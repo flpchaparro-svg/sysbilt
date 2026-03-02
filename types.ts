@@ -1,4 +1,3 @@
-
 import { LucideIcon } from 'lucide-react';
 
 export interface Persona {
@@ -56,3 +55,20 @@ export type GridSpan = {
   col: string;
   row: string;
 };
+
+// --- NEW SANITY CMS TYPES ---
+export interface SanityService {
+  _id: string;
+  serviceName: string;
+  pillar: string;
+  systemPhase: string;
+  tagline: string;
+  promise: string;
+  theirPain: string;
+  whoBuysIt: string;
+  sprintLength: string;
+  setupFee: string;
+  retainer: string;
+  keyTools: string[];
+  leadsTo: string;
+}
