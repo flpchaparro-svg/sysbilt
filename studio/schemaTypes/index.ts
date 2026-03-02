@@ -3,8 +3,7 @@ import category from './category'
 import post from './post'
 import author from './author'
 import youtube from './youtube'
-import service from './service' // Import new schema
-import caseStudy from './caseStudy' // Import new schema
+import service from './service'
+import caseStudy from './caseStudy' // <-- Add this import
 
-// Add them to the array
-export const schemaTypes = [post, author, category, blockContent, youtube, service, caseStudy]
+export const schemaTypes = [post, author, category, blockContent, youtube, service, caseStudy] // <-- Add to array
