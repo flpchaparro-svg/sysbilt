@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { m, motion, useMotionValue, useSpring } from 'framer-motion';
-import { ArrowRight, ArrowDown, Hash } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { client, urlFor } from '../src/sanityClient';
+import { client, urlFor, getCaseStudies } from '../src/sanityClient'; // <-- Added getCaseStudies
+import { SanityCaseStudy } from '../types'; // <-- Added types
 import { getAllPillars } from '../constants/systemPillars';
 import HeroVisualBrutalist from '../components/Blog/HeroVisualBrutalist';
 import RobotPeek from '../components/RobotPeek'; 
@@ -26,7 +27,6 @@ function formatDate(dateString: string | null | undefined): string {
 }
 
 // --- FEATURED CARDS ---
-
 const FeaturedCardLead: React.FC<{ post: any }> = ({ post }) => {
   const slug = post.slug?.current ?? '';
   const href = `/blog/${slug}`;
@@ -133,16 +133,12 @@ const LedgerRow: React.FC<{ post: any }> = ({ post }) => {
   const href = `/blog/${slug}`;
   const [isHovered, setIsHovered] = useState(false);
 
-  // Set up Framer Motion values to track the mouse position
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-
-  // Add a spring physics configuration to make the image float smoothly behind the cursor
   const springX = useSpring(x, { stiffness: 400, damping: 28 });
   const springY = useSpring(y, { stiffness: 400, damping: 28 });
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    // Offset the image slightly so it sits just off the tip of the mouse pointer
     x.set(e.clientX + 15);
     y.set(e.clientY + 15);
   };
@@ -176,7 +172,6 @@ const LedgerRow: React.FC<{ post: any }> = ({ post }) => {
         </div>
       </div>
 
-      {/* --- THE FLOATING CURSOR IMAGE --- */}
       {post.mainImage && (
         <motion.div
           style={{
@@ -210,21 +205,19 @@ const LedgerRow: React.FC<{ post: any }> = ({ post }) => {
 
 export default function BlogPage() {
   const [posts, setPosts] = useState<any[]>([]);
+  const [latestCaseStudy, setLatestCaseStudy] = useState<SanityCaseStudy | null>(null); // <-- Added state for Case Study
   const [isLoading, setIsLoading] = useState(true); 
   const [activeFilter, setActiveFilter] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState<string>(''); 
   const [email, setEmail] = useState('');
   const [formStatus, setFormStatus] = useState<'idle' | 'loading' | 'success'>('idle');
 
-  // Pagination State
   const [visibleCount, setVisibleCount] = useState(10);
-
   const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
   const [currentText, setCurrentText] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
 
-  // Hardcoded Search Phrases
   const SEARCH_PHRASES = useMemo(() => [
     "Automate onboarding...",
     "Integrate HubSpot...",
@@ -236,17 +229,24 @@ export default function BlogPage() {
   useEffect(() => {
     document.title = "Insights & Strategy | Sysbilt";
     setIsLoading(true); 
-    client
-      .fetch(`*[_type == "post"] | order(publishedAt desc) { title, slug, mainImage, publishedAt, "authorName": author->name, servicePillar, isFeatured, seoDescription }`)
-      .then((data) => {
-        setPosts(data || []);
-      })
-      .catch((error) => {
-        console.error("Failed to fetch posts:", error);
-      })
-      .finally(() => {
-        setIsLoading(false); 
-      });
+    
+    // Fetch both Posts and the latest Case Study at the same time
+    Promise.all([
+      client.fetch(`*[_type == "post"] | order(publishedAt desc) { title, slug, mainImage, publishedAt, "authorName": author->name, servicePillar, isFeatured, seoDescription }`),
+      getCaseStudies()
+    ])
+    .then(([postsData, caseStudiesData]) => {
+      setPosts(postsData || []);
+      if (caseStudiesData && caseStudiesData.length > 0) {
+        setLatestCaseStudy(caseStudiesData[0]); // Grab the newest proof point
+      }
+    })
+    .catch((error) => {
+      console.error("Failed to fetch data:", error);
+    })
+    .finally(() => {
+      setIsLoading(false); 
+    });
   }, []);
 
   useEffect(() => {
@@ -270,7 +270,6 @@ export default function BlogPage() {
     return () => clearTimeout(timeout);
   }, [currentText, isDeleting, currentPhraseIndex, SEARCH_PHRASES]);
 
-  // Reset pagination if filter or search changes
   useEffect(() => {
     setVisibleCount(10);
   }, [activeFilter, searchQuery]);
@@ -286,7 +285,6 @@ export default function BlogPage() {
   const featuredPosts = filteredPosts.filter(p => p.isFeatured).slice(0, 6);
   const regularPosts = filteredPosts.filter(p => !p.isFeatured);
   
-  // Apply Pagination
   const visibleRegularPosts = regularPosts.slice(0, visibleCount);
   const hasMorePosts = visibleRegularPosts.length < regularPosts.length;
 
@@ -383,14 +381,6 @@ export default function BlogPage() {
           <div className="type-eyebrow text-dark/70 border-2 border-dark p-6 inline-block bg-white">
             Loading Insights...
           </div>
-        ) : posts.length === 0 ? (
-          <div className="type-eyebrow text-dark/70 border-2 border-dark p-6 inline-block bg-white">
-            No insights published yet.
-          </div>
-        ) : filteredPosts.length === 0 ? (
-          <div className="type-eyebrow text-red-text border-2 border-red-solid p-6 inline-block bg-red-solid/10">
-            No insights found for that search.
-          </div>
         ) : (
           <div className="w-full relative z-30 pb-20"> 
             
@@ -417,6 +407,38 @@ export default function BlogPage() {
               </div>
             )}
 
+            {/* --- PROOF BRIDGE (LATEST EVIDENCE) --- */}
+            {latestCaseStudy && (
+              <div className="mb-20 md:mb-32">
+                <Link to="/proof" className="group block border-2 border-dark bg-dark text-white p-8 md:p-12 shadow-[8px_8px_0px_0px_#1a1a1a] hover:shadow-[12px_12px_0px_0px_#E21E3F] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+                  {/* Accent Line */}
+                  <div className="absolute top-0 left-0 w-full h-1.5 bg-red-solid scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-700 ease-out" />
+                  
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 relative z-10">
+                    <div>
+                      <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-red-solid mb-4 flex items-center gap-2">
+                        <span className="w-2 h-2 bg-red-solid rounded-full animate-pulse" />
+                        VERIFIED DEPLOYMENT
+                      </span>
+                      <h3 className="font-serif text-4xl md:text-5xl text-white mb-4 group-hover:text-gold-on-dark transition-colors duration-300">
+                        {latestCaseStudy.clientName}
+                      </h3>
+                      <div className="flex flex-wrap items-center gap-3 font-mono text-[10px] md:text-xs text-white/70 uppercase tracking-widest">
+                        <span className="border border-white/20 px-3 py-1.5 bg-white/5">{latestCaseStudy.clientIndustry}</span>
+                        <span className="text-red-solid">/</span>
+                        <span className="border border-white/20 px-3 py-1.5 bg-white/5">{latestCaseStudy.pillarFocus}</span>
+                      </div>
+                    </div>
+
+                    <div className="shrink-0 flex items-center gap-4 bg-white text-dark px-6 py-4 border-2 border-dark group-hover:bg-cream transition-colors font-mono text-sm font-bold uppercase tracking-widest">
+                      View Hard Data
+                      <ArrowRight className="w-4 h-4 text-red-solid group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            )}
+
             {/* --- LEDGER SECTION --- */}
             <div className="mb-24">
               <div className="flex items-center justify-between mb-8 border-b-4 border-dark pb-6">
@@ -427,18 +449,24 @@ export default function BlogPage() {
                 <span className="type-eyebrow text-dark/50">{regularPosts.length} RECORDS FOUND</span>
               </div>
 
-              <div className="border-t-2 border-dark">
-                <div className="grid grid-cols-12 gap-4 py-4 border-b-2 border-dark font-mono text-[10px] uppercase tracking-widest text-dark/50 px-4 -mx-4">
-                  <div className="col-span-3 md:col-span-2">Date</div>
-                  <div className="col-span-3 md:col-span-2 hidden md:block">Pillar</div>
-                  <div className="col-span-6 md:col-span-6">Title</div>
-                  <div className="col-span-3 md:col-span-2 text-right">Action</div>
+              {regularPosts.length === 0 ? (
+                <div className="type-eyebrow text-dark/70 border-2 border-dark p-6 inline-block bg-white">
+                  No insights match this filter.
                 </div>
-                
-                {visibleRegularPosts.map((post: any) => (
-                  <LedgerRow key={post.slug?.current ?? post.title} post={post} />
-                ))}
-              </div>
+              ) : (
+                <div className="border-t-2 border-dark">
+                  <div className="grid grid-cols-12 gap-4 py-4 border-b-2 border-dark font-mono text-[10px] uppercase tracking-widest text-dark/50 px-4 -mx-4">
+                    <div className="col-span-3 md:col-span-2">Date</div>
+                    <div className="col-span-3 md:col-span-2 hidden md:block">Pillar</div>
+                    <div className="col-span-6 md:col-span-6">Title</div>
+                    <div className="col-span-3 md:col-span-2 text-right">Action</div>
+                  </div>
+                  
+                  {visibleRegularPosts.map((post: any) => (
+                    <LedgerRow key={post.slug?.current ?? post.title} post={post} />
+                  ))}
+                </div>
+              )}
 
               {hasMorePosts && (
                 <div className="mt-12 flex justify-center">
