@@ -23,28 +23,27 @@ export interface Tier {
 export interface ServiceDetail {
   id: string;
   title: string;
-  subtitle: string; // Used in SystemPhases/Modal (e.g., "The Face")
-  technicalLabel?: string; // Full technical label for display box (optional - not currently used)
-  systemGroup?: string; // New field for System Architecture Grouping
-  symptom?: string; // New field for Diagnostic Modal
-  description: string; // Full description for display box
-  smallCardBody?: string; // Short hook/question text for desktop small cards
+  subtitle: string; 
+  technicalLabel?: string; 
+  systemGroup?: string; 
+  symptom?: string; 
+  description: string; 
+  smallCardBody?: string; 
   features: string[];
   visualPrompt: string;
-  bgImage?: string; // Optional - not currently used
-  icon?: string; // Optional - not currently used (string names are unused, components import icons directly)
+  bgImage?: string; 
+  icon?: string; 
 }
 
-// Extended interface for SystemPage grid view
 export interface SystemPillarDetail extends ServiceDetail {
-  number: string; // e.g., '01', '02'
-  icon: LucideIcon; // React component icon
-  subtitle: string; // SystemPage-specific subtitle (e.g., "Websites & E-commerce")
-  subtitleMobile?: string; // Mobile-specific subtitle
-  categoryHex: string; // Color for the pillar
-  categoryLabel: string; // e.g., "GET CLIENTS"
-  body: string; // Short body text for grid cards
-  systemPurpose: string; // Core function description
+  number: string; 
+  icon: LucideIcon; 
+  subtitle: string; 
+  subtitleMobile?: string; 
+  categoryHex: string; 
+  categoryLabel: string; 
+  body: string; 
+  systemPurpose: string; 
   subServices: Array<{
     title: string;
     description: string;
@@ -71,4 +70,34 @@ export interface SanityService {
   retainer: string;
   keyTools: string[];
   leadsTo: string;
+}
+
+export interface SanityCaseStudy {
+  _id: string;
+  clientName: string;
+  clientIndustry: string;
+  pillarFocus: string;
+  terminalLines: string[];
+  problemItems: Array<{
+    title: string;
+    metric: string;
+    label: string;
+    desc: string;
+    impact: string;
+  }>;
+  solutionItems: Array<{
+    title: string;
+    what: string;
+    why: string;
+  }>;
+  evidenceMetrics: Array<{
+    label: string;
+    val: number;
+    prefix: string;
+    suffix: string;
+    note: string;
+  }>;
+  beforeImage?: string;
+  afterImage?: string;
+  gallery?: string[];
 }

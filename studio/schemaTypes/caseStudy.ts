@@ -9,6 +9,7 @@ export default defineType({
     {name: 'problems', title: 'The Problem'},
     {name: 'solutions', title: 'The Fix'},
     {name: 'metrics', title: 'The Evidence'},
+    {name: 'visuals', title: 'Visual Evidence'}, // <-- NEW GROUP
   ],
   fields: [
     // --- OVERVIEW ---
@@ -24,32 +25,18 @@ export default defineType({
       title: 'Client Industry',
       type: 'string',
       group: 'overview',
-      description: 'e.g., Commercial Security, Plumbing, Finance',
-      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'pillarFocus',
       title: 'Primary Pillar Focus',
       type: 'string',
       group: 'overview',
-      options: {
-        list: [
-          'Pillar 1: Websites & E-commerce',
-          'Pillar 2: CRM & Lead Tracking',
-          'Pillar 3: Automation',
-          'Pillar 4: AI Assistants',
-          'Pillar 5: Content Systems',
-          'Pillar 6: Team Training',
-          'Pillar 7: Dashboards & Reporting'
-        ],
-      },
     }),
     defineField({
       name: 'terminalLines',
       title: 'Terminal Audit Log',
       type: 'array',
       group: 'overview',
-      description: 'The green hacking text at the top. e.g., "> Audited old site... [4.2s load]"',
       of: [{type: 'string'}],
     }),
 
@@ -59,16 +46,15 @@ export default defineType({
       title: 'Problem Items',
       type: 'array',
       group: 'problems',
-      description: 'What was broken before we started?',
       of: [
         {
           type: 'object',
           fields: [
-            defineField({name: 'title', type: 'string', title: 'Title (e.g., Speed Was Killing Conversions)'}),
-            defineField({name: 'metric', type: 'string', title: 'Metric (e.g., 4.2 seconds)'}),
-            defineField({name: 'label', type: 'string', title: 'Label (e.g., Load Time)'}),
+            defineField({name: 'title', type: 'string', title: 'Title'}),
+            defineField({name: 'metric', type: 'string', title: 'Metric'}),
+            defineField({name: 'label', type: 'string', title: 'Label'}),
             defineField({name: 'desc', type: 'text', title: 'Description'}),
-            defineField({name: 'impact', type: 'string', title: 'Business Impact (e.g., Lost contracts.)'}),
+            defineField({name: 'impact', type: 'string', title: 'Business Impact'}),
           ]
         }
       ]
@@ -80,14 +66,13 @@ export default defineType({
       title: 'Solution Items',
       type: 'array',
       group: 'solutions',
-      description: 'What we actually built to fix it.',
       of: [
         {
           type: 'object',
           fields: [
-            defineField({name: 'title', type: 'string', title: 'Action Taken (e.g., Domain Migration)'}),
+            defineField({name: 'title', type: 'string', title: 'Action Taken'}),
             defineField({name: 'what', type: 'string', title: 'What we did'}),
-            defineField({name: 'why', type: 'text', title: 'Why it matters to their business'}),
+            defineField({name: 'why', type: 'text', title: 'Why it matters'}),
           ]
         }
       ]
@@ -99,19 +84,44 @@ export default defineType({
       title: 'Final Evidence Metrics',
       type: 'array',
       group: 'metrics',
-      description: 'The hard numbers at the bottom of the page.',
       of: [
         {
           type: 'object',
           fields: [
-            defineField({name: 'label', type: 'string', title: 'Label (e.g., Load Time)'}),
-            defineField({name: 'val', type: 'number', title: 'Number Value (e.g., 0.4)'}),
+            defineField({name: 'label', type: 'string', title: 'Label'}),
+            defineField({name: 'val', type: 'number', title: 'Number Value'}),
             defineField({name: 'prefix', type: 'string', title: 'Prefix (e.g., + or $)'}),
             defineField({name: 'suffix', type: 'string', title: 'Suffix (e.g., s or %)'}),
-            defineField({name: 'note', type: 'string', title: 'Subtext note (e.g., Was 4.2s. Now 0.4s.)'}),
+            defineField({name: 'note', type: 'string', title: 'Subtext note'}),
           ]
         }
       ]
+    }),
+
+    // --- VISUAL EVIDENCE (NEW) ---
+    defineField({
+      name: 'beforeImage',
+      title: 'Before Image (Slider)',
+      type: 'image',
+      group: 'visuals',
+      description: 'Used for the Before & After comparison slider. Leave blank if not needed.',
+      options: { hotspot: true },
+    }),
+    defineField({
+      name: 'afterImage',
+      title: 'After Image (Slider)',
+      type: 'image',
+      group: 'visuals',
+      description: 'Used for the Before & After comparison slider. Leave blank if not needed.',
+      options: { hotspot: true },
+    }),
+    defineField({
+      name: 'gallery',
+      title: 'General Evidence Photos',
+      type: 'array',
+      group: 'visuals',
+      description: 'A grid of standard photos (e.g., dashboard screenshots, analytics).',
+      of: [{ type: 'image', options: { hotspot: true } }],
     }),
   ],
   preview: {
