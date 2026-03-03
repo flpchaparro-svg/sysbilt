@@ -24,10 +24,11 @@ interface PillarPageProps {
 }
 
 const Pillar3: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
-  // STATE
-  const [activeTier, setActiveTier] = useState<keyof typeof TIERS>('linear');
+  // STATE - Bulletproof fix to automatically grab the first tier
+  const firstTierKey = Object.keys(TIERS)[0] as keyof typeof TIERS;
+  const [activeTier, setActiveTier] = useState<keyof typeof TIERS>(firstTierKey);
   const [activePersonaIndex, setActivePersonaIndex] = useState(0);
-  const [expandedTier, setExpandedTier] = useState<keyof typeof TIERS | null>('linear');
+  const [expandedTier, setExpandedTier] = useState<keyof typeof TIERS | null>(firstTierKey);
   const [expandedPersona, setExpandedPersona] = useState<string | null>(null);
 
   // DATA HELPERS
@@ -52,11 +53,16 @@ const Pillar3: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
         const element = document.getElementById(id);
         if (element) {
             const offset = 100;
-            const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+            const elementPosition = element.getBoundingClientRect().top + window.scrollY;
             const offsetPosition = elementPosition - offset;
             window.scrollTo({ top: offsetPosition, behavior: "smooth" });
         }
     }, 300); 
+  };
+
+  const handleTierChange = (key: keyof typeof TIERS) => {
+    setActiveTier(key);
+    setActivePersonaIndex(0); // Resets the pane so the animation fires cleanly
   };
 
   return (
@@ -129,7 +135,7 @@ const Pillar3: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
               {Object.entries(TIERS).map(([key, tier]) => (
                 <button 
                   key={key}
-                  onClick={() => setActiveTier(key as keyof typeof TIERS)}
+                  onClick={() => handleTierChange(key as keyof typeof TIERS)}
                   className={`py-6 px-4 text-center transition-all duration-snap relative group overflow-hidden flex flex-col justify-center min-h-[100px] ${
                     activeTier === key ? 'bg-white' : 'hover:bg-white/50 text-black/60'
                   }`}
@@ -140,12 +146,12 @@ const Pillar3: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
                   <span className={`font-serif text-lg leading-tight ${activeTier === key ? 'text-black' : 'text-inherit opacity-60'}`}>
                     "{tier.hook}"
                   </span>
-                  {activeTier === key && <m.div layoutId="tab-highlight" className="absolute top-0 left-0 w-full h-1 bg-red-solid" />}
+                  {activeTier === key && <m.div layoutId="tab-highlight-p3" className="absolute top-0 left-0 w-full h-1 bg-red-solid" />}
                 </button>
               ))}
            </div>
            
-           {/* CONTENT */}
+           {/* CONTENT PANES */}
            <div className="flex min-h-[600px]">
               {/* LEFT SIDEBAR */}
               <div className="w-1/3 border-r border-black/10 bg-off-white p-8 flex flex-col">
@@ -220,7 +226,8 @@ const Pillar3: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
                                   </CTAButton>
                                 </div>
                              </div>
-                             <div className="w-32 hidden lg:block flex-shrink-0">
+                             {/* THE FIX: Replaced 'hidden lg:block' with 'hidden md:flex' so animations don't vanish on resized windows */}
+                             <div className="w-24 md:w-32 hidden md:flex flex-shrink-0 items-center justify-center">
                                 <TierVisual tierKey={activeTier} />
                              </div>
                           </div>

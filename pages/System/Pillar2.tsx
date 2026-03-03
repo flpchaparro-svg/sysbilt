@@ -24,10 +24,11 @@ interface PillarPageProps {
 }
 
 const Pillar2: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
-  // STATE
-  const [activeTier, setActiveTier] = useState<keyof typeof TIERS>('capture');
+  // STATE - Bulletproof fix to automatically grab the first tier
+  const firstTierKey = Object.keys(TIERS)[0] as keyof typeof TIERS;
+  const [activeTier, setActiveTier] = useState<keyof typeof TIERS>(firstTierKey);
   const [activePersonaIndex, setActivePersonaIndex] = useState(0);
-  const [expandedTier, setExpandedTier] = useState<keyof typeof TIERS | null>('capture');
+  const [expandedTier, setExpandedTier] = useState<keyof typeof TIERS | null>(firstTierKey);
   const [expandedPersona, setExpandedPersona] = useState<string | null>(null);
 
   // DATA HELPERS
@@ -52,11 +53,16 @@ const Pillar2: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
         const element = document.getElementById(id);
         if (element) {
             const offset = 100;
-            const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+            const elementPosition = element.getBoundingClientRect().top + window.scrollY;
             const offsetPosition = elementPosition - offset;
             window.scrollTo({ top: offsetPosition, behavior: "smooth" });
         }
-    }, 200); 
+    }, 300); 
+  };
+
+  const handleTierChange = (key: keyof typeof TIERS) => {
+    setActiveTier(key);
+    setActivePersonaIndex(0); // Resets the pane so the animation fires cleanly
   };
 
   return (
@@ -131,7 +137,7 @@ const Pillar2: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
               {Object.entries(TIERS).map(([key, tier]) => (
                 <button 
                   key={key}
-                  onClick={() => setActiveTier(key as keyof typeof TIERS)}
+                  onClick={() => handleTierChange(key as keyof typeof TIERS)}
                   className={`py-6 px-4 text-center transition-all duration-snap relative group overflow-hidden flex flex-col justify-center min-h-[100px] ${
                     activeTier === key ? 'bg-white' : 'hover:bg-white/50 text-black/60'
                   }`}
@@ -142,7 +148,7 @@ const Pillar2: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
                   <span className={`font-serif text-lg leading-tight ${activeTier === key ? 'text-black' : 'text-inherit opacity-60'}`}>
                     "{tier.hook}"
                   </span>
-                  {activeTier === key && <m.div layoutId="tab-highlight" className="absolute top-0 left-0 w-full h-1 bg-red-solid" />}
+                  {activeTier === key && <m.div layoutId="tab-highlight-p2" className="absolute top-0 left-0 w-full h-1 bg-red-solid" />}
                 </button>
               ))}
            </div>
@@ -154,14 +160,14 @@ const Pillar2: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
                  <div className="mb-8 p-4 bg-white border border-black/5 rounded-sm">
                     <div className="flex gap-2 items-center mb-2">
                        <HelpCircle className="w-4 h-4 text-red-solid" />
-                       <span className="font-mono text-[9px] uppercase tracking-widest font-bold text-black/60">Is this you?</span>
+                       <span className="font-mono text-[10px] uppercase tracking-widest font-bold text-black/60">Is this you?</span>
                     </div>
                     <p className="font-sans text-sm text-black/70 leading-relaxed">
                        {currentTier.summary}
                     </p>
                  </div>
 
-                 <span className="font-mono text-[9px] text-black/60 uppercase tracking-widest font-bold mb-4 block pl-1">Select Profile</span>
+                 <span className="font-mono text-[10px] text-black/60 uppercase tracking-widest font-bold mb-4 block pl-1">Select Profile</span>
                  <div className="space-y-3 flex-grow">
                     {currentTier.personas.map((p, idx) => (
                       <button
@@ -183,7 +189,7 @@ const Pillar2: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
                  </div>
 
                  <div className="mt-8 pt-8 border-t border-black/5">
-                    <span className="font-mono text-[9px] text-black/60 uppercase tracking-widest font-bold mb-4 block">Included Specs</span>
+                    <span className="font-mono text-[10px] text-black/60 uppercase tracking-widest font-bold mb-4 block">Included Specs</span>
                     <ul className="space-y-2">
                       {currentTier.specs.map((spec, i) => (
                         <li key={i} className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-wide text-black/60">
@@ -204,7 +210,7 @@ const Pillar2: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
                        className="flex-grow flex flex-col"
                     >
                        <div className="mb-10">
-                          <span className="text-red-text font-mono text-[9px] uppercase tracking-widest font-bold mb-3 block">The Problem</span>
+                          <span className="text-red-text font-mono text-[10px] uppercase tracking-widest font-bold mb-3 block">The Problem</span>
                           <h2 className="font-serif text-3xl md:text-4xl mb-6 text-dark leading-tight">{currentPersona.painTitle}</h2>
                           <p className="font-sans text-xl text-dark/70 leading-relaxed border-l-2 border-red-solid pl-6 italic">"{currentPersona.painText}"</p>
                        </div>
@@ -213,7 +219,7 @@ const Pillar2: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
                           <div className="absolute top-0 right-0 w-48 h-48 bg-red-solid/10 rounded-full blur-3xl" />
                           <div className="relative z-10 flex gap-8">
                              <div className="flex-grow">
-                                <span className="font-mono text-[9px] text-red-text uppercase tracking-widest block mb-4 font-bold">The Fix</span>
+                                <span className="font-mono text-[10px] text-red-text uppercase tracking-widest block mb-4 font-bold">The Fix</span>
                                 <p className="font-sans text-lg leading-relaxed mb-8">{currentPersona.solution}</p>
                                 
                                 <div className="w-fit">
@@ -222,7 +228,8 @@ const Pillar2: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
                                   </CTAButton>
                                 </div>
                              </div>
-                             <div className="w-32 hidden lg:block flex-shrink-0">
+                             {/* THE FIX: Replaced 'hidden lg:block' with 'hidden md:flex' so animations don't vanish on resized windows */}
+                             <div className="w-24 md:w-32 hidden md:flex flex-shrink-0 items-center justify-center">
                                 <TierVisual tierKey={activeTier} />
                              </div>
                           </div>
@@ -270,12 +277,12 @@ const Pillar2: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
                       <div className="p-4 space-y-2">
                          <div className="mb-6 p-4 bg-white border border-black/5 rounded-sm">
                             <p className="font-sans text-sm text-black/70 leading-relaxed">
-                               <strong className="text-red-text block mb-1 font-bold uppercase text-[9px] tracking-widest">Is this you?</strong>
+                               <strong className="text-red-text block mb-1 font-bold uppercase text-[10px] tracking-widest">Is this you?</strong>
                                {tier.summary}
                             </p>
                          </div>
                          
-                         <span className="font-mono text-[9px] text-black/60 uppercase tracking-widest font-bold block mb-2 px-2">Select Profile:</span>
+                         <span className="font-mono text-[10px] text-black/60 uppercase tracking-widest font-bold block mb-2 px-2">Select Profile:</span>
                          
                          {tier.personas.map((p) => {
                            const isPersonaExpanded = expandedPersona === p.id;
@@ -311,14 +318,14 @@ const Pillar2: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
                                    >
                                       <div className="p-6">
                                          <div className="mb-6">
-                                            <span className="text-red-text font-mono text-[9px] uppercase tracking-widest font-bold mb-2 block">The Problem</span>
+                                            <span className="text-red-text font-mono text-[10px] uppercase tracking-widest font-bold mb-2 block">The Problem</span>
                                             <h5 className="font-serif text-2xl mb-2 text-dark">{p.painTitle}</h5>
                                             <p className="font-sans text-base text-dark/70 leading-relaxed italic border-l-2 border-red-solid pl-4">"{p.painText}"</p>
                                          </div>
 
                                          <div className="bg-dark p-6 text-white rounded-sm mb-6 relative overflow-hidden">
                                             <div className="absolute top-0 right-0 w-24 h-24 bg-red-solid/20 rounded-full blur-2xl" />
-                                            <span className="font-mono text-[9px] text-red-text uppercase tracking-widest block mb-3 font-bold relative z-10">The Fix</span>
+                                            <span className="font-mono text-[10px] text-red-text uppercase tracking-widest block mb-3 font-bold relative z-10">The Fix</span>
                                             <p className="font-sans text-base leading-relaxed mb-6 relative z-10">{p.solution}</p>
                                             
                                             <div className="w-full flex justify-center py-4 bg-transparent relative z-10">
@@ -335,7 +342,7 @@ const Pillar2: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
                                          </div>
 
                                          <div className="mt-8 pt-6 border-t border-black/10">
-                                            <span className="font-mono text-[9px] text-black/60 uppercase tracking-widest font-bold mb-3 block">Included Specs</span>
+                                            <span className="font-mono text-[10px] text-black/60 uppercase tracking-widest font-bold mb-3 block">Included Specs</span>
                                             <ul className="space-y-2">
                                               {tier.specs.map((spec, i) => (
                                                 <li key={i} className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-wide text-black/60">

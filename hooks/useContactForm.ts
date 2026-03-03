@@ -1,31 +1,54 @@
-import { useState, FormEvent } from 'react';
-import { DIAGNOSIS_OPTIONS } from '../constants/contactData';
+import { useState } from 'react';
+
+// You will replace these with your actual HubSpot IDs in Step 2
+const HUBSPOT_PORTAL_ID = 'YOUR_PORTAL_ID';
+const HUBSPOT_FORM_ID = 'YOUR_FORM_ID'; 
 
 export const useContactForm = () => {
-  const [formState, setFormState] = useState({
-    name: '',
-    email: '',
-    company: '',
-    frictionPoint: DIAGNOSIS_OPTIONS[0], // Default to first option
-    message: ''
-  });
-  
-  const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    setStatus('submitting');
-    
-    // SIMULATE API CALL
-    // In production, replace this with: await fetch('/api/contact', { ... })
-    setTimeout(() => {
-      setStatus('success');
-    }, 1500);
+  const submitForm = async (data: Record<string, string>) => {
+    setIsSubmitting(true);
+    setSubmitStatus('idle');
+
+    // HubSpot Forms API Endpoint
+    const url = `https://api.hsforms.com/submissions/v3/integration/submit/${HUBSPOT_PORTAL_ID}/${HUBSPOT_FORM_ID}`;
+
+    // Map your React state data to HubSpot's expected format
+    const hubspotData = {
+      fields: Object.keys(data).map((key) => ({
+        name: key,
+        value: data[key],
+      })),
+      context: {
+        pageUri: window.location.href,
+        pageName: document.title,
+      },
+    };
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(hubspotData),
+      });
+
+      if (response.ok) {
+        setSubmitStatus('success');
+      } else {
+        console.error('HubSpot submission error:', await response.text());
+        setSubmitStatus('error');
+      }
+    } catch (error) {
+      console.error('Network error during form submission:', error);
+      setSubmitStatus('error');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const updateField = (field: keyof typeof formState, value: string) => {
-    setFormState(prev => ({ ...prev, [field]: value }));
-  };
-
-  return { formState, updateField, status, handleSubmit };
+  return { submitForm, isSubmitting, submitStatus };
 };
