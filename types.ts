@@ -55,7 +55,7 @@ export type GridSpan = {
   row: string;
 };
 
-// --- NEW SANITY CMS TYPES ---
+// --- SANITY CMS TYPES ---
 export interface SanityService {
   _id: string;
   serviceName: string;
@@ -66,8 +66,7 @@ export interface SanityService {
   theirPain: string;
   whoBuysIt: string;
   sprintLength: string;
-  setupFee: string;
-  retainer: string;
+  // setupFee and retainer have been securely removed from the frontend type
   keyTools: string[];
   leadsTo: string;
 }
