@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { Helmet } from 'react-helmet-async';
 import { client, urlFor } from '../src/sanityClient';
 import { PortableText } from '@portabletext/react';
 import { ArrowLeft, ArrowUpRight, Share2, MessageSquare, Eye, Quote, Copy, Check, Info, AlertTriangle } from 'lucide-react';
@@ -199,7 +200,12 @@ export default function BlogPostPage() {
             publishedAt,
             body,
             servicePillar,
+            seoTitle,
             seoDescription,
+            focusKeyword,
+            businessPhase,
+            targetPersona,
+            internalLinkDestination,
             tags,
             customCTA,
             "relatedPosts": relatedPosts[]->{
@@ -223,11 +229,6 @@ export default function BlogPostPage() {
       )
       .then((data) => {
         setPost(data.post);
-        
-        // Dynamically update the browser tab title for SEO and usability
-        if (data.post?.title) {
-          document.title = `${data.post.title} | Sysbilt Strategy`;
-        }
         
         let related = [];
         
@@ -634,6 +635,11 @@ export default function BlogPostPage() {
 
   return (
     <main className="min-h-screen bg-dark text-white font-sans selection:bg-white selection:text-dark pb-24 border-t border-white/10 relative">
+      <Helmet>
+        <title>{post?.seoTitle || post?.title || 'Sysbilt Strategy'} | SYSBILT</title>
+        <meta name="description" content={post?.seoDescription || "Business systems architecture for growing Australian companies."} />
+        {post?.focusKeyword && <meta name="keywords" content={post.focusKeyword} />}
+      </Helmet>
       
       <div className="pt-32 px-4 md:px-8 max-w-7xl mx-auto">
         
@@ -817,48 +823,74 @@ export default function BlogPostPage() {
               <PortableText value={post?.body} components={components} />
             </div>
 
-            {/* --- INLINE CALL TO ACTION --- */}
-            <div className={`mt-20 border ${theme.borderSubtle} ${theme.bgSubtle} p-8 md:p-12 relative overflow-hidden group ${theme.isBw ? 'shadow-[8px_8px_0px_0px_rgba(255,255,255,0.1)]' : ''}`}>
-              <div className={`absolute top-0 left-0 w-full h-1 ${theme.bgMain} scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-700 ease-out`} />
-              
-              <h3 className="font-sans font-black text-3xl md:text-4xl text-white uppercase tracking-tight mb-4 flex flex-wrap gap-2 items-center">
-                {theme.isBw ? (
-                  <span className="bg-white text-dark px-3 py-1 shadow-[4px_4px_0px_0px_rgba(255,255,255,0.3)]">
-                    DEPLOY THE SYSTEM.
-                  </span>
+            {/* --- CONVERSION CTA BLOCK (PILLAR DESTINATION OR FALLBACK) --- */}
+            {post?.internalLinkDestination ? (
+              <div className={`mt-20 border ${theme.borderSubtle} ${theme.bgSubtle} p-8 md:p-12 relative overflow-hidden group ${theme.isBw ? 'shadow-[8px_8px_0px_0px_rgba(255,255,255,0.1)]' : ''}`}>
+                <div className={`absolute top-0 left-0 w-full h-1 ${theme.bgMain} scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-700 ease-out`} />
+                
+                <h3 className="font-sans font-black text-3xl md:text-4xl text-white uppercase tracking-tight mb-4 flex flex-wrap gap-2 items-center">
+                  {theme.isBw ? (
+                    <span className="bg-white text-dark px-3 py-1 shadow-[4px_4px_0px_0px_rgba(255,255,255,0.3)]">
+                      SOLVE THIS PROBLEM.
+                    </span>
+                  ) : (
+                    <>Solve This <span className={theme.textMain}>Problem.</span></>
+                  )}
+                </h3>
+                <p className="font-sans text-white/70 font-light mb-8 max-w-md">
+                  Stop losing time to broken processes. See the exact system we build to fix this for businesses in your phase.
+                </p>
+                
+                <Link 
+                  to={post.internalLinkDestination}
+                  className={`font-mono text-xs font-bold uppercase transition-all duration-300 ${theme.btnInlineCta} px-8 py-4 inline-flex items-center gap-3`}
+                >
+                  {post?.customCTA || 'SEE THE SOLUTION'} <ArrowUpRight className="w-4 h-4" />
+                </Link>
+              </div>
+            ) : (
+              <div className={`mt-20 border ${theme.borderSubtle} ${theme.bgSubtle} p-8 md:p-12 relative overflow-hidden group ${theme.isBw ? 'shadow-[8px_8px_0px_0px_rgba(255,255,255,0.1)]' : ''}`}>
+                <div className={`absolute top-0 left-0 w-full h-1 ${theme.bgMain} scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-700 ease-out`} />
+                
+                <h3 className="font-sans font-black text-3xl md:text-4xl text-white uppercase tracking-tight mb-4 flex flex-wrap gap-2 items-center">
+                  {theme.isBw ? (
+                    <span className="bg-white text-dark px-3 py-1 shadow-[4px_4px_0px_0px_rgba(255,255,255,0.3)]">
+                      DEPLOY THE SYSTEM.
+                    </span>
+                  ) : (
+                    <>Deploy The <span className={theme.textMain}>System.</span></>
+                  )}
+                </h3>
+                <p className="font-sans text-white/70 font-light mb-8 max-w-md">
+                  Get architectural blueprints and technical teardowns delivered directly to your inbox. No noise, just raw intelligence.
+                </p>
+                
+                {formStatus === 'success' ? (
+                  <div className="font-mono text-white text-sm font-bold border border-white/20 p-4 bg-white/10 text-center uppercase tracking-widest">
+                     Access Granted.
+                  </div>
                 ) : (
-                  <>Deploy The <span className={theme.textMain}>System.</span></>
+                  <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-4">
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      disabled={formStatus === 'loading'}
+                      placeholder="CORPORATE EMAIL..."
+                      className={`flex-1 bg-dark border border-white/20 text-white px-4 py-4 font-mono text-xs uppercase focus:outline-none ${theme.borderFocus} placeholder:text-white/30 transition-all`}
+                      required
+                    />
+                    <button
+                      type="submit"
+                      disabled={formStatus === 'loading'}
+                      className={`font-mono text-xs font-bold uppercase transition-all duration-300 ${theme.btnInlineCta} px-8 py-4`}
+                    >
+                      {formStatus === 'loading' ? 'PROCESSING...' : (post?.customCTA || 'INITIALIZE')}
+                    </button>
+                  </form>
                 )}
-              </h3>
-              <p className="font-sans text-white/70 font-light mb-8 max-w-md">
-                Get architectural blueprints and technical teardowns delivered directly to your inbox. No noise, just raw intelligence.
-              </p>
-              
-              {formStatus === 'success' ? (
-                <div className="font-mono text-white text-sm font-bold border border-white/20 p-4 bg-white/10 text-center uppercase tracking-widest">
-                   Access Granted.
-                </div>
-              ) : (
-                <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-4">
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    disabled={formStatus === 'loading'}
-                    placeholder="CORPORATE EMAIL..."
-                    className={`flex-1 bg-dark border border-white/20 text-white px-4 py-4 font-mono text-xs uppercase focus:outline-none ${theme.borderFocus} placeholder:text-white/30 transition-all`}
-                    required
-                  />
-                  <button
-                    type="submit"
-                    disabled={formStatus === 'loading'}
-                    className={`font-mono text-xs font-bold uppercase transition-all duration-300 ${theme.btnInlineCta} px-8 py-4`}
-                  >
-                    {formStatus === 'loading' ? 'PROCESSING...' : (post?.customCTA || 'INITIALIZE')}
-                  </button>
-                </form>
-              )}
-            </div>
+              </div>
+            )}
 
             {/* --- AUTHOR BIO BLOCK --- */}
             {post?.author && (

@@ -1,6 +1,7 @@
 import React, { Suspense, lazy, useState, useEffect } from 'react';
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence, useScroll, useMotionValueEvent, LazyMotion, domAnimation } from 'framer-motion';
+import { HelmetProvider } from 'react-helmet-async';
 
 import GlobalHeader from '../components/GlobalHeader';
 import GlobalFooter from '../components/GlobalFooter'; // Standard Import (Stable)
@@ -98,53 +99,55 @@ const App: React.FC = () => {
   };
 
   return (
-    <LazyMotion features={domAnimation}>
-      <div className="bg-cream font-sans selection:bg-dark selection:text-cream min-h-screen flex flex-col relative">
-        
-        {location.pathname !== '/contact' && (
-          <GlobalHeader
-            currentView={getCurrentView()}
-            onNavigate={handleGlobalNavigate}
-            scrolled={scrolled}
-            solidBackground={/^\/blog\/[^/]+$/.test(location.pathname)}
-          />
-        )}
+    <HelmetProvider>
+      <LazyMotion features={domAnimation}>
+        <div className="bg-cream font-sans selection:bg-dark selection:text-cream min-h-screen flex flex-col relative">
+          
+          {location.pathname !== '/contact' && (
+            <GlobalHeader
+              currentView={getCurrentView()}
+              onNavigate={handleGlobalNavigate}
+              scrolled={scrolled}
+              solidBackground={/^\/blog\/[^/]+$/.test(location.pathname)}
+            />
+          )}
 
-        <main className="relative min-h-screen w-full flex-1">
-          <Suspense fallback={<div className="h-screen w-full bg-cream" />}>
-            <AnimatePresence mode="wait">
-              <div key={location.pathname} className="w-full">
-                <Routes location={location}>
-                  <Route path="/" element={<HomePage onNavigate={handleGlobalNavigate} onServiceClick={handleServiceClick} />} />
-                  <Route path="/architect" element={<ArchitectPage onBack={() => handleGlobalNavigate('homepage')} onNavigate={handleGlobalNavigate} />} />
-                  <Route path="/system" element={<SystemPage onBack={() => handleGlobalNavigate('homepage')} onNavigate={handleGlobalNavigate} />} />
-                  <Route path="/process" element={<ProcessPage onBack={() => handleGlobalNavigate('homepage')} onNavigate={handleGlobalNavigate} />} />
-                  <Route path="/proof" element={<ProofPage onBack={() => handleGlobalNavigate('homepage')} onNavigate={handleGlobalNavigate} />} />
-                  <Route path="/evidence-vault" element={<EvidenceVaultPage onBack={() => handleGlobalNavigate('homepage')} />} />
-                  <Route path="/contact" element={<ContactPage onBack={() => handleGlobalNavigate('homepage')} />} />
-                  <Route path="/privacy" element={<PrivacyPolicyPage onBack={() => handleGlobalNavigate('homepage')} onNavigate={handleGlobalNavigate} />} />
-                  <Route path="/blog" element={<BlogPage onNavigate={handleGlobalNavigate} />} />
-                  <Route path="/blog/:slug" element={<BlogPostPage onNavigate={handleGlobalNavigate} />} />
-                  
-                  <Route path="/pillar1" element={<Pillar1 onNavigate={handleGlobalNavigate} />} />
-                  <Route path="/pillar2" element={<Pillar2 onNavigate={handleGlobalNavigate} />} />
-                  <Route path="/pillar3" element={<Pillar3 onNavigate={handleGlobalNavigate} />} />
-                  <Route path="/pillar4" element={<Pillar4 onNavigate={handleGlobalNavigate} />} />
-                  <Route path="/pillar5" element={<Pillar5 onNavigate={handleGlobalNavigate} />} />
-                  <Route path="/pillar6" element={<Pillar6 onNavigate={handleGlobalNavigate} />} />
-                  <Route path="/pillar7" element={<Pillar7 onNavigate={handleGlobalNavigate} />} />
-                  
-                  <Route path="*" element={<NotFoundPage onNavigate={handleGlobalNavigate} />} />
-                </Routes>
-              </div>
-            </AnimatePresence>
-          </Suspense>
-        </main>
+          <main className="relative min-h-screen w-full flex-1">
+            <Suspense fallback={<div className="h-screen w-full bg-cream" />}>
+              <AnimatePresence mode="wait">
+                <div key={location.pathname} className="w-full">
+                  <Routes location={location}>
+                    <Route path="/" element={<HomePage onNavigate={handleGlobalNavigate} onServiceClick={handleServiceClick} />} />
+                    <Route path="/architect" element={<ArchitectPage onBack={() => handleGlobalNavigate('homepage')} onNavigate={handleGlobalNavigate} />} />
+                    <Route path="/system" element={<SystemPage onBack={() => handleGlobalNavigate('homepage')} onNavigate={handleGlobalNavigate} />} />
+                    <Route path="/process" element={<ProcessPage onBack={() => handleGlobalNavigate('homepage')} onNavigate={handleGlobalNavigate} />} />
+                    <Route path="/proof" element={<ProofPage onBack={() => handleGlobalNavigate('homepage')} onNavigate={handleGlobalNavigate} />} />
+                    <Route path="/evidence-vault" element={<EvidenceVaultPage onBack={() => handleGlobalNavigate('homepage')} />} />
+                    <Route path="/contact" element={<ContactPage onBack={() => handleGlobalNavigate('homepage')} />} />
+                    <Route path="/privacy" element={<PrivacyPolicyPage onBack={() => handleGlobalNavigate('homepage')} onNavigate={handleGlobalNavigate} />} />
+                    <Route path="/blog" element={<BlogPage onNavigate={handleGlobalNavigate} />} />
+                    <Route path="/blog/:slug" element={<BlogPostPage onNavigate={handleGlobalNavigate} />} />
+                    
+                    <Route path="/pillar1" element={<Pillar1 onNavigate={handleGlobalNavigate} />} />
+                    <Route path="/pillar2" element={<Pillar2 onNavigate={handleGlobalNavigate} />} />
+                    <Route path="/pillar3" element={<Pillar3 onNavigate={handleGlobalNavigate} />} />
+                    <Route path="/pillar4" element={<Pillar4 onNavigate={handleGlobalNavigate} />} />
+                    <Route path="/pillar5" element={<Pillar5 onNavigate={handleGlobalNavigate} />} />
+                    <Route path="/pillar6" element={<Pillar6 onNavigate={handleGlobalNavigate} />} />
+                    <Route path="/pillar7" element={<Pillar7 onNavigate={handleGlobalNavigate} />} />
+                    
+                    <Route path="*" element={<NotFoundPage onNavigate={handleGlobalNavigate} />} />
+                  </Routes>
+                </div>
+              </AnimatePresence>
+            </Suspense>
+          </main>
 
-        {location.pathname !== '/system' && location.pathname !== '/contact' && <GlobalFooter onNavigate={handleGlobalNavigate} />}
-        <Modal service={selectedService} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onViewPillar={(id) => handleGlobalNavigate(id)} />
-      </div>
-    </LazyMotion>
+          {location.pathname !== '/system' && location.pathname !== '/contact' && <GlobalFooter onNavigate={handleGlobalNavigate} />}
+          <Modal service={selectedService} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onViewPillar={(id) => handleGlobalNavigate(id)} />
+        </div>
+      </LazyMotion>
+    </HelmetProvider>
   );
 };
 
