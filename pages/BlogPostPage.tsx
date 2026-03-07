@@ -180,7 +180,7 @@ const CodeBlock = ({ value, theme }: any) => {
   );
 };
 
-export default function BlogPostPage() {
+export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string, sectionId?: string) => void }) {
   const { slug } = useParams();
   const [post, setPost] = useState<any>(null);
   const [relatedPosts, setRelatedPosts] = useState<any[]>([]);
@@ -232,11 +232,9 @@ export default function BlogPostPage() {
         
         let related = [];
         
-        // Priority 1: Use manually selected related posts if they exist
         if (data.post?.relatedPosts && data.post.relatedPosts.length > 0) {
             related = data.post.relatedPosts;
         } else {
-            // Priority 2: Fallback to logic (matching pillar first)
             related = data.allOtherPosts.filter((p: any) => p.servicePillar === data.post?.servicePillar);
             if (related.length < 3) {
               const others = data.allOtherPosts.filter((p: any) => p.servicePillar !== data.post?.servicePillar);
@@ -252,7 +250,6 @@ export default function BlogPostPage() {
       .catch(console.error);
   }, [slug]);
 
-  // SMART THEME SELECTOR
   const activeThemeKey = useMemo(() => {
     if (!post?.servicePillar) return 'red';
     const p = post.servicePillar.toLowerCase();
@@ -654,7 +651,6 @@ export default function BlogPostPage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
             
             <div className="lg:col-span-7 flex flex-col justify-center z-20">
-              {/* Title Slide from Left with Dynamic Sizing */}
               <motion.h1 
                 initial={{ opacity: 0, x: -30 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -668,7 +664,6 @@ export default function BlogPostPage() {
                 {post?.title}
               </motion.h1>
 
-              {/* Tags Staggered Slide */}
               <motion.div 
                 variants={tagContainerVariants}
                 initial="hidden"
@@ -687,7 +682,6 @@ export default function BlogPostPage() {
             </div>
 
             <div className="lg:col-span-5 relative z-10 w-full max-w-[450px] mx-auto lg:mx-0 lg:ml-auto">
-              {/* Image Slide from Right */}
               {post?.mainImage && (
                 <motion.div 
                   initial={{ opacity: 0, x: 30 }}
@@ -731,7 +725,6 @@ export default function BlogPostPage() {
         {/* --- 3. CONTENT BODY --- */}
         <article className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           
-          {/* DESKTOP INDEX SIDEBAR */}
           <aside className="lg:col-span-3 hidden lg:block relative">
             <div className="sticky top-32 h-fit pb-12">
               <p className={`type-eyebrow ${theme.textMain} tracking-widest mb-8 flex items-center gap-2`}>
@@ -789,7 +782,6 @@ export default function BlogPostPage() {
               </p>
             )}
 
-            {/* MOBILE ONLY INDEX */}
             {toc.length > 0 && (
               <div className="block lg:hidden mb-16 border border-white/10 bg-white/5 p-6 rounded-sm">
                 <p className={`type-eyebrow ${theme.textMain} tracking-widest mb-6 flex items-center gap-2`}>
@@ -823,7 +815,7 @@ export default function BlogPostPage() {
               <PortableText value={post?.body} components={components} />
             </div>
 
-            {/* --- CONVERSION CTA BLOCK (PILLAR DESTINATION OR FALLBACK) --- */}
+            {/* --- CONVERSION CTA BLOCK --- */}
             {post?.internalLinkDestination ? (
               <div className={`mt-20 border ${theme.borderSubtle} ${theme.bgSubtle} p-8 md:p-12 relative overflow-hidden group ${theme.isBw ? 'shadow-[8px_8px_0px_0px_rgba(255,255,255,0.1)]' : ''}`}>
                 <div className={`absolute top-0 left-0 w-full h-1 ${theme.bgMain} scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-700 ease-out`} />
@@ -841,12 +833,12 @@ export default function BlogPostPage() {
                   Stop losing time to broken processes. See the exact system we build to fix this for businesses in your phase.
                 </p>
                 
-                <Link 
-                  to={post.internalLinkDestination}
+                <button 
+                  onClick={() => onNavigate(post.internalLinkDestination.replace('/', ''))}
                   className={`font-mono text-xs font-bold uppercase transition-all duration-300 ${theme.btnInlineCta} px-8 py-4 inline-flex items-center gap-3`}
                 >
                   {post?.customCTA || 'SEE THE SOLUTION'} <ArrowUpRight className="w-4 h-4" />
-                </Link>
+                </button>
               </div>
             ) : (
               <div className={`mt-20 border ${theme.borderSubtle} ${theme.bgSubtle} p-8 md:p-12 relative overflow-hidden group ${theme.isBw ? 'shadow-[8px_8px_0px_0px_rgba(255,255,255,0.1)]' : ''}`}>
