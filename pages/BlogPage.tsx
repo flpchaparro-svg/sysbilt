@@ -28,14 +28,22 @@ function formatDate(dateString: string | null | undefined): string {
   return date.toLocaleDateString('en-AU', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '.');
 }
 
-// --- FEATURED CARDS (CLEAN, NO OVERLAYS) ---
+// --- FEATURED CARDS (CLEAN, SCALABLE, NO OVERLAYS) ---
 const FeaturedCardLead: React.FC<{ post: any }> = ({ post }) => {
   const slug = post.slug?.current ?? '';
   const href = `/blog/${slug}`;
+  const titleLen = post.title?.length || 0;
+
+  // Dynamically scale text down for massive titles so the card doesn't look flooded
+  const titleClass = titleLen > 70 
+    ? 'text-2xl lg:text-4xl' 
+    : titleLen > 40 
+    ? 'text-3xl lg:text-5xl' 
+    : 'text-4xl lg:text-6xl';
 
   return (
-    <Link to={href} className="col-span-1 lg:col-span-12 border-2 border-dark bg-cream flex flex-col lg:flex-row group cursor-pointer hover:shadow-[8px_8px_0px_0px_#1a1a1a] transition-all duration-300 hover:-translate-y-1 overflow-hidden">
-      <div className="relative w-full lg:w-2/3 aspect-[16/9] lg:aspect-auto border-b-2 lg:border-b-0 lg:border-r-2 border-dark overflow-hidden bg-dark shrink-0">
+    <Link to={href} className="col-span-1 lg:col-span-12 border-2 border-dark bg-cream flex flex-col lg:flex-row group cursor-pointer hover:shadow-[8px_8px_0px_0px_#1a1a1a] transition-all duration-300 hover:-translate-y-1 overflow-hidden relative lg:h-[70vh] lg:min-h-[500px] lg:max-h-[700px]">
+      <div className="relative w-full lg:w-2/3 h-64 sm:h-80 lg:h-full border-b-2 lg:border-b-0 lg:border-r-2 border-dark overflow-hidden bg-dark shrink-0">
         <div className="absolute top-4 left-4 z-20 bg-red-solid text-white px-3 py-1 type-eyebrow border-2 border-dark shadow-[4px_4px_0px_0px_#1a1a1a]">
           LEAD DOSSIER
         </div>
@@ -50,17 +58,20 @@ const FeaturedCardLead: React.FC<{ post: any }> = ({ post }) => {
 
       <div className="w-full lg:w-1/3 p-8 lg:p-12 flex flex-col justify-center bg-white transition-colors duration-300 min-w-0">
         <div className="flex justify-between items-center mb-6">
-          <span className="type-eyebrow text-red-text border-b-2 border-red-solid/20 pb-1">
+          <span className="type-eyebrow text-red-text border-b-2 border-red-solid/20 pb-1 shrink-0">
             // {post.servicePillar || 'STRATEGY'}
           </span>
           <span className="type-eyebrow text-dark/50 shrink-0 ml-4">{formatDate(post.publishedAt)}</span>
         </div>
-        <h3 className="font-sans font-black tracking-tighter text-4xl lg:text-6xl text-dark uppercase leading-[0.9] mb-6 group-hover:text-gold-on-cream transition-colors duration-300 break-words text-balance">
+        
+        <h3 className={`font-sans font-black tracking-tighter text-dark uppercase leading-[0.95] mb-6 group-hover:text-gold-on-cream transition-colors duration-300 break-words text-balance ${titleClass}`}>
           {post.title}
         </h3>
+        
         <p className="type-body text-dark/70 border-l-4 border-gold pl-4 line-clamp-3 mb-8 break-words text-pretty">
           {post.seoDescription || "Explore this architectural blueprint and case study to understand the systemic implementation."}
         </p>
+        
         <div className="mt-auto flex items-center justify-between border-t-2 border-dark pt-4">
           <span className="type-eyebrow text-dark group-hover:text-gold-on-cream transition-colors">ACCESS FILE</span>
           <ArrowRight className="w-6 h-6 text-dark group-hover:translate-x-2 transition-transform duration-300 shrink-0" />
@@ -232,7 +243,6 @@ export default function BlogPage() {
     document.title = "Insights & Strategy | Sysbilt";
     setIsLoading(true); 
     
-    // Updated query to pull featuredOrder
     Promise.all([
       client.fetch(`*[_type == "post"] | order(publishedAt desc) { 
         title, slug, mainImage, publishedAt, "authorName": author->name, 
