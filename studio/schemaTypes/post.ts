@@ -1,5 +1,13 @@
 import {defineField, defineType} from 'sanity'
 
+// Custom SEO Slug Generator
+function customSlugify(input: string): string {
+  const stopWords = ['a', 'an', 'and', 'the', 'but', 'or', 'on', 'in', 'with', 'to', 'of', 'for', 'is', 'how', 'why', 'what'];
+  const words = input.toLowerCase().replace(/[^\w\s-]/g, '').split(/\s+/);
+  const filtered = words.filter(word => !stopWords.includes(word) && word.length > 0);
+  return filtered.slice(0, 5).join('-'); // Limit to 5 core words
+}
+
 export default defineType({
   name: 'post',
   title: 'Insight (Blog Post)', 
@@ -18,16 +26,26 @@ export default defineType({
       title: 'Article Title (H1)',
       type: 'string',
       group: 'core',
-      description: 'The main headline. Brand Rule: End with a period. No exclamation marks. Problem-first or Command style.',
-      validation: (Rule) => Rule.required().max(90),
+      description: 'The main headline. Brand Rule: No periods at the end. No exclamation marks. Problem-first or Command style.',
+      validation: (Rule) => Rule.custom((title) => {
+        if (!title) return true;
+        if (title.trim().endsWith('.')) return 'Brand Rule: Titles must NOT end with a period.';
+        if (title.includes('!')) return 'Brand Rule: No exclamation marks allowed in titles.';
+        if (title.includes('—')) return 'Brand Rule: No em-dashes in titles. Use a colon or comma.';
+        return true;
+      }).required().max(90),
     }),
     defineField({
       name: 'slug',
       title: 'URL Slug',
       type: 'slug',
       group: 'core',
-      description: 'Click "Generate" to create the URL from the title.',
-      options: { source: 'title', maxLength: 96 },
+      description: 'Click "Generate" to create a short, SEO-friendly URL.',
+      options: { 
+        source: 'title', 
+        maxLength: 96,
+        slugify: customSlugify
+      },
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -35,8 +53,48 @@ export default defineType({
       title: '🌟 Featured Insight (High Converter)',
       type: 'boolean',
       group: 'core',
-      description: 'Turn this on to pin this post to the top of the blog as a primary, high-converting case study or insight.',
+      description: 'Turn this on to pin this post to the top of the blog.',
       initialValue: false,
+    }),
+    defineField({
+      name: 'featuredOrder',
+      title: 'Featured Grid Position',
+      type: 'number',
+      group: 'core',
+      description: 'Select where this card appears in the Priority Intelligence grid.',
+      hidden: ({document}) => !document?.isFeatured,
+      options: {
+        list: [
+          { title: 'Position 1 (Lead Dossier - Big Card)', value: 1 },
+          { title: 'Position 2 (Tall Card)', value: 2 },
+          { title: 'Position 3 (Tall Card)', value: 3 },
+          { title: 'Position 4 (Tall Card)', value: 4 },
+          { title: 'Position 5 (Half Card)', value: 5 },
+          { title: 'Position 6 (Half Card)', value: 6 },
+          { title: 'Position 7 (Half Card)', value: 7 },
+        ],
+      },
+      validation: (Rule) => Rule.custom(async (order, context) => {
+        if (!context.document?.isFeatured) return true;
+        if (!order) return 'Please select a position from the dropdown.';
+
+        // Live check if another post is already using this position
+        const client = context.getClient({ apiVersion: '2024-03-01' });
+        const id = context.document._id.replace('drafts.', '');
+
+        // Query to find if any OTHER published or draft post has this exact order number
+        const query = `*[_type == "post" && isFeatured == true && featuredOrder == $order && !(_id in [$id, "drafts." + $id])][0]{ title }`;
+        const existingPost = await client.fetch(query, { order, id });
+
+        if (existingPost) {
+          return {
+            message: `Position ${order} is already taken by "${existingPost.title}". If you publish, this post will overwrite it on the live grid.`,
+            level: 'warning' // Soft warning: allows you to replace it if you want to
+          };
+        }
+
+        return true;
+      }),
     }),
     defineField({
       name: 'servicePillar',
@@ -79,6 +137,26 @@ export default defineType({
       type: 'blockContent',
       group: 'content',
       description: 'Brand Rule: Short sentences (5-15 words). One idea per paragraph. Use "you" relentlessly. No passive voice.',
+      validation: (Rule) => Rule.custom((blocks: any) => {
+        if (!blocks || !Array.isArray(blocks)) return true;
+        // Extract all text from the PortableText blocks
+        const text = blocks
+          .filter(block => block._type === 'block' && block.children)
+          .map(block => block.children.map((child: any) => child.text).join(''))
+          .join(' ');
+        
+        const exclamations = (text.match(/!/g) || []).length;
+        const emDashes = (text.match(/—/g) || []).length;
+        const totalViolations = exclamations + emDashes;
+
+        if (totalViolations > 6) {
+          return {
+            message: `Brand Voice Warning: You used ${totalViolations} exclamation marks/em-dashes. Keep it punchy. Aim for under 6.`,
+            level: 'warning'
+          };
+        }
+        return true;
+      }),
     }),
 
     // --- 3. SEO & TARGETING ---
@@ -186,7 +264,7 @@ export default defineType({
       title: 'Read Next (Sticky Links)',
       type: 'array',
       group: 'marketing',
-      description: 'Manually select 2-3 specific articles to show at the bottom of this post to keep them reading.',
+      description: 'Manually select 1-3 specific articles to show at the bottom. Our frontend logic will auto-fill the rest if you pick less than 3.',
       of: [{type: 'reference', to: {type: 'post'}}],
       validation: (Rule) => Rule.max(3),
     }),

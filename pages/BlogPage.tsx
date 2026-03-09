@@ -2,14 +2,15 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { m, motion, useMotionValue, useSpring } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { client, urlFor, getCaseStudies } from '../src/sanityClient'; // <-- Added getCaseStudies
-import { SanityCaseStudy } from '../types'; // <-- Added types
+import { client, urlFor, getCaseStudies } from '../src/sanityClient';
+import { SanityCaseStudy } from '../types';
 import { getAllPillars } from '../constants/systemPillars';
 import HeroVisualBrutalist from '../components/Blog/HeroVisualBrutalist';
 import RobotPeek from '../components/RobotPeek'; 
 
 const RED_PILLARS = ['Websites & E-commerce', 'CRM & Lead Tracking', 'Automation'];
-const GOLD_PILLARS = ['AI Assistants', 'Content Systems', 'Team Training', 'Dashboards & Reporting'];
+const GOLD_PILLARS = ['AI Assistants', 'Content Systems', 'Team Training'];
+const BW_PILLARS = ['Dashboards & Reporting'];
 
 const FILTER_OPTIONS = ['ALL', ...getAllPillars().map((p) => p.subtitle)];
 
@@ -17,6 +18,7 @@ function getPillarBadgeClass(servicePillar: string | null | undefined): string {
   if (!servicePillar) return 'border-dark/20 bg-dark/5 text-dark/70';
   if (RED_PILLARS.includes(servicePillar)) return 'border-red-solid/20 bg-red-solid/10 text-red-text';
   if (GOLD_PILLARS.includes(servicePillar)) return 'border-gold/20 bg-gold/10 text-gold-on-cream';
+  if (BW_PILLARS.includes(servicePillar)) return 'border-dark/20 bg-dark text-cream';
   return 'border-dark/20 bg-dark/5 text-dark/70';
 }
 
@@ -26,7 +28,7 @@ function formatDate(dateString: string | null | undefined): string {
   return date.toLocaleDateString('en-AU', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '.');
 }
 
-// --- FEATURED CARDS ---
+// --- FEATURED CARDS (CLEAN, NO OVERLAYS) ---
 const FeaturedCardLead: React.FC<{ post: any }> = ({ post }) => {
   const slug = post.slug?.current ?? '';
   const href = `/blog/${slug}`;
@@ -41,7 +43,7 @@ const FeaturedCardLead: React.FC<{ post: any }> = ({ post }) => {
           <img
             src={urlFor(post.mainImage).width(1200).url()}
             alt={post.title}
-            className="w-full h-full object-cover grayscale opacity-90 transition-all duration-700 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105"
+            className="w-full h-full object-cover opacity-90 transition-all duration-700 group-hover:opacity-100 group-hover:scale-105"
           />
         )}
       </div>
@@ -79,7 +81,7 @@ const FeaturedCardTall: React.FC<{ post: any }> = ({ post }) => {
            <img
              src={urlFor(post.mainImage).width(600).url()}
              alt={post.title}
-             className="w-full h-full object-cover grayscale opacity-90 transition-all duration-700 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105"
+             className="w-full h-full object-cover opacity-90 transition-all duration-700 group-hover:opacity-100 group-hover:scale-105"
            />
         )}
       </div>
@@ -110,7 +112,7 @@ const FeaturedCardHalf: React.FC<{ post: any }> = ({ post }) => {
            <img
              src={urlFor(post.mainImage).width(600).url()}
              alt={post.title}
-             className="w-full h-full object-cover grayscale opacity-90 transition-all duration-700 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105"
+             className="w-full h-full object-cover opacity-90 transition-all duration-700 group-hover:opacity-100 group-hover:scale-105"
            />
         )}
       </div>
@@ -205,7 +207,7 @@ const LedgerRow: React.FC<{ post: any }> = ({ post }) => {
 
 export default function BlogPage() {
   const [posts, setPosts] = useState<any[]>([]);
-  const [latestCaseStudy, setLatestCaseStudy] = useState<SanityCaseStudy | null>(null); // <-- Added state for Case Study
+  const [latestCaseStudy, setLatestCaseStudy] = useState<SanityCaseStudy | null>(null);
   const [isLoading, setIsLoading] = useState(true); 
   const [activeFilter, setActiveFilter] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState<string>(''); 
@@ -219,26 +221,29 @@ export default function BlogPage() {
   const [isFocused, setIsFocused] = useState(false);
 
   const SEARCH_PHRASES = useMemo(() => [
-    "Automate onboarding...",
-    "Integrate HubSpot...",
-    "AI sales agents...",
-    "Frictionless funnels...",
-    "Scale B2B revenue..."
+    "Automate onboarding.",
+    "Integrate HubSpot.",
+    "AI sales agents.",
+    "Frictionless funnels.",
+    "Scale B2B revenue."
   ], []);
 
   useEffect(() => {
     document.title = "Insights & Strategy | Sysbilt";
     setIsLoading(true); 
     
-    // Fetch both Posts and the latest Case Study at the same time
+    // Updated query to pull featuredOrder
     Promise.all([
-      client.fetch(`*[_type == "post"] | order(publishedAt desc) { title, slug, mainImage, publishedAt, "authorName": author->name, servicePillar, isFeatured, seoDescription }`),
+      client.fetch(`*[_type == "post"] | order(publishedAt desc) { 
+        title, slug, mainImage, publishedAt, "authorName": author->name, 
+        servicePillar, isFeatured, featuredOrder, seoDescription 
+      }`),
       getCaseStudies()
     ])
     .then(([postsData, caseStudiesData]) => {
       setPosts(postsData || []);
       if (caseStudiesData && caseStudiesData.length > 0) {
-        setLatestCaseStudy(caseStudiesData[0]); // Grab the newest proof point
+        setLatestCaseStudy(caseStudiesData[0]); 
       }
     })
     .catch((error) => {
@@ -282,9 +287,14 @@ export default function BlogPage() {
     });
   }, [posts, activeFilter, searchQuery]);
 
-  const featuredPosts = filteredPosts.filter(p => p.isFeatured).slice(0, 6);
-  const regularPosts = filteredPosts.filter(p => !p.isFeatured);
+  // Sort featured posts strictly by the CMS featuredOrder field (default to 99 if missing to push to back)
+  const featuredPosts = filteredPosts
+    .filter(p => p.isFeatured)
+    .sort((a, b) => (a.featuredOrder || 99) - (b.featuredOrder || 99))
+    .slice(0, 7);
   
+  // All posts stay in the ledger.
+  const regularPosts = filteredPosts;
   const visibleRegularPosts = regularPosts.slice(0, visibleCount);
   const hasMorePosts = visibleRegularPosts.length < regularPosts.length;
 
@@ -296,6 +306,43 @@ export default function BlogPage() {
       setFormStatus('success');
       setEmail('');
     }, 1500);
+  };
+
+  // SMART GRID LOGIC: Ensures rows always sum to 12 columns perfectly. Absolutely no dangling cards.
+  const renderFeaturedGridItem = (post: any, index: number, total: number) => {
+    // 1st Item is ALWAYS the big Lead Card (12 Cols)
+    if (index === 0) {
+      return <FeaturedCardLead key={post.slug?.current ?? index} post={post} />;
+    }
+
+    // Mathematical groupings to fill 12 columns perfectly based on total count
+    if (total === 7) {
+      // 1 Lead (12), 3 Talls (4x3=12), 3 Talls (4x3=12)
+      return <FeaturedCardTall key={post.slug?.current ?? index} post={post} />;
+    }
+    if (total === 6) {
+      // 1 Lead (12), 2 Halfs (6x2=12), 3 Talls (4x3=12)
+      if (index <= 2) return <FeaturedCardHalf key={post.slug?.current ?? index} post={post} />;
+      return <FeaturedCardTall key={post.slug?.current ?? index} post={post} />;
+    }
+    if (total === 5) {
+      // 1 Lead (12), 2 Halfs (6x2=12), 2 Halfs (6x2=12)
+      return <FeaturedCardHalf key={post.slug?.current ?? index} post={post} />;
+    }
+    if (total === 4) {
+      // 1 Lead (12), 3 Talls (4x3=12)
+      return <FeaturedCardTall key={post.slug?.current ?? index} post={post} />;
+    }
+    if (total === 3) {
+      // 1 Lead (12), 2 Halfs (6x2=12)
+      return <FeaturedCardHalf key={post.slug?.current ?? index} post={post} />;
+    }
+    if (total === 2) {
+      // 1 Lead (12), 1 Lead (12)
+      return <FeaturedCardLead key={post.slug?.current ?? index} post={post} />;
+    }
+
+    return null;
   };
 
   return (
@@ -378,8 +425,8 @@ export default function BlogPage() {
         </div>
 
         {isLoading ? (
-          <div className="type-eyebrow text-dark/70 border-2 border-dark p-6 inline-block bg-white">
-            Loading Insights...
+          <div className="type-eyebrow text-dark border-2 border-dark p-6 inline-block bg-white uppercase tracking-widest animate-pulse">
+            DECRYPTING FILE...
           </div>
         ) : (
           <div className="w-full relative z-30 pb-20"> 
@@ -397,12 +444,7 @@ export default function BlogPage() {
                 </div>
                 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                  {featuredPosts.map((post, index) => {
-                    if (index === 0) return <FeaturedCardLead key={post.slug?.current ?? index} post={post} />;
-                    if (index >= 1 && index <= 3) return <FeaturedCardTall key={post.slug?.current ?? index} post={post} />;
-                    if (index >= 4) return <FeaturedCardHalf key={post.slug?.current ?? index} post={post} />;
-                    return null;
-                  })}
+                  {featuredPosts.map((post, index) => renderFeaturedGridItem(post, index, featuredPosts.length))}
                 </div>
               </div>
             )}

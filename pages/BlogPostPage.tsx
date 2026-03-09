@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import { client, urlFor } from '../src/sanityClient';
 import { PortableText } from '@portabletext/react';
-import { ArrowLeft, ArrowUpRight, Share2, MessageSquare, Eye, Quote, Copy, Check, Info, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, ArrowUpRight, Share2, Quote, Copy, Check, Info, AlertTriangle } from 'lucide-react';
 
 // Helper function to extract YouTube ID
 const getYouTubeId = (url: string) => {
@@ -122,7 +122,7 @@ const CustomYouTube = ({ value, theme }: any) => {
         <img 
           src={`https://img.youtube.com/vi/${id}/maxresdefault.jpg`} 
           alt="Video thumbnail" 
-          className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-all duration-700 group-hover:grayscale scale-105 group-hover:scale-100" 
+          className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-all duration-700 scale-100 group-hover:scale-105" 
         />
         <div className={`relative z-10 w-16 md:w-20 h-16 md:h-20 ${theme.bgMain} flex items-center justify-center rounded-full ${theme.ytShadow} transition-shadow duration-700`}>
           <div className={`w-0 h-0 border-y-[8px] md:border-y-[10px] border-y-transparent border-l-[12px] md:border-l-[16px] ${theme.playIcon} ml-1 md:ml-1.5`}></div>
@@ -189,6 +189,7 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
   
   const [email, setEmail] = useState('');
   const [formStatus, setFormStatus] = useState<'idle' | 'loading' | 'success'>('idle');
+  const [isCopied, setIsCopied] = useState(false);
 
   useEffect(() => {
     client
@@ -197,6 +198,7 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
           "post": *[_type == "post" && slug.current == $slug][0] {
             title,
             mainImage,
+            ogImage,
             publishedAt,
             body,
             servicePillar,
@@ -286,6 +288,14 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
       });
   }, [post?.body]);
 
+  // Dynamic Read Time Calculation
+  const readTime = useMemo(() => {
+    if (!post?.body) return 1;
+    const textString = JSON.stringify(post.body);
+    const wordCount = textString.split(/\s+/).length;
+    return Math.max(1, Math.ceil(wordCount / 200));
+  }, [post?.body]);
+
   useEffect(() => {
     const handleScroll = () => {
       if (!toc.length) return;
@@ -320,6 +330,24 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
     }, 1500);
   };
 
+  const handleShare = async () => {
+    const url = window.location.href;
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: post?.title,
+          url: url
+        });
+      } catch (err) {
+        console.log('Share cancelled');
+      }
+    } else {
+      navigator.clipboard.writeText(url);
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+    }
+  };
+
   if (loading) return <div className="min-h-screen bg-dark text-white pt-32 px-6 text-center type-eyebrow animate-pulse tracking-widest">DECRYPTING FILE...</div>;
   if (!post) return <div className="min-h-screen bg-dark text-red-solid pt-32 px-6 text-center type-eyebrow tracking-widest">DOSSIER NOT FOUND</div>;
 
@@ -333,7 +361,7 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
             <img 
               src={urlFor(value).width(1200).url()} 
               alt={value.alt || 'System Visual'} 
-              className={`w-full h-auto object-cover relative z-10 border border-white/10 opacity-90 hover:opacity-100 hover:grayscale transition-all duration-500`}
+              className={`w-full h-auto object-cover relative z-10 border border-white/10 opacity-90 hover:opacity-100 transition-all duration-500 hover:scale-[1.02]`}
             />
             {value.caption && (
               <figcaption className={`font-mono text-xs mt-4 text-right opacity-60 uppercase tracking-widest relative z-10 ${theme.textMain}`}>
@@ -443,7 +471,12 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
       },
     },
     block: {
-      normal: ({ children }: any) => <p className="font-sans text-lg md:text-xl text-white/70 leading-relaxed mb-8 font-light">{children}</p>,
+      normal: ({ children }: any) => {
+        // Prevent empty paragraphs from rendering weird symbols or breaking layout spacing
+        const isEmpty = !children || children.length === 0 || (children.length === 1 && children[0] === '');
+        if (isEmpty) return <div className="h-6"></div>;
+        return <p className="font-sans text-lg md:text-xl text-white/70 leading-relaxed mb-8 font-light">{children}</p>;
+      },
       
       h2: ({ children, value }: any) => {
         const rawText = value.children?.map((c: any) => c.text).join('') || '';
@@ -630,12 +663,32 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
     show: { opacity: 1, x: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } }
   };
 
+  // Setup SEO Variables
+  const pageTitle = post?.seoTitle || post?.title || 'Sysbilt Strategy';
+  const pageDescription = post?.seoDescription || "Business systems architecture for growing Australian companies.";
+  const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
+  const shareImage = post?.ogImage ? urlFor(post.ogImage).width(1200).height(630).url() : (post?.mainImage ? urlFor(post.mainImage).width(1200).height(630).url() : '');
+
   return (
     <main className="min-h-screen bg-dark text-white font-sans selection:bg-white selection:text-dark pb-24 border-t border-white/10 relative">
       <Helmet>
-        <title>{post?.seoTitle || post?.title || 'Sysbilt Strategy'} | SYSBILT</title>
-        <meta name="description" content={post?.seoDescription || "Business systems architecture for growing Australian companies."} />
+        <title>{pageTitle} | SYSBILT</title>
+        <meta name="description" content={pageDescription} />
         {post?.focusKeyword && <meta name="keywords" content={post.focusKeyword} />}
+        
+        {/* Open Graph Tags (LinkedIn, Facebook, iMessage) */}
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content={currentUrl} />
+        <meta property="og:title" content={`${pageTitle} | SYSBILT`} />
+        <meta property="og:description" content={pageDescription} />
+        {shareImage && <meta property="og:image" content={shareImage} />}
+
+        {/* Twitter Card Tags */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content={currentUrl} />
+        <meta name="twitter:title" content={`${pageTitle} | SYSBILT`} />
+        <meta name="twitter:description" content={pageDescription} />
+        {shareImage && <meta name="twitter:image" content={shareImage} />}
       </Helmet>
       
       <div className="pt-32 px-4 md:px-8 max-w-7xl mx-auto">
@@ -692,7 +745,7 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
                   <img 
                     src={urlFor(post.mainImage).width(1000).height(1000).url()} 
                     alt={post.title} 
-                    className="w-full h-full object-cover opacity-90 hover:opacity-100 hover:grayscale hover:scale-105 transition-all duration-700 ease-in-out"
+                    className="w-full h-full object-cover opacity-90 hover:opacity-100 hover:scale-105 transition-all duration-700 ease-in-out"
                   />
                 </motion.div>
               )}
@@ -713,12 +766,25 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
           </div>
           <div className="p-4 md:p-6 type-eyebrow text-white border-b border-r border-white/20">
             <span className="block opacity-40 mb-2">READ TIME</span>
-            12 MIN
+            {readTime} MIN
           </div>
           <div className="p-4 md:p-6 flex items-center justify-center gap-6 text-white/50 border-b border-r border-white/20">
-            <Share2 className={`w-4 h-4 cursor-pointer ${theme.textHover} transition-colors`} />
-            <MessageSquare className={`w-4 h-4 cursor-pointer ${theme.textHover} transition-colors`} />
-            <Eye className={`w-4 h-4 cursor-pointer ${theme.textHover} transition-colors`} />
+            <button 
+              onClick={handleShare}
+              className={`flex items-center gap-2 group ${theme.textHover} transition-colors duration-200`}
+            >
+              {isCopied ? (
+                <>
+                  <Check className="w-4 h-4 text-green-500" />
+                  <span className="text-green-500 font-bold tracking-widest type-eyebrow uppercase">COPIED</span>
+                </>
+              ) : (
+                <>
+                  <Share2 className="w-4 h-4" />
+                  <span className="font-bold tracking-widest type-eyebrow uppercase">SHARE</span>
+                </>
+              )}
+            </button>
           </div>
         </div>
 
@@ -761,7 +827,7 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
                                 : 'text-white/50 hover:text-white pl-0'
                             }`}
                           >
-                            {item.num ? <span className={`${theme.textMain} mr-1`}>{item.num}.</span> : ''}
+                            {item.num ? <span className="mr-1 opacity-70 font-bold">{item.num}.</span> : ''}
                             {item.text}
                           </a>
                         </li>
@@ -801,7 +867,7 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
                           }} 
                           className={`flex items-start gap-3 transition-colors ${isActive ? (theme.isBw ? 'bg-white text-dark font-bold p-2 shadow-[2px_2px_0px_0px_rgba(255,255,255,0.3)]' : 'text-white') : 'text-white/60 hover:text-white'}`}
                         >
-                          {item.num ? <span className={`${theme.textMain} shrink-0`}>{item.num}.</span> : <span className={`${theme.textMuted50} shrink-0`}>//</span>}
+                          {item.num ? <span className="shrink-0 opacity-70 font-bold">{item.num}.</span> : <span className="shrink-0 opacity-70">//</span>}
                           <span>{item.text}</span>
                         </a>
                       </li>
@@ -893,7 +959,7 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
                     <img 
                       src={urlFor(post.author.image).width(200).height(200).url()} 
                       alt={post.author.name} 
-                      className={`relative w-20 h-20 md:w-24 md:h-24 rounded-full object-cover border-2 ${theme.borderSubtle} opacity-90 hover:opacity-100 hover:grayscale transition-all duration-500`}
+                      className={`relative w-20 h-20 md:w-24 md:h-24 rounded-full object-cover border-2 ${theme.borderSubtle} opacity-90 hover:opacity-100 transition-all duration-500 hover:scale-[1.02]`}
                     />
                   </div>
                 ) : (
@@ -949,7 +1015,7 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
                       <img 
                         src={urlFor(relatedPost.mainImage).width(600).url()} 
                         alt={relatedPost.title}
-                        className="w-full h-full object-cover opacity-80 group-hover:grayscale group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" 
+                        className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" 
                       />
                     </div>
                   )}
