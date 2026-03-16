@@ -22,6 +22,7 @@ interface NewsItem {
   mainImage?: any;
   sourceUrl?: string;
   servicePillar?: string; 
+  targetPersonas?: { title: string; hubspotListId: string }[];
 }
 
 // CTA Map Recommendation
@@ -44,7 +45,18 @@ export default function NewsPage() {
   useEffect(() => {
     const fetchNews = async () => {
       const query = `*[_type == "newsItem"] | order(publishedAt desc) {
-        _id, title, publishedAt, revenuePhase, body, mainImage, sourceUrl, servicePillar
+        _id, 
+        title, 
+        publishedAt, 
+        revenuePhase, 
+        body, 
+        mainImage, 
+        sourceUrl, 
+        servicePillar,
+        "targetPersonas": targetPersonas[]->{
+          title,
+          hubspotListId
+        }
       }`;
       try {
         const data = await client.fetch(query);
@@ -98,7 +110,6 @@ export default function NewsPage() {
         <ArrowDownLeft className="absolute top-6 right-6 w-5 h-5 text-dark/40 group-hover:text-red transition-colors hidden sm:block" />
         <h3 className="font-serif text-2xl md:text-3xl text-dark leading-tight mb-3 uppercase font-black pr-8">{cta.actionText}</h3>
         <p className="type-body text-dark/80 mb-6 max-w-lg leading-relaxed">What does this change mean for your bottom line? No guess work required. Discuss your current tools with a systems architect.</p>
-        {/* RESPONSIVE FIX: Changed sm:w-max to sm:w-auto to prevent blowout */}
         <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center w-full sm:w-auto">
            <Link onClick={() => setExpandedItem(null)} to={cta.pillarPath} className="font-mono text-xs uppercase tracking-wider bg-dark text-white px-6 py-3 border border-dark hover:bg-gold hover:text-dark hover:border-dark transition-colors text-center">Explore {item.servicePillar || 'Capabilities'}</Link>
            <Link onClick={() => setExpandedItem(null)} to="/contact" className="font-mono text-xs uppercase tracking-wider text-dark/80 hover:text-dark transition-colors inline-flex items-center justify-center sm:justify-start gap-2 pt-2 sm:pt-0">Let's Talk ↓</Link>
@@ -107,7 +118,6 @@ export default function NewsPage() {
     );
   };
 
-  // The Drawer Content component
   const ArticleContent = ({ item }: { item: NewsItem }) => (
     <div className="bg-white min-h-full flex flex-col relative">
       
@@ -130,7 +140,6 @@ export default function NewsPage() {
           </time>
         </div>
 
-        {/* RESPONSIVE FIX: break-words to handle giant text on small screens */}
         <h2 className="text-3xl md:text-4xl font-normal uppercase font-serif leading-tight tracking-tight text-dark mb-10 break-words">
           {item.title}
         </h2>
@@ -157,7 +166,6 @@ export default function NewsPage() {
   );
 
   return (
-    // RESPONSIVE FIX: Added overflow-x-hidden to the master wrapper to kill horizontal scrolling
     <div className="w-full relative font-sans pb-32 bg-cream min-h-screen flex flex-col overflow-x-hidden">
       
       {loading ? (
@@ -168,7 +176,6 @@ export default function NewsPage() {
         <main className="flex-grow pt-32 relative">
           
           <header className="pb-12 px-4 md:px-8 max-w-[1400px] mx-auto border-b-4 border-dark mb-16 relative">
-            {/* RESPONSIVE FIX: Scaled mobile font and added break-words */}
             <h1 className="text-4xl sm:text-5xl md:text-7xl font-serif text-dark tracking-tighter uppercase mb-6 mt-12 break-words">
               Business Intelligence.
             </h1>
@@ -179,7 +186,6 @@ export default function NewsPage() {
 
           <div className="max-w-[1400px] mx-auto px-4 md:px-8 flex flex-col gap-12 relative">
             
-            {/* The Monthly Horizon */}
             {horizonNews && (
               <section className="mb-12">
                 <div className="flex items-center gap-4 mb-6">
@@ -211,7 +217,6 @@ export default function NewsPage() {
                         </div>
                       )}
 
-                      {/* RESPONSIVE FIX: w-max changed to w-fit */}
                       <span className="font-mono text-[11px] font-bold text-dark uppercase tracking-widest mt-auto inline-flex items-center gap-2 group-hover:text-gold transition-all duration-300 text-left w-fit group-hover:translate-x-2">
                         Read Forecast <span>→</span>
                       </span>
@@ -221,7 +226,6 @@ export default function NewsPage() {
               </section>
             )}
 
-            {/* Sticky Filter Bar */}
             <div className="flex flex-wrap gap-3 sm:gap-4 border-y border-dark/20 py-4 sticky top-0 bg-cream/95 backdrop-blur-md z-30 transition-all duration-300 -mx-4 md:-mx-8 px-4 md:px-8 shadow-sm">
               {['all', 'phase1', 'phase2', 'phase3'].map((filter) => (
                 <button
@@ -236,7 +240,6 @@ export default function NewsPage() {
               ))}
             </div>
 
-            {/* Brutalist Grid */}
             <div className="flex flex-col gap-16 md:gap-24 mt-8">
               {([ 'phase1', 'phase2', 'phase3' ]).map(filter => {
                   const items = filter === 'phase1' ? phase1News : filter === 'phase2' ? phase2News : phase3News;
@@ -282,7 +285,6 @@ export default function NewsPage() {
                                                   </div>
                                                 )}
                                                 
-                                                {/* RESPONSIVE FIX: w-max changed to w-fit */}
                                                 <span className="font-mono text-[11px] font-bold text-dark uppercase tracking-widest mt-auto group-hover:text-gold transition-all duration-300 inline-flex items-center gap-2 text-left w-fit pt-2 group-hover:translate-x-2">
                                                   Read Report <span>→</span>
                                                 </span>
@@ -301,7 +303,6 @@ export default function NewsPage() {
         </main>
       )}
 
-      {/* DRAWER MODE RENDER */}
       <AnimatePresence>
         {expandedItem && (
           <div className="fixed inset-0 z-[60] flex justify-end">

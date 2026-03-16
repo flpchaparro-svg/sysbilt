@@ -6,7 +6,8 @@ import youtube from './youtube'
 import service from './service'
 import caseStudy from './caseStudy'
 import newsItem from './newsItem'
-import newsBlockContent from './newsBlockContent' // Added this import
+import newsBlockContent from './newsBlockContent'
+import persona from './persona' // ADD THIS
 
 export const schemaTypes = [
   post, 
@@ -17,5 +18,6 @@ export const schemaTypes = [
   service, 
   caseStudy,
   newsItem,
-  newsBlockContent // Added to the array here
+  newsBlockContent,
+  persona // ADD THIS
 ]
