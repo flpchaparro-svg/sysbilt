@@ -5,6 +5,7 @@ import imageUrlBuilder from '@sanity/image-url';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowDownLeft, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import NewsletterForm from '../components/NewsletterForm';
 
 // Setup Image Builder
 const builder = imageUrlBuilder(client);
@@ -107,7 +108,7 @@ export default function NewsPage() {
 
     return (
       <div className="bg-off-white p-6 sm:p-8 md:p-12 border border-dark/10 relative group font-sans mt-12">
-        <ArrowDownLeft className="absolute top-6 right-6 w-5 h-5 text-dark/40 group-hover:text-red transition-colors hidden sm:block" />
+        <ArrowDownLeft className="absolute top-6 right-6 w-5 h-5 text-dark/40 group-hover:text-red-solid transition-colors hidden sm:block" />
         <h3 className="font-serif text-2xl md:text-3xl text-dark leading-tight mb-3 uppercase font-black pr-8">{cta.actionText}</h3>
         <p className="type-body text-dark/80 mb-6 max-w-lg leading-relaxed">What does this change mean for your bottom line? No guess work required. Discuss your current tools with a systems architect.</p>
         <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center w-full sm:w-auto">
@@ -121,7 +122,7 @@ export default function NewsPage() {
   const ArticleContent = ({ item }: { item: NewsItem }) => (
     <div className="bg-white min-h-full flex flex-col relative">
       
-      <button onClick={() => setExpandedItem(null)} className="absolute top-4 left-4 md:top-6 md:left-6 z-20 bg-red text-white p-2 hover:bg-dark transition-colors shadow-md">
+      <button onClick={() => setExpandedItem(null)} className="absolute top-4 left-4 md:top-6 md:left-6 z-20 bg-red-solid text-white p-2 hover:bg-dark transition-colors shadow-md">
         <X className="w-6 h-6" />
       </button>
 
@@ -157,7 +158,7 @@ export default function NewsPage() {
             </a>
           ) : <div></div>}
           
-          <button onClick={() => setExpandedItem(null)} className="font-mono text-[11px] font-bold text-red uppercase tracking-widest transition-all duration-300 inline-flex items-center gap-2 text-left sm:text-right hover:text-dark">
+          <button onClick={() => setExpandedItem(null)} className="font-mono text-[11px] font-bold text-red-solid uppercase tracking-widest transition-all duration-300 inline-flex items-center gap-2 text-left sm:text-right hover:text-dark">
             Close Article <span>↑</span>
           </button>
         </div>
@@ -175,7 +176,7 @@ export default function NewsPage() {
       ) : (
         <main className="flex-grow pt-32 relative">
           
-          <header className="pb-12 px-4 md:px-8 max-w-[1400px] mx-auto border-b-4 border-dark mb-16 relative">
+          <header className="pb-12 px-4 md:px-8 max-w-[1400px] mx-auto border-b-4 border-dark mb-8 relative">
             <h1 className="text-4xl sm:text-5xl md:text-7xl font-serif text-dark tracking-tighter uppercase mb-6 mt-12 break-words">
               Business Intelligence.
             </h1>
@@ -183,6 +184,10 @@ export default function NewsPage() {
               Market updates and technology forecasts translated into plain English, built for Australian business owners.
             </p>
           </header>
+
+          <div className="max-w-[1400px] mx-auto px-4 md:px-8 mb-16">
+            <NewsletterForm />
+          </div>
 
           <div className="max-w-[1400px] mx-auto px-4 md:px-8 flex flex-col gap-12 relative">
             
@@ -244,7 +249,7 @@ export default function NewsPage() {
               {([ 'phase1', 'phase2', 'phase3' ]).map(filter => {
                   const items = filter === 'phase1' ? phase1News : filter === 'phase2' ? phase2News : phase3News;
                   const { title, description } = sectionContent[filter];
-                  const phaseColor = filter === 'phase1' ? 'border-red' : filter === 'phase2' ? 'border-gold' : 'border-dark';
+                  const phaseColor = filter === 'phase1' ? 'border-red-solid' : filter === 'phase2' ? 'border-gold' : 'border-dark';
 
                   if ((activeFilter === 'all' || activeFilter === filter) && items.length > 0) {
                       return (

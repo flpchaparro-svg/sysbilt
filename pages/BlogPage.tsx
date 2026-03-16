@@ -7,6 +7,7 @@ import { SanityCaseStudy } from '../types';
 import { getAllPillars } from '../constants/systemPillars';
 import HeroVisualBrutalist from '../components/Blog/HeroVisualBrutalist';
 import RobotPeek from '../components/RobotPeek'; 
+import NewsletterForm from '../components/NewsletterForm';
 
 const RED_PILLARS = ['Websites & E-commerce', 'CRM & Lead Tracking', 'Automation'];
 const GOLD_PILLARS = ['AI Assistants', 'Content Systems', 'Team Training'];
@@ -222,8 +223,6 @@ export default function BlogPage() {
   const [isLoading, setIsLoading] = useState(true); 
   const [activeFilter, setActiveFilter] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState<string>(''); 
-  const [email, setEmail] = useState('');
-  const [formStatus, setFormStatus] = useState<'idle' | 'loading' | 'success'>('idle');
 
   const [visibleCount, setVisibleCount] = useState(10);
   const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
@@ -307,16 +306,6 @@ export default function BlogPage() {
   const regularPosts = filteredPosts;
   const visibleRegularPosts = regularPosts.slice(0, visibleCount);
   const hasMorePosts = visibleRegularPosts.length < regularPosts.length;
-
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) return;
-    setFormStatus('loading');
-    setTimeout(() => {
-      setFormStatus('success');
-      setEmail('');
-    }, 1500);
-  };
 
   // SMART GRID LOGIC: Ensures rows always sum to 12 columns perfectly. Absolutely no dangling cards.
   const renderFeaturedGridItem = (post: any, index: number, total: number) => {
@@ -534,53 +523,7 @@ export default function BlogPage() {
             </div>
 
             {/* --- REFINED LEAD CAPTURE - BOXED MODULE --- */}
-            <div className="w-full">
-              <div className="bg-dark text-white border-2 border-dark shadow-[12px_12px_0px_0px_#1a1a1a] relative overflow-hidden flex flex-col lg:flex-row gap-12 lg:gap-16 items-center p-8 md:p-12 lg:p-16 group">
-                <div className="absolute top-0 left-0 w-full h-1.5 bg-red-solid scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-700 ease-out" />
-                
-                <div className="flex-1 w-full relative z-10">
-                  <h2 className="font-sans font-black text-4xl md:text-5xl lg:text-6xl uppercase tracking-tighter mb-4 text-white leading-[0.9] break-words text-balance">
-                    Join the <span className="text-gold">Private List.</span>
-                  </h2>
-                  <p className="font-mono text-xs md:text-sm tracking-widest text-white/70 border-l-2 border-gold pl-4 leading-relaxed max-w-md">
-                    Get exclusive architectural blueprints and system strategy delivered directly to your inbox. No spam, just pure signal.
-                  </p>
-                </div>
-                
-                <div className="w-full lg:w-[480px] bg-cream border-2 border-dark p-6 md:p-8 shadow-[8px_8px_0px_0px_#1a1a1a] text-dark shrink-0 relative z-10">
-                  {formStatus === 'success' ? (
-                     <div className="font-mono text-gold-on-cream font-bold text-sm md:text-base uppercase tracking-widest border-2 border-gold/50 p-6 bg-gold/10 text-center">
-                        Access Granted.
-                     </div>
-                  ) : (
-                    <form onSubmit={handleSubscribe} className="flex flex-col gap-4">
-                      <div className="flex flex-col">
-                        <label htmlFor="email" className="font-mono text-[10px] md:text-xs font-bold uppercase tracking-widest text-dark/70 mb-2">
-                          Corporate Email
-                        </label>
-                        <input
-                          id="email"
-                          type="email"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          disabled={formStatus === 'loading'}
-                          placeholder="Enter your address..."
-                          className="border-2 border-dark bg-white text-dark px-4 py-3 md:py-4 font-mono text-sm focus:outline-none focus:border-gold placeholder:text-dark/30 transition-all"
-                          required
-                        />
-                      </div>
-                      <button
-                        type="submit"
-                        disabled={formStatus === 'loading'}
-                        className="font-mono text-xs md:text-sm font-bold uppercase border-2 border-dark bg-dark text-cream px-6 py-3 md:py-4 hover:bg-gold hover:text-dark hover:border-dark hover:translate-x-1 hover:-translate-y-1 hover:shadow-[-4px_4px_0px_0px_#1a1a1a] transition-all duration-200 mt-2 flex items-center justify-center gap-2"
-                      >
-                        {formStatus === 'loading' ? 'Processing...' : 'Request Access'}
-                      </button>
-                    </form>
-                  )}
-                </div>
-              </div>
-            </div>
+            <NewsletterForm />
 
           </div>
         )}
