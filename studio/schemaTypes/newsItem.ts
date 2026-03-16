@@ -17,7 +17,6 @@ export default defineType({
       type: 'string',
       group: 'core',
       description: 'Maximum 90 characters to perfectly fit the frontend grid design.',
-      // HARD LOCK ADDED HERE
       validation: (Rule) => Rule.required().max(90).error('Title MUST be 90 characters or less. A longer title will break the website layout.'),
     }),
     defineField({
@@ -70,7 +69,6 @@ export default defineType({
       },
       validation: (Rule) => Rule.required(),
     }),
-   // Inside newsItem.ts, update the body field to look exactly like this:
    defineField({
     name: 'body',
     title: 'Body Content',
@@ -88,32 +86,18 @@ export default defineType({
 
     // --- 3. TARGETING ---
     defineField({
-      name: 'targetPersona',
+      name: 'targetPersonas',
       title: 'Target Personas',
       type: 'array',
       group: 'seo',
-      description: 'Select the specific persona this piece is written for.',
-      of: [{type: 'string'}],
-      options: {
-        list: [
-          { title: '--- LEVEL 0: MASTER ---', value: 'HEADER_MASTER' },
-          { title: 'The Visionary Operator (Full Ecosystem)', value: 'The Visionary Operator' },
-          
-          { title: '--- LEVEL A: PHASE PERSONAS (MARKETING) ---', value: 'HEADER_PHASE' },
-          { title: 'The Builder (Phase 01)', value: 'The Builder' },
-          { title: 'The Scaler (Phase 02)', value: 'The Scaler' },
-          { title: 'The Controller (Phase 03)', value: 'The Controller' },
-          
-          { title: '--- LEVEL B: PILLAR PERSONAS (SPECIFIC SOLUTIONS) ---', value: 'HEADER_PILLAR' },
-          { title: 'P1: The Authority Seeker', value: 'The Authority Seeker' },
-          { title: 'P2: The Revenue Protector', value: 'The Revenue Protector' },
-          { title: 'P3: The Leverage Seeker', value: 'The Leverage Seeker' },
-          { title: 'P4: The Cognitive Scaler', value: 'The Cognitive Scaler' },
-          { title: 'P5: The Omnipresence Seeker', value: 'The Omnipresence Seeker' },
-          { title: 'P6: The Adoption Seeker', value: 'The Adoption Seeker' },
-          { title: 'P7: The Executive Navigator', value: 'The Executive Navigator' }
-        ],
-      },
+      description: 'Select the specific persona document(s) this piece is written for.',
+      of: [
+        {
+          type: 'reference',
+          to: [{ type: 'persona' }]
+        }
+      ],
+      validation: (Rule) => Rule.required().error('At least one target persona is required for HubSpot distribution.'),
     }),
   ],
   preview: {
