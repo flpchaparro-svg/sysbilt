@@ -98,9 +98,9 @@ export default function NewsletterForm() {
                   required
                 >
                   <option value="" disabled>Select your phase...</option>
-                  <option value="The Builder">The Builder (Getting Clients)</option>
-                  <option value="The Scaler">The Scaler (Scaling Operations)</option>
-                  <option value="The Controller">The Controller (Maximising Margin)</option>
+                  <option value="the_builder">The Builder (Getting Clients)</option>
+                  <option value="the_scaler">The Scaler (Scaling Operations)</option>
+                  <option value="the_controller">The Controller (Maximising Margin)</option>
                 </select>
               </div>
 
