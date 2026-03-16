@@ -1,0 +1,330 @@
+import { useState, useEffect } from 'react';
+import { client } from '../src/sanityClient';
+import { PortableText } from '@portabletext/react';
+import imageUrlBuilder from '@sanity/image-url';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowDownLeft, X } from 'lucide-react';
+import { Link } from 'react-router-dom';
+
+// Setup Image Builder
+const builder = imageUrlBuilder(client);
+function urlFor(source: any) {
+  return builder.image(source);
+}
+
+// Interfaces
+interface NewsItem {
+  _id: string;
+  title: string;
+  publishedAt: string;
+  revenuePhase: 'horizon' | 'phase1' | 'phase2' | 'phase3';
+  body: any[];
+  mainImage?: any;
+  sourceUrl?: string;
+  servicePillar?: string; 
+}
+
+// CTA Map Recommendation
+const pillarCTAMap: Record<string, { actionText: string; contactText: string; pillarPath: string }> = {
+  'Websites & E-commerce': { actionText: 'Fix your online visibility.', contactText: 'Discuss modern web architectures with us.', pillarPath: '/pillar1' },
+  'CRM & Lead Tracking': { actionText: 'Ready to fix your lead flow?', contactText: 'Discuss native CRM integrations with an architect.', pillarPath: '/pillar2' },
+  'Automation': { actionText: 'Fix your operational bottlenecks.', contactText: 'Map out an automation workflow with an expert.', pillarPath: '/pillar3' },
+  'AI Assistants': { actionText: 'Ready to fix your admin burden?', contactText: 'Audit your team for AI implementation opportunities.', pillarPath: '/pillar4' },
+  'Dashboards & Reporting': { actionText: 'Fix your data fog.', contactText: 'Discuss real-time margin tracking on a call.', pillarPath: '/pillar7' },
+};
+
+export default function NewsPage() {
+  const [news, setNews] = useState<NewsItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activeFilter, setActiveFilter] = useState<'all' | 'phase1' | 'phase2' | 'phase3'>('all');
+  
+  // Track the expanded article for the drawer
+  const [expandedItem, setExpandedItem] = useState<NewsItem | null>(null);
+
+  useEffect(() => {
+    const fetchNews = async () => {
+      const query = `*[_type == "newsItem"] | order(publishedAt desc) {
+        _id, title, publishedAt, revenuePhase, body, mainImage, sourceUrl, servicePillar
+      }`;
+      try {
+        const data = await client.fetch(query);
+        setNews(data);
+      } catch (error) {
+        console.error("Error fetching news:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchNews();
+  }, []);
+
+  // Lock background scrolling when the drawer is open
+  useEffect(() => {
+    if (expandedItem) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => { document.body.style.overflow = 'unset'; };
+  }, [expandedItem]);
+
+  const horizonNews = news.find((n) => n.revenuePhase === 'horizon');
+  const phase1News = news.filter((n) => n.revenuePhase === 'phase1').slice(0, 12);
+  const phase2News = news.filter((n) => n.revenuePhase === 'phase2').slice(0, 12);
+  const phase3News = news.filter((n) => n.revenuePhase === 'phase3').slice(0, 12);
+
+  const sectionContent: Record<string, { label: string, title: string, description: string }> = {
+    'all': { label: 'View All', title: 'All Business Intelligence', description: 'Complete feed of intelligence briefings.' },
+    'phase1': { label: 'Getting More Clients', title: 'Growing Your Business', description: 'News and updates to help you get more leads and customers.' },
+    'phase2': { label: 'Building Your Business', title: 'Growing Your Operations', description: 'Updates on how to handle more work, more efficiently.' },
+    'phase3': { label: 'Managing Your Business', title: 'Monitoring Your Business', description: 'Insights for a clearer view of your numbers and progress.' },
+  };
+
+  const HotspotTags = ({ pillar }: { pillar?: string }) => (
+    <div className="flex flex-wrap gap-2 mb-6">
+      <span className="font-mono text-[9px] uppercase tracking-wider bg-gold px-2 py-0.5 border border-dark/10 text-cream">#INTEL_FEED</span>
+      {pillar && <span className="font-mono text-[9px] uppercase tracking-wider bg-off-white px-2 py-0.5 border border-dark/10 text-dark/70">#PILLAR_{pillar.toUpperCase().replace(/\s/g, '_').replace(/&/g, '')}</span>}
+      <span className="font-mono text-[9px] uppercase tracking-wider bg-off-white px-2 py-0.5 border border-dark/10 text-dark/70">#INTEGRATION</span>
+      <span className="font-mono text-[9px] uppercase tracking-wider bg-off-white px-2 py-0.5 border border-dark/10 text-dark/70">#SYSTEMS</span>
+    </div>
+  );
+
+  const CTA = ({ item }: { item: NewsItem }) => {
+    const defaultCTA = { actionText: 'Ready to get unstuck?', contactText: 'Discuss your systems with an architect.', pillarPath: '/system' };
+    const cta = item.servicePillar && pillarCTAMap[item.servicePillar] ? pillarCTAMap[item.servicePillar] : defaultCTA;
+
+    return (
+      <div className="bg-off-white p-6 sm:p-8 md:p-12 border border-dark/10 relative group font-sans mt-12">
+        <ArrowDownLeft className="absolute top-6 right-6 w-5 h-5 text-dark/40 group-hover:text-red transition-colors hidden sm:block" />
+        <h3 className="font-serif text-2xl md:text-3xl text-dark leading-tight mb-3 uppercase font-black pr-8">{cta.actionText}</h3>
+        <p className="type-body text-dark/80 mb-6 max-w-lg leading-relaxed">What does this change mean for your bottom line? No guess work required. Discuss your current tools with a systems architect.</p>
+        {/* RESPONSIVE FIX: Changed sm:w-max to sm:w-auto to prevent blowout */}
+        <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center w-full sm:w-auto">
+           <Link onClick={() => setExpandedItem(null)} to={cta.pillarPath} className="font-mono text-xs uppercase tracking-wider bg-dark text-white px-6 py-3 border border-dark hover:bg-gold hover:text-dark hover:border-dark transition-colors text-center">Explore {item.servicePillar || 'Capabilities'}</Link>
+           <Link onClick={() => setExpandedItem(null)} to="/contact" className="font-mono text-xs uppercase tracking-wider text-dark/80 hover:text-dark transition-colors inline-flex items-center justify-center sm:justify-start gap-2 pt-2 sm:pt-0">Let's Talk ↓</Link>
+        </div>
+      </div>
+    );
+  };
+
+  // The Drawer Content component
+  const ArticleContent = ({ item }: { item: NewsItem }) => (
+    <div className="bg-white min-h-full flex flex-col relative">
+      
+      <button onClick={() => setExpandedItem(null)} className="absolute top-4 left-4 md:top-6 md:left-6 z-20 bg-red text-white p-2 hover:bg-dark transition-colors shadow-md">
+        <X className="w-6 h-6" />
+      </button>
+
+      {item.mainImage && (
+        <div className="w-full aspect-video md:aspect-[21/9] relative border-b border-dark/10 bg-cream">
+           <img src={urlFor(item.mainImage).width(1200).url()} alt={item.title} className="w-full h-full object-cover" />
+        </div>
+      )}
+
+      <div className="p-6 sm:p-8 md:p-12 lg:p-16 flex-grow flex flex-col max-w-3xl mx-auto w-full">
+        <HotspotTags pillar={item.servicePillar} />
+        
+        <div className="flex items-center gap-3 mb-6">
+          <time className="font-mono text-[10px] text-dark/50 uppercase tracking-widest">
+            {new Date(item.publishedAt).toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' })}
+          </time>
+        </div>
+
+        {/* RESPONSIVE FIX: break-words to handle giant text on small screens */}
+        <h2 className="text-3xl md:text-4xl font-normal uppercase font-serif leading-tight tracking-tight text-dark mb-10 break-words">
+          {item.title}
+        </h2>
+
+        <div className="text-left prose prose-lg prose-dark/80 max-w-none hover:prose-a:text-dark prose-a:text-gold prose-p:mb-8 pr-0 md:pr-4 overflow-hidden">
+          <PortableText value={item.body} />
+        </div>
+
+        <CTA item={item} />
+
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-12 pt-8 border-t border-dark/10 gap-6 sm:gap-0">
+          {item.sourceUrl ? (
+            <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer" className="font-mono text-[11px] uppercase tracking-wider text-dark hover:text-gold transition-colors inline-flex items-center gap-2 font-bold break-all">
+              View Original Source <span>↗</span>
+            </a>
+          ) : <div></div>}
+          
+          <button onClick={() => setExpandedItem(null)} className="font-mono text-[11px] font-bold text-red uppercase tracking-widest transition-all duration-300 inline-flex items-center gap-2 text-left sm:text-right hover:text-dark">
+            Close Article <span>↑</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    // RESPONSIVE FIX: Added overflow-x-hidden to the master wrapper to kill horizontal scrolling
+    <div className="w-full relative font-sans pb-32 bg-cream min-h-screen flex flex-col overflow-x-hidden">
+      
+      {loading ? (
+        <main className="flex-grow flex items-center justify-center pt-48 pb-24">
+          <p className="type-body text-dark font-mono uppercase tracking-widest">Syncing Intelligence Feed...</p>
+        </main>
+      ) : (
+        <main className="flex-grow pt-32 relative">
+          
+          <header className="pb-12 px-4 md:px-8 max-w-[1400px] mx-auto border-b-4 border-dark mb-16 relative">
+            {/* RESPONSIVE FIX: Scaled mobile font and added break-words */}
+            <h1 className="text-4xl sm:text-5xl md:text-7xl font-serif text-dark tracking-tighter uppercase mb-6 mt-12 break-words">
+              Business Intelligence.
+            </h1>
+            <p className="type-body-lg text-dark/70 max-w-2xl border-l-4 border-gold pl-6 font-serif">
+              Market updates and technology forecasts translated into plain English, built for Australian business owners.
+            </p>
+          </header>
+
+          <div className="max-w-[1400px] mx-auto px-4 md:px-8 flex flex-col gap-12 relative">
+            
+            {/* The Monthly Horizon */}
+            {horizonNews && (
+              <section className="mb-12">
+                <div className="flex items-center gap-4 mb-6">
+                  <span className="w-4 h-4 bg-gold border border-dark"></span>
+                  <h2 className="font-mono text-sm text-dark font-bold uppercase tracking-widest m-0">The Monthly Horizon</h2>
+                </div>
+                
+                <div 
+                  onClick={() => setExpandedItem(horizonNews)}
+                  className="w-full text-left flex flex-col bg-transparent border-y-2 border-dark/10 relative group font-serif transition-all duration-500 hover:bg-cream/60 hover:backdrop-blur-md shadow-none hover:shadow-2xl hover:-translate-y-1 py-8 md:py-12 px-4 md:px-12 cursor-pointer"
+                >
+                  <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-center">
+                    
+                    {horizonNews.mainImage && (
+                      <div className="w-full lg:w-1/2 mb-2 aspect-video relative z-10 border border-dark/10 overflow-hidden bg-cream">
+                         <img src={urlFor(horizonNews.mainImage).width(1200).url()} alt={horizonNews.title} className="w-full h-full object-cover transition-all duration-700 hover:scale-105" />
+                      </div>
+                    )}
+
+                    <div className="flex-1 z-10 flex flex-col justify-center w-full">
+                      <span className="font-mono text-xs uppercase tracking-widest text-gold mb-4 block">Future Forecast</span>
+                      <h2 className="text-3xl md:text-5xl font-normal uppercase font-serif leading-tight tracking-tight text-dark mb-6 break-words">
+                        {horizonNews.title}
+                      </h2>
+                      
+                      {horizonNews.body && horizonNews.body.length > 0 && (
+                        <div className="type-body prose prose-lg line-clamp-3 text-dark/70 mb-8 overflow-hidden">
+                            <PortableText value={[horizonNews.body[0]]} />
+                        </div>
+                      )}
+
+                      {/* RESPONSIVE FIX: w-max changed to w-fit */}
+                      <span className="font-mono text-[11px] font-bold text-dark uppercase tracking-widest mt-auto inline-flex items-center gap-2 group-hover:text-gold transition-all duration-300 text-left w-fit group-hover:translate-x-2">
+                        Read Forecast <span>→</span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            )}
+
+            {/* Sticky Filter Bar */}
+            <div className="flex flex-wrap gap-3 sm:gap-4 border-y border-dark/20 py-4 sticky top-0 bg-cream/95 backdrop-blur-md z-30 transition-all duration-300 -mx-4 md:-mx-8 px-4 md:px-8 shadow-sm">
+              {['all', 'phase1', 'phase2', 'phase3'].map((filter) => (
+                <button
+                  key={filter}
+                  onClick={() => setActiveFilter(filter as any)}
+                  className={`font-mono text-[10px] sm:text-xs uppercase tracking-widest px-4 sm:px-6 py-2 sm:py-3 border transition-colors ${
+                    activeFilter === filter ? 'bg-dark text-white border-dark' : 'bg-transparent text-dark border-dark/20 hover:border-dark hover:bg-white/50'
+                  }`}
+                >
+                  {sectionContent[filter].label}
+                </button>
+              ))}
+            </div>
+
+            {/* Brutalist Grid */}
+            <div className="flex flex-col gap-16 md:gap-24 mt-8">
+              {([ 'phase1', 'phase2', 'phase3' ]).map(filter => {
+                  const items = filter === 'phase1' ? phase1News : filter === 'phase2' ? phase2News : phase3News;
+                  const { title, description } = sectionContent[filter];
+                  const phaseColor = filter === 'phase1' ? 'border-red' : filter === 'phase2' ? 'border-gold' : 'border-dark';
+
+                  if ((activeFilter === 'all' || activeFilter === filter) && items.length > 0) {
+                      return (
+                          <section key={filter}>
+                              <div className={`flex flex-col gap-3 mb-8 md:mb-10 border-b-2 ${phaseColor} pb-6 md:pb-8`}>
+                                  <h2 className="type-h3 text-dark uppercase m-0 font-serif break-words">{title}</h2>
+                                  <p className="font-mono text-sm text-dark/60">{description}</p>
+                              </div>
+                              
+                              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 items-stretch">
+                                  {items.map((item) => (
+                                      <div 
+                                        key={item._id} 
+                                        onClick={() => setExpandedItem(item)}
+                                        className="border-b-2 border-dark/10 bg-transparent p-4 sm:p-6 relative group flex flex-col h-full transition-all duration-500 hover:bg-cream/60 hover:backdrop-blur-md shadow-none hover:shadow-2xl hover:-translate-y-1 cursor-pointer"
+                                      >
+                                          <div className="flex flex-col gap-6 p-0 h-full w-full overflow-hidden">
+                                            {item.mainImage && (
+                                                <div className="w-full mb-2 aspect-video overflow-hidden bg-cream border border-dark/10 shadow-inner">
+                                                    <img src={urlFor(item.mainImage).width(800).url()} alt={item.title} className="w-full h-full object-cover transition-all duration-700 hover:scale-105" />
+                                                </div>
+                                            )}
+                                            
+                                            <div className="flex flex-col flex-grow justify-start w-full">
+                                                <div className="flex items-center gap-3 mb-4">
+                                                  <time className="font-mono text-[10px] text-dark/50 uppercase tracking-widest">
+                                                    {new Date(item.publishedAt).toLocaleDateString('en-AU', { day: '2-digit', month: 'short' })}
+                                                  </time>
+                                                </div>
+
+                                                <h3 className="text-xl sm:text-2xl font-normal uppercase font-serif leading-snug tracking-tight text-dark mb-4 group-hover:text-gold transition-colors min-h-[6.5rem] break-words">
+                                                  {item.title}
+                                                </h3>
+                                                
+                                                {item.body && item.body.length > 0 && (
+                                                  <div className="type-body prose prose-sm line-clamp-3 text-dark/70 mb-6 overflow-hidden">
+                                                      <PortableText value={[item.body[0]]} />
+                                                  </div>
+                                                )}
+                                                
+                                                {/* RESPONSIVE FIX: w-max changed to w-fit */}
+                                                <span className="font-mono text-[11px] font-bold text-dark uppercase tracking-widest mt-auto group-hover:text-gold transition-all duration-300 inline-flex items-center gap-2 text-left w-fit pt-2 group-hover:translate-x-2">
+                                                  Read Report <span>→</span>
+                                                </span>
+                                            </div>
+                                          </div>
+                                      </div>
+                                  ))}
+                              </div>
+                          </section>
+                      );
+                  }
+                  return null;
+              })}
+            </div>
+          </div>
+        </main>
+      )}
+
+      {/* DRAWER MODE RENDER */}
+      <AnimatePresence>
+        {expandedItem && (
+          <div className="fixed inset-0 z-[60] flex justify-end">
+            <motion.div 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              exit={{ opacity: 0 }} 
+              onClick={() => setExpandedItem(null)}
+              className="absolute inset-0 bg-dark/40 backdrop-blur-sm cursor-pointer"
+            />
+            <motion.div 
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: "spring", bounce: 0, duration: 0.4 }}
+              className="relative w-[95vw] md:w-[70vw] lg:max-w-3xl bg-white h-full overflow-y-auto overflow-x-hidden shadow-2xl z-[70]"
+            >
+               <ArticleContent item={expandedItem} />
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+    </div>
+  );
+}

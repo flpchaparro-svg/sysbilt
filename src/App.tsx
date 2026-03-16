@@ -19,6 +19,7 @@ const PrivacyPolicyPage = lazy(() => import('../pages/PrivacyPolicyPage'));
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
 const BlogPage = lazy(() => import('../pages/BlogPage'));
 const BlogPostPage = lazy(() => import('../pages/BlogPostPage'));
+const NewsPage = lazy(() => import('../pages/NewsPage'));
 
 const SystemPage = lazy(() => import('../pages/System/SystemPage'));
 const Pillar1 = lazy(() => import('../pages/System/Pillar1'));
@@ -53,6 +54,7 @@ const App: React.FC = () => {
     const routeMap: Record<string, string> = {
       'homepage': '/',
       'blog': '/blog',
+      'news': '/news',
       'architect': '/architect',
       'system': '/system',
       'process': '/process',
@@ -127,6 +129,7 @@ const App: React.FC = () => {
                     <Route path="/privacy" element={<PrivacyPolicyPage onBack={() => handleGlobalNavigate('homepage')} onNavigate={handleGlobalNavigate} />} />
                     <Route path="/blog" element={<BlogPage onNavigate={handleGlobalNavigate} />} />
                     <Route path="/blog/:slug" element={<BlogPostPage onNavigate={handleGlobalNavigate} />} />
+                    <Route path="/news" element={<NewsPage />} />
                     
                     <Route path="/pillar1" element={<Pillar1 onNavigate={handleGlobalNavigate} />} />
                     <Route path="/pillar2" element={<Pillar2 onNavigate={handleGlobalNavigate} />} />

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Target, TrendingUp, BarChart3, ArrowUpRight } from 'lucide-react';
 import CTAButton from './CTAButton';
-import { SysbiltLogo } from './SysbiltLogo'; // 1. Imported the logo
+import { SysbiltLogo } from './SysbiltLogo'; 
 
 interface GlobalFooterProps {
   onNavigate: (view: string, sectionId?: string) => void;
@@ -20,6 +20,7 @@ const GlobalFooter: React.FC<GlobalFooterProps> = ({ onNavigate }) => {
         { label: 'The Process', action: () => onNavigate('process') },
         { label: 'Case Studies', action: () => onNavigate('proof') },
         { label: 'System Logs', action: () => onNavigate('blog') },
+        { label: 'Industry News', action: () => onNavigate('news') }, // Hidden development link
       ]
     },
     {
@@ -45,7 +46,6 @@ const GlobalFooter: React.FC<GlobalFooterProps> = ({ onNavigate }) => {
     {
       title: 'SEE CLEARLY',
       icon: BarChart3,
-      // FIX: Changed from text-dark (Black) to text-white for visibility on dark footer
       color: 'text-white', 
       links: [
         { label: 'Dashboards', action: () => onNavigate('pillar7') },
@@ -70,7 +70,6 @@ const GlobalFooter: React.FC<GlobalFooterProps> = ({ onNavigate }) => {
         <div className="flex flex-col lg:flex-row justify-between items-start mb-24 gap-16">
            <div className="max-w-lg">
               
-              {/* 2. REPLACED THE OLD FC TEXT WITH THE LOGO */}
               <div className="mb-8">
                  <SysbiltLogo isDarkBg={true} />
               </div>
