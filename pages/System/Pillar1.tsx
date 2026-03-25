@@ -12,71 +12,11 @@ interface Pillar1Props {
   onNavigate: (view: string, sectionId?: string) => void;
 }
 
-// Funnel / Network Node SVG replacing the generic circle
-const FunnelSVG = ({ className, animateProps }: { className: string, animateProps?: any }) => (
-  <motion.svg
-    viewBox="0 0 100 100"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    className={className}
-    {...animateProps}
-  >
-    {/* Fast spinning top ring */}
-    <motion.circle
-      cx="50" cy="20" r="22"
-      stroke="currentColor" strokeWidth="1.5" strokeDasharray="4 8"
-      animate={{ rotate: -360 }}
-      transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-      style={{ transformOrigin: "50px 20px" }}
-    />
-    {/* Funnel Body */}
-    <path d="M15 20 L85 20 L58 80 L42 80 Z" stroke="currentColor" strokeWidth="1.5" />
-    <path d="M15 20 L50 30 L85 20 L50 10 Z" stroke="currentColor" strokeWidth="1.5" />
-
-    {/* Multiple Processing Nodes */}
-    {[0, 1, 2].map((i) => (
-      <motion.circle
-        key={i}
-        cx={50} cy="20" r="2" fill="currentColor"
-        animate={{
-          cx: [30 + i * 20, 50],
-          cy: [20, 80],
-          opacity: [0, 1, 0]
-        }}
-        transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.5, ease: "easeIn" }}
-      />
-    ))}
-
-    {/* Output Pulse */}
-    <motion.ellipse
-      cx="50" cy="85" rx="10" ry="3"
-      stroke="currentColor" strokeWidth="1.5"
-      animate={{ rx: [10, 35], ry: [3, 12], opacity: [1, 0] }}
-      transition={{ duration: 1.5, repeat: Infinity, ease: "easeOut" }}
-    />
-    <motion.line
-      x1="50" y1="80" x2="50" y2="100"
-      stroke="currentColor" strokeWidth="2"
-      animate={{ strokeDashoffset: [20, 0] }}
-      strokeDasharray="5 5"
-      transition={{ duration: 0.5, repeat: Infinity, ease: "linear" }}
-    />
-  </motion.svg>
-);
-
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: { staggerChildren: 0.3 }
-  }
-};
-
-const flipVariants = {
-  hidden: { rotateY: 180 },
-  visible: { 
-    rotateY: 0, 
-    transition: { duration: 1.2, ease: "linear" } 
   }
 };
 
@@ -170,7 +110,7 @@ interface SolutionCardProps {
 const SolutionCard: React.FC<SolutionCardProps> = ({ point, index }) => {
   const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' ? window.innerWidth < 768 : false);
   const ref = useRef<HTMLDivElement>(null);
-  
+
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["0 1", "0.5 1"]
@@ -178,7 +118,7 @@ const SolutionCard: React.FC<SolutionCardProps> = ({ point, index }) => {
 
   const mobileX = useTransform(scrollYProgress, [0, 1], [index % 2 === 0 ? -100 : 100, 0]);
   const mobileOpacity = useTransform(scrollYProgress, [0, 1], [0, 1]);
-  
+
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener('resize', checkMobile);
@@ -186,60 +126,41 @@ const SolutionCard: React.FC<SolutionCardProps> = ({ point, index }) => {
   }, []);
 
   const desktopVariants = {
-    hidden: { rotateY: 180 },
-    visible: { 
-      rotateY: 0, 
-      transition: { 
-        duration: 1.2, 
-        ease: "linear",
-        delay: index === 0 ? 0.2 : 0.2 + (index * 1.2)
-      } 
+    hidden: { rotateY: 90, opacity: 0 },
+    visible: {
+      rotateY: 0,
+      opacity: 1,
+      transition: {
+        duration: 0.8,
+        ease: [0.25, 0.46, 0.45, 0.94],
+        delay: index * 0.15
+      }
     }
   };
 
   return (
-    <motion.div 
+    <motion.div
       ref={ref}
       variants={isMobile ? undefined : desktopVariants}
       initial={isMobile ? undefined : "hidden"}
       whileInView={isMobile ? undefined : "visible"}
       viewport={{ once: true, margin: "-100px" }}
-      style={{ 
+      style={{
         transformStyle: "preserve-3d",
         ...(isMobile ? { x: mobileX, opacity: mobileOpacity } : {})
       }}
-      className="relative w-full h-auto min-h-[400px] md:min-h-[420px] group cursor-pointer"
+      className="relative w-full h-auto min-h-[380px] md:min-h-[400px] group cursor-pointer"
     >
-      <div 
+      <div
         className={`relative w-full h-full transition-all duration-300 bg-white ${
-          isMobile 
-            ? "shadow-[8px_8px_0px_0px_#9A1730] -translate-y-2 -translate-x-2" 
+          isMobile
+            ? "shadow-[8px_8px_0px_0px_#9A1730] -translate-y-2 -translate-x-2"
             : "group-hover:shadow-[8px_8px_0px_0px_#9A1730] group-hover:-translate-y-2 group-hover:-translate-x-2"
         }`}
         style={{ transformStyle: "preserve-3d" }}
       >
-        {/* === BACK OF CARD === */}
-        <div 
-          className="absolute inset-0 w-full h-full bg-white p-8 border border-[#D32F2F]/30 flex flex-col items-center justify-center"
-          style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
-        >
-          <FunnelSVG className="w-24 h-24 text-[#D32F2F]" />
-          
-          <div className="mt-8 text-center w-full">
-            <p className="text-[#D32F2F] font-sans font-bold text-sm uppercase tracking-widest mb-4">
-              Active Processing
-            </p>
-            <div className="flex flex-col gap-2 text-dark/50 font-sans text-xs text-left w-fit mx-auto">
-              <motion.p animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.5, repeat: Infinity }}>&gt; Ingesting raw data...</motion.p>
-              <motion.p animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.5, repeat: Infinity, delay: 0.5 }}>&gt; Filtering noise...</motion.p>
-              <motion.p animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.5, repeat: Infinity, delay: 1.0 }} className="text-dark/80">&gt; Outputting qualified leads</motion.p>
-            </div>
-          </div>
-        </div>
-
-        {/* === FRONT OF CARD === */}
-        <div 
-          className="relative bg-white border border-black/10 p-8 md:p-10 flex flex-col justify-start h-full min-h-[400px] md:min-h-[420px]"
+        <div
+          className="relative bg-white border border-black/10 p-8 md:p-10 flex flex-col justify-start h-full min-h-[380px] md:min-h-[400px]"
           style={{ backfaceVisibility: "hidden" }}
         >
           <div className="mb-6 pb-4 border-b border-dark/10">
@@ -247,7 +168,6 @@ const SolutionCard: React.FC<SolutionCardProps> = ({ point, index }) => {
               0{index + 1}
             </span>
           </div>
-          
           <div className="relative z-10">
             <h3 className="font-serif text-2xl md:text-3xl text-dark mb-4 leading-tight">
               {point.title}
