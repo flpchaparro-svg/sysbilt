@@ -1,26 +1,46 @@
-import { useState } from 'react';
+import { useState, FormEvent } from 'react';
 
-// You will replace these with your actual HubSpot IDs in Step 2
-const HUBSPOT_PORTAL_ID = 'YOUR_PORTAL_ID';
-const HUBSPOT_FORM_ID = 'YOUR_FORM_ID'; 
+const HUBSPOT_PORTAL_ID = '442493227';
+const HUBSPOT_FORM_ID = 'YOUR_FORM_ID';
+
+interface FormState {
+  name: string;
+  email: string;
+  company: string;
+  frictionPoint: string;
+  message: string;
+}
+
+const INITIAL_STATE: FormState = {
+  name: '',
+  email: '',
+  company: '',
+  frictionPoint: '',
+  message: '',
+};
 
 export const useContactForm = () => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [formState, setFormState] = useState<FormState>(INITIAL_STATE);
+  const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
-  const submitForm = async (data: Record<string, string>) => {
-    setIsSubmitting(true);
-    setSubmitStatus('idle');
+  const updateField = (field: keyof FormState, value: string) => {
+    setFormState((prev) => ({ ...prev, [field]: value }));
+  };
 
-    // HubSpot Forms API Endpoint
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setStatus('submitting');
+
     const url = `https://api.hsforms.com/submissions/v3/integration/submit/${HUBSPOT_PORTAL_ID}/${HUBSPOT_FORM_ID}`;
 
-    // Map your React state data to HubSpot's expected format
     const hubspotData = {
-      fields: Object.keys(data).map((key) => ({
-        name: key,
-        value: data[key],
-      })),
+      fields: [
+        { name: 'firstname', value: formState.name },
+        { name: 'email', value: formState.email },
+        { name: 'company', value: formState.company },
+        { name: 'friction_point', value: formState.frictionPoint },
+        { name: 'message', value: formState.message },
+      ],
       context: {
         pageUri: window.location.href,
         pageName: document.title,
@@ -30,25 +50,22 @@ export const useContactForm = () => {
     try {
       const response = await fetch(url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(hubspotData),
       });
 
       if (response.ok) {
-        setSubmitStatus('success');
+        setStatus('success');
+        setFormState(INITIAL_STATE);
       } else {
         console.error('HubSpot submission error:', await response.text());
-        setSubmitStatus('error');
+        setStatus('error');
       }
     } catch (error) {
       console.error('Network error during form submission:', error);
-      setSubmitStatus('error');
-    } finally {
-      setIsSubmitting(false);
+      setStatus('error');
     }
   };
 
-  return { submitForm, isSubmitting, submitStatus };
+  return { formState, updateField, status, handleSubmit };
 };

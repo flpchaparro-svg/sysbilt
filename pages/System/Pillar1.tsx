@@ -1,77 +1,286 @@
-import React, { useState } from 'react';
-import { 
-  m, 
-  AnimatePresence, 
-  useAnimationFrame,
-  useMotionValue,
-  useTransform
-} from 'framer-motion';
-import { 
-  CheckCircle, ChevronDown, ChevronRight, HelpCircle
-} from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { motion, useAnimationFrame, useMotionValue, useTransform, useScroll } from 'framer-motion';
+import CTAButton from '../../components/CTAButton';
+import BackButton from '../../components/BackButton';
 import PillarVisual_Catchment from '../../components/Pillar1/PillarVisual_Catchment';
-import FAQSection from '../../components/FAQSection';
-import { getPillarFAQs } from '../../constants/faqData';
-import { colors } from '../../constants/theme';
-import CTAButton from '../../components/CTAButton'; 
-import BackButton from '../../components/BackButton'; 
-import TierVisual from '../../components/Pillar1/TierVisual';
-import { TIERS } from '../../constants/pillar1Data';
+import { pillar1Copy } from '../../constants/pillar1Copy';
 
-interface PillarPageProps {
-  onBack: () => void;
+interface Pillar1Props {
   onNavigate: (view: string, sectionId?: string) => void;
 }
 
-const Pillar1: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
-  // STATE
-  const firstTierKey = Object.keys(TIERS)[0] as keyof typeof TIERS;
-  const [activeTier, setActiveTier] = useState<keyof typeof TIERS>(firstTierKey);
-  const [activePersonaIndex, setActivePersonaIndex] = useState(0);
-  const [expandedTier, setExpandedTier] = useState<keyof typeof TIERS | null>(firstTierKey);
-  const [expandedPersona, setExpandedPersona] = useState<string | null>(null);
+// Funnel / Network Node SVG replacing the generic circle
+const FunnelSVG = ({ className, animateProps }: { className: string, animateProps?: any }) => (
+  <motion.svg
+    viewBox="0 0 100 100"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+    {...animateProps}
+  >
+    {/* Fast spinning top ring */}
+    <motion.circle
+      cx="50" cy="20" r="22"
+      stroke="currentColor" strokeWidth="1.5" strokeDasharray="4 8"
+      animate={{ rotate: -360 }}
+      transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+      style={{ transformOrigin: "50px 20px" }}
+    />
+    {/* Funnel Body */}
+    <path d="M15 20 L85 20 L58 80 L42 80 Z" stroke="currentColor" strokeWidth="1.5" />
+    <path d="M15 20 L50 30 L85 20 L50 10 Z" stroke="currentColor" strokeWidth="1.5" />
 
-  // DATA HELPERS
-  const pillarFAQs = getPillarFAQs('pillar1');
-  const currentTier = TIERS[activeTier];
-  const currentPersona = currentTier.personas[activePersonaIndex];
+    {/* Multiple Processing Nodes */}
+    {[0, 1, 2].map((i) => (
+      <motion.circle
+        key={i}
+        cx={50} cy="20" r="2" fill="currentColor"
+        animate={{
+          cx: [30 + i * 20, 50],
+          cy: [20, 80],
+          opacity: [0, 1, 0]
+        }}
+        transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.5, ease: "easeIn" }}
+      />
+    ))}
 
-  // SCROLL ANIMATION
-  const scrollLineY = useMotionValue(-100);
-  const scrollLineSpeed = useMotionValue(0.067);
+    {/* Output Pulse */}
+    <motion.ellipse
+      cx="50" cy="85" rx="10" ry="3"
+      stroke="currentColor" strokeWidth="1.5"
+      animate={{ rx: [10, 35], ry: [3, 12], opacity: [1, 0] }}
+      transition={{ duration: 1.5, repeat: Infinity, ease: "easeOut" }}
+    />
+    <motion.line
+      x1="50" y1="80" x2="50" y2="100"
+      stroke="currentColor" strokeWidth="2"
+      animate={{ strokeDashoffset: [20, 0] }}
+      strokeDasharray="5 5"
+      transition={{ duration: 0.5, repeat: Infinity, ease: "linear" }}
+    />
+  </motion.svg>
+);
 
-  useAnimationFrame((time, delta) => {
-    const currentY = scrollLineY.get();
-    const speed = scrollLineSpeed.get();
-    let newY = currentY + (speed * delta);
-    if (newY >= 100) newY = -100;
-    scrollLineY.set(newY);
+// This ensures the cards are ALWAYS visible (opacity 1) and just staggers the flip
+const containerVariants = {
+  hidden: { opacity: 1 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 1.5 } // Waits 1.5 seconds between each card flipping
+  }
+};
+
+const AnimatedCard1: React.FC<{ data: any }> = ({ data }) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"]
   });
 
-  const handleScrollTo = (id: string) => {
-    setTimeout(() => {
-        const element = document.getElementById(id);
-        if (element) {
-            const offset = 100;
-            const elementPosition = element.getBoundingClientRect().top + window.scrollY;
-            const offsetPosition = elementPosition - offset;
-            window.scrollTo({ top: offsetPosition, behavior: "smooth" });
-        }
-    }, 300); 
-  };
+  // Card 1 comes from right to left
+  const cardX = useTransform(scrollYProgress, [0, 1], ["15vw", "-15vw"]);
+  // Line 1 comes from left to right
+  const lineX = useTransform(scrollYProgress, [0, 1], ["-35vw", "35vw"]);
+  // Fade in and out
+  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
 
-  const handleTierChange = (key: keyof typeof TIERS) => {
-    setActiveTier(key);
-    setActivePersonaIndex(0); // Resets the pane so the animation fires cleanly
+  return (
+    <div ref={ref} className="relative w-full flex justify-center items-center py-12 md:min-h-[25vh] md:py-8 overflow-hidden">
+      {/* The Line */}
+      <motion.div 
+        style={{ x: lineX, opacity }}
+        className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 h-[2px] bg-red-solid w-[60vw] md:w-[800px] z-0 pointer-events-none"
+      />
+      
+      {/* The Card */}
+      <motion.div 
+        style={{ x: cardX, opacity }}
+        className="relative z-10 w-[85vw] md:w-[550px] shrink-0 bg-cream/80 backdrop-blur-md border border-dark p-8 md:p-12"
+      >
+        <div className="font-mono text-xs font-bold text-red-text mb-8 border-b border-dark/10 pb-4 flex justify-end items-center">
+          <span className="bg-red-solid/10 text-red-text px-2 py-1">{data.tag || '[SYS_BLEED]'}</span>
+        </div>
+        <h3 className="font-serif text-3xl md:text-4xl leading-tight text-dark mb-6">
+          {data.title}
+        </h3>
+        <p className="font-sans text-lg text-dark/70 leading-relaxed">
+          {data.desc}
+        </p>
+      </motion.div>
+    </div>
+  );
+};
+
+const AnimatedCard2: React.FC<{ data: any }> = ({ data }) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"]
+  });
+
+  // Card 2 comes from left to right
+  const cardX = useTransform(scrollYProgress, [0, 1], ["-15vw", "15vw"]);
+  // Line 2 comes from right to left
+  const lineX = useTransform(scrollYProgress, [0, 1], ["35vw", "-35vw"]);
+  // Fade in and out
+  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
+
+  return (
+    <div ref={ref} className="relative w-full flex justify-center items-center py-12 md:min-h-[25vh] md:py-8 overflow-hidden">
+      {/* The Line */}
+      <motion.div 
+        style={{ x: lineX, opacity }}
+        className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 h-[2px] bg-red-solid w-[60vw] md:w-[800px] z-0 pointer-events-none"
+      />
+      
+      {/* The Card */}
+      <motion.div 
+        style={{ x: cardX, opacity }}
+        className="relative z-10 w-[85vw] md:w-[550px] shrink-0 bg-cream/80 backdrop-blur-md border border-dark p-8 md:p-12"
+      >
+        <div className="font-mono text-xs font-bold text-red-text mb-8 border-b border-dark/10 pb-4 flex justify-end items-center">
+          <span className="bg-red-solid/10 text-red-text px-2 py-1">{data.tag || '[CRITICAL_FAIL]'}</span>
+        </div>
+        <h3 className="font-serif text-3xl md:text-4xl leading-tight text-dark mb-6">
+          {data.title}
+        </h3>
+        <p className="font-sans text-lg text-dark/70 leading-relaxed">
+          {data.desc}
+        </p>
+      </motion.div>
+    </div>
+  );
+};
+
+interface SolutionCardProps {
+  point: any;
+  index: number;
+}
+
+const SolutionCard: React.FC<SolutionCardProps> = ({ point, index }) => {
+  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' ? window.innerWidth < 768 : false);
+  const ref = useRef<HTMLDivElement>(null);
+  
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["0 1", "0.5 1"]
+  });
+
+  const mobileX = useTransform(scrollYProgress, [0, 1], [index % 2 === 0 ? -100 : 100, 0]);
+  const mobileOpacity = useTransform(scrollYProgress, [0, 1], [0, 1]);
+  
+  React.useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // EXACTLY AS IT WAS IN YOUR GOOGLE AI STUDIO CODE. No opacity changes. No Y translates.
+  const desktopVariants = {
+    hidden: { rotateY: 180 },
+    visible: { 
+      rotateY: 0, 
+      transition: { duration: 1.5, ease: "linear" } 
+    }
   };
 
   return (
-    <m.div 
-      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+    <motion.div 
+      ref={ref}
+      variants={isMobile ? undefined : desktopVariants}
+      style={{ 
+        transformStyle: "preserve-3d",
+        ...(isMobile ? { x: mobileX, opacity: mobileOpacity } : {})
+      }}
+      className="relative w-full h-auto min-h-[400px] md:min-h-[420px] group cursor-pointer"
+    >
+      <div 
+        className={`relative w-full h-full transition-all duration-300 bg-white ${
+          isMobile 
+            ? "shadow-[8px_8px_0px_0px_#9A1730] -translate-y-2 -translate-x-2" 
+            : "group-hover:shadow-[8px_8px_0px_0px_#9A1730] group-hover:-translate-y-2 group-hover:-translate-x-2"
+        }`}
+        style={{ transformStyle: "preserve-3d" }}
+      >
+        {/* === BACK OF CARD === */}
+        <div 
+          className="absolute inset-0 w-full h-full bg-white p-8 border border-[#D32F2F]/30 flex flex-col items-center justify-center"
+          style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
+        >
+          <FunnelSVG className="w-24 h-24 text-[#D32F2F]" />
+          
+          <div className="mt-8 text-center w-full">
+            <p className="text-[#D32F2F] font-sans font-bold text-sm uppercase tracking-widest mb-4">
+              Active Processing
+            </p>
+            <div className="flex flex-col gap-2 text-dark/50 font-sans text-xs text-left w-fit mx-auto">
+              <motion.p animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.5, repeat: Infinity }}>&gt; Ingesting raw data...</motion.p>
+              <motion.p animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.5, repeat: Infinity, delay: 0.5 }}>&gt; Filtering noise...</motion.p>
+              <motion.p animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.5, repeat: Infinity, delay: 1.0 }} className="text-dark/80">&gt; Outputting qualified leads</motion.p>
+            </div>
+          </div>
+        </div>
+
+        {/* === FRONT OF CARD === */}
+        <div 
+          className="relative bg-white border border-black/10 p-8 flex flex-col justify-start h-full min-h-[400px] md:min-h-[420px]"
+          style={{ backfaceVisibility: "hidden" }}
+        >
+          <FunnelSVG 
+            className="w-12 h-12 absolute top-6 right-6 text-[#D32F2F] opacity-40" 
+            animateProps={{
+              animate: { rotate: 360 },
+              transition: { duration: 20, repeat: Infinity, ease: "linear" }
+            }}
+          />
+          
+          <div className="relative z-10 mt-12 md:mt-16">
+            <h3 className="font-serif text-2xl md:text-3xl text-[#D32F2F] mb-4 leading-tight pr-12">
+              {point.title}
+            </h3>
+            <p className="font-sans text-base md:text-lg text-dark/80 leading-relaxed text-justify">
+              {point.desc}
+            </p>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
+const Pillar1: React.FC<Pillar1Props> = ({ onNavigate }) => {
+  const [activeNode, setActiveNode] = useState<number | null>(null);
+  
+  const { hero, gap, solution, engine } = pillar1Copy;
+
+  const scrollLineY = useMotionValue(-100);
+  const scrollLineSpeed = useMotionValue(0.067);
+
+  useAnimationFrame((_t, delta) => {
+    const y = scrollLineY.get();
+    const speed = scrollLineSpeed.get();
+    let next = y + speed * delta;
+    if (next >= 100) next = -100;
+    scrollLineY.set(next);
+  });
+
+  const scrollLineYPercent = useTransform(scrollLineY, (v) => `${v}%`);
+
+  const scrollToEngine = () => {
+    const el = document.getElementById('engine');
+    if (!el) return;
+    const offset = 100;
+    const top = el.getBoundingClientRect().top + window.scrollY - offset;
+    window.scrollTo({ top, behavior: 'smooth' });
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
       className="min-h-screen bg-cream text-dark px-0 relative z-[150] overflow-x-hidden flex flex-col font-sans"
     >
-      
-      {/* 1. HERO SECTION */}
       <section className="relative min-h-[700px] h-[100dvh] w-full flex flex-col overflow-hidden">
         <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 w-full h-full flex flex-col relative z-10">
           <div className="flex justify-between items-center mb-4 pt-24 relative z-20">
@@ -80,292 +289,223 @@ const Pillar1: React.FC<PillarPageProps> = ({ onBack, onNavigate }) => {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 lg:gap-20 flex-1 content-center items-center">
             <div className="flex flex-col items-start max-w-3xl">
-               <div className="flex items-center gap-2 md:gap-4 mb-6 md:mb-10 overflow-hidden justify-start">
-                 <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark">/</span>
-                 <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark">
-                   THE SYSTEM / GET CLIENTS
-                 </span>
-               </div>
-               <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl xl:text-8xl leading-[1.1] lg:leading-[0.9] tracking-tighter text-dark mb-6 md:mb-10">
-                 Pick Your <span className="italic font-serif text-red-text drop-shadow-[0_0_20px_rgba(226,30,63,0.2)]">Situation.</span>
-               </h1>
-               <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/70 max-w-2xl border-l-2 border-red-solid pl-6 mb-8">
-                 Different businesses need different websites. Find yours below. See exactly what you get.
-               </p>
+              <h1 className="font-serif text-[2.75rem] md:text-[3.5rem] lg:text-[4.75rem] xl:text-[5.5rem] leading-[1.1] lg:leading-[0.9] tracking-tighter text-dark mb-6 md:mb-10">
+                A website that works <span className="italic font-serif text-red-text drop-shadow-[0_0_20px_rgba(226,30,63,0.2)]">as hard as you do.</span>
+              </h1>
+
+              <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/70 max-w-2xl border-l-2 border-red-solid pl-6 mb-8">
+                {hero.sub}
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4 sm:items-center sm:gap-8 items-start">
+                <CTAButton theme="light" onClick={() => onNavigate('contact')}>
+                  {hero.ctaPrimary}
+                </CTAButton>
+              </div>
             </div>
-            <div className="w-full h-auto lg:h-full flex items-center justify-center lg:justify-end -mt-8 md:mt-0">
-               <div className="relative w-full max-w-[450px] h-[300px] lg:h-[450px] opacity-90 flex items-center justify-center">
-                 <PillarVisual_Catchment />
-               </div>
+
+            <div className="w-full h-auto lg:h-full flex items-center justify-center lg:justify-end">
+              <div className="relative w-full max-w-[450px] h-[220px] md:h-[280px] lg:h-[450px] opacity-90 flex items-center justify-center">
+                <PillarVisual_Catchment />
+              </div>
             </div>
           </div>
         </div>
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-10 md:h-12 w-[1px] bg-dark/10 overflow-hidden z-30" aria-hidden="true">
-          <m.div 
-            style={{ y: useTransform(scrollLineY, (v) => `${v}%`) }}
-            className="absolute inset-0 bg-dark/40 w-full h-full" 
-          />
+
+        <div
+          className="absolute bottom-0 left-1/2 -translate-x-1/2 h-10 md:h-12 w-[1px] bg-dark/10 overflow-hidden z-30"
+          aria-hidden="true"
+        >
+          <motion.div style={{ y: scrollLineYPercent }} className="absolute inset-0 bg-dark/40 w-full h-full" />
         </div>
       </section>
 
-      {/* 2. CONFIGURATOR SECTION */}
-      <section className="w-full px-6 md:px-12 lg:px-20 pt-24 pb-32 max-w-[1400px] mx-auto border-t border-dark/10">
-        <div className="mb-16">
-           <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-red-text mb-4 block">
-              / SYSTEM CONFIGURATION
-           </span>
-           <h2 className="font-serif text-4xl md:text-5xl lg:text-7xl text-dark leading-[0.95] tracking-tighter mb-6">
-             Select your <span className="italic text-red-text font-serif">Situation.</span>
-           </h2>
+      {/* SECTION 2: THE GAP (VERTICAL ANIMATED PANELS) */}
+      <section className="relative bg-cream w-full py-16 md:py-24 overflow-hidden border-t border-dark/10">
+        
+        {/* Header / Intro */}
+        <div className="relative w-full px-6 md:px-12 lg:px-20 z-20 mb-12 md:mb-16">
+          <div className="max-w-[1400px] mx-auto">
+            <div className="flex items-center gap-3 mb-6">
+              <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-red-text">
+                {gap.eyebrow}
+              </span>
+            </div>
+            <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-dark leading-[0.95] tracking-tighter mb-6 max-w-4xl drop-shadow-sm">
+              {gap.headline}
+            </h2>
+            <p className="font-sans text-lg md:text-xl text-dark/70 leading-relaxed max-w-2xl">
+              {gap.sub}
+            </p>
+          </div>
         </div>
 
-        {/* --- DESKTOP VIEW --- */}
-        <div className="hidden md:block border border-black/10 bg-gradient-to-br from-white to-cream-warm shadow-sm mb-32 rounded-sm overflow-hidden">
-           {/* TABS */}
-           <div className="grid grid-cols-4 border-b border-black/10 bg-off-white">
-              {Object.entries(TIERS).map(([key, tier]) => (
-                <button 
-                  key={key}
-                  onClick={() => handleTierChange(key as keyof typeof TIERS)}
-                  className={`py-6 px-4 text-center transition-all duration-snap relative group overflow-hidden flex flex-col justify-center min-h-[100px] ${
-                    activeTier === key ? 'bg-white' : 'hover:bg-white/50 text-black/60'
-                  }`}
-                >
-                  <span className={`font-mono text-[10px] uppercase tracking-widest font-bold block mb-2 ${activeTier === key ? 'text-red-text' : 'text-inherit'}`}>
-                    {tier.label}
-                  </span>
-                  <span className={`font-serif text-lg leading-tight ${activeTier === key ? 'text-black' : 'text-inherit opacity-60'}`}>
-                    "{tier.hook}"
-                  </span>
-                  {activeTier === key && <m.div layoutId="tab-highlight" className="absolute top-0 left-0 w-full h-1 bg-red-solid" />}
-                </button>
+        {/* Animated Cards Content */}
+        <div className="flex flex-col gap-16 md:gap-0 relative w-full max-w-[1400px] mx-auto px-0">
+          <AnimatedCard1 data={gap.points[0]} />
+          <AnimatedCard2 data={gap.points[1]} />
+        </div>
+      </section>
+
+      <motion.section 
+        className="w-full px-6 md:px-12 lg:px-20 pt-24 pb-32 max-w-[1400px] mx-auto border-t border-dark/10 overflow-hidden"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+      >
+        <motion.div className="mb-16 max-w-3xl" variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}>
+          <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-[#D32F2F] mb-4 block">
+            {solution.eyebrow}
+          </span>
+          <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-dark leading-[0.95] tracking-tighter mb-6">
+            {solution.headline}
+          </h2>
+          <div className="font-sans text-lg md:text-xl text-dark/70 leading-relaxed max-w-3xl space-y-4">
+            <p>{solution.sub}</p>
+          </div>
+        </motion.div>
+
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-3 gap-8 perspective-[1500px]"
+          variants={containerVariants}
+        >
+          {solution.points.map((point, index) => (
+            <SolutionCard key={index} point={point} index={index} />
+          ))}
+        </motion.div>
+      </motion.section>
+
+      <section id="engine" className="w-full px-6 md:px-12 lg:px-20 pb-32 max-w-[1400px] mx-auto border-t border-dark/10">
+        <div className="pt-16 border-t border-dark/10">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-red-text mb-4 block">
+              {engine.eyebrow}
+            </span>
+            <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-dark leading-[0.95] tracking-tighter mb-6">
+              {engine.headline}
+            </h2>
+            <div className="font-sans text-lg md:text-xl text-dark/70 leading-relaxed space-y-4">
+              <p>{engine.sub}</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+            <div className="space-y-8">
+              {engine.points.map((step, idx) => (
+                <div key={step.title} className="mb-8 last:mb-0">
+                  <h3 className="font-serif text-3xl md:text-4xl text-dark leading-tight mb-2">
+                    {step.title}
+                  </h3>
+                  <p className="font-sans text-xl text-dark/70 leading-relaxed">{step.desc}</p>
+                </div>
               ))}
-           </div>
-           
-           {/* CONTENT PANES */}
-           <div className="flex min-h-[600px]">
-              {/* LEFT SIDEBAR */}
-              <div className="w-1/3 border-r border-black/10 bg-off-white p-8 flex flex-col">
-                 <div className="mb-8 p-4 bg-white border border-black/5 rounded-sm">
-                    <div className="flex gap-2 items-center mb-2">
-                       <HelpCircle className="w-4 h-4 text-red-solid" />
-                       <span className="font-mono text-[10px] uppercase tracking-widest font-bold text-black/60">Is this you?</span>
-                    </div>
-                    <p className="font-sans text-sm text-black/70 leading-relaxed">
-                       {currentTier.summary}
-                    </p>
-                 </div>
+            </div>
 
-                 <span className="font-mono text-[10px] text-black/60 uppercase tracking-widest font-bold mb-4 block pl-1">Select Profile</span>
-                 <div className="space-y-3 flex-grow">
-                    {currentTier.personas.map((p, idx) => (
-                      <button
-                        key={p.id}
-                        onClick={() => setActivePersonaIndex(idx)}
-                        className={`w-full text-left p-4 border rounded-sm transition-all duration-snap flex items-center gap-4 group ${
-                           activePersonaIndex === idx ? 'bg-white border-red-solid shadow-md' : 'bg-transparent border-transparent hover:bg-white hover:border-black/5'
-                        }`}
-                      >
-                         <div className={`p-2 rounded-full ${activePersonaIndex === idx ? 'bg-red-solid/10 text-red-text' : 'bg-black/5 text-black/60'}`}>
-                           <p.icon className="w-4 h-4" />
-                         </div>
-                         <div>
-                           <h3 className={`font-serif text-lg leading-tight ${activePersonaIndex === idx ? 'text-black' : 'text-black/60'}`}>{p.title}</h3>
-                         </div>
-                         {activePersonaIndex === idx && <ChevronRight className="w-4 h-4 ml-auto text-red-solid" />}
-                      </button>
-                    ))}
-                 </div>
-
-                 <div className="mt-8 pt-8 border-t border-black/5">
-                    <span className="font-mono text-[10px] text-black/60 uppercase tracking-widest font-bold mb-4 block">Included Specs</span>
-                    <ul className="space-y-2">
-                      {currentTier.specs.map((spec, i) => (
-                        <li key={i} className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-wide text-black/60">
-                          <CheckCircle className="w-3 h-3 text-red-solid" />
-                          {spec}
-                        </li>
-                      ))}
-                    </ul>
-                 </div>
-              </div>
-
-              {/* RIGHT CONTENT */}
-              <div className="w-2/3 p-12 relative flex flex-col">
-                  <AnimatePresence mode="wait">
-                    <m.div 
-                       key={`${activeTier}-${activePersonaIndex}`}
-                       initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
-                       className="flex-grow flex flex-col"
-                    >
-                       <div className="mb-10">
-                          <span className="text-red-text font-mono text-[10px] uppercase tracking-widest font-bold mb-3 block">The Problem</span>
-                          <h2 className="font-serif text-3xl md:text-4xl mb-6 text-dark leading-tight">{currentPersona.painTitle}</h2>
-                          <p className="font-sans text-xl text-dark/70 leading-relaxed border-l-2 border-red-solid pl-6 italic">"{currentPersona.painText}"</p>
-                       </div>
-
-                       <div className="mt-auto bg-dark p-8 text-white rounded-sm relative overflow-hidden shadow-2xl">
-                          <div className="absolute top-0 right-0 w-48 h-48 bg-red-solid/10 rounded-full blur-3xl" />
-                          <div className="relative z-10 flex gap-8">
-                             <div className="flex-grow">
-                                <span className="font-mono text-[10px] text-red-text uppercase tracking-widest block mb-4 font-bold">The Fix</span>
-                                <p className="font-sans text-lg leading-relaxed mb-8">{currentPersona.solution}</p>
-                                
-                                <div className="w-fit">
-                                  <CTAButton theme="dark" onClick={() => onNavigate('contact')}>
-                                    BOOK A CALL
-                                  </CTAButton>
-                                </div>
-                             </div>
-                             {/* THE FIX: Replaced 'hidden lg:block' with 'hidden md:flex' so animations don't vanish on resized windows */}
-                             <div className="w-24 md:w-32 hidden md:flex flex-shrink-0 items-center justify-center">
-                                <TierVisual tierKey={activeTier} />
-                             </div>
-                          </div>
-                       </div>
-                    </m.div>
-                  </AnimatePresence>
-              </div>
-           </div>
-        </div>
-
-        {/* --- MOBILE VIEW --- */}
-        <div className="md:hidden space-y-4 mb-32">
-          {Object.entries(TIERS).map(([key, tier]) => {
-            const isTierExpanded = expandedTier === key;
-            return (
+            {/* THE NEW 3D ORBITAL WHEEL */}
+            <div 
+              className="relative aspect-square max-w-md mx-auto w-full flex items-center justify-center bg-transparent"
+              style={{ perspective: "1200px" }}
+            >
+              {/* Tilted 3D Scene */}
               <div 
-                key={key} 
-                id={`tier-mobile-${key}`} 
-                className={`border rounded-sm overflow-hidden transition-all duration-snap ${isTierExpanded ? 'border-dark bg-white shadow-xl scale-[1.02] z-10' : 'border-black/10 bg-white'}`}
+                className="relative w-full h-full flex items-center justify-center"
+                style={{ transform: "rotateX(70deg)", transformStyle: "preserve-3d" }}
               >
-                <button 
-                  onClick={() => {
-                    const willExpand = !isTierExpanded;
-                    setExpandedTier(willExpand ? key as keyof typeof TIERS : null);
-                    setExpandedPersona(null); 
-                    if (willExpand) handleScrollTo(`tier-mobile-${key}`);
-                  }}
-                  className={`w-full flex items-center justify-between p-6 text-left transition-colors duration-snap ${isTierExpanded ? 'bg-dark text-white' : 'bg-white text-black'}`}
+                
+                {/* Central Core: Pillar 1 (Static, facing camera) */}
+                <div 
+                  className="absolute w-48 h-48 rounded-full bg-red-solid text-cream flex flex-col items-center justify-center shadow-[0_0_40px_rgba(226,30,63,0.4)]"
+                  style={{ transform: "rotateX(-70deg)", transformStyle: "preserve-3d" }}
                 >
-                  <div>
-                    <span className={`font-mono text-[10px] uppercase tracking-widest font-bold block mb-1 ${isTierExpanded ? 'text-red-text' : 'text-black/60'}`}>
-                      {tier.label}
-                    </span>
-                    <span className={`font-serif text-lg leading-tight ${isTierExpanded ? 'text-white' : 'text-black'}`}>"{tier.hook}"</span>
-                  </div>
-                  <ChevronDown className={`w-5 h-5 transition-transform duration-snap ${isTierExpanded ? 'rotate-180 text-red-solid' : 'text-black/60'}`} />
-                </button>
+                  <span className="font-mono text-[10px] tracking-widest opacity-80 mb-1 uppercase">Pillar 1</span>
+                  <span className="font-serif font-bold text-2xl text-center leading-tight uppercase">Websites</span>
+                </div>
 
-                <AnimatePresence>
-                  {isTierExpanded && (
-                    <m.div 
-                      initial={{ height: 0 }} animate={{ height: "auto" }} exit={{ height: 0 }}
-                      className="overflow-hidden bg-off-white"
+                {/* Orbiting Container */}
+                <motion.div 
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+                  className="absolute inset-0 flex items-center justify-center"
+                  style={{ transformStyle: "preserve-3d" }}
+                >
+                  {/* Node 1: Pillar 2 CRM */}
+                  <div className="absolute" style={{ transform: "translateY(-180px)", transformStyle: "preserve-3d" }}>
+                    <motion.div 
+                      animate={{ rotate: -360 }} 
+                      transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+                      className="flex items-center justify-center"
+                      style={{ transformStyle: "preserve-3d" }}
                     >
-                      <div className="p-4 space-y-2">
-                         <div className="mb-6 p-4 bg-white border border-black/5 rounded-sm">
-                            <p className="font-sans text-sm text-black/70 leading-relaxed">
-                               <strong className="text-red-text block mb-1 font-bold uppercase text-[10px] tracking-widest">Is this you?</strong>
-                               {tier.summary}
-                            </p>
-                         </div>
-                         
-                         <span className="font-mono text-[10px] text-black/60 uppercase tracking-widest font-bold block mb-2 px-2">Select Profile:</span>
-                         
-                         {tier.personas.map((p) => {
-                           const isPersonaExpanded = expandedPersona === p.id;
-                           return (
-                             <div 
-                                key={p.id} 
-                                id={`persona-mobile-${p.id}`} 
-                                className={`border rounded-sm overflow-hidden transition-all duration-snap ${isPersonaExpanded ? 'border-red-solid bg-white shadow-md' : 'border-black/5 bg-white'}`}
-                             >
-                               <button 
-                                 onClick={() => {
-                                    const willExpand = !isPersonaExpanded;
-                                    setExpandedPersona(willExpand ? p.id : null);
-                                    if (willExpand) handleScrollTo(`persona-mobile-${p.id}`); 
-                                 }}
-                                 className="w-full flex items-center gap-4 p-4 text-left hover:bg-black/5 transition-colors"
-                               >
-                                  <div className={`p-2 rounded-full ${isPersonaExpanded ? 'bg-red-solid text-dark' : 'bg-black/5 text-black/60'}`}>
-                                     <p.icon className="w-4 h-4" />
-                                  </div>
-                                  <div className="flex-grow">
-                                     <h3 className={`font-serif text-lg leading-tight ${isPersonaExpanded ? 'text-red-text' : 'text-black/70'}`}>{p.title}</h3>
-                                     <span className="text-[10px] text-black/60 block mt-1 line-clamp-1">{p.examples}</span>
-                                  </div>
-                                  <ChevronDown className={`w-4 h-4 transition-transform ${isPersonaExpanded ? 'rotate-180 text-red-solid' : 'text-black/20'}`} />
-                               </button>
-
-                               <AnimatePresence>
-                                 {isPersonaExpanded && (
-                                   <m.div
-                                     initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
-                                     className="border-t border-red-solid/20 bg-white"
-                                   >
-                                      <div className="p-6">
-                                         <div className="mb-6">
-                                            <span className="text-red-text font-mono text-[10px] uppercase tracking-widest font-bold mb-2 block">The Problem</span>
-                                            <h5 className="font-serif text-2xl mb-2 text-dark">{p.painTitle}</h5>
-                                            <p className="font-sans text-base text-dark/70 leading-relaxed italic border-l-2 border-red-solid pl-4">"{p.painText}"</p>
-                                         </div>
-
-                                         <div className="bg-dark p-6 text-white rounded-sm mb-6 relative overflow-hidden">
-                                            <div className="absolute top-0 right-0 w-24 h-24 bg-red-solid/20 rounded-full blur-2xl" />
-                                            <span className="font-mono text-[10px] text-red-text uppercase tracking-widest block mb-3 font-bold relative z-10">The Fix</span>
-                                            <p className="font-sans text-base leading-relaxed mb-6 relative z-10">{p.solution}</p>
-                                            
-                                            <div className="w-full flex justify-center py-4 bg-transparent relative z-10">
-                                               <div className="w-24 h-24 flex items-center justify-center">
-                                                 <TierVisual tierKey={key} />
-                                               </div>
-                                            </div>
-                                         </div>
-
-                                         <div className="w-full">
-                                            <CTAButton theme="dark" onClick={() => onNavigate('contact')} className="w-full">
-                                                BOOK A CALL
-                                            </CTAButton>
-                                         </div>
-
-                                         <div className="mt-8 pt-6 border-t border-black/10">
-                                            <span className="font-mono text-[10px] text-black/60 uppercase tracking-widest font-bold mb-3 block">Included Specs</span>
-                                            <ul className="space-y-2">
-                                              {tier.specs.map((spec, i) => (
-                                                <li key={i} className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-wide text-black/60">
-                                                  <CheckCircle className="w-3 h-3 text-red-solid" />
-                                                  {spec}
-                                                </li>
-                                              ))}
-                                            </ul>
-                                         </div>
-                                      </div>
-                                   </m.div>
-                                 )}
-                               </AnimatePresence>
-                             </div>
-                           )
-                         })}
+                      <div 
+                        className="w-32 h-32 rounded-full flex flex-col items-center justify-center backdrop-blur-md"
+                        style={{ 
+                          transform: "rotateX(-70deg)",
+                          background: "linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.1) 100%)",
+                          border: "1px solid rgba(255,255,255,0.6)",
+                          boxShadow: "0 10px 30px -10px rgba(0,0,0,0.2), inset 0 0 20px rgba(255,255,255,0.8)"
+                        }}
+                      >
+                        <span className="font-mono text-[10px] tracking-widest text-dark/60 mb-1 uppercase">Pillar 2</span>
+                        <span className="font-serif font-bold text-base text-dark uppercase">CRM</span>
                       </div>
-                    </m.div>
-                  )}
-                </AnimatePresence>
+                    </motion.div>
+                  </div>
+
+                  {/* Node 2: Pillar 3 Automation */}
+                  <div className="absolute" style={{ transform: "translateY(180px)", transformStyle: "preserve-3d" }}>
+                    <motion.div 
+                      animate={{ rotate: -360 }} 
+                      transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+                      className="flex items-center justify-center"
+                      style={{ transformStyle: "preserve-3d" }}
+                    >
+                      <div 
+                        className="w-32 h-32 rounded-full flex flex-col items-center justify-center backdrop-blur-md"
+                        style={{ 
+                          transform: "rotateX(-70deg)",
+                          background: "linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.1) 100%)",
+                          border: "1px solid rgba(255,255,255,0.6)",
+                          boxShadow: "0 10px 30px -10px rgba(0,0,0,0.2), inset 0 0 20px rgba(255,255,255,0.8)"
+                        }}
+                      >
+                        <span className="font-mono text-[10px] tracking-widest text-dark/60 mb-1 uppercase">Pillar 3</span>
+                        <span className="font-serif font-bold text-base text-dark text-center leading-tight uppercase">Auto-<br/>mation</span>
+                      </div>
+                    </motion.div>
+                  </div>
+                </motion.div>
               </div>
-            );
-          })}
+            </div>
+            {/* END OF 3D ORBITAL WHEEL */}
+
+          </div>
+
+          {/* FINAL CTA MODULE */}
+          <div className="mt-32 w-full bg-dark rounded-sm p-12 md:p-24 flex flex-col items-center justify-center text-center">
+            <p className="font-mono text-[#D4A84B]/80 uppercase tracking-[0.2em] text-sm mb-6">
+              / READY?
+            </p>
+            
+            <h2 className="font-serif text-6xl md:text-8xl text-white mb-12">
+              Let's <span className="italic text-[#D4A84B]">Talk.</span>
+            </h2>
+            
+            <div className="mb-16">
+              <CTAButton theme="dark" onClick={() => onNavigate('contact')}>
+                BOOK A CALL
+              </CTAButton>
+            </div>
+            
+            <div className="flex items-center justify-center gap-3">
+              <div className="w-2 h-2 rounded-full bg-[#D4A84B] animate-pulse"></div>
+              <p className="font-mono text-[10px] uppercase tracking-widest text-white/50">
+                NOW ACCEPTING PROJECTS
+              </p>
+            </div>
+          </div>
         </div>
       </section>
-
-      <FAQSection
-        faqs={pillarFAQs}
-        accentColor={colors.goldOnCream} 
-        title="Questions about websites?"
-        subtitle="Common questions about websites and e-commerce."
-        onNavigate={onNavigate}
-      />
-    </m.div>
+    </motion.div>
   );
 };
 
