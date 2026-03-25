@@ -7,8 +7,8 @@ export const pillar1Copy = {
   },
   gap: {
     eyebrow: '/ WHAT MOST PEOPLE MISS',
-    headline: 'Two types of websites cost you money',
-    sub: 'The first one is obvious. The second one is not.',
+    headline: 'Your website is either hurting your business or not helping it',
+    sub: "Both cost you money. Most owners don't realise they have one of these problems until someone points it out.",
     points: [
       {
         label: 'DIAGNOSTIC_ERR_01',
@@ -26,7 +26,7 @@ export const pillar1Copy = {
   },
   solution: {
     eyebrow: '/ HOW WE BUILD IT',
-    headline: 'Fast to launch, built to last',
+    headline: 'A website built the right way',
     sub: 'Building a website that looks good is the easy part now. We go further and make it work.',
     points: [
       {

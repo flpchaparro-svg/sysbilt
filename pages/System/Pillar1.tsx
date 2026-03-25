@@ -4,6 +4,9 @@ import CTAButton from '../../components/CTAButton';
 import BackButton from '../../components/BackButton';
 import PillarVisual_Catchment from '../../components/Pillar1/PillarVisual_Catchment';
 import { pillar1Copy } from '../../constants/pillar1Copy';
+import FAQSection from '../../components/FAQSection';
+import { getPillarFAQs } from '../../constants/faqData';
+import { colors } from '../../constants/theme';
 
 interface Pillar1Props {
   onNavigate: (view: string, sectionId?: string) => void;
@@ -236,22 +239,20 @@ const SolutionCard: React.FC<SolutionCardProps> = ({ point, index }) => {
 
         {/* === FRONT OF CARD === */}
         <div 
-          className="relative bg-white border border-black/10 p-8 flex flex-col justify-start h-full min-h-[400px] md:min-h-[420px]"
+          className="relative bg-white border border-black/10 p-8 md:p-10 flex flex-col justify-start h-full min-h-[400px] md:min-h-[420px]"
           style={{ backfaceVisibility: "hidden" }}
         >
-          <FunnelSVG 
-            className="w-12 h-12 absolute top-6 right-6 text-[#D32F2F] opacity-40" 
-            animateProps={{
-              animate: { rotate: 360 },
-              transition: { duration: 20, repeat: Infinity, ease: "linear" }
-            }}
-          />
+          <div className="mb-6 pb-4 border-b border-dark/10">
+            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-red-text font-bold">
+              0{index + 1}
+            </span>
+          </div>
           
-          <div className="relative z-10 mt-12 md:mt-16">
-            <h3 className="font-serif text-2xl md:text-3xl text-[#D32F2F] mb-4 leading-tight pr-12">
+          <div className="relative z-10">
+            <h3 className="font-serif text-2xl md:text-3xl text-dark mb-4 leading-tight">
               {point.title}
             </h3>
-            <p className="font-sans text-base md:text-lg text-dark/80 leading-relaxed text-justify">
+            <p className="font-sans text-base md:text-lg text-dark/70 leading-relaxed text-left">
               {point.desc}
             </p>
           </div>
@@ -263,6 +264,7 @@ const SolutionCard: React.FC<SolutionCardProps> = ({ point, index }) => {
 
 const Pillar1: React.FC<Pillar1Props> = ({ onNavigate }) => {
   const [activeNode, setActiveNode] = useState<number | null>(null);
+  const pillarFAQs = getPillarFAQs('pillar1');
   
   const { hero, gap, solution, engine } = pillar1Copy;
 
@@ -296,21 +298,21 @@ const Pillar1: React.FC<Pillar1Props> = ({ onNavigate }) => {
     >
       <section className="relative min-h-[700px] h-[100dvh] w-full flex flex-col overflow-hidden">
         <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 w-full h-full flex flex-col relative z-10">
-          <div className="flex justify-between items-center mb-4 pt-24 relative z-20">
+          <div className="flex justify-between items-center mb-8 md:mb-4 pt-24 relative z-20">
             <BackButton onClick={() => onNavigate('system')} label="Return to The System" />
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 lg:gap-20 flex-1 content-center items-center">
             <div className="flex flex-col items-start max-w-3xl">
-              <h1 className="font-serif text-[2.75rem] md:text-[3.5rem] lg:text-[4.75rem] xl:text-[5.5rem] leading-[1.1] lg:leading-[0.9] tracking-tighter text-dark mb-6 md:mb-10">
+              <h1 className="font-serif text-[2.75rem] md:text-[3.5rem] lg:text-[4.75rem] xl:text-[5.5rem] leading-[1.1] lg:leading-[0.9] tracking-tighter text-dark mb-8 md:mb-10">
                 A website that works <span className="italic font-serif text-red-text drop-shadow-[0_0_20px_rgba(226,30,63,0.2)]">as hard as you do</span>
               </h1>
 
-              <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/70 max-w-2xl border-l-2 border-red-solid pl-6 mb-8">
+              <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/70 max-w-2xl border-l-2 border-red-solid pl-6 mb-10 md:mb-8">
                 {hero.sub}
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-4 sm:items-center sm:gap-8 items-start">
+              <div className="flex flex-col sm:flex-row gap-4 sm:items-center sm:gap-8 items-start mt-2">
                 <CTAButton theme="light" onClick={() => onNavigate('contact')}>
                   {hero.ctaPrimary}
                 </CTAButton>
@@ -346,9 +348,9 @@ const Pillar1: React.FC<Pillar1Props> = ({ onNavigate }) => {
               </span>
             </div>
             <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-dark leading-[0.95] tracking-tighter mb-6 max-w-4xl drop-shadow-sm">
-              {gap.headline}
+              Your website is either hurting your business or <span className="italic font-serif text-red-text drop-shadow-[0_0_20px_rgba(226,30,63,0.2)]">not helping it</span>
             </h2>
-            <p className="font-sans text-lg md:text-xl text-dark/70 leading-relaxed max-w-2xl">
+            <p className="font-sans text-lg md:text-xl text-dark/70 leading-relaxed max-w-2xl border-l-2 border-red-solid pl-6">
               {gap.sub}
             </p>
           </div>
@@ -368,13 +370,13 @@ const Pillar1: React.FC<Pillar1Props> = ({ onNavigate }) => {
         viewport={{ once: true, margin: "-100px" }}
       >
         <motion.div className="mb-16 max-w-3xl" variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}>
-          <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-[#D32F2F] mb-4 block">
+          <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-red-text mb-4 block">
             {solution.eyebrow}
           </span>
           <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-dark leading-[0.95] tracking-tighter mb-6">
-            {solution.headline}
+            A website built <span className="italic font-serif text-red-text drop-shadow-[0_0_20px_rgba(226,30,63,0.2)]">the right way</span>
           </h2>
-          <div className="font-sans text-lg md:text-xl text-dark/70 leading-relaxed max-w-3xl space-y-4 border-l-2 border-red-solid pl-6">
+          <div className="font-sans text-lg md:text-xl text-dark/70 leading-relaxed max-w-3xl space-y-4">
             <p>{solution.sub}</p>
           </div>
         </motion.div>
@@ -392,13 +394,13 @@ const Pillar1: React.FC<Pillar1Props> = ({ onNavigate }) => {
       <section id="engine" className="w-full px-6 md:px-12 lg:px-20 pb-32 max-w-[1400px] mx-auto border-t border-dark/10">
         <div className="pt-16 border-t border-dark/10">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-red-text mb-4 block">
+            <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-red-text mb-6 md:mb-4 block">
               {engine.eyebrow}
             </span>
-            <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-dark leading-[0.95] tracking-tighter mb-6">
-              {engine.headline}
+            <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-dark leading-[0.95] tracking-tighter mb-8 md:mb-6">
+              A website that talks to the rest of <span className="italic font-serif text-red-text drop-shadow-[0_0_20px_rgba(226,30,63,0.2)]">your business</span>
             </h2>
-            <div className="font-sans text-lg md:text-xl text-dark/70 leading-relaxed space-y-4">
+            <div className="font-sans text-lg md:text-xl text-dark/70 leading-relaxed space-y-4 mt-2">
               <p>{engine.sub}</p>
             </div>
           </div>
@@ -417,7 +419,7 @@ const Pillar1: React.FC<Pillar1Props> = ({ onNavigate }) => {
 
             {/* THE NEW 3D ORBITAL WHEEL */}
             <div 
-              className="relative aspect-square max-w-md mx-auto w-full flex items-center justify-center bg-transparent scale-[0.65] sm:scale-100 origin-center mt-8 lg:mt-0"
+              className="relative aspect-square max-w-[320px] sm:max-w-md mx-auto w-full flex items-center justify-center bg-transparent scale-[0.85] sm:scale-100 origin-center -mt-4 sm:mt-8 lg:mt-0 -mb-8 sm:mb-0"
               style={{ perspective: "1200px" }}
             >
               {/* Tilted 3D Scene */}
@@ -519,6 +521,14 @@ const Pillar1: React.FC<Pillar1Props> = ({ onNavigate }) => {
           </div>
         </div>
       </section>
+
+      <FAQSection
+        faqs={pillarFAQs}
+        accentColor={colors.goldOnCream}
+        title="Questions about websites?"
+        subtitle="Common questions about how we build and deliver your site."
+        onNavigate={onNavigate}
+      />
     </motion.div>
   );
 };
