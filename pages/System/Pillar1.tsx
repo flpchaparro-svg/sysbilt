@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, useAnimationFrame, useMotionValue, useTransform, useScroll } from 'framer-motion';
 import CTAButton from '../../components/CTAButton';
 import BackButton from '../../components/BackButton';
@@ -61,16 +61,23 @@ const FunnelSVG = ({ className, animateProps }: { className: string, animateProp
   </motion.svg>
 );
 
-// This ensures the cards are ALWAYS visible (opacity 1) and just staggers the flip
 const containerVariants = {
-  hidden: { opacity: 1 },
+  hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 1.5 } // Waits 1.5 seconds between each card flipping
+    transition: { staggerChildren: 0.3 }
   }
 };
 
-const AnimatedCard1: React.FC<{ data: any }> = ({ data }) => {
+const flipVariants = {
+  hidden: { rotateY: 180 },
+  visible: { 
+    rotateY: 0, 
+    transition: { duration: 1.2, ease: "linear" } 
+  }
+};
+
+const AnimatedCard1 = ({ data }: { data: any }) => {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -111,7 +118,7 @@ const AnimatedCard1: React.FC<{ data: any }> = ({ data }) => {
   );
 };
 
-const AnimatedCard2: React.FC<{ data: any }> = ({ data }) => {
+const AnimatedCard2 = ({ data }: { data: any }) => {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -169,18 +176,21 @@ const SolutionCard: React.FC<SolutionCardProps> = ({ point, index }) => {
   const mobileX = useTransform(scrollYProgress, [0, 1], [index % 2 === 0 ? -100 : 100, 0]);
   const mobileOpacity = useTransform(scrollYProgress, [0, 1], [0, 1]);
   
-  React.useEffect(() => {
+  useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // EXACTLY AS IT WAS IN YOUR GOOGLE AI STUDIO CODE. No opacity changes. No Y translates.
   const desktopVariants = {
     hidden: { rotateY: 180 },
     visible: { 
       rotateY: 0, 
-      transition: { duration: 1.5, ease: "linear" } 
+      transition: { 
+        duration: 1.2, 
+        ease: "linear",
+        delay: index === 0 ? 0.2 : 0.2 + (index * 1.2)
+      } 
     }
   };
 
@@ -188,6 +198,9 @@ const SolutionCard: React.FC<SolutionCardProps> = ({ point, index }) => {
     <motion.div 
       ref={ref}
       variants={isMobile ? undefined : desktopVariants}
+      initial={isMobile ? undefined : "hidden"}
+      whileInView={isMobile ? undefined : "visible"}
+      viewport={{ once: true, margin: "-100px" }}
       style={{ 
         transformStyle: "preserve-3d",
         ...(isMobile ? { x: mobileX, opacity: mobileOpacity } : {})
@@ -290,7 +303,7 @@ const Pillar1: React.FC<Pillar1Props> = ({ onNavigate }) => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 lg:gap-20 flex-1 content-center items-center">
             <div className="flex flex-col items-start max-w-3xl">
               <h1 className="font-serif text-[2.75rem] md:text-[3.5rem] lg:text-[4.75rem] xl:text-[5.5rem] leading-[1.1] lg:leading-[0.9] tracking-tighter text-dark mb-6 md:mb-10">
-                A website that works <span className="italic font-serif text-red-text drop-shadow-[0_0_20px_rgba(226,30,63,0.2)]">as hard as you do.</span>
+                A website that works <span className="italic font-serif text-red-text drop-shadow-[0_0_20px_rgba(226,30,63,0.2)]">as hard as you do</span>
               </h1>
 
               <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/70 max-w-2xl border-l-2 border-red-solid pl-6 mb-8">
@@ -304,8 +317,9 @@ const Pillar1: React.FC<Pillar1Props> = ({ onNavigate }) => {
               </div>
             </div>
 
-            <div className="w-full h-auto lg:h-full flex items-center justify-center lg:justify-end">
-              <div className="relative w-full max-w-[450px] h-[220px] md:h-[280px] lg:h-[450px] opacity-90 flex items-center justify-center">
+            {/* ONLY RENDERED ON DESKTOP - Hidden on mobile and tablet */}
+            <div className="hidden lg:flex w-full h-full items-center justify-end">
+              <div className="relative w-full max-w-[450px] h-[450px] opacity-90 flex items-center justify-center">
                 <PillarVisual_Catchment />
               </div>
             </div>
@@ -360,7 +374,7 @@ const Pillar1: React.FC<Pillar1Props> = ({ onNavigate }) => {
           <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-dark leading-[0.95] tracking-tighter mb-6">
             {solution.headline}
           </h2>
-          <div className="font-sans text-lg md:text-xl text-dark/70 leading-relaxed max-w-3xl space-y-4">
+          <div className="font-sans text-lg md:text-xl text-dark/70 leading-relaxed max-w-3xl space-y-4 border-l-2 border-red-solid pl-6">
             <p>{solution.sub}</p>
           </div>
         </motion.div>
@@ -403,7 +417,7 @@ const Pillar1: React.FC<Pillar1Props> = ({ onNavigate }) => {
 
             {/* THE NEW 3D ORBITAL WHEEL */}
             <div 
-              className="relative aspect-square max-w-md mx-auto w-full flex items-center justify-center bg-transparent"
+              className="relative aspect-square max-w-md mx-auto w-full flex items-center justify-center bg-transparent scale-[0.65] sm:scale-100 origin-center mt-8 lg:mt-0"
               style={{ perspective: "1200px" }}
             >
               {/* Tilted 3D Scene */}
