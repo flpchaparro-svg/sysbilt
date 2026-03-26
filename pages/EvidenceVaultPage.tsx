@@ -143,7 +143,7 @@ const EvidenceVaultPage: React.FC<EvidenceVaultPageProps> = ({ onBack }) => {
         </div>
       </div>
 
-      <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 relative z-10 pt-0 pb-32">
+      <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 relative z-10 pt-0 pb-24">
         
         {/* NAVIGATION */}
         <div className="flex justify-between items-center mb-4 pt-24 relative z-20">
@@ -245,7 +245,7 @@ const EvidenceVaultPage: React.FC<EvidenceVaultPageProps> = ({ onBack }) => {
         </section>
 
         {/* VERIFIED PARTNERS */}
-        <section className="mb-32">
+        <section className="mb-20 md:mb-24">
           {/* FIX: Bumped to text-[10px] */}
           <span className="font-mono text-[10px] text-black/60 tracking-[0.5em] uppercase mb-12 block text-center">Engineered With The Best</span>
           <div className="flex flex-wrap justify-center md:justify-between items-center gap-12 grayscale opacity-30 py-12 border-y border-black/5">
@@ -256,7 +256,7 @@ const EvidenceVaultPage: React.FC<EvidenceVaultPageProps> = ({ onBack }) => {
         </section>
 
         {/* CALL TO ACTION */}
-        <section className="py-32 flex flex-col items-center text-center mb-24">
+        <section className="py-20 md:py-24 flex flex-col items-center text-center mb-20 md:mb-24">
           <h2 className="font-serif text-5xl md:text-7xl mb-12 italic max-w-4xl leading-tight">Your company is the next <span className="text-gold-on-cream">evidence log.</span></h2>
           
           <CTAButton theme="light" onClick={() => window.open("https://meetings-ap1.hubspot.com/felipe", "_blank")}>

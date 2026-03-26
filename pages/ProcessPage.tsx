@@ -46,7 +46,7 @@ const ProcessPage: React.FC<ProcessPageProps> = ({ onBack, onNavigate }) => {
         </div>
 
         {/* HERO SECTION */}
-        <div className="mb-24 lg:mb-32 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative">
+        <div className="mb-20 lg:mb-24 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative">
           <Section className="text-center lg:text-left flex flex-col items-center lg:items-start">
             <div className="flex items-center gap-2 md:gap-4 mb-6 md:mb-10 overflow-hidden justify-center lg:justify-start">
               <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark">/</span>
@@ -102,8 +102,8 @@ const ProcessPage: React.FC<ProcessPageProps> = ({ onBack, onNavigate }) => {
         </div>
 
         {/* SECTION: THE EXECUTION PATH */}
-        <div className="mb-32">
-          <Section className="mb-20 text-center lg:text-left">
+        <div className="mb-20 md:mb-24">
+          <Section className="mb-16 text-center lg:text-left">
             <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-gold-muted mb-6 block">
               / THE 4 PHASES
             </span>

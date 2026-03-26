@@ -87,10 +87,10 @@ const SystemPage: React.FC<SystemPageProps> = ({ onBack, onNavigate }) => {
                 <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark">THE SYSTEM</span>
               </m.div>
               <m.h1 variants={heroItem} className="font-serif text-5xl md:text-6xl lg:text-7xl xl:text-8xl leading-[1.1] lg:leading-[0.9] tracking-tighter text-dark mb-6 md:mb-10 break-words">
-                How It All <span className="italic font-serif text-gold-on-cream">Connects.</span>
+                You built the business, now the business <span className="italic font-serif text-gold-on-cream">runs you</span>
               </m.h1>
               <m.p variants={heroItem} className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/70 max-w-2xl border-l-2 border-gold pl-6 mb-8">
-                Every service works alone. But they're built to connect. Depending on where your business is right now, you might need one piece, one group, or the full system.
+                Every decision waits on you. Leads slip through because nobody followed up. Your team asks you the same questions every day. We build a 7-part system that fixes the plumbing so you can focus on the work that actually grows revenue.
               </m.p>
             </div>
             <m.div variants={heroItem} className="w-full h-auto lg:h-full flex items-center justify-center lg:justify-end -mt-16 md:mt-0">
@@ -106,13 +106,13 @@ const SystemPage: React.FC<SystemPageProps> = ({ onBack, onNavigate }) => {
       </section>
 
       {/* 2. SCROLLYTELLING INTRO */}
-      <section className="w-full bg-cream py-24 md:py-32 px-6 md:px-12 lg:px-20 border-t border-dark/10">
+      <section className="w-full bg-cream py-16 md:py-20 px-6 md:px-12 lg:px-20 border-t border-dark/10">
         <div className="max-w-[1400px] mx-auto text-center">
           <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-gold-muted mb-6 block">
-            / THE 3 SYSTEMS
+            / THE 3 STAGES
           </span>
           <h2 className="font-serif text-4xl md:text-5xl lg:text-7xl leading-[0.95] tracking-tighter text-dark mb-6">
-            Where Are You <span className="italic font-serif text-gold-on-cream">Right Now?</span>
+            Where are you <span className="italic font-serif text-gold-on-cream">right now</span>
           </h2>
           <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/70 max-w-2xl mx-auto">
             Most businesses fit into one of three stages. Find yours.
@@ -122,13 +122,13 @@ const SystemPage: React.FC<SystemPageProps> = ({ onBack, onNavigate }) => {
 
       {/* 3. SCROLLYTELLING (Lazy Loaded) */}
       <Suspense fallback={<div className="h-[50vh] bg-cream" />}>
-        <section className="relative z-0 mb-32">
+        <section className="relative z-0 mb-16 md:mb-20">
            <SystemArchitecture />
         </section>
       </Suspense>
 
       {/* 3. GRID BLUEPRINT (Isolated State) */}
-      <section className="w-full bg-cream pb-32 relative z-10">
+      <section className="w-full bg-cream pb-20 md:pb-24 relative z-10">
         <SystemGrid onNavigate={onNavigate} />
       </section>
 

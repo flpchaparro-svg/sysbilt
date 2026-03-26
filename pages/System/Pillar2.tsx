@@ -262,7 +262,7 @@ const Pillar2: React.FC<Pillar2Props> = ({ onNavigate }) => {
 
       {/* SOLUTION */}
       <motion.section
-        className="w-full px-6 md:px-12 lg:px-20 pt-24 pb-32 max-w-[1400px] mx-auto border-t border-dark/10 overflow-hidden"
+        className="w-full px-6 md:px-12 lg:px-20 pt-20 pb-24 max-w-[1400px] mx-auto border-t border-dark/10 overflow-hidden"
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
@@ -290,7 +290,7 @@ const Pillar2: React.FC<Pillar2Props> = ({ onNavigate }) => {
       </motion.section>
 
       {/* ENGINE */}
-      <section id="engine" className="w-full px-6 md:px-12 lg:px-20 pb-32 max-w-[1400px] mx-auto border-t border-dark/10">
+      <section id="engine" className="w-full px-6 md:px-12 lg:px-20 pb-24 max-w-[1400px] mx-auto border-t border-dark/10">
         <div className="pt-16 border-t border-dark/10">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-red-text mb-6 md:mb-4 block">
@@ -388,7 +388,7 @@ const Pillar2: React.FC<Pillar2Props> = ({ onNavigate }) => {
           </div>
 
           {/* FINAL CTA MODULE */}
-          <div className="mt-32 w-full bg-dark rounded-sm p-12 md:p-24 flex flex-col items-center justify-center text-center">
+          <div className="mt-20 md:mt-24 w-full bg-dark rounded-sm p-12 md:p-24 flex flex-col items-center justify-center text-center">
             <p className="font-mono text-[#D4A84B]/80 uppercase tracking-[0.2em] text-sm mb-6">
               / READY?
             </p>

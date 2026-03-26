@@ -100,7 +100,7 @@ const ArchitectPage: React.FC<ArchitectPageProps> = ({ onBack, onNavigate }) => 
            </AnimatePresence>
         </Section>
         
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 mb-32">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 mb-20 md:mb-24">
            <div className="lg:col-span-5 relative order-2 lg:order-1">
               <div className="sticky top-32">
                 <AnimatePresence mode="wait">
@@ -185,7 +185,7 @@ const ArchitectPage: React.FC<ArchitectPageProps> = ({ onBack, onNavigate }) => 
         </div>
         
         {/* FOOTER CTA */}
-        <Section className="border-t border-black/10 py-32 flex flex-col items-center text-center">
+        <Section className="border-t border-black/10 py-20 md:py-24 flex flex-col items-center text-center">
            <h2 className="font-serif text-4xl md:text-7xl tracking-tighter mb-12">
              Ready to build your <span className="italic font-serif text-gold-on-cream">system?</span>
            </h2>

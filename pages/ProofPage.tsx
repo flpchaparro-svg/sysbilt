@@ -81,7 +81,7 @@ const ProofPage: React.FC<ProofPageProps> = ({ onBack, onNavigate }) => {
       <div className="fixed inset-0 pointer-events-none opacity-[0.03]" 
            style={{ backgroundImage: 'radial-gradient(var(--ink) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
 
-      <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 w-full flex-grow pb-32 relative z-10">
+      <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 w-full flex-grow pb-24 relative z-10">
         
         {/* NAVIGATION */}
         <div className="flex justify-between items-center mb-12 md:mb-20 pt-24 relative z-20">
@@ -89,7 +89,7 @@ const ProofPage: React.FC<ProofPageProps> = ({ onBack, onNavigate }) => {
         </div>
 
         {/* HERO SECTION */}
-        <Section className="mb-20 md:mb-32 relative">
+        <Section className="mb-16 md:mb-24 relative">
           <div className="absolute top-0 right-0 w-64 h-64 bg-gold/5 rounded-full blur-3xl -z-10" />
           <div className="flex items-center gap-2 md:gap-4 mb-6 md:mb-10 overflow-hidden justify-start">
             <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark">/</span>
@@ -105,7 +105,7 @@ const ProofPage: React.FC<ProofPageProps> = ({ onBack, onNavigate }) => {
         </Section>
 
         {/* THE BRIEF */}
-        <Section className="mb-20 md:mb-32">
+        <Section className="mb-16 md:mb-24">
           <div className="bg-white border border-dark/5 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] p-0 overflow-hidden">
             <div className="bg-dark text-white px-8 py-4 flex flex-wrap justify-between items-center gap-4">
               <span className="font-mono text-xs text-gold-on-dark uppercase tracking-[0.2em] font-bold">
@@ -148,7 +148,7 @@ const ProofPage: React.FC<ProofPageProps> = ({ onBack, onNavigate }) => {
 
         {/* THE PROBLEM */}
         {caseStudy.problemItems && caseStudy.problemItems.length > 0 && (
-          <Section className="mb-20 md:mb-32">
+          <Section className="mb-16 md:mb-24">
             <div className="mb-12">
               <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-red-text mb-6 block">/ THE PROBLEM</span>
               <h2 className="font-serif text-4xl md:text-5xl lg:text-7xl leading-[0.95] tracking-tighter text-dark mb-8">
@@ -185,7 +185,7 @@ const ProofPage: React.FC<ProofPageProps> = ({ onBack, onNavigate }) => {
 
         {/* THE SOLUTION */}
         {caseStudy.solutionItems && caseStudy.solutionItems.length > 0 && (
-          <Section className="mb-20 md:mb-32">
+          <Section className="mb-16 md:mb-24">
             <div className="mb-12">
               <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-gold-muted mb-6 block">/ THE SOLUTION</span>
               <h2 className="font-serif text-4xl md:text-5xl lg:text-7xl leading-[0.95] tracking-tighter text-dark mb-8">
@@ -220,7 +220,7 @@ const ProofPage: React.FC<ProofPageProps> = ({ onBack, onNavigate }) => {
 
         {/* THE EVIDENCE */}
         {caseStudy.evidenceMetrics && caseStudy.evidenceMetrics.length > 0 && (
-          <Section className="mb-20 md:mb-32">
+          <Section className="mb-16 md:mb-24">
             <div className="mb-12">
               <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-gold-muted mb-6 block">/ THE RESULTS</span>
               <h2 className="font-serif text-4xl md:text-5xl lg:text-7xl leading-[0.95] tracking-tighter text-dark mb-8">
@@ -258,14 +258,14 @@ const ProofPage: React.FC<ProofPageProps> = ({ onBack, onNavigate }) => {
 
         {/* BUILD LOG */}
         {caseStudy.terminalLines && caseStudy.terminalLines.length > 0 && (
-          <Section className="mb-20 md:mb-32">
+          <Section className="mb-16 md:mb-24">
             <TerminalLog lines={caseStudy.terminalLines} />
           </Section>
         )}
 
         {/* DYNAMIC VISUAL EVIDENCE SECTION */}
         {(caseStudy.beforeImage && caseStudy.afterImage) || (caseStudy.gallery && caseStudy.gallery.length > 0) ? (
-          <Section className="mb-20 md:mb-32">
+          <Section className="mb-16 md:mb-24">
              <div className="mb-12">
               <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-gold-muted mb-6 block">/ VISUAL EVIDENCE</span>
               <h2 className="font-serif text-4xl md:text-5xl lg:text-7xl leading-[0.95] tracking-tighter text-dark mb-8">

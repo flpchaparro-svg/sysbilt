@@ -166,7 +166,7 @@ const Pillar7: React.FC<Pillar7Props> = ({ onNavigate }) => {
       </section>
 
       {/* SOLUTION */}
-      <motion.section className="w-full px-6 md:px-12 lg:px-20 pt-24 pb-32 max-w-[1400px] mx-auto border-t border-dark/10 overflow-hidden" initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }}>
+      <motion.section className="w-full px-6 md:px-12 lg:px-20 pt-20 pb-24 max-w-[1400px] mx-auto border-t border-dark/10 overflow-hidden" initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }}>
         <motion.div className="mb-16 max-w-3xl" variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}>
           <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark mb-4 block">{solution.eyebrow}</span>
           <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-dark leading-[0.95] tracking-tighter mb-6">
@@ -184,7 +184,7 @@ const Pillar7: React.FC<Pillar7Props> = ({ onNavigate }) => {
       </motion.section>
 
       {/* ENGINE */}
-      <section id="engine" className="w-full px-6 md:px-12 lg:px-20 pb-32 max-w-[1400px] mx-auto border-t border-dark/10">
+      <section id="engine" className="w-full px-6 md:px-12 lg:px-20 pb-24 max-w-[1400px] mx-auto border-t border-dark/10">
         <div className="pt-16 border-t border-dark/10">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark mb-6 md:mb-4 block">{engine.eyebrow}</span>
@@ -248,7 +248,7 @@ const Pillar7: React.FC<Pillar7Props> = ({ onNavigate }) => {
           </div>
 
           {/* FINAL CTA */}
-          <div className="mt-32 w-full bg-dark rounded-sm p-12 md:p-24 flex flex-col items-center justify-center text-center">
+          <div className="mt-20 md:mt-24 w-full bg-dark rounded-sm p-12 md:p-24 flex flex-col items-center justify-center text-center">
             <p className="font-mono text-white/40 uppercase tracking-[0.2em] text-sm mb-6">/ READY?</p>
             <h2 className="font-serif text-6xl md:text-8xl text-white mb-12">Let's <span className="italic text-white/80">Talk.</span></h2>
             <div className="mb-16">

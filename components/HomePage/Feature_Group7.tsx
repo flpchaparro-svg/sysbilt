@@ -92,7 +92,7 @@ const Feature_Group7: React.FC = () => {
   }, [isModalOpen]);
 
   return (
-    <section className="w-full bg-cream py-24 md:py-32 border-y border-black/5 relative z-20">
+    <section className="w-full bg-cream py-20 md:py-24 border-y border-black/5 relative z-20">
       <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20">
         
         {/* --- SECTION HEADER --- */}

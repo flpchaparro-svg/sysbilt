@@ -19,106 +19,106 @@ const SYSTEM_PILLAR_VIEW_DATA: Record<string, {
   pillar1: {
     number: '01',
     icon: Globe,
-    displayTitle: 'THE FACE',
+    displayTitle: 'THE FRONT DOOR',
     subtitle: 'Websites & E-commerce',
     subtitleMobile: 'Websites',
     categoryHex: colors.redSolid,
     categoryLabel: 'GET CLIENTS',
-    body: 'Your website is the front door.',
+    body: 'We build your website so it catches leads and feeds them straight into your system',
     systemPurpose: 'Stop losing leads.',
     subServices: [
-      { title: 'How it connects', description: 'Your website is the front door. When someone fills out a form, that data goes straight to your CRM. No inbox. No copy-pasting. The lead exists in your system before they\'ve closed the browser.' },
-      { title: 'What this unlocks', description: 'Your CRM knows where they came from. Your automation can respond instantly. Your dashboard can track which pages actually bring in money.' }
+      { title: 'How it connects', description: 'When someone fills out a form, that data goes straight to your CRM with no inbox and no copy-pasting. The lead exists in your system before they\'ve closed the browser.' },
+      { title: 'What this unlocks', description: 'Your CRM knows where they came from, your automation can respond instantly, and your dashboard can track which pages actually bring in money.' }
     ]
   },
   pillar2: {
     number: '02',
     icon: Database,
-    displayTitle: 'THE BRAIN',
+    displayTitle: 'THE MEMORY',
     subtitle: 'CRM & Lead Tracking',
     subtitleMobile: 'CRM',
     categoryHex: colors.redSolid,
     categoryLabel: 'GET CLIENTS',
-    body: 'Your CRM is the memory.',
+    body: 'Every lead, every deal, and every follow-up tracked in one place',
     systemPurpose: 'Stop losing leads.',
     subServices: [
-      { title: 'How it connects', description: 'Your CRM is the memory. Everything your website catches lands here. When you move a deal forward, automation knows. When you win a job, invoices get sent. When something stalls, you get reminded.' },
+      { title: 'How it connects', description: 'Everything your website catches lands here. When you move a deal forward automation knows, when you win a job invoices get sent, and when something stalls you get reminded.' },
       { title: 'What this unlocks', description: 'Your AI assistant can read the CRM before a call and know who\'s ringing. Your dashboard can show pipeline and forecast. Nothing lives in your head anymore.' }
     ]
   },
   pillar3: {
     number: '03',
     icon: Zap,
-    displayTitle: 'THE MUSCLE',
+    displayTitle: 'THE ENGINE',
     subtitle: 'Automation',
     subtitleMobile: 'Automation',
     categoryHex: colors.redSolid,
     categoryLabel: 'GET CLIENTS',
-    body: 'Automation is the speed.',
+    body: 'Data moves between your tools without anyone doing it manually',
     systemPurpose: 'Stop losing leads.',
     subServices: [
-      { title: 'How it connects', description: 'Automation is the speed. When a lead comes in, it replies. When a deal closes, it invoices. When someone forgets to follow up, it chases. It watches your CRM and acts without you lifting a finger.' },
-      { title: 'What this unlocks', description: 'Your website and CRM become a machine that runs while you sleep. You stop doing admin. Your team stops forgetting things.' }
+      { title: 'How it connects', description: 'When a lead comes in it replies, when a deal closes it invoices, and when someone forgets to follow up it chases. It watches your CRM and acts without you lifting a finger.' },
+      { title: 'What this unlocks', description: 'Your website and CRM become a machine that runs while you sleep. You stop doing admin and your team stops forgetting things.' }
     ]
   },
   pillar4: {
     number: '04',
     icon: Bot,
-    displayTitle: 'THE VOICE',
+    displayTitle: 'THE ASSISTANT',
     subtitle: 'AI Assistants',
     subtitleMobile: 'AI Bots',
     categoryHex: colors.gold,
     categoryLabel: 'SCALE FASTER',
-    body: 'AI handles overflow.',
+    body: 'AI that answers your phone, qualifies leads, and handles repetitive questions',
     systemPurpose: 'Do more without hiring more.',
     subServices: [
-      { title: 'How it connects', description: 'AI handles overflow. When your content brings traffic and your website captures leads, AI picks up the phone. It reads your CRM to know who\'s calling. After the call, it updates the record. You never touched it.' },
-      { title: 'What this unlocks', description: 'You double your lead volume without hiring. Your CRM stays updated without your team doing data entry. Nights and weekends are covered.' }
+      { title: 'How it connects', description: 'When your website captures leads, AI picks up the phone, reads your CRM to know who\'s calling, and updates the record after the call without you touching it.' },
+      { title: 'What this unlocks', description: 'You double your lead volume without hiring. Your CRM stays updated without your team doing data entry and nights and weekends are covered.' }
     ]
   },
   pillar5: {
     number: '05',
     icon: Video,
-    displayTitle: 'THE PRESENCE',
+    displayTitle: 'THE AMPLIFIER',
     subtitle: 'Content Systems',
     subtitleMobile: 'Content',
     categoryHex: colors.gold,
     categoryLabel: 'SCALE FASTER',
-    body: 'Content fills the top of the funnel.',
+    body: 'One conversation turned into a month of content across every platform',
     systemPurpose: 'Do more without hiring more.',
     subServices: [
-      { title: 'How it connects', description: 'Content fills the top of the funnel. More content means more traffic. More traffic means more leads hitting your website. More leads means more work for your CRM, automation, and AI to handle.' },
-      { title: 'What this unlocks', description: 'You stay visible without posting every day. Your website has something to catch. The rest of the system has fuel to run on.' }
+      { title: 'How it connects', description: 'More content means more traffic, more traffic means more leads hitting your website, and more leads means more work for your CRM, automation, and AI to handle.' },
+      { title: 'What this unlocks', description: 'You stay visible without posting every day. Your website has something to catch and the rest of the system has fuel to run on.' }
     ]
   },
   pillar6: {
     number: '06',
     icon: Users,
-    displayTitle: 'THE SOUL',
+    displayTitle: 'THE COACH',
     subtitle: 'Team Training',
     subtitleMobile: 'Training',
     categoryHex: colors.gold,
     categoryLabel: 'SCALE FASTER',
-    body: 'Training protects everything else.',
+    body: 'Short videos, clear guides, and support until your team actually uses the tools',
     systemPurpose: 'Do more without hiring more.',
     subServices: [
-      { title: 'How it connects', description: 'Training protects everything else. Your CRM only works if your team uses it. Your automation only works if your data is clean. Your AI only works if people trust it. Training makes sure they do.' },
-      { title: 'What this unlocks', description: 'The tools you paid for actually get used. Data stays clean. Your dashboard tells the truth. Nothing becomes expensive shelfware.' }
+      { title: 'How it connects', description: 'Your CRM only works if your team uses it, your automation only works if your data is clean, and your AI only works if people trust it. Training makes sure they do.' },
+      { title: 'What this unlocks', description: 'The tools you paid for actually get used. Data stays clean, your dashboard tells the truth, and nothing becomes expensive shelfware.' }
     ]
   },
   pillar7: {
     number: '07',
     icon: BarChart3,
-    displayTitle: 'THE EYES',
+    displayTitle: 'THE DASHBOARD',
     subtitle: 'Dashboards & Reporting',
     subtitleMobile: 'Dashboards',
     categoryHex: colors.dark,
     categoryLabel: 'SEE CLEARLY',
-    body: 'Your dashboard pulls from everything.',
+    body: 'Revenue, margin, and pipeline on one screen, updated live',
     systemPurpose: 'Know your numbers.',
     subServices: [
-      { title: 'How it connects', description: 'Your dashboard pulls from everything. Website traffic. CRM pipeline. Automation logs. AI call stats. Training adoption. It shows you the whole system on one screen.' },
-      { title: 'What this unlocks', description: 'You see problems before they cost you money. You know which marketing works. You stop guessing and start steering.' }
+      { title: 'How it connects', description: 'Your dashboard pulls from everything. Website traffic, CRM pipeline, automation logs, AI call stats, and training adoption all visible on one screen.' },
+      { title: 'What this unlocks', description: 'You see problems before they cost you money, you know which marketing works, and you stop guessing and start steering.' }
     ]
   }
 };
