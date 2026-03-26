@@ -416,7 +416,7 @@ const Pillar2: React.FC<Pillar2Props> = ({ onNavigate }) => {
         faqs={pillarFAQs}
         accentColor={colors.goldOnCream}
         title={<>Questions about <span className="italic text-gold-on-cream">CRM</span></>}
-        subtitle="Common questions about sales pipelines and lead tracking."
+        subtitle="Common questions about lead tracking, pipelines, and how we set it up"
         onNavigate={onNavigate}
       />
     </motion.div>

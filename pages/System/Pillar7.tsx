@@ -262,7 +262,7 @@ const Pillar7: React.FC<Pillar7Props> = ({ onNavigate }) => {
         </div>
       </section>
 
-      <FAQSection faqs={pillarFAQs} accentColor={colors.goldOnCream} title={<>Questions about <span className="italic text-gold-on-cream">dashboards</span></>} subtitle="Common questions about reporting and business intelligence." onNavigate={onNavigate} />
+      <FAQSection faqs={pillarFAQs} accentColor={colors.goldOnCream} title={<>Questions about <span className="italic text-gold-on-cream">dashboards</span></>} subtitle="Common questions about what we track, where the data comes from, and how it updates" onNavigate={onNavigate} />
     </motion.div>
   );
 };

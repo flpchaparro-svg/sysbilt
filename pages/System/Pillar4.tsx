@@ -441,7 +441,7 @@ const Pillar4: React.FC<Pillar4Props> = ({ onNavigate }) => {
         faqs={pillarFAQs}
         accentColor={colors.goldOnCream}
         title={<>Questions about <span className="italic text-gold-on-cream">AI</span></>}
-        subtitle="Common questions about AI assistants and voice agents."
+        subtitle="Common questions about how AI assistants work, privacy, and what they can do"
         onNavigate={onNavigate}
       />
     </motion.div>

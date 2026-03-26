@@ -253,7 +253,7 @@ const Pillar6: React.FC<Pillar6Props> = ({ onNavigate }) => {
         </div>
       </section>
 
-      <FAQSection faqs={pillarFAQs} accentColor={colors.goldOnCream} title={<>Questions about <span className="italic text-gold-on-cream">training</span></>} subtitle="Common questions about team adoption and onboarding." onNavigate={onNavigate} />
+      <FAQSection faqs={pillarFAQs} accentColor={colors.goldOnCream} title={<>Questions about <span className="italic text-gold-on-cream">training</span></>} subtitle="Common questions about how we get your team to actually use new tools" onNavigate={onNavigate} />
     </motion.div>
   );
 };

@@ -416,7 +416,7 @@ const Pillar3: React.FC<Pillar3Props> = ({ onNavigate }) => {
         faqs={pillarFAQs}
         accentColor={colors.goldOnCream}
         title={<>Questions about <span className="italic text-gold-on-cream">automation</span></>}
-        subtitle="Common questions about workflows and bots."
+        subtitle="Common questions about what we can automate and how it works"
         onNavigate={onNavigate}
       />
     </motion.div>

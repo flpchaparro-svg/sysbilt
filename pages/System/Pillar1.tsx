@@ -446,7 +446,7 @@ const Pillar1: React.FC<Pillar1Props> = ({ onNavigate }) => {
         faqs={pillarFAQs}
         accentColor={colors.goldOnCream}
         title={<>Questions about <span className="italic text-gold-on-cream">websites</span></>}
-        subtitle="Common questions about how we build and deliver your site."
+        subtitle="Common questions about how we build websites and what's included"
         onNavigate={onNavigate}
       />
     </motion.div>

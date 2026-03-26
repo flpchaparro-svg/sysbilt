@@ -262,7 +262,7 @@ const Pillar5: React.FC<Pillar5Props> = ({ onNavigate }) => {
         </div>
       </section>
 
-      <FAQSection faqs={pillarFAQs} accentColor={colors.goldOnCream} title={<>Questions about <span className="italic text-gold-on-cream">content</span></>} subtitle="Common questions about content systems and publishing." onNavigate={onNavigate} />
+      <FAQSection faqs={pillarFAQs} accentColor={colors.goldOnCream} title={<>Questions about <span className="italic text-gold-on-cream">content</span></>} subtitle="Common questions about what we create, how it works, and where it gets published" onNavigate={onNavigate} />
     </motion.div>
   );
 };
