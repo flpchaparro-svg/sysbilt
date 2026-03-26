@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, useAnimationFrame, useMotionValue, useTransform, useScroll } from 'framer-motion';
 import CTAButton from '../../components/CTAButton';
 import BackButton from '../../components/BackButton';
@@ -7,6 +7,7 @@ import { pillar4Copy } from '../../constants/pillar4Copy';
 import FAQSection from '../../components/FAQSection';
 import { getPillarFAQs } from '../../constants/faqData';
 import { colors } from '../../constants/theme';
+import SolutionCardPillar from '../../components/System/SolutionCardPillar';
 
 interface Pillar4Props {
   onNavigate: (view: string, sectionId?: string) => void;
@@ -79,87 +80,6 @@ const AnimatedCardRight = ({ data }: { data: any }) => {
         </p>
       </motion.div>
     </div>
-  );
-};
-
-interface SolutionCardProps {
-  point: any;
-  index: number;
-}
-
-const SolutionCard: React.FC<SolutionCardProps> = ({ point, index }) => {
-  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' ? window.innerWidth < 768 : false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["0 1", "0.5 1"]
-  });
-
-  const mobileX = useTransform(scrollYProgress, [0, 1], [index % 2 === 0 ? -100 : 100, 0]);
-  const mobileOpacity = useTransform(scrollYProgress, [0, 1], [0, 1]);
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  const desktopVariants = {
-    hidden: { rotateY: 90, opacity: 0 },
-    visible: {
-      rotateY: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.8,
-        ease: [0.25, 0.46, 0.45, 0.94],
-        delay: index * 0.15
-      }
-    }
-  };
-
-  return (
-    <motion.div
-      ref={ref}
-      variants={isMobile ? undefined : desktopVariants}
-      initial={isMobile ? undefined : "hidden"}
-      whileInView={isMobile ? undefined : "visible"}
-      viewport={{ once: true, margin: "-100px" }}
-      style={{
-        transformStyle: "preserve-3d",
-        ...(isMobile ? { x: mobileX, opacity: mobileOpacity } : {})
-      }}
-      className="relative w-full h-auto min-h-[400px] md:min-h-[420px] group cursor-pointer"
-    >
-      <div
-        className={`relative w-full h-full transition-all duration-300 bg-white ${
-          isMobile
-            ? "shadow-[8px_8px_0px_0px_#8B6914] -translate-y-2 -translate-x-2"
-            : "group-hover:shadow-[8px_8px_0px_0px_#8B6914] group-hover:-translate-y-2 group-hover:-translate-x-2"
-        }`}
-        style={{ transformStyle: "preserve-3d" }}
-      >
-        <div
-          className="relative bg-white border border-black/10 p-8 md:p-10 flex flex-col justify-start h-full min-h-[400px] md:min-h-[420px]"
-          style={{ backfaceVisibility: "hidden" }}
-        >
-          <div className="mb-6 pb-4 border-b border-dark/10">
-            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-gold-on-cream font-bold">
-              0{index + 1}
-            </span>
-          </div>
-
-          <div className="relative z-10">
-            <h3 className="font-serif text-2xl md:text-3xl text-dark mb-4 leading-tight">
-              {point.title}
-            </h3>
-            <p className="font-sans text-base md:text-lg text-dark/70 leading-relaxed text-left">
-              {point.desc}
-            </p>
-          </div>
-        </div>
-      </div>
-    </motion.div>
   );
 };
 
@@ -283,7 +203,7 @@ const Pillar4: React.FC<Pillar4Props> = ({ onNavigate }) => {
           variants={containerVariants}
         >
           {solution.points.map((point, index) => (
-            <SolutionCard key={index} point={point} index={index} />
+            <SolutionCardPillar key={index} point={point} index={index} phase="scale-faster" />
           ))}
         </motion.div>
       </motion.section>
