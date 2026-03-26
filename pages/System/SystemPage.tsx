@@ -89,8 +89,8 @@ const SystemPage: React.FC<SystemPageProps> = ({ onBack, onNavigate }) => {
                 Every decision waits on you. Leads slip through because nobody followed up. Your team asks you the same questions every day. We build a 7-part system that fixes the plumbing so you can focus on the work that actually grows revenue.
               </m.p>
             </div>
-            <m.div variants={heroItem} className="w-full h-auto lg:h-full flex items-center justify-center lg:justify-end -mt-16 md:mt-0">
-              <div className="w-full max-w-full flex items-center justify-center pb-0 md:pb-24 lg:pb-0">
+            <m.div variants={heroItem} className="w-full h-auto lg:h-full flex items-center justify-center lg:justify-end -mt-8 md:-mt-4 lg:mt-0 pb-16 md:pb-12 lg:pb-0">
+              <div className="w-full max-w-full flex items-center justify-center">
                 <HeroVisual_Suspension />
               </div>
             </m.div>
