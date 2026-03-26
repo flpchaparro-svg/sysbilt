@@ -82,10 +82,6 @@ const SystemPage: React.FC<SystemPageProps> = ({ onBack, onNavigate }) => {
             className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 lg:gap-20 flex-1 content-center items-center"
           >
             <div className="flex flex-col justify-center">
-              <m.div variants={heroItem} className="flex items-center gap-2 md:gap-4 mb-6 md:mb-10 overflow-hidden justify-start">
-                <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark">/</span>
-                <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark">THE SYSTEM</span>
-              </m.div>
               <m.h1 variants={heroItem} className="font-serif text-5xl md:text-6xl lg:text-7xl xl:text-8xl leading-[1.1] lg:leading-[0.9] tracking-tighter text-dark mb-6 md:mb-10 break-words">
                 You built the business, now the business <span className="italic font-serif text-gold-on-cream">runs you</span>
               </m.h1>

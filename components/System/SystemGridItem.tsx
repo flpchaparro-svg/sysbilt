@@ -88,11 +88,11 @@ const GridItem: React.FC<GridItemProps> = ({ pillar, isSelected, selectedId, onT
                 style={{ color: accentColor }}
               />
               <h3 className="font-serif text-2xl md:text-3xl text-dark mb-2 leading-none tracking-tight group-hover:translate-x-1 transition-transform duration-snap">
-                 {pillar.title}
-              </h3>
-              <p className="font-mono text-[9px] md:text-[10px] uppercase tracking-[0.2em] font-bold mb-3 md:mb-4" style={{ color: `${accentColor}80` }}>
                  <span className="md:hidden">{pillar.subtitleMobile || pillar.subtitle}</span>
                  <span className="hidden md:inline">{pillar.subtitle}</span>
+              </h3>
+              <p className="font-mono text-[9px] md:text-[10px] uppercase tracking-[0.2em] font-bold mb-3 md:mb-4" style={{ color: `${accentColor}80` }}>
+                 {pillar.title}
               </p>
               
               <p className="font-sans text-xs md:text-sm text-dark/70 leading-relaxed line-clamp-2 md:line-clamp-none">
