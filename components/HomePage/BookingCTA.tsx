@@ -10,25 +10,21 @@ const BookingCTA: React.FC = () => {
         
         {/* LEFT: TEXT */}
         <div className="w-full md:w-1/2">
-          <div className="flex items-center gap-3 mb-6">
-            <span className="w-2 h-2 bg-gold rounded-full animate-pulse" />
-            <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-gold-muted">
-              Now Accepting Projects
-            </span>
-          </div>
-          
-          <h2 className="font-serif text-5xl md:text-6xl lg:text-7xl leading-[0.9] mb-6 tracking-tight text-dark">
-            Ready to stop <br />
-            <span className="italic text-red-text">the grind?</span>
+          <h2 className="font-serif text-5xl md:text-6xl lg:text-7xl leading-[0.9] mb-4 tracking-tight text-dark">
+            Now accepting projects
           </h2>
-          
-          <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/80 border-l-2 border-dark/10 pl-6 max-w-lg">
-            You've seen how it works. You know what the chaos is costing you. Limited spots each quarter so every build gets full attention.
+
+          <p className="font-sans text-xl md:text-2xl font-light text-dark/90 mb-8 max-w-lg border-l-2 border-gold pl-6">
+            Ready to get your time back
           </p>
 
-          <div className="flex items-center gap-8 mt-8 font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark/70">
-             <span className="flex items-center gap-2"><Clock className="w-3 h-3 text-gold-on-cream" /> Timeline: 3-4 Weeks</span>
-             <span className="flex items-center gap-2"><CheckCircle2 className="w-3 h-3 text-gold-on-cream" /> Focus: Results Only</span>
+          <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/80 border-l-2 border-dark/10 pl-6 max-w-lg">
+            You've seen how it works and you know what the chaos is costing you. We take limited spots each quarter so every build gets our full attention.
+          </p>
+
+          <div className="flex flex-wrap items-center gap-x-8 gap-y-3 mt-8 font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark/70">
+             <span className="flex items-center gap-2"><Clock className="w-3 h-3 text-gold-on-cream" /> Timeline: 3 to 4 weeks</span>
+             <span className="flex items-center gap-2"><CheckCircle2 className="w-3 h-3 text-gold-on-cream" /> Focus: Results only</span>
           </div>
         </div>
 
@@ -60,7 +56,7 @@ const BookingCTA: React.FC = () => {
              </div>
              
              <p className="text-center mt-4 font-mono text-xs font-bold text-white/70 uppercase tracking-[0.2em]">
-                No sales pitch. Just a conversation about your system.
+                No sales pitch, just a conversation about your system
              </p>
           </div>
         </div>

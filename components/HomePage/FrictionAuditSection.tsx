@@ -6,34 +6,38 @@ import CTAButton from '~/components/CTAButton';
 export const AUDIT_DATA = [
   {
     id: '01',
-    title: 'Leads Go Cold',
+    title: 'Leads go cold',
     metric: 'HOURS, NOT MINUTES',
     label: 'REVENUE LEAK',
-    description: "Someone fills out your contact form. You see it the next day. By then, they've called your competitor. Speed wins jobs. You're too slow.",
+    description:
+      "Someone fills out your contact form and you see it the next day. By then they've called your competitor. Speed wins jobs and right now you're too slow.",
     type: 'data'
   },
   {
     id: '02',
-    title: 'The Copy-Paste Loop',
+    title: 'The copy-paste loop',
     metric: 'SAME DATA, THREE TIMES',
     label: 'TIME LEAK',
-    description: "Sales types it. Ops types it again. Finance types it a third time. You're paying three salaries for one job. The errors multiply.",
+    description:
+      "Sales types it, ops types it again, and finance types it a third time. You're paying three people to do one job and the errors multiply with every handoff.",
     type: 'data'
   },
   {
     id: '03',
-    title: 'You Are The Bottleneck',
+    title: 'You are the bottleneck',
     metric: 'EVERYTHING WAITS FOR YOU',
     label: 'GROWTH BLOCKER',
-    description: "Your phone buzzes all day with questions only you can answer. Deep work? Forget it. You're everyone's helpdesk.",
+    description:
+      "Your phone buzzes all day with questions only you can answer. Deep work is impossible because you're everyone's helpdesk. The business can't move faster than you can reply.",
     type: 'data'
   },
   {
     id: '04',
-    title: 'Flying Without Instruments',
+    title: 'Flying without instruments',
     metric: 'NO REAL-TIME NUMBERS',
     label: 'BLIND SPOT',
-    description: "You know your revenue. But not your real margin. You wait for your accountant to tell you if last month was good or bad. Too late to fix it by then.",
+    description:
+      "You know your revenue but not your real margin. You wait for the accountant to tell you if last month was good or bad, and by then it's too late to fix anything.",
     type: 'data'
   },
   {
@@ -170,13 +174,12 @@ const FrictionAuditSection: React.FC<FrictionAuditSectionProps> = ({ onNavigate 
                     / THE FRICTION AUDIT
                  </div>
                  <h1 className="font-serif text-4xl md:text-5xl lg:text-7xl leading-[0.95] text-dark tracking-tighter mb-10">
-                    Where your <br/>
-                    <span className="text-red-text">week</span> <br/>
+                    Where your <span className="text-red-text">week</span>{' '}
                     <span className="italic text-red-text">disappears</span>
                  </h1>
                  <div className="w-16 h-1 bg-dark mb-10"></div>
                  <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/70 max-w-sm">
-                    Your business isn't broken. But it is leaking. These are the 4 places where time and money vanish before you notice.
+                    Your business isn't broken, but it is leaking. These are the four places where time and money vanish before you notice.
                  </p>
               </div>
               
@@ -225,12 +228,11 @@ const FrictionAuditSection: React.FC<FrictionAuditSectionProps> = ({ onNavigate 
                / THE FRICTION AUDIT
             </div>
             <h1 className="font-serif text-4xl md:text-5xl lg:text-7xl leading-[0.95] tracking-tighter text-dark mb-6">
-               Where your <br/>
-               <span className="text-red-text">week</span> <br/>
+               Where your <span className="text-red-text">week</span>{' '}
                <span className="italic text-red-text">disappears</span>
             </h1>
             <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/70 max-w-sm">
-               Your business isn't broken. But it is leaking. These are the 4 places where time and money vanish before you notice.
+               Your business isn't broken, but it is leaking. These are the four places where time and money vanish before you notice.
             </p>
          </div>
 

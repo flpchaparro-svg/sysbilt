@@ -88,11 +88,13 @@ const ProblemSection: React.FC = () => {
             
           {/* 01: THE PROBLEM */}
           <div className="col-span-1 md:col-span-2 p-8 md:p-12 lg:p-16 border-r border-b border-dark/10 flex flex-col justify-center min-h-[300px] md:min-h-[400px] transition-colors duration-snap hover:bg-dark/5 group">
-            <span className="type-eyebrow text-red-text mb-6 md:mb-10 block">01 / THE PROBLEM</span>
+            <span className="type-eyebrow text-red-text mb-6 md:mb-10 block">01 / WHAT WE SEE EVERY DAY</span>
             <h2 className="font-serif text-4xl md:text-5xl lg:text-7xl leading-[0.95] text-dark tracking-tighter">
-              You didn't start your business to become an <br className="hidden md:block" />
-              <span className="italic text-dark/80 group-hover:text-red-text transition-colors duration-snap">administrative hostage</span>
+              You didn't build a business to do paperwork
             </h2>
+            <p className="font-sans text-lg md:text-xl text-dark/70 leading-relaxed max-w-2xl mt-6 md:mt-8">
+              Three things happen in every growing business. You've probably got all three.
+            </p>
           </div>
 
           {/* GRAPH CONTAINER */}
@@ -111,21 +113,21 @@ const ProblemSection: React.FC = () => {
                 <XCircle className="w-5 h-5 text-red-solid shrink-0 mt-1 pointer-events-none" />
                 <div className="pointer-events-none leading-relaxed">
                   <strong className="font-serif text-xl md:text-2xl text-dark tracking-tight block mb-1">The Bottleneck Boss</strong>
-                  <span className="font-sans text-base md:text-lg leading-relaxed text-dark/70">Your team asks you 20 questions a day. They could just do the work. But they wait for you instead.</span>
+                  <span className="font-sans text-base md:text-lg leading-relaxed text-dark/70">Your team asks you 20 questions a day. They could just do the work, but they wait for you instead. Every decision runs through you because the business has no system for answering without you.</span>
                 </div>
               </li>
               <li onMouseEnter={() => handleGraphHover('tax')} onMouseLeave={handleGraphLeave} className="flex items-start gap-4 p-3 -ml-3 rounded-lg hover:bg-dark/5 transition-colors duration-200">
                 <XCircle className="w-5 h-5 text-red-solid shrink-0 mt-1 pointer-events-none" />
                 <div className="pointer-events-none leading-relaxed">
                   <strong className="font-serif text-xl md:text-2xl text-dark tracking-tight block mb-1">The Double-Entry Tax</strong>
-                  <span className="font-sans text-base md:text-lg leading-relaxed text-dark/70">The same customer details get typed into three apps by three people. Every. Single. Day.</span>
+                  <span className="font-sans text-base md:text-lg leading-relaxed text-dark/70">The same customer details get typed into three apps by three people. Every single day. You're paying three salaries for one job and the errors multiply every time someone copies and pastes.</span>
                 </div>
               </li>
               <li onMouseEnter={() => handleGraphHover('grind')} onMouseLeave={handleGraphLeave} className="flex items-start gap-4 p-3 -ml-3 rounded-lg hover:bg-dark/5 transition-colors duration-200">
                 <XCircle className="w-5 h-5 text-red-solid shrink-0 mt-1 pointer-events-none" />
                 <div className="pointer-events-none leading-relaxed">
                   <strong className="font-serif text-xl md:text-2xl text-dark tracking-tight block mb-1">The Sunday Dread</strong>
-                  <span className="font-sans text-base md:text-lg leading-relaxed text-dark/70">Your weekend disappears into invoicing and admin. Your family waits.</span>
+                  <span className="font-sans text-base md:text-lg leading-relaxed text-dark/70">Your weekend disappears into invoicing and admin. You tell yourself you'll catch up on Monday, but Monday brings its own chaos. Your family waits and your to-do list never gets shorter.</span>
                 </div>
               </li>
             </ul>
@@ -134,11 +136,13 @@ const ProblemSection: React.FC = () => {
           {/* 03: THE COST */}
           <div onMouseEnter={() => handleGraphHover('cost')} onMouseLeave={handleGraphLeave} className="col-span-1 p-8 md:p-12 border-r border-b border-dark/10 bg-red-solid/5 min-h-[250px] md:min-h-[400px] hover:bg-red-solid/10 transition-colors duration-snap relative overflow-hidden group flex flex-col justify-center">
             <div className="absolute inset-0 bg-red-solid/0 group-hover:bg-red-solid/10 transition-colors duration-flow" />
-            <span className="type-eyebrow text-red-text mb-6 block relative z-10">03 / THE COST</span>
+            <span className="type-eyebrow text-red-text mb-6 block relative z-10">03 / THE REAL PRICE</span>
             <div className="space-y-4 relative z-10">
-              <div className="font-mono text-3xl md:text-4xl font-bold text-red-text uppercase tracking-tighter">YOUR BEST PEOPLE ARE BORED</div>
-              <p className="font-mono text-sm md:text-base text-red-text/80 leading-relaxed uppercase tracking-[0.15em] font-medium max-w-xs">
-                You're paying skilled staff to do unskilled work. They get bored. They leave. You hire again. The cycle repeats.
+              <div className="font-mono text-2xl md:text-3xl font-bold text-red-text tracking-tighter leading-tight">
+                Your best people are bored
+              </div>
+              <p className="font-mono text-sm md:text-base text-red-text/80 leading-relaxed tracking-[0.12em] font-medium max-w-md">
+                You're paying skilled staff to do unskilled work. They get bored, they make mistakes, and eventually they leave. You hire again and the cycle repeats. The cost isn't just their salary, it's the knowledge that walks out the door with them.
               </p>
             </div>
           </div>

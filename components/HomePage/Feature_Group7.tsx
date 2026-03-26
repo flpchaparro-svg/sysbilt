@@ -1,59 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { m, AnimatePresence } from 'framer-motion';
-import { ShieldCheck, AlertTriangle, Activity, Zap, X, Terminal } from 'lucide-react';
+import { ShieldCheck, AlertTriangle, Activity, Zap, X } from 'lucide-react';
 import { colors } from '../../constants/theme';
 import EvidenceVisual_Compare from '../EvidenceVisual_Compare';
 import CTAButton from '../CTAButton';
-
-const TerminalLog: React.FC = () => {
-  const [lines, setLines] = useState<string[]>([]);
-  
-  const allLines = [
-    "> Added Sydney location tags for Google... [DONE]",
-    "> Removed slow code... [SAVED 2.1MB]",
-    "> Load time: 4.2s → 0.4s [10x FASTER]"
-  ];
-
-  useEffect(() => {
-    let delay = 200;
-    allLines.forEach((line) => {
-      setTimeout(() => {
-        setLines(prev => [...prev, line]);
-      }, delay);
-      delay += 300; // Sequence delay (reduced from 800ms for faster UX)
-    });
-  }, []);
-
-  return (
-    // UPGRADE: Increased p-6 to p-8, font size base for better readability
-    <div className="w-full bg-dark p-8 border-t border-black/10 font-mono text-sm overflow-hidden">
-      <div className="flex items-center gap-2 text-white/20 mb-4 border-b border-white/10 pb-2">
-        <Terminal className="w-3 h-3 text-gold-on-dark" />
-        {/* Type B: Card Tag (inside terminal component) */}
-        <span className="text-[10px] text-gold-on-dark uppercase tracking-[0.2em] font-bold">BUILD LOG / WHAT I DID</span>
-      </div>
-      <div className="space-y-3">
-        {lines.map((line, i) => (
-          <m.div 
-            key={i}
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="text-white/80"
-          >
-            <span className="text-teal mr-3">➜</span>
-            {line}
-          </m.div>
-        ))}
-        <m.div 
-          animate={{ opacity: [0, 1] }} 
-          transition={{ repeat: Infinity, duration: 0.8 }}
-          className="w-2 h-4 bg-gold inline-block align-middle ml-2"
-        />
-      </div>
-    </div>
-  );
-};
 
 const Feature_Group7: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -102,11 +53,10 @@ const Feature_Group7: React.FC = () => {
           </span>
           {/* FIXED: Smooth scaling 4xl -> 5xl -> 7xl */}
           <h2 className="font-serif text-4xl md:text-5xl lg:text-7xl text-dark leading-[0.95] tracking-tighter mb-6">
-            See It In <span className="italic text-gold-on-cream">Action</span>
+            See it in <span className="italic text-gold-on-cream">action</span>
           </h2>
-          {/* FIXED: Body text smooth scaling */}
           <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/80 border-l-2 border-red-solid/30 pl-6">
-            Don't take my word for it. Here's what happened when I rebuilt a Sydney security company's website.
+            Here's what happened when we rebuilt a Sydney security company's website.
           </p>
         </div>
 
@@ -144,19 +94,12 @@ const Feature_Group7: React.FC = () => {
           />
 
           {/* Header Bar */}
-          <div className="flex justify-between items-center px-6 py-4 border-b border-white/5 bg-black/40 relative z-30">
-              <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-gold rounded-full animate-pulse" />
-                  {/* Type B: Card Tag */}
-                  <span className="font-mono text-[10px] font-bold text-gold-on-dark tracking-[0.2em] uppercase">
-                     WEBSITE REBUILD
-                  </span>
-              </div>
-              {/* Type B: Card Tag */}
-              <span className="font-mono text-[10px] font-bold text-white/70 uppercase tracking-[0.2em] flex items-center gap-2">
-                  SEE THE TRANSFORMATION
-                  <Zap className="w-3 h-3 text-gold-on-dark" />
+          <div className="flex items-start sm:items-center gap-3 px-6 py-4 border-b border-white/5 bg-black/40 relative z-30">
+              <div className="w-2 h-2 bg-gold rounded-full animate-pulse shrink-0 mt-1.5 sm:mt-0" />
+              <span className="font-mono text-[9px] sm:text-[10px] font-bold text-gold-on-dark tracking-[0.12em] sm:tracking-[0.2em] uppercase leading-snug flex-1 min-w-0">
+                 WEBSITE REBUILD — group7security.com 4.2s load vs group7security.com.au 0.4s load
               </span>
+              <Zap className="w-3 h-3 text-gold-on-dark shrink-0 mt-1 sm:mt-0 opacity-90" aria-hidden />
           </div>
 
           {/* The Transformation Engine (Visual Abstract) */}
@@ -306,13 +249,11 @@ idle: { borderColor: colors.gray700, backgroundColor: 'rgba(0,0,0,0)' },
                  {/* MODAL HEADER */}
                  <div className="flex justify-between items-center p-6 border-b border-black/10 bg-white shrink-0">
                     <div>
-                      {/* FIXED: Standardized Modal Title */}
                       <h3 className="font-serif text-3xl md:text-4xl text-dark leading-tight tracking-tight">
-                         Case Study: Group 7 Security
+                         Group 7 Security
                       </h3>
-                      {/* Type B: Card Tag */}
                       <p className="type-eyebrow text-dark/60 mt-1">
-                         WEBSITE + SEO OVERHAUL
+                         Website rebuild
                       </p>
                     </div>
                     <button 
@@ -329,38 +270,11 @@ idle: { borderColor: colors.gray700, backgroundColor: 'rgba(0,0,0,0)' },
                       beforeLabel="BEFORE: Old .com Site"
                       afterLabel="AFTER: New .com.au Site"
                     />
-                    
-                    <TerminalLog />
 
-                    {/* MODAL GRID */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 p-8 md:p-12 bg-white border-t border-black/10">
-                        <div>
-                          {/* Type B: Card Tag - using span since this is a label, not a heading */}
-                          <span className="type-eyebrow text-red-text mb-3 block">
-                             THE PROBLEM
-                          </span>
-                          <p className="font-sans text-base md:text-lg text-dark/70 leading-relaxed">
-                            Slow .com website with no local SEO. Google thought they were a global tech company, not a Sydney security firm. Local customers couldn't find them.
-                          </p>
-                        </div>
-                        <div>
-                          {/* Type B: Card Tag - using span since this is a label, not a heading */}
-                          <span className="type-eyebrow text-gold-on-cream mb-3 block">
-                             WHAT I DID
-                          </span>
-                          <p className="font-sans text-base md:text-lg text-dark/70 leading-relaxed">
-                            Migrated to .com.au. Rebuilt from scratch. Fast, mobile-first, with Sydney location tags so Google knows exactly where they operate.
-                          </p>
-                        </div>
-                        <div>
-                          {/* Type B: Card Tag - using span since this is a label, not a heading */}
-                          <span className="font-mono text-[10px] font-bold text-gold-on-cream mb-3 uppercase tracking-[0.2em] block">
-                             THE RESULT
-                          </span>
-                          <p className="font-sans text-base md:text-lg text-dark/70 leading-relaxed">
-                            Page load dropped from <strong>4.2s to 0.4s</strong>. Local rankings improved. The site now converts visitors instead of losing them.
-                          </p>
-                        </div>
+                    <div className="p-8 md:p-12 bg-white border-t border-black/10">
+                      <p className="font-sans text-base md:text-lg text-dark/70 leading-relaxed max-w-3xl">
+                        We added local Sydney tags, removed slow code, and rebuilt from scratch. Load time dropped from 4.2 seconds to 0.4 seconds. A 10x faster site means more leads stay on the page.
+                      </p>
                     </div>
                  </div>
 

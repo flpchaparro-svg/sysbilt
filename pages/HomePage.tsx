@@ -135,7 +135,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onServiceClick }) => {
               <span className="hidden md:inline font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark">/</span>
               <div className="flex items-center gap-2">
                 <span className="font-mono text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-dark">
-                  SYDNEY BUSINESS AUTOMATION 
+                  SYDNEY BUSINESS SYSTEMS
                 </span>
                 <ScrambleTitle />
               </div>
@@ -143,17 +143,17 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onServiceClick }) => {
 
             <h1 className="font-serif text-5xl md:text-6xl lg:text-[6.5rem] leading-[1.1] lg:leading-[0.9] tracking-tighter text-dark mb-8 md:mb-10">
               <div className="overflow-hidden">
-                <span className="block reveal-text tracking-tighter font-serif" style={{ letterSpacing: '-0.04em' }}>Stop Doing</span>
+                <span className="block reveal-text tracking-tighter font-serif" style={{ letterSpacing: '-0.04em' }}>Stop doing</span>
               </div>
               <div className="overflow-hidden">
                 <span className="block reveal-text tracking-tighter" style={{ animationDelay: '0.2s', letterSpacing: '-0.04em' }}>
-                  <span className="italic font-serif text-gold-on-cream drop-shadow-[0_0_20px_rgba(197,160,89,0.2)]">Everyone's Job</span>
+                  <span className="italic font-serif text-gold-on-cream drop-shadow-[0_0_20px_rgba(197,160,89,0.2)]">everyone's job</span>
                 </span>
               </div>
             </h1>
 
             <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/70 max-w-2xl border-l-2 border-gold pl-6 animate-fade-in text-left mx-auto lg:mx-0 mb-12 md:mb-0" style={{ animationDelay: '0.6s' }}>
-              You didn't start a business to chase invoices, re-type data, and answer the same questions all day. Your time is worth more than that. I build systems that handle the boring stuff so you can focus on the work that actually grows your revenue.
+              We build the systems that run your business without you
             </p>
 
             <div className="mt-10 md:mt-16 flex flex-col sm:flex-row items-center gap-6 md:gap-12 animate-fade-in relative z-30" style={{ animationDelay: '0.8s' }}>
