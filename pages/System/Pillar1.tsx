@@ -423,7 +423,7 @@ const Pillar1: React.FC<Pillar1Props> = ({ onNavigate }) => {
             </p>
             
             <h2 className="font-serif text-6xl md:text-8xl text-white mb-12">
-              Let's <span className="italic text-[#D4A84B]">Talk.</span>
+              Let's <span className="italic text-[#D4A84B]">Talk</span>
             </h2>
             
             <div className="mb-16">
@@ -445,7 +445,7 @@ const Pillar1: React.FC<Pillar1Props> = ({ onNavigate }) => {
       <FAQSection
         faqs={pillarFAQs}
         accentColor={colors.goldOnCream}
-        title="Questions about websites?"
+        title={<>Questions about <span className="italic text-gold-on-cream">websites</span></>}
         subtitle="Common questions about how we build and deliver your site."
         onNavigate={onNavigate}
       />

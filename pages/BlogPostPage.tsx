@@ -892,7 +892,7 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
                       SOLVE THIS PROBLEM.
                     </span>
                   ) : (
-                    <>Solve This <span className={theme.textMain}>Problem.</span></>
+                    <>Solve This <span className={theme.textMain}>Problem</span></>
                   )}
                 </h3>
                 <p className="font-sans text-white/70 font-light mb-8 max-w-md">
@@ -916,7 +916,7 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
                       DEPLOY THE SYSTEM.
                     </span>
                   ) : (
-                    <>Deploy The <span className={theme.textMain}>System.</span></>
+                    <>Deploy The <span className={theme.textMain}>System</span></>
                   )}
                 </h3>
                 <p className="font-sans text-white/70 font-light mb-8 max-w-md">

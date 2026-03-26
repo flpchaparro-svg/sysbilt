@@ -86,7 +86,7 @@ export const SystemArchitecture: React.FC = () => {
       <NarrativeSection 
         phase="PHASE 01 / GET CLIENTS"
         title="The Capture"
-        subtitle="Loop."
+        subtitle="Loop"
         body="Right now your leads land in an inbox and sit there. You reply when you can and sometimes that's too late. Here's how it should work. Someone fills out your form and they land in your CRM instantly. The system replies within seconds and you get a reminder to call. Your website catches, your CRM holds, and automation chases. No more lost leads."
         color={colors.redText}
         align="left"
@@ -97,7 +97,7 @@ export const SystemArchitecture: React.FC = () => {
       <NarrativeSection 
         phase="PHASE 02 / SCALE FASTER"
         title="The"
-        subtitle="Multiplier."
+        subtitle="Multiplier"
         body="Your marketing works and more calls come in, but you can't answer them all. Here's how it should work. Content brings people to you without posting every day. AI picks up, qualifies, and books the good ones. Training keeps your team using the tools properly. You grow without burning out."
         color={colors.goldOnCream}
         align="right"
@@ -108,7 +108,7 @@ export const SystemArchitecture: React.FC = () => {
       <NarrativeSection 
         phase="PHASE 03 / SEE CLEARLY"
         title="The Control"
-        subtitle="Room."
+        subtitle="Room"
         body="Right now you find out about problems after the damage is done. Here's how it should work. Every part of your system feeds into one dashboard. Where did your leads come from? Which ones converted? What did it cost? All on one screen, updated live. You see what's working and fix what's broken before it costs you money."
         color={colors.dark}
         align="left"

@@ -99,7 +99,7 @@ const formatFAQAnswer = (answer: string, accentColor: string) => {
 interface FAQSectionProps {
   faqs: FAQ[];
   accentColor?: string;
-  title?: string;
+  title?: React.ReactNode;
   subtitle?: string;
   showBookingCTA?: boolean;
   onNavigate?: (view: string, sectionId?: string) => void;
@@ -131,7 +131,7 @@ const FAQSection: React.FC<FAQSectionProps> = ({
             / FAQ
           </span>
           <h2 className="font-serif text-4xl md:text-5xl lg:text-7xl leading-[0.95] tracking-tighter text-dark">
-            {title} <span className="italic" style={{ color: accentColor }}>Answered.</span>
+            {title}
           </h2>
           {subtitle && (
             <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/70 max-w-xl mt-4">

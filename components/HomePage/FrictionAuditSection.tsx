@@ -172,7 +172,7 @@ const FrictionAuditSection: React.FC<FrictionAuditSectionProps> = ({ onNavigate 
                  <h1 className="font-serif text-4xl md:text-5xl lg:text-7xl leading-[0.95] text-dark tracking-tighter mb-10">
                     Where your <br/>
                     <span className="text-red-text">week</span> <br/>
-                    <span className="italic text-red-text">disappears.</span>
+                    <span className="italic text-red-text">disappears</span>
                  </h1>
                  <div className="w-16 h-1 bg-dark mb-10"></div>
                  <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/70 max-w-sm">
@@ -227,7 +227,7 @@ const FrictionAuditSection: React.FC<FrictionAuditSectionProps> = ({ onNavigate 
             <h1 className="font-serif text-4xl md:text-5xl lg:text-7xl leading-[0.95] tracking-tighter text-dark mb-6">
                Where your <br/>
                <span className="text-red-text">week</span> <br/>
-               <span className="italic text-red-text">disappears.</span>
+               <span className="italic text-red-text">disappears</span>
             </h1>
             <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/70 max-w-sm">
                Your business isn't broken. But it is leaking. These are the 4 places where time and money vanish before you notice.

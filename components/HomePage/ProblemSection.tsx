@@ -91,7 +91,7 @@ const ProblemSection: React.FC = () => {
             <span className="type-eyebrow text-red-text mb-6 md:mb-10 block">01 / THE PROBLEM</span>
             <h2 className="font-serif text-4xl md:text-5xl lg:text-7xl leading-[0.95] text-dark tracking-tighter">
               You didn't start your business to become an <br className="hidden md:block" />
-              <span className="italic text-dark/80 group-hover:text-red-text transition-colors duration-snap">administrative hostage.</span>
+              <span className="italic text-dark/80 group-hover:text-red-text transition-colors duration-snap">administrative hostage</span>
             </h2>
           </div>
 

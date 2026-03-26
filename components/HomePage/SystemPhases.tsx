@@ -122,7 +122,7 @@ const SystemPhases: React.FC<SystemPhasesProps> = ({ onNavigate }) => {
               <span className="text-gold-muted">/</span> THE SYSTEM
             </span>
             <h2 className="font-serif text-5xl md:text-7xl text-dark leading-[0.9] tracking-tighter mb-6">
-              7 Pillars. <span className="italic text-gold-on-cream">3 Outcomes.</span>
+              7 Pillars, <span className="italic text-gold-on-cream">3 Outcomes</span>
             </h2>
             <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/70 max-w-2xl mx-auto">
               Some businesses need everything built from scratch. Some just need one piece fixed. Each service works alone. But they're built to connect when you're ready.

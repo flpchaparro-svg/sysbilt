@@ -55,7 +55,7 @@ export default function NewsletterForm() {
         
         <div className="flex-1 w-full relative z-10">
           <h2 className="font-sans font-black text-4xl md:text-5xl lg:text-6xl uppercase tracking-tighter mb-4 text-white leading-[0.9] break-words text-balance">
-            Join the <span className="text-gold">Private List.</span>
+            Join the <span className="text-gold">Private List</span>
           </h2>
           <p className="font-mono text-xs md:text-sm tracking-widest text-white/70 border-l-2 border-gold pl-4 leading-relaxed max-w-md">
             Identify your operational phase. We route the exact blueprints required to scale your specific bottlenecks. No generic advice.

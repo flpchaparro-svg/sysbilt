@@ -37,7 +37,7 @@ const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
           </span>
           <h1 className="font-serif text-4xl md:text-6xl lg:text-7xl xl:text-8xl leading-[1.0] lg:leading-[0.9] tracking-tighter text-dark mb-8 md:mb-10">
             This is not a <br />
-            <span className="italic font-serif text-gold-on-cream">Sales Call.</span>
+            <span className="italic font-serif text-gold-on-cream">Sales Call</span>
           </h1>
           <div className="space-y-6 max-w-lg">
             <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark">
@@ -68,7 +68,7 @@ const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
                 / YOUR DETAILS
               </span>
               <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl leading-[0.95] tracking-tighter text-white mb-4">
-                Tell Me About Your <span className="italic font-serif text-gold-on-dark">Business.</span>
+                Tell Me About Your <span className="italic font-serif text-gold-on-dark">Business</span>
               </h2>
               <p className="font-sans text-lg md:text-xl text-white/80 leading-relaxed max-w-xl">
                 Fill this out. I'll get back to you within 24 hours.
@@ -166,7 +166,7 @@ const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
                <Check className="w-12 h-12 text-dark" />
              </div>
              <h2 className="font-serif text-4xl md:text-6xl lg:text-7xl leading-[0.95] tracking-tighter text-white mb-6">
-               Got <span className="italic font-serif text-gold-on-dark">It.</span>
+               Got <span className="italic font-serif text-gold-on-dark">It</span>
              </h2>
              <p className="font-sans text-lg md:text-xl font-light text-white/80 mb-12 leading-relaxed">
                Thanks for reaching out. I'll review your details and get back to you within 24 hours.

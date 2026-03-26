@@ -257,7 +257,7 @@ const EvidenceVaultPage: React.FC<EvidenceVaultPageProps> = ({ onBack }) => {
 
         {/* CALL TO ACTION */}
         <section className="py-20 md:py-24 flex flex-col items-center text-center mb-20 md:mb-24">
-          <h2 className="font-serif text-5xl md:text-7xl mb-12 italic max-w-4xl leading-tight">Your company is the next <span className="text-gold-on-cream">evidence log.</span></h2>
+          <h2 className="font-serif text-5xl md:text-7xl mb-12 italic max-w-4xl leading-tight">Your company is the next <span className="text-gold-on-cream">evidence log</span></h2>
           
           <CTAButton theme="light" onClick={() => window.open("https://meetings-ap1.hubspot.com/felipe", "_blank")}>
              AUDIT MY SYSTEM

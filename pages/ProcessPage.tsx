@@ -55,7 +55,7 @@ const ProcessPage: React.FC<ProcessPageProps> = ({ onBack, onNavigate }) => {
               </span>
             </div>
             <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl xl:text-8xl leading-[1.1] lg:leading-[0.9] tracking-tighter text-dark mb-8 md:mb-12">
-              How I <span className="italic font-serif text-gold-on-cream">Work.</span>
+              How I <span className="italic font-serif text-gold-on-cream">Work</span>
             </h1>
             <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/70 max-w-2xl border-l-2 border-gold pl-8 py-2 text-left lg:mx-0">
               Clear path. No mystery. No jargon. Just results.
@@ -76,7 +76,7 @@ const ProcessPage: React.FC<ProcessPageProps> = ({ onBack, onNavigate }) => {
               / HOW I THINK
             </span>
             <h2 className="font-serif text-4xl md:text-5xl lg:text-7xl leading-[0.95] tracking-tighter text-dark mb-6">
-              Two <span className="italic font-serif text-gold-on-cream">Rules.</span>
+              Two <span className="italic font-serif text-gold-on-cream">Rules</span>
             </h2>
           </Section>
 
@@ -108,7 +108,7 @@ const ProcessPage: React.FC<ProcessPageProps> = ({ onBack, onNavigate }) => {
               / THE 4 PHASES
             </span>
             <h2 className="font-serif text-4xl md:text-5xl lg:text-7xl leading-[0.95] tracking-tighter text-dark mb-6">
-              How Every Project <span className="italic font-serif text-gold-on-cream">Works.</span>
+              How Every Project <span className="italic font-serif text-gold-on-cream">Works</span>
             </h2>
           </Section>
 
@@ -155,7 +155,7 @@ const ProcessPage: React.FC<ProcessPageProps> = ({ onBack, onNavigate }) => {
                   / READY?
                 </span>
                 <h2 className="font-serif text-5xl md:text-7xl leading-[0.9] tracking-tighter text-white mb-12">
-                  Let's <span className="italic font-serif text-gold-on-dark">Talk.</span>
+                  Let's <span className="italic font-serif text-gold-on-dark">Talk</span>
                 </h2>
                 
                 <CTAButton theme="dark" onClick={() => onNavigate('contact')}>

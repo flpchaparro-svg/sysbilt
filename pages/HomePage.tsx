@@ -147,7 +147,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onServiceClick }) => {
               </div>
               <div className="overflow-hidden">
                 <span className="block reveal-text tracking-tighter" style={{ animationDelay: '0.2s', letterSpacing: '-0.04em' }}>
-                  <span className="italic font-serif text-gold-on-cream drop-shadow-[0_0_20px_rgba(197,160,89,0.2)]">Everyone's Job.</span>
+                  <span className="italic font-serif text-gold-on-cream drop-shadow-[0_0_20px_rgba(197,160,89,0.2)]">Everyone's Job</span>
                 </span>
               </div>
             </h1>

@@ -117,9 +117,9 @@ const TheArchitect: React.FC = () => {
                  {/* FIXED RESPONSIVENESS: Scales smoothly now */}
                  <h2 className="font-serif text-5xl md:text-6xl lg:text-7xl leading-[0.9] mb-8 md:mb-12 text-dark tracking-tight">
                     {mode === 'architect' ? (
-                       <>One person. <br/><span className="italic text-gold-on-cream">Ten person output.</span></>
+                       <>One person. <br/><span className="italic text-gold-on-cream">Ten person output</span></>
                     ) : (
-                       <>I've run businesses. <br/><span className="italic text-gold-on-cream">Not just advised them.</span></>
+                       <>I've run businesses. <br/><span className="italic text-gold-on-cream">Not just advised them</span></>
                     )}
                  </h2>
                  <div className="space-y-8 md:space-y-12">

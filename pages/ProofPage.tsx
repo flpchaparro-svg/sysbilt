@@ -97,7 +97,7 @@ const ProofPage: React.FC<ProofPageProps> = ({ onBack, onNavigate }) => {
           </div>
           <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl xl:text-8xl leading-[1.1] lg:leading-[0.9] tracking-tighter text-dark mb-8 md:mb-12 max-w-5xl">
             Results You Can <br/>
-            <span className="italic font-serif text-gold-on-cream">Verify.</span>
+            <span className="italic font-serif text-gold-on-cream">Verify</span>
           </h1>
           <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/70 max-w-2xl border-l-2 border-gold pl-8 py-2">
             No testimonials. Just data. Here's what happened when we rebuilt {caseStudy.clientName}'s system.
@@ -152,7 +152,7 @@ const ProofPage: React.FC<ProofPageProps> = ({ onBack, onNavigate }) => {
             <div className="mb-12">
               <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-red-text mb-6 block">/ THE PROBLEM</span>
               <h2 className="font-serif text-4xl md:text-5xl lg:text-7xl leading-[0.95] tracking-tighter text-dark mb-8">
-                The Old <span className="italic font-serif text-red-text">System.</span>
+                The Old <span className="italic font-serif text-red-text">System</span>
               </h2>
             </div>
 
@@ -189,7 +189,7 @@ const ProofPage: React.FC<ProofPageProps> = ({ onBack, onNavigate }) => {
             <div className="mb-12">
               <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-gold-muted mb-6 block">/ THE SOLUTION</span>
               <h2 className="font-serif text-4xl md:text-5xl lg:text-7xl leading-[0.95] tracking-tighter text-dark mb-8">
-                The New <span className="italic font-serif text-gold-on-cream">Standard.</span>
+                The New <span className="italic font-serif text-gold-on-cream">Standard</span>
               </h2>
             </div>
 
@@ -224,7 +224,7 @@ const ProofPage: React.FC<ProofPageProps> = ({ onBack, onNavigate }) => {
             <div className="mb-12">
               <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-gold-muted mb-6 block">/ THE RESULTS</span>
               <h2 className="font-serif text-4xl md:text-5xl lg:text-7xl leading-[0.95] tracking-tighter text-dark mb-8">
-                The <span className="italic font-serif text-gold-on-cream">Evidence.</span>
+                The <span className="italic font-serif text-gold-on-cream">Evidence</span>
               </h2>
             </div>
 
@@ -269,7 +269,7 @@ const ProofPage: React.FC<ProofPageProps> = ({ onBack, onNavigate }) => {
              <div className="mb-12">
               <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-gold-muted mb-6 block">/ VISUAL EVIDENCE</span>
               <h2 className="font-serif text-4xl md:text-5xl lg:text-7xl leading-[0.95] tracking-tighter text-dark mb-8">
-                The <span className="italic font-serif text-gold-on-cream">Proof.</span>
+                The <span className="italic font-serif text-gold-on-cream">Proof</span>
               </h2>
             </div>
             

@@ -12,7 +12,7 @@ export const ARCHITECT_CONTENT = {
     headline: (
       <>
         One person. <br className="hidden md:block" />
-        <span className="italic font-serif text-gold-on-cream">Ten person output.</span>
+        <span className="italic font-serif text-gold-on-cream">Ten person output</span>
       </>
     ),
     subhead: "No account managers. No junior handoffs. No endless meetings. You talk directly to the person building your system. Automation and AI let me deliver what agencies charge a team for.",
@@ -35,7 +35,7 @@ export const ARCHITECT_CONTENT = {
     headline: (
       <>
         I've run businesses. <br className="hidden md:block" />
-        <span className="italic font-serif text-gold-on-cream">Not just consulted them.</span>
+        <span className="italic font-serif text-gold-on-cream">Not just consulted them</span>
       </>
     ),
     subhead: "Before I built systems for others, I ran my own café, managed international franchises, and worked factory floors. I know what it's like to chase invoices at midnight. No theory. Just what actually works.",

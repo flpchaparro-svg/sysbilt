@@ -76,7 +76,7 @@ const GlobalFooter: React.FC<GlobalFooterProps> = ({ onNavigate }) => {
               
               <h2 className="font-serif text-4xl md:text-5xl leading-[0.95] tracking-tight mb-8">
                 Stop guessing. <br />
-                Start <span className="italic text-gold-on-dark">building.</span>
+                Start <span className="italic text-gold-on-dark">building</span>
               </h2>
               <CTAButton theme="dark" onClick={() => onNavigate('contact')}>
                 BOOK A CALL

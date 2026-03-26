@@ -250,7 +250,7 @@ const Pillar7: React.FC<Pillar7Props> = ({ onNavigate }) => {
           {/* FINAL CTA */}
           <div className="mt-20 md:mt-24 w-full bg-dark rounded-sm p-12 md:p-24 flex flex-col items-center justify-center text-center">
             <p className="font-mono text-white/40 uppercase tracking-[0.2em] text-sm mb-6">/ READY?</p>
-            <h2 className="font-serif text-6xl md:text-8xl text-white mb-12">Let's <span className="italic text-white/80">Talk.</span></h2>
+            <h2 className="font-serif text-6xl md:text-8xl text-white mb-12">Let's <span className="italic text-white/80">Talk</span></h2>
             <div className="mb-16">
               <CTAButton theme="dark" onClick={() => onNavigate('contact')}>BOOK A CALL</CTAButton>
             </div>
@@ -262,7 +262,7 @@ const Pillar7: React.FC<Pillar7Props> = ({ onNavigate }) => {
         </div>
       </section>
 
-      <FAQSection faqs={pillarFAQs} accentColor={colors.goldOnCream} title="Questions about dashboards?" subtitle="Common questions about reporting and business intelligence." onNavigate={onNavigate} />
+      <FAQSection faqs={pillarFAQs} accentColor={colors.goldOnCream} title={<>Questions about <span className="italic text-gold-on-cream">dashboards</span></>} subtitle="Common questions about reporting and business intelligence." onNavigate={onNavigate} />
     </motion.div>
   );
 };
