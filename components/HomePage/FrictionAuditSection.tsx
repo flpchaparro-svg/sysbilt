@@ -42,7 +42,7 @@ export const AUDIT_DATA = [
   },
   {
     id: '05',
-    title: "You've seen the leak.",
+    title: "You've seen the leak",
     metric: '',
     description: "",
     type: 'cta'
@@ -104,7 +104,7 @@ const Card: React.FC<CardProps> = ({ data, index, total, scrollYProgress, onNavi
            <div className="flex flex-col items-center justify-center text-center h-full max-w-4xl mx-auto">
               {/* FIXED: Reduced to text-7xl max to be smaller than Hero (8xl) */}
               <h2 className="font-serif text-4xl md:text-6xl lg:text-7xl text-dark leading-tight tracking-tighter mb-10">
-                You've seen the <span className="text-red-text">leak</span>.
+                You've seen the <span className="text-red-text">leak</span>
               </h2>
               <CTAButton theme="light" onClick={() => document.getElementById('seven-pillars')?.scrollIntoView({ behavior: 'smooth' })}>
                 SEE THE FIX
@@ -247,7 +247,7 @@ const FrictionAuditSection: React.FC<FrictionAuditSectionProps> = ({ onNavigate 
                   {data.type === 'cta' ? (
                      <div className="flex flex-col items-center justify-center text-center h-full px-6 bg-cream">
                         <h2 className="font-serif text-3xl text-dark leading-tight tracking-tighter mb-8">
-                           You've seen the <span className="text-red-text">leak</span>.
+                           You've seen the <span className="text-red-text">leak</span>
                         </h2>
                         <CTAButton theme="light" onClick={() => document.getElementById('seven-pillars')?.scrollIntoView({ behavior: 'smooth' })} className="w-full">
                            SEE THE FIX

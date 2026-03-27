@@ -174,7 +174,7 @@ const EvidenceVaultPage: React.FC<EvidenceVaultPageProps> = ({ onBack }) => {
         {/* PHILOSOPHY BLOCK */}
         <section className="mb-40 grid grid-cols-1 lg:grid-cols-12 gap-16 items-center border-y border-black/5 py-24">
           <div className="lg:col-span-7">
-            <h2 className="font-serif text-4xl md:text-5xl mb-8 italic">Truth is found in the logs.</h2>
+            <h2 className="font-serif text-4xl md:text-5xl mb-8 italic">Truth is found in the logs</h2>
             <div className="space-y-6 text-lg text-black/60 font-light leading-relaxed max-w-2xl">
               <p>Testimonials are subjective. Clients are nice. But architecture is objective. It either performs or it fails. We don't rely on "reviews"—we present Case Audits where the code and the data prove the ROI.</p>
               <p className="font-serif text-2xl text-dark italic border-b border-gold/30 pb-4 inline-block">
@@ -195,7 +195,7 @@ const EvidenceVaultPage: React.FC<EvidenceVaultPageProps> = ({ onBack }) => {
         {/* RESULTS MATRIX */}
         <section className="mb-40">
           <div className="flex justify-between items-end mb-16 border-b border-black/10 pb-8">
-            <h2 className="font-serif text-5xl italic">Case Audits.</h2>
+            <h2 className="font-serif text-5xl italic">Case Audits</h2>
             {/* FIX: Bumped to text-[10px] */}
             <span className="font-mono text-[10px] text-black/60 tracking-[0.2em] uppercase mb-2">DEPLOYMENT LOG ARCHIVE</span>
           </div>
