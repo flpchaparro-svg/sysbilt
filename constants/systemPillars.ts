@@ -1,4 +1,4 @@
-import { Globe, Database, Zap, Bot, Video, Users, BarChart3, LucideIcon } from 'lucide-react';
+import { Filter, Magnet, Cog, Brain, LayoutGrid, Dna, BarChart3, LucideIcon } from 'lucide-react';
 import { SystemPillarDetail } from '../types';
 import { SERVICES } from '../constants';
 import { colors } from './theme';
@@ -18,7 +18,7 @@ const SYSTEM_PILLAR_VIEW_DATA: Record<string, {
 }> = {
   pillar1: {
     number: '01',
-    icon: Globe,
+    icon: Filter,
     displayTitle: 'THE FRONT DOOR',
     subtitle: 'Websites & E-commerce',
     subtitleMobile: 'Websites',
@@ -33,7 +33,7 @@ const SYSTEM_PILLAR_VIEW_DATA: Record<string, {
   },
   pillar2: {
     number: '02',
-    icon: Database,
+    icon: Magnet,
     displayTitle: 'THE MEMORY',
     subtitle: 'CRM & Lead Tracking',
     subtitleMobile: 'CRM',
@@ -48,7 +48,7 @@ const SYSTEM_PILLAR_VIEW_DATA: Record<string, {
   },
   pillar3: {
     number: '03',
-    icon: Zap,
+    icon: Cog,
     displayTitle: 'THE ENGINE',
     subtitle: 'Automation',
     subtitleMobile: 'Automation',
@@ -63,7 +63,7 @@ const SYSTEM_PILLAR_VIEW_DATA: Record<string, {
   },
   pillar4: {
     number: '04',
-    icon: Bot,
+    icon: Brain,
     displayTitle: 'THE ASSISTANT',
     subtitle: 'AI Assistants',
     subtitleMobile: 'AI Bots',
@@ -78,7 +78,7 @@ const SYSTEM_PILLAR_VIEW_DATA: Record<string, {
   },
   pillar5: {
     number: '05',
-    icon: Video,
+    icon: LayoutGrid,
     displayTitle: 'THE AMPLIFIER',
     subtitle: 'Content Systems',
     subtitleMobile: 'Content',
@@ -93,7 +93,7 @@ const SYSTEM_PILLAR_VIEW_DATA: Record<string, {
   },
   pillar6: {
     number: '06',
-    icon: Users,
+    icon: Dna,
     displayTitle: 'THE COACH',
     subtitle: 'Team Training',
     subtitleMobile: 'Training',
