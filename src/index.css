@@ -417,3 +417,19 @@
          If decorative (icons, borders) → any opacity is fine
    
    ============================================ */
+   :root {
+    --color-shadow-dark: #E6D5CC;
+    --color-shadow-light: #FFFFFF;
+  }
+  
+  @layer utilities {
+    .shadow-neu {
+      box-shadow: 12px 12px 24px var(--color-shadow-dark), -12px -12px 24px var(--color-shadow-light);
+    }
+    .shadow-neu-inner {
+      box-shadow: inset 12px 12px 24px var(--color-shadow-dark), inset -12px -12px 24px var(--color-shadow-light);
+    }
+    .drop-shadow-neu {
+      filter: drop-shadow(4px 4px 8px var(--color-shadow-dark)) drop-shadow(-4px -4px 8px var(--color-shadow-light));
+    }
+  }

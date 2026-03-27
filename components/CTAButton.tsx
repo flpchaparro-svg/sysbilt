@@ -27,9 +27,10 @@ const CTAButton: React.FC<CTAButtonProps> = ({
   // VARIANT: BRACKET (Fixed for Responsive)
   // ============================================
   if (variant === 'bracket') {
-    // idleText: Black on Cream, White on Black.
-    const idleText = isLightTheme ? 'text-dark' : 'text-white';
-    
+    // Light: dark text on cream, hover gold. Dark: gold on black, hover white.
+    const idleText = isLightTheme ? 'text-dark' : 'text-gold-on-dark';
+    const hoverText = isLightTheme ? 'hover:text-gold-on-cream' : 'hover:text-white';
+
     // Size Logic
     const fontSize = size === 'sm' ? 'text-[10px]' : 'text-xs';
     const padding = size === 'sm' ? 'px-1 py-1' : 'px-3 py-2';
@@ -45,7 +46,7 @@ const CTAButton: React.FC<CTAButtonProps> = ({
           transition-colors duration-snap
           max-w-full whitespace-normal text-center leading-tight
           ${idleText} ${fontSize} ${padding} ${className}
-          hover:text-gold-on-cream
+          ${hoverText}
         `}
       >
         {/* Left Bracket - Squeezes In */}
