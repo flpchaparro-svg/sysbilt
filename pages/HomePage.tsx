@@ -54,6 +54,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onServiceClick }) => {
     return () => {
       mobileQuery.removeEventListener('change', checkMobile);
       clearTimeout(timer);
+      if (decayTimeoutRef.current) clearTimeout(decayTimeoutRef.current);
     };
   }, []);
 
@@ -193,21 +194,27 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onServiceClick }) => {
 
       <Suspense fallback={<div className="min-h-[500px] bg-cream" />}>
         <ProblemSection />
+      </Suspense>
         
+      <Suspense fallback={<div className="min-h-[300px] bg-cream" />}>
         <section id="friction-audit" aria-label="Friction Audit Section" className="relative bg-cream z-30">
           <FrictionAuditSection onNavigate={onNavigate} />
         </section>
+      </Suspense>
 
+      <Suspense fallback={<div className="min-h-[300px] bg-cream" />}>
         <section id="seven-pillars" className="relative bg-cream z-30">
           <SystemPhases onNavigate={onNavigate} />
         </section>
+      </Suspense>
+
+      <Suspense fallback={<div className="min-h-[300px] bg-cream" />}>
         <section id="about" className="relative bg-cream z-30">
           <TheArchitect />
         </section>
         <section id="case-study" className="relative bg-cream z-30">
           <Feature_Group7 />
         </section>
-
         <section id="cta" aria-label="Call to Action Section" className="relative bg-cream z-30">
           <BookingCTA />
         </section>
