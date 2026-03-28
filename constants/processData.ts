@@ -4,14 +4,14 @@ export const PRINCIPLES = [
   {
     id: 'p1',
     label: '01 / CLARITY',
-    title: 'If we cannot explain it at a pub, it is too complex',
-    body: 'You will understand exactly how your system works. If you do not, we have not done our job.',
+    title: "If we can't explain it at a pub, it's too complex",
+    body: "You'll understand exactly how your system works. If you don't, we haven't done our job.",
     icon: Search
   },
   {
     id: 'p2',
     label: '02 / PEOPLE',
-    title: "If a tool makes your team's day harder, it has failed",
+    title: "If a tool makes your team's day harder, it's failed",
     body: 'Your team will actually use what we build. Not fight against it.',
     icon: CheckCircle2
   }
@@ -31,7 +31,7 @@ export const STEPS = [
     id: '02',
     phase: '02 / DESIGN',
     title: 'Pick the right tools',
-    text: 'No platform lock-in. We pick the software that actually fits your business. We map the logic before writing a single line of code.',
+    text: 'No platform lock-in. We pick the software that actually fits your business and map the logic before writing a single line of code.',
     icon: PenTool,
     color: 'text-gold',
     borderColor: 'border-gold'
@@ -49,7 +49,7 @@ export const STEPS = [
     id: '04',
     phase: '04 / HANDOVER',
     title: 'Make it stick',
-    text: "Software fails when people do not use it. We provide the training, support, and check-ins to make sure your team actually adopts the system.",
+    text: "Software fails when people don't use it. We handle the training, support, and check-ins until your team actually adopts it.",
     icon: Flag,
     color: 'text-gold',
     borderColor: 'border-gold'

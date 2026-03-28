@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { m, AnimatePresence } from 'framer-motion';
-import { ShieldCheck, ArrowUpRight } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
 
 const TheArchitect: React.FC = () => {
   const [mode, setMode] = useState<'architect' | 'human'>('architect');
@@ -9,7 +9,7 @@ const TheArchitect: React.FC = () => {
     <section id="origins" className="w-full bg-cream py-32 lg:py-64 px-6 md:px-12 lg:px-20 relative z-30 overflow-hidden border-t border-black/5">
       <div className="max-w-[1600px] mx-auto relative">
         
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 relative items-center">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-12 gap-12 lg:gap-24 relative items-start">
       
           {/* LEFT: LIVING PORTRAIT CONTAINER */}
           <m.div 
@@ -17,7 +17,7 @@ const TheArchitect: React.FC = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-            className="lg:col-span-5 relative group lg:sticky lg:top-1/2 lg:-translate-y-1/2 lg:self-start"
+            className="md:col-span-1 md:row-start-1 lg:col-span-5 lg:col-start-1 lg:row-start-1 lg:row-span-3 relative group lg:sticky lg:top-1/2 lg:-translate-y-1/2 lg:self-start"
           >
             <div className="aspect-[9/16] md:max-h-[70vh] lg:max-h-[85vh] bg-dark relative overflow-visible shadow-2xl">
               {/* Structural Frame - Inside the video container so it scales together */}
@@ -72,15 +72,23 @@ const TheArchitect: React.FC = () => {
             </div>
           </m.div>
 
-          {/* RIGHT: TEXT CONTENT */}
-          <div className="lg:col-span-7 relative">
-             {/* PROFILE SWITCH - High Visibility Dashboard Style */}
-             <div className="flex flex-col sm:flex-row sm:items-center gap-6 mb-12 border-b border-black/5 pb-8">
-              {/* Type A: Section Anchor */}
-              <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark/80">
-                / VIEW MODE
-              </span>
-         
+          {/* Intro: eyebrow + H2 + sub (mobile: after video; tablet: top-right; desktop: col 6–12 row 1) */}
+          <div className="relative md:col-span-2 md:row-start-1 lg:col-span-7 lg:col-start-6 lg:row-start-1">
+            <span className="block font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark/80 mb-6 md:mb-10">
+              / WHO WE ARE
+            </span>
+            <h2 className="font-serif text-5xl md:text-6xl lg:text-7xl leading-[0.9] mb-8 md:mb-10 text-dark tracking-tight">
+              Built by people who have{' '}
+              <span className="italic text-gold-on-cream">actually run businesses</span>
+            </h2>
+            <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/70 border-l-2 border-dark/10 pl-8 max-w-xl">
+              We don&apos;t just write code. We build systems based on what actually works on the floor.
+            </p>
+          </div>
+
+          {/* Modes + team/founder copy: stacked; tablet = full width under row 1; lg = right col rows 2–3 */}
+          <div className="flex flex-col gap-8 md:gap-10 lg:gap-12 md:col-span-3 md:row-start-2 lg:col-span-7 lg:col-start-6 lg:row-start-2 lg:row-span-2">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-6 border-b border-black/5 pb-8 w-full">
               <div className="flex bg-dark/5 p-1.5 rounded-sm w-fit">
                 <button 
                   onClick={() => setMode('architect')}
@@ -90,7 +98,7 @@ const TheArchitect: React.FC = () => {
                       : 'text-dark/70 hover:text-dark hover:bg-black/5'
                   }`}
                 >
-                  THE ARCHITECT
+                  THE TEAM
                 </button>
             
                 <button 
@@ -101,7 +109,7 @@ const TheArchitect: React.FC = () => {
                       : 'text-dark/70 hover:text-dark hover:bg-black/5'
                   }`}
                 >
-                  THE HUMAN
+                  THE FOUNDER
                 </button>
               </div>
             </div>
@@ -114,47 +122,16 @@ const TheArchitect: React.FC = () => {
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.5 }}
               >
-                 {/* FIXED RESPONSIVENESS: Scales smoothly now */}
-                 <h2 className="font-serif text-5xl md:text-6xl lg:text-7xl leading-[0.9] mb-8 md:mb-12 text-dark tracking-tight">
-                    {mode === 'architect' ? (
-                       <>One person. <br/><span className="italic text-gold-on-cream">Ten person output</span></>
-                    ) : (
-                       <>I've run businesses. <br/><span className="italic text-gold-on-cream">Not just advised them</span></>
-                    )}
-                 </h2>
-                 <div className="space-y-8 md:space-y-12">
-                    {/* FIXED: Body text scaling */}
-                    <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/70 border-l-2 border-dark/10 pl-8 max-w-xl">
-                       {mode === 'architect' 
-                         ? "No account managers. No junior handoffs. No endless meetings. You talk directly to the person building your system. Automation and AI let me deliver what agencies charge a team for."
-                         : "Before I built systems for others, I ran my own café, managed international franchises, and worked factory floors. I know what it's like to chase invoices at midnight. No theory. Just what actually works."
-                       }
-                    </p>
-                 </div>
-
-                 {/* Signature Block */}
-                 <div className="mt-16 pt-10 border-t border-black/5">
-                    <div className="flex items-center gap-8 mb-8">
-                      <div>
-                          {/* Type B: Card Tag */}
-                          <p className="type-eyebrow text-black/60 mb-1">
-                             {mode === 'architect' ? 'THE ARCHITECT' : 'THE HUMAN'}
-                          </p>
-                          <p className={`font-serif text-2xl transition-colors duration-flow ${mode === 'architect' ? 'text-dark' : 'text-gold-on-cream'}`}>
-                             Felipe Chaparro
-                          </p>
-                      </div>
-                      <a 
-                        href="https://www.linkedin.com/in/felipe-chaparro-97a390176/" 
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label="Visit Felipe Chaparro's LinkedIn Profile"
-                        className={`group/arrow flex items-center justify-center w-14 h-14 border transition-all duration-snap ${mode === 'architect' ? 'border-black/10 hover:bg-dark hover:text-white' : 'border-gold/30 hover:bg-gold hover:text-white'}`}
-                      >
-                          <ArrowUpRight className="w-6 h-6 stroke-[1.5] group-hover/arrow:translate-x-1 group-hover/arrow:-translate-y-1 transition-transform duration-snap ease-out" />
-                      </a>
-                    </div>
-                 </div>
+                <h3 className="font-serif text-2xl md:text-3xl lg:text-4xl text-dark mb-6 md:mb-8 leading-tight tracking-tight">
+                  {mode === 'architect'
+                    ? 'We run our business on the same systems we build for you'
+                    : 'Felipe Chaparro'}
+                </h3>
+                <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/70 max-w-xl md:max-w-none lg:max-w-xl">
+                  {mode === 'architect'
+                    ? "Small team, real experience. We've worked inside businesses like yours and we know what operations actually look like. We take on a few clients at a time so every build gets proper attention."
+                    : "Before SYSBILT, Felipe ran companies, managed franchises, and worked the floor. He knows what it's like to chase invoices on a Sunday and train staff who won't read the manual. He built SYSBILT to create the exact systems he wished he had back then."}
+                </p>
               </m.div>
             </AnimatePresence>
           </div>

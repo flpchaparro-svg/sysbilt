@@ -55,7 +55,7 @@ const ProcessPage: React.FC<ProcessPageProps> = ({ onBack, onNavigate }) => {
               How we <span className="italic font-serif text-gold-on-cream">work</span>
             </h1>
             <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/70 max-w-2xl border-l-2 border-gold pl-8 py-2 text-left lg:mx-0">
-              Clear path. No mystery. No jargon. Just results.
+              This is how we take your business from messy to automated
             </p>
           </Section>
 
