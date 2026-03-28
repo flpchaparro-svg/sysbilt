@@ -15,7 +15,7 @@ export default function SystemPhases({ onNavigate }: SystemPhasesProps) {
 
   return (
     <section id="architecture" className="py-24 lg:py-32 bg-[#FFF2EC] border-t border-[#1A1A1A]/10 relative overflow-hidden font-sans">
-      <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 relative z-10">
+      <div className="max-w-[1400px] mx-auto px-6 md:px-5 lg:px-20 relative z-10">
         
         {/* HEADER SECTION */}
         <div className="mb-16 md:mb-24 text-center max-w-4xl mx-auto">
@@ -33,11 +33,11 @@ export default function SystemPhases({ onNavigate }: SystemPhasesProps) {
           </p>
         </div>
 
-        {/* CARDS GRID */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-16 md:gap-10 lg:gap-14 justify-items-center">
+        {/* CARDS GRID — tablet: full-width zig-zag rows; lg: 3 columns; mobile: stacked */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16 md:gap-12 lg:gap-14 justify-items-center">
           
           {/* PHASE 01: GET CLIENTS */}
-          <div className="flex flex-col items-center w-full max-w-[320px] gap-10">
+          <div className="flex flex-col items-center w-full max-w-[320px] gap-10 md:max-w-none md:w-full md:col-span-2 md:flex-row md:items-center md:justify-between md:gap-8 lg:col-span-1 lg:max-w-[320px] lg:w-auto lg:flex-col lg:gap-10">
             <div className="relative w-[320px] h-[320px] bg-cream rounded-[40px] shadow-neu flex-shrink-0 flex items-center justify-center">
               {/* Neumorphic Inner Well */}
               <div className="relative w-48 h-48 bg-cream rounded-full shadow-neu-inner flex items-center justify-center">
@@ -67,7 +67,7 @@ export default function SystemPhases({ onNavigate }: SystemPhasesProps) {
                 </motion.div>
               </div>
             </div>
-            <div className="w-[320px] flex flex-col text-left">
+            <div className="w-[320px] flex flex-col text-left md:w-auto md:max-w-md md:flex-1 md:min-w-0 lg:w-[320px] lg:max-w-none lg:flex-none">
               <div className="flex items-center gap-4">
                 <div className="border px-3 py-1.5 text-[11px] font-bold tracking-[0.2em] uppercase" style={{ borderColor: colors.redText, color: colors.redText }}>
                   Phase 01
@@ -82,7 +82,7 @@ export default function SystemPhases({ onNavigate }: SystemPhasesProps) {
           </div>
 
           {/* PHASE 02: SCALE FASTER */}
-          <div className="flex flex-col items-center w-full max-w-[320px] gap-10">
+          <div className="flex flex-col items-center w-full max-w-[320px] gap-10 md:max-w-none md:w-full md:col-span-2 md:flex-row-reverse md:items-center md:justify-between md:gap-8 lg:col-span-1 lg:max-w-[320px] lg:w-auto lg:flex-col lg:gap-10">
             <div className="relative w-[320px] h-[320px] bg-cream rounded-[40px] shadow-neu flex-shrink-0 flex items-center justify-center">
               {/* Neumorphic Inner Well */}
               <div className="relative w-48 h-48 bg-cream rounded-full shadow-neu-inner flex items-center justify-center">
@@ -112,7 +112,7 @@ export default function SystemPhases({ onNavigate }: SystemPhasesProps) {
                 </motion.div>
               </div>
             </div>
-            <div className="w-[320px] flex flex-col text-left">
+            <div className="w-[320px] flex flex-col text-left md:w-auto md:max-w-md md:flex-1 md:min-w-0 lg:w-[320px] lg:max-w-none lg:flex-none">
               <div className="flex items-center gap-4">
                 <div className="border px-3 py-1.5 text-[11px] font-bold tracking-[0.2em] uppercase" style={{ borderColor: '#8B6914', color: '#8B6914' }}>
                   Phase 02
@@ -127,7 +127,7 @@ export default function SystemPhases({ onNavigate }: SystemPhasesProps) {
           </div>
 
           {/* PHASE 03: SEE CLEARLY */}
-          <div className="flex flex-col items-center w-full max-w-[320px] gap-10">
+          <div className="flex flex-col items-center w-full max-w-[320px] gap-10 md:max-w-none md:w-full md:col-span-2 md:flex-row md:items-center md:justify-between md:gap-8 lg:col-span-1 lg:max-w-[320px] lg:w-auto lg:flex-col lg:gap-10">
             <div className="relative w-[320px] h-[320px] bg-cream rounded-[40px] shadow-neu flex-shrink-0 flex items-center justify-center">
               {/* Neumorphic Inner Well */}
               <div className="relative w-48 h-48 bg-cream rounded-full shadow-neu-inner flex items-center justify-center">
@@ -149,7 +149,7 @@ export default function SystemPhases({ onNavigate }: SystemPhasesProps) {
                 </motion.div>
               </div>
             </div>
-            <div className="w-[320px] flex flex-col text-left">
+            <div className="w-[320px] flex flex-col text-left md:w-auto md:max-w-md md:flex-1 md:min-w-0 lg:w-[320px] lg:max-w-none lg:flex-none">
               <div className="flex items-center gap-4">
                 <div className="border px-3 py-1.5 text-[11px] font-bold tracking-[0.2em] uppercase" style={{ borderColor: colors.dark, color: colors.dark }}>
                   Phase 03

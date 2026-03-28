@@ -65,11 +65,6 @@ const ArchitectPage: React.FC<ArchitectPageProps> = ({ onBack, onNavigate }) => 
 
         {/* HEADER & SWITCH */}
         <Section className="mb-16 md:mb-24 relative text-center lg:text-left">
-           <div className="flex items-center gap-2 md:gap-4 mb-6 md:mb-10 overflow-hidden justify-center lg:justify-start">
-             <span className="font-mono text-xs font-bold uppercase tracking-[0.2em]">/</span>
-             <span className="font-mono text-xs font-bold uppercase tracking-[0.2em]">{current.label.replace('/', '').trim()}</span>
-           </div>
-           
            <div className="flex items-center gap-0 mb-12 border border-dark/10 bg-white p-1 rounded-sm w-fit shadow-lg mx-auto lg:mx-0">
               <button 
                 onClick={() => setMode('architect')}
@@ -77,7 +72,7 @@ const ArchitectPage: React.FC<ArchitectPageProps> = ({ onBack, onNavigate }) => 
                   mode === 'architect' ? 'text-cream bg-dark shadow-md' : 'text-dark/60'
                 }`}
               >
-                {mode === 'architect' && <Terminal className="w-3 h-3" />} THE ARCHITECT
+                {mode === 'architect' && <Terminal className="w-3 h-3" />} THE TEAM
               </button>
               <button 
                 onClick={() => setMode('human')}
@@ -85,7 +80,7 @@ const ArchitectPage: React.FC<ArchitectPageProps> = ({ onBack, onNavigate }) => 
                   mode === 'human' ? 'text-dark bg-gold shadow-md' : 'text-dark/60'
                 }`}
               >
-                {mode === 'human' && <Fingerprint className="w-3 h-3" />} THE HUMAN
+                {mode === 'human' && <Fingerprint className="w-3 h-3" />} THE FOUNDER
               </button>
            </div>
 
@@ -165,20 +160,6 @@ const ArchitectPage: React.FC<ArchitectPageProps> = ({ onBack, onNavigate }) => 
                       </Section>
                     ))}
                   </div>
-
-                  {/* ARCHITECT CREDENTIALS */}
-                  {mode === 'architect' && ARCHITECT_CONTENT.architect.credentials && (
-                    <Section className="bg-white p-6 border border-black/5 rounded-sm">
-                      <div className="grid grid-cols-2 gap-4">
-                        {ARCHITECT_CONTENT.architect.credentials.map((cred, i) => (
-                          <div key={i} className="flex items-center gap-3">
-                             <cred.icon className="w-4 h-4 text-dark/60" />
-                             <span className="font-mono text-xs font-bold uppercase">{cred.label}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </Section>
-                  )}
                 </m.div>
               </AnimatePresence>
            </div>

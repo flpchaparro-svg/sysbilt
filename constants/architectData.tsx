@@ -1,49 +1,86 @@
 import React from 'react';
-import { 
-  FlaskConical, Award, Wrench, Target, 
-  Coffee, Globe, Code2, Database, Zap 
+import {
+  Package,
+  Building2,
+  Clock,
+  Users,
+  Calendar,
+  FileWarning,
+  FlaskConical,
+  Heart,
 } from 'lucide-react';
 
 export const ARCHITECT_CONTENT = {
   architect: {
-    label: '/ THE ARCHITECT',
-    accent: 'text-red-text',
-    // Storing JSX directly in data allows for rich text formatting
     headline: (
       <>
-        One person. <br className="hidden md:block" />
-        <span className="italic font-serif text-gold-on-cream">Ten person output</span>
+        Small team, <br className="hidden md:block" />
+        <span className="italic font-serif text-gold-on-cream">big output</span>
       </>
     ),
-    subhead: "No account managers. No junior handoffs. No endless meetings. You talk directly to the person building your system. Automation and AI let me deliver what agencies charge a team for.",
+    subhead:
+      'We run our business on the same systems we build for you. No account managers, no junior handoffs. You talk directly to the people building your system.',
     timeline: [
-      { id: 'a1', icon: FlaskConical, title: 'No Templates', text: "Every solution is built for your specific situation. Nothing copy-pasted." },
-      { id: 'a2', icon: Award, title: 'No Shortcuts', text: "I trained as a chemist. If you miss a step, the reaction fails. Same with business systems." },
-      { id: 'a3', icon: Wrench, title: 'Enterprise Tools', text: "Same platforms as large agencies. HubSpot. Make.com. Sized for real businesses." },
-      { id: 'a4', icon: Target, title: 'Your Time Back', text: "If your sales team is doing data entry, something is broken. I fix that." }
+      {
+        id: 'a1',
+        icon: Package,
+        title: 'We use what we sell',
+        text: "We capture our own leads, automate our own follow-ups, and run our own operations through the same system we build for clients. If it doesn't work for us, we don't sell it to you.",
+      },
+      {
+        id: 'a2',
+        icon: Building2,
+        title: "We've been on the floor",
+        text: "We've worked inside trade, wholesale, and service businesses. We know what operations actually look like when stock goes missing, staff call in sick, and the phone won't stop ringing.",
+      },
+      {
+        id: 'a3',
+        icon: Clock,
+        title: "We've run the books at midnight",
+        text: "Before we built systems for other people, we ran our own companies. We've chased invoices on a Sunday, trained staff who wouldn't read the manual, and managed chaos with spreadsheets. That's exactly why we built SYSBILT.",
+      },
+      {
+        id: 'a4',
+        icon: Users,
+        title: 'Few clients, full attention',
+        text: 'We take on a small number of clients at a time so every build gets the focus it needs. No rushed jobs, no half-finished systems, no disappearing after handover.',
+      },
     ],
-    credentials: [
-      { label: '24+ Certifications', icon: Award },
-      { label: 'HubSpot Certified', icon: Database },
-      { label: 'Sydney Based', icon: Globe },
-      { label: 'Same-Day Response', icon: Zap }
-    ]
   },
   human: {
-    label: '/ THE HUMAN',
-    accent: 'text-gold-on-cream',
     headline: (
       <>
-        I've run businesses. <br className="hidden md:block" />
-        <span className="italic font-serif text-gold-on-cream">Not just consulted them</span>
+        Built out of <br className="hidden md:block" />
+        <span className="italic font-serif text-gold-on-cream">actual frustration</span>
       </>
     ),
-    subhead: "Before I built systems for others, I ran my own café, managed international franchises, and worked factory floors. I know what it's like to chase invoices at midnight. No theory. Just what actually works.",
+    subhead:
+      'Before SYSBILT, Felipe ran companies, managed franchises, and worked the floor. He built this company to create the exact systems he wished he had back then.',
     timeline: [
-      { id: 'h1', icon: FlaskConical, title: 'Trained as a Chemist', text: "In Chile, I learned that every problem needs a custom process. No templates. Just problem-solving." },
-      { id: 'h2', icon: Coffee, title: 'Ran My Own Café', text: "Hiring, payroll, marketing, chasing invoices. I know what running a business actually costs." },
-      { id: 'h3', icon: Globe, title: 'Managed a Franchise', text: "Fitness franchise in Southeast Asia. I learned to adapt systems to people, not force people into systems." },
-      { id: 'h4', icon: Code2, title: 'Now I Build Systems', text: "The systems I wish I'd had when I was running my café. So you can focus on work that matters." }
-    ]
-  }
+      {
+        id: 'h1',
+        icon: Calendar,
+        title: 'The Sunday invoice chase',
+        text: 'The original frustration was spending Sunday nights manually reconciling accounts and chasing late payers. That specific pain is exactly why we built automation into the core of everything we do.',
+      },
+      {
+        id: 'h2',
+        icon: FileWarning,
+        title: 'The manual nobody reads',
+        text: 'Writing procedures that staff ignored was a constant drain. We fix that now by building the process directly into the software so the right steps happen automatically. No manual required.',
+      },
+      {
+        id: 'h3',
+        icon: FlaskConical,
+        title: 'Systems thinking from the start',
+        text: "Felipe trained as a chemist before moving into business. That background means we don't just look at your business as a website project. We treat every bottleneck as a process problem with a logical fix.",
+      },
+      {
+        id: 'h4',
+        icon: Heart,
+        title: 'Built for real people',
+        text: "We learned early that you have to adapt systems to the people using them. If you force busy staff into rigid software, they go back to paper. We build tools that fit how your team actually works.",
+      },
+    ],
+  },
 };
