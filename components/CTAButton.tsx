@@ -43,14 +43,15 @@ const CTAButton: React.FC<CTAButtonProps> = ({
           group relative inline-flex items-center justify-center gap-[2px]
           font-mono font-bold uppercase tracking-[0.2em] 
           bg-transparent border-none
-          transition-colors duration-snap
+          transition-colors transition-transform duration-[250ms]
+          active:scale-[0.97]
           max-w-full whitespace-normal text-center leading-tight
           ${idleText} ${fontSize} ${padding} ${className}
           ${hoverText}
         `}
       >
         {/* Left Bracket - Squeezes In */}
-        <span className="transition-transform duration-snap group-hover:translate-x-[2px] shrink-0">
+        <span className="transition-transform duration-[250ms] group-hover:translate-x-[2px] shrink-0">
           [
         </span>
         
@@ -60,7 +61,7 @@ const CTAButton: React.FC<CTAButtonProps> = ({
         </span>
         
         {/* Right Bracket - Squeezes In */}
-        <span className="transition-transform duration-snap group-hover:-translate-x-[2px] shrink-0">
+        <span className="transition-transform duration-[250ms] group-hover:-translate-x-[2px] shrink-0">
           ]
         </span>
       </button>
@@ -83,16 +84,17 @@ const CTAButton: React.FC<CTAButtonProps> = ({
       className={`
         group relative ${solidSize} 
         font-mono font-bold uppercase tracking-[0.2em] 
-        overflow-hidden transition-all duration-snap 
+        overflow-hidden transition-all duration-[250ms]
+        active:scale-[0.97]
         border ${initialBorder} ${initialBg} ${initialText} 
         max-w-full w-auto h-auto min-h-[3rem]
         ${className}
       `}
     >
-      <div className={`absolute inset-0 ${initialBg} group-hover:-translate-y-full transition-transform duration-flow cubic-bezier(0.23, 1, 0.32, 1)`} />
-      <div className={`absolute inset-0 ${hoverBg} translate-y-full group-hover:translate-y-0 transition-transform duration-flow cubic-bezier(0.23, 1, 0.32, 1)`} />
+      <div className={`absolute inset-0 ${initialBg} group-hover:-translate-y-full transition-transform duration-[250ms] cubic-bezier(0.23, 1, 0.32, 1)`} />
+      <div className={`absolute inset-0 ${hoverBg} translate-y-full group-hover:translate-y-0 transition-transform duration-[250ms] cubic-bezier(0.23, 1, 0.32, 1)`} />
       
-      <span className={`relative z-10 flex items-center justify-center gap-3 transition-colors duration-flow group-hover:text-dark flex-wrap text-center`}>
+      <span className={`relative z-10 flex items-center justify-center gap-3 transition-colors duration-[250ms] group-hover:text-dark flex-wrap text-center`}>
         <span className="whitespace-normal leading-relaxed">{children}</span>
         <ArrowRight className="w-4 h-4 shrink-0" />
       </span>

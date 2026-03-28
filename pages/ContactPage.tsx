@@ -19,7 +19,7 @@ const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
   usePageTitle('Contact');
   const { formState, updateField, status, handleSubmit } = useContactForm();
   
-  const inputBaseStyle = "w-full bg-white/5 border border-white/10 px-4 py-4 font-sans text-xl text-white focus:outline-none focus:border-gold focus:bg-white/10 transition-all placeholder:text-white/70 rounded-sm mt-2";
+  const inputBaseStyle = "w-full bg-white/5 border border-white/10 px-4 py-4 font-sans text-xl text-white focus:outline-none focus:border-gold focus:bg-white/10 transition-colors duration-200 ease-out placeholder:text-white/70 rounded-sm mt-2";
 
   return (
     // Main background dark so overscrolling on mobile doesn't show cream under the form (design spec: dark #1a1a1a)
@@ -61,7 +61,7 @@ const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
       <div className="w-full lg:w-7/12 min-h-screen lg:h-screen bg-dark text-cream p-6 md:p-12 lg:px-16 lg:py-12 flex flex-col justify-center relative lg:overflow-y-auto">
         
         {status !== 'success' ? (
-          <m.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="max-w-xl w-full mx-auto lg:mx-0">
+          <m.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25, ease: "easeOut" }} className="max-w-xl w-full mx-auto lg:mx-0">
             
             <div className="mb-8 lg:mb-6 border-b border-white/10 pb-6 mt-8 lg:mt-0">
               <span className="font-mono text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-gold-on-dark mb-4 block">

@@ -29,7 +29,7 @@ interface HomePageProps {
 const HomePage: React.FC<HomePageProps> = ({ onNavigate, onServiceClick }) => {
   usePageTitle('Home');
   
-  const [isTickerHovered, setIsTickerHovered] = useState(false);
+  const isTickerHovered = useRef(false);
   const [isMobile, setIsMobile] = useState(false);
   const [canAnimate, setCanAnimate] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
@@ -62,6 +62,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onServiceClick }) => {
   const { scrollY } = useScroll();
   const carouselX = useMotionValue(0);
   const xPercent = useTransform(carouselX, (value) => `${value}%`);
+  const tickerTransform = useTransform(xPercent, (v) => `translateX(${v})`);
   
   const scrollVelocityRef = useRef(0);
   const lastScrollYRef = useRef(0);
@@ -80,7 +81,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onServiceClick }) => {
     if (newY >= 100) newY = -100;
     scrollLineY.set(newY);
 
-    const tickerSpeed = isTickerHovered ? 0 : 0.0006;
+    const tickerSpeed = isTickerHovered.current ? 0 : 0.0006;
     let moveBy = tickerSpeed * delta;
     const currentX = carouselX.get();
     let nextX = currentX - moveBy;
@@ -175,9 +176,9 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onServiceClick }) => {
         </div>
       </section>
 
-      <div className="w-full bg-dark/5 py-12 border-y border-black/5 overflow-hidden relative z-30" style={{ maskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)', WebkitMaskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)' }} onMouseEnter={() => setIsTickerHovered(true)} onMouseLeave={() => setIsTickerHovered(false)}>
+      <div className="w-full bg-dark/5 py-12 border-y border-black/5 overflow-hidden relative z-30" style={{ maskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)', WebkitMaskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)' }} onMouseEnter={() => { isTickerHovered.current = true; }} onMouseLeave={() => { isTickerHovered.current = false; }}>
         <div className="flex whitespace-nowrap">
-          <m.div className="flex items-center pr-0" style={{ x: xPercent, willChange: 'transform' }}>
+          <m.div className="flex items-center pr-0" style={{ transform: tickerTransform, willChange: 'transform' }}>
             {[...TECH_STACK, ...TECH_STACK, ...TECH_STACK, ...TECH_STACK].map((tech, i) => (
               <div key={i} className="flex items-center group cursor-default">
                 <span className="type-eyebrow text-dark opacity-80 group-hover:text-gold-on-cream group-hover:opacity-100 transition-all duration-snap px-12">

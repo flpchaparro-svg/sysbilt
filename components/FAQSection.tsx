@@ -156,7 +156,7 @@ const FAQSection: React.FC<FAQSectionProps> = ({
                     >
                       {/* Hover Wipe Effect */}
                       <div 
-                        className={`hidden lg:block absolute inset-0 transition-transform duration-flow origin-left ${isActive ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`}
+                        className={`hidden lg:block absolute inset-0 transition-transform duration-snap ease-out origin-left ${isActive ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`}
                         style={{ backgroundColor: accentColor }}
                       />
 

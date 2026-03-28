@@ -251,8 +251,8 @@ const HeroVisual: React.FC = () => {
     observer.observe(container);
     resize();
     render(performance.now());
-    window.addEventListener('resize', resize);
-    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('resize', resize, { passive: true });
+    window.addEventListener('mousemove', onMouseMove, { passive: true });
 
     return () => {
       observer.disconnect();

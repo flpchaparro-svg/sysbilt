@@ -126,7 +126,7 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
                        <m.div 
                          layoutId="nav-bg"
                          className="absolute inset-0 bg-dark/5 rounded-sm z-0"
-                         transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                         transition={{ type: "spring", bounce: 0.1, duration: 0.25 }}
                        />
                      )}
 
@@ -149,7 +149,7 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
                               initial={{ opacity: 0, y: 10, clipPath: 'inset(0% 0% 100% 0%)' }}
                               animate={{ opacity: 1, y: 0, clipPath: 'inset(0% 0% 0% 0%)' }}
                               exit={{ opacity: 0, y: 10, clipPath: 'inset(0% 0% 100% 0%)' }}
-                              transition={{ duration: 0.3, ease: 'circOut' }}
+                              transition={{ duration: 0.2, ease: "easeOut" }}
                               className="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-[700px] bg-white border border-dark/10 shadow-2xl p-8 grid grid-cols-3 gap-8 cursor-default z-[400]"
                             >
                               {archPillars.map((group) => (
