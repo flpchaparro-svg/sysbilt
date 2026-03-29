@@ -1,59 +1,116 @@
 # Pillar 7 — Dashboards & Reporting — Copy
 
-## Hero
-- Back: `Return to The System`
-- Eyebrow: `/` — `THE SYSTEM / SEE CLEARLY`
-- Headline: `Dashboards &` + `Reporting.` ("Reporting." dark, italic)
-- Sub: `Do you actually know your margin right now? Or are you waiting for the accountant? Revenue, margin, and pipeline on one screen. Updated live. No more guessing.`
-
-## Section: System Configuration
-- Eyebrow: `/ SYSTEM CONFIGURATION`
-- Headline: `Select your Situation.` ("Situation." dark, italic)
-- UI labels: "Is this you?", "Select Profile", "The Pain", "The Fix", "Included Specs", `[ BOOK A CALL ]`
+Return to The System  
 
 ---
 
-## Tiers & personas (full copy)
+## Hero
 
-### PULSE — "I need to stop guessing."
-- Summary: `You're flying blind. You have data in Xero, Google Ads, and your CRM but no single screen that tells you if you're winning or losing today.`
-- Sprint: `7 DAYS`
-- Specs: Google Tag Manager | Looker Studio | Attribution modelling | Basic KPIs
+Know exactly what your business is doing right now  
 
-- **The Blind Scaler** (High-Volume Businesses) — Pain: Operational Blindness — `High volume, thin margins. You don't know your real profit until the accountant finishes the books at end of quarter. By then, the damage is done.` — Fix: `Real-time margin tracking. Inventory links to finance so you see the net profit on every single order the moment it happens. No more quarter-end surprises.`
-- **The Margin Squeeze** (Distributors, Wholesalers) — Pain: Hidden Costs — `Revenue is up. Profit isn't. Something is eating your margin but you don't know what.` — Fix: `Margin breakdown by product, service, and customer. You see where money disappears.`
-- **The Data Hoarder** (Founders with Multiple Systems) — Pain: Too Many Numbers — `You have 12 reports across 5 systems. Information overload. No clarity.` — Fix: `One dashboard. The 6 numbers that actually matter. Everything else is noise.`
+You shouldn't have to wait for the accountant to tell you if last month was good or bad. We build dashboards that pull your scattered data into one screen so you can see your numbers live from anywhere.  
 
-### LAB — "I see what your customers see."
-- Summary: `You need to understand customer behaviour. What are they clicking? Where do they drop off? What converts?`
-- Sprint: `14 DAYS`
-- Specs: Heat mapping | Funnel analysis | A/B testing | Conversion tracking
+BOOK A CALL  
 
-- **The Conversion Hunter** (E-commerce, Lead Gen Sites) — Pain: Website Leaks — `People visit your site. Most leave without enquiring. You don't know why.` — Fix: `Heat maps show where they click. Funnel analysis shows where they drop off. You fix the leaks.`
-- **The Ad Spender** (Marketing Teams, Advertisers) — Pain: Wasted Budget — `You spend $5k/month on ads. Something works. You don't know what.` — Fix: `Attribution tracking. You see which ad, which keyword, which audience actually generates revenue.`
-- **The Price Tester** (E-commerce, Service Biz) — Pain: Pricing Guesswork — `You think you could charge more. But you're scared to test it.` — Fix: `A/B testing. Show different prices to different visitors. Data tells you the answer.`
+---
 
-### ORACLE — "I need to predict the future."
-- Summary: `Looking backwards isn't enough. You need to see what's coming. Forecasting, projections, early warnings.`
-- Sprint: `21 DAYS`
-- Specs: Revenue forecasting | Pipeline predictions | Trend analysis | Alert systems
+## The gap
 
-- **The Cash Flow Guesser** (CFOs, Finance Directors) — Pain: Runway Anxiety — `"Will we make payroll next month?" You're never quite sure.` — Fix: `Cash flow projection based on pipeline, payment terms, and seasonal trends. You see problems before they hit.`
-- **The Pipeline Dreamer** (Sales Leaders, RevOps) — Pain: Wishful Forecasting — `Your sales forecast is fiction. Deals that were "closing this week" last month are still "closing this week."` — Fix: `Reality-based forecasting. Weighted by probability, adjusted by historical conversion. Numbers you can trust.`
-- **The Trend Spotter** (Strategy, Leadership) — Pain: Late Reactions — `You notice problems after they've hurt you. Slow sales, rising costs, churn. Always reactive.` — Fix: `Early warning indicators. Spot downturns before they become disasters. Act while you can still fix it.`
+/ WHAT MOST PEOPLE MISS  
 
-### TOWER — "I need total command."
-- Summary: `Full operational visibility. Every team, every metric, every system. Command centre view.`
-- Sprint: `30+ DAYS`
-- Specs: Multi-source integration | Real-time feeds | Executive dashboards | Team scorecards
+You have data everywhere and answers nowhere  
 
-- **The Multi-Location Owner** (Multi-Site Businesses) — Pain: Site Blindness — `You have 5 locations. Each runs differently. You only see problems when you visit.` — Fix: `Location-by-location dashboards. Compare performance. Spot issues from your desk.`
-- **The Team Manager** (Sales Directors, Ops) — Pain: Performance Guessing — `Who's your best performer? Who's struggling? You go by gut, not data.` — Fix: `Team scorecards. Activity, outcomes, trends. You manage with facts, not feelings.`
-- **The Acquisition Target** (Founders, Exit Planning) — Pain: Due Diligence Readiness — `You want to sell in 3 years. But you can't prove your numbers clearly.` — Fix: `Investor-ready dashboards. Clean data. Clear trends. You look professional when it matters.`
+Your CRM has numbers, your accounting software has numbers, and your ad platforms have numbers. But nobody has put them in one place where you can actually see what is going on.  
+
+THE GAP  
+The answer that arrives too late  
+You want to know your profit margin this month or how much it cost you to win your last 10 clients. You ask your team and three days later someone hands you a spreadsheet. By the time you read it the numbers are already stale so you stop asking. You make decisions on gut feeling instead of facts and you only find out something went wrong after it has already cost you money.  
+
+THE GAP  
+The campaign you can't measure  
+You spend money on Google Ads, social media, referrals, maybe a new hire. Is it actually working? You have a feeling it is but you can't prove it. If someone asked you right now which marketing channel brought in your most profitable clients last quarter you couldn't answer with confidence. You're investing without knowing what is paying you back and what is burning cash.  
+
+---
+
+## Solution
+
+/ HOW WE BUILD IT  
+
+Every number that matters on one screen  
+
+We connect the tools you already use and build a single view that tells you the truth about your business, updated live.  
+
+SEE CLEARLY  
+01  
+Everything in one place  
+We pull data from your CRM, your accounting software, and your marketing platforms into one dashboard. You open your laptop or your phone and see how much money is coming in, what it cost to get it, and where the problems are.  
+
+SEE CLEARLY  
+02  
+Know what is actually working  
+You see which marketing channels bring in paying clients and which ones waste money. You see which services are profitable and which ones eat your margin. You stop guessing and start making decisions based on real numbers.  
+
+SEE CLEARLY  
+03  
+See what is coming  
+We don't just show you the past. We visualise your pipeline, your cash flow, and your trends so you can see the next 90 days clearly. You spot problems before they hit and opportunities before your competitors do.  
+
+---
+
+## Engine (how it connects)
+
+/ HOW IT CONNECTS  
+
+The layer that sits on top of everything  
+
+A dashboard is only as useful as the data feeding it. We wire your reporting directly into your entire system so it updates itself.  
+
+Pull  
+It pulls lead data from your website (Pillar 1) and your sales pipeline from your CRM (Pillar 2). Every enquiry, every deal, and every conversion tracked.  
+
+Calculate  
+It matches that against the operational data running through your automations (Pillar 3). Cost per lead, time to close, revenue by source.  
+
+Display  
+One clean screen with profit, costs, pipeline, and velocity. You see the whole machine working and you steer instead of guess.  
+
+Orbital labels (visual)  
+Pillar 7 — Dashboards  
+Pillar 1 — Websites  
+Pillar 2 — CRM  
+Pillar 3 — Automation  
+
+---
+
+## Bottom CTA
+
+/ READY?  
+
+Let's Talk  
+
+BOOK A CALL  
+
+NOW ACCEPTING PROJECTS  
 
 ---
 
 ## FAQ
-- Title: `Questions about dashboards?`
-- Subtitle: `Common questions about dashboards and reporting.`
-- Q&A: **Full copy in `copy/faq-pillar7.md`** · Data: `constants/faqData.ts` → `pillarFAQs.pillar7`
+
+Questions about dashboards  
+
+Common questions about what we track, where the data comes from, and how it updates  
+
+How is a dashboard different from reports in Xero or MYOB  
+Accounting software shows you history. Money in, money out. A dashboard shows you the full picture in real time including where your leads come from, where the bottlenecks are, and what your pipeline looks like for the next 90 days. It's the windshield, not the rearview mirror.  
+
+Can I check my dashboard from my phone  
+Yes. We build for desktop, tablet, and mobile. You can check your business numbers from a cafe or the train with real-time data and no laptop needed.  
+
+What systems can feed into the dashboard  
+Almost anything. Your CRM, your accounting software like Xero or MYOB, your ad platforms like Google and Meta, your e-commerce platform, and your spreadsheets. If it has data we can pull it in.  
+
+Is the data live or does it update once a day  
+It depends on what makes sense for you. Sales pipeline data can be real-time. Financial summaries might update daily. We decide together what needs to be instant and what can be slower. More frequency means more complexity.  
+
+Can different people see different dashboards  
+Yes. Role-based views are standard. The owner sees cash flow and overall health. The sales manager sees deals and pipeline. Marketing sees lead sources and campaign performance. Everyone sees what they need and nothing more.  
