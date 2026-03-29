@@ -1,5 +1,5 @@
 import React from 'react';
-import { Target, TrendingUp, BarChart3, ArrowUpRight } from 'lucide-react';
+import { Target, TrendingUp, BarChart3, ArrowUpRight, Layers, Building2, Newspaper } from 'lucide-react';
 import CTAButton from './CTAButton';
 import { SysbiltLogo } from './SysbiltLogo';
 
@@ -7,12 +7,20 @@ interface GlobalFooterProps {
   onNavigate: (view: string, sectionId?: string) => void;
 }
 
+type FooterLinkGroup = {
+  title: string;
+  icon: React.ComponentType<{ className?: string }>;
+  color: string;
+  links: { label: string; action: () => void }[];
+};
+
 const GlobalFooter: React.FC<GlobalFooterProps> = ({ onNavigate }) => {
   const currentYear = new Date().getFullYear();
 
-  const footerLinks = [
+  const footerLinks: FooterLinkGroup[] = [
     {
-      title: 'ABOUT',
+      title: 'COMPANY',
+      icon: Building2,
       color: 'text-white/80',
       links: [
         { label: 'About', action: () => onNavigate('architect') },
@@ -48,6 +56,7 @@ const GlobalFooter: React.FC<GlobalFooterProps> = ({ onNavigate }) => {
     },
     {
       title: 'INSIGHTS',
+      icon: Newspaper,
       color: 'text-white/80',
       links: [
         { label: 'Blog', action: () => onNavigate('blog') },
@@ -66,73 +75,94 @@ const GlobalFooter: React.FC<GlobalFooterProps> = ({ onNavigate }) => {
   ];
 
   return (
-    <footer className="bg-dark text-white pt-24 pb-12 px-6 md:px-12 border-t border-white/10">
+    <footer className="bg-dark text-white pt-16 pb-10 px-6 md:px-12 border-t border-white/10">
       <div className="max-w-[1400px] mx-auto">
-        <div className="flex flex-col lg:flex-row justify-between items-start mb-24 gap-16">
-          <div className="max-w-lg">
-            <div className="mb-6">
+        {/* Top: brand (left) + all nav columns in one dense row (right on xl) */}
+        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8 lg:gap-6 xl:gap-10 mb-10 lg:mb-8">
+          <div className="shrink-0 max-w-[20rem] lg:max-w-[min(100%,17rem)] xl:max-w-[18.5rem]">
+            <div className="mb-3 w-[7.5rem]">
               <SysbiltLogo isDarkBg={true} />
             </div>
-            <p className="font-mono text-[10px] font-bold uppercase tracking-[0.15em] text-white/50 mb-4">
-              SYSBILT
-            </p>
-            <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl leading-[1.1] tracking-tight mb-8 text-white">
-              We build the systems that run your business without you
+            <h2 className="font-serif text-xl sm:text-2xl lg:text-[1.4rem] xl:text-[1.5rem] leading-[1.2] tracking-tight mb-4 text-white">
+              We build the{' '}
+              <span className="text-gold-on-dark italic">systems that run your business</span>
+              {' '}
+              without you
             </h2>
-            <CTAButton theme="dark" onClick={() => onNavigate('contact')}>
+            <CTAButton theme="dark" onClick={() => onNavigate('contact')} className="text-sm py-2.5 px-5">
               BOOK A CALL
             </CTAButton>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-12 lg:gap-10 w-full xl:w-auto xl:flex-1 xl:max-w-5xl">
-            {footerLinks.map((group) => (
-              <div key={group.title}>
-                <div className={`flex items-center gap-2 mb-6 ${group.color}`}>
-                  {group.icon && <group.icon className="w-4 h-4" />}
-                  <span className="font-mono text-[10px] font-bold uppercase tracking-[0.1em]">
-                    {group.title}
-                  </span>
+          <div className="min-w-0 lg:flex-1 lg:flex lg:justify-end">
+            <div
+              className="
+                grid w-full min-w-0
+                grid-cols-2 gap-x-5 gap-y-6
+                sm:grid-cols-3 sm:gap-x-4
+                lg:grid-cols-5 lg:gap-x-3 lg:gap-y-0 lg:justify-items-stretch
+              "
+            >
+              {footerLinks.map((group) => (
+                <div key={group.title} className="min-w-0">
+                  <div className={`flex items-center gap-1.5 mb-2 ${group.color}`}>
+                    <group.icon className="w-3 h-3 shrink-0" aria-hidden />
+                    <span className="font-mono text-[8px] sm:text-[9px] font-bold uppercase tracking-[0.08em] leading-tight">
+                      {group.title}
+                    </span>
+                  </div>
+                  <ul className="space-y-1">
+                    {group.links.map((link) => (
+                      <li key={link.label}>
+                        <button
+                          onClick={link.action}
+                          className="font-sans text-[11px] sm:text-xs text-white/70 hover:text-white transition-colors text-left leading-snug"
+                        >
+                          {link.label}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <ul className="space-y-4">
-                  {group.links.map((link) => (
-                    <li key={link.label}>
-                      <button
-                        onClick={link.action}
-                        className="font-sans text-sm text-white/70 hover:text-white transition-colors text-left"
-                      >
-                        {link.label}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-            <div>
-              <div className="flex items-center gap-2 mb-6 text-white/80">
-                <span className="font-mono text-[10px] font-bold uppercase tracking-[0.1em]">
-                  / WHAT WE DO
-                </span>
-              </div>
-              <ul className="space-y-4" aria-label="Capabilities and services">
-                {capabilitiesList.map((item) => (
-                  <li key={item}>
-                    <span className="font-sans text-sm text-white/70">{item}</span>
-                  </li>
-                ))}
-              </ul>
+              ))}
             </div>
           </div>
         </div>
 
-        <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6">
-          <p className="font-mono text-[10px] text-white/70 uppercase tracking-widest">
+        {/* WHAT WE DO: one band, capabilities in a single multi-column row */}
+        <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row md:items-start gap-4 md:gap-8 lg:gap-10 mb-14">
+          <div className="flex items-center gap-2 shrink-0 text-white/80 md:pt-0.5">
+            <Layers className="w-3.5 h-3.5 shrink-0 text-gold-on-dark" aria-hidden />
+            <span className="font-mono text-[9px] font-bold uppercase tracking-[0.1em] whitespace-nowrap">
+              WHAT WE DO
+            </span>
+          </div>
+          <div
+            className="
+              grid flex-1 min-w-0
+              grid-cols-2 gap-x-5 gap-y-1.5
+              sm:grid-cols-3
+              lg:grid-cols-6 lg:gap-x-4
+            "
+            aria-label="Capabilities and services"
+          >
+            {capabilitiesList.map((item) => (
+              <span key={item} className="font-sans text-[11px] sm:text-xs text-white/65 leading-snug">
+                {item}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div className="pt-6 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-5">
+          <p className="font-mono text-[9px] text-white/70 uppercase tracking-widest">
             © {currentYear} SYSBILT. Sydney, Australia.
           </p>
 
-          <div className="flex items-center gap-8">
+          <div className="flex items-center gap-6">
             <button
               onClick={() => onNavigate('privacy')}
-              className="font-mono text-[10px] text-white/70 hover:text-white uppercase tracking-widest transition-colors"
+              className="font-mono text-[9px] text-white/70 hover:text-white uppercase tracking-widest transition-colors"
             >
               Privacy Policy
             </button>
@@ -141,7 +171,7 @@ const GlobalFooter: React.FC<GlobalFooterProps> = ({ onNavigate }) => {
               target="_blank"
               rel="noreferrer"
               aria-label="SYSBILT on LinkedIn"
-              className="font-mono text-[10px] text-white/70 hover:text-gold-on-cream uppercase tracking-widest transition-colors flex items-center gap-2"
+              className="font-mono text-[9px] text-white/70 hover:text-gold-on-cream uppercase tracking-widest transition-colors flex items-center gap-2"
             >
               LinkedIn <ArrowUpRight className="w-3 h-3" />
             </a>

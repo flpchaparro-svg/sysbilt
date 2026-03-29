@@ -38,7 +38,6 @@ export const SysbiltLogo: React.FC<SysbiltLogoProps> = ({ isDarkBg = false }) =>
         isVisible ? 'opacity-100' : 'opacity-0'
       }`}
       onMouseEnter={handleHover}
-      // RIGHT HERE: Change this number if you want it even smaller or slightly bigger!
       style={{ width: '130px' }} 
     >
       <svg

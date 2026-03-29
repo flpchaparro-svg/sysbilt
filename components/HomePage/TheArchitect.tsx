@@ -6,7 +6,7 @@ const TheArchitect: React.FC = () => {
   const [mode, setMode] = useState<'architect' | 'human'>('architect');
 
   return (
-    <section id="origins" className="w-full bg-cream py-32 lg:py-64 px-6 md:px-12 lg:px-20 relative z-30 overflow-hidden border-t border-black/5">
+    <section id="origins" className="w-full bg-cream py-20 md:py-24 lg:py-32 px-6 md:px-12 lg:px-20 relative z-30 overflow-hidden border-t border-black/5">
       <div className="max-w-[1600px] mx-auto relative">
         
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-12 gap-12 lg:gap-24 relative items-start">
