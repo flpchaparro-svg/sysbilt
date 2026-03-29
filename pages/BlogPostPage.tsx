@@ -5,6 +5,7 @@ import { Helmet } from 'react-helmet-async';
 import { client, urlFor } from '../src/sanityClient';
 import { PortableText } from '@portabletext/react';
 import { ArrowLeft, ArrowUpRight, Share2, Quote, Copy, Check, Info, AlertTriangle } from 'lucide-react';
+import CTAButton from '../components/CTAButton';
 
 // Helper function to extract YouTube ID
 const getYouTubeId = (url: string) => {
@@ -135,7 +136,7 @@ const CustomYouTube = ({ value, theme }: any) => {
     <div className="my-16 relative aspect-video w-full max-w-4xl mx-auto border border-white/20 bg-dark overflow-hidden shadow-2xl">
       <iframe
         src={`https://www.youtube.com/embed/${id}?autoplay=1&controls=1&rel=0&modestbranding=1`}
-        title="YouTube Video"
+        title="YouTube video"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowFullScreen
         className="absolute top-0 left-0 w-full h-full"
@@ -172,7 +173,7 @@ const CodeBlock = ({ value, theme }: any) => {
       <button 
         onClick={handleCopy}
         className="absolute top-4 right-4 text-white/30 hover:text-white opacity-0 group-hover:opacity-100 transition-all p-2 rounded-md hover:bg-white/5"
-        title="Copy Code"
+        title="Copy code"
       >
         {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
       </button>
@@ -349,7 +350,7 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
   };
 
   if (loading) return <div className="min-h-screen bg-dark text-white pt-32 px-6 text-center font-sans text-sm md:text-base animate-pulse">Loading...</div>;
-  if (!post) return <div className="min-h-screen bg-dark text-red-solid pt-32 px-6 text-center type-eyebrow tracking-widest">DOSSIER NOT FOUND</div>;
+  if (!post) return <div className="min-h-screen bg-dark text-red-solid pt-32 px-6 text-center font-sans text-sm md:text-base">Article not found</div>;
 
   const components = {
     types: {
@@ -360,12 +361,12 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
             <div className={`absolute -inset-2 ${theme.bgSubtle} opacity-0 group-hover:opacity-100 transition-opacity transform -skew-x-6`}></div>
             <img 
               src={urlFor(value).width(1200).url()} 
-              alt={value.alt || 'System Visual'} 
+              alt={value.alt || 'Article image'} 
               className={`w-full h-auto object-cover relative z-10 border border-white/10 opacity-90 hover:opacity-100 transition-all duration-500 hover:scale-[1.02]`}
             />
             {value.caption && (
-              <figcaption className={`font-mono text-xs mt-4 text-right opacity-60 uppercase tracking-widest relative z-10 ${theme.textMain}`}>
-                FIG. // {value.caption}
+              <figcaption className={`font-sans text-sm mt-4 text-right opacity-70 relative z-10 ${theme.textMain}`}>
+                {value.caption}
               </figcaption>
             )}
           </figure>
@@ -404,7 +405,7 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
             <Info className={`${theme.textMuted80} shrink-0 mt-0.5`} size={20} />
             <div>
               <h4 className={`${theme.isBw ? 'bg-white text-dark inline-block px-2 py-0.5 font-bold uppercase tracking-widest text-xs shadow-[2px_2px_0px_0px_rgba(255,255,255,0.3)]' : theme.textMain + ' font-medium text-sm tracking-wide'} mb-1.5`}>
-                {value.title || 'Important Note'}
+                {value.title || 'Important note'}
               </h4>
               <p className="text-white/70 text-sm leading-relaxed">
                 {value.text}
@@ -665,7 +666,7 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
 
   // Setup SEO Variables
   const pageTitle = post?.seoTitle || post?.title || 'Sysbilt Strategy';
-  const pageDescription = post?.seoDescription || "Business systems architecture for growing Australian companies.";
+  const pageDescription = post?.seoDescription || "We build the systems that help Australian businesses stop doing everything manually";
   const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
   const shareImage = post?.ogImage ? urlFor(post.ogImage).width(1200).height(630).url() : (post?.mainImage ? urlFor(post.mainImage).width(1200).height(630).url() : '');
 
@@ -695,7 +696,7 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
         
         <nav className="mb-8 relative z-20">
           <Link to="/blog" className="inline-flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-[0.2em] text-white/50 hover:text-white transition-colors">
-            <ArrowLeft className="w-4 h-4" /> All articles
+            <ArrowLeft className="w-4 h-4" /> All articles →
           </Link>
         </nav>
 
@@ -793,9 +794,15 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
           
           <aside className="lg:col-span-3 hidden lg:block relative">
             <div className="sticky top-32 h-fit pb-12">
-              <p className={`type-eyebrow ${theme.textMain} tracking-widest mb-8 flex items-center gap-2`}>
+              <p className={`type-eyebrow ${theme.textMain} tracking-widest mb-8 flex items-center gap-2 normal-case`}>
                 <span className={`w-1.5 h-1.5 ${theme.pulse}`}></span>
-                {theme.isBw ? <span className="bg-white text-dark px-1.5 py-0.5 shadow-[2px_2px_0px_0px_rgba(255,255,255,0.3)]">INDEX</span> : 'INDEX'} // CONTENTS
+                {theme.isBw ? (
+                  <span className="bg-white text-dark px-1.5 py-0.5 shadow-[2px_2px_0px_0px_rgba(255,255,255,0.3)] uppercase tracking-widest text-[10px] font-bold">
+                    IN THIS ARTICLE
+                  </span>
+                ) : (
+                  'In this article'
+                )}
               </p>
               
               <nav className="relative pl-4">
@@ -834,7 +841,7 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
                       );
                     })
                   ) : (
-                    <span className="opacity-30 text-xs font-mono">NO INDEX DETECTED</span>
+                    <span className="opacity-30 text-xs font-mono normal-case">No sections found</span>
                   )}
                 </ul>
               </nav>
@@ -850,9 +857,15 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
 
             {toc.length > 0 && (
               <div className="block lg:hidden mb-16 border border-white/10 bg-white/5 p-6 rounded-sm">
-                <p className={`type-eyebrow ${theme.textMain} tracking-widest mb-6 flex items-center gap-2`}>
+                <p className={`type-eyebrow ${theme.textMain} tracking-widest mb-6 flex items-center gap-2 normal-case`}>
                   <span className={`w-1.5 h-1.5 ${theme.pulse}`}></span>
-                  {theme.isBw ? <span className="bg-white text-dark px-1.5 py-0.5 shadow-[2px_2px_0px_0px_rgba(255,255,255,0.3)]">INDEX</span> : 'INDEX'} // CONTENTS
+                  {theme.isBw ? (
+                    <span className="bg-white text-dark px-1.5 py-0.5 shadow-[2px_2px_0px_0px_rgba(255,255,255,0.3)] uppercase tracking-widest text-[10px] font-bold">
+                      IN THIS ARTICLE
+                    </span>
+                  ) : (
+                    'In this article'
+                  )}
                 </p>
                 <ul className="space-y-4 font-mono text-sm">
                   {toc.map((item: any) => {
@@ -886,41 +899,43 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
               <div className={`mt-20 border ${theme.borderSubtle} ${theme.bgSubtle} p-8 md:p-12 relative overflow-hidden group ${theme.isBw ? 'shadow-[8px_8px_0px_0px_rgba(255,255,255,0.1)]' : ''}`}>
                 <div className={`absolute top-0 left-0 w-full h-1 ${theme.bgMain} scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-700 ease-out`} />
                 
-                <h3 className="font-sans font-black text-3xl md:text-4xl text-white uppercase tracking-tight mb-4 flex flex-wrap gap-2 items-center">
+                <h3 className="font-sans font-black text-3xl md:text-4xl text-white tracking-tight mb-4 flex flex-wrap gap-2 items-center normal-case">
                   {theme.isBw ? (
-                    <span className="bg-white text-dark px-3 py-1 shadow-[4px_4px_0px_0px_rgba(255,255,255,0.3)]">
-                      SOLVE THIS PROBLEM.
+                    <span className="bg-white text-dark px-3 py-1 shadow-[4px_4px_0px_0px_rgba(255,255,255,0.3)] uppercase">
+                      SEE HOW WE FIX THIS
                     </span>
                   ) : (
-                    <>Solve This <span className={theme.textMain}>Problem</span></>
+                    'See how we fix this'
                   )}
                 </h3>
                 <p className="font-sans text-white/70 font-light mb-8 max-w-md">
-                  Stop losing time to broken processes. See the exact system we build to fix this for businesses in your phase.
+                  See the exact system we build to fix this
                 </p>
                 
                 <button 
                   onClick={() => onNavigate(post.internalLinkDestination.replace('/', ''))}
                   className={`font-mono text-xs font-bold uppercase transition-all duration-300 ${theme.btnInlineCta} px-8 py-4 inline-flex items-center gap-3`}
                 >
-                  {post?.customCTA || 'SEE THE SOLUTION'} <ArrowUpRight className="w-4 h-4" />
+                  {post?.customCTA || 'SEE THE SYSTEM'} <ArrowUpRight className="w-4 h-4" />
                 </button>
               </div>
             ) : (
               <div className={`mt-20 border ${theme.borderSubtle} ${theme.bgSubtle} p-8 md:p-12 relative overflow-hidden group ${theme.isBw ? 'shadow-[8px_8px_0px_0px_rgba(255,255,255,0.1)]' : ''}`}>
                 <div className={`absolute top-0 left-0 w-full h-1 ${theme.bgMain} scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-700 ease-out`} />
                 
-                <h3 className="font-sans font-black text-3xl md:text-4xl text-white uppercase tracking-tight mb-4 flex flex-wrap gap-2 items-center">
+                <h3 className="font-sans font-black text-3xl md:text-4xl text-white tracking-tight mb-4 flex flex-wrap gap-2 items-center normal-case">
                   {theme.isBw ? (
-                    <span className="bg-white text-dark px-3 py-1 shadow-[4px_4px_0px_0px_rgba(255,255,255,0.3)]">
-                      DEPLOY THE SYSTEM.
+                    <span className="bg-white text-dark px-3 py-1 shadow-[4px_4px_0px_0px_rgba(255,255,255,0.3)] uppercase">
+                      SYSTEMS ADVICE, NOT SPAM
                     </span>
                   ) : (
-                    <>Deploy The <span className={theme.textMain}>System</span></>
+                    <>
+                      Systems advice, <span className={theme.textMain}>not spam</span>
+                    </>
                   )}
                 </h3>
                 <p className="font-sans text-white/70 font-light mb-8 max-w-md">
-                  Tell us where you're stuck. We'll send you the articles and case studies that actually apply to your situation
+                  Tell us where you're stuck and we'll send you the articles and case studies that actually apply to your situation
                 </p>
                 
                 {formStatus === 'success' ? (
@@ -979,7 +994,7 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
                         components={{ block: { normal: ({children}:any) => <p className="mb-4">{children}</p> } }} 
                       />
                     ) : (
-                      <p>Systems Architect & Operations Specialist.</p>
+                      <p>The team behind SYSBILT builds business systems for growing Australian companies</p>
                     )}
                   </div>
                 </div>
@@ -993,9 +1008,15 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
         {relatedPosts.length > 0 && (
           <div className="mt-24 border-t border-white/20 pt-16">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
-              <h3 className={`type-eyebrow ${theme.textMain} flex items-center gap-3`}>
+              <h3 className={`type-eyebrow ${theme.textMain} flex items-center gap-3 normal-case`}>
                 <div className={`w-2 h-2 ${theme.pulse}`} />
-                {theme.isBw ? <span className="bg-white text-dark px-2 py-0.5 font-bold shadow-[2px_2px_0px_0px_rgba(255,255,255,0.3)]">RELATED ARTICLES</span> : 'RELATED ARTICLES'}
+                {theme.isBw ? (
+                  <span className="bg-white text-dark px-2 py-0.5 font-bold shadow-[2px_2px_0px_0px_rgba(255,255,255,0.3)] uppercase tracking-widest text-[10px]">
+                    RELATED ARTICLES
+                  </span>
+                ) : (
+                  'RELATED ARTICLES'
+                )}
               </h3>
               <Link to="/blog" className={`type-eyebrow text-white ${theme.textHover} transition-colors`}>
                 View all →
@@ -1036,6 +1057,18 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
             </div>
           </div>
         )}
+
+        <div className="mt-24 pt-16 border-t border-white/20 max-w-3xl">
+          <h3 className="font-sans font-bold text-2xl md:text-3xl text-white tracking-tight mb-4 normal-case">
+            Want to talk about this
+          </h3>
+          <p className="font-sans text-white/70 font-light mb-8 max-w-xl leading-relaxed">
+            Book a free call and we'll walk you through how this applies to your business
+          </p>
+          <CTAButton theme="dark" variant="bracket" onClick={() => onNavigate('contact')}>
+            BOOK A CALL
+          </CTAButton>
+        </div>
 
       </div>
     </main>

@@ -1,10 +1,10 @@
 # Blog article (`/blog/:slug`) — Copy
 
-`pages/BlogPostPage.tsx`. Post title, body, SEO fields, tags, author, images, and most CTAs come from Sanity. Fixed UI strings below.
+`pages/BlogPostPage.tsx`. Post title, body, SEO fields, tags, author, images, and some CTAs come from Sanity. Fixed UI strings below.
 
 **Browser tab & social title pattern:** `{seoTitle or post title} | SYSBILT`  
 
-**Default meta description** (if no `seoDescription`): Business systems architecture for growing Australian companies.  
+**Default meta description** (if no `seoDescription`): We build the systems that help Australian businesses stop doing everything manually  
 
 ---
 
@@ -12,41 +12,37 @@
 
 Loading: Loading...  
 
-Missing post: DOSSIER NOT FOUND  
+Missing post: Article not found  
 
 ---
 
 ## Three UI themes (same page, different accent)
 
-Accent is chosen from `servicePillar` (not three separate routes):
+Accent is chosen from `servicePillar`:
 
-| Theme key | When it applies | Accent |
-|-----------|-----------------|--------|
-| **red** | Default (e.g. Websites, CRM, Automation) | Red |
-| **gold** | Pillar text contains `ai`, `content`, or `training` | Gold |
-| **bw** | Pillar text contains `dashboard` | White / high-contrast “stamp” labels |
-
-**Copy is almost identical across themes.** Only the **dashboard (`bw`)** theme swaps a few headings to all-caps stamped labels (see next section). Red and gold use the same words; only colours differ.
-
----
+| Theme key | When it applies |
+|-----------|-----------------|
+| **red** | Default (e.g. Websites, CRM, Automation) |
+| **gold** | Pillar text contains `ai`, `content`, or `training` |
+| **bw** | Pillar text contains `dashboard` |
 
 ## Copy that differs in the **dashboard (`bw`)** theme only
 
 | Location | Red / gold | Dashboard (`bw`) |
-|----------|------------|-------------------|
-| Table of contents label | `INDEX // CONTENTS` | White badge **INDEX** then `// CONTENTS` |
-| Internal-link CTA headline | Solve This **Problem** | **SOLVE THIS PROBLEM.** |
-| Email capture headline | Deploy The **System** | **DEPLOY THE SYSTEM.** |
-| Related section eyebrow | `RELATED ARTICLES` | White badge **RELATED ARTICLES** |
+|----------|------------|------------------|
+| Table of contents heading | In this article | White badge **IN THIS ARTICLE** |
+| Internal-link CTA headline | See how we fix this | **SEE HOW WE FIX THIS** |
+| Email capture headline | Systems advice, not spam | **SYSTEMS ADVICE, NOT SPAM** |
+| Related section eyebrow | RELATED ARTICLES | White badge **RELATED ARTICLES** |
 
-Mobile TOC uses the same **INDEX // CONTENTS** pattern as desktop (with the same `bw` badge rule).
+Red and gold use the same words; only accent colours differ.
 
 ---
 
 ## Shared chrome (all themes)
 
 **Back link** → `/blog`  
-All articles  
+All articles →  
 
 **Hero**  
 - H1: `{post.title}` (CMS)  
@@ -56,49 +52,54 @@ All articles
 - AUTHOR — `{author.name}` or **SYSBILT TEAM**  
 - DATE — `en-AU` short, uppercased, or **DRAFT**  
 - READ TIME — `{n}` MIN  
-- Share control: **SHARE** → after copy: **COPIED**  
+- Share: **SHARE** → **COPIED**  
 
 **Table of contents** (desktop aside + mobile block)  
-- Heading: **INDEX // CONTENTS** (see theme table above)  
-- Empty TOC: **NO INDEX DETECTED**  
-- Entries: derived from H2s in body (numbered or `//` prefix stripped in display)  
+- Heading: **In this article** (see theme table)  
+- Empty: **No sections found**  
+- Entries: derived from H2s in body  
 
 **Lead paragraph**  
-If `seoDescription` exists, shown as large intro above the body (CMS).  
+`seoDescription` when set, large intro above body.  
 
-**PortableText chrome** (non-CMS labels)  
-- Image caption prefix: `FIG. // {caption}`  
-- Code block: `title` on copy button **Copy Code**  
-- YouTube embed `title`: YouTube Video  
-- Image default `alt`: System Visual  
-- Callout defaults if Sanity title empty: **Warning** / **Important Note**  
-- Inline CTA blocks: link text from CMS (`value.text`)  
+**PortableText chrome**  
+- Image caption: `{caption}` only (no prefix)  
+- Code block copy button `title`: Copy code  
+- YouTube iframe `title`: YouTube video  
+- Image default `alt`: Article image  
+- Callout defaults if Sanity title empty: Warning / Important note  
+- Inline CTA blocks: link text from CMS  
 
-**Conversion block A** — when `internalLinkDestination` is set  
-- Headline: **Solve This** + accent **Problem** (or bw stamp line above)  
-- Body: Stop losing time to broken processes. See the exact system we build to fix this for businesses in your phase.  
-- Button: `{customCTA}` from CMS or **SEE THE SOLUTION**  
+**Conversion block A** (`internalLinkDestination` set)  
+- Headline: See how we fix this (see theme table)  
+- Body: See the exact system we build to fix this  
+- Button: `{customCTA}` or **SEE THE SYSTEM**  
 
-**Conversion block B** — when no internal link (email capture)  
-- Headline: **Deploy The** + accent **System** (or bw stamp line above)  
-- Body: Tell us where you're stuck. We'll send you the articles and case studies that actually apply to your situation  
-- Email field `placeholder`: Enter your email address  
-- Submit: **Processing...** / `{customCTA}` or **Send me the good stuff**  
+**Conversion block B** (email capture, no internal link)  
+- Headline: Systems advice, not spam (see theme table)  
+- Body: Tell us where you're stuck and we'll send you the articles and case studies that actually apply to your situation  
+- Email placeholder: Enter your email address  
+- Submit: **Send me the good stuff** / **Processing...**  
 - Success: You're on the list, check your inbox  
 
 **Author** (if author exists)  
 - Eyebrow: **WRITTEN BY**  
 - Name: CMS  
-- Bio fallback: Systems Architect & Operations Specialist.  
+- Bio fallback: The team behind SYSBILT builds business systems for growing Australian companies  
 
 **Related articles** (if any)  
-- Section label: **RELATED ARTICLES** (see theme table)  
+- Eyebrow: **RELATED ARTICLES** (see theme table)  
 - Link: View all → → `/blog`  
 - Card meta: `// {servicePillar}` or `// GENERAL`  
 - Date: `DD.MM.YYYY` or **DRAFT**  
+
+**Bottom CTA** (always below related grid area)  
+- H3: Want to talk about this  
+- Sub: Book a free call and we'll walk you through how this applies to your business  
+- Button: BOOK A CALL → contact  
 
 ---
 
 ## Related
 
-Blog index UI: [blog.md](./blog.md)  
+Blog index: [blog.md](./blog.md)  
