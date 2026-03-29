@@ -1,53 +1,116 @@
 # Pillar 1 — Websites & E-commerce — Copy
 
-## Hero
-- Back: `Return to The System`
-- Eyebrow: `/` — `THE SYSTEM / GET CLIENTS`
-- Headline: `Pick Your Situation.` ("Situation." red, italic)
-- Sub: `Different businesses need different websites. Find yours below. See exactly what you get.`
-
-## Section: System Configuration
-- Eyebrow: `/ SYSTEM CONFIGURATION`
-- Headline: `Select your Situation.` ("Situation." red, italic)
-- UI labels: "Is this you?", "Select Profile", "The Problem", "The Fix", "Included Specs", `[ BOOK A CALL ]`
+Return to The System  
 
 ---
 
-## Tiers & personas (full copy)
+## Hero
 
-### STARTER — "I need a website that actually works."
-- Summary: `You're a tradie or local service business. You need a website that captures enquiries while you're on the tools.`
-- Sprint: `7 DAYS`
-- Specs: Ready in 7 days | Built on WordPress | Works perfectly on phones | Shows up on Google
-- **The After-Hours Tradie** (Emergency plumbers, locksmiths, after-hours electricians) — Pain: The Missed Call — `You're under a sink at 11pm. Phone rings. You can't answer. That job goes to the next bloke on Google.` — Fix: `Instant SMS replies. When you miss a call, they get a text saying you'll call back within the hour. The job stays yours.`
-- **The Quote Runner** (Pest control, solar installers, cleaners, pool guys) — Pain: The Wasted Quote — `You drive 45 minutes to quote a job. Turns out their budget is $200 for a $2,000 job. Half a day wasted on a tyre-kicker.` — Fix: `Forms that ask the right questions before they book. Budget, job size, timeline. You only quote jobs worth quoting.`
-- **The Local Expert** (NDIS providers, physios, accountants, lawyers) — Pain: The Free Advice Trap — `You spend 10 hours a week on calls with people who can't afford you or don't actually need you.` — Fix: `Intake forms that filter out time-wasters before they reach your phone.`
+A website that works  
+as hard as you do  
 
-### E-COMMERCE — "I sell products online."
-- Summary: `You sell physical products online. You need a store that syncs with your stock and calculates shipping properly.`
-- Sprint: `14 DAYS`
-- Specs: Built on Shopify | Syncs with your till system | Calculates shipping automatically | Sends order updates automatically
-- **The Boutique Owner** (Fashion boutiques, homewares, gift shops) — Pain: The Oversell — `Customer orders online. You check the shelf. Already sold in-store. Now you're apologising and refunding.` — Fix: `Your shop floor syncs to your website. Sell something in-store, the website updates instantly. No more double-selling.`
-- **The Heavy Goods Seller** (Auto parts, building supplies, equipment, machinery) — Pain: The Shipping Problem — `Flat-rate shipping kills your margins on big items. You're either overcharging small orders or losing money on large ones.` — Fix: `Shipping that calculates based on weight, size, and postcode. Accurate quotes. Protected margins.`
-- **The Subscription Box** (Coffee subscriptions, pet food, meal kits, supplements) — Pain: The Failed Payment — `Card expires. Payment fails. Customer churns. You had no idea until they were already gone.` — Fix: `Automatic payment retries and reminder emails. You catch failed payments before you lose the customer.`
+We build clean, fast websites that catch leads, qualify enquiries, and feed your pipeline while you focus on running the business.  
 
-### PROFESSIONAL — "I sell high-ticket services."
-- Summary: `You sell expensive services. Your website needs to match. Slow or dated sites cost you deals before you even get the call.`
-- Sprint: `21 DAYS`
-- Specs: Custom-built, not a template | Loads in under a second | Bank-level security | Connects to your CRM
-- **The High-End Builder** (Luxury home builders, architects, high-end renovators) — Pain: The Slow Portfolio — `Your portfolio is full of stunning work. But the photos take 8 seconds to load. Potential clients leave before they see it.` — Fix: `A site that loads your high-res photos instantly. Your work speaks. They stay.`
-- **The Prestige Seller** (Yacht brokers, prestige cars, luxury real estate) — Pain: The Trust Killer — `You're asking clients to trust you with millions. Your WordPress site got hacked last month. They found out.` — Fix: `Sites with no database to hack. Static, fast, secure. Nothing to break into.`
-- **The Authority Site** (Medical clinics, financial advisors, specialist consultants) — Pain: The Google Problem — `You've written 50 blog posts. Google ignores them because your site is slow and poorly structured.` — Fix: `Site rebuilt so it loads fast, structured so Google understands it. Your content finally ranks.`
+BOOK A CALL  
 
-### FLAGSHIP — "I need something special."
-- Summary: `A normal website isn't enough. You need something that makes people stop and stare.`
-- Sprint: `30+ DAYS`
-- Specs: 3D and animation | Cinematic feel | Custom experience for your customers | Built to impress
-- **The Luxury Brand** (Luxury fashion, fine jewellery, heritage brands) — Pain: The Template Problem — `You sell $50,000 watches. Your website looks like every other Shopify store.` — Fix: `A site that feels like an experience, not a catalogue. People remember it.`
-- **The Customiser** (Custom furniture, kitchens, lighting, bespoke interiors) — Pain: The Imagination Gap — `You sell custom furniture. Customers can't picture what they want. They hesitate. They leave.` — Fix: `A configurator where they pick the fabric, the legs, the size. They see it before they buy it.`
-- **The Boutique Hotelier** (Boutique hotels, retreats, safari lodges, destination spas) — Pain: The Booking.com Tax — `OTAs take 15-20% of every booking. Your own website looks boring, so guests don't trust it.` — Fix: `A booking experience so smooth that guests want to book direct. You keep the margin.`
+---
+
+## The gap
+
+/ WHAT MOST PEOPLE MISS  
+
+Your website is either hurting your business or not helping it  
+
+Both cost you money. Most owners don't realise they have one of these problems until someone points it out.  
+
+THE GAP  
+The one that looks cheap  
+Your business has grown but your website hasn't kept up. It looks dated, loads slowly, and doesn't work properly on phones. Clients check you out online before they ever call. If the site looks like it was built in 2016, they assume the business runs that way too. You lose the job before you even know they were looking.  
+
+THE GAP  
+The one that looks good but does nothing  
+This one is harder to spot because the site looks professional with nice photos and a clean layout. But there's no proper form, no tracking, and no connection to anything. Someone enquires and the message lands in a generic inbox. You reply a day later and by then they've called someone else. The website isn't broken, it's just not doing its job.  
+
+---
+
+## Solution
+
+/ HOW WE BUILD IT  
+
+A website built the right way  
+
+Building a website that looks good is the easy part now. We go further and make it work.  
+
+GET CLIENTS  
+01  
+Clean code, fast delivery  
+We don't use WordPress or bloated page builders. We write modern, clean code and that's why your site loads in under a second and why we can launch in under two weeks.  
+
+GET CLIENTS  
+02  
+Marketing built in, not bolted on  
+Every page has a clear job. Visitors know exactly what you do and exactly how to get in touch the second they land. No dead ends, no confusion, no guessing what to click next.  
+
+GET CLIENTS  
+03  
+The stuff you never see  
+Proper SEO structure so Google can actually find you. Metadata so search engines and AI tools understand your business. Google Maps and business profile connected. Forms that capture the right details and send them to the right place. This is where most websites fall apart, and where we spend the most time getting it right.  
+
+---
+
+## Engine (how it connects)
+
+/ HOW IT CONNECTS  
+
+A website that talks to the rest of your business  
+
+A standalone website just creates more admin. We build your site as the front door of your entire system, wired directly into your CRM and automations from day one.  
+
+Capture  
+A visitor fills out one form on your site. That's all they do.  
+
+Store  
+Their details flow straight into your CRM with no copy-pasting, no lost emails, and no spreadsheet.  
+
+Engage  
+The system sends them a reply and notifies your team before you've put your phone down.  
+
+Orbital labels (visual)  
+Pillar 1 — Websites  
+Pillar 2 — CRM  
+Pillar 3 — Automation  
+
+---
+
+## Bottom CTA
+
+/ READY?  
+
+Let's Talk  
+
+BOOK A CALL  
+
+NOW ACCEPTING PROJECTS  
+
+---
 
 ## FAQ
-- Title: `Questions about websites?`
-- Subtitle: `Common questions about websites and e-commerce.`
-- Q&A: **Full copy in `copy/faq-pillar1.md`** · Data: `constants/faqData.ts` → `pillarFAQs.pillar1`
+
+Questions about websites  
+
+Common questions about how we build websites and what's included  
+
+How long does it take to build a website  
+It depends on what you need. A simple site with a few pages takes about 7 days. A standard business website with 10 or so pages takes around 14 days. Larger builds with a blog, multiple service pages, or e-commerce take longer. We'll give you a clear timeline before we start.  
+
+Will my website work properly on mobile  
+Yes. We design mobile-first because that's where most of your visitors are, often 70% or more. Your site will load fast and look good on every device. If someone fills out a form at 11pm on their phone, it works.  
+
+Do you handle SEO  
+We build with SEO foundations baked in. Fast loading, proper structure, local business tags, and clean metadata. We don't run ongoing SEO campaigns like monthly link building or blog writing, but if you need that we can point you in the right direction.  
+
+Can my website connect to Xero or MYOB  
+Yes. That's one of the most valuable connections we build. An enquiry comes in through your site, gets tracked in your CRM, and when the deal closes the invoice can be generated in your accounting software automatically.  
+
+What if I need something more complex later  
+We build sites that can grow with you. If you start with a simple 5-page site and later need e-commerce, a client portal, or more advanced features, we can add them. The foundation is built to handle it.  
