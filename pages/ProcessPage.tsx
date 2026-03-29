@@ -29,7 +29,7 @@ const Section: React.FC<{ children: React.ReactNode, className?: string, delay?:
 );
 
 const ProcessPage: React.FC<ProcessPageProps> = ({ onBack, onNavigate }) => {
-  usePageTitle('The Process');
+  usePageTitle('Process');
 
   return (
     <m.div 

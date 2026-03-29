@@ -30,7 +30,7 @@ const Section: React.FC<{ children: React.ReactNode, className?: string, delay?:
 );
 
 const ArchitectPage: React.FC<ArchitectPageProps> = ({ onBack, onNavigate }) => {
-  usePageTitle('The Architect');
+  usePageTitle('About');
   const [mode, setMode] = useState<'architect' | 'human'>('architect');
   const current = ARCHITECT_CONTENT[mode];
 

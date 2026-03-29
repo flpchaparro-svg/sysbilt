@@ -1,82 +1,61 @@
 # Global header — Copy
 
-`components/GlobalHeader.tsx` — fixed **top bar**, **side dock** (desktop, after scroll), and **mobile** menu. Same component on all routes that mount it from `App.tsx`.
-
-**Logo:** `SysbiltLogo` (SVG). No separate wordmark string in code.
+`components/GlobalHeader.tsx`. **Route keys** (`architect`, `system`, `process`, `proof`) stay the same in code so URLs and navigation don’t break; only **labels** change.
 
 ---
 
 ## Top bar (desktop, `lg+`)
 
-**Logo control**  
-- `aria-label`: Go to Homepage  
-- Action: navigates to homepage  
+**Logo**  
+- `SysbiltLogo` · `aria-label`: Go to Homepage  
 
-**Primary nav** (visible labels use `fullLabel`; gold dot when that view is active)
+**Primary nav**
 
-| `id` (route key) | Compact label (side dock only) | Hover / desktop label |
-|------------------|-------------------------------|------------------------|
-| architect | ABOUT | THE ARCHITECT |
-| system | SYSTEM | THE SYSTEM |
-| process | PROCESS | THE PROCESS |
-| proof | PROOF | THE PROOF |
+| Route key | Compact (side dock) | Full label (top bar + mobile) |
+|-----------|---------------------|------------------------------|
+| `architect` | ABOUT | ABOUT |
+| `system` | SERVICES | SERVICES |
+| `process` | PROCESS | PROCESS |
+| `proof` | PROOF | PROOF |
 
-**SYSTEM** opens a mega menu (chevron rotates when open). Three columns:
+**SERVICES** opens the mega menu (chevron). Three columns (unchanged):
 
-**GET CLIENTS**  
-- 01 / Websites & E-commerce → `pillar1`  
-- 02 / CRM & Lead Tracking → `pillar2`  
-- 03 / Automation → `pillar3`  
+**GET CLIENTS** — 01–03 pillars  
+**SCALE FASTER** — 04–06 pillars  
+**SEE CLEARLY** — 07 pillar  
 
-**SCALE FASTER**  
-- 04 / AI Assistants → `pillar4`  
-- 05 / Content Systems → `pillar5`  
-- 06 / Team Training → `pillar6`  
+**Right CTA:** **LET'S TALK** → contact  
 
-**SEE CLEARLY**  
-- 07 / Dashboards & Reporting → `pillar7`  
-
-**Right CTA**  
-- **TALK** → contact (`CTAButton` light theme)  
-
-**Blog / editorial:** When `currentView` starts with `blog`, the top bar stays visible while scrolling and can switch to cream/blur styling. **`solidBackground`** (e.g. blog post pages) forces cream behind the bar.
+**Blog:** Top bar stays on scroll for `blog*` views; `solidBackground` on blog posts.
 
 ---
 
 ## Side dock (desktop scroll, `lg+`)
 
-Shown when **`scrolled`** is true and **not** a blog view (hidden on blog so it doesn’t cover reading).
+Not on blog routes.
 
-**Top cell**  
-- Label: **[SYS]**  
-- `aria-label`: Go to Homepage  
-
-**Nav stack** (vertical; uses **compact** `label`: ABOUT, SYSTEM, PROCESS, PROOF)  
-- Active state: gold accent  
-
-**Bottom cell**  
-- **TALK** (rotated) → contact  
+- Top: **[SYS]** → homepage (`aria-label`: Go to Homepage)  
+- Stack: **ABOUT** · **SERVICES** · **PROCESS** · **PROOF**  
+- Bottom (rotated): **TALK** → contact  
 
 ---
 
 ## Mobile (`< lg`)
 
-**Fixed strip (menu closed)**  
-- **TALK** → contact (dark button)  
-- Menu: hamburger icon, `aria-label`: **Open main menu**  
+**Strip (menu closed)**  
+- **LET'S TALK** → contact  
+- Menu: **Open main menu** (`aria-label`)  
 
-**Fullscreen menu (open)**  
-- Top-left: **[SYS]** → homepage (closes menu)  
-- Close: X, `aria-label`: **Close menu**  
-- Same four items as desktop **`fullLabel`** (THE ARCHITECT, THE SYSTEM, …) with optional gold dot when active  
-- **THE SYSTEM**: chevron toggles nested pillar lists (same group titles and line items as mega menu)  
-- Bottom primary: **LET'S TALK** → contact (`CTAButton` light, full width)  
-- Footer strip: **Response Time** · pulsing dot · **< 24 HRS**  
-
-**Accessibility:** System submenu toggle uses `aria-label`: **Toggle system menu** and `aria-expanded` on the chevron button.
+**Fullscreen**  
+- **[SYS]** → homepage  
+- Close: **Close menu** (`aria-label`)  
+- Nav: **ABOUT** · **SERVICES** · **PROCESS** · **PROOF**  
+- **SERVICES**: chevron toggles pillar lists (same groups as mega menu)  
+- Bottom: **LET'S TALK** → contact (full width)  
+- Strip: **Response time** · dot · **< 24 HRS**  
 
 ---
 
 ## Related
 
-Site chrome: [footer.md](./footer.md)  
+[footer.md](./footer.md) · Routes still use `/architect`, `/system`, etc.; labels are display-only.  

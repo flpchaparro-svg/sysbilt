@@ -23,10 +23,10 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
 
   // --- DATA ---
   const navItems = [
-    { id: 'architect', label: 'ABOUT', fullLabel: 'THE ARCHITECT' },
-    { id: 'system', label: 'SYSTEM', fullLabel: 'THE SYSTEM', hasDropdown: true },
-    { id: 'process', label: 'PROCESS', fullLabel: 'THE PROCESS' },
-    { id: 'proof', label: 'PROOF', fullLabel: 'THE PROOF' },
+    { id: 'architect', label: 'ABOUT', fullLabel: 'ABOUT' },
+    { id: 'system', label: 'SERVICES', fullLabel: 'SERVICES', hasDropdown: true },
+    { id: 'process', label: 'PROCESS', fullLabel: 'PROCESS' },
+    { id: 'proof', label: 'PROOF', fullLabel: 'PROOF' },
   ];
 
   const archPillars = [
@@ -186,7 +186,7 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
                  onClick={() => onNavigate('contact')}
                  className="py-3 px-6 whitespace-nowrap"
                >
-                 TALK
+                 LET&apos;S TALK
                </CTAButton>
             </div>
           </m.nav>
@@ -262,7 +262,7 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
               onClick={() => onNavigate('contact')}
               className={`px-3 py-2 type-eyebrow border border-dark bg-dark text-cream whitespace-nowrap ${scrolled ? 'shadow-lg' : ''}`}
             >
-              TALK
+              LET&apos;S TALK
             </button>
             <button 
               onClick={() => setIsMenuOpen(true)} 
@@ -369,14 +369,14 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
                    onClick={() => { onNavigate('contact'); setIsMenuOpen(false); }}
                    className="w-full whitespace-nowrap"
                  >
-                   LET'S TALK
+                   LET&apos;S TALK
                  </CTAButton>
                </div>
              </div>
              
              <div className="mb-8 border-t border-dark/10 pt-4 shrink-0">
                <div className="flex justify-between items-center">
-                 <span className="font-mono text-[10px] uppercase tracking-widest text-dark/60">Response Time</span>
+                 <span className="font-mono text-[10px] uppercase tracking-widest text-dark/60">Response time</span>
                  <div className="flex items-center gap-2 text-gold-on-cream font-mono text-xs uppercase tracking-widest">
                    <div className="w-2 h-2 rounded-full bg-gold animate-pulse" />
                    &lt; 24 HRS

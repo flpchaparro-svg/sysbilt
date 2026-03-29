@@ -33,7 +33,7 @@ const Section: React.FC<{ children: React.ReactNode, className?: string, delay?:
 );
 
 const ProofPage: React.FC<ProofPageProps> = ({ onBack, onNavigate }) => {
-  usePageTitle('Results You Can Verify');
+  usePageTitle('Proof');
   
   // SANITY STATE
   const [caseStudy, setCaseStudy] = useState<SanityCaseStudy | null>(null);

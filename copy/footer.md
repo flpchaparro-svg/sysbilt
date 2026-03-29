@@ -1,20 +1,28 @@
 # Footer — Copy
 
+`components/GlobalFooter.tsx`
+
 ## Brand
-- Brand: `[FC) Felipe Consultancy`
-- Sub: `Stop guessing. Start building.`
-- CTA: `[ BOOK A CALL ]`
+- Wordmark line: **SYSBILT** (mono; logo remains above)
+- Sub: We build the systems that run your business without you
+- CTA: **BOOK A CALL** → contact
 
 ## Link groups
-- THE ARCHITECT — Philosophy | The Process | Case Studies
-- GET CLIENTS — Websites | CRM Systems | Automation
-- SCALE FASTER — AI Agents | Content Systems | Team Training
-- SEE CLEARLY — Dashboards
+
+| Group | Links |
+|-------|--------|
+| **ABOUT** | About · Process · Proof |
+| **GET CLIENTS** | Websites · CRM · Automation |
+| **SCALE FASTER** | AI Assistants · Content · Training |
+| **SEE CLEARLY** | Dashboards |
+| **INSIGHTS** | Blog · News |
+
+(Route keys unchanged: `architect`, `process`, `proof`, pillars, `blog`, `news`.)
 
 ## Capabilities
-- Eyebrow: `/ CAPABILITIES`
-- Items: Sydney Business Automation | HubSpot CRM Implementation | Next.js Web Development | AI Voice Receptionists | Lead Generation Systems | Revenue Operations (RevOps)
+- Eyebrow: **/ WHAT WE DO**
+- Items: Business Systems Sydney · CRM Setup and Integration · Custom Website Development · AI Assistants and Voice Agents · Business Automation · Dashboards and Reporting  
 
 ## Bottom bar
-- Copy: `© {year} Felipe Chaparro. Sydney, Australia.`
-- Links: Privacy Policy | LinkedIn
+- © `{year}` SYSBILT. Sydney, Australia.  
+- Privacy Policy · LinkedIn  

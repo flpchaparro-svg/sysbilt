@@ -25,7 +25,7 @@ interface SystemPageProps {
 }
 
 const SystemPage: React.FC<SystemPageProps> = ({ onBack, onNavigate }) => {
-  usePageTitle('The System');
+  usePageTitle('Services');
   const systemFAQs = getSystemPageFAQs();
 
   // --- OPTIMIZED HERO SCROLL LOGIC ---
