@@ -1,40 +1,40 @@
-# News / Business Intelligence (`/news`) — Copy
+# News (`/news`) — Copy
 
 `pages/NewsPage.tsx`. Article titles, bodies, dates, images, and `sourceUrl` come from Sanity (`newsItem`). Fixed UI strings below.
 
-The bottom **NewsletterForm** block uses the same copy as on the blog index — see [blog.md](./blog.md) (Newsletter section).
+**Browser tab:** News | SYSBILT  
+
+The **NewsletterForm** block matches the blog index — see [blog.md](./blog.md) (Newsletter section).
 
 ---
 
 ## Loading
 
-Syncing Intelligence Feed...  
+Loading articles...  
 
 ---
 
-## Header
+## Hero
 
-H1: Business Intelligence.  
+H1: Industry news and updates  
 
-Sub: Market updates and technology forecasts translated into plain English, built for Australian business owners.  
+Sub: What's changing in tech and business, and what it means for you  
 
 ---
 
-## Horizon feature (one item with `revenuePhase === 'horizon'`)
+## Forecast (single item, `revenuePhase === 'horizon'`)
 
-Section label: The Monthly Horizon  
+Section label: This month's forecast  
 
-Eyebrow on card: Future Forecast  
+Card eyebrow: FORECAST  
 
-Card title / preview: from CMS  
+Title / preview: CMS  
 
-Footer hint: Read Forecast →  
+Card footer: Read more →  
 
 ---
 
 ## Filter bar (sticky)
-
-Buttons use `sectionContent[filter].label`:
 
 | Filter id | Button label |
 |-----------|----------------|
@@ -43,67 +43,63 @@ Buttons use `sectionContent[filter].label`:
 | phase2 | Building Your Business |
 | phase3 | Managing Your Business |
 
-**Note:** The `all` entry in code also stores title `All Business Intelligence` and description `Complete feed of intelligence briefings.` — those two are **not** shown in the UI (only the **View All** button label is used).
+The `all` key also holds unused `title` / `description` in code (not rendered).
 
 ---
 
-## Phase sections (grids of cards)
+## Phase sections
 
-When **View All** or a matching phase is selected, each phase block shows:
+Shown when **View All** or that phase is selected. If there are no items, the section still shows its header and: **No articles in this section yet**
 
 **Phase 1**  
-- Section title: Growing Your Business  
-- Description: News and updates to help you get more leads and customers.  
-- Card link line: Read Report →  
+- Title: Getting more clients  
+- Description: News and updates about websites, CRM, and lead generation  
+- Card footer: Read more →  
 
 **Phase 2**  
-- Section title: Growing Your Operations  
-- Description: Updates on how to handle more work, more efficiently.  
-- Card link line: Read Report →  
+- Title: Scaling your operations  
+- Description: News and updates about AI, content, and team training  
+- Card footer: Read more →  
 
 **Phase 3**  
-- Section title: Monitoring Your Business  
-- Description: Insights for a clearer view of your numbers and progress.  
-- Card link line: Read Report →  
-
-*(Section titles above are the `title` field in `sectionContent` for `phase1`–`phase3`; the filter button labels differ slightly from these titles — that matches the code.)*
+- Title: Seeing your numbers clearly  
+- Description: News and updates about dashboards, reporting, and data  
+- Card footer: Read more →  
 
 ---
 
-## Article drawer (expanded item)
+## Article drawer
 
-**Close (top left):** icon only (`X`), no text label.  
+**Close:** X icon only (no text).  
 
-**Hotspot tags** (under image):  
-- `#INTEL_FEED`  
-- `#PILLAR_{SERVICEPILLAR}` (derived from `servicePillar`, uppercased, spaces → `_`, `&` removed) — only if pillar set  
-- `#INTEGRATION`  
-- `#SYSTEMS`  
+**Tags:** One chip only: `#{servicePillar}` with spaces removed from the pillar name (no `#INTEL_FEED`, `#INTEGRATION`, `#SYSTEMS`). If there is no pillar, no tag row (or omit chip).  
 
-**Footer row**  
-- If `sourceUrl`: **View Original Source** ↗  
-- **Close Article** ↑  
+**Footer**  
+- If `sourceUrl`: View original source ↗  
+- Close article ↑  
 
 ---
 
-## In-drawer CTA block (`CTA` component)
+## In-drawer CTA
 
-Lead line (from `pillarCTAMap` by `servicePillar`, else default):
+**Headline** by `servicePillar`:
 
-| `servicePillar` | Headline (`actionText`) |
-|-----------------|-------------------------|
-| Websites & E-commerce | Fix your online visibility. |
-| CRM & Lead Tracking | Ready to fix your lead flow? |
-| Automation | Fix your operational bottlenecks. |
-| AI Assistants | Ready to fix your admin burden? |
-| Dashboards & Reporting | Fix your data fog. |
-| *(missing or other)* | Ready to get unstuck? |
+| Pillar | Headline |
+|--------|----------|
+| Websites & E-commerce | Want to fix your website |
+| CRM & Lead Tracking | Want to fix your lead tracking |
+| Automation | Want to automate this |
+| AI Assistants | Want AI to handle this |
+| Content Systems | Want to fix your content |
+| Team Training | Want your team to actually use this |
+| Dashboards & Reporting | Want to see your real numbers |
+| Missing / other | Want to talk about this |
 
-Body (same for all): What does this change mean for your bottom line? No guess work required. Discuss your current tools with a systems architect.  
+**Body (all):** Book a call and we'll walk you through what this means for your business  
 
-Primary button: Explore `{servicePillar}` or **Explore Capabilities** if no pillar  
+**Primary button:** See `{servicePillar}` — or **See how we help** if no pillar (links to pillar page or `/system` for default).  
 
-Secondary link: Let's Talk ↓ → `/contact`  
+**Secondary:** Let's talk ↓ → `/contact`  
 
 ---
 
