@@ -1,21 +1,58 @@
 # Architect Page — Copy
 
-## Hero
-- Back: `Return to Home`
-- Eyebrow: `/ THE ARCHITECT | / THE HUMAN`
-- Headline: `THE ARCHITECT | THE HUMAN`
+Return to Home  
 
-## Section: THE ARCHITECT mode
-- Headline: `One person. Ten person output.`
-- Sub: `No account managers. No junior handoffs. No endless meetings. You talk directly to the person building your system. Automation and AI let me deliver what agencies charge a team for.`
-- Items: No Templates — Every solution is built for your specific situation. Nothing copy-pasted. | No Shortcuts — I trained as a chemist. If you miss a step, the reaction fails. Same with business systems. | Enterprise Tools — Same platforms as large agencies. HubSpot. Make.com. Sized for real businesses. | Your Time Back — If your sales team is doing data entry, something is broken. I fix that.
-- Meta: `24+ Certifications | HubSpot Certified | Sydney Based | Same-Day Response`
+THE TEAM · THE FOUNDER  
 
-## Section: THE HUMAN mode
-- Headline: `I've run businesses. Not just consulted them.`
-- Sub: `Before I built systems for others, I ran my own café, managed international franchises, and worked factory floors. I know what it's like to chase invoices at midnight. No theory. Just what actually works.`
-- Items: Trained as a Chemist — In Chile, I learned that every problem needs a custom process. No templates. Just problem-solving. | Ran My Own Café — Hiring, payroll, marketing, chasing invoices. I know what running a business actually costs. | Managed a Franchise — Fitness franchise in Southeast Asia. I learned to adapt systems to people, not force people into systems. | Now I Build Systems — The systems I wish I'd had when I was running my café. So you can focus on work that matters.
+---
 
-## Section: Footer CTA
-- Headline: `Ready to build your system?`
-- CTA: `[ BOOK A CALL ]`
+## THE TEAM
+
+Small team,  
+big output  
+
+We run our business on the same systems we build for you. No account managers, no junior handoffs. You talk directly to the people building your system.  
+
+We use what we sell  
+We capture our own leads, automate our own follow-ups, and run our own operations through the same system we build for clients. If it doesn't work for us, we don't sell it to you.  
+
+We've been on the floor  
+We've worked inside trade, wholesale, and service businesses. We know what operations actually look like when stock goes missing, staff call in sick, and the phone won't stop ringing.  
+
+We've run the books at midnight  
+Before we built systems for other people, we ran our own companies. We've chased invoices on a Sunday, trained staff who wouldn't read the manual, and managed chaos with spreadsheets. That's exactly why we built SYSBILT.  
+
+Few clients, full attention  
+We take on a small number of clients at a time so every build gets the focus it needs. No rushed jobs, no half-finished systems, no disappearing after handover.  
+
+Video overlay (THE TEAM mode only)  
+LIVE FEED  
+
+---
+
+## THE FOUNDER
+
+Built out of  
+actual frustration  
+
+Before SYSBILT, Felipe ran companies, managed franchises, and worked the floor. He built this company to create the exact systems he wished he had back then.  
+
+The Sunday invoice chase  
+The original frustration was spending Sunday nights manually reconciling accounts and chasing late payers. That specific pain is exactly why we built automation into the core of everything we do.  
+
+The manual nobody reads  
+Writing procedures that staff ignored was a constant drain. We fix that now by building the process directly into the software so the right steps happen automatically. No manual required.  
+
+Systems thinking from the start  
+Felipe trained as a chemist before moving into business. That background means we don't just look at your business as a website project. We treat every bottleneck as a process problem with a logical fix.  
+
+Built for real people  
+We learned early that you have to adapt systems to the people using them. If you force busy staff into rigid software, they go back to paper. We build tools that fit how your team actually works.  
+
+---
+
+## Footer CTA
+
+Ready to build your system?  
+
+BOOK A CALL  
