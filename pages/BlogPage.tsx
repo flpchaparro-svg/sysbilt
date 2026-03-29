@@ -368,8 +368,8 @@ export default function BlogPage() {
                     onChange={(e) => setSearchQuery(e.target.value)} 
                     onFocus={() => setIsFocused(true)}
                     onBlur={() => setIsFocused(false)}
-                    placeholder="Find an article"
-                    className="w-full px-4 py-4 md:px-6 md:py-6 text-base md:text-lg font-sans text-dark focus:outline-none focus:bg-cream transition-colors relative z-10 bg-transparent placeholder:text-dark/40" 
+                    aria-label="Search articles"
+                    className="w-full px-4 py-4 md:px-6 md:py-6 text-base md:text-lg font-sans text-dark focus:outline-none focus:bg-cream transition-colors relative z-10 bg-transparent" 
                   />
 
                   {!searchQuery && !isFocused && (

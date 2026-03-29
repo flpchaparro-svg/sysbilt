@@ -12,7 +12,7 @@ Post titles, excerpts, dates, images, and case-study fields still come from Sani
 
 Practical advice for businesses that want to grow without the grind  
 
-Search: static `placeholder` when focused — **Find an article**  
+Search: no static placeholder (cycling hints only when the field is empty and not focused). Accessible label: Search articles.  
 
 Cycling hints (empty field, not focused):  
 
