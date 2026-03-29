@@ -1,59 +1,124 @@
 # Pillar 2 — CRM & Lead Tracking — Copy
 
-## Hero
-- Back: `Return to The System`
-- Eyebrow: `/` — `THE SYSTEM / GET CLIENTS`
-- Headline: `CRM & Lead Tracking.` ("Lead Tracking." red, italic)
-- Sub: `You don't have a lead problem. You have a follow-up problem. How many enquiries slipped through last month? If you don't know, that's the problem.`
-
-## Section: System Configuration
-- Eyebrow: `/ SYSTEM CONFIGURATION`
-- Headline: `Select your Situation.` ("Situation." red, italic)
-- UI labels: "Is this you?", "Select Profile", "The Problem", "The Fix", "Included Specs", `[ BOOK A CALL ]`
+Return to The System  
 
 ---
 
-## Tiers & personas (full copy)
+## Hero
 
-### CAPTURE — "I keep losing leads."
-- Summary: `You have a website but no idea where your leads go. They land in an inbox. Sometimes you remember to check it.`
-- Sprint: `7 DAYS`
-- Specs: HubSpot or Pipedrive setup | Lead source tracking | Auto-reply email | Admin notification
+Never lose track of a lead again  
 
-- **The Inbox Manager** (Solo Consultants, Small Agencies) — Pain: Unknown ROI — `You spend $1,000 on ads but don't know if the phone rang because of the ad or a referral. You're guessing with your wallet.` — Fix: `Source tracking. The CRM tells you "John Smith came from Google Ads." You know exactly which marketing pays your bills.`
-- **The Blind Advertiser** (Local Services, Tradies) — Pain: Lost Attribution — `You run Facebook ads, Google ads, referrals, and word of mouth. Something works. You just don't know what.` — Fix: `Every lead tagged with where they came from. You stop wasting money on channels that don't convert.`
-- **The Slow Responder** (Real Estate, Finance Brokers) — Pain: Cold Leads — `Leads come in. You reply when you can. Sometimes that's 3 days later. By then, they've hired someone else.` — Fix: `Auto-reply within 10 seconds. They know you got their message. You get time to call back properly.`
+We set up a CRM that captures every enquiry, follows up automatically, and shows you exactly where every deal stands.  
 
-### NURTURE — "My leads go cold."
-- Summary: `You capture leads but they go quiet. No follow-up system. Deals die in silence.`
-- Sprint: `14 DAYS`
-- Specs: Email sequences | Task reminders | Deal pipeline | Activity tracking
+BOOK A CALL  
 
-- **The Forgetter** (Solar Sales, Enterprise SaaS) — Pain: Lost Follow-ups — `You quoted someone last month. Meant to follow up. Forgot. They went with your competitor.` — Fix: `Automatic reminders. If you haven't touched a deal in 7 days, the system nudges you. Nothing falls through.`
-- **The Spreadsheet Warrior** (E-commerce, Authors) — Pain: Chaos Management — `Your leads live in a spreadsheet, your emails, sticky notes, and your head. Good luck finding that quote from March.` — Fix: `One place. Every lead, every email, every note. Search "plumber Bondi" and find them in 2 seconds.`
-- **The Ghost Hunter** (Multi-Service Agencies) — Pain: Silent Prospects — `People enquire, you send a quote, then silence. You don't know if they're thinking or they've moved on.` — Fix: `Automatic follow-up emails at day 3, 7, and 14. Gentle nudges that bring deals back from the dead.`
+---
 
-### PIPELINE — "I can't see my deals."
-- Summary: `You have leads but no visibility. How much is in your pipeline? What's closing this month? You're guessing.`
-- Sprint: `14 DAYS`
-- Specs: Visual pipeline | Revenue forecasting | Win/loss tracking | Team visibility
+## The gap
 
-- **The Revenue Guesser** (Solar Sales, Enterprise SaaS) — Pain: No Forecast — `"How much will we close this month?" You shrug. You genuinely don't know.` — Fix: `A pipeline that shows every deal, its value, and its probability. You know what's coming before it lands.`
-- **The Manager in the Dark** (Teams of 3+ Reps) — Pain: Team Blindness — `Your sales team says they're busy. But are they? You have no idea what they're actually working on.` — Fix: `Full visibility. See every deal, every activity, every conversation. No more "trust me, I'm on it."`
-- **The One-Man Band** (Construction, Events) — Pain: Head Storage — `Everything lives in your head. If you got hit by a bus tomorrow, the business stops.` — Fix: `Everything documented. Deals, contacts, history. Your business survives without your memory.`
+/ WHAT MOST PEOPLE MISS  
 
-### REVOPS — "I need everything connected."
-- Summary: `You have systems but they don't talk to each other. CRM here, accounting there, operations somewhere else.`
-- Sprint: `21 DAYS`
-- Specs: CRM to accounting sync | Inventory integration | Custom dashboards | Multi-team workflows
+You are not short on leads, you are short on follow-up  
 
-- **The Double-Entry Victim** (Mid-Market Companies $5M+) — Pain: Data Everywhere — `A deal closes in the CRM. Someone types it into Xero. Someone else types it into the project system. Three chances for error.` — Fix: `Close a deal, invoice auto-generates in Xero, project auto-creates in Monday. One entry. Zero mistakes.`
-- **The Information Silo** (SaaS, Membership Sites) — Pain: Disconnected Teams — `Sales doesn't know what operations promised. Operations doesn't know what sales sold. Clients get caught in the middle.` — Fix: `One source of truth. Deal notes flow to operations. Everyone sees the same information.`
-- **The Scaling Business** (Financial Services, Insurance) — Pain: Breaking Systems — `What worked with 5 staff breaks with 15. Your processes can't handle the growth.` — Fix: `Systems built to scale. Add staff, add deals, add complexity. The CRM handles it.`
+Most businesses think they need more enquiries. They don't. They need to stop losing the ones they already get.  
+
+THE GAP  
+The lead you forgot  
+Someone enquires through your website. The email sits in your inbox and you get pulled into the day. By the time you reply it's been two days and they've already spoken to someone else. You paid for that lead with your marketing budget and your competitor closed it.  
+
+THE GAP  
+The quote that went quiet  
+You send a proposal and mean to follow up in a few days. But you get busy, and a few days become a few weeks. You have no idea if they're still thinking about it or if they've moved on, so you do nothing and the deal dies in silence.  
+
+THE GAP  
+The client you already won  
+You finished a job six months ago and they were happy. They would have referred you or come back, but you never followed up. You forgot about them and they forgot about you. Repeat business and referrals are the cheapest leads you will ever get, and they are disappearing because no one is keeping track.  
+
+---
+
+## Solution
+
+/ HOW WE BUILD IT  
+
+One place for every lead, every deal, every follow-up  
+
+We replace your inbox, your spreadsheet, your sticky notes, and the list in your head with a single system that does the heavy lifting.  
+
+GET CLIENTS  
+01  
+A pipeline you can see  
+Every lead is a card. You see who's new, who's been quoted, and who needs a follow-up today. No guessing and no digging through emails. You open it and you know exactly where everything stands.  
+
+GET CLIENTS  
+02  
+Follow-ups that run themselves  
+You sent a quote three days ago and haven't heard back. The system sends a check-in at exactly the right time, not too early and not too late. You stay top of mind without having to remember anything.  
+
+GET CLIENTS  
+03  
+Source tracking that protects your budget  
+You spend money on Google Ads, referrals, and social media. The CRM tags every lead with where they came from so you stop spending on what doesn't work and double down on what does.  
+
+GET CLIENTS  
+04  
+Quotes and emails that look professional  
+We set up templates that match your brand. Every quote goes out looking sharp and consistent, whether you send it or someone on your team does.  
+
+---
+
+## Engine (how it connects)
+
+/ HOW IT CONNECTS  
+
+The memory your business has been missing  
+
+A CRM on its own is just a database. We wire it into your website and your automations so the whole system works without you touching it.  
+
+Capture  
+A lead fills out a form on your website and their details land in the CRM instantly. No copy-pasting and no inbox.  
+
+Track  
+Every email, every call, and every note logged in one place. You can search "that dentist from Bondi" and find everything in two seconds.  
+
+Trigger  
+A deal moves forward and the system acts. Quote sent, follow-up scheduled, invoice generated. You move a card and the admin runs itself.  
+
+Orbital labels (visual)  
+Pillar 2 — CRM  
+Pillar 1 — Websites  
+Pillar 3 — Automation  
+
+---
+
+## Bottom CTA
+
+/ READY?  
+
+Let's Talk  
+
+BOOK A CALL  
+
+NOW ACCEPTING PROJECTS  
 
 ---
 
 ## FAQ
-- Title: `Questions about CRM?`
-- Subtitle: `Common questions about sales pipelines and lead tracking.`
-- Q&A: **Full copy in `copy/faq-pillar2.md`** · Data: `constants/faqData.ts` → `pillarFAQs.pillar2`
+
+Questions about CRM  
+
+Common questions about lead tracking, pipelines, and how we set it up  
+
+My team hated our last CRM, what's different  
+Most CRMs fail because they create more work than they remove. We set up systems that are simple to use and that fit how your team actually works. If it's too complicated they won't use it, so we keep it simple and train them until they're comfortable.  
+
+Can this connect to software we already use  
+Yes. We connect your CRM to your website, your accounting software, your email, and your marketing tools. If it has an API or an integration we can wire it in.  
+
+How do you handle our existing contacts and data  
+We migrate everything. Your current spreadsheet, your email contacts, your existing deals. We clean the data, remove duplicates, and organise it properly before we set up the new system.  
+
+Will I be able to see which marketing channels are working  
+Yes. Every lead gets tagged with where they came from. Google Ads, social media, referrals, word of mouth. You see exactly which channels are bringing in paying clients and which ones are wasting money.  
+
+What happens if we outgrow the CRM  
+We build on platforms that scale. If you start as a 5-person team and grow to 30, the CRM handles it. If your needs change we can adjust the setup, add custom fields, or connect new tools without starting from scratch.  
