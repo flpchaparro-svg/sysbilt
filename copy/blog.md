@@ -1,142 +1,121 @@
 # Blog index (`/blog`) — Copy
 
-Scroll order as on `pages/BlogPage.tsx`. **Post titles, dates, excerpts, images, and case-study names** come from Sanity and are not listed here. Everything below is fixed UI or template chrome.
+**Browser tab:** Insights | SYSBILT  
 
-**Document title (browser tab):** Insights & Strategy | Sysbilt  
+Post titles, excerpts, dates, images, and case-study fields still come from Sanity; everything below is fixed UI or template chrome.
 
 ---
 
 ## Hero
 
-Insights & Strategy_  
+/ INSIGHTS  
 
-Perspectives, case studies, and architectural blueprints for scaling your revenue engine.  
+Practical advice for businesses that want to grow without the grind  
 
-Find your article  
+Search: static `placeholder` when focused — **Find an article**  
 
-Search field: placeholder cycles through typed phrases (when empty and not focused):  
+Cycling hints (empty field, not focused):  
 
-- Automate onboarding.  
-- Integrate HubSpot.  
-- AI sales agents.  
-- Frictionless funnels.  
-- Scale B2B revenue.  
+- Stop chasing leads manually  
+- Automate client onboarding  
+- Fix your CRM pipeline  
+- AI that answers your phone  
+- Track your real margins  
 
-Adjacent control: search icon button (no text label).  
-
-Right column (md+): `HeroVisualBrutalist` illustration only — no copy.  
-
-`RobotPeek` (fixed decorative SVG): no readable text.  
+Search button: icon only (no label).  
 
 ---
 
 ## Pillar filters
 
-Row of toggle buttons (`FILTER_OPTIONS`). First option, then each pillar subtitle from `getAllPillars()` / `constants/systemPillars.ts` in service order:  
-
-ALL  
-Websites & E-commerce  
-CRM & Lead Tracking  
-Automation  
-AI Assistants  
-Content Systems  
-Team Training  
-Dashboards & Reporting  
+ALL · Websites & E-commerce · CRM & Lead Tracking · Automation · AI Assistants · Content Systems · Team Training · Dashboards & Reporting  
 
 ---
 
 ## Loading state
 
-DECRYPTING FILE...  
+Loading articles...  
 
 ---
 
-## Priority Intelligence (featured grid)
+## Featured posts
 
-Shown only when there are featured posts. Section heading:  
+/ FEATURED  
 
-Priority Intelligence  
+**Lead card**  
+Badge: FEATURED  
+Meta: `//` + service pillar from CMS (fallback: `// GENERAL`)  
+Date: `DD.MM.YYYY` (fallback: DRAFT)  
+Excerpt fallback: Read how we fixed this exact problem, step by step  
+Footer: READ ARTICLE →  
 
-**Featured card template labels** (content beside these is from CMS):  
+**Tall card**  
+Date: `DD.MM.YYYY` (fallback: DRAFT)  
+Excerpt fallback: Read the full breakdown  
+Footer: READ →  
 
-**Lead card (first slot)**  
-- Image corner badge: LEAD DOSSIER  
-- Meta line: `//` + service pillar name, or `STRATEGY` if missing  
-- Date: formatted `en-AU` as `DD.MM.YYYY`, or `DRAFT` if no date  
-- Excerpt fallback: Explore this architectural blueprint and case study to understand the systemic implementation.  
-- Footer: ACCESS FILE  
-
-**Tall cards**  
-- Date (same rules)  
-- Excerpt fallback: Access the blueprint.  
-- Footer: VIEW →  
-
-**Half-width cards**  
-- Date  
-- Footer: READ BRIEFING →  
+**Half-width card**  
+Date: `DD.MM.YYYY`  
+Footer: READ →  
 
 ---
 
 ## Proof bridge (latest case study)
 
-Shown when a case study exists. Link target: `/proof`.  
+Link: `/proof`  
 
-VERIFIED DEPLOYMENT  
+/ REAL RESULTS  
 
 `{clientName}` · `{clientIndustry}` / `{pillarFocus}` (Sanity)  
 
-View Hard Data  
+CTA: See the numbers  
 
 ---
 
-## System Ledger
+## All articles
 
-System Ledger  
+/ ALL ARTICLES  
 
-`{N}` RECORDS FOUND (count matches filtered list)  
+`{N}` articles found  
 
-**Column headers**  
-Date · Pillar · Title · Action  
+Column headers: Date · Pillar · Title · Action  
 
-**Row template**  
-- Date (same rules as featured)  
-- Pillar badge text: `servicePillar` from CMS, or **GENERAL** if missing  
-- Title from CMS  
-- Hover-only control: ACCESS →  
+Row date: `DD.MM.YYYY` (fallback: DRAFT)  
+Row pillar: `{servicePillar}` (fallback: GENERAL)  
+Row title: from CMS  
+Row hover: READ →  
 
-**Empty filter / search**  
-No insights match this filter.  
+Empty state: No articles match this search  
 
-**Pagination**  
-Load More Blueprints ↓  
+Pagination: Load more articles ↓  
 
 ---
 
-## Newsletter (`NewsletterForm` at bottom)
+## Newsletter (`NewsletterForm`)
 
-Join the **Private List**  
+/ THE EMAIL LIST  
 
-Identify your operational phase. We route the exact blueprints required to scale your specific bottlenecks. No generic advice.  
+Systems advice, not spam  
 
-Corporate Email  
-Placeholder: Enter your address...  
+Tell us where you're stuck. We'll send you the articles and case studies that actually apply to your situation  
 
-Current Phase  
-Select placeholder: Select your phase...  
-Options:  
-- The Builder (Getting Clients)  
-- The Scaler (Scaling Operations)  
-- The Controller (Maximising Margin)  
+Work email — placeholder: Enter your email address  
 
-Submit: Request Access  
+Where are you right now — placeholder: Select your stage  
+
+Options (values unchanged for HubSpot):  
+
+- Getting clients (I need more leads)  
+- Scaling up (I'm doing too much myself)  
+- Seeing clearly (I don't know my real numbers)  
+
+Submit: Send me the good stuff  
 Loading: Processing...  
-
-Success: Access Granted. Transmission initiated.  
-
-Error: Transmission failed. Please verify your details.  
+Success: You're on the list, check your inbox  
+Error: Something went wrong, check your details and try again  
 
 ---
 
 ## Site chrome (shared)
 
-Header, footer, and primary nav labels are the same as on other marketing routes (see `components/GlobalHeader.tsx`, `components/GlobalFooter.tsx`). Footer includes **System Logs** linking to this blog index.
+Header and footer match other routes. Footer **System Logs** links here.

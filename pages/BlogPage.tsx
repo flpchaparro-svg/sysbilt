@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { m, motion, useMotionValue, useSpring } from 'framer-motion';
+import { motion, useMotionValue, useSpring } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { client, urlFor, getCaseStudies } from '../src/sanityClient';
@@ -46,7 +46,7 @@ const FeaturedCardLead: React.FC<{ post: any }> = ({ post }) => {
     <Link to={href} className="col-span-1 lg:col-span-12 border-2 border-dark bg-cream flex flex-col lg:flex-row group cursor-pointer hover:shadow-[8px_8px_0px_0px_#1a1a1a] transition-all duration-300 hover:-translate-y-1 overflow-hidden relative lg:h-[70vh] lg:min-h-[500px] lg:max-h-[700px]">
       <div className="relative w-full lg:w-2/3 h-64 sm:h-80 lg:h-full border-b-2 lg:border-b-0 lg:border-r-2 border-dark overflow-hidden bg-dark shrink-0">
         <div className="absolute top-4 left-4 z-20 bg-red-solid text-white px-3 py-1 type-eyebrow border-2 border-dark shadow-[4px_4px_0px_0px_#1a1a1a]">
-          LEAD DOSSIER
+          FEATURED
         </div>
         {post.mainImage && (
           <img
@@ -60,7 +60,7 @@ const FeaturedCardLead: React.FC<{ post: any }> = ({ post }) => {
       <div className="w-full lg:w-1/3 p-8 lg:p-12 flex flex-col justify-center bg-white transition-colors duration-300 min-w-0">
         <div className="flex justify-between items-center mb-6">
           <span className="type-eyebrow text-red-text border-b-2 border-red-solid/20 pb-1 shrink-0">
-            // {post.servicePillar || 'STRATEGY'}
+            // {post.servicePillar || 'GENERAL'}
           </span>
           <span className="type-eyebrow text-dark/50 shrink-0 ml-4">{formatDate(post.publishedAt)}</span>
         </div>
@@ -70,11 +70,11 @@ const FeaturedCardLead: React.FC<{ post: any }> = ({ post }) => {
         </h3>
         
         <p className="type-body text-dark/70 border-l-4 border-gold pl-4 line-clamp-3 mb-8 break-words text-pretty">
-          {post.seoDescription || "Explore this architectural blueprint and case study to understand the systemic implementation."}
+          {post.seoDescription || "Read how we fixed this exact problem, step by step"}
         </p>
         
         <div className="mt-auto flex items-center justify-between border-t-2 border-dark pt-4">
-          <span className="type-eyebrow text-dark group-hover:text-gold-on-cream transition-colors">ACCESS FILE</span>
+          <span className="type-eyebrow text-dark group-hover:text-gold-on-cream transition-colors">READ ARTICLE →</span>
           <ArrowRight className="w-6 h-6 text-dark group-hover:translate-x-2 transition-transform duration-300 shrink-0" />
         </div>
       </div>
@@ -103,10 +103,10 @@ const FeaturedCardTall: React.FC<{ post: any }> = ({ post }) => {
           {post.title}
         </h3>
         <p className="type-body text-dark/70 line-clamp-2 mb-6 break-words text-pretty">
-          {post.seoDescription || "Access the blueprint."}
+          {post.seoDescription || "Read the full breakdown"}
         </p>
         <div className="mt-auto pt-4 border-t-2 border-dark/10 flex justify-between items-center">
-           <span className="type-eyebrow text-red-text">VIEW →</span>
+           <span className="type-eyebrow text-red-text">READ →</span>
         </div>
       </div>
     </Link>
@@ -134,7 +134,7 @@ const FeaturedCardHalf: React.FC<{ post: any }> = ({ post }) => {
           {post.title}
         </h3>
         <div className="mt-auto pt-4 border-t-2 border-dark/10">
-           <span className="type-eyebrow text-dark group-hover:text-red-text transition-colors">READ BRIEFING →</span>
+           <span className="type-eyebrow text-dark group-hover:text-red-text transition-colors">READ →</span>
         </div>
       </div>
     </Link>
@@ -181,8 +181,7 @@ const LedgerRow: React.FC<{ post: any }> = ({ post }) => {
       
       <div className="col-span-3 md:col-span-2 flex justify-end shrink-0">
         <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center space-x-2 type-eyebrow border-2 border-cream px-4 py-2">
-          <span>ACCESS</span>
-          <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+          <span>READ →</span>
         </div>
       </div>
 
@@ -231,15 +230,15 @@ export default function BlogPage() {
   const [isFocused, setIsFocused] = useState(false);
 
   const SEARCH_PHRASES = useMemo(() => [
-    "Automate onboarding.",
-    "Integrate HubSpot.",
-    "AI sales agents.",
-    "Frictionless funnels.",
-    "Scale B2B revenue."
+    "Stop chasing leads manually",
+    "Automate client onboarding",
+    "Fix your CRM pipeline",
+    "AI that answers your phone",
+    "Track your real margins",
   ], []);
 
   useEffect(() => {
-    document.title = "Insights & Strategy | Sysbilt";
+    document.title = "Insights | SYSBILT";
     setIsLoading(true); 
     
     Promise.all([
@@ -353,19 +352,14 @@ export default function BlogPage() {
         
         <header className="mb-12 md:mb-20 flex flex-col md:flex-row md:items-start justify-between gap-12 border-b-4 border-dark pb-12 md:pb-16 relative w-full">
           <div className="max-w-3xl flex-1 relative z-30 pt-8 md:pt-0">
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter mb-6 uppercase flex items-baseline text-dark break-words text-balance">
-              Insights & Strategy<span className="animate-pulse text-dark ml-1">_</span>
+            <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark mb-4 block">
+              / INSIGHTS
+            </span>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-8 md:mb-10 text-dark leading-[1.08] break-words text-balance">
+              Practical advice for businesses that want to grow without the grind
             </h1>
-            <p className="type-body-lg text-dark/70 max-w-2xl border-l-2 border-gold pl-6 mb-8 md:mb-12">
-              Perspectives, case studies, and architectural blueprints for scaling your revenue engine.
-            </p>
 
             <div className="w-full max-w-2xl">
-              <h3 className="type-eyebrow text-red-text mb-4 flex items-center gap-2">
-                <span className="w-2 h-2 bg-red-solid animate-pulse"></span>
-                Find your article
-              </h3>
-              
               <div className="flex items-stretch shadow-[8px_8px_0px_0px_#1a1a1a] transition-shadow hover:shadow-[12px_12px_0px_0px_#1a1a1a]">
                 <div className="relative flex-1 flex min-w-0 bg-white border-2 border-r-0 border-dark overflow-hidden">
                   <input 
@@ -374,14 +368,15 @@ export default function BlogPage() {
                     onChange={(e) => setSearchQuery(e.target.value)} 
                     onFocus={() => setIsFocused(true)}
                     onBlur={() => setIsFocused(false)}
-                    className="w-full px-4 py-4 md:px-6 md:py-6 text-base md:text-xl font-mono uppercase tracking-widest text-dark focus:outline-none focus:bg-cream transition-colors relative z-10 bg-transparent" 
+                    placeholder="Find an article"
+                    className="w-full px-4 py-4 md:px-6 md:py-6 text-base md:text-lg font-sans text-dark focus:outline-none focus:bg-cream transition-colors relative z-10 bg-transparent placeholder:text-dark/40" 
                   />
 
                   {!searchQuery && !isFocused && (
                     <div className="absolute inset-0 flex items-center pl-4 md:pl-6 pr-4 pointer-events-none z-20 overflow-hidden whitespace-nowrap">
-                      <span className="text-base md:text-xl font-mono uppercase tracking-widest text-dark/60 truncate">
+                      <span className="text-base md:text-lg font-sans text-dark/55 truncate">
                         {currentText}
-                        <span className="text-red-solid animate-pulse ml-0.5 inline-block translate-y-[-2px]">█</span>
+                        <span className="text-red-solid animate-pulse ml-0.5 inline-block translate-y-[-1px]">|</span>
                       </span>
                     </div>
                   )}
@@ -424,8 +419,8 @@ export default function BlogPage() {
         </div>
 
         {isLoading ? (
-          <div className="type-eyebrow text-dark border-2 border-dark p-6 inline-block bg-white uppercase tracking-widest animate-pulse">
-            DECRYPTING FILE...
+          <div className="type-eyebrow text-dark border-2 border-dark p-6 inline-block bg-white tracking-widest animate-pulse">
+            Loading articles...
           </div>
         ) : (
           <div className="w-full relative z-30 pb-20"> 
@@ -433,13 +428,8 @@ export default function BlogPage() {
             {/* FEATURED SECTION */}
             {featuredPosts.length > 0 && (
               <div className="mb-20 md:mb-32">
-                <div className="mb-10 border-b-4 border-dark pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-3 h-3 bg-red-solid animate-pulse" />
-                    <h2 className="font-mono text-xl md:text-2xl font-bold uppercase tracking-widest text-dark">
-                      Priority Intelligence
-                    </h2>
-                  </div>
+                <div className="mb-10 border-b-4 border-dark pb-6">
+                  <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark">/ FEATURED</span>
                 </div>
                 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -457,9 +447,8 @@ export default function BlogPage() {
                   
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 relative z-10">
                     <div>
-                      <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-red-solid mb-4 flex items-center gap-2">
-                        <span className="w-2 h-2 bg-red-solid rounded-full animate-pulse" />
-                        VERIFIED DEPLOYMENT
+                      <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-red-solid mb-4 block">
+                        / REAL RESULTS
                       </span>
                       <h3 className="font-serif text-4xl md:text-5xl text-white mb-4 group-hover:text-gold-on-dark transition-colors duration-300">
                         {latestCaseStudy.clientName}
@@ -472,7 +461,7 @@ export default function BlogPage() {
                     </div>
 
                     <div className="shrink-0 flex items-center gap-4 bg-white text-dark px-6 py-4 border-2 border-dark group-hover:bg-cream transition-colors font-mono text-sm font-bold uppercase tracking-widest">
-                      View Hard Data
+                      See the numbers
                       <ArrowRight className="w-4 h-4 text-red-solid group-hover:translate-x-1 transition-transform" />
                     </div>
                   </div>
@@ -482,17 +471,14 @@ export default function BlogPage() {
 
             {/* --- LEDGER SECTION --- */}
             <div className="mb-24">
-              <div className="flex items-center justify-between mb-8 border-b-4 border-dark pb-6">
-                <div className="flex items-center space-x-4">
-                  <span className="w-3 h-3 border-2 border-dark" />
-                  <h3 className="font-mono text-xl md:text-2xl font-bold tracking-widest uppercase">System Ledger</h3>
-                </div>
-                <span className="type-eyebrow text-dark/50">{regularPosts.length} RECORDS FOUND</span>
+              <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 border-b-4 border-dark pb-6">
+                <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark">/ ALL ARTICLES</span>
+                <span className="type-eyebrow text-dark/50 normal-case">{regularPosts.length} articles found</span>
               </div>
 
               {regularPosts.length === 0 ? (
-                <div className="type-eyebrow text-dark/70 border-2 border-dark p-6 inline-block bg-white">
-                  No insights match this filter.
+                <div className="type-eyebrow text-dark/70 border-2 border-dark p-6 inline-block bg-white normal-case">
+                  No articles match this search
                 </div>
               ) : (
                 <div className="border-t-2 border-dark">
@@ -515,7 +501,7 @@ export default function BlogPage() {
                     onClick={() => setVisibleCount(prev => prev + 10)}
                     className="type-eyebrow border-2 border-dark bg-white text-dark px-8 py-4 hover:bg-dark hover:text-cream hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_#1a1a1a] transition-all duration-300"
                   >
-                    Load More Blueprints ↓
+                    Load more articles ↓
                   </button>
                 </div>
               )}

@@ -348,7 +348,7 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
     }
   };
 
-  if (loading) return <div className="min-h-screen bg-dark text-white pt-32 px-6 text-center type-eyebrow animate-pulse tracking-widest">DECRYPTING FILE...</div>;
+  if (loading) return <div className="min-h-screen bg-dark text-white pt-32 px-6 text-center font-sans text-sm md:text-base animate-pulse">Loading...</div>;
   if (!post) return <div className="min-h-screen bg-dark text-red-solid pt-32 px-6 text-center type-eyebrow tracking-widest">DOSSIER NOT FOUND</div>;
 
   const components = {
@@ -695,7 +695,7 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
         
         <nav className="mb-8 relative z-20">
           <Link to="/blog" className="inline-flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-[0.2em] text-white/50 hover:text-white transition-colors">
-            <ArrowLeft className="w-4 h-4" /> THE VAULT
+            <ArrowLeft className="w-4 h-4" /> All articles
           </Link>
         </nav>
 
@@ -920,12 +920,12 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
                   )}
                 </h3>
                 <p className="font-sans text-white/70 font-light mb-8 max-w-md">
-                  Get architectural blueprints and technical teardowns delivered directly to your inbox. No noise, just raw intelligence.
+                  Tell us where you're stuck. We'll send you the articles and case studies that actually apply to your situation
                 </p>
                 
                 {formStatus === 'success' ? (
-                  <div className="font-mono text-white text-sm font-bold border border-white/20 p-4 bg-white/10 text-center uppercase tracking-widest">
-                     Access Granted.
+                  <div className="font-sans text-white text-sm border border-white/20 p-4 bg-white/10 text-center leading-relaxed">
+                     You're on the list, check your inbox
                   </div>
                 ) : (
                   <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-4">
@@ -934,8 +934,8 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       disabled={formStatus === 'loading'}
-                      placeholder="CORPORATE EMAIL..."
-                      className={`flex-1 bg-dark border border-white/20 text-white px-4 py-4 font-mono text-xs uppercase focus:outline-none ${theme.borderFocus} placeholder:text-white/30 transition-all`}
+                      placeholder="Enter your email address"
+                      className={`flex-1 bg-dark border border-white/20 text-white px-4 py-4 font-sans text-sm focus:outline-none ${theme.borderFocus} placeholder:text-white/40 transition-all`}
                       required
                     />
                     <button
@@ -943,7 +943,7 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
                       disabled={formStatus === 'loading'}
                       className={`font-mono text-xs font-bold uppercase transition-all duration-300 ${theme.btnInlineCta} px-8 py-4`}
                     >
-                      {formStatus === 'loading' ? 'PROCESSING...' : (post?.customCTA || 'INITIALIZE')}
+                      {formStatus === 'loading' ? 'Processing...' : (post?.customCTA || 'Send me the good stuff')}
                     </button>
                   </form>
                 )}
@@ -995,10 +995,10 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
               <h3 className={`type-eyebrow ${theme.textMain} flex items-center gap-3`}>
                 <div className={`w-2 h-2 ${theme.pulse}`} />
-                {theme.isBw ? <span className="bg-white text-dark px-2 py-0.5 font-bold shadow-[2px_2px_0px_0px_rgba(255,255,255,0.3)]">RELATED BLUEPRINTS</span> : 'RELATED BLUEPRINTS'}
+                {theme.isBw ? <span className="bg-white text-dark px-2 py-0.5 font-bold shadow-[2px_2px_0px_0px_rgba(255,255,255,0.3)]">RELATED ARTICLES</span> : 'RELATED ARTICLES'}
               </h3>
               <Link to="/blog" className={`type-eyebrow text-white ${theme.textHover} transition-colors`}>
-                VIEW ALL →
+                View all →
               </Link>
             </div>
             
@@ -1021,7 +1021,7 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
                   )}
                   <div className="p-6 flex flex-col flex-1 min-w-0">
                     <span className={`type-eyebrow ${theme.textMain} mb-4`}>
-                      // {relatedPost.servicePillar || 'STRATEGY'}
+                      // {relatedPost.servicePillar || 'GENERAL'}
                     </span>
                     <h4 className={`font-sans font-black text-xl text-white uppercase leading-tight mb-4 ${theme.textHover} transition-colors line-clamp-3 break-words text-balance`}>
                       {relatedPost.title}

@@ -61,11 +61,11 @@ export default defineType({
       title: 'Featured Grid Position',
       type: 'number',
       group: 'core',
-      description: 'Select where this card appears in the Priority Intelligence grid.',
+      description: 'Select where this card appears in the featured posts grid on /blog.',
       hidden: ({document}) => !document?.isFeatured,
       options: {
         list: [
-          { title: 'Position 1 (Lead Dossier - Big Card)', value: 1 },
+          { title: 'Position 1 (Featured lead — big card)', value: 1 },
           { title: 'Position 2 (Tall Card)', value: 2 },
           { title: 'Position 3 (Tall Card)', value: 3 },
           { title: 'Position 4 (Tall Card)', value: 4 },
