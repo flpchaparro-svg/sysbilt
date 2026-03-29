@@ -1,59 +1,116 @@
 # Pillar 4 — AI Assistants — Copy
 
-## Hero
-- Back: `Return to The System`
-- Eyebrow: `/` — `THE SYSTEM / SCALE FASTER`
-- Headline: `AI` + `Assistants.` ("Assistants." gold, italic)
-- Sub: `How many calls did you miss last month? Each one could've been a job. AI answers your phone, qualifies leads, and books appointments. 24/7. Sounds human. Never calls in sick.`
-
-## Section: System Configuration
-- Eyebrow: `/ SYSTEM CONFIGURATION`
-- Headline: `Select your Situation.` ("Situation." gold, italic)
-- UI labels: "Is this you?", "Select Profile", "The Problem", "The Fix", "Included Specs", `[ BOOK A CALL ]`
+Return to The System  
 
 ---
 
-## Tiers & personas (full copy)
+## Hero
 
-### RESPONDER — "I need to catch missed calls."
-- Summary: `You miss calls. Every missed call is a missed opportunity. AI picks up when you can't.`
-- Sprint: `7 DAYS`
-- Specs: AI voice agent | Call transcription | SMS follow-up | Calendar booking
+Stop answering the same questions over and over  
 
-- **The Missed Call Business** (Trades, Emergency Services) — Pain: After-Hours Revenue — `Your phone rings at 9pm. You're at dinner with family. That job goes to whoever picks up.` — Fix: `AI answers. Sounds human. Takes their details. Books them into your calendar. You call back in the morning with the job already half-won.`
-- **The One-Man Operation** (Solo Tradies, Consultants) — Pain: On the Tools — `You're mid-job. Hands full. Phone rings. You can't answer. Another lead gone.` — Fix: `AI handles it. Gets their name, job details, urgency. Sends you a summary when you're free.`
-- **The Overflow Handler** (Clinics, Agencies) — Pain: Peak Time Chaos — `Monday mornings. Phones ring off the hook. Your receptionist can only answer one at a time. The rest go to voicemail.` — Fix: `AI catches the overflow. No hold music. No voicemail. Every call answered instantly.`
+We build AI assistants that know your business inside out. They answer your phone, reply to enquiries, and handle the repetitive questions so you and your team don't have to.  
 
-### QUALIFIER — "I need to filter leads."
-- Summary: `Not every enquiry deserves your time. AI asks the right questions so you know who's worth calling back.`
-- Sprint: `14 DAYS`
-- Specs: Custom qualification scripts | Lead scoring | CRM integration | Smart routing
+BOOK A CALL  
 
-- **The Tyre-Kicker Filter** (High-Ticket Sales, Coaches) — Pain: Wasted Quotes — `You quote 10 jobs. 2 convert. The other 8 were never going to buy. You wasted time on all of them.` — Fix: `AI qualifies upfront. Budget? Timeline? Urgency? You only spend time on real opportunities.`
-- **The Service Matcher** (Multi-Service Agencies) — Pain: Wrong Enquiries — `Half your calls are for services you don't offer. You explain this 10 times a day.` — Fix: `AI explains your services, redirects if needed, only passes through relevant enquiries.`
-- **The Urgency Sorter** (Real Estate, Finance Brokers) — Pain: Everything Feels Equal — `Hot lead and cold lead look the same in your inbox. You treat them equally. You shouldn't.` — Fix: `AI scores urgency. "Needs it this week" gets a different priority than "just browsing."`
+---
 
-### ASSISTANT — "I need AI that knows my business."
-- Summary: `Beyond answering calls. AI that knows your services, your pricing, your processes. A trained team member.`
-- Sprint: `21 DAYS`
-- Specs: Custom knowledge base | Multi-channel (voice, chat, email) | Internal assistant | Training system
+## The gap
 
-- **The FAQ Machine** (Service Businesses, Clinics) — Pain: Repetitive Questions — `You answer the same 20 questions every week. "Do you service my area?" "What's your turnaround?" Over and over.` — Fix: `AI knows the answers. Customers get instant responses. You never answer the same question twice.`
-- **The Internal Helper** (Agency Owners, Operations) — Pain: Staff Interruptions — `Your team asks you questions all day. "Where's that template?" "What's the process for X?" You're everyone's helpdesk.` — Fix: `Internal AI assistant. Staff ask the bot. You get your time back.`
-- **The Multi-Channel Responder** (E-commerce, Membership Sites) — Pain: Platform Chaos — `Enquiries come from Facebook, website, email, phone. Different inboxes. Easy to miss.` — Fix: `One AI across all channels. Same knowledge. Same quality. Nothing falls through.`
+/ WHAT MOST PEOPLE MISS  
 
-### WORKFORCE — "I need AI employees."
-- Summary: `Full AI agents that work autonomously. They research, decide, and act. Digital team members.`
-- Sprint: `30+ DAYS`
-- Specs: Autonomous agents | Complex decision trees | Multi-step tasks | Human escalation
+Your business can only grow as fast as you can reply  
 
-- **The Researcher** (Sales Teams, BD) — Pain: Manual Due Diligence — `Before every call, someone researches the prospect. Website, LinkedIn, news. Takes 20 minutes.` — Fix: `AI researches automatically. You get a brief before the call. Context without effort.`
-- **The Outreach Agent** (Marketing, Sales) — Pain: Cold Follow-up — `You have 500 old leads. Someone should follow up. Nobody does.` — Fix: `AI reaches out. Personalised messages based on their history. Warm leads resurface without you lifting a finger.`
-- **The Project Coordinator** (Agencies, Project Biz) — Pain: Status Chasing — `You spend hours chasing updates. "Where are we on the Smith job?" "Has the supplier confirmed?"` — Fix: `AI chases for you. Sends reminders, collects updates, flags delays. You see a dashboard, not a to-do list.`
+Right now every answer depends on you or someone on your team typing it out, picking up the phone, or finding the right document. That doesn't scale.  
+
+THE GAP  
+The 9pm enquiry  
+Someone calls your business at 9pm and you're at home. The phone rings out and they call the next business on Google. You will never know that lead existed. It happens on weekends too, and during lunch, and every time your team is busy with the client in front of them. Every missed call is a job you lost without knowing it.  
+
+THE GAP  
+The "ask the boss" problem  
+Your team needs an answer and instead of looking it up they interrupt you. "What's our pricing for that?" "Where's the template?" "How do we handle this?" You have become the search engine of your own company. Every question that reaches you is a question your business can't answer without you, and that means you can never fully step away.  
+
+---
+
+## Solution
+
+/ HOW WE BUILD IT  
+
+An AI that knows your business and sounds like your team  
+
+We don't plug in a generic chatbot. We feed it your documents, your pricing, your processes, and your rules. It learns how your business works and responds using your actual information.  
+
+SCALE FASTER  
+01  
+Phone calls answered around the clock  
+The AI picks up when you can't. It sounds human, takes their details, asks the right questions, and books them into your calendar or sends you a summary. No voicemail and no missed leads.  
+
+SCALE FASTER  
+02  
+Enquiries qualified before they reach you  
+It doesn't just answer questions, it has a conversation. Budget, timeline, what they need. By the time you pick up the phone to call them back you already know if they're worth your time and you only talk to real opportunities.  
+
+SCALE FASTER  
+03  
+Your team stops interrupting you  
+We build internal assistants that your staff can ask instead of you. "How do we process a refund?" "Where's the onboarding checklist?" The AI gives them the answer from your own documents and you stop being everyone's helpdesk.  
+
+---
+
+## Engine (how it connects)
+
+/ HOW IT CONNECTS  
+
+An assistant wired into the rest of your business  
+
+The AI doesn't just answer and forget. It pushes everything it learns into your existing systems so nothing gets lost.  
+
+Engage  
+The AI sits on your website, answers your phone, or lives in your team's chat. It catches questions the moment they happen.  
+
+Qualify  
+It talks to the person, gathers their details, and figures out exactly what they need. Not a form, a conversation.  
+
+Action  
+The qualified lead gets pushed straight into your CRM (Pillar 2) and your team gets notified through your automations (Pillar 3). By the time you look at your screen the heavy lifting is done.  
+
+Orbital labels (visual)  
+Pillar 4 — AI  
+Pillar 1 — Websites  
+Pillar 2 — CRM  
+Pillar 3 — Automation  
+
+---
+
+## Bottom CTA
+
+/ READY?  
+
+Let's Talk  
+
+BOOK A CALL  
+
+NOW ACCEPTING PROJECTS  
 
 ---
 
 ## FAQ
-- Title: `Questions about AI?`
-- Subtitle: `Common questions about privacy, accuracy, and replacing humans.`
-- Q&A: **Full copy in `copy/faq-pillar4.md`** · Data: `constants/faqData.ts` → `pillarFAQs.pillar4`
+
+Questions about AI  
+
+Common questions about how AI assistants work, privacy, and what they can do  
+
+What's the difference between a chatbot and an AI assistant  
+Old chatbots followed scripts and were frustrating to use. AI assistants understand natural language and can answer specific questions about your business using your actual information. One reads from a menu, the other has a real conversation.  
+
+Can the AI actually book real appointments  
+Yes. It connects to your calendar, checks availability in real time, and confirms the booking. A customer asks for a slot and the AI handles it with no back-and-forth emails needed.  
+
+Can I have an AI that answers my phone  
+Yes. An AI voice agent answers around the clock, handles common questions, qualifies leads, and books meetings. It sounds human and hands off to a real person when needed.  
+
+What happens if someone asks something the AI doesn't know  
+It hands off gracefully. We build clear escalation paths so the AI knows its limits. It will connect the person to someone who can help instead of guessing or making things up.  
+
+How does the AI learn about my specific business  
+We feed it your documents, your website content, your pricing, and your policies. We test it, find gaps, and refine until it answers accurately. Most AI assistants are ready to launch in a few days.  
