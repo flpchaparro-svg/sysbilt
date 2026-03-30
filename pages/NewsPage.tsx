@@ -6,7 +6,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowDownLeft, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import NewsletterForm from '../components/NewsletterForm';
-import { usePageTitle } from '../hooks/usePageTitle';
+import { PageMeta } from '../components/PageMeta';
+import { SEO_META } from '../constants/seoMeta';
 
 // Setup Image Builder
 const builder = imageUrlBuilder(client);
@@ -40,8 +41,6 @@ const pillarCTAMap: Record<string, { headline: string; pillarPath: string }> = {
 };
 
 export default function NewsPage() {
-  usePageTitle('News');
-
   const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState<'all' | 'phase1' | 'phase2' | 'phase3'>('all');
@@ -205,7 +204,12 @@ export default function NewsPage() {
 
   return (
     <div className="w-full relative font-sans pb-32 bg-cream min-h-screen flex flex-col overflow-x-hidden">
-      
+      <PageMeta
+        title={SEO_META.news.title}
+        description={SEO_META.news.description}
+        robots="noindex, follow"
+      />
+
       {loading ? (
         <main className="flex-grow flex items-center justify-center pt-48 pb-24">
           <p className="text-dark font-sans text-base md:text-lg animate-pulse">Loading articles...</p>

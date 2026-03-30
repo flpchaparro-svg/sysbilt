@@ -5,7 +5,8 @@ import { ShieldCheck, Database, Zap, Activity, CheckCircle2, X, Terminal } from 
 import EvidenceVisual_Compare from '../components/EvidenceVisual_Compare';
 import CTAButton from '../components/CTAButton'; 
 import BackButton from '../components/BackButton';
-import { usePageTitle } from '../hooks/usePageTitle'; 
+import { PageMeta } from '../components/PageMeta';
+import { SEO_META } from '../constants/seoMeta'; 
 
 interface EvidenceVaultPageProps {
   onBack: () => void;
@@ -61,8 +62,6 @@ const TerminalLog: React.FC = () => {
 };
 
 const EvidenceVaultPage: React.FC<EvidenceVaultPageProps> = ({ onBack }) => {
-  usePageTitle('Evidence Vault');
-  
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -133,6 +132,8 @@ const EvidenceVaultPage: React.FC<EvidenceVaultPageProps> = ({ onBack }) => {
       exit={{ opacity: 0 }}
       className="relative min-h-screen w-full bg-cream text-dark overflow-x-hidden content-layer"
     >
+      <PageMeta title={SEO_META.evidenceVault.title} description={SEO_META.evidenceVault.description} />
+
       {/* FORENSIC ARCHIVE BACKGROUND */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden h-full">
         <div className="absolute inset-0 opacity-[0.03] grayscale bg-[url('https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?q=80&w=2000')] bg-cover mix-blend-multiply" />

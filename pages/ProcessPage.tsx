@@ -7,7 +7,8 @@ import CTAButton from '../components/CTAButton';
 import BackButton from '../components/BackButton'; 
 
 // HOOKS & DATA
-import { usePageTitle } from '../hooks/usePageTitle';
+import { PageMeta } from '../components/PageMeta';
+import { SEO_META } from '../constants/seoMeta';
 import { PRINCIPLES, STEPS } from '../constants/processData'; 
 
 interface ProcessPageProps {
@@ -29,8 +30,6 @@ const Section: React.FC<{ children: React.ReactNode, className?: string, delay?:
 );
 
 const ProcessPage: React.FC<ProcessPageProps> = ({ onBack, onNavigate }) => {
-  usePageTitle('Process');
-
   return (
     <m.div 
       initial={{ opacity: 0 }} 
@@ -38,6 +37,7 @@ const ProcessPage: React.FC<ProcessPageProps> = ({ onBack, onNavigate }) => {
       exit={{ opacity: 0 }}
       className="min-h-screen bg-cream text-dark pt-0 pb-0 px-0 relative z-[150] overflow-x-hidden flex flex-col selection:bg-gold/30"
     >
+      <PageMeta title={SEO_META.process.title} description={SEO_META.process.description} />
       <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 w-full flex-grow relative z-10">
         
         {/* NAV BACK */}

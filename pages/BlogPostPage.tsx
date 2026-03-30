@@ -665,29 +665,32 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
   };
 
   // Setup SEO Variables
-  const pageTitle = post?.seoTitle || post?.title || 'Sysbilt Strategy';
-  const pageDescription = post?.seoDescription || "We build the systems that help Australian businesses stop doing everything manually";
+  const FALLBACK_DESCRIPTION =
+    'We build the systems that help Australian businesses stop doing everything manually';
+  const resolvedArticleTitle = post?.seoTitle || post?.title;
+  const pageDescription = post?.seoDescription || FALLBACK_DESCRIPTION;
+  const brandedTitle = resolvedArticleTitle ? `${resolvedArticleTitle} | SYSBILT` : 'SYSBILT';
   const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
   const shareImage = post?.ogImage ? urlFor(post.ogImage).width(1200).height(630).url() : (post?.mainImage ? urlFor(post.mainImage).width(1200).height(630).url() : '');
 
   return (
     <main className="min-h-screen bg-dark text-white font-sans selection:bg-white selection:text-dark pb-24 border-t border-white/10 relative">
       <Helmet>
-        <title>{pageTitle} | SYSBILT</title>
+        <title>{brandedTitle}</title>
         <meta name="description" content={pageDescription} />
         {post?.focusKeyword && <meta name="keywords" content={post.focusKeyword} />}
         
         {/* Open Graph Tags (LinkedIn, Facebook, iMessage) */}
         <meta property="og:type" content="article" />
         <meta property="og:url" content={currentUrl} />
-        <meta property="og:title" content={`${pageTitle} | SYSBILT`} />
+        <meta property="og:title" content={brandedTitle} />
         <meta property="og:description" content={pageDescription} />
         {shareImage && <meta property="og:image" content={shareImage} />}
 
         {/* Twitter Card Tags */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content={currentUrl} />
-        <meta name="twitter:title" content={`${pageTitle} | SYSBILT`} />
+        <meta name="twitter:title" content={brandedTitle} />
         <meta name="twitter:description" content={pageDescription} />
         {shareImage && <meta name="twitter:image" content={shareImage} />}
       </Helmet>

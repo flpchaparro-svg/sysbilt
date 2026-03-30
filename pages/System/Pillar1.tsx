@@ -8,6 +8,8 @@ import FAQSection from '../../components/FAQSection';
 import { getPillarFAQs } from '../../constants/faqData';
 import { colors } from '../../constants/theme';
 import SolutionCardPillar from '../../components/System/SolutionCardPillar';
+import { PageMeta } from '../../components/PageMeta';
+import { SEO_META } from '../../constants/seoMeta';
 
 interface Pillar1Props {
   onNavigate: (view: string, sectionId?: string) => void;
@@ -137,6 +139,7 @@ const Pillar1: React.FC<Pillar1Props> = ({ onNavigate }) => {
       exit={{ opacity: 0 }}
       className="min-h-screen bg-cream text-dark px-0 relative z-[150] overflow-x-hidden flex flex-col font-sans"
     >
+      <PageMeta title={SEO_META.pillar1.title} description={SEO_META.pillar1.description} />
       <section className="relative min-h-[700px] h-[100dvh] w-full flex flex-col overflow-hidden">
         <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 w-full h-full flex flex-col relative z-10">
           <div className="flex justify-between items-center mb-8 md:mb-4 pt-24 relative z-20">

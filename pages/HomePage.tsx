@@ -2,7 +2,8 @@ import React, { useState, useRef, useEffect, lazy, Suspense } from 'react';
 import { m, useScroll, useMotionValueEvent, useAnimationFrame, useMotionValue, useTransform } from 'framer-motion';
 import CTAButton from '../components/CTAButton';
 import ScrambleTitle from '../components/HomePage/ScrambleTitle';
-import { usePageTitle } from '../hooks/usePageTitle';
+import { PageMeta } from '../components/PageMeta';
+import { SEO_META } from '../constants/seoMeta';
 
 // Lazy load BookingCTA (at bottom of page)
 const BookingCTA = lazy(() => import('../components/HomePage/BookingCTA'));
@@ -27,8 +28,6 @@ interface HomePageProps {
 }
 
 const HomePage: React.FC<HomePageProps> = ({ onNavigate, onServiceClick }) => {
-  usePageTitle('Home');
-  
   const isTickerHovered = useRef(false);
   const [isMobile, setIsMobile] = useState(false);
   const [canAnimate, setCanAnimate] = useState(false);
@@ -122,6 +121,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onServiceClick }) => {
 
   return (
     <>
+      <PageMeta title={SEO_META.home.title} description={SEO_META.home.description} />
       <section id="hero" aria-label="Hero Section" className="min-h-[100svh] w-full flex items-center pt-32 md:pt-20 overflow-hidden relative z-20 content-layer">
         
         <div className="absolute inset-0 z-[1]">

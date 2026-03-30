@@ -8,7 +8,8 @@ import BackButton from '../components/BackButton';
 import VideoHUD from '../components/Architect/VideoHUD';
 
 // HOOKS & DATA
-import { usePageTitle } from '../hooks/usePageTitle'; 
+import { PageMeta } from '../components/PageMeta';
+import { SEO_META } from '../constants/seoMeta'; 
 import { ARCHITECT_CONTENT } from '../constants/architectData'; 
 
 interface ArchitectPageProps {
@@ -30,7 +31,6 @@ const Section: React.FC<{ children: React.ReactNode, className?: string, delay?:
 );
 
 const ArchitectPage: React.FC<ArchitectPageProps> = ({ onBack, onNavigate }) => {
-  usePageTitle('About');
   const [mode, setMode] = useState<'architect' | 'human'>('architect');
   const current = ARCHITECT_CONTENT[mode];
 
@@ -57,6 +57,7 @@ const ArchitectPage: React.FC<ArchitectPageProps> = ({ onBack, onNavigate }) => 
 
   return (
     <m.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="min-h-screen bg-cream text-dark relative z-[150] flex flex-col selection:bg-gold/30">
+      <PageMeta title={SEO_META.about.title} description={SEO_META.about.description} />
       <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 w-full flex-grow relative z-10">
         
         <div className="flex justify-between items-center mb-12 md:mb-20 pt-24 relative z-[200]">

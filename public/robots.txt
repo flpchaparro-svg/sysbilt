@@ -1,6 +1,5 @@
-# Allow everyone. Let the world (and the AIs) know who Felipe is.
 User-agent: *
 Allow: /
+Disallow: /studio/
 
-# (Optional) Point them to your map so they know exactly what pages exist
-Sitemap: https://www.felipechaparro.com/sitemap.xml
+Sitemap: https://sysbilt.com/sitemap.xml

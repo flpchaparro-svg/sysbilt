@@ -7,7 +7,8 @@ import CTAButton from '../components/CTAButton';
 import BackButton from '../components/BackButton'; 
 
 // HOOKS & DATA
-import { usePageTitle } from '../hooks/usePageTitle';
+import { PageMeta } from '../components/PageMeta';
+import { SEO_META } from '../constants/seoMeta';
 import { useContactForm } from '../hooks/useContactForm';
 import { DIAGNOSIS_OPTIONS } from '../constants/contactData';
 
@@ -16,7 +17,6 @@ interface ContactPageProps {
 }
 
 const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
-  usePageTitle('Contact');
   const { formState, updateField, status, handleSubmit } = useContactForm();
   
   const inputBaseStyle = "w-full bg-white/5 border border-white/10 px-4 py-4 font-sans text-xl text-white focus:outline-none focus:border-gold focus:bg-white/10 transition-colors duration-200 ease-out placeholder:text-white/70 rounded-sm mt-2";
@@ -24,7 +24,8 @@ const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
   return (
     // Main background dark so overscrolling on mobile doesn't show cream under the form (design spec: dark #1a1a1a)
     <div className="min-h-screen lg:h-screen w-full flex flex-col lg:flex-row relative z-[9999] bg-dark lg:overflow-hidden">
-      
+      <PageMeta title={SEO_META.contact.title} description={SEO_META.contact.description} />
+
       {/* LEFT COLUMN: THE HUMAN ANCHOR */}
       <div className="w-full lg:w-5/12 h-auto lg:h-screen bg-cream text-dark flex flex-col p-8 md:p-12 lg:px-16 lg:pb-12 lg:pt-20 border-r border-dark/10 justify-between order-first relative z-10">
         <div className="flex-none mb-12 lg:mb-0 pt-2 lg:pt-0">

@@ -8,6 +8,8 @@ import { getAllPillars } from '../constants/systemPillars';
 import HeroVisualBrutalist from '../components/Blog/HeroVisualBrutalist';
 import RobotPeek from '../components/RobotPeek'; 
 import NewsletterForm from '../components/NewsletterForm';
+import { PageMeta } from '../components/PageMeta';
+import { SEO_META } from '../constants/seoMeta';
 
 const RED_PILLARS = ['Websites & E-commerce', 'CRM & Lead Tracking', 'Automation'];
 const GOLD_PILLARS = ['AI Assistants', 'Content Systems', 'Team Training'];
@@ -345,7 +347,8 @@ export default function BlogPage() {
 
   return (
     <section className="w-full bg-cream relative z-10 flex flex-col font-sans text-dark min-h-screen">
-      
+      <PageMeta title={SEO_META.blogIndex.title} description={SEO_META.blogIndex.description} />
+
       <RobotPeek />
 
       <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 pt-32 md:pt-48 pb-16 flex-1 w-full relative z-20 flex flex-col">

@@ -13,7 +13,8 @@ import TerminalLog from '../components/Proof/TerminalLog';
 import CountUp from '../components/Proof/CountUp';
 
 // HOOKS & DATA
-import { usePageTitle } from '../hooks/usePageTitle';
+import { PageMeta } from '../components/PageMeta';
+import { SEO_META } from '../constants/seoMeta';
 import { getCaseStudies } from '../src/sanityClient';
 import { SanityCaseStudy } from '../types';
 
@@ -33,8 +34,6 @@ const Section: React.FC<{ children: React.ReactNode, className?: string, delay?:
 );
 
 const ProofPage: React.FC<ProofPageProps> = ({ onBack, onNavigate }) => {
-  usePageTitle('Proof');
-  
   // SANITY STATE
   const [caseStudy, setCaseStudy] = useState<SanityCaseStudy | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -59,6 +58,7 @@ const ProofPage: React.FC<ProofPageProps> = ({ onBack, onNavigate }) => {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-cream flex items-center justify-center">
+        <PageMeta title={SEO_META.proof.title} description={SEO_META.proof.description} />
         <span className="font-mono text-sm uppercase tracking-widest text-dark/50 animate-pulse">Loading Evidence...</span>
       </div>
     );
@@ -67,6 +67,7 @@ const ProofPage: React.FC<ProofPageProps> = ({ onBack, onNavigate }) => {
   if (!caseStudy) {
     return (
       <div className="min-h-screen bg-cream flex flex-col items-center justify-center gap-4">
+        <PageMeta title={SEO_META.proof.title} description={SEO_META.proof.description} />
         <span className="font-mono text-sm uppercase tracking-widest text-dark/50">No Evidence Found.</span>
         <BackButton onClick={onBack} label="Return to Home" />
       </div>
@@ -78,6 +79,7 @@ const ProofPage: React.FC<ProofPageProps> = ({ onBack, onNavigate }) => {
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
       className="min-h-screen bg-cream text-dark pt-0 relative z-[150] overflow-x-hidden flex flex-col selection:bg-gold/30"
     >
+      <PageMeta title={SEO_META.proof.title} description={SEO_META.proof.description} />
       <div className="fixed inset-0 pointer-events-none opacity-[0.03]" 
            style={{ backgroundImage: 'radial-gradient(var(--ink) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
 

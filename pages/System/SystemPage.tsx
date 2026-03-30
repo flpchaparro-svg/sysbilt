@@ -14,7 +14,8 @@ import { getSystemPageFAQs } from '../../constants/faqData';
 import { colors } from '../../constants/theme';
 import BackButton from '../../components/BackButton';
 import SystemGrid from '../../components/System/SystemGrid';
-import { usePageTitle } from '../../hooks/usePageTitle';
+import { PageMeta } from '../../components/PageMeta';
+import { SEO_META } from '../../constants/seoMeta';
 
 // Lazy load the scroll-heavy section
 const SystemArchitecture = lazy(() => import('../../components/System/SystemArchitecture').then(module => ({ default: module.SystemArchitecture })));
@@ -25,7 +26,6 @@ interface SystemPageProps {
 }
 
 const SystemPage: React.FC<SystemPageProps> = ({ onBack, onNavigate }) => {
-  usePageTitle('Services');
   const systemFAQs = getSystemPageFAQs();
 
   // --- OPTIMIZED HERO SCROLL LOGIC ---
@@ -69,7 +69,8 @@ const SystemPage: React.FC<SystemPageProps> = ({ onBack, onNavigate }) => {
 
   return (
     <div className="min-h-screen bg-cream text-dark pt-0 pb-0 px-0 relative z-[150] flex flex-col font-sans">
-      
+      <PageMeta title={SEO_META.services.title} description={SEO_META.services.description} />
+
       {/* 1. HERO SECTION (Static Props, Self-Contained Animation) */}
       <section className="relative h-[100dvh] w-full flex flex-col overflow-hidden">
         <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 w-full h-full flex flex-col relative z-10">
