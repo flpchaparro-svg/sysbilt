@@ -2,10 +2,10 @@ import {defineField, defineType} from 'sanity'
 
 // Custom SEO Slug Generator
 function customSlugify(input: string): string {
-  const stopWords = ['a', 'an', 'and', 'the', 'but', 'or', 'on', 'in', 'with', 'to', 'of', 'for', 'is', 'how', 'why', 'what'];
+  const stopWords = ['a', 'an', 'and', 'the', 'but', 'or', 'on', 'in', 'with', 'to', 'of', 'for', 'is'];
   const words = input.toLowerCase().replace(/[^\w\s-]/g, '').split(/\s+/);
   const filtered = words.filter(word => !stopWords.includes(word) && word.length > 0);
-  return filtered.slice(0, 5).join('-'); // Limit to 5 core words
+  return filtered.slice(0, 7).join('-'); // Up to 7 words for more distinctive slugs (how/why/what kept)
 }
 
 export default defineType({
@@ -196,30 +196,18 @@ export default defineType({
     }),
     defineField({
       name: 'targetPersona',
-      title: 'Target Personas',
-      type: 'array',
+      title: 'Target Persona',
+      type: 'string',
       group: 'seo',
-      description: 'Select the specific persona this piece is written for. Do not mix Phase and Pillar personas in the same piece.',
-      of: [{type: 'string'}],
+      description: 'Which persona is this post written for? Pick one.',
       options: {
         list: [
-          { title: '--- LEVEL 0: MASTER ---', value: 'HEADER_MASTER' },
-          { title: 'The Visionary Operator (Full Ecosystem)', value: 'The Visionary Operator' },
-          
-          { title: '--- LEVEL A: PHASE PERSONAS (MARKETING) ---', value: 'HEADER_PHASE' },
-          { title: 'The Builder (Phase 01)', value: 'The Builder' },
-          { title: 'The Scaler (Phase 02)', value: 'The Scaler' },
-          { title: 'The Controller (Phase 03)', value: 'The Controller' },
-          
-          { title: '--- LEVEL B: PILLAR PERSONAS (SPECIFIC SOLUTIONS) ---', value: 'HEADER_PILLAR' },
-          { title: 'P1: The Authority Seeker', value: 'The Authority Seeker' },
-          { title: 'P2: The Revenue Protector', value: 'The Revenue Protector' },
-          { title: 'P3: The Leverage Seeker', value: 'The Leverage Seeker' },
-          { title: 'P4: The Cognitive Scaler', value: 'The Cognitive Scaler' },
-          { title: 'P5: The Omnipresence Seeker', value: 'The Omnipresence Seeker' },
-          { title: 'P6: The Adoption Seeker', value: 'The Adoption Seeker' },
-          { title: 'P7: The Executive Navigator', value: 'The Executive Navigator' }
+          {title: 'The Visionary Operator', value: 'The Visionary Operator'},
+          {title: 'The Builder', value: 'The Builder'},
+          {title: 'The Scaler', value: 'The Scaler'},
+          {title: 'The Controller', value: 'The Controller'},
         ],
+        layout: 'radio',
       },
     }),
     defineField({
@@ -229,13 +217,16 @@ export default defineType({
       group: 'seo',
       options: {
         list: [
-          {title: 'Pillar 1: Websites', value: '/pillar1'},
-          {title: 'Pillar 2: CRM', value: '/pillar2'},
-          {title: 'Pillar 3: Automation', value: '/pillar3'},
-          {title: 'Pillar 4: AI Assistants', value: '/pillar4'},
-          {title: 'Pillar 5: Content Systems', value: '/pillar5'},
-          {title: 'Pillar 6: Team Training', value: '/pillar6'},
-          {title: 'Pillar 7: Dashboards', value: '/pillar7'},
+          {title: 'Websites & E-commerce', value: '/pillar1'},
+          {title: 'CRM & Lead Tracking', value: '/pillar2'},
+          {title: 'Automation', value: '/pillar3'},
+          {title: 'AI Assistants', value: '/pillar4'},
+          {title: 'Content Systems', value: '/pillar5'},
+          {title: 'Team Training', value: '/pillar6'},
+          {title: 'Dashboards & Reporting', value: '/pillar7'},
+          {title: 'The System (Overview)', value: '/system'},
+          {title: 'Homepage', value: '/'},
+          {title: 'Contact', value: '/contact'},
         ],
       },
     }),
