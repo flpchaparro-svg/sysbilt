@@ -699,7 +699,7 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
         
         <nav className="mb-8 relative z-20">
           <Link to="/blog" className="inline-flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-[0.2em] text-white/50 hover:text-white transition-colors">
-            <ArrowLeft className="w-4 h-4" /> All articles →
+            <ArrowLeft className="w-4 h-4" /> All articles
           </Link>
         </nav>
 
