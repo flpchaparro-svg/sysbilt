@@ -64,9 +64,6 @@ const SystemPage: React.FC<SystemPageProps> = ({ onBack, onNavigate }) => {
     lastTimeRef.current = now;
   });
 
-  const heroContainer = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.05, delayChildren: 0.1 } } };
-  const heroItem = { hidden: { y: 30, opacity: 0 }, visible: { y: 0, opacity: 1, transition: { type: "spring", stiffness: 40, damping: 20 } } };
-
   return (
     <div className="min-h-screen bg-cream text-dark pt-0 pb-0 px-0 relative z-[150] flex flex-col font-sans">
       <PageMeta
@@ -82,24 +79,21 @@ const SystemPage: React.FC<SystemPageProps> = ({ onBack, onNavigate }) => {
             <BackButton onClick={onBack} label="Return to Home" />
           </div>
           
-          <m.div 
-            initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} variants={heroContainer} 
-            className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 lg:gap-20 flex-1 content-center items-center"
-          >
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 lg:gap-20 flex-1 content-center items-center">
             <div className="flex flex-col justify-center">
-              <m.h1 variants={heroItem} className="font-serif text-5xl md:text-6xl lg:text-7xl xl:text-8xl leading-[1.1] lg:leading-[0.9] tracking-tighter text-dark mb-6 md:mb-10 break-words">
+              <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl xl:text-8xl leading-[1.1] lg:leading-[0.9] tracking-tighter text-dark mb-6 md:mb-10 break-words">
                 You built the business, now the business <span className="italic font-serif text-gold-on-cream">runs you</span>
-              </m.h1>
-              <m.p variants={heroItem} className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/70 max-w-2xl border-l-2 border-gold pl-6 mb-8">
+              </h1>
+              <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/70 max-w-2xl border-l-2 border-gold pl-6 mb-8 animate-fade-in">
                 Every decision waits on you. Leads slip through because nobody followed up. Your team asks you the same questions every day. We build a 7-part system that fixes the plumbing so you can focus on the work that actually grows revenue.
-              </m.p>
+              </p>
             </div>
-            <m.div variants={heroItem} className="w-full h-auto lg:h-full flex items-center justify-center lg:justify-end -mt-8 md:-mt-4 lg:mt-0 pb-16 md:pb-12 lg:pb-0">
+            <div className="w-full h-auto lg:h-full flex items-center justify-center lg:justify-end -mt-8 md:-mt-4 lg:mt-0 pb-16 md:pb-12 lg:pb-0">
               <div className="w-full max-w-full flex items-center justify-center">
                 <HeroVisual_Suspension />
               </div>
-            </m.div>
-          </m.div>
+            </div>
+          </div>
         </div>
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-10 md:h-12 w-[1px] bg-dark/10 overflow-hidden z-30" aria-hidden="true">
           <m.div style={{ y: useTransform(scrollLineY, (v) => `${v}%`) }} className="absolute inset-0 bg-dark/40 w-full h-full" />

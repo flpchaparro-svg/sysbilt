@@ -612,23 +612,32 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
         if (numMatch) {
            const num = numMatch[1].padStart(2, '0');
            const cleanText = numMatch[2];
+           const beforeBg = theme.bgMain.replace(/^bg-/, 'before:bg-');
+           const beforeText = theme.textInverse.replace(/^text-/, 'before:text-');
            return (
-             <h2 id={id} className="font-sans font-bold text-2xl md:text-3xl uppercase mt-20 mb-10 flex items-center gap-4 scroll-mt-32">
-                <span className={`${theme.bgMain} ${theme.textInverse} px-3 py-1 leading-none font-black text-xl md:text-2xl shadow-[4px_4px_0px_0px_rgba(255,255,255,0.1)]`}>
-                  {num}
-                </span>
+             <h2
+               id={id}
+               data-decorative-num={num}
+               className={`font-sans font-bold text-2xl md:text-3xl uppercase mt-20 mb-10 flex items-center gap-4 scroll-mt-32
+                 before:content-[attr(data-decorative-num)]
+                 before:inline-flex before:items-center before:px-3 before:py-1 before:leading-none before:font-black before:text-xl before:md:text-2xl
+                 before:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.1)] before:shrink-0
+                 ${beforeBg} ${beforeText}`}
+             >
                 <span className="flex-1 text-white">{cleanText}</span>
              </h2>
            );
         }
 
         if (slashMatch) {
+           const beforeAccent = theme.textMain.replace(/^text-/, 'before:text-');
            return (
              <h2 id={id} className="font-sans font-bold text-2xl md:text-3xl uppercase mt-20 mb-10 flex items-center gap-4 scroll-mt-32">
-                <span className={`${theme.textMain} font-black text-xl md:text-2xl opacity-70`}>
-                  //
+                <span
+                  className={`flex-1 text-white before:content-['//'] before:mr-4 before:opacity-70 before:font-black before:text-xl before:md:text-2xl before:inline-block ${beforeAccent}`}
+                >
+                  {slashMatch[1]}
                 </span>
-                <span className="flex-1 text-white">{slashMatch[1]}</span>
              </h2>
            );
         }
