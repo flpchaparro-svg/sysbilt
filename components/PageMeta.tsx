@@ -31,6 +31,10 @@ export function PageMeta({ title, description, canonical, robots, ogImage }: Pag
       {canonical != null && canonical !== '' ? <meta property="og:url" content={canonical} /> : null}
       <meta property="og:type" content="website" />
       <meta property="og:image" content={resolvedOgImage} />
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={title} />
+      <meta name="twitter:description" content={description} />
+      <meta name="twitter:image" content={resolvedOgImage} />
     </Helmet>
   );
 }
