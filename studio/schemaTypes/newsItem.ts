@@ -35,9 +35,9 @@ export default defineType({
       options: {
         list: [
           { title: 'The Monthly Horizon (Featured Top)', value: 'horizon' },
-          { title: 'Phase 01: Grinding & Growing', value: 'phase1' },
-          { title: 'Phase 02: Scaling Operations', value: 'phase2' },
-          { title: 'Phase 03: Seeing Clearly', value: 'phase3' },
+          { title: 'Phase 01: Get Clients', value: 'phase1' },
+          { title: 'Phase 02: Scale Faster', value: 'phase2' },
+          { title: 'Phase 03: See Clearly', value: 'phase3' },
         ],
         layout: 'radio',
       },

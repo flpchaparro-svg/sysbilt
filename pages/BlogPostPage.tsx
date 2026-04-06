@@ -204,6 +204,7 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
             mainImage,
             ogImage,
             publishedAt,
+            _updatedAt,
             body,
             servicePillar,
             seoTitle,
@@ -700,6 +701,67 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
         <meta name="twitter:title" content={brandedTitle} />
         <meta name="twitter:description" content={pageDescription} />
         {shareImage && <meta name="twitter:image" content={shareImage} />}
+        {canonicalUrl && post && (
+          <script type="application/ld+json">
+            {JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'BlogPosting',
+              headline: post.title,
+              description: pageDescription,
+              datePublished: post.publishedAt,
+              dateModified: post._updatedAt || post.publishedAt,
+              author: {
+                '@type': 'Organization',
+                name: 'SYSBILT',
+                url: 'https://sysbilt.com',
+              },
+              publisher: {
+                '@type': 'Organization',
+                name: 'SYSBILT',
+                url: 'https://sysbilt.com',
+                logo: {
+                  '@type': 'ImageObject',
+                  url: 'https://sysbilt.com/images/og-sysbilt.png',
+                },
+              },
+              mainEntityOfPage: {
+                '@type': 'WebPage',
+                '@id': canonicalUrl,
+              },
+              ...(shareImage ? { image: shareImage } : {}),
+              ...(post.focusKeyword ? { keywords: post.focusKeyword } : {}),
+              inLanguage: 'en-AU',
+            })}
+          </script>
+        )}
+        {canonicalUrl && post && (
+          <script type="application/ld+json">
+            {JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'BreadcrumbList',
+              itemListElement: [
+                {
+                  '@type': 'ListItem',
+                  position: 1,
+                  name: 'Home',
+                  item: `${SITE_ORIGIN}/`,
+                },
+                {
+                  '@type': 'ListItem',
+                  position: 2,
+                  name: 'Insights',
+                  item: `${SITE_ORIGIN}/blog`,
+                },
+                {
+                  '@type': 'ListItem',
+                  position: 3,
+                  name: post.title,
+                  item: canonicalUrl,
+                },
+              ],
+            })}
+          </script>
+        )}
       </Helmet>
       
       <div className="pt-32 px-4 md:px-8 max-w-7xl mx-auto">
