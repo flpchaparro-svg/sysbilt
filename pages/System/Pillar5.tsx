@@ -75,7 +75,7 @@ const Pillar5: React.FC<Pillar5Props> = ({ onNavigate }) => {
   const scrollLineYPercent = useTransform(scrollLineY, (v) => `${v}%`);
 
   return (
-    <motion.article initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="min-h-screen bg-cream text-dark px-0 relative z-[150] overflow-x-hidden flex flex-col font-sans" aria-labelledby="pillar-hero-title">
+    <article className="min-h-screen bg-cream text-dark px-0 relative z-[150] overflow-x-hidden flex flex-col font-sans" aria-labelledby="pillar-hero-title">
       <PageMeta
         title={`${pillar5Copy.hero.headline} | SYSBILT`}
         description={pillar5Copy.hero.sub}
@@ -229,7 +229,7 @@ const Pillar5: React.FC<Pillar5Props> = ({ onNavigate }) => {
       </section>
 
       <FAQSection faqs={pillarFAQs} accentColor={colors.goldOnCream} title={<>Questions about <span className="italic text-gold-on-cream">content</span></>} subtitle="Common questions about what we create, how it works, and where it gets published" onNavigate={onNavigate} />
-    </motion.article>
+    </article>
   );
 };
 

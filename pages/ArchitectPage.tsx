@@ -161,6 +161,7 @@ const ArchitectPage: React.FC<ArchitectPageProps> = ({ onBack, onNavigate }) => 
                           src={mode === 'architect' ? "/videos/the_architect_strategy.webm" : "/videos/the_architect_human.webm"} 
                           type="video/webm" 
                         />
+                        <track kind="captions" srcLang="en" label="English" src="" default />
                       </video>
 
                       {/* Dark overlay for better contrast */}

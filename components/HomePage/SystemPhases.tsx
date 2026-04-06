@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { Filter, Magnet, Cog, Brain, LayoutGrid, Dna, BarChart3, Activity } from 'lucide-react';
 import CTAButton from '../CTAButton';
 import { colors } from '../../constants/theme';
@@ -41,30 +41,30 @@ export default function SystemPhases({ onNavigate }: SystemPhasesProps) {
             <div className="relative w-[320px] h-[320px] bg-cream rounded-[40px] shadow-neu flex-shrink-0 flex items-center justify-center">
               {/* Neumorphic Inner Well */}
               <div className="relative w-48 h-48 bg-cream rounded-full shadow-neu-inner flex items-center justify-center">
-                <motion.div
+                <m.div
                   className="absolute inset-0 flex items-center justify-center drop-shadow-neu"
                   style={{ color: colors.redSolid }}
                   animate={{ opacity: [1, 1, 0, 0, 0, 0, 1], scale: [1, 1.1, 0.8, 0.8, 0.8, 0.8, 1] }}
                   transition={{ ...transition, times: times3Icon }}
                 >
                   <Filter size={80} strokeWidth={2} />
-                </motion.div>
-                <motion.div
+                </m.div>
+                <m.div
                   className="absolute inset-0 flex items-center justify-center drop-shadow-neu"
                   style={{ color: colors.redSolid }}
                   animate={{ opacity: [0, 0, 1, 1, 0, 0, 0], scale: [0.8, 0.8, 1, 1.1, 0.8, 0.8, 0.8] }}
                   transition={{ ...transition, times: times3Icon }}
                 >
                   <Magnet size={80} strokeWidth={2} />
-                </motion.div>
-                <motion.div
+                </m.div>
+                <m.div
                   className="absolute inset-0 flex items-center justify-center drop-shadow-neu"
                   style={{ color: colors.redSolid }}
                   animate={{ opacity: [0, 0, 0, 0, 1, 1, 0], scale: [0.8, 0.8, 0.8, 0.8, 1, 1.1, 0.8] }}
                   transition={{ ...transition, times: times3Icon }}
                 >
                   <Cog size={80} strokeWidth={2} />
-                </motion.div>
+                </m.div>
               </div>
             </div>
             <div className="w-[320px] flex flex-col text-left md:w-auto md:max-w-md md:flex-1 md:min-w-0 lg:w-[320px] lg:max-w-none lg:flex-none">
@@ -86,30 +86,30 @@ export default function SystemPhases({ onNavigate }: SystemPhasesProps) {
             <div className="relative w-[320px] h-[320px] bg-cream rounded-[40px] shadow-neu flex-shrink-0 flex items-center justify-center">
               {/* Neumorphic Inner Well */}
               <div className="relative w-48 h-48 bg-cream rounded-full shadow-neu-inner flex items-center justify-center">
-                <motion.div
+                <m.div
                   className="absolute inset-0 flex items-center justify-center drop-shadow-neu"
                   style={{ color: colors.gold }}
                   animate={{ opacity: [1, 1, 0, 0, 0, 0, 1], scale: [1, 1.1, 0.8, 0.8, 0.8, 0.8, 1] }}
                   transition={{ ...transition, times: times3Icon }}
                 >
                   <Brain size={80} strokeWidth={2} />
-                </motion.div>
-                <motion.div
+                </m.div>
+                <m.div
                   className="absolute inset-0 flex items-center justify-center drop-shadow-neu"
                   style={{ color: colors.gold }}
                   animate={{ opacity: [0, 0, 1, 1, 0, 0, 0], scale: [0.8, 0.8, 1, 1.1, 0.8, 0.8, 0.8] }}
                   transition={{ ...transition, times: times3Icon }}
                 >
                   <LayoutGrid size={80} strokeWidth={2} />
-                </motion.div>
-                <motion.div
+                </m.div>
+                <m.div
                   className="absolute inset-0 flex items-center justify-center drop-shadow-neu"
                   style={{ color: colors.gold }}
                   animate={{ opacity: [0, 0, 0, 0, 1, 1, 0], scale: [0.8, 0.8, 0.8, 0.8, 1, 1.1, 0.8] }}
                   transition={{ ...transition, times: times3Icon }}
                 >
                   <Dna size={80} strokeWidth={2} />
-                </motion.div>
+                </m.div>
               </div>
             </div>
             <div className="w-[320px] flex flex-col text-left md:w-auto md:max-w-md md:flex-1 md:min-w-0 lg:w-[320px] lg:max-w-none lg:flex-none">
@@ -131,22 +131,22 @@ export default function SystemPhases({ onNavigate }: SystemPhasesProps) {
             <div className="relative w-[320px] h-[320px] bg-cream rounded-[40px] shadow-neu flex-shrink-0 flex items-center justify-center">
               {/* Neumorphic Inner Well */}
               <div className="relative w-48 h-48 bg-cream rounded-full shadow-neu-inner flex items-center justify-center">
-                <motion.div
+                <m.div
                   className="absolute inset-0 flex items-center justify-center drop-shadow-neu"
                   style={{ color: colors.dark }}
                   animate={{ opacity: [1, 1, 0, 0, 1], scale: [1, 1.1, 0.8, 0.8, 1] }}
                   transition={{ ...transition, times: times2Icon }}
                 >
                   <BarChart3 size={80} strokeWidth={2} />
-                </motion.div>
-                <motion.div
+                </m.div>
+                <m.div
                   className="absolute inset-0 flex items-center justify-center drop-shadow-neu"
                   style={{ color: colors.dark }}
                   animate={{ opacity: [0, 0, 1, 1, 0], scale: [0.8, 0.8, 1, 1.1, 0.8] }}
                   transition={{ ...transition, times: times2Icon }}
                 >
                   <Activity size={80} strokeWidth={2} />
-                </motion.div>
+                </m.div>
               </div>
             </div>
             <div className="w-[320px] flex flex-col text-left md:w-auto md:max-w-md md:flex-1 md:min-w-0 lg:w-[320px] lg:max-w-none lg:flex-none">
@@ -166,7 +166,7 @@ export default function SystemPhases({ onNavigate }: SystemPhasesProps) {
         </div>
 
         {/* CTA BUTTON */}
-        <motion.div
+        <m.div
           className="mt-20 md:mt-32 flex justify-center"
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -176,7 +176,7 @@ export default function SystemPhases({ onNavigate }: SystemPhasesProps) {
           <CTAButton theme="light" onClick={() => onNavigate?.('system')}>
             SEE HOW IT WORKS
           </CTAButton>
-        </motion.div>
+        </m.div>
 
       </div>
     </section>

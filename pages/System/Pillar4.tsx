@@ -113,10 +113,7 @@ const Pillar4: React.FC<Pillar4Props> = ({ onNavigate }) => {
   const scrollLineYPercent = useTransform(scrollLineY, (v) => `${v}%`);
 
   return (
-    <motion.article
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+    <article
       className="min-h-screen bg-cream text-dark px-0 relative z-[150] overflow-x-hidden flex flex-col font-sans"
       aria-labelledby="pillar-hero-title"
     >
@@ -376,7 +373,7 @@ const Pillar4: React.FC<Pillar4Props> = ({ onNavigate }) => {
         subtitle="Common questions about how AI assistants work, privacy, and what they can do"
         onNavigate={onNavigate}
       />
-    </motion.article>
+    </article>
   );
 };
 

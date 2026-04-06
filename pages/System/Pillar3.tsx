@@ -113,10 +113,7 @@ const Pillar3: React.FC<Pillar3Props> = ({ onNavigate }) => {
   const scrollLineYPercent = useTransform(scrollLineY, (v) => `${v}%`);
 
   return (
-    <motion.article
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+    <article
       className="min-h-screen bg-cream text-dark px-0 relative z-[150] overflow-x-hidden flex flex-col font-sans"
       aria-labelledby="pillar-hero-title"
     >
@@ -351,7 +348,7 @@ const Pillar3: React.FC<Pillar3Props> = ({ onNavigate }) => {
         subtitle="Common questions about what we can automate and how it works"
         onNavigate={onNavigate}
       />
-    </motion.article>
+    </article>
   );
 };
 

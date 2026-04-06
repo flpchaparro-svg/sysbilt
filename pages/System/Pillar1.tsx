@@ -135,10 +135,7 @@ const Pillar1: React.FC<Pillar1Props> = ({ onNavigate }) => {
   };
 
   return (
-    <motion.article
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+    <article
       className="min-h-screen bg-cream text-dark px-0 relative z-[150] overflow-x-hidden flex flex-col font-sans"
       aria-labelledby="pillar-hero-title"
     >
@@ -382,7 +379,7 @@ const Pillar1: React.FC<Pillar1Props> = ({ onNavigate }) => {
         subtitle="Common questions about how we build websites and what's included"
         onNavigate={onNavigate}
       />
-    </motion.article>
+    </article>
   );
 };
 

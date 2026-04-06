@@ -52,6 +52,7 @@ const TheArchitect: React.FC = () => {
                       decoding="async"
                     />
                     Your browser does not support the video tag.
+                    <track kind="captions" srcLang="en" label="English" src="" default />
                   </video>
                   {/* Vignette Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-dark via-transparent to-transparent opacity-60" />

@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 
 export type OrbitalVariant = 'red' | 'gold' | 'dark';
 
@@ -71,14 +71,14 @@ const SystemPhaseOrbital: React.FC<SystemPhaseOrbitalProps> = ({
 
         {/* One satellite — Pillar4 top node (0°) */}
         {n === 1 && (
-          <motion.div
+          <m.div
             animate={{ rotate: 360 }}
             transition={{ duration: DURATION_3, repeat: Infinity, ease: 'linear' }}
             className="absolute inset-0 flex items-center justify-center"
             style={{ transformStyle: 'preserve-3d' }}
           >
             <div className="absolute" style={{ transform: `translateY(-${RADIUS_3}px)`, transformStyle: 'preserve-3d' }}>
-              <motion.div
+              <m.div
                 animate={{ rotate: -360 }}
                 transition={{ duration: DURATION_3, repeat: Infinity, ease: 'linear' }}
                 className="flex items-center justify-center"
@@ -91,21 +91,21 @@ const SystemPhaseOrbital: React.FC<SystemPhaseOrbitalProps> = ({
                   <span className="font-mono text-[9px] tracking-widest text-dark/70 mb-1 uppercase">{satellites[0].tag}</span>
                   <span className="font-serif font-bold text-sm text-dark text-center leading-tight uppercase">{satellites[0].title}</span>
                 </div>
-              </motion.div>
+              </m.div>
             </div>
-          </motion.div>
+          </m.div>
         )}
 
         {/* Two satellites — Pillar1 vertical pair */}
         {n === 2 && (
-          <motion.div
+          <m.div
             animate={{ rotate: 360 }}
             transition={{ duration: DURATION_2, repeat: Infinity, ease: 'linear' }}
             className="absolute inset-0 flex items-center justify-center"
             style={{ transformStyle: 'preserve-3d' }}
           >
             <div className="absolute" style={{ transform: `translateY(-${RADIUS_2}px)`, transformStyle: 'preserve-3d' }}>
-              <motion.div
+              <m.div
                 animate={{ rotate: -360 }}
                 transition={{ duration: DURATION_2, repeat: Infinity, ease: 'linear' }}
                 className="flex items-center justify-center"
@@ -118,10 +118,10 @@ const SystemPhaseOrbital: React.FC<SystemPhaseOrbitalProps> = ({
                   <span className="font-mono text-[10px] tracking-widest text-dark/70 mb-1 uppercase">{satellites[0].tag}</span>
                   <span className="font-serif font-bold text-base text-dark text-center leading-tight uppercase">{satellites[0].title}</span>
                 </div>
-              </motion.div>
+              </m.div>
             </div>
             <div className="absolute" style={{ transform: `translateY(${RADIUS_2}px)`, transformStyle: 'preserve-3d' }}>
-              <motion.div
+              <m.div
                 animate={{ rotate: -360 }}
                 transition={{ duration: DURATION_2, repeat: Infinity, ease: 'linear' }}
                 className="flex items-center justify-center"
@@ -134,21 +134,21 @@ const SystemPhaseOrbital: React.FC<SystemPhaseOrbitalProps> = ({
                   <span className="font-mono text-[10px] tracking-widest text-dark/70 mb-1 uppercase">{satellites[1].tag}</span>
                   <span className="font-serif font-bold text-base text-dark text-center leading-tight uppercase">{satellites[1].title}</span>
                 </div>
-              </motion.div>
+              </m.div>
             </div>
-          </motion.div>
+          </m.div>
         )}
 
         {/* Three satellites — Pillar4 arms at 0° / 240° / 120° */}
         {n >= 3 && (
-          <motion.div
+          <m.div
             animate={{ rotate: 360 }}
             transition={{ duration: DURATION_3, repeat: Infinity, ease: 'linear' }}
             className="absolute inset-0 flex items-center justify-center"
             style={{ transformStyle: 'preserve-3d' }}
           >
             <div className="absolute" style={{ transform: `translateY(-${RADIUS_3}px)`, transformStyle: 'preserve-3d' }}>
-              <motion.div
+              <m.div
                 animate={{ rotate: -360 }}
                 transition={{ duration: DURATION_3, repeat: Infinity, ease: 'linear' }}
                 className="flex items-center justify-center"
@@ -161,11 +161,11 @@ const SystemPhaseOrbital: React.FC<SystemPhaseOrbitalProps> = ({
                   <span className="font-mono text-[9px] tracking-widest text-dark/70 mb-1 uppercase">{satellites[0].tag}</span>
                   <span className="font-serif font-bold text-sm text-dark text-center leading-tight uppercase">{satellites[0].title}</span>
                 </div>
-              </motion.div>
+              </m.div>
             </div>
 
             <div className="absolute" style={{ transform: `rotate(240deg) translateY(-${RADIUS_3}px)`, transformStyle: 'preserve-3d' }}>
-              <motion.div
+              <m.div
                 animate={{ rotate: -360 }}
                 transition={{ duration: DURATION_3, repeat: Infinity, ease: 'linear' }}
                 className="flex items-center justify-center"
@@ -178,11 +178,11 @@ const SystemPhaseOrbital: React.FC<SystemPhaseOrbitalProps> = ({
                   <span className="font-mono text-[9px] tracking-widest text-dark/70 mb-1 uppercase">{satellites[1].tag}</span>
                   <span className="font-serif font-bold text-sm text-dark text-center leading-tight uppercase">{satellites[1].title}</span>
                 </div>
-              </motion.div>
+              </m.div>
             </div>
 
             <div className="absolute" style={{ transform: `rotate(120deg) translateY(-${RADIUS_3}px)`, transformStyle: 'preserve-3d' }}>
-              <motion.div
+              <m.div
                 animate={{ rotate: -360 }}
                 transition={{ duration: DURATION_3, repeat: Infinity, ease: 'linear' }}
                 className="flex items-center justify-center"
@@ -195,9 +195,9 @@ const SystemPhaseOrbital: React.FC<SystemPhaseOrbitalProps> = ({
                   <span className="font-mono text-[9px] tracking-widest text-dark/70 mb-1 uppercase">{satellites[2].tag}</span>
                   <span className="font-serif font-bold text-xs text-dark text-center leading-tight uppercase">{satellites[2].title}</span>
                 </div>
-              </motion.div>
+              </m.div>
             </div>
-          </motion.div>
+          </m.div>
         )}
       </div>
     </div>

@@ -75,7 +75,7 @@ const Pillar7: React.FC<Pillar7Props> = ({ onNavigate }) => {
   const scrollLineYPercent = useTransform(scrollLineY, (v) => `${v}%`);
 
   return (
-    <motion.article initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="min-h-screen bg-cream text-dark px-0 relative z-[150] overflow-x-hidden flex flex-col font-sans" aria-labelledby="pillar-hero-title">
+    <article className="min-h-screen bg-cream text-dark px-0 relative z-[150] overflow-x-hidden flex flex-col font-sans" aria-labelledby="pillar-hero-title">
       <PageMeta
         title={`${pillar7Copy.hero.headline} | SYSBILT`}
         description={pillar7Copy.hero.sub}
@@ -229,7 +229,7 @@ const Pillar7: React.FC<Pillar7Props> = ({ onNavigate }) => {
       </section>
 
       <FAQSection faqs={pillarFAQs} accentColor={colors.goldOnCream} title={<>Questions about <span className="italic text-gold-on-cream">dashboards</span></>} subtitle="Common questions about what we track, where the data comes from, and how it updates" onNavigate={onNavigate} />
-    </motion.article>
+    </article>
   );
 };
 

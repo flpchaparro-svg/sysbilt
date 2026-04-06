@@ -113,10 +113,7 @@ const Pillar2: React.FC<Pillar2Props> = ({ onNavigate }) => {
   const scrollLineYPercent = useTransform(scrollLineY, (v) => `${v}%`);
 
   return (
-    <motion.article
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+    <article
       className="min-h-screen bg-cream text-dark px-0 relative z-[150] overflow-x-hidden flex flex-col font-sans"
       aria-labelledby="pillar-hero-title"
     >
@@ -351,7 +348,7 @@ const Pillar2: React.FC<Pillar2Props> = ({ onNavigate }) => {
         subtitle="Common questions about lead tracking, pipelines, and how we set it up"
         onNavigate={onNavigate}
       />
-    </motion.article>
+    </article>
   );
 };
 
