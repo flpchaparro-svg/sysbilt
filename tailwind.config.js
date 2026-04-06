@@ -1,11 +1,14 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  // Scan only app UI sources — exclude Sanity studio, API routes, and tooling (smaller CSS, fewer false safelists)
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
     "./components/**/*.{js,ts,jsx,tsx}",
     "./pages/**/*.{js,ts,jsx,tsx}",
     "./constants/**/*.{js,ts,jsx,tsx}",
+    "!./studio/**",
+    "!./api/**",
   ],
   theme: {
     extend: {

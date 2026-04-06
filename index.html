@@ -6,8 +6,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="dns-prefetch" href="https://fonts.googleapis.com">
     <link rel="dns-prefetch" href="https://fonts.gstatic.com">
-    <link rel="preconnect" href="https://forms-ap1.hscollectedforms.net" crossorigin>
-    <link rel="preconnect" href="https://js-ap1.hscollectedforms.net" crossorigin>
 
     <!-- Meta tags -->
     <meta charset="UTF-8" />
@@ -135,16 +133,37 @@
       </section>
     </div>
     <script type="module" src="/src/index.tsx"></script>
-    <!-- HubSpot - Delayed load to not block initial render -->
+    <!-- HubSpot: load on first interaction or after 8s (off main thread for passive Lighthouse) -->
     <script>
+      function loadHubSpot() {
+        if (document.getElementById('hs-script-loader')) return;
+        ['https://forms-ap1.hscollectedforms.net', 'https://js-ap1.hscollectedforms.net'].forEach(function (href) {
+          if (document.querySelector('link[rel="preconnect"][href="' + href + '"]')) return;
+          var link = document.createElement('link');
+          link.rel = 'preconnect';
+          link.href = href;
+          link.crossOrigin = '';
+          document.head.appendChild(link);
+        });
+        var script = document.createElement('script');
+        script.src = '//js-ap1.hs-scripts.com/442493227.js';
+        script.id = 'hs-script-loader';
+        script.async = true;
+        document.body.appendChild(script);
+      }
+
+      // Load on first interaction OR after 8 seconds, whichever comes first
+      var loaded = false;
+      function triggerHS() {
+        if (loaded) return;
+        loaded = true;
+        loadHubSpot();
+      }
+      window.addEventListener('scroll', triggerHS, {once: true});
+      window.addEventListener('click', triggerHS, {once: true});
+      window.addEventListener('touchstart', triggerHS, {once: true});
       window.addEventListener('load', function() {
-        setTimeout(function() {
-          var script = document.createElement('script');
-          script.src = '//js-ap1.hs-scripts.com/442493227.js';
-          script.id = 'hs-script-loader';
-          script.async = true;
-          document.body.appendChild(script);
-        }, 3000);
+        setTimeout(triggerHS, 8000);
       });
     </script>
   </body>

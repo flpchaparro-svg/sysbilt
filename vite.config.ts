@@ -1,11 +1,14 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js';
 import { visualizer } from 'rollup-plugin-visualizer';
 import path from 'path';
 
 export default defineConfig({
   plugins: [
     react(),
+    // Bundle app CSS into JS so the main stylesheet is not render-blocking (critical CSS stays in index.html <style>)
+    cssInjectedByJsPlugin(),
     visualizer({
       open: true,
       filename: 'bundle-stats.html',

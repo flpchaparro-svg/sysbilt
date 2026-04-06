@@ -101,8 +101,8 @@ const App: React.FC = () => {
   };
 
   return (
-    <LazyMotion features={domAnimation}>
-      <HelmetProvider>
+    <HelmetProvider>
+      <LazyMotion features={domAnimation}>
         <div className="bg-cream font-sans selection:bg-dark selection:text-cream min-h-screen flex flex-col relative">
           
           {location.pathname !== '/contact' && (
@@ -149,8 +149,8 @@ const App: React.FC = () => {
           {location.pathname !== '/system' && location.pathname !== '/contact' && <GlobalFooter onNavigate={handleGlobalNavigate} />}
           <Modal service={selectedService} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onViewPillar={(id) => handleGlobalNavigate(id)} />
         </div>
-      </HelmetProvider>
-    </LazyMotion>
+      </LazyMotion>
+    </HelmetProvider>
   );
 };
 
