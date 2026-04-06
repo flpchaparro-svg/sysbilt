@@ -13,7 +13,7 @@ const NotFoundPage: React.FC<NotFoundPageProps> = ({ onNavigate }) => {
       <PageMeta
         title={SEO_META.notFound.title}
         description={SEO_META.notFound.description}
-        robots="noindex"
+        robots="noindex, follow"
       />
       
       {/* Simple, clear heading */}

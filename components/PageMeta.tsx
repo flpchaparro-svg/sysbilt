@@ -4,6 +4,8 @@ import { Helmet as HelmetImpl } from 'react-helmet-async';
 /** react-helmet-async + React 19 JSX types */
 const Helmet = HelmetImpl as FC<{ children?: ReactNode }>;
 
+const DEFAULT_OG_IMAGE = 'https://sysbilt.com/images/og-sysbilt.png';
+
 export interface PageMetaProps {
   title: string;
   description: string;
@@ -11,10 +13,13 @@ export interface PageMetaProps {
   canonical?: string;
   /** e.g. `noindex, follow` for pages that should not appear in search results */
   robots?: string;
+  /** Open Graph image URL; defaults to site-wide og image */
+  ogImage?: string;
 }
 
 /** Sets document title, meta description, and matching Open Graph title/description. */
-export function PageMeta({ title, description, canonical, robots }: PageMetaProps) {
+export function PageMeta({ title, description, canonical, robots, ogImage }: PageMetaProps) {
+  const resolvedOgImage = ogImage != null && ogImage !== '' ? ogImage : DEFAULT_OG_IMAGE;
   return (
     <Helmet>
       <title>{title}</title>
@@ -24,6 +29,8 @@ export function PageMeta({ title, description, canonical, robots }: PageMetaProp
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
       {canonical != null && canonical !== '' ? <meta property="og:url" content={canonical} /> : null}
+      <meta property="og:type" content="website" />
+      <meta property="og:image" content={resolvedOgImage} />
     </Helmet>
   );
 }

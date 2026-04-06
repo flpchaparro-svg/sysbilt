@@ -1,9 +1,32 @@
-import React, { useState, useRef, useEffect, lazy, Suspense } from 'react';
+import React, { useState, useRef, useEffect, lazy, Suspense, type FC, type ReactNode } from 'react';
+import { Helmet as HelmetImpl } from 'react-helmet-async';
 import { m, useScroll, useMotionValueEvent, useAnimationFrame, useMotionValue, useTransform } from 'framer-motion';
 import CTAButton from '../components/CTAButton';
 import ScrambleTitle from '../components/HomePage/ScrambleTitle';
 import { PageMeta } from '../components/PageMeta';
 import { SEO_META } from '../constants/seoMeta';
+
+/** react-helmet-async + React 19 JSX types */
+const Helmet = HelmetImpl as FC<{ children?: ReactNode }>;
+
+const PROFESSIONAL_SERVICE_JSONLD = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  name: 'SYSBILT',
+  image: 'https://sysbilt.com/images/og-sysbilt.png',
+  description:
+    'SYSBILT builds business systems for Australian companies doing $1M to $20M in revenue. Websites, CRM, automation, AI assistants, content systems, team training, and dashboards.',
+  slogan: 'Sydney-based team building integrated systems for Australian companies.',
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Sydney',
+    addressRegion: 'NSW',
+    addressCountry: 'AU',
+  },
+  priceRange: '$$$',
+  openingHours: 'Mo-Fr 09:00-17:00',
+  sameAs: ['https://www.linkedin.com/in/felipe-chaparro-97a390176/'],
+} as const;
 
 // Lazy load BookingCTA (at bottom of page)
 const BookingCTA = lazy(() => import('../components/HomePage/BookingCTA'));
@@ -126,6 +149,10 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onServiceClick }) => {
         description={SEO_META.home.description}
         canonical={SEO_META.home.canonical}
       />
+      <Helmet>
+        <script type="application/ld+json">{JSON.stringify(PROFESSIONAL_SERVICE_JSONLD)}</script>
+      </Helmet>
+      <article aria-labelledby="homepage-hero-heading" className="w-full min-w-0">
       <section id="hero" aria-label="Hero Section" className="min-h-[100svh] w-full flex items-center pt-32 md:pt-20 overflow-hidden relative z-20 content-layer">
         
         <div className="absolute inset-0 z-[1]">
@@ -147,7 +174,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onServiceClick }) => {
               </div>
             </div>
 
-            <h1 className="font-serif text-5xl md:text-6xl lg:text-[6.5rem] leading-[1.1] lg:leading-[0.9] tracking-tighter text-dark mb-8 md:mb-10">
+            <h1 id="homepage-hero-heading" className="font-serif text-5xl md:text-6xl lg:text-[6.5rem] leading-[1.1] lg:leading-[0.9] tracking-tighter text-dark mb-8 md:mb-10">
               <div className="overflow-hidden">
                 <span className="block reveal-text tracking-tighter font-serif" style={{ letterSpacing: '-0.04em' }}>Stop doing</span>
               </div>
@@ -181,7 +208,13 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onServiceClick }) => {
         </div>
       </section>
 
-      <div className="w-full bg-dark/5 py-12 border-y border-black/5 overflow-hidden relative z-30" style={{ maskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)', WebkitMaskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)' }} onMouseEnter={() => { isTickerHovered.current = true; }} onMouseLeave={() => { isTickerHovered.current = false; }}>
+      <section
+        aria-label="Core capabilities"
+        className="w-full bg-dark/5 py-12 border-y border-black/5 overflow-hidden relative z-30"
+        style={{ maskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)', WebkitMaskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)' }}
+        onMouseEnter={() => { isTickerHovered.current = true; }}
+        onMouseLeave={() => { isTickerHovered.current = false; }}
+      >
         <div className="flex whitespace-nowrap">
           <m.div className="flex items-center pr-0" style={{ transform: tickerTransform, willChange: 'transform' }}>
             {[...TECH_STACK, ...TECH_STACK, ...TECH_STACK, ...TECH_STACK].map((tech, i) => (
@@ -194,7 +227,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onServiceClick }) => {
             ))}
           </m.div>
         </div>
-      </div>
+      </section>
 
       <Suspense fallback={<div className="min-h-[500px] bg-cream" />}>
         <ProblemSection />
@@ -223,6 +256,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onServiceClick }) => {
           <BookingCTA />
         </section>
       </Suspense>
+      </article>
     </>
   );
 };

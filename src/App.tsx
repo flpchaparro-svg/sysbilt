@@ -7,6 +7,7 @@ import GlobalHeader from '../components/GlobalHeader';
 import GlobalFooter from '../components/GlobalFooter'; // Standard Import (Stable)
 import Modal from '../components/Modal';
 import { ServiceDetail } from '../types';
+import NotFoundPage from '../pages/NotFoundPage';
 
 // PERFORMANCE: Keep HomePage Lazy
 const HomePage = lazy(() => import('../pages/HomePage'));
@@ -16,7 +17,6 @@ const ProofPage = lazy(() => import('../pages/ProofPage'));
 const EvidenceVaultPage = lazy(() => import('../pages/EvidenceVaultPage'));
 const ContactPage = lazy(() => import('../pages/ContactPage'));
 const PrivacyPolicyPage = lazy(() => import('../pages/PrivacyPolicyPage'));
-const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
 const BlogPage = lazy(() => import('../pages/BlogPage'));
 const BlogPostPage = lazy(() => import('../pages/BlogPostPage'));
 const NewsPage = lazy(() => import('../pages/NewsPage'));

@@ -10,6 +10,7 @@ import { colors } from '../../constants/theme';
 import SolutionCardPillar from '../../components/System/SolutionCardPillar';
 import { PageMeta } from '../../components/PageMeta';
 import PillarFAQJsonLd from '../../components/PillarFAQJsonLd';
+import PillarServiceJsonLd from '../../components/PillarServiceJsonLd';
 import { SEO_META } from '../../constants/seoMeta';
 
 interface Pillar1Props {
@@ -134,11 +135,12 @@ const Pillar1: React.FC<Pillar1Props> = ({ onNavigate }) => {
   };
 
   return (
-    <motion.div
+    <motion.article
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className="min-h-screen bg-cream text-dark px-0 relative z-[150] overflow-x-hidden flex flex-col font-sans"
+      aria-labelledby="pillar-hero-title"
     >
       <PageMeta
         title={`${pillar1Copy.hero.headline} | SYSBILT`}
@@ -146,15 +148,16 @@ const Pillar1: React.FC<Pillar1Props> = ({ onNavigate }) => {
         canonical={SEO_META.pillar1.canonical}
       />
       <PillarFAQJsonLd faqs={pillarFAQs} />
-      <section className="relative min-h-[700px] h-[100dvh] w-full flex flex-col overflow-hidden">
+      <PillarServiceJsonLd pillarKey="pillar1" />
+      <section aria-label="Hero" className="relative min-h-[700px] h-[100dvh] w-full flex flex-col overflow-hidden">
         <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 w-full h-full flex flex-col relative z-10">
-          <div className="flex justify-between items-center mb-8 md:mb-4 pt-24 relative z-20">
+          <nav className="flex justify-between items-center mb-8 md:mb-4 pt-24 relative z-20" aria-label="Section navigation">
             <BackButton onClick={() => onNavigate('system')} label="Return to The System" />
-          </div>
+          </nav>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 lg:gap-20 flex-1 content-center items-center">
             <div className="flex flex-col items-start max-w-3xl">
-              <h1 className="font-serif text-[2.75rem] md:text-[3.5rem] lg:text-[4.75rem] xl:text-[5.5rem] leading-[1.1] lg:leading-[0.9] tracking-tighter text-dark mb-8 md:mb-10">
+              <h1 id="pillar-hero-title" className="font-serif text-[2.75rem] md:text-[3.5rem] lg:text-[4.75rem] xl:text-[5.5rem] leading-[1.1] lg:leading-[0.9] tracking-tighter text-dark mb-8 md:mb-10">
                 A website that works <span className="italic font-serif text-red-text drop-shadow-[0_0_20px_rgba(226,30,63,0.2)]">as hard as you do</span>
               </h1>
 
@@ -379,7 +382,7 @@ const Pillar1: React.FC<Pillar1Props> = ({ onNavigate }) => {
         subtitle="Common questions about how we build websites and what's included"
         onNavigate={onNavigate}
       />
-    </motion.div>
+    </motion.article>
   );
 };
 

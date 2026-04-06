@@ -10,6 +10,7 @@ import { colors } from '../../constants/theme';
 import SolutionCardPillar from '../../components/System/SolutionCardPillar';
 import { PageMeta } from '../../components/PageMeta';
 import PillarFAQJsonLd from '../../components/PillarFAQJsonLd';
+import PillarServiceJsonLd from '../../components/PillarServiceJsonLd';
 import { SEO_META } from '../../constants/seoMeta';
 
 interface Pillar7Props {
@@ -74,23 +75,24 @@ const Pillar7: React.FC<Pillar7Props> = ({ onNavigate }) => {
   const scrollLineYPercent = useTransform(scrollLineY, (v) => `${v}%`);
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="min-h-screen bg-cream text-dark px-0 relative z-[150] overflow-x-hidden flex flex-col font-sans"    >
+    <motion.article initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="min-h-screen bg-cream text-dark px-0 relative z-[150] overflow-x-hidden flex flex-col font-sans" aria-labelledby="pillar-hero-title">
       <PageMeta
         title={`${pillar7Copy.hero.headline} | SYSBILT`}
         description={pillar7Copy.hero.sub}
         canonical={SEO_META.pillar7.canonical}
       />
       <PillarFAQJsonLd faqs={pillarFAQs} />
+      <PillarServiceJsonLd pillarKey="pillar7" />
 
       {/* HERO */}
-      <section className="relative min-h-[700px] h-[100dvh] w-full flex flex-col overflow-hidden">
+      <section aria-label="Hero" className="relative min-h-[700px] h-[100dvh] w-full flex flex-col overflow-hidden">
         <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 w-full h-full flex flex-col relative z-10">
-          <div className="flex justify-between items-center mb-8 md:mb-4 pt-24 relative z-20">
+          <nav className="flex justify-between items-center mb-8 md:mb-4 pt-24 relative z-20" aria-label="Section navigation">
             <BackButton onClick={() => onNavigate('system')} label="Return to The System" />
-          </div>
+          </nav>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 lg:gap-20 flex-1 content-center items-center">
             <div className="flex flex-col items-start max-w-3xl">
-              <h1 className="font-serif text-[2.75rem] md:text-[3.5rem] lg:text-[4.75rem] xl:text-[5.5rem] leading-[1.1] lg:leading-[0.9] tracking-tighter text-dark mb-8 md:mb-10">
+              <h1 id="pillar-hero-title" className="font-serif text-[2.75rem] md:text-[3.5rem] lg:text-[4.75rem] xl:text-[5.5rem] leading-[1.1] lg:leading-[0.9] tracking-tighter text-dark mb-8 md:mb-10">
                 Know exactly what your business is doing <span className="italic font-serif text-dark/80 drop-shadow-[0_0_20px_rgba(26,26,26,0.15)]">right now</span>
               </h1>
               <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/70 max-w-2xl border-l-2 border-dark pl-6 mb-10 md:mb-8">{hero.sub}</p>
@@ -227,7 +229,7 @@ const Pillar7: React.FC<Pillar7Props> = ({ onNavigate }) => {
       </section>
 
       <FAQSection faqs={pillarFAQs} accentColor={colors.goldOnCream} title={<>Questions about <span className="italic text-gold-on-cream">dashboards</span></>} subtitle="Common questions about what we track, where the data comes from, and how it updates" onNavigate={onNavigate} />
-    </motion.div>
+    </motion.article>
   );
 };
 
