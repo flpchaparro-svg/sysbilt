@@ -9,7 +9,6 @@ import { getPillarFAQs } from '../../constants/faqData';
 import { colors } from '../../constants/theme';
 import SolutionCardPillar from '../../components/System/SolutionCardPillar';
 import { PageMeta } from '../../components/PageMeta';
-import { SEO_META } from '../../constants/seoMeta';
 
 interface Pillar7Props {
   onNavigate: (view: string, sectionId?: string) => void;
@@ -73,8 +72,11 @@ const Pillar7: React.FC<Pillar7Props> = ({ onNavigate }) => {
   const scrollLineYPercent = useTransform(scrollLineY, (v) => `${v}%`);
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="min-h-screen bg-cream text-dark px-0 relative z-[150] overflow-x-hidden flex flex-col font-sans">
-      <PageMeta title={SEO_META.pillar7.title} description={SEO_META.pillar7.description} />
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="min-h-screen bg-cream text-dark px-0 relative z-[150] overflow-x-hidden flex flex-col font-sans"    >
+      <PageMeta
+        title={`${pillar7Copy.hero.headline} | SYSBILT`}
+        description={pillar7Copy.hero.sub}
+      />
 
       {/* HERO */}
       <section className="relative min-h-[700px] h-[100dvh] w-full flex flex-col overflow-hidden">

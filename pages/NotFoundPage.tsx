@@ -10,7 +10,11 @@ interface NotFoundPageProps {
 const NotFoundPage: React.FC<NotFoundPageProps> = ({ onNavigate }) => {
   return (
     <main className="min-h-screen w-full bg-cream flex flex-col items-center justify-center p-6 text-center">
-      <PageMeta title={SEO_META.notFound.title} description={SEO_META.notFound.description} />
+      <PageMeta
+        title={SEO_META.notFound.title}
+        description={SEO_META.notFound.description}
+        robots="noindex"
+      />
       
       {/* Simple, clear heading */}
       <h1 className="font-serif text-5xl md:text-6xl text-dark mb-4">

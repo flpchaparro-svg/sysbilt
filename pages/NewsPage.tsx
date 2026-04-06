@@ -207,7 +207,7 @@ export default function NewsPage() {
       <PageMeta
         title={SEO_META.news.title}
         description={SEO_META.news.description}
-        robots="noindex, follow"
+        robots="noindex, nofollow"
       />
 
       {loading ? (

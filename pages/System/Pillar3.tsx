@@ -9,7 +9,6 @@ import { getPillarFAQs } from '../../constants/faqData';
 import { colors } from '../../constants/theme';
 import SolutionCardPillar from '../../components/System/SolutionCardPillar';
 import { PageMeta } from '../../components/PageMeta';
-import { SEO_META } from '../../constants/seoMeta';
 
 interface Pillar3Props {
   onNavigate: (view: string, sectionId?: string) => void;
@@ -117,7 +116,10 @@ const Pillar3: React.FC<Pillar3Props> = ({ onNavigate }) => {
       exit={{ opacity: 0 }}
       className="min-h-screen bg-cream text-dark px-0 relative z-[150] overflow-x-hidden flex flex-col font-sans"
     >
-      <PageMeta title={SEO_META.pillar3.title} description={SEO_META.pillar3.description} />
+      <PageMeta
+        title={`${pillar3Copy.hero.headline} | SYSBILT`}
+        description={pillar3Copy.hero.sub}
+      />
       {/* HERO */}
       <section className="relative min-h-[700px] h-[100dvh] w-full flex flex-col overflow-hidden">
         <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 w-full h-full flex flex-col relative z-10">

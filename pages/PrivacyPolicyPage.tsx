@@ -18,7 +18,11 @@ const PrivacyPolicyPage: React.FC<PrivacyPolicyPageProps> = ({ onBack, onNavigat
       exit={{ opacity: 0 }}
       className="min-h-screen bg-cream text-dark font-sans selection:bg-gold/30"
     >
-      <PageMeta title={SEO_META.privacy.title} description={SEO_META.privacy.description} />
+      <PageMeta
+        title={SEO_META.privacy.title}
+        description={SEO_META.privacy.description}
+        robots="noindex"
+      />
       <div className="max-w-[1000px] mx-auto px-6 md:px-12 lg:px-20 pt-24 pb-32">
         
         {/* NAV BACK */}

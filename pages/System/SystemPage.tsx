@@ -69,7 +69,7 @@ const SystemPage: React.FC<SystemPageProps> = ({ onBack, onNavigate }) => {
 
   return (
     <div className="min-h-screen bg-cream text-dark pt-0 pb-0 px-0 relative z-[150] flex flex-col font-sans">
-      <PageMeta title={SEO_META.services.title} description={SEO_META.services.description} />
+      <PageMeta title={SEO_META.system.title} description={SEO_META.system.description} />
 
       {/* 1. HERO SECTION (Static Props, Self-Contained Animation) */}
       <section className="relative h-[100dvh] w-full flex flex-col overflow-hidden">
