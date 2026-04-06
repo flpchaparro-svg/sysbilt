@@ -115,7 +115,9 @@ const Card: React.FC<CardProps> = ({ data, index, total, scrollYProgress, onNavi
               <div className="flex flex-col space-y-8 md:space-y-10">
                  <div className="flex items-center gap-4">
                     {/* Pain point number: text-4xl → text-6xl */}
-                    <span className="font-serif text-4xl md:text-5xl lg:text-6xl text-dark/10 italic font-bold">{data.id}</span>
+                    <span className="font-serif text-4xl md:text-5xl lg:text-6xl text-dark/10 italic font-bold" aria-hidden="true">
+                      {data.id}
+                    </span>
                     <div className="h-px flex-1 bg-dark/20"></div>
                     {/* Type B: Card Tag - font-mono, font-bold, text-[10px], tracking-[0.2em] */}
                     <span className="type-eyebrow text-red-text border border-red-solid/20 px-2 py-1">{data.label}</span>
@@ -185,7 +187,7 @@ const FrictionAuditSection: React.FC<FrictionAuditSectionProps> = ({ onNavigate 
               
               <div>
                  {/* Type B: Card Tag - text-[10px], font-bold, tracking-[0.2em] */}
-                 <div className="font-mono text-[10px] font-bold text-dark/60 uppercase tracking-[0.2em] mb-4">AUDIT PROGRESS</div>
+                 <div className="font-mono text-[10px] font-bold text-dark/70 uppercase tracking-[0.2em] mb-4">AUDIT PROGRESS</div>
                  <div className="w-full h-1 bg-dark/10 relative overflow-hidden">
                     <m.div 
                        className="h-full bg-red-solid" 

@@ -111,7 +111,7 @@ export const SolutionCardPillar: React.FC<SolutionCardPillarProps> = ({ point, i
             >
               {cfg.label}
             </span>
-            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-dark/60 font-bold">
+            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-dark/70 font-bold">
               {String(index + 1).padStart(2, '0')}
             </span>
           </div>

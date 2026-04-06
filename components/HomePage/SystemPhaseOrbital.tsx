@@ -88,7 +88,7 @@ const SystemPhaseOrbital: React.FC<SystemPhaseOrbitalProps> = ({
                   className="w-28 h-28 rounded-full flex flex-col items-center justify-center backdrop-blur-md"
                   style={{ transform: 'rotateX(-70deg)', ...GLASS_PILL_STYLE }}
                 >
-                  <span className="font-mono text-[9px] tracking-widest text-dark/60 mb-1 uppercase">{satellites[0].tag}</span>
+                  <span className="font-mono text-[9px] tracking-widest text-dark/70 mb-1 uppercase">{satellites[0].tag}</span>
                   <span className="font-serif font-bold text-sm text-dark text-center leading-tight uppercase">{satellites[0].title}</span>
                 </div>
               </motion.div>
@@ -115,7 +115,7 @@ const SystemPhaseOrbital: React.FC<SystemPhaseOrbitalProps> = ({
                   className="w-32 h-32 rounded-full flex flex-col items-center justify-center backdrop-blur-md"
                   style={{ transform: 'rotateX(-70deg)', ...GLASS_PILL_STYLE }}
                 >
-                  <span className="font-mono text-[10px] tracking-widest text-dark/60 mb-1 uppercase">{satellites[0].tag}</span>
+                  <span className="font-mono text-[10px] tracking-widest text-dark/70 mb-1 uppercase">{satellites[0].tag}</span>
                   <span className="font-serif font-bold text-base text-dark text-center leading-tight uppercase">{satellites[0].title}</span>
                 </div>
               </motion.div>
@@ -131,7 +131,7 @@ const SystemPhaseOrbital: React.FC<SystemPhaseOrbitalProps> = ({
                   className="w-32 h-32 rounded-full flex flex-col items-center justify-center backdrop-blur-md"
                   style={{ transform: 'rotateX(-70deg)', ...GLASS_PILL_STYLE }}
                 >
-                  <span className="font-mono text-[10px] tracking-widest text-dark/60 mb-1 uppercase">{satellites[1].tag}</span>
+                  <span className="font-mono text-[10px] tracking-widest text-dark/70 mb-1 uppercase">{satellites[1].tag}</span>
                   <span className="font-serif font-bold text-base text-dark text-center leading-tight uppercase">{satellites[1].title}</span>
                 </div>
               </motion.div>
@@ -158,7 +158,7 @@ const SystemPhaseOrbital: React.FC<SystemPhaseOrbitalProps> = ({
                   className="w-28 h-28 rounded-full flex flex-col items-center justify-center backdrop-blur-md"
                   style={{ transform: 'rotateX(-70deg)', ...GLASS_PILL_STYLE }}
                 >
-                  <span className="font-mono text-[9px] tracking-widest text-dark/60 mb-1 uppercase">{satellites[0].tag}</span>
+                  <span className="font-mono text-[9px] tracking-widest text-dark/70 mb-1 uppercase">{satellites[0].tag}</span>
                   <span className="font-serif font-bold text-sm text-dark text-center leading-tight uppercase">{satellites[0].title}</span>
                 </div>
               </motion.div>
@@ -175,7 +175,7 @@ const SystemPhaseOrbital: React.FC<SystemPhaseOrbitalProps> = ({
                   className="w-28 h-28 rounded-full flex flex-col items-center justify-center backdrop-blur-md"
                   style={{ transform: 'rotate(-240deg) rotateX(-70deg)', ...GLASS_PILL_STYLE }}
                 >
-                  <span className="font-mono text-[9px] tracking-widest text-dark/60 mb-1 uppercase">{satellites[1].tag}</span>
+                  <span className="font-mono text-[9px] tracking-widest text-dark/70 mb-1 uppercase">{satellites[1].tag}</span>
                   <span className="font-serif font-bold text-sm text-dark text-center leading-tight uppercase">{satellites[1].title}</span>
                 </div>
               </motion.div>
@@ -192,7 +192,7 @@ const SystemPhaseOrbital: React.FC<SystemPhaseOrbitalProps> = ({
                   className="w-28 h-28 rounded-full flex flex-col items-center justify-center backdrop-blur-md"
                   style={{ transform: 'rotate(-120deg) rotateX(-70deg)', ...GLASS_PILL_STYLE }}
                 >
-                  <span className="font-mono text-[9px] tracking-widest text-dark/60 mb-1 uppercase">{satellites[2].tag}</span>
+                  <span className="font-mono text-[9px] tracking-widest text-dark/70 mb-1 uppercase">{satellites[2].tag}</span>
                   <span className="font-serif font-bold text-xs text-dark text-center leading-tight uppercase">{satellites[2].title}</span>
                 </div>
               </motion.div>

@@ -173,7 +173,7 @@ const LedgerRow: React.FC<{ post: any }> = ({ post }) => {
       onMouseMove={handleMouseMove}
       className="group relative grid grid-cols-12 gap-4 py-6 border-b-2 border-dark transition-colors duration-300 hover:bg-dark hover:text-cream items-center px-4 -mx-4 cursor-pointer"
     >
-      <div className="col-span-3 md:col-span-2 type-eyebrow text-dark/60 group-hover:text-cream/70">
+      <div className="col-span-3 md:col-span-2 type-eyebrow text-dark/70 group-hover:text-cream/70">
         {formatDate(post.publishedAt)}
       </div>
       

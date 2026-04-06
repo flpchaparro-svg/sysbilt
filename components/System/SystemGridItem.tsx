@@ -77,7 +77,10 @@ const GridItem: React.FC<GridItemProps> = ({ pillar, isSelected, selectedId, onT
       {!isSelected && (
         <m.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 p-6 md:p-8 flex flex-col justify-between">
           <div className="flex justify-between items-start">
-              <span className="font-serif text-3xl md:text-4xl text-dark/10 font-bold absolute top-4 right-6 group-hover:text-dark/20 transition-colors">
+              <span
+                className="font-serif text-3xl md:text-4xl text-dark/10 font-bold absolute top-4 right-6 group-hover:text-dark/20 transition-colors"
+                aria-hidden="true"
+              >
                  {pillar.number}
               </span>
            </div>
@@ -101,7 +104,7 @@ const GridItem: React.FC<GridItemProps> = ({ pillar, isSelected, selectedId, onT
            </div>
 
            <div className="flex justify-between items-center border-t border-dark/10 pt-4 mt-auto">
-              <span className="font-mono text-[9px] md:text-[10px] uppercase tracking-[0.2em] text-dark/60 transition-colors font-bold group-hover:text-black">
+              <span className="font-mono text-[9px] md:text-[10px] uppercase tracking-[0.2em] text-dark/70 transition-colors font-bold group-hover:text-black">
                  PILLAR {pillar.number}
               </span>
               <div 

@@ -252,7 +252,7 @@ idle: { borderColor: colors.gray700, backgroundColor: 'rgba(0,0,0,0)' },
                       <h3 className="font-serif text-3xl md:text-4xl text-dark leading-tight tracking-tight">
                          Group 7 Security
                       </h3>
-                      <p className="type-eyebrow text-dark/60 mt-1">
+                      <p className="type-eyebrow text-dark/70 mt-1">
                          Website rebuild
                       </p>
                     </div>

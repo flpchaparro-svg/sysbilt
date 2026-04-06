@@ -167,7 +167,7 @@ const FAQSection: React.FC<FAQSectionProps> = ({
                            so it doesn't disappear against the Gold background.
                         */}
                         <span 
-                          className={`font-mono text-xs font-bold uppercase tracking-[0.2em] mt-1 shrink-0 transition-colors duration-snap ${isActive ? 'text-dark' : 'text-dark/60 lg:group-hover:!text-dark'}`}
+                          className={`font-mono text-xs font-bold uppercase tracking-[0.2em] mt-1 shrink-0 transition-colors duration-snap ${isActive ? 'text-dark' : 'text-dark/70 lg:group-hover:!text-dark'}`}
                           style={!isActive ? { color: accentColor } : {}}
                         >
                           {String(index + 1).padStart(2, '0')}.
