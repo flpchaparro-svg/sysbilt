@@ -9,6 +9,8 @@ import { getPillarFAQs } from '../../constants/faqData';
 import { colors } from '../../constants/theme';
 import SolutionCardPillar from '../../components/System/SolutionCardPillar';
 import { PageMeta } from '../../components/PageMeta';
+import PillarFAQJsonLd from '../../components/PillarFAQJsonLd';
+import { SEO_META } from '../../constants/seoMeta';
 
 interface Pillar5Props {
   onNavigate: (view: string, sectionId?: string) => void;
@@ -76,7 +78,9 @@ const Pillar5: React.FC<Pillar5Props> = ({ onNavigate }) => {
       <PageMeta
         title={`${pillar5Copy.hero.headline} | SYSBILT`}
         description={pillar5Copy.hero.sub}
+        canonical={SEO_META.pillar5.canonical}
       />
+      <PillarFAQJsonLd faqs={pillarFAQs} />
 
       {/* HERO */}
       <section className="relative min-h-[700px] h-[100dvh] w-full flex flex-col overflow-hidden">

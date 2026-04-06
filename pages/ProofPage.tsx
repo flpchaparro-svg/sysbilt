@@ -58,7 +58,11 @@ const ProofPage: React.FC<ProofPageProps> = ({ onBack, onNavigate }) => {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-cream flex items-center justify-center">
-        <PageMeta title={SEO_META.proof.title} description={SEO_META.proof.description} />
+        <PageMeta
+          title={SEO_META.proof.title}
+          description={SEO_META.proof.description}
+          canonical={SEO_META.proof.canonical}
+        />
         <span className="font-mono text-sm uppercase tracking-widest text-dark/50 animate-pulse">Loading Evidence...</span>
       </div>
     );
@@ -67,7 +71,11 @@ const ProofPage: React.FC<ProofPageProps> = ({ onBack, onNavigate }) => {
   if (!caseStudy) {
     return (
       <div className="min-h-screen bg-cream flex flex-col items-center justify-center gap-4">
-        <PageMeta title={SEO_META.proof.title} description={SEO_META.proof.description} />
+        <PageMeta
+          title={SEO_META.proof.title}
+          description={SEO_META.proof.description}
+          canonical={SEO_META.proof.canonical}
+        />
         <span className="font-mono text-sm uppercase tracking-widest text-dark/50">No Evidence Found.</span>
         <BackButton onClick={onBack} label="Return to Home" />
       </div>
@@ -79,7 +87,11 @@ const ProofPage: React.FC<ProofPageProps> = ({ onBack, onNavigate }) => {
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
       className="min-h-screen bg-cream text-dark pt-0 relative z-[150] overflow-x-hidden flex flex-col selection:bg-gold/30"
     >
-      <PageMeta title={SEO_META.proof.title} description={SEO_META.proof.description} />
+      <PageMeta
+        title={SEO_META.proof.title}
+        description={SEO_META.proof.description}
+        canonical={SEO_META.proof.canonical}
+      />
       <div className="fixed inset-0 pointer-events-none opacity-[0.03]" 
            style={{ backgroundImage: 'radial-gradient(var(--ink) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
 
@@ -296,6 +308,8 @@ const ProofPage: React.FC<ProofPageProps> = ({ onBack, onNavigate }) => {
                       src={imgUrl} 
                       alt={`Evidence ${idx + 1}`} 
                       className="w-full h-full object-cover rounded-sm"
+                      loading="lazy"
+                      decoding="async"
                     />
                   </div>
                 ))}

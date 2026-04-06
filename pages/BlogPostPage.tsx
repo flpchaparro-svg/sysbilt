@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import { client, urlFor } from '../src/sanityClient';
+import { SITE_ORIGIN } from '../constants/seoMeta';
 import { PortableText } from '@portabletext/react';
 import { ArrowLeft, ArrowUpRight, Share2, Quote, Copy, Check, Info, AlertTriangle } from 'lucide-react';
 import CTAButton from '../components/CTAButton';
@@ -124,6 +125,8 @@ const CustomYouTube = ({ value, theme }: any) => {
           src={`https://img.youtube.com/vi/${id}/maxresdefault.jpg`} 
           alt="Video thumbnail" 
           className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-all duration-700 scale-100 group-hover:scale-105" 
+          loading="lazy"
+          decoding="async"
         />
         <div className={`relative z-10 w-16 md:w-20 h-16 md:h-20 ${theme.bgMain} flex items-center justify-center rounded-full ${theme.ytShadow} transition-shadow duration-700`}>
           <div className={`w-0 h-0 border-y-[8px] md:border-y-[10px] border-y-transparent border-l-[12px] md:border-l-[16px] ${theme.playIcon} ml-1 md:ml-1.5`}></div>
@@ -363,6 +366,8 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
               src={urlFor(value).width(1200).url()} 
               alt={value.alt || 'Article image'} 
               className={`w-full h-auto object-cover relative z-10 border border-white/10 opacity-90 hover:opacity-100 transition-all duration-500 hover:scale-[1.02]`}
+              loading="lazy"
+              decoding="async"
             />
             {value.caption && (
               <figcaption className={`font-sans text-sm mt-4 text-right opacity-70 relative z-10 ${theme.textMain}`}>
@@ -670,7 +675,8 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
   const resolvedArticleTitle = post?.seoTitle || post?.title;
   const pageDescription = post?.seoDescription || FALLBACK_DESCRIPTION;
   const brandedTitle = resolvedArticleTitle ? `${resolvedArticleTitle} | SYSBILT` : 'SYSBILT';
-  const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
+  const canonicalUrl = slug ? `${SITE_ORIGIN}/blog/${slug}` : '';
+  const currentUrl = canonicalUrl || (typeof window !== 'undefined' ? window.location.href : '');
   const shareImage = post?.ogImage ? urlFor(post.ogImage).width(1200).height(630).url() : (post?.mainImage ? urlFor(post.mainImage).width(1200).height(630).url() : '');
 
   return (
@@ -678,6 +684,7 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
       <Helmet>
         <title>{brandedTitle}</title>
         <meta name="description" content={pageDescription} />
+        {canonicalUrl ? <link rel="canonical" href={canonicalUrl} /> : null}
         {post?.focusKeyword && <meta name="keywords" content={post.focusKeyword} />}
         
         {/* Open Graph Tags (LinkedIn, Facebook, iMessage) */}
@@ -750,6 +757,8 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
                     src={urlFor(post.mainImage).width(1000).height(1000).url()} 
                     alt={post.title} 
                     className="w-full h-full object-cover opacity-90 hover:opacity-100 hover:scale-105 transition-all duration-700 ease-in-out"
+                    loading="eager"
+                    decoding="async"
                   />
                 </motion.div>
               )}
@@ -978,6 +987,8 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
                       src={urlFor(post.author.image).width(200).height(200).url()} 
                       alt={post.author.name} 
                       className={`relative w-20 h-20 md:w-24 md:h-24 rounded-full object-cover border-2 ${theme.borderSubtle} opacity-90 hover:opacity-100 transition-all duration-500 hover:scale-[1.02]`}
+                      loading="lazy"
+                      decoding="async"
                     />
                   </div>
                 ) : (
@@ -1040,6 +1051,8 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
                         src={urlFor(relatedPost.mainImage).width(600).url()} 
                         alt={relatedPost.title}
                         className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" 
+                        loading="lazy"
+                        decoding="async"
                       />
                     </div>
                   )}

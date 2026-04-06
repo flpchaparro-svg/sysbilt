@@ -57,7 +57,11 @@ const ArchitectPage: React.FC<ArchitectPageProps> = ({ onBack, onNavigate }) => 
 
   return (
     <m.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="min-h-screen bg-cream text-dark relative z-[150] flex flex-col selection:bg-gold/30">
-      <PageMeta title={SEO_META.architect.title} description={SEO_META.architect.description} />
+      <PageMeta
+        title={SEO_META.architect.title}
+        description={SEO_META.architect.description}
+        canonical={SEO_META.architect.canonical}
+      />
       <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 w-full flex-grow relative z-10">
         
         <div className="flex justify-between items-center mb-12 md:mb-20 pt-24 relative z-[200]">

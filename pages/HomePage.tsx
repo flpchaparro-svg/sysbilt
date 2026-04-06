@@ -121,7 +121,11 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onServiceClick }) => {
 
   return (
     <>
-      <PageMeta title={SEO_META.home.title} description={SEO_META.home.description} />
+      <PageMeta
+        title={SEO_META.home.title}
+        description={SEO_META.home.description}
+        canonical={SEO_META.home.canonical}
+      />
       <section id="hero" aria-label="Hero Section" className="min-h-[100svh] w-full flex items-center pt-32 md:pt-20 overflow-hidden relative z-20 content-layer">
         
         <div className="absolute inset-0 z-[1]">

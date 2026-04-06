@@ -55,6 +55,8 @@ const FeaturedCardLead: React.FC<{ post: any }> = ({ post }) => {
             src={urlFor(post.mainImage).width(1200).url()}
             alt={post.title}
             className="w-full h-full object-cover opacity-90 transition-all duration-700 group-hover:opacity-100 group-hover:scale-105"
+            loading="lazy"
+            decoding="async"
           />
         )}
       </div>
@@ -96,6 +98,8 @@ const FeaturedCardTall: React.FC<{ post: any }> = ({ post }) => {
              src={urlFor(post.mainImage).width(600).url()}
              alt={post.title}
              className="w-full h-full object-cover opacity-90 transition-all duration-700 group-hover:opacity-100 group-hover:scale-105"
+             loading="lazy"
+             decoding="async"
            />
         )}
       </div>
@@ -127,6 +131,8 @@ const FeaturedCardHalf: React.FC<{ post: any }> = ({ post }) => {
              src={urlFor(post.mainImage).width(600).url()}
              alt={post.title}
              className="w-full h-full object-cover opacity-90 transition-all duration-700 group-hover:opacity-100 group-hover:scale-105"
+             loading="lazy"
+             decoding="async"
            />
         )}
       </div>
@@ -211,6 +217,8 @@ const LedgerRow: React.FC<{ post: any }> = ({ post }) => {
             src={urlFor(post.mainImage).width(400).url()}
             alt={post.title}
             className="w-full h-full object-cover"
+            loading="lazy"
+            decoding="async"
           />
         </motion.div>
       )}
@@ -347,7 +355,11 @@ export default function BlogPage() {
 
   return (
     <section className="w-full bg-cream relative z-10 flex flex-col font-sans text-dark min-h-screen">
-      <PageMeta title={SEO_META.blogIndex.title} description={SEO_META.blogIndex.description} />
+      <PageMeta
+        title={SEO_META.blogIndex.title}
+        description={SEO_META.blogIndex.description}
+        canonical={SEO_META.blogIndex.canonical}
+      />
 
       <RobotPeek />
 

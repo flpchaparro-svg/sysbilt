@@ -132,7 +132,11 @@ const EvidenceVaultPage: React.FC<EvidenceVaultPageProps> = ({ onBack }) => {
       exit={{ opacity: 0 }}
       className="relative min-h-screen w-full bg-cream text-dark overflow-x-hidden content-layer"
     >
-      <PageMeta title={SEO_META.evidenceVault.title} description={SEO_META.evidenceVault.description} />
+      <PageMeta
+        title={SEO_META.evidenceVault.title}
+        description={SEO_META.evidenceVault.description}
+        canonical={SEO_META.evidenceVault.canonical}
+      />
 
       {/* FORENSIC ARCHIVE BACKGROUND */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden h-full">

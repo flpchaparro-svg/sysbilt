@@ -24,7 +24,11 @@ const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
   return (
     // Main background dark so overscrolling on mobile doesn't show cream under the form (design spec: dark #1a1a1a)
     <div className="min-h-screen lg:h-screen w-full flex flex-col lg:flex-row relative z-[9999] bg-dark lg:overflow-hidden">
-      <PageMeta title={SEO_META.contact.title} description={SEO_META.contact.description} />
+      <PageMeta
+        title={SEO_META.contact.title}
+        description={SEO_META.contact.description}
+        canonical={SEO_META.contact.canonical}
+      />
 
       {/* LEFT COLUMN: THE HUMAN ANCHOR */}
       <div className="w-full lg:w-5/12 h-auto lg:h-screen bg-cream text-dark flex flex-col p-8 md:p-12 lg:px-16 lg:pb-12 lg:pt-20 border-r border-dark/10 justify-between order-first relative z-10">

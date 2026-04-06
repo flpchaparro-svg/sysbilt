@@ -21,6 +21,7 @@ const PrivacyPolicyPage: React.FC<PrivacyPolicyPageProps> = ({ onBack, onNavigat
       <PageMeta
         title={SEO_META.privacy.title}
         description={SEO_META.privacy.description}
+        canonical={SEO_META.privacy.canonical}
         robots="noindex"
       />
       <div className="max-w-[1000px] mx-auto px-6 md:px-12 lg:px-20 pt-24 pb-32">

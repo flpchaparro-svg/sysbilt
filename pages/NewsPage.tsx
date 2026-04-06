@@ -164,7 +164,13 @@ export default function NewsPage() {
 
       {item.mainImage && (
         <div className="w-full aspect-video md:aspect-[21/9] relative border-b border-dark/10 bg-cream">
-           <img src={urlFor(item.mainImage).width(1200).url()} alt={item.title} className="w-full h-full object-cover" />
+           <img
+             src={urlFor(item.mainImage).width(1200).url()}
+             alt={item.title}
+             className="w-full h-full object-cover"
+             loading="lazy"
+             decoding="async"
+           />
         </div>
       )}
 
@@ -207,6 +213,7 @@ export default function NewsPage() {
       <PageMeta
         title={SEO_META.news.title}
         description={SEO_META.news.description}
+        canonical={SEO_META.news.canonical}
         robots="noindex, nofollow"
       />
 
@@ -247,7 +254,13 @@ export default function NewsPage() {
                     
                     {horizonNews.mainImage && (
                       <div className="w-full lg:w-1/2 mb-2 aspect-video relative z-10 border border-dark/10 overflow-hidden bg-cream">
-                         <img src={urlFor(horizonNews.mainImage).width(1200).url()} alt={horizonNews.title} className="w-full h-full object-cover transition-all duration-700 hover:scale-105" />
+                         <img
+                           src={urlFor(horizonNews.mainImage).width(1200).url()}
+                           alt={horizonNews.title}
+                           className="w-full h-full object-cover transition-all duration-700 hover:scale-105"
+                           loading="lazy"
+                           decoding="async"
+                         />
                       </div>
                     )}
 
@@ -311,7 +324,13 @@ export default function NewsPage() {
                                 <div className="flex flex-col gap-6 p-0 h-full w-full overflow-hidden">
                                   {item.mainImage && (
                                     <div className="w-full mb-2 aspect-video overflow-hidden bg-cream border border-dark/10 shadow-inner">
-                                      <img src={urlFor(item.mainImage).width(800).url()} alt={item.title} className="w-full h-full object-cover transition-all duration-700 hover:scale-105" />
+                                      <img
+                                        src={urlFor(item.mainImage).width(800).url()}
+                                        alt={item.title}
+                                        className="w-full h-full object-cover transition-all duration-700 hover:scale-105"
+                                        loading="lazy"
+                                        decoding="async"
+                                      />
                                     </div>
                                   )}
 

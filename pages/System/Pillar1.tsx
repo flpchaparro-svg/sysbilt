@@ -9,6 +9,8 @@ import { getPillarFAQs } from '../../constants/faqData';
 import { colors } from '../../constants/theme';
 import SolutionCardPillar from '../../components/System/SolutionCardPillar';
 import { PageMeta } from '../../components/PageMeta';
+import PillarFAQJsonLd from '../../components/PillarFAQJsonLd';
+import { SEO_META } from '../../constants/seoMeta';
 
 interface Pillar1Props {
   onNavigate: (view: string, sectionId?: string) => void;
@@ -141,7 +143,9 @@ const Pillar1: React.FC<Pillar1Props> = ({ onNavigate }) => {
       <PageMeta
         title={`${pillar1Copy.hero.headline} | SYSBILT`}
         description={pillar1Copy.hero.sub}
+        canonical={SEO_META.pillar1.canonical}
       />
+      <PillarFAQJsonLd faqs={pillarFAQs} />
       <section className="relative min-h-[700px] h-[100dvh] w-full flex flex-col overflow-hidden">
         <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 w-full h-full flex flex-col relative z-10">
           <div className="flex justify-between items-center mb-8 md:mb-4 pt-24 relative z-20">

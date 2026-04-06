@@ -48,6 +48,8 @@ const TheArchitect: React.FC = () => {
                       src="/images/felipe-chaparro-sysbilt-sydney.webp"
                       alt="Felipe Chaparro - SYSBILT architect in Sydney - AI avatar video clone"
                       style={{ display: 'none' }}
+                      loading="eager"
+                      decoding="async"
                     />
                     Your browser does not support the video tag.
                   </video>
