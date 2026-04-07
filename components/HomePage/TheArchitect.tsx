@@ -3,7 +3,7 @@ import { m, AnimatePresence } from 'framer-motion';
 import { ShieldCheck } from 'lucide-react';
 
 const TheArchitect: React.FC = () => {
-  const [mode, setMode] = useState<'architect' | 'human'>('architect');
+  const [mode, setMode] = useState<'architect' | 'human'>('human');
 
   return (
     <section id="origins" className="w-full bg-cream py-20 md:py-24 lg:py-32 px-6 md:px-12 lg:px-20 relative z-30 overflow-hidden border-t border-black/5">
