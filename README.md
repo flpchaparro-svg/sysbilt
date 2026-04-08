@@ -6,7 +6,7 @@
 
 This contains everything you need to run your app locally.
 
-**Codebase map (single source of truth):** All routes and visible UI come from `src/App.tsx` (routes) and the `pages/` and `components/` they import. There are no unused/ghost components. Copy docs live in `copy/` only as reference; they are not imported by the app.
+**Codebase map:** Routes are defined in `src/App.tsx`; each route loads `pages/` modules that import `components/` and `constants/` as needed. Sanity CMS lives under `studio/` (separate from the Vite app).
 
 View your app in AI Studio: https://ai.studio/apps/drive/1G_ebFCKG9R1SJQyo6BG085NhxKYy_rg0
 

@@ -269,7 +269,7 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: 100, opacity: 0 }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed right-0 top-[20vh] z-[300] hidden lg:flex flex-col bg-dark border-l border-y border-white/10 rounded-l-lg shadow-2xl overflow-hidden w-[118px]"
+            className="fixed right-0 top-[20vh] z-[300] hidden lg:flex flex-col bg-dark border-l border-y border-white/10 rounded-l-lg shadow-2xl overflow-hidden w-[54px]"
             style={{ maxHeight: 'calc(100vh - 20vh - 4rem)' }}
           >
             <button
@@ -279,7 +279,9 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
                 currentView === 'homepage' ? 'bg-gold text-dark' : 'text-cream hover:bg-white/5'
               }`}
             >
-              <span className="font-mono text-[10px] font-bold whitespace-nowrap">[SYS]</span>
+              <span className="font-mono text-[10px] font-bold whitespace-nowrap inline-block -translate-x-1">
+                [SYS]
+              </span>
             </button>
 
             <div className="flex flex-col">
