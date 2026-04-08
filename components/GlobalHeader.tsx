@@ -275,11 +275,13 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
             <button
               onClick={() => onNavigate('homepage')}
               aria-label="Go to Homepage"
-              className={`p-4 transition-all duration-snap border-b border-white/10 ${
+              className={`flex w-full items-center justify-center py-4 pl-3 pr-5 transition-all duration-snap border-b border-white/10 ${
                 currentView === 'homepage' ? 'bg-gold text-dark' : 'text-cream hover:bg-white/5'
               }`}
             >
-              <span className="font-mono text-[10px] font-bold whitespace-nowrap">[SYS]</span>
+              <span className="font-mono text-[10px] font-bold whitespace-nowrap -translate-x-1">
+                [SYS]
+              </span>
             </button>
 
             <div className="flex flex-col">
