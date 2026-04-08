@@ -269,7 +269,7 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: 100, opacity: 0 }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed right-0 top-[20vh] z-[300] hidden lg:flex flex-col bg-dark border-l border-y border-white/10 rounded-l-lg shadow-2xl overflow-hidden w-[54px]"
+            className="fixed right-0 top-[20vh] z-[300] hidden lg:flex flex-col bg-dark border-l border-y border-white/10 rounded-l-lg shadow-2xl overflow-hidden w-[118px]"
             style={{ maxHeight: 'calc(100vh - 20vh - 4rem)' }}
           >
             <button
@@ -354,10 +354,9 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
                   onNavigate('homepage');
                 }}
                 aria-label="Go to Homepage"
+                className="flex items-center"
               >
-                <div className="font-mono text-[10px] font-bold border border-dark px-1.5 py-0.5 bg-dark text-cream whitespace-nowrap">
-                  [SYS]
-                </div>
+                <SysbiltLogo className="w-[min(130px,calc(100vw-6rem))]" />
               </button>
               <button
                 type="button"

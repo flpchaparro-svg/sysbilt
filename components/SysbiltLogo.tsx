@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 interface SysbiltLogoProps {
   /** Set to true when placing the logo on a dark background (like the footer) */
   isDarkBg?: boolean;
+  /** Optional width/sizing (default: w-[130px]) */
+  className?: string;
 }
 
-export const SysbiltLogo: React.FC<SysbiltLogoProps> = ({ isDarkBg = false }) => {
+export const SysbiltLogo: React.FC<SysbiltLogoProps> = ({ isDarkBg = false, className }) => {
   // Uses exact brand guideline hex codes
   const lightModeColors = ['#1A1A1A', '#9A1730', '#8B6914']; // Black, Red-text, Gold-on-cream
   const darkModeColors = ['#FFF2EC', '#FF6B6B', '#D4A84B'];  // Cream, Red-on-dark, Gold-on-dark
@@ -34,11 +37,12 @@ export const SysbiltLogo: React.FC<SysbiltLogoProps> = ({ isDarkBg = false }) =>
 
   return (
     <div
-      className={`transition-opacity duration-1000 ease-in-out cursor-pointer flex items-center ${
-        isVisible ? 'opacity-100' : 'opacity-0'
-      }`}
+      className={twMerge(
+        'transition-opacity duration-1000 ease-in-out cursor-pointer flex items-center w-[130px]',
+        isVisible ? 'opacity-100' : 'opacity-0',
+        className
+      )}
       onMouseEnter={handleHover}
-      style={{ width: '130px' }} 
     >
       <svg
         viewBox="0 0 2100 441"
