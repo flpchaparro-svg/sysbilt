@@ -66,24 +66,45 @@ export const SEO_META = {
     description: 'The page you are looking for does not exist.',
   },
   pillar1: {
+    title: 'Websites & E-commerce for Australian Businesses | SYSBILT',
+    description:
+      'We build websites and e-commerce systems that capture leads and connect to your CRM. For Australian businesses doing $1M to $20M.',
     canonical: `${SITE_ORIGIN}/pillar1`,
   },
   pillar2: {
+    title: 'CRM & Lead Tracking for Growing Businesses | SYSBILT',
+    description:
+      'We set up CRM systems that track every lead, every deal, and every follow-up in one place. HubSpot and Pipedrive specialists in Sydney.',
     canonical: `${SITE_ORIGIN}/pillar2`,
   },
   pillar3: {
+    title: 'Business Automation for Australian Companies | SYSBILT',
+    description:
+      'We build automations that move data between your tools, send follow-ups, and handle admin. Using Make.com and n8n for businesses doing $1M to $20M.',
     canonical: `${SITE_ORIGIN}/pillar3`,
   },
   pillar4: {
+    title: 'AI Assistants for Business | SYSBILT Sydney',
+    description:
+      'We build AI assistants that answer calls, qualify leads, and handle repetitive questions for your business. Custom AI chatbots and voice bots.',
     canonical: `${SITE_ORIGIN}/pillar4`,
   },
   pillar5: {
+    title: 'Content Systems & Distribution | SYSBILT',
+    description:
+      'We build content systems that turn one voice note into a month of posts. Automated content production for busy Australian business owners.',
     canonical: `${SITE_ORIGIN}/pillar5`,
   },
   pillar6: {
+    title: 'Team Training & System Adoption | SYSBILT',
+    description:
+      'We train your team to actually use the tools you paid for. SOPs, onboarding videos, and adoption tracking for Australian businesses.',
     canonical: `${SITE_ORIGIN}/pillar6`,
   },
   pillar7: {
+    title: 'Business Dashboards & Reporting | SYSBILT',
+    description:
+      'We build dashboards that show your leads, revenue, and operations on one screen. Real-time business intelligence for growing Australian companies.',
     canonical: `${SITE_ORIGIN}/pillar7`,
   },
 } as const;

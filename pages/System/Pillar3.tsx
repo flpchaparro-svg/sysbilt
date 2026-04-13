@@ -118,8 +118,8 @@ const Pillar3: React.FC<Pillar3Props> = ({ onNavigate }) => {
       aria-labelledby="pillar-hero-title"
     >
       <PageMeta
-        title={`${pillar3Copy.hero.headline} | SYSBILT`}
-        description={pillar3Copy.hero.sub}
+        title={SEO_META.pillar3.title}
+        description={SEO_META.pillar3.description}
         canonical={SEO_META.pillar3.canonical}
       />
       <PillarFAQJsonLd faqs={pillarFAQs} />

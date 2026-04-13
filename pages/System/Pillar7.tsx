@@ -77,8 +77,8 @@ const Pillar7: React.FC<Pillar7Props> = ({ onNavigate }) => {
   return (
     <article className="min-h-screen bg-cream text-dark px-0 relative z-[150] overflow-x-hidden flex flex-col font-sans" aria-labelledby="pillar-hero-title">
       <PageMeta
-        title={`${pillar7Copy.hero.headline} | SYSBILT`}
-        description={pillar7Copy.hero.sub}
+        title={SEO_META.pillar7.title}
+        description={SEO_META.pillar7.description}
         canonical={SEO_META.pillar7.canonical}
       />
       <PillarFAQJsonLd faqs={pillarFAQs} />

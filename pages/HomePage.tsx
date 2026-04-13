@@ -9,23 +9,95 @@ import { SEO_META } from '../constants/seoMeta';
 /** react-helmet-async + React 19 JSX types */
 const Helmet = HelmetImpl as FC<{ children?: ReactNode }>;
 
+/** Organization + services — homepage ProfessionalService JSON-LD for search/AI consumers */
 const PROFESSIONAL_SERVICE_JSONLD = {
   '@context': 'https://schema.org',
   '@type': 'ProfessionalService',
   name: 'SYSBILT',
-  image: 'https://sysbilt.com/images/og-sysbilt.png',
+  url: 'https://sysbilt.com',
+  logo: 'https://sysbilt.com/images/og-sysbilt.png',
   description:
-    'SYSBILT builds business systems for Australian companies doing $1M to $20M in revenue. Websites, CRM, automation, AI assistants, content systems, team training, and dashboards.',
-  slogan: 'Sydney-based team building integrated systems for Australian companies.',
+    'SYSBILT is a Sydney-based team that builds business systems for Australian companies doing $1M to $20M. We build websites, CRM systems, automations, AI assistants, content systems, team training, and business dashboards.',
   address: {
     '@type': 'PostalAddress',
     addressLocality: 'Sydney',
     addressRegion: 'NSW',
     addressCountry: 'AU',
   },
-  priceRange: '$$$',
-  openingHours: 'Mo-Fr 09:00-17:00',
-  sameAs: ['https://www.linkedin.com/in/felipe-chaparro-97a390176/'],
+  areaServed: { '@type': 'Country', name: 'Australia' },
+  priceRange: '$$',
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Business Systems Services',
+    itemListElement: [
+      {
+        '@type': 'Offer',
+        itemOffered: {
+          '@type': 'Service',
+          name: 'Website Development & E-commerce',
+          url: 'https://sysbilt.com/pillar1',
+        },
+      },
+      {
+        '@type': 'Offer',
+        itemOffered: {
+          '@type': 'Service',
+          name: 'CRM & Lead Tracking Setup',
+          url: 'https://sysbilt.com/pillar2',
+        },
+      },
+      {
+        '@type': 'Offer',
+        itemOffered: {
+          '@type': 'Service',
+          name: 'Business Process Automation',
+          url: 'https://sysbilt.com/pillar3',
+        },
+      },
+      {
+        '@type': 'Offer',
+        itemOffered: {
+          '@type': 'Service',
+          name: 'AI Assistants & Chatbots',
+          url: 'https://sysbilt.com/pillar4',
+        },
+      },
+      {
+        '@type': 'Offer',
+        itemOffered: {
+          '@type': 'Service',
+          name: 'Content Systems & Distribution',
+          url: 'https://sysbilt.com/pillar5',
+        },
+      },
+      {
+        '@type': 'Offer',
+        itemOffered: {
+          '@type': 'Service',
+          name: 'Team Training & System Adoption',
+          url: 'https://sysbilt.com/pillar6',
+        },
+      },
+      {
+        '@type': 'Offer',
+        itemOffered: {
+          '@type': 'Service',
+          name: 'Business Dashboards & Reporting',
+          url: 'https://sysbilt.com/pillar7',
+        },
+      },
+    ],
+  },
+  knowsAbout: [
+    'HubSpot CRM',
+    'Make.com automation',
+    'business process automation',
+    'AI chatbots',
+    'website development Sydney',
+    'business dashboards',
+    'content marketing systems',
+    'team training',
+  ],
 } as const;
 
 // Lazy load BookingCTA (at bottom of page)

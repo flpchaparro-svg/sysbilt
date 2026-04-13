@@ -7,17 +7,21 @@ import service from './service'
 import caseStudy from './caseStudy'
 import newsItem from './newsItem'
 import newsBlockContent from './newsBlockContent'
-import persona from './persona' // ADD THIS
+import persona from './persona'
+import guideBlockContent from './guideBlockContent'
+import guide from './guide'
 
 export const schemaTypes = [
-  post, 
-  author, 
-  category, 
-  blockContent, 
-  youtube, 
-  service, 
+  post,
+  author,
+  category,
+  blockContent,
+  youtube,
+  service,
   caseStudy,
   newsItem,
   newsBlockContent,
-  persona // ADD THIS
+  persona,
+  guideBlockContent,
+  guide,
 ]
