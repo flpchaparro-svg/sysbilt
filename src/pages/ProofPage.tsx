@@ -15,7 +15,7 @@ import CountUp from '../components/Proof/CountUp';
 // HOOKS & DATA
 import { PageMeta } from '../components/PageMeta';
 import { SEO_META } from '../constants/seoMeta';
-import { getCaseStudies } from '../src/sanityClient';
+import { getCaseStudies } from '../sanityClient';
 import { SanityCaseStudy } from '../types';
 
 interface ProofPageProps {

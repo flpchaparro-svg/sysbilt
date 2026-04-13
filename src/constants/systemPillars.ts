@@ -1,6 +1,6 @@
 import { Filter, Magnet, Cog, Brain, LayoutGrid, Dna, BarChart3, LucideIcon } from 'lucide-react';
 import { SystemPillarDetail } from '../types';
-import { SERVICES } from '../constants';
+import { SERVICES } from './services';
 import { colors } from './theme';
 
 // SystemPage-specific view data that extends SERVICES

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { client, urlFor, getCaseStudies } from '../src/sanityClient';
+import { client, urlFor, getCaseStudies } from '../sanityClient';
 import { SanityCaseStudy } from '../types';
 import { getAllPillars } from '../constants/systemPillars';
 import HeroVisualBrutalist from '../components/Blog/HeroVisualBrutalist';

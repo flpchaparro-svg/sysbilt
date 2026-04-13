@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { m, useScroll, useTransform } from 'framer-motion';
-import CTAButton from '~/components/CTAButton';
+import CTAButton from '../CTAButton';
 
 // --- DATA ---
 export const AUDIT_DATA = [

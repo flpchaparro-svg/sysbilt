@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
-import { client, urlFor } from '../src/sanityClient';
+import { client, urlFor } from '../sanityClient';
 import { SITE_ORIGIN } from '../constants/seoMeta';
 import { PortableText } from '@portabletext/react';
 import { ArrowLeft, ArrowUpRight, Share2, Quote, Copy, Check, Info, AlertTriangle } from 'lucide-react';

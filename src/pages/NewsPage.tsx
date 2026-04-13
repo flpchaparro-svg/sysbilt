@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { client } from '../src/sanityClient';
+import { client } from '../sanityClient';
 import { PortableText } from '@portabletext/react';
 import imageUrlBuilder from '@sanity/image-url';
 import { motion, AnimatePresence } from 'framer-motion';
