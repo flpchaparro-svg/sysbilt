@@ -6,7 +6,7 @@ export const SEO_META = {
   home: {
     title: 'SYSBILT | Business Systems for Growing Companies',
     description:
-      'SYSBILT builds business systems for Australian companies doing $1M to $20M. Websites, CRM, automation, AI, content, training, and dashboards.',
+      'SYSBILT builds business systems for growing Australian companies. Websites, CRM, automation, AI, content, training, and dashboards that work together.',
     canonical: `${SITE_ORIGIN}/`,
   },
   process: {
