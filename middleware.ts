@@ -51,9 +51,11 @@ function isSpaRoute(normalizedPathname: string): boolean {
     '/privacy',
     '/blog',
     '/news',
+    '/guides',
   ]);
   if (exact.has(normalizedPathname)) return true;
   if (/^\/blog\/[^/]+$/i.test(normalizedPathname)) return true;
+  if (/^\/guides\/[^/]+$/i.test(normalizedPathname)) return true;
   return false;
 }
 
@@ -75,12 +77,15 @@ function shouldPrerenderPath(pathname: string): boolean {
     '/architect',
     '/proof',
     '/blog',
+    '/guides',
     '/contact',
   ]);
   for (let i = 1; i <= 7; i++) staticRoutes.add(`/pillar${i}`);
   if (staticRoutes.has(pathname)) return true;
 
   if (pathname.startsWith('/blog/') && pathname.length > '/blog/'.length) return true;
+
+  if (pathname.startsWith('/guides/') && pathname.length > '/guides/'.length) return true;
 
   return false;
 }

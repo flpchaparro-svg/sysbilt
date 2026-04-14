@@ -1,4 +1,8 @@
 import React, {useEffect, useMemo, useState} from 'react'
+import {useParams, Link} from 'react-router-dom'
+import {client} from '../sanityClient'
+import {PageMeta} from '../components/PageMeta'
+import {SITE_ORIGIN} from '../constants/seoMeta'
 
 // --- Types aligned with Sanity `guide` + `guideBlockContent` ---
 
@@ -80,8 +84,24 @@ export type GuidePageEntry = {
 export type GuideDocument = {
   title: string
   subtitle?: string
+  seoTitle?: string
+  seoDescription?: string
   pages: GuidePageEntry[]
 }
+
+const GUIDE_BY_SLUG_QUERY = `*[_type == "guide" && slug.current == $slug && !(_id in path("drafts.**"))][0]{
+  title,
+  subtitle,
+  seoTitle,
+  seoDescription,
+  servicePillar,
+  publishedAt,
+  pages[]{
+    _key,
+    _type,
+    content
+  }
+}`
 
 function isPortableBlock(b: GuideContentBlock): b is PortableTextBlock {
   return b._type === 'block'
@@ -380,56 +400,6 @@ function PageContainer({pageIndex, totalPages, children}: PageContainerProps) {
   )
 }
 
-const MOCK_GUIDE: GuideDocument = {
-  title: 'Sample SYSBILT Guide',
-  subtitle: 'Neumorphic A4 preview',
-  pages: [
-    {
-      _key: 'p1',
-      content: [
-        {
-          _type: 'sectionCover',
-          sectionNumber: '01',
-          sectionTitle: 'Foundations',
-          sectionIntro: 'Paginated content for PDF export. Each page is an explicit array entry.',
-        },
-        {
-          _type: 'block',
-          style: 'normal',
-          children: [{_type: 'span', text: 'This paragraph comes from a standard Portable Text block.'}],
-        },
-        {
-          _type: 'calloutBox',
-          label: 'How we do it',
-          body: 'Callout copy sits in a recessed neumorphic card with a soft top highlight.',
-        },
-      ],
-    },
-    {
-      _key: 'p2',
-      content: [
-        {
-          _type: 'darkQuote',
-          body: 'Dark extruded quote with gold accent border — cream type on charcoal.',
-        },
-        {
-          _type: 'contrastDemo',
-          failLabel: 'Before',
-          failText: 'Low contrast, easy to skim past.',
-          convertLabel: 'After',
-          convertText: 'High contrast, clear hierarchy, intentional spacing.',
-        },
-        {
-          _type: 'checklistGroup',
-          categoryTitle: 'Delivery checklist',
-          categoryColour: 'red',
-          items: ['Scope signed', 'Systems map approved', 'Launch window set'],
-        },
-      ],
-    },
-  ],
-}
-
 const GUIDE_STYLES = `
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:ital,wght@0,400;0,600;0,700;1,400&display=swap');
 
@@ -473,13 +443,54 @@ const GUIDE_STYLES = `
 }
 `
 
-export function GuidePage() {
+export default function GuideDocumentPage() {
+  const {slug} = useParams<{slug: string}>()
   const [guideData, setGuideData] = useState<GuideDocument | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [notFound, setNotFound] = useState(false)
 
   useEffect(() => {
-    // TODO: Replace with sanityClient.fetch(guideQuery, { slug }) once routing + GROQ are wired.
-    setGuideData(MOCK_GUIDE)
-  }, [])
+    if (!slug?.trim()) {
+      setLoading(false)
+      setNotFound(true)
+      setGuideData(null)
+      return
+    }
+
+    let cancelled = false
+    setLoading(true)
+    setNotFound(false)
+
+    client
+      .fetch<GuideDocument | null>(GUIDE_BY_SLUG_QUERY, {slug})
+      .then((data) => {
+        if (cancelled) return
+        if (!data?.title) {
+          setGuideData(null)
+          setNotFound(true)
+        } else {
+          setGuideData({
+            ...data,
+            pages: Array.isArray(data.pages) ? data.pages : [],
+          })
+          setNotFound(false)
+        }
+      })
+      .catch((err) => {
+        console.error('Guide fetch failed:', err)
+        if (!cancelled) {
+          setGuideData(null)
+          setNotFound(true)
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false)
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [slug])
 
   const pages = guideData?.pages ?? []
   const totalPages = Math.max(pages.length, 1)
@@ -497,11 +508,40 @@ export function GuidePage() {
     })
   }, [pages, totalPages])
 
+  const metaTitle = guideData?.seoTitle?.trim() || (guideData?.title ? `${guideData.title} | SYSBILT` : 'Guide | SYSBILT')
+  const metaDescription =
+    guideData?.seoDescription?.trim() || guideData?.subtitle?.trim() || 'SYSBILT system guides for growing Australian businesses.'
+  const canonical = slug ? `${SITE_ORIGIN}/guides/${slug}` : undefined
+
+  if (loading) {
+    return (
+      <div className="guide-root flex min-h-screen items-center justify-center bg-[#111111] px-4 py-20">
+        <style>{GUIDE_STYLES}</style>
+        <p className="font-mono text-sm uppercase tracking-widest text-[#FFF2EC]/60">Loading guide…</p>
+      </div>
+    )
+  }
+
+  if (notFound || !guideData) {
+    return (
+      <div className="guide-root flex min-h-screen flex-col items-center justify-center gap-6 bg-[#111111] px-4 py-20 text-center">
+        <style>{GUIDE_STYLES}</style>
+        <PageMeta title="Guide not found | SYSBILT" description="This guide does not exist or is unpublished." robots="noindex, follow" />
+        <h1 className="font-serif text-2xl text-[#FFF2EC]">Guide not found</h1>
+        <p className="max-w-md text-[#FFF2EC]/70">The guide you’re looking for isn’t available. It may have been moved or not published yet.</p>
+        <Link to="/guides" className="font-mono text-sm uppercase tracking-widest text-[#C5A059] underline underline-offset-4 hover:text-[#FFF2EC]">
+          Back to guides
+        </Link>
+      </div>
+    )
+  }
+
   return (
     <div className="guide-root min-h-screen bg-[#111111] py-10 text-[#1a1a1a]">
       <style>{GUIDE_STYLES}</style>
+      <PageMeta title={metaTitle} description={metaDescription} canonical={canonical} />
       <div className="mx-auto flex max-w-[840px] flex-col items-center gap-12 px-4">
-        {guideData?.title ? (
+        {guideData.title ? (
           <h1 className="text-center font-serif text-3xl text-[#FFF2EC]">{guideData.title}</h1>
         ) : null}
         {pageNodes}
@@ -509,5 +549,3 @@ export function GuidePage() {
     </div>
   )
 }
-
-export default GuidePage
