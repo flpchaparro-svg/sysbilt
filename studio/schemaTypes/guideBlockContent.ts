@@ -4,6 +4,8 @@ export default defineType({
   name: 'guideBlockContent',
   title: 'Guide block content',
   type: 'array',
+  description:
+    "Formatting Tricks for Headings: Type '1/ ' before a heading for a Brutalist Dark Circle number. Type '1// ' before a heading for a Soft UX Cream Badge number.",
   of: [
     defineArrayMember({
       title: 'Block',
@@ -121,6 +123,61 @@ export default defineType({
         {name: 'convertLabel', type: 'string', title: 'Convert label'},
         {name: 'convertText', type: 'string', title: 'Convert text'},
       ],
+    }),
+    defineArrayMember({
+      name: 'imagePlaceholder',
+      type: 'object',
+      title: 'Image',
+      description:
+        'Upload an image here. Aspect ratio controls the frame. Leave the image empty to show a layout placeholder only.',
+      fields: [
+        {
+          name: 'image',
+          title: 'Image',
+          type: 'image',
+          options: {
+            hotspot: true,
+          },
+          fields: [
+            {
+              name: 'alt',
+              type: 'string',
+              title: 'Alternative text',
+              description: 'Describe the image for accessibility (and when the image fails to load).',
+            },
+          ],
+        },
+        {
+          name: 'ratio',
+          type: 'string',
+          title: 'Aspect ratio',
+          options: {
+            list: [
+              {title: '16:9', value: '16:9'},
+              {title: '4:3', value: '4:3'},
+              {title: '1:1', value: '1:1'},
+              {title: '3:4', value: '3:4'},
+              {title: '9:16', value: '9:16'},
+            ],
+            layout: 'dropdown',
+          },
+        },
+        {name: 'caption', type: 'string', title: 'Caption'},
+      ],
+      preview: {
+        select: {
+          media: 'image',
+          caption: 'caption',
+          ratio: 'ratio',
+        },
+        prepare({media, caption, ratio}) {
+          return {
+            title: caption?.trim() || `Image (${ratio || '16:9'})`,
+            subtitle: caption?.trim() ? ratio || '16:9' : undefined,
+            media,
+          }
+        },
+      },
     }),
   ],
 })
