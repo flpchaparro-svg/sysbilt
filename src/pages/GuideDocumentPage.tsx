@@ -214,9 +214,9 @@ function renderSingleTextBlock(block: PortableTextBlock, key: number): React.Rea
   const style = block.style ?? 'normal'
   
   const getHeadingClass = (hStyle: string) => {
-    if (hStyle === 'h2') return 'font-serif text-[36px] font-semibold leading-[1.05] tracking-tighter text-[#1a1a1a]';
-    if (hStyle === 'h3') return 'font-serif text-[22px] font-medium leading-snug tracking-[0.05em] uppercase text-[#1a1a1a]/90';
-    if (hStyle === 'h4') return 'font-serif text-[19px] font-medium leading-snug tracking-tight text-[#1a1a1a]';
+    if (hStyle === 'h2') return 'font-serif text-[28px] md:text-[36px] font-semibold leading-[1.05] tracking-tighter text-[#1a1a1a]';
+    if (hStyle === 'h3') return 'font-serif text-[20px] md:text-[22px] font-medium leading-snug tracking-[0.05em] uppercase text-[#1a1a1a]/90';
+    if (hStyle === 'h4') return 'font-serif text-[17px] md:text-[19px] font-medium leading-snug tracking-tight text-[#1a1a1a]';
     return '';
   }
 
@@ -232,12 +232,12 @@ function renderSingleTextBlock(block: PortableTextBlock, key: number): React.Rea
 
     if (prefix.type === 'soft') {
       // --- SOFT UX BADGE (1//) ---
-      const outerSize = style === 'h2' ? 'h-12 w-12' : style === 'h3' ? 'h-10 w-10' : 'h-8 w-8';
-      const innerSize = style === 'h2' ? 'h-8 w-8' : style === 'h3' ? 'h-7 w-7' : 'h-6 w-6';
-      const numSize = style === 'h2' ? 'text-[15px]' : style === 'h3' ? 'text-[13px]' : 'text-[11px]';
+      const outerSize = style === 'h2' ? 'h-10 w-10 md:h-12 md:w-12' : style === 'h3' ? 'h-9 w-9 md:h-10 md:w-10' : 'h-8 w-8';
+      const innerSize = style === 'h2' ? 'h-7 w-7 md:h-8 md:w-8' : style === 'h3' ? 'h-6 w-6 md:h-7 md:w-7' : 'h-6 w-6';
+      const numSize = style === 'h2' ? 'text-[14px] md:text-[15px]' : style === 'h3' ? 'text-[12px] md:text-[13px]' : 'text-[11px]';
 
       return (
-        <div key={key} className={`flex items-start gap-4 ${marginClass}`}>
+        <div key={key} className={`flex items-start gap-3 md:gap-4 ${marginClass}`}>
           <div className={`flex shrink-0 items-center justify-center rounded-full bg-[#FFF2EC] shadow-neu border border-white/40 mt-[-4px] ${outerSize}`}>
              <div className={`flex items-center justify-center rounded-full bg-[#FFF8F5] shadow-neu-inner ${innerSize}`}>
                <span className={`font-serif font-bold text-[#8B6914] ${numSize}`}>{prefix.num}</span>
@@ -250,10 +250,10 @@ function renderSingleTextBlock(block: PortableTextBlock, key: number): React.Rea
       )
     } else {
       // --- BRUTALIST BADGE (1/) ---
-      const circleSize = style === 'h2' ? 'h-10 w-10 text-[16px]' : style === 'h3' ? 'h-9 w-9 text-[14px]' : style === 'h4' ? 'h-8 w-8 text-[13px]' : 'h-7 w-7 text-[12px]';
+      const circleSize = style === 'h2' ? 'h-9 w-9 md:h-10 md:w-10 text-[14px] md:text-[16px]' : style === 'h3' ? 'h-8 w-8 md:h-9 md:w-9 text-[13px] md:text-[14px]' : style === 'h4' ? 'h-7 w-7 md:h-8 md:w-8 text-[12px] md:text-[13px]' : 'h-7 w-7 text-[12px]';
 
       return (
-        <div key={key} className={`flex items-start gap-4 ${marginClass}`}>
+        <div key={key} className={`flex items-start gap-3 md:gap-4 ${marginClass}`}>
           <div className={`flex shrink-0 items-center justify-center rounded-full bg-[#1a1a1a] shadow-neu-sm font-bold text-[#C5A059] font-mono mt-0.5 ${circleSize}`}>
             {prefix.num}
           </div>
@@ -317,9 +317,9 @@ function renderGuideBlocks(blocks: GuideContentBlock[]): React.ReactNode[] {
       if (kind === 'number') {
         // Official Sanity Numbered List - Uses Brutalist Dark Circle
         out.push(
-          <div key={`list-${i}-${items.length}`} className="my-6 space-y-4 pl-2 text-[15px] leading-relaxed">
+          <div key={`list-${i}-${items.length}`} className="my-6 space-y-4 pl-0 md:pl-2 text-[15px] leading-relaxed">
             {items.map((item, j) => (
-              <div key={j} className="flex items-start gap-4">
+              <div key={j} className="flex items-start gap-3 md:gap-4">
                 <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#1a1a1a] shadow-neu-sm text-[12px] font-bold text-[#C5A059] font-mono mt-0.5">
                   {j + 1}
                 </div>
@@ -333,7 +333,7 @@ function renderGuideBlocks(blocks: GuideContentBlock[]): React.ReactNode[] {
         out.push(
           <ul
             key={`list-${i}-${items.length}`}
-            className="my-3 mb-6 space-y-2 pl-5 text-[15px] leading-relaxed list-disc"
+            className="my-3 mb-6 space-y-2 pl-4 md:pl-5 text-[15px] leading-relaxed list-disc"
           >
             {items.map((item, j) => (
               <li key={j} className="pl-1">{renderTextSpans(item)}</li>
@@ -374,7 +374,7 @@ function InteractiveChecklist({ items, categoryTitle, categoryColour }: any) {
           return (
             <li 
               key={j} 
-              className="flex items-start gap-4 text-[15px] leading-relaxed cursor-pointer group"
+              className="flex items-start gap-3 md:gap-4 text-[15px] leading-relaxed cursor-pointer group"
               onClick={() => toggleCheck(j)}
             >
               <button 
@@ -409,18 +409,18 @@ function renderCustomBlock(block: GuideContentBlock, key: number): React.ReactNo
       const s = block as SectionCoverBlock
       return (
         <div key={key} className="flex flex-1 flex-col items-center justify-center text-center w-full py-12">
-          <div className="shadow-neu flex h-24 w-24 items-center justify-center rounded-full bg-[#FFF2EC]">
-            <div className="shadow-neu-inner flex h-16 w-16 items-center justify-center rounded-full bg-[#FFF8F5]">
-              <span className="font-serif text-2xl font-bold text-[#9A1730]">{s.sectionNumber ?? ''}</span>
+          <div className="shadow-neu flex h-20 w-20 md:h-24 md:w-24 items-center justify-center rounded-full bg-[#FFF2EC]">
+            <div className="shadow-neu-inner flex h-14 w-14 md:h-16 md:w-16 items-center justify-center rounded-full bg-[#FFF8F5]">
+              <span className="font-serif text-xl md:text-2xl font-bold text-[#9A1730]">{s.sectionNumber ?? ''}</span>
             </div>
           </div>
           {s.sectionTitle ? (
-            <h2 className="mt-8 font-serif text-[42px] font-semibold leading-[1.1] tracking-tighter text-[#1a1a1a]">
+            <h2 className="mt-8 font-serif text-[32px] md:text-[42px] font-semibold leading-[1.1] tracking-tighter text-[#1a1a1a]">
               {s.sectionTitle}
             </h2>
           ) : null}
           {s.sectionIntro ? (
-            <p className="mt-6 max-w-xl text-[17px] leading-relaxed text-[#1a1a1a]/75">{s.sectionIntro}</p>
+            <p className="mt-6 max-w-xl text-[16px] md:text-[17px] leading-relaxed text-[#1a1a1a]/75">{s.sectionIntro}</p>
           ) : null}
         </div>
       )
@@ -430,7 +430,7 @@ function renderCustomBlock(block: GuideContentBlock, key: number): React.ReactNo
       return (
         <div
           key={key}
-          className="shadow-neu relative my-8 rounded-2xl bg-[#FFF2EC] px-8 py-8 border border-white/30"
+          className="shadow-neu relative my-8 rounded-2xl bg-[#FFF2EC] px-6 py-6 md:px-8 md:py-8 border border-white/30"
         >
           {/* Decorative Neumorphic Screws */}
           <div className="absolute top-4 right-4 h-[6px] w-[6px] rounded-full shadow-neu-inner bg-[#1a1a1a]/5"></div>
@@ -440,7 +440,7 @@ function renderCustomBlock(block: GuideContentBlock, key: number): React.ReactNo
 
           {c.label ? (
             <div className="mb-5 inline-flex shadow-neu-inner rounded-md px-4 py-2 bg-[#FFF8F5] relative z-10">
-              <p className="font-mono text-[13px] font-bold uppercase tracking-[0.2em] text-[#8B6914]">
+              <p className="font-mono text-[12px] md:text-[13px] font-bold uppercase tracking-[0.2em] text-[#8B6914]">
                 {c.label}
               </p>
             </div>
@@ -456,10 +456,10 @@ function renderCustomBlock(block: GuideContentBlock, key: number): React.ReactNo
       return (
         <div
           key={key}
-          className="shadow-neu my-6 rounded-xl border border-[#333] border-l-[8px] border-l-[#8B6914] bg-[#1a1a1a] px-8 py-6 text-[#FFF2EC]"
+          className="shadow-neu my-6 rounded-xl border border-[#333] border-l-[8px] border-l-[#8B6914] bg-[#1a1a1a] px-6 py-5 md:px-8 md:py-6 text-[#FFF2EC]"
         >
           {q.body ? (
-            <p className="whitespace-pre-wrap font-serif text-lg leading-relaxed">{q.body}</p>
+            <p className="whitespace-pre-wrap font-serif text-[16px] md:text-lg leading-relaxed">{q.body}</p>
           ) : null}
         </div>
       )
@@ -467,10 +467,10 @@ function renderCustomBlock(block: GuideContentBlock, key: number): React.ReactNo
     case 'bulletCard': {
       const card = block as BulletCardBlock
       return (
-        <div key={key} className="shadow-neu-inner my-6 rounded-2xl bg-[#FFF8F5] px-8 py-6 border border-black/5">
+        <div key={key} className="shadow-neu-inner my-6 rounded-2xl bg-[#FFF8F5] px-6 py-5 md:px-8 md:py-6 border border-black/5">
           <ul className="space-y-4">
             {(card.items ?? []).map((item, j) => (
-              <li key={j} className="flex items-start gap-4 text-[15px] leading-relaxed text-[#1a1a1a]">
+              <li key={j} className="flex items-start gap-3 md:gap-4 text-[15px] leading-relaxed text-[#1a1a1a]">
                 <span className="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-[3px] bg-[#9A1730] shadow-sm" />
                 <span>{item}</span>
               </li>
@@ -486,7 +486,7 @@ function renderCustomBlock(block: GuideContentBlock, key: number): React.ReactNo
     case 'contrastDemo': {
       const d = block as ContrastDemoBlock
       return (
-        <div key={key} className="my-8 grid grid-cols-2 gap-6">
+        <div key={key} className="my-8 grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="shadow-neu-inner rounded-xl bg-[#FFF2EC] px-6 py-5 text-[#1a1a1a]/70">
             <p className="mb-3 font-mono text-[10px] font-bold uppercase tracking-widest text-[#1a1a1a]/45">
               {d.failLabel ?? 'Fail'}
@@ -504,6 +504,9 @@ function renderCustomBlock(block: GuideContentBlock, key: number): React.ReactNo
     }
     case 'imagePlaceholder': {
       const p = block as ImagePlaceholderBlock
+
+      // THE FIX: We use standard Tailwind aspect-ratio classes. 
+      // We do NOT hardcode heights or widths here. 
       const ratioClass = {
         '16:9': 'aspect-video',
         '4:3': 'aspect-[4/3]',
@@ -517,39 +520,38 @@ function renderCustomBlock(block: GuideContentBlock, key: number): React.ReactNo
       const altText = (p.image?.alt ?? p.caption ?? '').trim() || ''
 
       return (
-        <div key={key} className="my-8 flex w-full flex-col items-center">
-          <div
-            className={`relative flex w-full max-h-[500px] ${ratioClass} items-center justify-center overflow-hidden rounded-2xl border border-black/5 bg-[#FFF8F5] shadow-neu-inner`}
-          >
-            {imageSrc ? (
-              <img
-                src={imageSrc}
-                alt={altText}
-                className="absolute inset-0 z-10 h-full w-full object-cover"
-                loading="lazy"
-                decoding="async"
-              />
-            ) : (
-              <>
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:8px_8px] mix-blend-multiply opacity-50" />
-                <div className="z-10 flex flex-col items-center gap-3 opacity-40">
-                  <svg className="h-10 w-10 text-[#1a1a1a]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={1}
-                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                    />
-                  </svg>
-                  <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#1a1a1a]">
-                    Image / {p.ratio ?? '16:9'}
-                  </span>
-                </div>
-              </>
-            )}
+        // Wrapper: allowed to shrink (min-h-0, flex-shrink), capped at 500px so it doesn't get huge.
+        <div key={key} className="my-6 flex w-full flex-col items-center justify-center min-h-0 flex-shrink flex-1 max-h-[500px]">
+          {/* Frame: h-full makes it fill available space. max-w-full stops overflow. aspect-[ratio] mathematically scales it perfectly without cropping. */}
+          <div className={`relative p-2 md:p-3 rounded-[16px] md:rounded-[24px] bg-[#FFF2EC] shadow-neu border border-white/50 h-full max-w-full flex-shrink min-h-0 mx-auto ${ratioClass}`}>
+            <div className="relative w-full h-full flex items-center justify-center overflow-hidden rounded-xl border border-black/5 bg-[#FFF8F5] shadow-neu-inner">
+              {imageSrc ? (
+                <img
+                  src={imageSrc}
+                  alt={altText}
+                  className="absolute inset-0 z-10 h-full w-full object-cover"
+                  loading="lazy"
+                  decoding="async"
+                />
+              ) : (
+                <>
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:8px_8px] mix-blend-multiply opacity-50" />
+                  <div className="z-10 flex flex-col items-center gap-3 opacity-40">
+                    <svg className="h-8 w-8 md:h-10 md:w-10 text-[#1a1a1a]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span className="font-mono text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-[#1a1a1a]">
+                      Image / {p.ratio ?? '16:9'}
+                    </span>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
           {p.caption && (
-            <p className="mt-4 text-center font-sans text-[13px] text-[#1a1a1a]/60">{p.caption}</p>
+            <p className="mt-4 text-center font-sans text-[12.5px] md:text-[13.5px] italic text-[#1a1a1a]/60 flex-shrink-0 px-4">
+              {p.caption}
+            </p>
           )}
         </div>
       )
@@ -587,14 +589,44 @@ function NoiseLayer() {
 }
 
 function CoverPage({ guideData }: { guideData: GuideDocument }) {
+  const [showModal, setShowModal] = useState(false);
+
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: guideData.title,
+          text: guideData.subtitle || 'Check out this guide by SYSBILT.',
+          url: window.location.href,
+        });
+      } catch (err) {
+        console.error('Error sharing:', err);
+      }
+    } else {
+      // Fallback if share isn't supported (e.g., older desktop browsers)
+      navigator.clipboard.writeText(window.location.href);
+      alert('Link copied to clipboard!');
+    }
+    setShowModal(false);
+  };
+
+  const handlePrint = () => {
+    setShowModal(false);
+    // Slight delay to allow modal to close visually before browser freezes the DOM for the print dialog
+    setTimeout(() => {
+      window.print();
+    }, 100);
+  };
+
   return (
-    <div className="print-page relative flex h-[1123px] w-[794px] flex-shrink-0 flex-col overflow-hidden bg-[#FFF2EC] text-[#1a1a1a] shadow-neu border border-white/40">
+    // Replaced rigid pixel width/height with w-full and md:h-[1123px] for true mobile responsiveness
+    <div className="print-page relative flex w-full max-w-[794px] h-auto min-h-[100vh] md:min-h-0 md:h-[1123px] md:flex-shrink-0 flex-col overflow-hidden bg-[#FFF2EC] text-[#1a1a1a] shadow-neu border border-white/40">
       <NoiseLayer />
       
       {/* Functional Print/Download Button (Hidden when actually printing) */}
       <button 
-        onClick={() => window.print()}
-        className="absolute top-10 right-10 z-[20] flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/60 backdrop-blur-md border border-black/10 shadow-neu-sm text-[10px] font-mono font-bold uppercase tracking-[0.15em] text-[#1a1a1a]/60 hover:bg-white hover:text-[#9A1730] transition-colors print:hidden group"
+        onClick={() => setShowModal(true)}
+        className="absolute top-6 right-6 md:top-10 md:right-10 z-[20] flex items-center gap-2 px-4 py-2 md:px-5 md:py-2.5 rounded-full bg-white/60 backdrop-blur-md border border-black/10 shadow-neu-sm text-[9px] md:text-[10px] font-mono font-bold uppercase tracking-[0.15em] text-[#1a1a1a]/60 hover:bg-white hover:text-[#9A1730] transition-colors print:hidden group"
       >
         <svg className="w-4 h-4 transition-transform group-hover:-translate-y-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
@@ -602,27 +634,70 @@ function CoverPage({ guideData }: { guideData: GuideDocument }) {
         Save / Print
       </button>
 
+      {/* Custom Soft UX Modal */}
+      {showModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#1a1a1a]/40 backdrop-blur-sm print:hidden">
+          <div className="w-[90%] max-w-[320px] rounded-[24px] bg-[#FFF2EC] p-6 shadow-neu border border-white/50 text-center relative">
+            <button 
+              onClick={() => setShowModal(false)}
+              className="absolute top-4 right-4 text-[#1a1a1a]/40 hover:text-[#9A1730] transition-colors"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            
+            <h3 className="font-serif text-[22px] font-semibold text-[#1a1a1a] mb-2 mt-2">How to save?</h3>
+            <p className="font-sans text-[14px] text-[#1a1a1a]/60 mb-6">Choose how you want to keep or share this guide.</p>
+            
+            <div className="flex flex-col gap-3">
+              {/* Share/Mobile Save Button */}
+              <button 
+                onClick={handleShare}
+                className="w-full flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-[#FFF8F5] shadow-neu-inner border border-black/5 text-[11px] font-mono font-bold uppercase tracking-widest text-[#8B6914] hover:text-[#1a1a1a] transition-colors"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                </svg>
+                Share / Save Link
+              </button>
+              
+              {/* Native Print/PDF Button */}
+              <button 
+                onClick={handlePrint}
+                className="w-full flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-[#1a1a1a] shadow-neu-sm border border-[#333] text-[11px] font-mono font-bold uppercase tracking-widest text-[#FFF2EC] hover:bg-[#222] transition-colors"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                </svg>
+                Print / Save PDF
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Absolute Header - SysbiltLogo component */}
-      <div className="absolute top-0 left-0 w-full pt-20 px-24 flex justify-center z-[3]">
-        <SysbiltLogo className="w-[120px] h-auto text-[#1a1a1a] opacity-90" />
+      <div className="absolute top-0 left-0 w-full pt-12 md:pt-20 px-8 md:px-24 flex justify-center z-[3]">
+        <SysbiltLogo className="w-[100px] md:w-[120px] h-auto text-[#1a1a1a] opacity-90" />
       </div>
       
       {/* Absolute Body - True vertical and horizontal centre */}
-      <div className="relative z-[2] flex h-full w-full flex-col items-center justify-center px-24 text-center">
-         <h1 className="font-serif text-[64px] leading-[1.05] tracking-tighter text-[#1a1a1a] mb-8 max-w-[650px] mx-auto">
+      <div className="relative z-[2] flex flex-1 h-full w-full flex-col items-center justify-center px-8 md:px-24 py-32 text-center">
+         <h1 className="font-serif text-[42px] md:text-[64px] leading-[1.05] tracking-tighter text-[#1a1a1a] mb-6 md:mb-8 max-w-[650px] mx-auto">
            {guideData.title}
          </h1>
          {guideData.subtitle && (
-           <p className="font-sans text-xl font-light leading-relaxed text-[#1a1a1a]/70 max-w-[550px] mx-auto">
+           <p className="font-sans text-[17px] md:text-xl font-light leading-relaxed text-[#1a1a1a]/70 max-w-[550px] mx-auto">
              {guideData.subtitle}
            </p>
          )}
       </div>
       
       {/* Absolute Footer - Pinned to exact bottom */}
-      <div className="absolute bottom-0 left-0 w-full pb-20 px-24 z-[3]">
-         <div className="border-t border-black/10 pt-8 text-center">
-            <p className="font-serif text-[17px] italic text-[#1a1a1a]/60">
+      <div className="absolute bottom-0 left-0 w-full pb-12 md:pb-20 px-8 md:px-24 z-[3]">
+         <div className="border-t border-black/10 pt-6 md:pt-8 text-center">
+            <p className="font-serif text-[15px] md:text-[17px] italic text-[#1a1a1a]/60">
               {guideData.coverLegend?.trim() || DEFAULT_COVER_LEGEND}
             </p>
          </div>
@@ -633,33 +708,34 @@ function CoverPage({ guideData }: { guideData: GuideDocument }) {
 
 function PageContainer({pageIndex, totalPages, servicePillar, children}: PageContainerProps) {
   return (
-    <div className="print-page relative flex h-[1123px] w-[794px] flex-shrink-0 flex-col overflow-hidden bg-[#FFF2EC] text-[#1a1a1a] shadow-neu border border-white/40">
+    // Replaced rigid pixel width/height with w-full and md:h-[1123px] for true mobile responsiveness
+    <div className="print-page relative flex w-full max-w-[794px] h-auto min-h-[100vh] md:min-h-0 md:h-[1123px] md:flex-shrink-0 flex-col overflow-hidden bg-[#FFF2EC] text-[#1a1a1a] shadow-neu border border-white/40">
       <NoiseLayer />
       <div className="relative z-[2] flex h-full min-h-0 flex-col">
-        {/* A4 Header: SysbiltLogo component & Pillar Badge. Tagged with a4-header to prevent print-hiding */}
-        <header className="a4-header flex h-[110px] shrink-0 items-center justify-between border-b border-black/5 px-24">
-          <SysbiltLogo className="w-[85px] h-auto text-[#1a1a1a] opacity-70" />
+        {/* A4 Header: SysbiltLogo component & Pillar Badge. Fixed padding for mobile */}
+        <header className="a4-header flex h-[90px] md:h-[110px] shrink-0 items-center justify-between border-b border-black/5 px-8 md:px-24">
+          <SysbiltLogo className="w-[70px] md:w-[85px] h-auto text-[#1a1a1a] opacity-70" />
           
           {servicePillar ? (
-            <div className="shadow-neu-inner bg-[#FFF8F5] border border-black/5 rounded-md px-4 py-2">
-               <span className="font-mono text-[10px] font-bold uppercase tracking-[0.15em] text-[#8B6914]">
+            <div className="shadow-neu-inner bg-[#FFF8F5] border border-black/5 rounded-md px-3 py-1.5 md:px-4 md:py-2">
+               <span className="font-mono text-[9px] md:text-[10px] font-bold uppercase tracking-[0.15em] text-[#8B6914]">
                  {servicePillar}
                </span>
             </div>
           ) : null}
         </header>
 
-        {/* A4 Content Area - Widened margins & Centered vertically */}
-        <main className="min-h-0 flex-1 overflow-hidden px-24 py-12 flex flex-col justify-center">
-          <div className="flex flex-col w-full">{children}</div>
+       {/* A4 Content Area - Adjusted mobile padding */}
+       <main className="min-h-0 flex-1 overflow-hidden px-8 md:px-24 py-8 md:py-12 flex flex-col justify-center">
+          <div className="flex flex-col w-full h-full min-h-0">{children}</div>
         </main>
 
-        {/* A4 Footer: Domain & Page Numbers. Tagged with a4-footer to prevent print-hiding */}
-        <footer className="a4-footer flex h-[100px] shrink-0 items-center justify-between border-t border-black/5 px-24">
-          <span className="font-mono text-[11px] font-bold tracking-[0.25em] text-[#1a1a1a]/50">
+        {/* A4 Footer: Domain & Page Numbers. Fixed padding for mobile */}
+        <footer className="a4-footer flex h-[80px] md:h-[100px] shrink-0 items-center justify-between border-t border-black/5 px-8 md:px-24">
+          <span className="font-mono text-[10px] md:text-[11px] font-bold tracking-[0.25em] text-[#1a1a1a]/50">
             SYSBILT.COM
           </span>
-          <span className="font-mono text-xs uppercase tracking-[0.25em] text-[#1a1a1a]/50">
+          <span className="font-mono text-[10px] md:text-xs uppercase tracking-[0.25em] text-[#1a1a1a]/50">
             Page {pageIndex} of {totalPages}
           </span>
         </footer>
@@ -714,9 +790,7 @@ const GUIDE_STYLES = `
 @media print {
   @page {
     margin: 0 !important;
-    /* Delete the "size: A4 portrait;" line here */
   }
-...
 
   html, body, #root {
     background-color: #FFF2EC !important;
@@ -756,12 +830,14 @@ const GUIDE_STYLES = `
     that triggers an invisible blank page before the page-break.
   */
   .print-page {
-    width: 794px !important;
-    height: 1123px !important;
-    max-height: 1123px !important;
+    width: 210mm !important;
+    height: 296.5mm !important; 
+    max-height: 296.5mm !important;
     overflow: hidden !important; 
     margin: 0 auto !important;
+    padding: 0 !important;
     border: none !important;
+    box-sizing: border-box !important;
     page-break-after: always !important;
     page-break-inside: avoid !important;
     break-after: page !important;
@@ -860,7 +936,7 @@ export default function GuideDocumentPage() {
 
     const ctaHref = (guideData?.ctaLink?.trim() || '/contact')
     const ctaLinkClass =
-      'shadow-neu bg-[#FFF2EC] text-[#1a1a1a] font-mono text-[12px] font-bold uppercase tracking-[0.2em] px-12 py-5 rounded-full border border-white/50 hover:shadow-neu-inner hover:text-[#9A1730] transition-all duration-300 print:hidden mb-16'
+      'shadow-neu bg-[#FFF2EC] text-[#1a1a1a] font-mono text-[11px] md:text-[12px] font-bold uppercase tracking-[0.2em] px-8 py-4 md:px-12 md:py-5 rounded-full border border-white/50 hover:shadow-neu-inner hover:text-[#9A1730] transition-all duration-300 print:hidden mb-12 md:mb-16'
     const ctaTitleText = guideData?.ctaTitle?.trim() || DEFAULT_CTA_TITLE
     const ctaBodyText = guideData?.ctaDescription?.trim() || DEFAULT_CTA_DESCRIPTION
     const ctaButtonLabel = guideData?.ctaButtonText?.trim() || DEFAULT_CTA_BUTTON
@@ -869,16 +945,16 @@ export default function GuideDocumentPage() {
     const ctaEndPage =
       guideData && includeCtaPage ? (
         <PageContainer pageIndex={totalPages} totalPages={totalPages} servicePillar={cleanPillarName}>
-          <div className="flex flex-1 flex-col items-center justify-center text-center max-w-2xl mx-auto py-12 px-8">
-            <div className="w-28 h-28 rounded-full shadow-neu flex items-center justify-center bg-[#FFF2EC] mb-12 border border-white/40">
-              <div className="w-20 h-20 rounded-full shadow-neu-inner flex items-center justify-center bg-[#FFF8F5]">
-                <svg className="w-10 h-10 text-[#8B6914] opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="flex flex-1 flex-col items-center justify-center text-center max-w-2xl mx-auto py-12 px-4 md:px-8">
+            <div className="w-20 h-20 md:w-28 md:h-28 rounded-full shadow-neu flex items-center justify-center bg-[#FFF2EC] mb-8 md:mb-12 border border-white/40">
+              <div className="w-14 h-14 md:w-20 md:h-20 rounded-full shadow-neu-inner flex items-center justify-center bg-[#FFF8F5]">
+                <svg className="w-8 h-8 md:w-10 md:h-10 text-[#8B6914] opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
               </div>
             </div>
-            <h2 className="font-serif text-[46px] leading-[1.05] tracking-tighter text-[#1a1a1a] mb-8">{ctaTitleText}</h2>
-            <p className="font-sans text-[18px] font-light leading-relaxed text-[#1a1a1a]/70 mb-14 max-w-xl mx-auto">{ctaBodyText}</p>
+            <h2 className="font-serif text-[36px] md:text-[46px] leading-[1.05] tracking-tighter text-[#1a1a1a] mb-6 md:mb-8">{ctaTitleText}</h2>
+            <p className="font-sans text-[16px] md:text-[18px] font-light leading-relaxed text-[#1a1a1a]/70 mb-10 md:mb-14 max-w-xl mx-auto">{ctaBodyText}</p>
             {useNativeAnchor ? (
               <a href={ctaHref} className={ctaLinkClass}>
                 {ctaButtonLabel}
@@ -889,8 +965,8 @@ export default function GuideDocumentPage() {
               </Link>
             )}
 
-            <div className="mt-auto border-t border-black/5 pt-10">
-              <p className="font-sans text-[14px] leading-relaxed text-[#1a1a1a]/50 max-w-lg mx-auto italic">
+            <div className="mt-auto border-t border-black/5 pt-8 md:pt-10">
+              <p className="font-sans text-[13px] md:text-[14px] leading-relaxed text-[#1a1a1a]/50 max-w-lg mx-auto italic">
                 {guideData.ctaLegend?.trim() || DEFAULT_CTA_LEGEND}
               </p>
             </div>
@@ -936,12 +1012,12 @@ export default function GuideDocumentPage() {
   }
 
   return (
-    <div className="guide-root min-h-screen bg-[#FFF2EC] pt-[140px] pb-24 text-[#1a1a1a]">
+    <div className="guide-root min-h-screen bg-[#FFF2EC] pt-[100px] md:pt-[140px] pb-16 md:pb-24 text-[#1a1a1a]">
       <style>{GUIDE_STYLES}</style>
       <PageMeta title={metaTitle} description={metaDescription} canonical={canonical} />
       
       {/* Targeted centered stack container for on-screen/print differentiation. */}
-      <div className="guide-page-stack mx-auto flex max-w-[840px] flex-col items-center gap-16 px-4">
+      <div className="guide-page-stack mx-auto flex w-full max-w-[840px] flex-col items-center gap-12 md:gap-16 px-4">
         {pageNodes}
       </div>
     </div>
