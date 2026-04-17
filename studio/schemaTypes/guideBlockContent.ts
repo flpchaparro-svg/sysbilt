@@ -100,10 +100,11 @@ export default defineType({
             list: [
               {title: 'Red', value: 'red'},
               {title: 'Gold', value: 'gold'},
+              {title: 'Black', value: 'black'},
             ],
             layout: 'radio',
           },
-          initialValue: 'red',
+          initialValue: 'black',
         },
         {
           name: 'items',

@@ -101,7 +101,7 @@ export type GuideDocument = {
   subtitle?: string
   seoTitle?: string
   seoDescription?: string
-  servicePillar?: string
+  servicePillar?: string[] // UPDATED: Now expects an array from Sanity
   coverLegend?: string
   includeCtaPage?: boolean
   ctaTitle?: string
@@ -142,6 +142,55 @@ const GUIDE_BY_SLUG_QUERY = `*[_type == "guide" && slug.current == $slug && !(_i
     content
   }
 }`
+
+// --- PHASE LOGIC & ROUTING ---
+const PHASE_1_SERVICES = ['Website & E-commerce', 'CRM & Lead Tracking', 'Automation'];
+const PHASE_2_SERVICES = ['AI Assistants', 'Content Systems', 'Team Training'];
+const PHASE_3_SERVICES = ['Dashboards & Reporting'];
+
+const ROUTE_MAP: Record<string, string> = {
+  'Website & E-commerce': '/pillar1',
+  'CRM & Lead Tracking': '/pillar2',
+  'Automation': '/pillar3',
+  'AI Assistants': '/pillar4',
+  'Content Systems': '/pillar5',
+  'Team Training': '/pillar6',
+  'Dashboards & Reporting': '/pillar7',
+};
+
+// Safe function to parse the array and return the correct label and link
+const getBadgeInfo = (pillars: string[] | undefined): { badgeLabel: string | null, badgeLink: string } => {
+  const safe = pillars || [];
+  if (safe.length === 0) return { badgeLabel: null, badgeLink: '/system' };
+  
+  if (safe.includes('The System')) return { badgeLabel: 'The System', badgeLink: '/system' };
+
+  const p1Count = safe.filter(p => PHASE_1_SERVICES.includes(p)).length;
+  const p2Count = safe.filter(p => PHASE_2_SERVICES.includes(p)).length;
+  const p3Count = safe.filter(p => PHASE_3_SERVICES.includes(p)).length;
+
+  // Phase Roll-ups (If multiple selected, roll up to parent phase)
+  if (safe.includes('Get Clients') || p1Count > 1) return { badgeLabel: 'Get Clients', badgeLink: '/system' };
+  if (safe.includes('Scale Faster') || p2Count > 1) return { badgeLabel: 'Scale Faster', badgeLink: '/system' };
+  if (safe.includes('See Clearly') || p3Count > 1) return { badgeLabel: 'See Clearly', badgeLink: '/system' };
+
+  // Single Pillar specific links
+  if (p1Count === 1) {
+    const found = safe.find(p => PHASE_1_SERVICES.includes(p))!;
+    return { badgeLabel: found, badgeLink: ROUTE_MAP[found] || '/system' };
+  }
+  if (p2Count === 1) {
+    const found = safe.find(p => PHASE_2_SERVICES.includes(p))!;
+    return { badgeLabel: found, badgeLink: ROUTE_MAP[found] || '/system' };
+  }
+  if (p3Count === 1) {
+    const found = safe.find(p => PHASE_3_SERVICES.includes(p))!;
+    return { badgeLabel: found, badgeLink: ROUTE_MAP[found] || '/system' };
+  }
+
+  // Fallback
+  return { badgeLabel: safe[0], badgeLink: ROUTE_MAP[safe[0]] || '/system' };
+};
 
 function isPortableBlock(b: GuideContentBlock): b is PortableTextBlock {
   return b._type === 'block'
@@ -354,9 +403,10 @@ function renderGuideBlocks(blocks: GuideContentBlock[]): React.ReactNode[] {
 function InteractiveChecklist({ items, categoryTitle, categoryColour }: any) {
   const [checked, setChecked] = useState<Record<number, boolean>>({});
   
-  // Explicit Support for Black checklist items
+  // Explicit Support for Black checklist items as fallback
   const isGold = categoryColour === 'gold';
-  const isBlack = categoryColour === 'black';
+  const isRed = categoryColour === 'red';
+  const isBlack = categoryColour === 'black' || (!isGold && !isRed); 
   
   const headerClass = isGold 
     ? 'text-[#8B6914] border-[#C5A059]/40' 
@@ -531,18 +581,15 @@ function renderCustomBlock(block: GuideContentBlock, key: number): React.ReactNo
       const altText = (p.image?.alt ?? p.caption ?? '').trim() || ''
 
       return (
-        // THE FIX: Mobile relies naturally on width. Desktop uses flex-1 to stretch into empty space.
         <div key={key} className="my-6 flex w-full flex-col items-center justify-center md:flex-1 md:min-h-0">
-          {/* THE FIX: Mobile uses w-full. Desktop uses md:h-full md:w-auto to dictate width via height, capped horizontally by max-w-full */}
           <div className={`relative p-2 md:p-3 rounded-[16px] md:rounded-[24px] bg-[#FFF2EC] shadow-neu border border-white/50 w-full md:w-auto md:h-full max-w-full flex-shrink min-h-0 mx-auto ${ratioClass}`}>
             <div className="relative w-full h-full flex items-center justify-center overflow-hidden rounded-xl border border-black/5 bg-[#FFF8F5] shadow-neu-inner">
               {imageSrc ? (
+                // UPDATED: Removed loading="lazy" so print catches the image immediately
                 <img
                   src={imageSrc}
                   alt={altText}
                   className="absolute inset-0 z-10 h-full w-full object-cover"
-                  loading="lazy"
-                  decoding="async"
                 />
               ) : (
                 <>
@@ -577,7 +624,8 @@ function renderCustomBlock(block: GuideContentBlock, key: number): React.ReactNo
 type PageContainerProps = {
   pageIndex: number
   totalPages: number
-  servicePillar?: string | null
+  badgeLabel?: string | null
+  badgeLink?: string
   children: React.ReactNode
 }
 
@@ -614,7 +662,6 @@ function CoverPage({ guideData }: { guideData: GuideDocument }) {
         console.error('Error sharing:', err);
       }
     } else {
-      // Fallback if share isn't supported
       navigator.clipboard.writeText(window.location.href);
       alert('Link copied to clipboard!');
     }
@@ -665,7 +712,7 @@ function CoverPage({ guideData }: { guideData: GuideDocument }) {
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
                 </svg>
-                Share / Save Link
+                Share
               </button>
               
               <button 
@@ -675,18 +722,20 @@ function CoverPage({ guideData }: { guideData: GuideDocument }) {
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
                 </svg>
-                Print / Save PDF
+                Print
               </button>
             </div>
           </div>
         </div>
       )}
 
-      <div className="absolute top-0 left-0 w-full pt-12 md:pt-20 px-8 md:px-24 flex justify-center z-[3]">
-        <SysbiltLogo className="w-[100px] md:w-[120px] h-auto text-[#1a1a1a] opacity-90" />
+      {/* UPDATED: Added print: margins for the Cover */}
+      <div className="absolute top-0 left-0 w-full pt-12 md:pt-20 print:pt-20 px-8 md:px-24 print:px-24 flex justify-center z-[3]">
+        <SysbiltLogo className="w-[100px] md:w-[120px] print:w-[120px] h-auto text-[#1a1a1a] opacity-90" />
       </div>
       
-      <div className="relative z-[2] flex flex-1 h-full w-full flex-col items-center justify-center px-8 md:px-24 py-32 text-center">
+      {/* UPDATED: Added print: margins for the Cover */}
+      <div className="relative z-[2] flex flex-1 h-full w-full flex-col items-center justify-center px-8 md:px-24 print:px-24 py-32 text-center">
          <h1 className="font-serif text-[42px] md:text-[64px] leading-[1.05] tracking-tighter text-[#1a1a1a] mb-6 md:mb-8 max-w-[650px] mx-auto">
            {guideData.title}
          </h1>
@@ -708,28 +757,35 @@ function CoverPage({ guideData }: { guideData: GuideDocument }) {
   )
 }
 
-function PageContainer({pageIndex, totalPages, servicePillar, children}: PageContainerProps) {
+function PageContainer({pageIndex, totalPages, badgeLabel, badgeLink, children}: PageContainerProps) {
   return (
     <div className="print-page relative flex w-full max-w-[794px] h-auto min-h-[100vh] md:min-h-0 md:h-[1123px] md:flex-shrink-0 flex-col overflow-hidden bg-[#FFF2EC] text-[#1a1a1a] shadow-neu border border-white/40">
       <NoiseLayer />
       <div className="relative z-[2] flex h-full min-h-0 flex-col">
-        <header className="a4-header flex h-[90px] md:h-[110px] shrink-0 items-center justify-between border-b border-black/5 px-8 md:px-24">
+        {/* UPDATED: Added print: margins for the Content Headers */}
+        <header className="a4-header flex h-[90px] md:h-[110px] print:h-[110px] shrink-0 items-center justify-between border-b border-black/5 px-8 md:px-24 print:px-24">
           <SysbiltLogo className="w-[70px] md:w-[85px] h-auto text-[#1a1a1a] opacity-70" />
           
-          {servicePillar ? (
-            <div className="shadow-neu-inner bg-[#FFF8F5] border border-black/5 rounded-md px-3 py-1.5 md:px-4 md:py-2">
-               <span className="font-mono text-[9px] md:text-[10px] font-bold uppercase tracking-[0.15em] text-[#8B6914]">
-                 {servicePillar}
+          {badgeLabel && (
+            // UPDATED: Changed from recessed (shadow-neu-inner) to elevated button (shadow-neu)
+            <Link 
+              to={badgeLink || '/'}
+              className="shadow-neu bg-[#FFF2EC] border border-white/50 rounded-lg px-4 py-2 transition-all duration-300 hover:shadow-neu-inner hover:bg-[#FFF8F5] active:shadow-neu-inner group print:pointer-events-none print:shadow-none print:border-black/20"
+            >
+               <span className="font-mono text-[9px] md:text-[10px] font-bold uppercase tracking-[0.15em] text-[#1a1a1a]/70 transition-colors duration-300 group-hover:text-[#9A1730] print:text-[#1a1a1a]">
+                 {badgeLabel}
                </span>
-            </div>
-          ) : null}
+            </Link>
+          )}
         </header>
 
-       <main className="min-h-0 flex-1 overflow-hidden px-8 md:px-24 py-8 md:py-12 flex flex-col justify-center">
+       {/* UPDATED: Added print: margins for the Content Body */}
+       <main className="min-h-0 flex-1 overflow-hidden px-8 md:px-24 print:px-24 py-8 md:py-12 print:py-12 flex flex-col justify-center">
           <div className="flex flex-col w-full h-full min-h-0">{children}</div>
         </main>
 
-        <footer className="a4-footer flex h-[80px] md:h-[100px] shrink-0 items-center justify-between border-t border-black/5 px-8 md:px-24">
+        {/* UPDATED: Added print: margins for the Content Footers */}
+        <footer className="a4-footer flex h-[80px] md:h-[100px] print:h-[100px] shrink-0 items-center justify-between border-t border-black/5 px-8 md:px-24 print:px-24">
           <span className="font-mono text-[10px] md:text-[11px] font-bold tracking-[0.25em] text-[#1a1a1a]/50">
             SYSBILT.COM
           </span>
@@ -823,10 +879,7 @@ const GUIDE_STYLES = `
     width: 100% !important;
   }
 
-  /* THE FIX: Lock exact pixel dimensions and hide overflow.
-    This stops the browser from calculating a sub-pixel overflow 
-    that triggers an invisible blank page before the page-break.
-  */
+  /* REVERTED: Let the browser handle standard block layout for print to prevent text overflow */
   .print-page {
     width: 210mm !important;
     height: 296.5mm !important; 
@@ -840,21 +893,38 @@ const GUIDE_STYLES = `
     page-break-inside: avoid !important;
     break-after: page !important;
     break-inside: avoid !important;
-  }
-
-  /* Remove ALL shadows during print to fix weird shape glitches */
-  .print-page, .print-page * {
     box-shadow: none !important;
   }
 
-  /* Ensure the absolute final page (the CTA) doesn't force an empty trailing page */
+  /* Remove ALL shadows during print to fix weird shape glitches */
+  .print-page * {
+    box-shadow: none !important;
+  }
+
+/* Ensure the absolute final page (the CTA) doesn't force an empty trailing page */
   .guide-page-stack > .print-page:last-child {
     page-break-after: auto !important;
     break-after: auto !important;
   }
 
+  /* CRITICAL FIX: The SVG noise filter causes print engines to thin out fonts. 
+     We must completely disable it and remove any filters from the page container. */
   .noise-layer {
     display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+  }
+  
+  .print-page {
+    filter: none !important;
+    -webkit-filter: none !important;
+  }
+  
+  /* Force text rendering back to normal */
+  * {
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+    text-rendering: optimizeLegibility !important;
   }
 }
 `
@@ -910,14 +980,10 @@ export default function GuideDocumentPage() {
 
   const pages = guideData?.pages ?? []
 
-  // THE TITLE OVERRIDE FIX: Change "General Overview" to "The System" automatically
-  let cleanPillarName = guideData?.servicePillar
-    ? guideData.servicePillar.replace(/^Pillar\s*\d+:\s*/i, '').trim()
-    : null
-
-  if (cleanPillarName && cleanPillarName.toLowerCase() === 'general overview') {
-    cleanPillarName = 'The System';
-  }
+  // DYNAMIC BADGE & ROUTING LOGIC
+  const { badgeLabel, badgeLink } = useMemo(() => {
+    return getBadgeInfo(guideData?.servicePillar);
+  }, [guideData?.servicePillar]);
 
   const includeCtaPage = guideData?.includeCtaPage !== false
   const totalPages = 1 + pages.length + (includeCtaPage ? 1 : 0)
@@ -927,7 +993,12 @@ export default function GuideDocumentPage() {
       const blocks = page.content ?? []
       return (
         <React.Fragment key={page._key ?? idx}>
-          <PageContainer pageIndex={idx + 2} totalPages={totalPages} servicePillar={cleanPillarName}>
+          <PageContainer 
+            pageIndex={idx + 2} 
+            totalPages={totalPages} 
+            badgeLabel={badgeLabel}
+            badgeLink={badgeLink}
+          >
             {renderGuideBlocks(blocks)}
           </PageContainer>
         </React.Fragment>
@@ -944,7 +1015,12 @@ export default function GuideDocumentPage() {
 
     const ctaEndPage =
       guideData && includeCtaPage ? (
-        <PageContainer pageIndex={totalPages} totalPages={totalPages} servicePillar={cleanPillarName}>
+        <PageContainer 
+          pageIndex={totalPages} 
+          totalPages={totalPages} 
+          badgeLabel={badgeLabel}
+          badgeLink={badgeLink}
+        >
           <div className="flex flex-1 flex-col items-center justify-center text-center max-w-2xl mx-auto py-12 px-4 md:px-8">
             <div className="w-20 h-20 md:w-28 md:h-28 rounded-full shadow-neu flex items-center justify-center bg-[#FFF2EC] mb-8 md:mb-12 border border-white/40">
               <div className="w-14 h-14 md:w-20 md:h-20 rounded-full shadow-neu-inner flex items-center justify-center bg-[#FFF8F5]">
@@ -981,7 +1057,7 @@ export default function GuideDocumentPage() {
         {ctaEndPage}
       </>
     )
-  }, [pages, totalPages, guideData, cleanPillarName, includeCtaPage])
+  }, [pages, totalPages, guideData, badgeLabel, badgeLink, includeCtaPage])
 
   const metaTitle = guideData?.seoTitle?.trim() || (guideData?.title ? `${guideData.title} | SYSBILT` : 'Guide | SYSBILT')
   const metaDescription =

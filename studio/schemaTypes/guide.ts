@@ -1,14 +1,17 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
 
 const SERVICE_PILLAR_OPTIONS = [
-  {title: 'General Overview', value: 'General Overview'},
-  {title: 'Pillar 1: WEBSITES & E-COMMERCE', value: 'Pillar 1: WEBSITES & E-COMMERCE'},
-  {title: 'Pillar 2: CRM & LEAD TRACKING', value: 'Pillar 2: CRM & LEAD TRACKING'},
-  {title: 'Pillar 3: AUTOMATION', value: 'Pillar 3: AUTOMATION'},
-  {title: 'Pillar 4: AI ASSISTANTS', value: 'Pillar 4: AI ASSISTANTS'},
-  {title: 'Pillar 5: CONTENT SYSTEMS', value: 'Pillar 5: CONTENT SYSTEMS'},
-  {title: 'Pillar 6: TEAM TRAINING', value: 'Pillar 6: TEAM TRAINING'},
-  {title: 'Pillar 7: DASHBOARDS & REPORTING', value: 'Pillar 7: DASHBOARDS & REPORTING'},
+  {title: 'Website & E-commerce', value: 'Website & E-commerce'},
+  {title: 'CRM & Lead Tracking', value: 'CRM & Lead Tracking'},
+  {title: 'Automation', value: 'Automation'},
+  {title: 'AI Assistants', value: 'AI Assistants'},
+  {title: 'Content Systems', value: 'Content Systems'},
+  {title: 'Team Training', value: 'Team Training'},
+  {title: 'Dashboards & Reporting', value: 'Dashboards & Reporting'},
+  {title: 'Get Clients', value: 'Get Clients'},
+  {title: 'Scale Faster', value: 'Scale Faster'},
+  {title: 'See Clearly', value: 'See Clearly'},
+  {title: 'The System', value: 'The System'},
 ] as const
 
 const BUSINESS_PHASE_OPTIONS = [
@@ -46,11 +49,12 @@ export default defineType({
     }),
     defineField({
       name: 'servicePillar',
-      title: 'Service pillar',
-      type: 'string',
+      title: 'Service Pillars & Categories',
+      type: 'array',
+      description: 'Check one or more. If multiple are checked, the frontend will automatically group them under a phase (e.g. Get Clients).',
+      of: [{type: 'string'}],
       options: {
         list: [...SERVICE_PILLAR_OPTIONS],
-        layout: 'dropdown',
       },
     }),
     defineField({
