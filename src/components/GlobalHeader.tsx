@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { m, AnimatePresence } from 'framer-motion';
 import { Menu, X, ChevronDown, Target, TrendingUp, BarChart3 } from 'lucide-react';
 import CTAButton from './CTAButton';
@@ -22,7 +23,13 @@ interface GlobalHeaderProps {
 }
 
 function isInsightsActive(currentView: string): boolean {
-  return currentView === 'blog' || currentView.startsWith('blog') || currentView === 'news';
+  return (
+    currentView === 'blog' ||
+    currentView.startsWith('blog') ||
+    currentView === 'news' ||
+    currentView === 'guides' ||
+    currentView.startsWith('guides/')
+  );
 }
 
 const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, scrolled, solidBackground = false }) => {
@@ -228,6 +235,16 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
                               >
                                 Blog
                               </button>
+                              <Link
+                                to="/guides"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setOpenDesktopDropdown(null);
+                                }}
+                                className="text-left font-serif text-lg text-dark/80 hover:pl-2 transition-all duration-200 hover:text-red-text"
+                              >
+                                Guides
+                              </Link>
                               <button
                                 type="button"
                                 onClick={(e) => {
@@ -479,6 +496,13 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
                               >
                                 Blog
                               </button>
+                              <Link
+                                to="/guides"
+                                onClick={() => setIsMenuOpen(false)}
+                                className="text-left font-serif text-lg text-dark/70 hover:text-dark active:text-gold-on-cream transition-colors"
+                              >
+                                Guides
+                              </Link>
                               <button
                                 type="button"
                                 onClick={() => {

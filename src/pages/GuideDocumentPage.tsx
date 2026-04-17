@@ -1,6 +1,8 @@
 import React, {useEffect, useMemo, useState} from 'react'
 import {useParams, Link} from 'react-router-dom'
+import {ArrowLeft} from 'lucide-react'
 import {client, urlFor} from '../sanityClient'
+import {Helmet} from 'react-helmet-async'
 import {PageMeta} from '../components/PageMeta'
 import {SITE_ORIGIN} from '../constants/seoMeta'
 import {SysbiltLogo} from '../components/SysbiltLogo'
@@ -101,6 +103,8 @@ export type GuideDocument = {
   subtitle?: string
   seoTitle?: string
   seoDescription?: string
+  publishedAt?: string
+  slug?: {current?: string}
   servicePillar?: string[] // UPDATED: Now expects an array from Sanity
   coverLegend?: string
   includeCtaPage?: boolean
@@ -127,6 +131,7 @@ const GUIDE_BY_SLUG_QUERY = `*[_type == "guide" && slug.current == $slug && !(_i
   subtitle,
   seoTitle,
   seoDescription,
+  slug,
   servicePillar,
   publishedAt,
   coverLegend,
@@ -1059,11 +1064,6 @@ export default function GuideDocumentPage() {
     )
   }, [pages, totalPages, guideData, badgeLabel, badgeLink, includeCtaPage])
 
-  const metaTitle = guideData?.seoTitle?.trim() || (guideData?.title ? `${guideData.title} | SYSBILT` : 'Guide | SYSBILT')
-  const metaDescription =
-    guideData?.seoDescription?.trim() || guideData?.subtitle?.trim() || 'SYSBILT system guides for growing Australian businesses.'
-  const canonical = slug ? `${SITE_ORIGIN}/guides/${slug}` : undefined
-
   if (loading) {
     return (
       <div className="guide-root flex min-h-screen items-center justify-center bg-[#FFF2EC] px-4 py-20">
@@ -1087,12 +1087,100 @@ export default function GuideDocumentPage() {
     )
   }
 
+  const pageDescription = guideData.seoDescription?.trim() || guideData.subtitle?.trim() || ''
+  const rawDocTitle = guideData.seoTitle?.trim() || guideData.title
+  const htmlTitle = `${rawDocTitle} | SYSBILT`
+  const guideSlug = guideData.slug?.current ?? slug ?? ''
+  const guidePageUrl = `${SITE_ORIGIN}/guides/${guideSlug}`
+  const ogTitle = guideData.seoTitle?.trim() || guideData.title
+  const defaultOgImage = `${SITE_ORIGIN}/images/og-sysbilt.png`
+
+  const articleJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: guideData.title,
+    description: pageDescription,
+    datePublished: guideData.publishedAt,
+    author: {
+      '@type': 'Organization',
+      name: 'SYSBILT',
+      url: SITE_ORIGIN,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'SYSBILT',
+      url: SITE_ORIGIN,
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `${SITE_ORIGIN}/guides/${guideSlug}`,
+    },
+    educationalUse: 'Professional Development',
+  }
+
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: `${SITE_ORIGIN}/`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Guides',
+        item: `${SITE_ORIGIN}/guides`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: guideData.title,
+        item: guidePageUrl,
+      },
+    ],
+  }
+
   return (
     <div className="guide-root min-h-screen bg-[#FFF2EC] pt-[100px] md:pt-[140px] pb-16 md:pb-24 text-[#1a1a1a]">
       <style>{GUIDE_STYLES}</style>
-      <PageMeta title={metaTitle} description={metaDescription} canonical={canonical} />
+      <Helmet>
+        <title>{htmlTitle}</title>
+        <meta name="description" content={pageDescription} />
+        <link rel="canonical" href={guidePageUrl} />
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content={guidePageUrl} />
+        <meta property="og:title" content={ogTitle} />
+        <meta property="og:description" content={pageDescription} />
+        <meta property="og:image" content={defaultOgImage} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content={defaultOgImage} />
+        <meta name="twitter:url" content={guidePageUrl} />
+        <meta name="twitter:title" content={ogTitle} />
+        <meta name="twitter:description" content={pageDescription} />
+        <script type="application/ld+json">{JSON.stringify(articleJsonLd)}</script>
+        <script type="application/ld+json">{JSON.stringify(breadcrumbJsonLd)}</script>
+      </Helmet>
       
       <div className="guide-page-stack mx-auto flex w-full max-w-[840px] flex-col items-center gap-12 md:gap-16 px-4">
+        <nav aria-label="Guide navigation" className="print:hidden relative z-20 w-full self-stretch">
+          <div className="flex flex-wrap items-center gap-x-8 gap-y-2">
+            <Link
+              to="/guides"
+              className="inline-flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-[0.2em] text-[#1a1a1a]/50 transition-colors hover:text-[#1a1a1a]"
+            >
+              <ArrowLeft className="h-4 w-4" /> All Guides
+            </Link>
+            <Link
+              to="/"
+              className="inline-flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-[0.2em] text-[#1a1a1a]/35 transition-colors hover:text-[#1a1a1a]/85"
+            >
+              <ArrowLeft className="h-4 w-4" /> Home
+            </Link>
+          </div>
+        </nav>
         {pageNodes}
       </div>
     </div>

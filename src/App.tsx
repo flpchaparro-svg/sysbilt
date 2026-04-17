@@ -57,6 +57,7 @@ const App: React.FC = () => {
       'homepage': '/',
       'blog': '/blog',
       'news': '/news',
+      'guides': '/guides',
       'architect': '/architect',
       'system': '/system',
       'process': '/process',

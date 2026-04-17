@@ -1,7 +1,9 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { m, AnimatePresence } from 'framer-motion';
+import { Helmet } from 'react-helmet-async';
 import { PageMeta } from '../components/PageMeta';
+import { SITE_ORIGIN } from '../constants/seoMeta';
 import { ArrowRight, BookOpen, FileText, Rss, ChevronDown, ChevronUp } from 'lucide-react';
 import { client } from '../sanityClient';
 
@@ -16,6 +18,31 @@ type HubGuide = {
 const PHASE_1_SERVICES = ['Website & E-commerce', 'CRM & Lead Tracking', 'Automation'];
 const PHASE_2_SERVICES = ['AI Assistants', 'Content Systems', 'Team Training'];
 const PHASE_3_SERVICES = ['Dashboards & Reporting'];
+
+const GUIDES_HUB_URL = `${SITE_ORIGIN}/guides`;
+
+const guidesHubCollectionJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Business System Guides | SYSBILT',
+  description:
+    'Deep guides on how to build business systems that actually work. Websites, CRM, automation, AI, content, training, and dashboards.',
+  url: GUIDES_HUB_URL,
+  publisher: {
+    '@type': 'Organization',
+    name: 'SYSBILT',
+    url: SITE_ORIGIN,
+  },
+};
+
+const guidesHubBreadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_ORIGIN}/` },
+    { '@type': 'ListItem', position: 2, name: 'Guides', item: GUIDES_HUB_URL },
+  ],
+};
 
 // Helper to determine the primary badge label based on the array of selected pillars
 const getPrimaryBadge = (pillars: string[] | undefined): string => {
@@ -96,7 +123,15 @@ export default function GuidesHubPage() {
 
   return (
     <div className="min-h-screen bg-cream font-sans selection:bg-dark selection:text-cream flex flex-col">
-      <PageMeta title="System Guides | SYSBILT" description="Structured guides on business systems, lead capture, and automation." />
+      <PageMeta
+        title="Business System Guides for Growing Companies | SYSBILT"
+        description="Deep guides on building business systems. Websites, CRM, automation, AI assistants, content systems, team training, and dashboards. Free to read and download."
+        canonical={GUIDES_HUB_URL}
+      />
+      <Helmet>
+        <script type="application/ld+json">{JSON.stringify(guidesHubCollectionJsonLd)}</script>
+        <script type="application/ld+json">{JSON.stringify(guidesHubBreadcrumbJsonLd)}</script>
+      </Helmet>
       
       <main className="flex-grow pt-28 md:pt-32 pb-24 relative overflow-hidden">
         <div className="pointer-events-none absolute inset-0 z-0 opacity-[0.03] mix-blend-multiply" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>

@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { motion, useAnimationFrame, useMotionValue, useTransform, useScroll } from 'framer-motion';
 import CTAButton from '../../components/CTAButton';
 import BackButton from '../../components/BackButton';
@@ -98,6 +99,12 @@ const Pillar5: React.FC<Pillar5Props> = ({ onNavigate }) => {
               <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/70 max-w-2xl border-l-2 border-gold pl-6 mb-10 md:mb-8">{hero.sub}</p>
               <div className="flex flex-col sm:flex-row gap-4 sm:items-center sm:gap-8 items-start mt-2">
                 <CTAButton theme="light" onClick={() => onNavigate('contact')}>{hero.ctaPrimary}</CTAButton>
+                <Link
+                  to="/guides/content-systems"
+                  className="font-sans text-sm text-dark/40 transition-colors hover:text-dark/60"
+                >
+                  or read the full guide first →
+                </Link>
               </div>
             </div>
             <div className="hidden lg:flex w-full h-full items-center justify-end">
@@ -212,6 +219,26 @@ const Pillar5: React.FC<Pillar5Props> = ({ onNavigate }) => {
               </div>
             </div>
           </div>
+
+          <section
+            className="mx-auto w-full max-w-[700px] bg-cream py-16 text-center md:py-20"
+            aria-label="Guide deep-dive"
+          >
+            <p className="mb-4 font-mono text-[11px] font-bold uppercase tracking-[0.3em] text-gold-on-cream">
+              / LEARN FIRST
+            </p>
+            <h2 className="mb-6 font-serif text-3xl text-dark">Want to know how to build a content system?</h2>
+            <p className="mb-10 font-sans text-lg font-light leading-relaxed text-dark/70">
+              Read the complete guide on building a content system that works for your business. Everything we described
+              here, in depth, with examples and a diagnostic checklist.
+            </p>
+            <Link
+              to="/guides/content-systems"
+              className="inline-block rounded-full border border-dark/20 px-8 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark transition-colors hover:border-dark/40"
+            >
+              [ READ THE GUIDE ]
+            </Link>
+          </section>
 
           {/* FINAL CTA */}
           <div className="mt-20 md:mt-24 w-full bg-dark rounded-sm p-12 md:p-24 flex flex-col items-center justify-center text-center">

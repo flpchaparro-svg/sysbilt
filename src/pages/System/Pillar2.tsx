@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { motion, useAnimationFrame, useMotionValue, useTransform, useScroll } from 'framer-motion';
 import CTAButton from '../../components/CTAButton';
 import BackButton from '../../components/BackButton';
@@ -145,6 +146,12 @@ const Pillar2: React.FC<Pillar2Props> = ({ onNavigate }) => {
                 <CTAButton theme="light" onClick={() => onNavigate('contact')}>
                   {hero.ctaPrimary}
                 </CTAButton>
+                <Link
+                  to="/guides/lead-tracking"
+                  className="font-sans text-sm text-dark/40 transition-colors hover:text-dark/60"
+                >
+                  or read the full guide first →
+                </Link>
               </div>
             </div>
 
@@ -315,6 +322,26 @@ const Pillar2: React.FC<Pillar2Props> = ({ onNavigate }) => {
               </div>
             </div>
           </div>
+
+          <section
+            className="mx-auto w-full max-w-[700px] bg-cream py-16 text-center md:py-20"
+            aria-label="Guide deep-dive"
+          >
+            <p className="mb-4 font-mono text-[11px] font-bold uppercase tracking-[0.3em] text-gold-on-cream">
+              / LEARN FIRST
+            </p>
+            <h2 className="mb-6 font-serif text-3xl text-dark">Want to know how to stop losing leads?</h2>
+            <p className="mb-10 font-sans text-lg font-light leading-relaxed text-dark/70">
+              Read the complete guide on lead tracking that works for your business. Everything we described here, in
+              depth, with examples and a diagnostic checklist.
+            </p>
+            <Link
+              to="/guides/lead-tracking"
+              className="inline-block rounded-full border border-dark/20 px-8 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark transition-colors hover:border-dark/40"
+            >
+              [ READ THE GUIDE ]
+            </Link>
+          </section>
 
           {/* FINAL CTA MODULE */}
           <div className="mt-20 md:mt-24 w-full bg-dark rounded-sm p-12 md:p-24 flex flex-col items-center justify-center text-center">

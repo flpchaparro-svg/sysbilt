@@ -1,4 +1,5 @@
 import React, { useRef, lazy, Suspense } from 'react';
+import { Link } from 'react-router-dom';
 import { 
   m, 
   useScroll, 
@@ -125,6 +126,25 @@ const SystemPage: React.FC<SystemPageProps> = ({ onBack, onNavigate }) => {
       {/* 3. GRID BLUEPRINT (Isolated State) */}
       <section className="w-full bg-cream pb-20 md:pb-24 relative z-10">
         <SystemGrid onNavigate={onNavigate} />
+      </section>
+
+      <section
+        className="w-full border-t border-dark/10 bg-cream px-6 pb-16 pt-12 md:px-12 md:pb-20 md:pt-14 lg:px-20"
+        aria-label="Revenue Engine guide"
+      >
+        <div className="mx-auto max-w-[640px] text-center">
+          <p className="mb-3 font-mono text-[11px] font-bold uppercase tracking-[0.3em] text-gold-on-cream">/ THE FULL GUIDE</p>
+          <p className="mb-8 font-sans text-base font-light leading-relaxed text-dark/70 md:text-[17px] md:leading-relaxed">
+            Want the complete picture? Read The Revenue Engine guide — everything you see here, explained in depth with a
+            diagnostic checklist.
+          </p>
+          <Link
+            to="/guides/revenue-engine"
+            className="inline-block rounded-full border border-dark/20 px-8 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark transition-colors hover:border-dark/40"
+          >
+            [ READ THE GUIDE ]
+          </Link>
+        </div>
       </section>
 
       {/* 4. STATIC FOOTER CONTENT */}
