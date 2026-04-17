@@ -54,7 +54,7 @@ export type BulletCardBlock = {
 export type ChecklistGroupBlock = {
   _type: 'checklistGroup'
   categoryTitle?: string
-  categoryColour?: 'red' | 'gold' | string
+  categoryColour?: 'red' | 'gold' | 'black' | string
   items?: string[]
 }
 
@@ -353,9 +353,22 @@ function renderGuideBlocks(blocks: GuideContentBlock[]): React.ReactNode[] {
 // Interactive Component for Checklists
 function InteractiveChecklist({ items, categoryTitle, categoryColour }: any) {
   const [checked, setChecked] = useState<Record<number, boolean>>({});
+  
+  // Explicit Support for Black checklist items
   const isGold = categoryColour === 'gold';
-  const headerClass = isGold ? 'text-[#8B6914] border-[#C5A059]/40' : 'text-[#9A1730] border-[#9A1730]/30';
-  const checkColour = isGold ? 'text-[#8B6914]' : 'text-[#9A1730]';
+  const isBlack = categoryColour === 'black';
+  
+  const headerClass = isGold 
+    ? 'text-[#8B6914] border-[#C5A059]/40' 
+    : isBlack 
+    ? 'text-[#1a1a1a] border-black/20' 
+    : 'text-[#9A1730] border-[#9A1730]/30';
+    
+  const checkColour = isGold 
+    ? 'text-[#8B6914]' 
+    : isBlack 
+    ? 'text-[#1a1a1a]' 
+    : 'text-[#9A1730]';
 
   const toggleCheck = (idx: number) => {
     setChecked(prev => ({ ...prev, [idx]: !prev[idx] }));
@@ -505,8 +518,6 @@ function renderCustomBlock(block: GuideContentBlock, key: number): React.ReactNo
     case 'imagePlaceholder': {
       const p = block as ImagePlaceholderBlock
 
-      // THE FIX: We use standard Tailwind aspect-ratio classes. 
-      // We do NOT hardcode heights or widths here. 
       const ratioClass = {
         '16:9': 'aspect-video',
         '4:3': 'aspect-[4/3]',
@@ -520,10 +531,10 @@ function renderCustomBlock(block: GuideContentBlock, key: number): React.ReactNo
       const altText = (p.image?.alt ?? p.caption ?? '').trim() || ''
 
       return (
-        // Wrapper: allowed to shrink (min-h-0, flex-shrink), capped at 500px so it doesn't get huge.
-        <div key={key} className="my-6 flex w-full flex-col items-center justify-center min-h-0 flex-shrink flex-1 max-h-[500px]">
-          {/* Frame: h-full makes it fill available space. max-w-full stops overflow. aspect-[ratio] mathematically scales it perfectly without cropping. */}
-          <div className={`relative p-2 md:p-3 rounded-[16px] md:rounded-[24px] bg-[#FFF2EC] shadow-neu border border-white/50 h-full max-w-full flex-shrink min-h-0 mx-auto ${ratioClass}`}>
+        // THE FIX: Mobile relies naturally on width. Desktop uses flex-1 to stretch into empty space.
+        <div key={key} className="my-6 flex w-full flex-col items-center justify-center md:flex-1 md:min-h-0">
+          {/* THE FIX: Mobile uses w-full. Desktop uses md:h-full md:w-auto to dictate width via height, capped horizontally by max-w-full */}
+          <div className={`relative p-2 md:p-3 rounded-[16px] md:rounded-[24px] bg-[#FFF2EC] shadow-neu border border-white/50 w-full md:w-auto md:h-full max-w-full flex-shrink min-h-0 mx-auto ${ratioClass}`}>
             <div className="relative w-full h-full flex items-center justify-center overflow-hidden rounded-xl border border-black/5 bg-[#FFF8F5] shadow-neu-inner">
               {imageSrc ? (
                 <img
@@ -603,7 +614,7 @@ function CoverPage({ guideData }: { guideData: GuideDocument }) {
         console.error('Error sharing:', err);
       }
     } else {
-      // Fallback if share isn't supported (e.g., older desktop browsers)
+      // Fallback if share isn't supported
       navigator.clipboard.writeText(window.location.href);
       alert('Link copied to clipboard!');
     }
@@ -612,18 +623,15 @@ function CoverPage({ guideData }: { guideData: GuideDocument }) {
 
   const handlePrint = () => {
     setShowModal(false);
-    // Slight delay to allow modal to close visually before browser freezes the DOM for the print dialog
     setTimeout(() => {
       window.print();
     }, 100);
   };
 
   return (
-    // Replaced rigid pixel width/height with w-full and md:h-[1123px] for true mobile responsiveness
     <div className="print-page relative flex w-full max-w-[794px] h-auto min-h-[100vh] md:min-h-0 md:h-[1123px] md:flex-shrink-0 flex-col overflow-hidden bg-[#FFF2EC] text-[#1a1a1a] shadow-neu border border-white/40">
       <NoiseLayer />
       
-      {/* Functional Print/Download Button (Hidden when actually printing) */}
       <button 
         onClick={() => setShowModal(true)}
         className="absolute top-6 right-6 md:top-10 md:right-10 z-[20] flex items-center gap-2 px-4 py-2 md:px-5 md:py-2.5 rounded-full bg-white/60 backdrop-blur-md border border-black/10 shadow-neu-sm text-[9px] md:text-[10px] font-mono font-bold uppercase tracking-[0.15em] text-[#1a1a1a]/60 hover:bg-white hover:text-[#9A1730] transition-colors print:hidden group"
@@ -634,7 +642,6 @@ function CoverPage({ guideData }: { guideData: GuideDocument }) {
         Save / Print
       </button>
 
-      {/* Custom Soft UX Modal */}
       {showModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#1a1a1a]/40 backdrop-blur-sm print:hidden">
           <div className="w-[90%] max-w-[320px] rounded-[24px] bg-[#FFF2EC] p-6 shadow-neu border border-white/50 text-center relative">
@@ -651,7 +658,6 @@ function CoverPage({ guideData }: { guideData: GuideDocument }) {
             <p className="font-sans text-[14px] text-[#1a1a1a]/60 mb-6">Choose how you want to keep or share this guide.</p>
             
             <div className="flex flex-col gap-3">
-              {/* Share/Mobile Save Button */}
               <button 
                 onClick={handleShare}
                 className="w-full flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-[#FFF8F5] shadow-neu-inner border border-black/5 text-[11px] font-mono font-bold uppercase tracking-widest text-[#8B6914] hover:text-[#1a1a1a] transition-colors"
@@ -662,7 +668,6 @@ function CoverPage({ guideData }: { guideData: GuideDocument }) {
                 Share / Save Link
               </button>
               
-              {/* Native Print/PDF Button */}
               <button 
                 onClick={handlePrint}
                 className="w-full flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-[#1a1a1a] shadow-neu-sm border border-[#333] text-[11px] font-mono font-bold uppercase tracking-widest text-[#FFF2EC] hover:bg-[#222] transition-colors"
@@ -677,12 +682,10 @@ function CoverPage({ guideData }: { guideData: GuideDocument }) {
         </div>
       )}
 
-      {/* Absolute Header - SysbiltLogo component */}
       <div className="absolute top-0 left-0 w-full pt-12 md:pt-20 px-8 md:px-24 flex justify-center z-[3]">
         <SysbiltLogo className="w-[100px] md:w-[120px] h-auto text-[#1a1a1a] opacity-90" />
       </div>
       
-      {/* Absolute Body - True vertical and horizontal centre */}
       <div className="relative z-[2] flex flex-1 h-full w-full flex-col items-center justify-center px-8 md:px-24 py-32 text-center">
          <h1 className="font-serif text-[42px] md:text-[64px] leading-[1.05] tracking-tighter text-[#1a1a1a] mb-6 md:mb-8 max-w-[650px] mx-auto">
            {guideData.title}
@@ -694,7 +697,6 @@ function CoverPage({ guideData }: { guideData: GuideDocument }) {
          )}
       </div>
       
-      {/* Absolute Footer - Pinned to exact bottom */}
       <div className="absolute bottom-0 left-0 w-full pb-12 md:pb-20 px-8 md:px-24 z-[3]">
          <div className="border-t border-black/10 pt-6 md:pt-8 text-center">
             <p className="font-serif text-[15px] md:text-[17px] italic text-[#1a1a1a]/60">
@@ -708,11 +710,9 @@ function CoverPage({ guideData }: { guideData: GuideDocument }) {
 
 function PageContainer({pageIndex, totalPages, servicePillar, children}: PageContainerProps) {
   return (
-    // Replaced rigid pixel width/height with w-full and md:h-[1123px] for true mobile responsiveness
     <div className="print-page relative flex w-full max-w-[794px] h-auto min-h-[100vh] md:min-h-0 md:h-[1123px] md:flex-shrink-0 flex-col overflow-hidden bg-[#FFF2EC] text-[#1a1a1a] shadow-neu border border-white/40">
       <NoiseLayer />
       <div className="relative z-[2] flex h-full min-h-0 flex-col">
-        {/* A4 Header: SysbiltLogo component & Pillar Badge. Fixed padding for mobile */}
         <header className="a4-header flex h-[90px] md:h-[110px] shrink-0 items-center justify-between border-b border-black/5 px-8 md:px-24">
           <SysbiltLogo className="w-[70px] md:w-[85px] h-auto text-[#1a1a1a] opacity-70" />
           
@@ -725,12 +725,10 @@ function PageContainer({pageIndex, totalPages, servicePillar, children}: PageCon
           ) : null}
         </header>
 
-       {/* A4 Content Area - Adjusted mobile padding */}
        <main className="min-h-0 flex-1 overflow-hidden px-8 md:px-24 py-8 md:py-12 flex flex-col justify-center">
           <div className="flex flex-col w-full h-full min-h-0">{children}</div>
         </main>
 
-        {/* A4 Footer: Domain & Page Numbers. Fixed padding for mobile */}
         <footer className="a4-footer flex h-[80px] md:h-[100px] shrink-0 items-center justify-between border-t border-black/5 px-8 md:px-24">
           <span className="font-mono text-[10px] md:text-[11px] font-bold tracking-[0.25em] text-[#1a1a1a]/50">
             SYSBILT.COM
@@ -912,19 +910,21 @@ export default function GuideDocumentPage() {
 
   const pages = guideData?.pages ?? []
 
-  // Clean up the Sanity Pillar text automatically (removes "Pillar X: ")
-  const cleanPillarName = guideData?.servicePillar
+  // THE TITLE OVERRIDE FIX: Change "General Overview" to "The System" automatically
+  let cleanPillarName = guideData?.servicePillar
     ? guideData.servicePillar.replace(/^Pillar\s*\d+:\s*/i, '').trim()
     : null
 
+  if (cleanPillarName && cleanPillarName.toLowerCase() === 'general overview') {
+    cleanPillarName = 'The System';
+  }
+
   const includeCtaPage = guideData?.includeCtaPage !== false
-  // Total = cover (1) + content pages + optional CTA page
   const totalPages = 1 + pages.length + (includeCtaPage ? 1 : 0)
 
   const pageNodes = useMemo(() => {
     const contentPages = pages.map((page, idx) => {
       const blocks = page.content ?? []
-      // idx + 2 because Cover Page is Page 1
       return (
         <React.Fragment key={page._key ?? idx}>
           <PageContainer pageIndex={idx + 2} totalPages={totalPages} servicePillar={cleanPillarName}>
@@ -1016,7 +1016,6 @@ export default function GuideDocumentPage() {
       <style>{GUIDE_STYLES}</style>
       <PageMeta title={metaTitle} description={metaDescription} canonical={canonical} />
       
-      {/* Targeted centered stack container for on-screen/print differentiation. */}
       <div className="guide-page-stack mx-auto flex w-full max-w-[840px] flex-col items-center gap-12 md:gap-16 px-4">
         {pageNodes}
       </div>
