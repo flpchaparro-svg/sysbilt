@@ -9,7 +9,6 @@ lerna-debug.log*
 
 node_modules
 .cache
-dist
 dist-ssr
 *.local
 bundle-stats.html
@@ -24,3 +23,4 @@ bundle-stats.html
 *.njsproj
 *.sln
 *.sw?
+dist/
