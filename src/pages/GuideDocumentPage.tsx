@@ -709,7 +709,7 @@ function CoverPage({ guideData }: { guideData: GuideDocument }) {
             <h3 className="font-serif text-[22px] font-semibold text-[#1a1a1a] mb-2 mt-2">How to save?</h3>
             <p className="font-sans text-[14px] text-[#1a1a1a]/60 mb-6">Choose how you want to keep or share this guide.</p>
             
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3">``
               <button 
                 onClick={handleShare}
                 className="w-full flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-[#FFF8F5] shadow-neu-inner border border-black/5 text-[11px] font-mono font-bold uppercase tracking-widest text-[#8B6914] hover:text-[#1a1a1a] transition-colors"

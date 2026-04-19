@@ -32,6 +32,12 @@ const Pillar5 = lazy(() => import('./pages/System/Pillar5'));
 const Pillar6 = lazy(() => import('./pages/System/Pillar6'));
 const Pillar7 = lazy(() => import('./pages/System/Pillar7'));
 
+declare global {
+  interface Window {
+    prerenderReady: boolean;
+  }
+}
+
 const App: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -50,6 +56,13 @@ const App: React.FC = () => {
       document.documentElement.style.overflow = '';
       window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
     });
+  }, [location.pathname]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      window.prerenderReady = true;
+    }, 3000);
+    return () => clearTimeout(timer);
   }, [location.pathname]);
 
   const handleGlobalNavigate = (path: string, sectionId?: string) => {
