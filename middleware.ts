@@ -22,6 +22,14 @@ const BOT_PATTERNS = [
   /LinkedInBot/i,
   /Twitterbot/i,
   /Slackbot/i,
+  /WhatsApp/i,
+  /TelegramBot/i,
+  /Discordbot/i,
+  /Viber/i,
+  /iMessageBot/i,
+  /Applebot/i,
+  /SkypeUriPreview/i,
+  /Line/i,
 ];
 
 function isBot(userAgent: string): boolean {
