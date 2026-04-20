@@ -4,6 +4,7 @@ import { m, AnimatePresence } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import { PageMeta } from '../components/PageMeta';
 import { SITE_ORIGIN } from '../constants/seoMeta';
+import ShareButton from '../components/ShareButton';
 import { ArrowRight, BookOpen, FileText, Rss, ChevronDown, ChevronUp } from 'lucide-react';
 import { client } from '../sanityClient';
 
@@ -214,13 +215,21 @@ export default function GuidesHubPage() {
           ) : (
             <m.div layout className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
               <AnimatePresence mode="popLayout">
-                {filteredGuides.map((guide) => (
-                  <m.div key={guide.slug?.current} variants={cardVariants} layout initial="hidden" animate="show" exit="exit">
-                    <Link to={`/guides/${guide.slug?.current}`} className="group flex flex-col h-full bg-cream rounded-[28px] p-8 shadow-neu border border-white/40 transition-all duration-500 hover:-translate-y-1">
+                {filteredGuides.map((guide) => {
+                  const slug = guide.slug?.current ?? '';
+                  const guidePath = `/guides/${slug}`;
+                  const shareUrl = `${SITE_ORIGIN}${guidePath}`;
+                  return (
+                  <m.div key={guide.slug?.current} variants={cardVariants} layout initial="hidden" animate="show" exit="exit" className="relative group">
+                    <Link to={guidePath} className="absolute inset-0 z-[1] rounded-[28px]" aria-label={`Open guide: ${guide.title}`} />
+                    <div className="relative z-[2] flex flex-col h-full bg-cream rounded-[28px] p-8 shadow-neu border border-white/40 transition-all duration-500 hover:-translate-y-1 pointer-events-none">
+                      <div className="absolute top-6 right-6 z-[3] pointer-events-auto">
+                        <ShareButton url={shareUrl} title={guide.title} mode="card" variant="neumorphic" />
+                      </div>
                       <div className="mb-6 inline-flex border border-gold-on-cream/20 px-3 py-1.5 rounded-sm text-[10px] font-bold uppercase tracking-widest text-gold-on-cream bg-cream shadow-neu-inner w-fit">
                         {getPrimaryBadge(guide.servicePillar)}
                       </div>
-                      <h2 className="font-serif text-2xl text-dark mb-4 group-hover:text-red-text transition-colors leading-tight">
+                      <h2 className="font-serif text-2xl text-dark mb-4 group-hover:text-red-text transition-colors leading-tight pr-12">
                         {guide.title}
                       </h2>
                       <p className="text-on-cream-secondary font-light text-sm mb-10 line-clamp-3 flex-grow">
@@ -229,9 +238,10 @@ export default function GuidesHubPage() {
                       <div className="flex items-center text-[11px] font-bold uppercase tracking-widest text-dark group-hover:text-red-text pt-4 border-t border-black/5">
                         Open Guide <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
                       </div>
-                    </Link>
+                    </div>
                   </m.div>
-                ))}
+                  );
+                })}
               </AnimatePresence>
             </m.div>
           )}

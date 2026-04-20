@@ -6,6 +6,7 @@ import {Helmet} from 'react-helmet-async'
 import {PageMeta} from '../components/PageMeta'
 import {SITE_ORIGIN} from '../constants/seoMeta'
 import {SysbiltLogo} from '../components/SysbiltLogo'
+import ShareButton from '../components/ShareButton'
 
 // --- Types aligned with Sanity `guide` + `guideBlockContent` ---
 
@@ -655,24 +656,6 @@ function NoiseLayer() {
 function CoverPage({ guideData }: { guideData: GuideDocument }) {
   const [showModal, setShowModal] = useState(false);
 
-  const handleShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: guideData.title,
-          text: guideData.subtitle || 'Check out this guide by SYSBILT.',
-          url: window.location.href,
-        });
-      } catch (err) {
-        console.error('Error sharing:', err);
-      }
-    } else {
-      navigator.clipboard.writeText(window.location.href);
-      alert('Link copied to clipboard!');
-    }
-    setShowModal(false);
-  };
-
   const handlePrint = () => {
     setShowModal(false);
     setTimeout(() => {
@@ -709,17 +692,31 @@ function CoverPage({ guideData }: { guideData: GuideDocument }) {
             <h3 className="font-serif text-[22px] font-semibold text-[#1a1a1a] mb-2 mt-2">How to save?</h3>
             <p className="font-sans text-[14px] text-[#1a1a1a]/60 mb-6">Choose how you want to keep or share this guide.</p>
             
-            <div className="flex flex-col gap-3">``
-              <button 
-                onClick={handleShare}
-                className="w-full flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-[#FFF8F5] shadow-neu-inner border border-black/5 text-[11px] font-mono font-bold uppercase tracking-widest text-[#8B6914] hover:text-[#1a1a1a] transition-colors"
-              >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-                </svg>
-                Share
-              </button>
-              
+            <div className="flex flex-col gap-3">
+              <div className="relative rounded-2xl border border-white/50 bg-gradient-to-b from-white/40 to-[#FFF8F5]/80 px-2 py-3 shadow-neu-inner overflow-hidden">
+                <div
+                  className="pointer-events-none absolute inset-0 z-0 opacity-[0.05] mix-blend-multiply"
+                  style={{
+                    backgroundImage:
+                      'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/%3E%3C/svg%3E")',
+                  }}
+                  aria-hidden
+                />
+                <div className="relative z-10 flex justify-center">
+                  <ShareButton
+                    url={
+                      guideData.slug?.current
+                        ? `${SITE_ORIGIN}/guides/${guideData.slug.current}`
+                        : `${SITE_ORIGIN}/guides`
+                    }
+                    title={guideData.title}
+                    mode="inline"
+                    variant="neumorphic"
+                    className="justify-center gap-2"
+                  />
+                </div>
+              </div>
+
               <button 
                 onClick={handlePrint}
                 className="w-full flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-[#1a1a1a] shadow-neu-sm border border-[#333] text-[11px] font-mono font-bold uppercase tracking-widest text-[#FFF2EC] hover:bg-[#222] transition-colors"

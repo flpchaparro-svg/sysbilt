@@ -5,6 +5,10 @@ import { visualizer } from 'rollup-plugin-visualizer';
 import path from 'path';
 
 export default defineConfig({
+  server: {
+    port: 3333,
+    strictPort: false,
+  },
   plugins: [
     react(),
     cssInjectedByJsPlugin(),

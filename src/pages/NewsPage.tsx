@@ -7,7 +7,8 @@ import { ArrowDownLeft, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import NewsletterForm from '../components/NewsletterForm';
 import { PageMeta } from '../components/PageMeta';
-import { SEO_META } from '../constants/seoMeta';
+import { SEO_META, SITE_ORIGIN } from '../constants/seoMeta';
+import ShareButton from '../components/ShareButton';
 
 // Setup Image Builder
 const builder = imageUrlBuilder(client);
@@ -193,6 +194,17 @@ export default function NewsPage() {
 
         <CTA item={item} />
 
+        <div className="mt-10 pt-8 border-t border-dark/10">
+          <ShareButton
+            url={`${SITE_ORIGIN}/news?item=${item._id}`}
+            title={item.title}
+            mode="card"
+            variant="brutalist"
+            cardAnchor="bl"
+            cardCollapsedStyle="minimal"
+          />
+        </div>
+
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-12 pt-8 border-t border-dark/10 gap-6 sm:gap-0">
           {item.sourceUrl ? (
             <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer" className="font-mono text-[11px] tracking-wider text-dark hover:text-gold transition-colors inline-flex items-center gap-2 font-bold break-all normal-case">
@@ -250,6 +262,16 @@ export default function NewsPage() {
                   onClick={() => setExpandedItem(horizonNews)}
                   className="w-full text-left flex flex-col bg-transparent border-y-2 border-dark/10 relative group font-serif transition-all duration-500 hover:bg-cream/60 hover:backdrop-blur-md shadow-none hover:shadow-2xl hover:-translate-y-1 py-8 md:py-12 px-4 md:px-12 cursor-pointer"
                 >
+                  <div
+                    className="absolute top-6 right-4 md:right-12 z-20"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <ShareButton
+                      url={`${SITE_ORIGIN}/news?item=${horizonNews._id}`}
+                      title={horizonNews.title}
+                      mode="card"
+                    />
+                  </div>
                   <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-center">
                     
                     {horizonNews.mainImage && (
@@ -321,6 +343,16 @@ export default function NewsPage() {
                                 onClick={() => setExpandedItem(item)}
                                 className="border-b-2 border-dark/10 bg-transparent p-4 sm:p-6 relative group flex flex-col h-full transition-all duration-500 hover:bg-cream/60 hover:backdrop-blur-md shadow-none hover:shadow-2xl hover:-translate-y-1 cursor-pointer"
                               >
+                                <div
+                                  className="absolute top-5 right-5 sm:top-7 sm:right-7 z-20"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <ShareButton
+                                    url={`${SITE_ORIGIN}/news?item=${item._id}`}
+                                    title={item.title}
+                                    mode="card"
+                                  />
+                                </div>
                                 <div className="flex flex-col gap-6 p-0 h-full w-full overflow-hidden">
                                   {item.mainImage && (
                                     <div className="w-full mb-2 aspect-video overflow-hidden bg-cream border border-dark/10 shadow-inner">

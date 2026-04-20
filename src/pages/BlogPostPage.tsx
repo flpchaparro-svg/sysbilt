@@ -5,8 +5,9 @@ import { Helmet } from 'react-helmet-async';
 import { client, urlFor } from '../sanityClient';
 import { SITE_ORIGIN } from '../constants/seoMeta';
 import { PortableText } from '@portabletext/react';
-import { ArrowLeft, ArrowUpRight, Share2, Quote, Copy, Check, Info, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, ArrowUpRight, Quote, Copy, Check, Info, AlertTriangle } from 'lucide-react';
 import CTAButton from '../components/CTAButton';
+import ShareButton from '../components/ShareButton';
 
 // Helper function to extract YouTube ID
 const getYouTubeId = (url: string) => {
@@ -310,7 +311,6 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
   
   const [email, setEmail] = useState('');
   const [formStatus, setFormStatus] = useState<'idle' | 'loading' | 'success'>('idle');
-  const [isCopied, setIsCopied] = useState(false);
 
   useEffect(() => {
     client
@@ -450,24 +450,6 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
       setFormStatus('success');
       setEmail('');
     }, 1500);
-  };
-
-  const handleShare = async () => {
-    const url = window.location.href;
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: post?.title,
-          url: url
-        });
-      } catch (err) {
-        console.log('Share cancelled');
-      }
-    } else {
-      navigator.clipboard.writeText(url);
-      setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 2000);
-    }
   };
 
   if (loading) return <div className="min-h-screen bg-dark text-white pt-32 px-6 text-center font-sans text-sm md:text-base animate-pulse">Loading...</div>;
@@ -949,23 +931,14 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
             <span className="block opacity-40 mb-2">READ TIME</span>
             {readTime} MIN
           </div>
-          <div className="p-4 md:p-6 flex items-center justify-center gap-6 text-white/50 border-b border-r border-white/20">
-            <button 
-              onClick={handleShare}
-              className={`flex items-center gap-2 group ${theme.textHover} transition-colors duration-200`}
-            >
-              {isCopied ? (
-                <>
-                  <Check className="w-4 h-4 text-green-500" />
-                  <span className="text-green-500 font-bold tracking-widest type-eyebrow uppercase">COPIED</span>
-                </>
-              ) : (
-                <>
-                  <Share2 className="w-4 h-4" />
-                  <span className="font-bold tracking-widest type-eyebrow uppercase">SHARE</span>
-                </>
-              )}
-            </button>
+          <div className="p-4 md:p-6 flex items-center justify-center border-b border-r border-white/20">
+            <ShareButton
+              url={currentUrl}
+              title={resolvedArticleTitle || post?.title || 'SYSBILT'}
+              mode="card"
+              variant="dark"
+              themeClass={{ textMain: theme.textMain, textHover: theme.textHover }}
+            />
           </div>
         </div>
 

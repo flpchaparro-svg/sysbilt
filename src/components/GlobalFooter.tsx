@@ -1,7 +1,8 @@
 import React from 'react';
-import { Target, TrendingUp, BarChart3, ArrowUpRight, Layers, Building2, Newspaper } from 'lucide-react';
+import { Target, TrendingUp, BarChart3, Layers, Building2, Newspaper, Instagram, Facebook, Linkedin } from 'lucide-react';
 import CTAButton from './CTAButton';
 import { SysbiltLogo } from './SysbiltLogo';
+import ShareButton from './ShareButton';
 
 interface GlobalFooterProps {
   onNavigate: (view: string, sectionId?: string) => void;
@@ -13,6 +14,9 @@ type FooterLinkGroup = {
   color: string;
   links: { label: string; action: () => void }[];
 };
+
+const socialIconLinkClass =
+  'inline-flex h-9 w-9 shrink-0 items-center justify-center text-white/70 transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/35';
 
 const GlobalFooter: React.FC<GlobalFooterProps> = ({ onNavigate }) => {
   const currentYear = new Date().getFullYear();
@@ -155,28 +159,60 @@ const GlobalFooter: React.FC<GlobalFooterProps> = ({ onNavigate }) => {
           </div>
         </div>
 
-        <div className="pt-6 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-5">
+        <div className="pt-6 border-t border-white/10 flex flex-col md:flex-row md:flex-wrap justify-between items-center gap-5">
           <p className="font-mono text-[9px] text-white/70 uppercase tracking-widest">
             © {currentYear} SYSBILT. Sydney, Australia.
           </p>
 
-          <div className="flex items-center gap-6">
-            <button
-              onClick={() => onNavigate('privacy')}
-              className="font-mono text-[9px] text-white/70 hover:text-white uppercase tracking-widest transition-colors"
-            >
-              Privacy Policy
-            </button>
+          <nav
+            aria-label="Share and social links"
+            className="flex flex-wrap items-center justify-center gap-1 sm:gap-2"
+          >
+            <ShareButton
+              url={typeof window !== 'undefined' ? window.location.href : 'https://sysbilt.com'}
+              title={typeof document !== 'undefined' ? document.title : 'SYSBILT'}
+              mode="card"
+              variant="dark"
+              cardAnchor="tr"
+              cardCollapsedStyle="minimal"
+              themeClass={{ textMain: 'text-white/70', textHover: 'hover:text-white' }}
+            />
             <a
-              href="https://www.linkedin.com/in/felipe-chaparro-97a390176/"
+              href="https://www.instagram.com/sysbilt/"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="SYSBILT on Instagram"
+              className={socialIconLinkClass}
+            >
+              <Instagram className="h-[18px] w-[18px] shrink-0" aria-hidden />
+            </a>
+            <a
+              href="https://www.facebook.com/profile.php?id=61577590740296"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="SYSBILT on Facebook"
+              className={socialIconLinkClass}
+            >
+              <Facebook className="h-[18px] w-[18px] shrink-0" aria-hidden />
+            </a>
+            <a
+              href="https://www.linkedin.com/company/112107023"
               target="_blank"
               rel="noreferrer"
               aria-label="SYSBILT on LinkedIn"
-              className="font-mono text-[9px] text-white/70 hover:text-gold-on-cream uppercase tracking-widest transition-colors flex items-center gap-2"
+              className={socialIconLinkClass}
             >
-              LinkedIn <ArrowUpRight className="w-3 h-3" />
+              <Linkedin className="h-[18px] w-[18px] shrink-0" aria-hidden />
             </a>
-          </div>
+          </nav>
+
+          <button
+            type="button"
+            onClick={() => onNavigate('privacy')}
+            className="font-mono text-[9px] text-white/70 hover:text-white uppercase tracking-widest transition-colors"
+          >
+            Privacy Policy
+          </button>
         </div>
       </div>
     </footer>

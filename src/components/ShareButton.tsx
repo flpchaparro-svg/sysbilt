@@ -11,6 +11,13 @@ export interface ShareButtonProps {
   variant?: Variant;
   themeClass?: { textMain?: string; textHover?: string };
   className?: string;
+  /** mode="card": `tr` popover opens left (default). `bl` bottom-left trigger, popover opens right. */
+  cardAnchor?: 'tr' | 'bl';
+  /**
+   * mode="card": collapsed trigger only. `minimal` = icon-only, no bordered tile (footer / news drawer).
+   * Expanded actions and popover surface stay the same.
+   */
+  cardCollapsedStyle?: 'default' | 'minimal';
 }
 
 function buildUrls(url: string, title: string) {
@@ -49,6 +56,8 @@ export default function ShareButton({
   variant = 'brutalist',
   themeClass,
   className = '',
+  cardAnchor = 'tr',
+  cardCollapsedStyle = 'default',
 }: ShareButtonProps) {
   const [expanded, setExpanded] = useState(mode === 'inline');
   const [isCopied, setIsCopied] = useState(false);
@@ -102,6 +111,15 @@ export default function ShareButton({
     'inline-flex items-center justify-center w-9 h-9 text-white/50 transition-colors duration-200 hover:text-white';
   const darkBtnThemed = [darkBtn, themeClass?.textHover].filter(Boolean).join(' ');
 
+  /** Blog post meta row: one clear share control, expands to same actions as inline dark row */
+  const darkCardCollapsed =
+    'w-11 h-11 rounded-md border border-white/25 bg-white/[0.08] text-white/70 flex items-center justify-center hover:bg-white/12 hover:text-white hover:border-white/40 transition-colors duration-200';
+  const darkCardPopover =
+    'flex items-center gap-1.5 p-1.5 rounded-lg border border-white/20 bg-dark/95 backdrop-blur-md shadow-xl';
+  /** Footer: same behaviour as boxed card, no visible frame on the trigger */
+  const darkCardCollapsedMinimal =
+    'inline-flex min-h-9 min-w-9 items-center justify-center rounded-sm transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/35';
+
   const brutalInlineBtn =
     'w-9 h-9 flex items-center justify-center border-2 border-dark bg-transparent text-dark hover:bg-dark hover:text-cream transition-colors';
 
@@ -114,13 +132,24 @@ export default function ShareButton({
 
   const brutalCardCollapsed =
     'w-9 h-9 bg-cream/90 backdrop-blur-sm border border-dark/20 text-dark flex items-center justify-center hover:bg-dark hover:text-cream transition-colors';
+  const brutalCardCollapsedMinimal =
+    'inline-flex min-h-9 min-w-9 items-center justify-center text-dark/70 transition-colors hover:text-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dark/30';
   const brutalCardPopover =
     'flex items-center gap-1 p-1 bg-cream border-2 border-dark shadow-[4px_4px_0px_0px_#1a1a1a]';
   const brutalCardPopoverBtn =
     'w-8 h-8 flex items-center justify-center bg-transparent text-dark hover:bg-dark hover:text-cream transition-colors';
 
+  /** Guides hub cards: matches pillar badge (shadow-neu-inner, gold-tint border, cream) */
+  const neuCardCollapsed =
+    'w-9 h-9 rounded-md bg-cream shadow-neu-inner border border-gold-on-cream/25 text-[#1a1a1a]/55 hover:text-[#9A1730] hover:bg-[#FFF8F5] hover:border-gold-on-cream/35 hover:shadow-neu transition-all duration-300 flex items-center justify-center';
+  const neuCardPopover =
+    'flex items-center gap-1 p-1.5 rounded-xl bg-[#FFF8F5] shadow-neu border border-white/50';
+  const neuCardPopoverBtn =
+    'w-8 h-8 rounded-md bg-cream shadow-neu-inner border border-white/60 text-[#1a1a1a]/50 hover:text-[#9A1730] hover:bg-[#FFF8F5] hover:shadow-neu hover:border-white/80 transition-all duration-300 flex items-center justify-center';
+
+  /** Guide document modal + soft UI: inset paper */
   const neuInlineBtn =
-    'w-10 h-10 rounded-full bg-[#FFF2EC] shadow-neu-sm border border-black/5 text-[#1a1a1a]/60 hover:text-[#9A1730] hover:bg-white transition-colors flex items-center justify-center';
+    'w-10 h-10 rounded-xl bg-[#FFF8F5] shadow-neu-inner border border-white/70 text-[#1a1a1a]/50 hover:text-[#9A1730] hover:bg-[#FFF2EC] hover:shadow-neu hover:border-white/90 active:shadow-neu-inner transition-all duration-300 flex items-center justify-center';
 
   function btnClassFor(
     kind: 'linkedin' | 'x' | 'mail' | 'copy',
@@ -132,6 +161,11 @@ export default function ShareButton({
       return base;
     }
     if (variant === 'neumorphic') {
+      if (ctx === 'card-pop') {
+        const base = neuCardPopoverBtn;
+        if (kind === 'copy' && isCopied) return `${base} !text-green-600`;
+        return base;
+      }
       const base = neuInlineBtn;
       if (kind === 'copy' && isCopied) return `${base} !text-green-500`;
       return base;
@@ -212,29 +246,50 @@ export default function ShareButton({
   }
 
   if (mode === 'card') {
+    const isBl = cardAnchor === 'bl';
+    const isDark = variant === 'dark';
+    const isNeu = variant === 'neumorphic';
+    const useMinimalCollapsed = cardCollapsedStyle === 'minimal';
+    const cardCollapsed = isDark
+      ? useMinimalCollapsed
+        ? [darkCardCollapsedMinimal, themeClass?.textMain, themeClass?.textHover].filter(Boolean).join(' ')
+        : darkCardCollapsed
+      : isNeu
+        ? neuCardCollapsed
+        : useMinimalCollapsed
+          ? brutalCardCollapsedMinimal
+          : brutalCardCollapsed;
+    const cardPopoverSurface = isDark ? darkCardPopover : isNeu ? neuCardPopover : brutalCardPopover;
+    const popCtx: 'dock-inner' | 'inline' | 'card-pop' | 'dark' = isDark ? 'dark' : 'card-pop';
+    const cardRoot = isBl
+      ? 'relative inline-flex items-end justify-start gap-1'
+      : 'relative inline-flex items-start justify-end gap-1';
+    /** `bl`: open upward so parent `overflow-hidden` on images does not clip a sideways strip */
+    const popoverPos = isBl
+      ? ['absolute bottom-full left-0 mb-2', cardPopoverSurface].join(' ')
+      : ['absolute right-full top-0 mr-2', cardPopoverSurface].join(' ');
+    const shareIconClass =
+      useMinimalCollapsed && isDark ? 'w-4 h-4 shrink-0' : isDark ? 'w-5 h-5 shrink-0' : 'w-4 h-4 shrink-0';
     return (
       <div
         ref={containerRef}
-        className={['relative flex items-start justify-end gap-1', className].filter(Boolean).join(' ')}
+        className={[cardRoot, className].filter(Boolean).join(' ')}
       >
         {expanded && (
-          <div
-            className={['absolute right-full top-0 mr-2', brutalCardPopover].join(' ')}
-            onMouseDown={stop}
-          >
-            <div className="flex items-center gap-1">{platformNodes('card-pop')}</div>
+          <div className={popoverPos} onMouseDown={stop}>
+            <div className="flex items-center gap-1">{platformNodes(popCtx)}</div>
           </div>
         )}
         <button
           type="button"
-          className={brutalCardCollapsed}
+          className={cardCollapsed}
           aria-label={expanded ? 'Close share options' : 'Open share options'}
           onClick={(e) => {
             stop(e);
             setExpanded((v) => !v);
           }}
         >
-          <Share2 className={`w-4 h-4 transition-transform ${expanded ? 'rotate-90' : ''}`} aria-hidden />
+          <Share2 className={`${shareIconClass} transition-transform ${expanded ? 'rotate-90' : ''}`} aria-hidden />
           <span className="sr-only">{expanded ? 'Close share options' : 'Open share options'}</span>
         </button>
       </div>

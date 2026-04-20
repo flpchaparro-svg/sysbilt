@@ -9,7 +9,8 @@ import HeroVisualBrutalist from '../components/Blog/HeroVisualBrutalist';
 import RobotPeek from '../components/RobotPeek'; 
 import NewsletterForm from '../components/NewsletterForm';
 import { PageMeta } from '../components/PageMeta';
-import { SEO_META } from '../constants/seoMeta';
+import { SEO_META, SITE_ORIGIN } from '../constants/seoMeta';
+import ShareButton from '../components/ShareButton';
 
 const RED_PILLARS = ['Websites & E-commerce', 'CRM & Lead Tracking', 'Automation'];
 const GOLD_PILLARS = ['AI Assistants', 'Content Systems', 'Team Training'];
@@ -44,9 +45,20 @@ const FeaturedCardLead: React.FC<{ post: any }> = ({ post }) => {
     ? 'text-3xl lg:text-5xl' 
     : 'text-4xl lg:text-6xl';
 
+  const shareUrl = `${SITE_ORIGIN}${href}`;
+
   return (
-    <Link to={href} className="col-span-1 lg:col-span-12 border-2 border-dark bg-cream flex flex-col lg:flex-row group cursor-pointer hover:shadow-[8px_8px_0px_0px_#1a1a1a] transition-all duration-300 hover:-translate-y-1 overflow-hidden relative lg:h-[70vh] lg:min-h-[500px] lg:max-h-[700px]">
+    <div className="col-span-1 lg:col-span-12 border-2 border-dark bg-cream flex flex-col lg:flex-row group cursor-pointer hover:shadow-[8px_8px_0px_0px_#1a1a1a] transition-all duration-300 hover:-translate-y-1 overflow-hidden relative lg:h-[70vh] lg:min-h-[500px] lg:max-h-[700px]">
+      <Link
+        to={href}
+        className="absolute inset-0 z-[1]"
+        aria-label={`Read article: ${post.title}`}
+      />
+      <div className="relative z-[2] flex flex-col lg:flex-row min-h-0 flex-1 pointer-events-none">
       <div className="relative w-full lg:w-2/3 h-64 sm:h-80 lg:h-full border-b-2 lg:border-b-0 lg:border-r-2 border-dark overflow-hidden bg-dark shrink-0">
+        <div className="absolute bottom-3 left-3 z-30 pointer-events-auto md:bottom-4 md:left-4">
+          <ShareButton url={shareUrl} title={post.title} mode="card" cardAnchor="bl" />
+        </div>
         <div className="absolute top-4 left-4 z-20 bg-red-solid text-white px-3 py-1 type-eyebrow border-2 border-dark shadow-[4px_4px_0px_0px_#1a1a1a]">
           FEATURED
         </div>
@@ -82,17 +94,24 @@ const FeaturedCardLead: React.FC<{ post: any }> = ({ post }) => {
           <ArrowRight className="w-6 h-6 text-dark group-hover:translate-x-2 transition-transform duration-300 shrink-0" />
         </div>
       </div>
-    </Link>
+      </div>
+    </div>
   );
 };
 
 const FeaturedCardTall: React.FC<{ post: any }> = ({ post }) => {
   const slug = post.slug?.current ?? '';
   const href = `/blog/${slug}`;
+  const shareUrl = `${SITE_ORIGIN}${href}`;
 
   return (
-    <Link to={href} className="col-span-1 lg:col-span-4 border-2 border-dark bg-cream flex flex-col group cursor-pointer hover:shadow-[8px_8px_0px_0px_#1a1a1a] transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+    <div className="col-span-1 lg:col-span-4 border-2 border-dark bg-cream flex flex-col group cursor-pointer hover:shadow-[8px_8px_0px_0px_#1a1a1a] transition-all duration-300 hover:-translate-y-1 overflow-hidden relative">
+      <Link to={href} className="absolute inset-0 z-[1]" aria-label={`Read article: ${post.title}`} />
+      <div className="relative z-[2] flex flex-col flex-1 min-h-0 pointer-events-none">
       <div className="relative w-full aspect-[4/3] border-b-2 border-dark overflow-hidden bg-dark shrink-0">
+        <div className="absolute bottom-3 left-3 z-20 pointer-events-auto md:bottom-4 md:left-4">
+          <ShareButton url={shareUrl} title={post.title} mode="card" cardAnchor="bl" />
+        </div>
         {post.mainImage && (
            <img
              src={urlFor(post.mainImage).width(600).url()}
@@ -115,17 +134,24 @@ const FeaturedCardTall: React.FC<{ post: any }> = ({ post }) => {
            <span className="type-eyebrow text-red-text">READ →</span>
         </div>
       </div>
-    </Link>
+      </div>
+    </div>
   );
 };
 
 const FeaturedCardHalf: React.FC<{ post: any }> = ({ post }) => {
   const slug = post.slug?.current ?? '';
   const href = `/blog/${slug}`;
+  const shareUrl = `${SITE_ORIGIN}${href}`;
 
   return (
-    <Link to={href} className="col-span-1 lg:col-span-6 border-2 border-dark bg-cream flex flex-col sm:flex-row group cursor-pointer hover:shadow-[8px_8px_0px_0px_#1a1a1a] transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+    <div className="col-span-1 lg:col-span-6 border-2 border-dark bg-cream flex flex-col sm:flex-row group cursor-pointer hover:shadow-[8px_8px_0px_0px_#1a1a1a] transition-all duration-300 hover:-translate-y-1 overflow-hidden relative">
+      <Link to={href} className="absolute inset-0 z-[1]" aria-label={`Read article: ${post.title}`} />
+      <div className="relative z-[2] flex flex-col sm:flex-row flex-1 min-h-0 pointer-events-none">
       <div className="relative w-full sm:w-1/2 aspect-[4/3] sm:aspect-auto border-b-2 sm:border-b-0 sm:border-r-2 border-dark overflow-hidden bg-dark shrink-0">
+        <div className="absolute bottom-3 left-3 z-20 pointer-events-auto md:bottom-4 md:left-4">
+          <ShareButton url={shareUrl} title={post.title} mode="card" cardAnchor="bl" />
+        </div>
         {post.mainImage && (
            <img
              src={urlFor(post.mainImage).width(600).url()}
@@ -145,7 +171,8 @@ const FeaturedCardHalf: React.FC<{ post: any }> = ({ post }) => {
            <span className="type-eyebrow text-dark group-hover:text-red-text transition-colors">READ →</span>
         </div>
       </div>
-    </Link>
+      </div>
+    </div>
   );
 };
 
@@ -153,6 +180,7 @@ const FeaturedCardHalf: React.FC<{ post: any }> = ({ post }) => {
 const LedgerRow: React.FC<{ post: any }> = ({ post }) => {
   const slug = post.slug?.current ?? '';
   const href = `/blog/${slug}`;
+  const shareUrl = `${SITE_ORIGIN}${href}`;
   const [isHovered, setIsHovered] = useState(false);
 
   const x = useMotionValue(0);
@@ -166,30 +194,37 @@ const LedgerRow: React.FC<{ post: any }> = ({ post }) => {
   };
 
   return (
-    <Link 
-      to={href}
+    <div
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onMouseMove={handleMouseMove}
       className="group relative grid grid-cols-12 gap-4 py-6 border-b-2 border-dark transition-colors duration-300 hover:bg-dark hover:text-cream items-center px-4 -mx-4 cursor-pointer"
     >
-      <div className="col-span-3 md:col-span-2 type-eyebrow text-dark/70 group-hover:text-cream/70">
+      <Link
+        to={href}
+        className="absolute inset-0 z-[1]"
+        aria-label={`Read article: ${post.title}`}
+      />
+      <div className="col-span-3 md:col-span-2 type-eyebrow text-dark/70 group-hover:text-cream/70 relative z-[2] pointer-events-none">
         {formatDate(post.publishedAt)}
       </div>
       
-      <div className="col-span-3 md:col-span-2 hidden md:block">
+      <div className="col-span-3 md:col-span-2 hidden md:block relative z-[2] pointer-events-none">
          <span className={`inline-block px-2 py-1 border text-[10px] font-mono uppercase tracking-wider ${getPillarBadgeClass(post.servicePillar)} group-hover:border-cream/20 group-hover:bg-cream/5 group-hover:text-cream/70 whitespace-nowrap overflow-hidden text-ellipsis max-w-full`}>
           {post.servicePillar || 'GENERAL'}
          </span>
       </div>
       
-      <div className="col-span-6 md:col-span-6 font-sans font-black tracking-tight text-lg md:text-2xl uppercase leading-none group-hover:text-gold-on-dark transition-colors duration-300 line-clamp-2 break-words text-balance pr-4">
+      <div className="col-span-6 md:col-span-6 font-sans font-black tracking-tight text-lg md:text-2xl uppercase leading-none group-hover:text-gold-on-dark transition-colors duration-300 line-clamp-2 break-words text-balance pr-4 relative z-[2] pointer-events-none">
         {post.title}
       </div>
       
-      <div className="col-span-3 md:col-span-2 flex justify-end shrink-0">
-        <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center space-x-2 type-eyebrow border-2 border-cream px-4 py-2">
-          <span>READ →</span>
+      <div className="col-span-3 md:col-span-2 flex justify-end shrink-0 relative z-[2] pointer-events-none">
+        <div className="pointer-events-auto flex items-center gap-2 shrink-0 relative z-[4]">
+          <ShareButton url={shareUrl} title={post.title} mode="card" />
+          <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center type-eyebrow border-2 border-cream px-4 py-2 pointer-events-none">
+            <span>READ →</span>
+          </div>
         </div>
       </div>
 
@@ -222,7 +257,7 @@ const LedgerRow: React.FC<{ post: any }> = ({ post }) => {
           />
         </motion.div>
       )}
-    </Link>
+    </div>
   );
 };
 

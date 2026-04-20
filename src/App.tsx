@@ -1,6 +1,6 @@
 import React, { Suspense, lazy, useState, useEffect } from 'react';
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
-import { AnimatePresence, useScroll, useMotionValueEvent, LazyMotion, domAnimation } from 'framer-motion';
+import { AnimatePresence, LazyMotion, domAnimation } from 'framer-motion';
 import { HelmetProvider } from 'react-helmet-async';
 
 import GlobalHeader from './components/GlobalHeader';
@@ -38,6 +38,10 @@ declare global {
   }
 }
 
+/** Wide hysteresis: scroll must pass clearly down/up before swapping header modes (stops rubber-band flicker). */
+const SCROLL_COMPACT_AFTER = 100;
+const SCROLL_FULL_NAV_UNTIL = 16;
+
 const App: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -45,12 +49,30 @@ const App: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  const { scrollY } = useScroll();
-  useMotionValueEvent(scrollY, "change", (latest) => {
-    setScrolled(latest > 50);
-  });
+  useEffect(() => {
+    let ticking = false;
+    const apply = () => {
+      ticking = false;
+      const y = window.scrollY;
+      setScrolled((prev) => {
+        if (y >= SCROLL_COMPACT_AFTER) return true;
+        if (y <= SCROLL_FULL_NAV_UNTIL) return false;
+        return prev;
+      });
+    };
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(apply);
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    apply();
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   useEffect(() => {
+    setScrolled(false);
     requestAnimationFrame(() => {
       document.body.style.overflow = '';
       document.documentElement.style.overflow = '';

@@ -38,8 +38,6 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
   const [hoveredNav, setHoveredNav] = useState<string | null>(null);
   const [mobileSubmenu, setMobileSubmenu] = useState<null | 'system' | 'insights'>(null);
 
-  const isBlogView = currentView.startsWith('blog');
-
   const navItems: NavItemConfig[] = [
     { id: 'architect', label: 'ABOUT', fullLabel: 'ABOUT' },
     { id: 'system', label: 'SERVICES', fullLabel: 'SERVICES', dropdown: 'pillars' },
@@ -95,23 +93,21 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
 
   return (
     <>
-      <AnimatePresence>
-        {(!scrolled || isBlogView) && (
-          <m.nav
-            initial={{ y: -100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -100, opacity: 0 }}
-            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className={`fixed top-0 w-full z-[300] px-6 md:px-12 transition-all duration-300 flex justify-between items-center pointer-events-none md:pointer-events-auto ${
-              isBlogView && scrolled
-                ? 'h-16 md:h-20 bg-cream/95 backdrop-blur-md shadow-sm border-b border-dark/10'
-                : `h-20 md:h-24 ${solidBackground ? 'bg-cream' : 'bg-transparent'}`
-            }`}
-            onMouseLeave={() => {
-              setOpenDesktopDropdown(null);
-              setHoveredNav(null);
-            }}
-          >
+      {/* Always mounted + opacity (no AnimatePresence) so rapid scroll thresholds cannot flash mount/unmount */}
+      <m.nav
+        initial={false}
+        animate={{ opacity: scrolled ? 0 : 1 }}
+        transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+        aria-hidden={scrolled}
+        inert={scrolled ? true : undefined}
+        className={`fixed top-0 w-full z-[300] px-6 md:px-12 flex justify-between items-center h-20 md:h-24 ${
+          scrolled ? 'pointer-events-none' : 'pointer-events-none md:pointer-events-auto'
+        } ${solidBackground ? 'bg-cream' : 'bg-transparent'}`}
+        onMouseLeave={() => {
+          setOpenDesktopDropdown(null);
+          setHoveredNav(null);
+        }}
+      >
             <button
               onClick={() => onNavigate('homepage')}
               aria-label="Go to Homepage"
@@ -275,20 +271,21 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
                 LET&apos;S TALK
               </CTAButton>
             </div>
-          </m.nav>
-        )}
-      </AnimatePresence>
+      </m.nav>
 
-      <AnimatePresence>
-        {scrolled && !isBlogView && (
-          <m.div
-            initial={{ x: 100, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: 100, opacity: 0 }}
-            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed right-0 top-[20vh] z-[300] hidden lg:flex flex-col bg-dark border-l border-y border-white/10 rounded-l-lg shadow-2xl overflow-hidden w-[54px]"
-            style={{ maxHeight: 'calc(100vh - 20vh - 4rem)' }}
-          >
+      <m.div
+        role="navigation"
+        aria-label="Quick links while scrolling"
+        initial={false}
+        animate={{ opacity: scrolled ? 1 : 0, x: scrolled ? 0 : 16 }}
+        transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+        aria-hidden={!scrolled}
+        inert={!scrolled ? true : undefined}
+        className={`fixed right-0 top-[20vh] z-[300] hidden lg:flex flex-col bg-dark border-l border-y border-white/10 rounded-l-lg shadow-2xl overflow-hidden w-[54px] ${
+          scrolled ? '' : 'pointer-events-none'
+        }`}
+        style={{ maxHeight: 'calc(100vh - 20vh - 4rem)' }}
+      >
             <button
               onClick={() => onNavigate('homepage')}
               aria-label="Go to Homepage"
@@ -329,9 +326,7 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
             >
               <span className="block -rotate-90 whitespace-nowrap type-eyebrow text-dark">TALK</span>
             </button>
-          </m.div>
-        )}
-      </AnimatePresence>
+      </m.div>
 
       <div
         className={`lg:hidden fixed top-0 w-full z-[310] h-20 flex items-center justify-end px-6 pointer-events-none transition-opacity duration-snap ${isMenuOpen ? 'opacity-0' : 'opacity-100'}`}
