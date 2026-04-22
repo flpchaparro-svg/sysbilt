@@ -6,6 +6,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import GlobalHeader from './components/GlobalHeader';
 import GlobalFooter from './components/GlobalFooter'; // Standard Import (Stable)
 import Modal from './components/Modal';
+import CookieBanner from './components/CookieBanner';
 import { ServiceDetail } from './types';
 import NotFoundPage from './pages/NotFoundPage';
 
@@ -188,6 +189,7 @@ const App: React.FC = () => {
 
           {location.pathname !== '/system' && location.pathname !== '/contact' && <GlobalFooter onNavigate={handleGlobalNavigate} />}
           <Modal service={selectedService} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onViewPillar={(id) => handleGlobalNavigate(id)} />
+          <CookieBanner />
         </div>
       </LazyMotion>
     </HelmetProvider>

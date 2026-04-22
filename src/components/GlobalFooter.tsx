@@ -3,6 +3,7 @@ import { Target, TrendingUp, BarChart3, Layers, Building2, Newspaper, Instagram,
 import CTAButton from './CTAButton';
 import { SysbiltLogo } from './SysbiltLogo';
 import ShareButton from './ShareButton';
+import { OPEN_BANNER_EVENT } from '../utils/consent';
 
 interface GlobalFooterProps {
   onNavigate: (view: string, sectionId?: string) => void;
@@ -206,13 +207,22 @@ const GlobalFooter: React.FC<GlobalFooterProps> = ({ onNavigate }) => {
             </a>
           </nav>
 
-          <button
-            type="button"
-            onClick={() => onNavigate('privacy')}
-            className="font-mono text-[9px] text-white/70 hover:text-white uppercase tracking-widest transition-colors"
-          >
-            Privacy Policy
-          </button>
+          <div className="flex flex-wrap items-center justify-center gap-6 md:justify-end">
+            <button
+              type="button"
+              onClick={() => onNavigate('privacy')}
+              className="font-mono text-[9px] text-white/70 hover:text-white uppercase tracking-widest transition-colors"
+            >
+              Privacy Policy
+            </button>
+            <button
+              type="button"
+              onClick={() => window.dispatchEvent(new Event(OPEN_BANNER_EVENT))}
+              className="font-mono text-[9px] text-white/70 hover:text-white uppercase tracking-widest transition-colors"
+            >
+              Cookie Settings
+            </button>
+          </div>
         </div>
       </div>
     </footer>
