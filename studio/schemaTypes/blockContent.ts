@@ -46,11 +46,14 @@ export default defineType({
       options: {hotspot: true},
       fields: [
         {
-          name: 'caption',
+          name: 'alt',
           type: 'string',
-          title: 'Caption',
-        }
-      ]
+          title: 'Alternative text',
+          description: 'Describe what the image shows. Required for accessibility and SEO.',
+          validation: (Rule) => Rule.required().error('Alt text is required'),
+        },
+        {name: 'caption', type: 'string', title: 'Caption'},
+      ],
     }),
     defineArrayMember({ type: 'code' }),
     defineArrayMember({ type: 'table' }),

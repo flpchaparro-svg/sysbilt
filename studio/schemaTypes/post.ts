@@ -280,6 +280,8 @@ export default defineType({
       title: 'Publish Date',
       type: 'datetime',
       group: 'meta',
+      initialValue: () => new Date().toISOString(),
+      validation: (Rule) => Rule.required().error('Publish date is required'),
     }),
   ],
   preview: {

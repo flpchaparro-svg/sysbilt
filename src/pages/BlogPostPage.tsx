@@ -459,12 +459,16 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
     types: {
       image: ({ value }: any) => {
         if (!value?.asset?._ref) return null;
+        const altText =
+          (typeof value.alt === 'string' && value.alt.trim()) ||
+          (typeof value.caption === 'string' && value.caption.trim()) ||
+          'Article image';
         return (
           <figure className={`relative my-16 group cursor-pointer border-l-4 ${theme.borderMain} pl-6`}>
             <div className={`absolute -inset-2 ${theme.bgSubtle} opacity-0 group-hover:opacity-100 transition-opacity transform -skew-x-6`}></div>
             <img 
               src={urlFor(value).width(1200).url()} 
-              alt={value.alt || 'Article image'} 
+              alt={altText} 
               className={`w-full h-auto object-cover relative z-10 border border-white/10 opacity-90 hover:opacity-100 transition-all duration-500 hover:scale-[1.02]`}
               loading="lazy"
               decoding="async"

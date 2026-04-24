@@ -27,7 +27,7 @@ function getPillarBadgeClass(servicePillar: string | null | undefined): string {
 }
 
 function formatDate(dateString: string | null | undefined): string {
-  if (!dateString) return 'DRAFT';
+  if (!dateString) return '';
   const date = new Date(dateString);
   return date.toLocaleDateString('en-AU', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '.');
 }

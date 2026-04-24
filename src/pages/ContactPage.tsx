@@ -46,10 +46,10 @@ const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
           </h1>
           <div className="space-y-6 max-w-lg">
             <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark">
-              No salespeople here. When you fill this out, you're starting a conversation directly with me.
+              No salespeople here. When you fill this out, you're starting a conversation directly with us.
             </p>
             <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/80">
-              I'll personally review your situation and tell you honestly if I can help.
+              We'll personally review your situation and tell you honestly if we can help.
             </p>
           </div>
         </div>
@@ -73,10 +73,10 @@ const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
                 / YOUR DETAILS
               </span>
               <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl leading-[0.95] tracking-tighter text-white mb-4">
-                Tell Me About Your <span className="italic font-serif text-gold-on-dark">Business</span>
+                Tell Us About Your <span className="italic font-serif text-gold-on-dark">Business</span>
               </h2>
               <p className="font-sans text-lg md:text-xl text-white/80 leading-relaxed max-w-xl">
-                Fill this out. I'll get back to you within 24 hours.
+                Fill this out. We'll get back to you within 24 hours.
               </p>
             </div>
 
