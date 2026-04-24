@@ -24,7 +24,6 @@ const STATIC_PAGES: readonly StaticPage[] = [
   { path: '/architect', priority: '0.9' },
   { path: '/proof', priority: '0.9' },
   { path: '/blog', priority: '0.9' },
-  { path: '/news', priority: '0.9' },
   { path: '/evidence-vault', priority: '0.9' },
   { path: '/contact', priority: '0.7' },
   { path: '/privacy', priority: '0.6' },

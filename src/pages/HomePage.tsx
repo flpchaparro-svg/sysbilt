@@ -1,7 +1,8 @@
-import React, { useState, useRef, useEffect, useLayoutEffect, lazy, Suspense, type FC, type ReactNode } from 'react';
+import React, { useState, useRef, useEffect, lazy, Suspense, type FC, type ReactNode } from 'react';
 import { Helmet as HelmetImpl } from 'react-helmet-async';
 import { m, useScroll, useMotionValueEvent, useAnimationFrame, useMotionValue, useTransform } from 'framer-motion';
 import CTAButton from '../components/CTAButton';
+import { PageMeta } from '../components/PageMeta';
 import ScrambleTitle from '../components/HomePage/ScrambleTitle';
 import { SEO_META } from '../constants/seoMeta';
 
@@ -213,26 +214,13 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onServiceClick }) => {
     lastTimeRef.current = now;
   });
 
-  /** Sync head from index.html (single source) when navigating client-side — avoids duplicate title/meta from Helmet. */
-  useLayoutEffect(() => {
-    const { title, description, canonical } = SEO_META.home;
-    document.title = title;
-    const setContent = (selector: string, value: string) => {
-      const el = document.head.querySelector(selector);
-      if (el) el.setAttribute('content', value);
-    };
-    setContent('meta[name="description"]', description);
-    setContent('meta[property="og:title"]', title);
-    setContent('meta[property="og:description"]', description);
-    setContent('meta[property="og:url"]', canonical);
-    setContent('meta[name="twitter:title"]', title);
-    setContent('meta[name="twitter:description"]', description);
-    const canonicalLink = document.head.querySelector('link[rel="canonical"]');
-    if (canonicalLink) canonicalLink.setAttribute('href', canonical);
-  }, []);
-
   return (
     <>
+      <PageMeta
+        title={SEO_META.home.title}
+        description={SEO_META.home.description}
+        canonical={SEO_META.home.canonical}
+      />
       <Helmet>
         <script type="application/ld+json">{JSON.stringify(PROFESSIONAL_SERVICE_JSONLD)}</script>
       </Helmet>
