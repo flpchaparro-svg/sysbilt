@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { m } from 'framer-motion';
 import { Check, ChevronDown } from 'lucide-react';
 
@@ -19,15 +19,73 @@ interface ContactPageProps {
 const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
   const { formState, updateField, status, handleSubmit } = useContactForm();
   
-  const inputBaseStyle = "w-full bg-white/5 border border-white/10 px-4 py-4 font-sans text-xl text-white focus:outline-none focus:border-gold focus:bg-white/10 transition-colors duration-200 ease-out placeholder:text-white/70 rounded-sm mt-2";
+  // Validation State
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validateField = (field: string, value: string) => {
+    let errorMsg = '';
+    
+    if (field === 'name') {
+      if (!value.trim()) errorMsg = 'Name is required';
+      else if (!/^[A-Za-z\s\-\']+$/.test(value)) errorMsg = 'Letters, spaces, and hyphens only';
+    }
+    if (field === 'email') {
+      if (!value.trim()) errorMsg = 'Email is required';
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) errorMsg = 'Please enter a valid email address';
+    }
+    if (field === 'company') {
+      if (!value.trim()) errorMsg = 'Business name is required';
+    }
+    if (field === 'phone') {
+      const cleanPhone = value.replace(/\s+/g, '');
+      if (!cleanPhone) errorMsg = 'Phone number is required';
+      else if (!/^(0[23478])\d{8}$/.test(cleanPhone)) errorMsg = 'Must be a 10-digit Aus number (e.g., 0412 345 678)';
+    }
+    if (field === 'frictionPoint') {
+      if (!value) errorMsg = 'Please select an option';
+    }
+    if (field === 'message') {
+      if (!value.trim()) errorMsg = 'Please provide some details';
+    }
+
+    setErrors(prev => ({ ...prev, [field]: errorMsg }));
+    return !errorMsg;
+  };
+
+  const handleBlur = (field: keyof typeof formState) => {
+    setTouched(prev => ({ ...prev, [field]: true }));
+    validateField(field as string, formState[field]);
+  };
+
+  const onFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Validate all fields before sending
+    const isNameValid = validateField('name', formState.name);
+    const isEmailValid = validateField('email', formState.email);
+    const isCompanyValid = validateField('company', formState.company);
+    const isPhoneValid = validateField('phone', formState.phone);
+    const isFrictionValid = validateField('frictionPoint', formState.frictionPoint);
+    const isMessageValid = validateField('message', formState.message);
+
+    // Mark all as touched so errors display
+    setTouched({
+      name: true, email: true, company: true, phone: true, frictionPoint: true, message: true
+    });
+
+    if (isNameValid && isEmailValid && isCompanyValid && isPhoneValid && isFrictionValid && isMessageValid) {
+      handleSubmit(e);
+    }
+  };
+  
+  const inputBaseStyle = "w-full bg-white/5 border px-4 py-4 font-sans text-xl text-white focus:outline-none transition-colors duration-200 ease-out placeholder:text-white/40 rounded-sm mt-2";
+  const getBorderStyle = (field: string) => 
+    touched[field] && errors[field] ? "border-red-solid focus:border-red-solid focus:bg-red-solid/5" : "border-white/10 focus:border-gold focus:bg-white/10";
 
   return (
     <div className="min-h-screen lg:h-screen w-full flex flex-col lg:flex-row relative z-[9999] bg-dark lg:overflow-hidden">
-      <PageMeta
-        title={SEO_META.contact.title}
-        description={SEO_META.contact.description}
-        canonical={SEO_META.contact.canonical}
-      />
+      <PageMeta title={SEO_META.contact.title} description={SEO_META.contact.description} canonical={SEO_META.contact.canonical} />
 
       {/* LEFT COLUMN: THE HUMAN ANCHOR */}
       <div className="w-full lg:w-5/12 h-auto lg:h-screen bg-cream text-dark flex flex-col p-8 md:p-12 lg:px-16 lg:pb-12 lg:pt-20 border-r border-dark/10 justify-between order-first relative z-10">
@@ -79,100 +137,139 @@ const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6 lg:space-y-5">
+            <form onSubmit={onFormSubmit} noValidate className="space-y-6 lg:space-y-5">
               {/* Row 1: Name & Email */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-5">
                 <div className="group relative">
-                  <label htmlFor="name" className="block font-mono text-[10px] uppercase tracking-[0.2em] text-gold-on-dark font-bold">YOUR NAME</label>
+                  <label htmlFor="name" className="block font-mono text-[10px] uppercase tracking-[0.2em] text-white/70 font-bold">
+                    YOUR NAME<span className="text-gold-on-dark ml-1">*</span>
+                  </label>
                   <input 
                     name="firstname"
                     id="name" 
                     type="text" 
-                    required 
-                    className={inputBaseStyle} 
+                    className={`${inputBaseStyle} ${getBorderStyle('name')}`} 
                     placeholder="Your name" 
                     value={formState.name} 
-                    onChange={e => updateField('name', e.target.value)} 
+                    onChange={e => {
+                      updateField('name', e.target.value);
+                      if (touched.name) validateField('name', e.target.value);
+                    }}
+                    onBlur={() => handleBlur('name')}
                   />
+                  {touched.name && errors.name && <p className="text-red-solid text-xs mt-2 font-sans">{errors.name}</p>}
                 </div>
+                
                 <div className="group relative">
-                  <label htmlFor="email" className="block font-mono text-[10px] uppercase tracking-[0.2em] text-gold-on-dark font-bold">EMAIL</label>
+                  <label htmlFor="email" className="block font-mono text-[10px] uppercase tracking-[0.2em] text-white/70 font-bold">
+                    EMAIL<span className="text-gold-on-dark ml-1">*</span>
+                  </label>
                   <input 
                     name="email"
                     id="email" 
                     type="email" 
-                    required 
-                    className={inputBaseStyle} 
+                    className={`${inputBaseStyle} ${getBorderStyle('email')}`} 
                     placeholder="Your email" 
                     value={formState.email} 
-                    onChange={e => updateField('email', e.target.value)} 
+                    onChange={e => {
+                      updateField('email', e.target.value);
+                      if (touched.email) validateField('email', e.target.value);
+                    }}
+                    onBlur={() => handleBlur('email')}
                   />
+                  {touched.email && errors.email && <p className="text-red-solid text-xs mt-2 font-sans">{errors.email}</p>}
                 </div>
               </div>
 
               {/* Row 2: Entity */}
               <div className="group relative">
-                <label htmlFor="company" className="block font-mono text-[10px] uppercase tracking-[0.2em] text-gold-on-dark font-bold">BUSINESS</label>
+                <label htmlFor="company" className="block font-mono text-[10px] uppercase tracking-[0.2em] text-white/70 font-bold">
+                  BUSINESS<span className="text-gold-on-dark ml-1">*</span>
+                </label>
                 <input 
                   name="company"
                   id="company" 
                   type="text" 
-                  required
-                  className={inputBaseStyle} 
+                  className={`${inputBaseStyle} ${getBorderStyle('company')}`} 
                   placeholder="Company name or website" 
                   value={formState.company} 
-                  onChange={e => updateField('company', e.target.value)} 
+                  onChange={e => {
+                    updateField('company', e.target.value);
+                    if (touched.company) validateField('company', e.target.value);
+                  }}
+                  onBlur={() => handleBlur('company')}
                 />
+                {touched.company && errors.company && <p className="text-red-solid text-xs mt-2 font-sans">{errors.company}</p>}
               </div>
 
               {/* Row 3: Phone & Dropdown (Side-by-side) */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-5">
                 <div className="group relative">
-                  <label htmlFor="phone" className="block font-mono text-[10px] uppercase tracking-[0.2em] text-gold-on-dark font-bold">PHONE NUMBER</label>
+                  <label htmlFor="phone" className="block font-mono text-[10px] uppercase tracking-[0.2em] text-white/70 font-bold">
+                    PHONE NUMBER<span className="text-gold-on-dark ml-1">*</span>
+                  </label>
                   <input 
                     name="phone"
                     id="phone" 
                     type="tel" 
-                    required
-                    className={inputBaseStyle} 
+                    className={`${inputBaseStyle} ${getBorderStyle('phone')}`} 
                     placeholder="Your best number" 
                     value={formState.phone} 
-                    onChange={e => updateField('phone', e.target.value)} 
+                    onChange={e => {
+                      updateField('phone', e.target.value);
+                      if (touched.phone) validateField('phone', e.target.value);
+                    }}
+                    onBlur={() => handleBlur('phone')}
                   />
+                  {touched.phone && errors.phone && <p className="text-red-solid text-xs mt-2 font-sans">{errors.phone}</p>}
                 </div>
+                
                 <div className="group relative">
-                  <label htmlFor="frictionPoint" className="block font-mono text-[10px] uppercase tracking-[0.2em] text-gold-on-dark font-bold">WHAT DO YOU NEED HELP WITH?</label>
+                  <label htmlFor="frictionPoint" className="block font-mono text-[10px] uppercase tracking-[0.2em] text-white/70 font-bold">
+                    WHAT DO YOU NEED HELP WITH?<span className="text-gold-on-dark ml-1">*</span>
+                  </label>
                   <div className="relative">
                     <select 
                       name="friction_point"
                       id="frictionPoint" 
-                      required
-                      className={`${inputBaseStyle} appearance-none cursor-pointer pr-10`} 
+                      className={`${inputBaseStyle} ${getBorderStyle('frictionPoint')} appearance-none cursor-pointer pr-10 ${!formState.frictionPoint ? '!text-white/40' : ''}`} 
                       value={formState.frictionPoint} 
-                      onChange={e => updateField('frictionPoint', e.target.value)}
+                      onChange={e => {
+                        updateField('frictionPoint', e.target.value);
+                        if (touched.frictionPoint) validateField('frictionPoint', e.target.value);
+                      }}
+                      onBlur={() => handleBlur('frictionPoint')}
                     >
-                      <option value="" disabled className="bg-dark text-white/50">Pick the closest match</option>
+                      <option value="" disabled className="bg-dark text-white/40">Pick the closest match</option>
                       {DIAGNOSIS_OPTIONS.map(s => <option key={s} value={s} className="bg-dark text-white">{s}</option>)}
                     </select>
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none mt-1">
+                    <div className="absolute right-4 top-[1.4rem] pointer-events-none">
                        <ChevronDown className="w-5 h-5 text-gold-on-dark" />
                     </div>
                   </div>
+                  {touched.frictionPoint && errors.frictionPoint && <p className="text-red-solid text-xs mt-2 font-sans">{errors.frictionPoint}</p>}
                 </div>
               </div>
 
               {/* Row 4: Message */}
               <div className="group relative">
-                <label htmlFor="message" className="block font-mono text-[10px] uppercase tracking-[0.2em] text-gold-on-dark font-bold">ANYTHING ELSE?</label>
+                <label htmlFor="message" className="block font-mono text-[10px] uppercase tracking-[0.2em] text-white/70 font-bold">
+                  ANYTHING ELSE?<span className="text-gold-on-dark ml-1">*</span>
+                </label>
                 <textarea 
                   name="message"
                   id="message" 
                   rows={3} 
-                  className={`${inputBaseStyle} resize-none`} 
+                  className={`${inputBaseStyle} ${getBorderStyle('message')} resize-none`} 
                   placeholder="Tell me a bit about your situation." 
                   value={formState.message} 
-                  onChange={e => updateField('message', e.target.value)} 
+                  onChange={e => {
+                    updateField('message', e.target.value);
+                    if (touched.message) validateField('message', e.target.value);
+                  }}
+                  onBlur={() => handleBlur('message')}
                 />
+                {touched.message && errors.message && <p className="text-red-solid text-xs mt-2 font-sans">{errors.message}</p>}
               </div>
 
               <div className="pt-6 pb-8 lg:pt-4 lg:pb-0">

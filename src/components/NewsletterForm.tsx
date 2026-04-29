@@ -4,7 +4,10 @@ export default function NewsletterForm() {
   const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
   const [persona, setPersona] = useState('');
+  
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const portalId = "442914926";
   const formId = "3903904e-f536-47e7-bdde-02d05e8b38dd";
@@ -15,9 +18,39 @@ export default function NewsletterForm() {
     return match ? match[1] : undefined;
   };
 
+  const validateField = (field: string, value: string) => {
+    let errorMsg = '';
+    if (field === 'firstName') {
+      if (!value.trim()) errorMsg = 'First name is required';
+      else if (!/^[A-Za-z\s\-\']+$/.test(value)) errorMsg = 'Letters only';
+    }
+    if (field === 'email') {
+      if (!value.trim()) errorMsg = 'Email is required';
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) errorMsg = 'Invalid email address';
+    }
+    if (field === 'persona') {
+      if (!value) errorMsg = 'Please select a stage';
+    }
+    
+    setErrors(prev => ({ ...prev, [field]: errorMsg }));
+    return !errorMsg;
+  };
+
+  const handleBlur = (field: string, value: string) => {
+    setTouched(prev => ({ ...prev, [field]: true }));
+    validateField(field, value);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !persona) return;
+    
+    const isNameValid = validateField('firstName', firstName);
+    const isEmailValid = validateField('email', email);
+    const isPersonaValid = validateField('persona', persona);
+    
+    setTouched({ firstName: true, email: true, persona: true });
+
+    if (!isNameValid || !isEmailValid || !isPersonaValid) return;
     
     setStatus('loading');
 
@@ -48,6 +81,7 @@ export default function NewsletterForm() {
         setFirstName('');
         setEmail('');
         setPersona('');
+        setTouched({});
       } else {
         setStatus('error');
       }
@@ -56,6 +90,10 @@ export default function NewsletterForm() {
       setStatus('error');
     }
   };
+
+  const inputBaseStyle = "border-2 bg-white text-dark px-4 py-3 md:py-4 font-sans text-sm focus:outline-none transition-all";
+  const getBorderStyle = (field: string) => 
+    touched[field] && errors[field] ? "border-red-solid focus:border-red-solid bg-red-50" : "border-dark focus:border-gold placeholder:text-dark/40";
 
   return (
     <div className="w-full">
@@ -78,50 +116,62 @@ export default function NewsletterForm() {
                 You're on the list, check your inbox
              </div>
           ) : (
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
               
               <div className="flex flex-col">
                 <label htmlFor="firstName" className="font-mono text-[10px] md:text-xs font-bold uppercase tracking-widest text-dark/70 mb-2">
-                  First Name (Optional)
+                  First Name<span className="text-red-solid ml-1">*</span>
                 </label>
                 <input
                   id="firstName"
                   type="text"
                   value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
+                  onChange={(e) => {
+                    setFirstName(e.target.value);
+                    if (touched.firstName) validateField('firstName', e.target.value);
+                  }}
+                  onBlur={() => handleBlur('firstName', firstName)}
                   disabled={status === 'loading'}
                   placeholder="Your name"
-                  className="border-2 border-dark bg-white text-dark px-4 py-3 md:py-4 font-sans text-sm focus:outline-none focus:border-gold placeholder:text-dark/40 transition-all"
+                  className={`${inputBaseStyle} ${getBorderStyle('firstName')}`}
                 />
+                {touched.firstName && errors.firstName && <p className="font-sans text-xs text-red-solid mt-1">{errors.firstName}</p>}
               </div>
 
               <div className="flex flex-col">
                 <label htmlFor="email" className="font-mono text-[10px] md:text-xs font-bold uppercase tracking-widest text-dark/70 mb-2">
-                  Work email
+                  Work email<span className="text-red-solid ml-1">*</span>
                 </label>
                 <input
                   id="email"
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (touched.email) validateField('email', e.target.value);
+                  }}
+                  onBlur={() => handleBlur('email', email)}
                   disabled={status === 'loading'}
                   placeholder="Enter your email address"
-                  className="border-2 border-dark bg-white text-dark px-4 py-3 md:py-4 font-sans text-sm focus:outline-none focus:border-gold placeholder:text-dark/40 transition-all"
-                  required
+                  className={`${inputBaseStyle} ${getBorderStyle('email')}`}
                 />
+                {touched.email && errors.email && <p className="font-sans text-xs text-red-solid mt-1">{errors.email}</p>}
               </div>
 
               <div className="flex flex-col">
                 <label htmlFor="persona" className="font-mono text-[10px] md:text-xs font-bold uppercase tracking-widest text-dark/70 mb-2">
-                  Where are you right now
+                  Where are you right now<span className="text-red-solid ml-1">*</span>
                 </label>
                 <select
                   id="persona"
                   value={persona}
-                  onChange={(e) => setPersona(e.target.value)}
+                  onChange={(e) => {
+                    setPersona(e.target.value);
+                    if (touched.persona) validateField('persona', e.target.value);
+                  }}
+                  onBlur={() => handleBlur('persona', persona)}
                   disabled={status === 'loading'}
-                  className="border-2 border-dark bg-white text-dark px-4 py-3 md:py-4 font-sans text-sm focus:outline-none focus:border-gold transition-all appearance-none cursor-pointer"
-                  required
+                  className={`${inputBaseStyle} ${getBorderStyle('persona')} appearance-none cursor-pointer ${!persona ? 'text-dark/40' : ''}`}
                 >
                   <option value="" disabled>Select your stage</option>
                   <option value="the_builder">Getting clients (I need more leads)</option>
@@ -129,10 +179,11 @@ export default function NewsletterForm() {
                   <option value="the_controller">Seeing clearly (I don't know my real numbers)</option>
                   <option value="the_visionary">Complete system (I need everything connected)</option>
                 </select>
+                {touched.persona && errors.persona && <p className="font-sans text-xs text-red-solid mt-1">{errors.persona}</p>}
               </div>
 
               {status === 'error' && (
-                <p className="font-sans text-xs text-red-solid mt-1">Something went wrong, check your details and try again</p>
+                <p className="font-sans text-xs text-red-solid mt-1 border border-red-solid p-2 bg-red-50">Something went wrong, please try again</p>
               )}
 
               <button

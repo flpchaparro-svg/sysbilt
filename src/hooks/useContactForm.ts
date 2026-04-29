@@ -1,6 +1,7 @@
 import { useState, FormEvent } from 'react';
 
 const HUBSPOT_PORTAL_ID = '442914926';
+// WARNING: Verify this ID matches your live HubSpot Contact Form URL
 const HUBSPOT_FORM_ID = 'b73fe2b1-95e1-4d06-b275-349f3ac37386';
 
 interface FormState {
@@ -27,10 +28,21 @@ const getHubSpotCookie = () => {
   return match ? match[1] : undefined;
 };
 
-// Replace 'sysbilt_consent' with your actual localStorage consent key if different
-const getConsentState = () => {
+// UPDATED: Correctly parses the sysbilt_consent_v1 JSON object
+const getConsentState = (): string => {
   if (typeof window === 'undefined') return 'declined';
-  return localStorage.getItem('sysbilt_consent') || 'declined';
+  try {
+    const raw = localStorage.getItem('sysbilt_consent_v1');
+    if (!raw) return 'declined';
+    const consent = JSON.parse(raw);
+    
+    // Map the consent object to one of the three HubSpot dropdown values
+    if (consent.analytics && consent.marketing) return 'all_accepted';
+    if (consent.analytics && !consent.marketing) return 'analytics_only';
+    return 'declined';
+  } catch {
+    return 'declined';
+  }
 };
 
 export const useContactForm = () => {
