@@ -33,6 +33,7 @@ const getConsentState = (): string => {
     const raw = localStorage.getItem('sysbilt_consent_v1');
     if (!raw) return 'declined';
     const consent = JSON.parse(raw);
+    
     if (consent.analytics && consent.marketing) return 'all_accepted';
     if (consent.analytics && !consent.marketing) return 'analytics_only';
     return 'declined';
@@ -41,20 +42,18 @@ const getConsentState = (): string => {
   }
 };
 
-// Maps the natural language string to the exact HubSpot internal value
+// Maps the UI text to the exact HubSpot internal values
 const formatFrictionPoint = (val: string) => {
   if (!val) return '';
-  const map: Record<string, string> = {
-    'Website and Leads': 'website_and_leads',
-    'CRM and Sales': 'crm_and_sales',
-    'Automation': 'automation',
-    'AI Assistants': 'ai_assistants',
-    'Content': 'content',
-    'Training': 'training',
-    'Dashboards': 'dashboards',
-    'Not Sure': 'not_sure'
-  };
-  return map[val] || val.toLowerCase().replace(/\s+and\s+/g, '_and_').replace(/\s+/g, '_');
+  if (val.includes('Website & Leads')) return 'website_and_leads';
+  if (val.includes('CRM & Sales')) return 'crm_and_sales';
+  if (val.includes('Automation')) return 'automation';
+  if (val.includes('AI')) return 'ai_assistants';
+  if (val.includes('Content')) return 'content';
+  if (val.includes('Training')) return 'training';
+  if (val.includes('Dashboards')) return 'dashboards';
+  if (val.includes('Not sure')) return 'not_sure';
+  return '';
 };
 
 export const useContactForm = () => {
