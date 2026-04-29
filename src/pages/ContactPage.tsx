@@ -17,7 +17,7 @@ interface ContactPageProps {
 }
 
 const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
-  const { formState, updateField, status, handleSubmit } = useContactForm();
+  const { formState, updateField, status, errorMessage, handleSubmit } = useContactForm();
   
   // Validation State
   const [touched, setTouched] = useState<Record<string, boolean>>({});
@@ -272,10 +272,10 @@ const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
                 {touched.message && errors.message && <p className="text-red-solid text-xs mt-2 font-sans">{errors.message}</p>}
               </div>
 
-              {/* NEW ERROR STATE BLOCK */}
-              {status === 'error' && (
-                <div className="p-4 border border-red-solid bg-red-solid/10 text-red-solid font-sans text-sm rounded-sm">
-                  Submission failed. Please verify "Last Name" is set to optional in HubSpot and try again.
+              {/* DYNAMIC ERROR STATE BLOCK */}
+              {status === 'error' && errorMessage && (
+                <div className="p-4 border border-red-solid bg-red-solid/10 text-red-solid font-sans text-sm rounded-sm break-words">
+                  {errorMessage}
                 </div>
               )}
 

@@ -42,23 +42,28 @@ const getConsentState = (): string => {
   }
 };
 
-// Maps the UI text to the exact HubSpot internal values
-const formatFrictionPoint = (val: string) => {
+// Robust formatter that logs warnings to console if a match fails
+const formatFrictionPoint = (val: string): string => {
   if (!val) return '';
-  if (val.includes('Website & Leads')) return 'website_and_leads';
-  if (val.includes('CRM & Sales')) return 'crm_and_sales';
-  if (val.includes('Automation')) return 'automation';
-  if (val.includes('AI')) return 'ai_assistants';
-  if (val.includes('Content')) return 'content';
-  if (val.includes('Training')) return 'training';
-  if (val.includes('Dashboards')) return 'dashboards';
-  if (val.includes('Not sure')) return 'not_sure';
+  const lowercased = val.toLowerCase();
+  
+  if (lowercased.includes('website') || lowercased.includes('lead')) return 'website_and_leads';
+  if (lowercased.includes('crm') || lowercased.includes('sales')) return 'crm_and_sales';
+  if (lowercased.includes('automation')) return 'automation';
+  if (lowercased.includes('ai')) return 'ai_assistants';
+  if (lowercased.includes('content')) return 'content';
+  if (lowercased.includes('training')) return 'training';
+  if (lowercased.includes('dashboard')) return 'dashboards';
+  if (lowercased.includes('not sure') || lowercased.includes('unsure')) return 'not_sure';
+  
+  console.warn('Unmapped friction point value:', val);
   return '';
 };
 
 export const useContactForm = () => {
   const [formState, setFormState] = useState<FormState>(INITIAL_STATE);
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
   const updateField = (field: keyof FormState, value: string) => {
     setFormState((prev) => ({ ...prev, [field]: value }));
@@ -67,6 +72,7 @@ export const useContactForm = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setStatus('submitting');
+    setErrorMessage(''); // Clear previous errors
 
     const url = `https://api.hsforms.com/submissions/v3/integration/submit/${HUBSPOT_PORTAL_ID}/${HUBSPOT_FORM_ID}`;
 
@@ -99,14 +105,30 @@ export const useContactForm = () => {
         setStatus('success');
         setFormState(INITIAL_STATE);
       } else {
-        console.error('HubSpot submission error:', await response.text());
+        const errText = await response.text();
+        console.error('HubSpot API Error:', errText);
+        
+        // Extract the specific field error from HubSpot's payload
+        try {
+          const errJson = JSON.parse(errText);
+          if (errJson.errors && errJson.errors.length > 0) {
+            const apiErr = errJson.errors[0];
+            setErrorMessage(`HubSpot API: ${apiErr.message} (Field: ${apiErr.name})`);
+          } else {
+            setErrorMessage('HubSpot API rejected the submission.');
+          }
+        } catch {
+          setErrorMessage('HubSpot API rejected the submission. Check console.');
+        }
+        
         setStatus('error');
       }
     } catch (error) {
       console.error('Network error during form submission:', error);
+      setErrorMessage('Network error during submission.');
       setStatus('error');
     }
   };
 
-  return { formState, updateField, status, handleSubmit };
+  return { formState, updateField, status, errorMessage, handleSubmit };
 };
