@@ -272,8 +272,20 @@ const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
                 {touched.message && errors.message && <p className="text-red-solid text-xs mt-2 font-sans">{errors.message}</p>}
               </div>
 
+              {/* NEW ERROR STATE BLOCK */}
+              {status === 'error' && (
+                <div className="p-4 border border-red-solid bg-red-solid/10 text-red-solid font-sans text-sm rounded-sm">
+                  Submission failed. Please verify "Last Name" is set to optional in HubSpot and try again.
+                </div>
+              )}
+
               <div className="pt-6 pb-8 lg:pt-4 lg:pb-0">
-                <CTAButton theme="dark" type="submit" className={`w-full ${status === 'submitting' ? 'opacity-50 cursor-wait' : ''}`}>
+                <CTAButton 
+                  theme="dark" 
+                  type="submit" 
+                  disabled={status === 'submitting'}
+                  className={`w-full ${status === 'submitting' ? 'opacity-50 cursor-wait' : ''}`}
+                >
                   {status === 'submitting' ? 'SENDING...' : 'SEND'}
                 </CTAButton>
               </div>

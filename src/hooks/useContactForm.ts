@@ -1,7 +1,6 @@
 import { useState, FormEvent } from 'react';
 
 const HUBSPOT_PORTAL_ID = '442914926';
-// WARNING: Verify this ID matches your live HubSpot Contact Form URL
 const HUBSPOT_FORM_ID = 'b73fe2b1-95e1-4d06-b275-349f3ac37386';
 
 interface FormState {
@@ -28,21 +27,34 @@ const getHubSpotCookie = () => {
   return match ? match[1] : undefined;
 };
 
-// UPDATED: Correctly parses the sysbilt_consent_v1 JSON object
 const getConsentState = (): string => {
   if (typeof window === 'undefined') return 'declined';
   try {
     const raw = localStorage.getItem('sysbilt_consent_v1');
     if (!raw) return 'declined';
     const consent = JSON.parse(raw);
-    
-    // Map the consent object to one of the three HubSpot dropdown values
     if (consent.analytics && consent.marketing) return 'all_accepted';
     if (consent.analytics && !consent.marketing) return 'analytics_only';
     return 'declined';
   } catch {
     return 'declined';
   }
+};
+
+// Maps the natural language string to the exact HubSpot internal value
+const formatFrictionPoint = (val: string) => {
+  if (!val) return '';
+  const map: Record<string, string> = {
+    'Website and Leads': 'website_and_leads',
+    'CRM and Sales': 'crm_and_sales',
+    'Automation': 'automation',
+    'AI Assistants': 'ai_assistants',
+    'Content': 'content',
+    'Training': 'training',
+    'Dashboards': 'dashboards',
+    'Not Sure': 'not_sure'
+  };
+  return map[val] || val.toLowerCase().replace(/\s+and\s+/g, '_and_').replace(/\s+/g, '_');
 };
 
 export const useContactForm = () => {
@@ -65,7 +77,7 @@ export const useContactForm = () => {
         { name: 'email', value: formState.email },
         { name: 'company', value: formState.company },
         { name: 'phone', value: formState.phone },
-        { name: 'friction_point', value: formState.frictionPoint },
+        { name: 'friction_point', value: formatFrictionPoint(formState.frictionPoint) },
         { name: 'message', value: formState.message },
         { name: 'consent_state', value: getConsentState() },
         { name: 'lead_source_detail', value: window.location.href }
