@@ -22,7 +22,6 @@ const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
   const inputBaseStyle = "w-full bg-white/5 border border-white/10 px-4 py-4 font-sans text-xl text-white focus:outline-none focus:border-gold focus:bg-white/10 transition-colors duration-200 ease-out placeholder:text-white/70 rounded-sm mt-2";
 
   return (
-    // Main background dark so overscrolling on mobile doesn't show cream under the form (design spec: dark #1a1a1a)
     <div className="min-h-screen lg:h-screen w-full flex flex-col lg:flex-row relative z-[9999] bg-dark lg:overflow-hidden">
       <PageMeta
         title={SEO_META.contact.title}
@@ -86,7 +85,7 @@ const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
                 <div className="group relative">
                   <label htmlFor="name" className="block font-mono text-[10px] uppercase tracking-[0.2em] text-gold-on-dark font-bold">YOUR NAME</label>
                   <input 
-                    name="firstname" /* ADDED FOR HUBSPOT */
+                    name="firstname"
                     id="name" 
                     type="text" 
                     required 
@@ -99,7 +98,7 @@ const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
                 <div className="group relative">
                   <label htmlFor="email" className="block font-mono text-[10px] uppercase tracking-[0.2em] text-gold-on-dark font-bold">EMAIL</label>
                   <input 
-                    name="email" /* ADDED FOR HUBSPOT */
+                    name="email"
                     id="email" 
                     type="email" 
                     required 
@@ -115,9 +114,10 @@ const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
               <div className="group relative">
                 <label htmlFor="company" className="block font-mono text-[10px] uppercase tracking-[0.2em] text-gold-on-dark font-bold">BUSINESS</label>
                 <input 
-                  name="company" /* ADDED FOR HUBSPOT */
+                  name="company"
                   id="company" 
                   type="text" 
+                  required
                   className={inputBaseStyle} 
                   placeholder="Company name or website" 
                   value={formState.company} 
@@ -125,21 +125,38 @@ const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
                 />
               </div>
 
-              {/* Row 3: Dropdown */}
-              <div className="group relative">
-                <label htmlFor="frictionPoint" className="block font-mono text-[10px] uppercase tracking-[0.2em] text-gold-on-dark font-bold">WHAT DO YOU NEED HELP WITH?</label>
-                <div className="relative">
-                  <select 
-                    name="friction_point" /* ADDED FOR HUBSPOT - MATCHES INTERNAL NAME */
-                    id="frictionPoint" 
-                    className={`${inputBaseStyle} appearance-none cursor-pointer pr-10`} 
-                    value={formState.frictionPoint} 
-                    onChange={e => updateField('frictionPoint', e.target.value)}
-                  >
-                    {DIAGNOSIS_OPTIONS.map(s => <option key={s} value={s} className="bg-dark text-white">{s}</option>)}
-                  </select>
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none mt-1">
-                     <ChevronDown className="w-5 h-5 text-gold-on-dark" />
+              {/* Row 3: Phone & Dropdown (Side-by-side) */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-5">
+                <div className="group relative">
+                  <label htmlFor="phone" className="block font-mono text-[10px] uppercase tracking-[0.2em] text-gold-on-dark font-bold">PHONE NUMBER</label>
+                  <input 
+                    name="phone"
+                    id="phone" 
+                    type="tel" 
+                    required
+                    className={inputBaseStyle} 
+                    placeholder="Your best number" 
+                    value={formState.phone} 
+                    onChange={e => updateField('phone', e.target.value)} 
+                  />
+                </div>
+                <div className="group relative">
+                  <label htmlFor="frictionPoint" className="block font-mono text-[10px] uppercase tracking-[0.2em] text-gold-on-dark font-bold">WHAT DO YOU NEED HELP WITH?</label>
+                  <div className="relative">
+                    <select 
+                      name="friction_point"
+                      id="frictionPoint" 
+                      required
+                      className={`${inputBaseStyle} appearance-none cursor-pointer pr-10`} 
+                      value={formState.frictionPoint} 
+                      onChange={e => updateField('frictionPoint', e.target.value)}
+                    >
+                      <option value="" disabled className="bg-dark text-white/50">Pick the closest match</option>
+                      {DIAGNOSIS_OPTIONS.map(s => <option key={s} value={s} className="bg-dark text-white">{s}</option>)}
+                    </select>
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none mt-1">
+                       <ChevronDown className="w-5 h-5 text-gold-on-dark" />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -148,7 +165,7 @@ const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
               <div className="group relative">
                 <label htmlFor="message" className="block font-mono text-[10px] uppercase tracking-[0.2em] text-gold-on-dark font-bold">ANYTHING ELSE?</label>
                 <textarea 
-                  name="message" /* ADDED FOR HUBSPOT */
+                  name="message"
                   id="message" 
                   rows={3} 
                   className={`${inputBaseStyle} resize-none`} 

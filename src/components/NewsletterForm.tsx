@@ -1,13 +1,19 @@
 import React, { useState } from 'react';
 
 export default function NewsletterForm() {
+  const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
   const [persona, setPersona] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 
-  // Hardcoded IDs from HubSpot embed script
   const portalId = "442914926";
-  const formId = "914f78a4-171e-457c-b560-421539eb6143";
+  const formId = "3903904e-f536-47e7-bdde-02d05e8b38dd";
+
+  const getHubSpotCookie = () => {
+    if (typeof document === 'undefined') return undefined;
+    const match = document.cookie.match(/(?:^|; )hubspotutk=([^;]*)/);
+    return match ? match[1] : undefined;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,12 +25,14 @@ export default function NewsletterForm() {
     
     const payload = {
       fields: [
+        { name: 'firstname', value: firstName },
         { name: 'email', value: email },
         { name: 'sysbilt_persona', value: persona } 
       ],
       context: {
         pageUri: window.location.href,
-        pageName: document.title
+        pageName: document.title,
+        hutk: getHubSpotCookie()
       }
     };
 
@@ -37,6 +45,7 @@ export default function NewsletterForm() {
 
       if (response.ok) {
         setStatus('success');
+        setFirstName('');
         setEmail('');
         setPersona('');
       } else {
@@ -70,6 +79,22 @@ export default function NewsletterForm() {
              </div>
           ) : (
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+              
+              <div className="flex flex-col">
+                <label htmlFor="firstName" className="font-mono text-[10px] md:text-xs font-bold uppercase tracking-widest text-dark/70 mb-2">
+                  First Name (Optional)
+                </label>
+                <input
+                  id="firstName"
+                  type="text"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  disabled={status === 'loading'}
+                  placeholder="Your name"
+                  className="border-2 border-dark bg-white text-dark px-4 py-3 md:py-4 font-sans text-sm focus:outline-none focus:border-gold placeholder:text-dark/40 transition-all"
+                />
+              </div>
+
               <div className="flex flex-col">
                 <label htmlFor="email" className="font-mono text-[10px] md:text-xs font-bold uppercase tracking-widest text-dark/70 mb-2">
                   Work email
@@ -102,6 +127,7 @@ export default function NewsletterForm() {
                   <option value="the_builder">Getting clients (I need more leads)</option>
                   <option value="the_scaler">Scaling up (I'm doing too much myself)</option>
                   <option value="the_controller">Seeing clearly (I don't know my real numbers)</option>
+                  <option value="the_visionary">Complete system (I need everything connected)</option>
                 </select>
               </div>
 

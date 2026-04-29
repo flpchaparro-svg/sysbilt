@@ -1,12 +1,13 @@
 import { useState, FormEvent } from 'react';
 
-const HUBSPOT_PORTAL_ID = '442493227';
-const HUBSPOT_FORM_ID = 'YOUR_FORM_ID';
+const HUBSPOT_PORTAL_ID = '442914926';
+const HUBSPOT_FORM_ID = 'b73fe2b1-95e1-4d06-b275-349f3ac37386';
 
 interface FormState {
   name: string;
   email: string;
   company: string;
+  phone: string;
   frictionPoint: string;
   message: string;
 }
@@ -15,8 +16,21 @@ const INITIAL_STATE: FormState = {
   name: '',
   email: '',
   company: '',
+  phone: '',
   frictionPoint: '',
   message: '',
+};
+
+const getHubSpotCookie = () => {
+  if (typeof document === 'undefined') return undefined;
+  const match = document.cookie.match(/(?:^|; )hubspotutk=([^;]*)/);
+  return match ? match[1] : undefined;
+};
+
+// Replace 'sysbilt_consent' with your actual localStorage consent key if different
+const getConsentState = () => {
+  if (typeof window === 'undefined') return 'declined';
+  return localStorage.getItem('sysbilt_consent') || 'declined';
 };
 
 export const useContactForm = () => {
@@ -38,12 +52,16 @@ export const useContactForm = () => {
         { name: 'firstname', value: formState.name },
         { name: 'email', value: formState.email },
         { name: 'company', value: formState.company },
+        { name: 'phone', value: formState.phone },
         { name: 'friction_point', value: formState.frictionPoint },
         { name: 'message', value: formState.message },
+        { name: 'consent_state', value: getConsentState() },
+        { name: 'lead_source_detail', value: window.location.href }
       ],
       context: {
         pageUri: window.location.href,
         pageName: document.title,
+        hutk: getHubSpotCookie(),
       },
     };
 
