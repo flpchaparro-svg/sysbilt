@@ -42,7 +42,6 @@ const getConsentState = (): string => {
   }
 };
 
-// Robust formatter that logs warnings to console if a match fails
 const formatFrictionPoint = (val: string): string => {
   if (!val) return '';
   const lowercased = val.toLowerCase();
@@ -72,7 +71,7 @@ export const useContactForm = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setStatus('submitting');
-    setErrorMessage(''); // Clear previous errors
+    setErrorMessage('');
 
     const url = `https://api.hsforms.com/submissions/v3/integration/submit/${HUBSPOT_PORTAL_ID}/${HUBSPOT_FORM_ID}`;
 
@@ -80,7 +79,8 @@ export const useContactForm = () => {
       fields: [
         { name: 'firstname', value: formState.name },
         { name: 'email', value: formState.email },
-        { name: 'company', value: formState.company },
+        // Fix: Explicitly map the company input to the HubSpot Company Object (0-2)
+        { objectTypeId: '0-2', name: 'name', value: formState.company },
         { name: 'phone', value: formState.phone },
         { name: 'friction_point', value: formatFrictionPoint(formState.frictionPoint) },
         { name: 'message', value: formState.message },
@@ -108,7 +108,6 @@ export const useContactForm = () => {
         const errText = await response.text();
         console.error('HubSpot API Error:', errText);
         
-        // Extract the specific field error from HubSpot's payload
         try {
           const errJson = JSON.parse(errText);
           if (errJson.errors && errJson.errors.length > 0) {
