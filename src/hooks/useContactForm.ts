@@ -79,13 +79,13 @@ export const useContactForm = () => {
       fields: [
         { name: 'firstname', value: formState.name },
         { name: 'email', value: formState.email },
-        // Fix: Explicitly map the company input to the HubSpot Company Object (0-2)
         { objectTypeId: '0-2', name: 'name', value: formState.company },
         { name: 'phone', value: formState.phone },
         { name: 'friction_point', value: formatFrictionPoint(formState.frictionPoint) },
         { name: 'message', value: formState.message },
         { name: 'consent_state', value: getConsentState() },
-        { name: 'lead_source_detail', value: window.location.href }
+        { name: 'lead_source_detail', value: window.location.href },
+        { name: 'lifecyclestage', value: 'lead' }
       ],
       context: {
         pageUri: window.location.href,
