@@ -7,6 +7,7 @@ import {PageMeta} from '../components/PageMeta'
 import {SITE_ORIGIN} from '../constants/seoMeta'
 import {SysbiltLogo} from '../components/SysbiltLogo'
 import ShareButton from '../components/ShareButton'
+import {GuideGateForm} from '../components/GuideGateForm'
 
 // --- Types aligned with Sanity `guide` + `guideBlockContent` ---
 
@@ -936,6 +937,7 @@ export default function GuideDocumentPage() {
   const [guideData, setGuideData] = useState<GuideDocument | null>(null)
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
+  const [isUnlocked, setIsUnlocked] = useState(false) // STAGE 2 LOCK STATE
 
   useEffect(() => {
     if (!slug?.trim()) {
@@ -990,7 +992,8 @@ export default function GuideDocumentPage() {
   const includeCtaPage = guideData?.includeCtaPage !== false
   const totalPages = 1 + pages.length + (includeCtaPage ? 1 : 0)
 
-  const pageNodes = useMemo(() => {
+  // SPLIT THE PAGES INTO CONTENT AND CTA SO WE CAN HIDE THEM
+  const { contentPages, ctaEndPage } = useMemo(() => {
     const contentPages = pages.map((page, idx) => {
       const blocks = page.content ?? []
       return (
@@ -1052,13 +1055,7 @@ export default function GuideDocumentPage() {
         </PageContainer>
       ) : null
 
-    return (
-      <>
-        {guideData && <CoverPage guideData={guideData} />}
-        {contentPages}
-        {ctaEndPage}
-      </>
-    )
+    return { contentPages, ctaEndPage }
   }, [pages, totalPages, guideData, badgeLabel, badgeLink, includeCtaPage])
 
   if (loading) {
@@ -1178,7 +1175,28 @@ export default function GuideDocumentPage() {
             </Link>
           </div>
         </nav>
-        {pageNodes}
+        
+        {/* COVER PAGE ALWAYS VISIBLE */}
+        {guideData && <CoverPage guideData={guideData} />}
+
+        {/* THE GATE */}
+        {!isUnlocked && guideData && (
+          <div className="w-full max-w-[794px] relative z-20 -mt-16 md:-mt-24 print:hidden">
+            <GuideGateForm 
+              guideSlug={guideSlug}
+              guideName={guideData.title}
+              onSuccess={() => setIsUnlocked(true)}
+            />
+          </div>
+        )}
+
+        {/* UNLOCKED CONTENT */}
+        {isUnlocked && (
+          <>
+            {contentPages}
+            {ctaEndPage}
+          </>
+        )}
       </div>
     </div>
   )

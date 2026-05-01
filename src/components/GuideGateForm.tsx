@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 interface GuideGateFormProps {
   guideSlug: string;
   guideName: string;
-  pdfUrl: string;
+  pdfUrl?: string; // Made optional since we are unlocking on-page
+  onSuccess?: () => void; // The trigger that unlocks the page
 }
 
 const HUBSPOT_PORTAL_ID = '442914926';
@@ -31,6 +32,7 @@ export const GuideGateForm: React.FC<GuideGateFormProps> = ({
   guideSlug,
   guideName,
   pdfUrl,
+  onSuccess,
 }) => {
   const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
@@ -45,6 +47,7 @@ export const GuideGateForm: React.FC<GuideGateFormProps> = ({
     if (honeypot) {
       console.log('Honeypot triggered, silently dropping bot submission');
       setStatus('success');
+      if (onSuccess) setTimeout(onSuccess, 1000);
       return;
     }
 
@@ -97,6 +100,10 @@ export const GuideGateForm: React.FC<GuideGateFormProps> = ({
 
       if (response.ok) {
         setStatus('success');
+        if (onSuccess) {
+          // Delay the unlock slightly so they see the success state
+          setTimeout(() => onSuccess(), 1500);
+        }
       } else {
         const errText = await response.text();
         console.error('HubSpot API Error:', errText);
@@ -112,28 +119,39 @@ export const GuideGateForm: React.FC<GuideGateFormProps> = ({
 
   if (status === 'success') {
     return (
-      <div className="bg-dark text-white p-8 border border-gold-on-dark/30 rounded-sm">
-        <h3 className="font-serif text-2xl mb-4">Your guide is ready</h3>
-        <p className="font-sans text-sm text-white/80 mb-6 leading-relaxed">
-          Click below to open it. We have also sent a copy to your inbox as a backup.
+      <div className="bg-dark text-white p-8 md:p-12 border-2 border-dark shadow-[8px_8px_0px_0px_#1a1a1a] text-center">
+        <div className="w-16 h-16 bg-gold/10 border-2 border-gold rounded-full flex items-center justify-center mx-auto mb-6">
+          <svg className="w-8 h-8 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+        <h3 className="font-serif text-3xl mb-4">Access Granted</h3>
+        <p className="font-sans text-white/80 mb-6">
+          {onSuccess 
+            ? "Unlocking your guide now..." 
+            : "Click below to open your guide. We have also sent a copy to your inbox."}
         </p>
-        <a
-          href={pdfUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-block font-mono text-xs font-bold uppercase tracking-widest bg-gold-on-dark text-dark px-6 py-3 hover:opacity-90 transition-opacity"
-        >
-          Download {guideName}
-        </a>
+        {!onSuccess && pdfUrl && (
+          <a
+            href={pdfUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block font-mono text-xs font-bold uppercase tracking-widest bg-gold-on-dark text-dark px-8 py-4 hover:opacity-90 transition-opacity"
+          >
+            Download {guideName}
+          </a>
+        )}
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-dark text-white p-8 space-y-4">
-      <h3 className="font-serif text-2xl mb-2">Get the guide</h3>
-      <p className="font-sans text-sm text-white/70 mb-6">
-        First name and email, that is all we need. Unsubscribe any time.
+    <form onSubmit={handleSubmit} className="bg-dark text-white p-8 md:p-12 border-2 border-dark shadow-[12px_12px_0px_0px_#1a1a1a] relative overflow-hidden group">
+      <div className="absolute top-0 left-0 w-full h-1.5 bg-red-solid scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-700 ease-out" />
+      
+      <h3 className="font-serif text-3xl md:text-4xl mb-4">Get the full guide</h3>
+      <p className="font-sans text-white/70 mb-8 border-l-2 border-gold pl-4 max-w-md">
+        First name and email, that is all we need. We'll unlock the guide instantly and send a backup copy to your inbox.
       </p>
 
       {/* HONEYPOT SPAM PROTECTION */}
@@ -148,46 +166,48 @@ export const GuideGateForm: React.FC<GuideGateFormProps> = ({
         style={{ position: 'absolute', left: '-9999px', opacity: 0, pointerEvents: 'none' }}
       />
 
-      <input
-        type="text"
-        placeholder="First name"
-        value={firstName}
-        onChange={e => setFirstName(e.target.value)}
-        required
-        className="w-full bg-white/5 border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-gold"
-      />
-      <input
-        type="email"
-        placeholder="Your email"
-        value={email}
-        onChange={e => setEmail(e.target.value)}
-        required
-        className="w-full bg-white/5 border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-gold"
-      />
-      <select
-        value={persona}
-        onChange={e => setPersona(e.target.value)}
-        required
-        className={`w-full bg-white/5 border border-white/10 px-4 py-3 text-white focus:outline-none focus:border-gold appearance-none cursor-pointer ${!persona ? 'text-white/40' : ''}`}
-      >
-        <option value="" disabled className="text-dark bg-white">Where are you right now?</option>
-        <option value="the_builder" className="text-dark bg-white">Getting clients (I need more leads)</option>
-        <option value="the_scaler" className="text-dark bg-white">Scaling up (I am doing too much myself)</option>
-        <option value="the_controller" className="text-dark bg-white">Seeing clearly (I do not know my real numbers)</option>
-        <option value="the_visionary" className="text-dark bg-white">Complete system (I need everything connected)</option>
-      </select>
+      <div className="space-y-4">
+        <input
+          type="text"
+          placeholder="First name"
+          value={firstName}
+          onChange={e => setFirstName(e.target.value)}
+          required
+          className="w-full bg-white text-dark px-4 py-3 md:py-4 font-sans text-sm focus:outline-none border-2 border-dark focus:border-gold placeholder:text-dark/40"
+        />
+        <input
+          type="email"
+          placeholder="Your work email"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          required
+          className="w-full bg-white text-dark px-4 py-3 md:py-4 font-sans text-sm focus:outline-none border-2 border-dark focus:border-gold placeholder:text-dark/40"
+        />
+        <select
+          value={persona}
+          onChange={e => setPersona(e.target.value)}
+          required
+          className={`w-full bg-white text-dark px-4 py-3 md:py-4 font-sans text-sm focus:outline-none border-2 border-dark focus:border-gold appearance-none cursor-pointer ${!persona ? 'text-dark/40' : ''}`}
+        >
+          <option value="" disabled>Where are you right now?</option>
+          <option value="the_builder">Getting clients (I need more leads)</option>
+          <option value="the_scaler">Scaling up (I am doing too much myself)</option>
+          <option value="the_controller">Seeing clearly (I do not know my real numbers)</option>
+          <option value="the_visionary">Complete system (I need everything connected)</option>
+        </select>
 
-      {status === 'error' && (
-        <p className="text-red-solid text-sm">{errorMessage}</p>
-      )}
+        {status === 'error' && (
+          <p className="font-sans text-xs text-red-solid border border-red-solid p-2 bg-red-50">{errorMessage}</p>
+        )}
 
-      <button
-        type="submit"
-        disabled={status === 'submitting'}
-        className="w-full bg-gold-on-dark text-dark py-3 font-mono text-xs font-bold uppercase tracking-widest hover:opacity-90 disabled:opacity-50 transition-opacity"
-      >
-        {status === 'submitting' ? 'Sending...' : `Get ${guideName}`}
-      </button>
+        <button
+          type="submit"
+          disabled={status === 'submitting'}
+          className="w-full font-mono text-xs md:text-sm font-bold uppercase border-2 border-dark bg-gold-on-dark text-dark px-6 py-4 hover:opacity-90 transition-opacity mt-4"
+        >
+          {status === 'submitting' ? 'Unlocking...' : `Read ${guideName}`}
+        </button>
+      </div>
     </form>
   );
 };
