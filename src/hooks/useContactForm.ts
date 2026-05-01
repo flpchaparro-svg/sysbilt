@@ -112,6 +112,7 @@ export const useContactForm = () => {
 
       if (response.ok) {
         setStatus('success');
+        localStorage.setItem('sysbilt_known_user', 'true');
         setFormState(INITIAL_STATE);
       } else {
         const errText = await response.text();

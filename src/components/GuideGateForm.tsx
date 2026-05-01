@@ -3,24 +3,13 @@ import React, { useState } from 'react';
 interface GuideGateFormProps {
   guideSlug: string;
   guideName: string;
-  pdfUrl?: string; // Made optional since we are unlocking on-page
-  onSuccess?: () => void; // The trigger that unlocks the page
+  pdfUrl?: string; 
+  onSuccess?: () => void; 
 }
 
 const HUBSPOT_PORTAL_ID = '442914926';
 const HUBSPOT_GUIDE_FORM_ID = '6702ab07-e01e-42c7-97b5-3cc68822b566';
 const SYSBILT_UPDATES_SUBSCRIPTION_ID = 2628685226;
-
-const guideSlugToHubSpotValue: Record<string, string> = {
-  'generic-revenue-engine': 'generic_revenue_engine',
-  'custom-builders-playbook': 'custom_builders_playbook',
-  'legal-firm-playbook': 'legal_firm_playbook',
-  'medical-aesthetics-playbook': 'medical_aesthetics_playbook',
-  'dental-practice-playbook': 'dental_practice_playbook',
-  'migration-agent-playbook': 'migration_agent_playbook',
-  'property-management-playbook': 'property_management_playbook',
-  'dashboards-guide': 'dashboards_guide',
-};
 
 const getHubSpotCookie = () => {
   if (typeof document === 'undefined') return undefined;
@@ -54,13 +43,9 @@ export const GuideGateForm: React.FC<GuideGateFormProps> = ({
     setStatus('submitting');
     setErrorMessage('');
 
-    const hubspotValue = guideSlugToHubSpotValue[guideSlug];
-    if (!hubspotValue) {
-      console.error('Unknown guide slug:', guideSlug);
-      setErrorMessage('Configuration error. Please contact support.');
-      setStatus('error');
-      return;
-    }
+    // DYNAMIC SLUG HANDLING: Converts "my-guide-name" to "my_guide_name" automatically.
+    // Ensure this exact value is added as an option in HubSpot's "guide_downloaded" property.
+    const hubspotValue = guideSlug.replace(/-/g, '_');
 
     const url = `https://api.hsforms.com/submissions/v3/integration/submit/${HUBSPOT_PORTAL_ID}/${HUBSPOT_GUIDE_FORM_ID}`;
 
@@ -100,8 +85,8 @@ export const GuideGateForm: React.FC<GuideGateFormProps> = ({
 
       if (response.ok) {
         setStatus('success');
+        localStorage.setItem('sysbilt_known_user', 'true');
         if (onSuccess) {
-          // Delay the unlock slightly so they see the success state
           setTimeout(() => onSuccess(), 1500);
         }
       } else {

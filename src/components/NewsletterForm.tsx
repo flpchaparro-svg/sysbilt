@@ -104,6 +104,7 @@ export default function NewsletterForm() {
 
       if (response.ok) {
         setStatus('success');
+        localStorage.setItem('sysbilt_known_user', 'true');
         setFirstName('');
         setEmail('');
         setPersona('');

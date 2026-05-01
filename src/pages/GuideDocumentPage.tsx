@@ -937,7 +937,11 @@ export default function GuideDocumentPage() {
   const [guideData, setGuideData] = useState<GuideDocument | null>(null)
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
-  const [isUnlocked, setIsUnlocked] = useState(false) // STAGE 2 LOCK STATE
+  // UNIVERSAL UNLOCK: If they ever filled out ANY form, unlock all guides forever
+  const [isUnlocked, setIsUnlocked] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return localStorage.getItem('sysbilt_known_user') === 'true';
+  });
 
   useEffect(() => {
     if (!slug?.trim()) {
