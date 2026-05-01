@@ -19,25 +19,28 @@ export default function NewsletterForm() {
     return match ? match[1] : undefined;
   };
 
-  const validateField = (field: string, value: string) => {
+  const validateField = (field: string, value: string | boolean) => {
     let errorMsg = '';
     if (field === 'firstName') {
-      if (!value.trim()) errorMsg = 'First name is required';
-      else if (!/^[A-Za-z\s\-\']+$/.test(value)) errorMsg = 'Letters only';
+      if (!(value as string).trim()) errorMsg = 'First name is required';
+      else if (!/^[A-Za-z\s\-\']+$/.test(value as string)) errorMsg = 'Letters only';
     }
     if (field === 'email') {
-      if (!value.trim()) errorMsg = 'Email is required';
-      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) errorMsg = 'Invalid email address';
+      if (!(value as string).trim()) errorMsg = 'Email is required';
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value as string)) errorMsg = 'Invalid email address';
     }
     if (field === 'persona') {
       if (!value) errorMsg = 'Please select a stage';
+    }
+    if (field === 'marketingConsent') {
+      if (value !== true) errorMsg = 'You must agree to join the list to continue';
     }
     
     setErrors(prev => ({ ...prev, [field]: errorMsg }));
     return !errorMsg;
   };
 
-  const handleBlur = (field: string, value: string) => {
+  const handleBlur = (field: string, value: string | boolean) => {
     setTouched(prev => ({ ...prev, [field]: true }));
     validateField(field, value);
   };
@@ -48,10 +51,11 @@ export default function NewsletterForm() {
     const isNameValid = validateField('firstName', firstName);
     const isEmailValid = validateField('email', email);
     const isPersonaValid = validateField('persona', persona);
+    const isConsentValid = validateField('marketingConsent', marketingConsent);
     
-    setTouched({ firstName: true, email: true, persona: true });
+    setTouched({ firstName: true, email: true, persona: true, marketingConsent: true });
 
-    if (!isNameValid || !isEmailValid || !isPersonaValid) return;
+    if (!isNameValid || !isEmailValid || !isPersonaValid || !isConsentValid) return;
     
     setStatus('loading');
 
@@ -197,19 +201,27 @@ export default function NewsletterForm() {
                 {touched.persona && errors.persona && <p className="font-sans text-xs text-red-solid mt-1">{errors.persona}</p>}
               </div>
 
-              <div className="flex items-start gap-3 mt-2 mb-1">
-                <div className="flex items-center h-5 mt-0.5 shrink-0">
-                  <input
-                    id="marketingConsent"
-                    type="checkbox"
-                    checked={marketingConsent}
-                    onChange={(e) => setMarketingConsent(e.target.checked)}
-                    className="w-4 h-4 appearance-none bg-white border-2 border-dark rounded-sm checked:bg-red-solid checked:border-red-solid focus:outline-none transition-colors cursor-pointer relative after:content-[''] after:absolute after:hidden checked:after:block after:left-[4px] after:top-[1px] after:w-1.5 after:h-2.5 after:border-r-2 after:border-b-2 after:border-white after:rotate-45"
-                  />
+              <div className="flex flex-col mt-2 mb-1">
+                <div className="flex items-start gap-3">
+                  <div className="flex items-center h-5 mt-0.5 shrink-0">
+                    <input
+                      id="marketingConsent"
+                      type="checkbox"
+                      checked={marketingConsent}
+                      onChange={(e) => {
+                        setMarketingConsent(e.target.checked);
+                        if (touched.marketingConsent) validateField('marketingConsent', e.target.checked);
+                      }}
+                      className={`w-4 h-4 appearance-none bg-white border-2 rounded-sm checked:bg-red-solid checked:border-red-solid focus:outline-none transition-colors cursor-pointer relative after:content-[''] after:absolute after:hidden checked:after:block after:left-[4px] after:top-[1px] after:w-1.5 after:h-2.5 after:border-r-2 after:border-b-2 after:border-white after:rotate-45 ${touched.marketingConsent && errors.marketingConsent ? 'border-red-solid bg-red-50' : 'border-dark'}`}
+                    />
+                  </div>
+                  <label htmlFor="marketingConsent" className="font-sans text-xs text-dark/70 leading-relaxed cursor-pointer select-none">
+                    I agree to receive the SYSBILT Updates weekly email. I understand I can unsubscribe at any time.<span className="text-red-solid ml-1">*</span>
+                  </label>
                 </div>
-                <label htmlFor="marketingConsent" className="font-sans text-xs text-dark/70 leading-relaxed cursor-pointer select-none">
-                  I agree to receive the SYSBILT Updates weekly email. I understand I can unsubscribe at any time.
-                </label>
+                {touched.marketingConsent && errors.marketingConsent && (
+                  <p className="font-sans text-xs text-red-solid mt-2">{errors.marketingConsent}</p>
+                )}
               </div>
 
               {status === 'error' && (
