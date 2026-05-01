@@ -54,8 +54,11 @@ const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
   };
 
   const handleBlur = (field: keyof typeof formState) => {
-    setTouched(prev => ({ ...prev, [field]: true }));
-    validateField(field as string, formState[field]);
+    // We only validate standard text fields, not the checkbox
+    if (field !== 'marketingConsent') {
+      setTouched(prev => ({ ...prev, [field]: true }));
+      validateField(field as string, formState[field] as string);
+    }
   };
 
   const onFormSubmit = (e: React.FormEvent) => {
@@ -270,6 +273,23 @@ const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
                   onBlur={() => handleBlur('message')}
                 />
                 {touched.message && errors.message && <p className="text-red-solid text-xs mt-2 font-sans">{errors.message}</p>}
+              </div>
+
+              {/* Row 5: Consent Checkbox */}
+              <div className="group relative flex items-start gap-4 mt-2">
+                <div className="flex items-center h-6 mt-[2px]">
+                  <input
+                    id="marketingConsent"
+                    name="marketingConsent"
+                    type="checkbox"
+                    className="w-5 h-5 appearance-none bg-white/5 border border-white/10 rounded-sm checked:bg-gold-on-dark checked:border-gold-on-dark focus:outline-none focus:ring-1 focus:ring-gold-on-dark transition-colors cursor-pointer relative after:content-[''] after:absolute after:hidden checked:after:block after:left-[6px] after:top-[2px] after:w-1.5 after:h-2.5 after:border-r-2 after:border-b-2 after:border-dark after:rotate-45"
+                    checked={formState.marketingConsent}
+                    onChange={(e) => updateField('marketingConsent', e.target.checked)}
+                  />
+                </div>
+                <label htmlFor="marketingConsent" className="font-sans text-sm text-white/70 leading-relaxed cursor-pointer select-none">
+                  I agree to receive the SYSBILT Updates weekly email. I understand I can unsubscribe at any time.
+                </label>
               </div>
 
               {/* DYNAMIC ERROR STATE BLOCK */}
