@@ -4,6 +4,7 @@ export default function NewsletterForm() {
   const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
   const [persona, setPersona] = useState('');
+  const [marketingConsent, setMarketingConsent] = useState(false);
   
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [touched, setTouched] = useState<Record<string, boolean>>({});
@@ -66,6 +67,19 @@ export default function NewsletterForm() {
         pageUri: window.location.href,
         pageName: document.title,
         hutk: getHubSpotCookie()
+      },
+      legalConsentOptions: {
+        consent: {
+          consentToProcess: true,
+          text: "I agree to allow SYSBILT to store and process my personal data.",
+          communications: [
+            {
+              value: marketingConsent,
+              subscriptionTypeId: 2628685226,
+              text: "I agree to receive the SYSBILT Updates weekly email."
+            }
+          ]
+        }
       }
     };
 
@@ -81,6 +95,7 @@ export default function NewsletterForm() {
         setFirstName('');
         setEmail('');
         setPersona('');
+        setMarketingConsent(false);
         setTouched({});
       } else {
         setStatus('error');
@@ -180,6 +195,21 @@ export default function NewsletterForm() {
                   <option value="the_visionary">Complete system (I need everything connected)</option>
                 </select>
                 {touched.persona && errors.persona && <p className="font-sans text-xs text-red-solid mt-1">{errors.persona}</p>}
+              </div>
+
+              <div className="flex items-start gap-3 mt-2 mb-1">
+                <div className="flex items-center h-5 mt-0.5 shrink-0">
+                  <input
+                    id="marketingConsent"
+                    type="checkbox"
+                    checked={marketingConsent}
+                    onChange={(e) => setMarketingConsent(e.target.checked)}
+                    className="w-4 h-4 appearance-none bg-white border-2 border-dark rounded-sm checked:bg-red-solid checked:border-red-solid focus:outline-none transition-colors cursor-pointer relative after:content-[''] after:absolute after:hidden checked:after:block after:left-[4px] after:top-[1px] after:w-1.5 after:h-2.5 after:border-r-2 after:border-b-2 after:border-white after:rotate-45"
+                  />
+                </div>
+                <label htmlFor="marketingConsent" className="font-sans text-xs text-dark/70 leading-relaxed cursor-pointer select-none">
+                  I agree to receive the SYSBILT Updates weekly email. I understand I can unsubscribe at any time.
+                </label>
               </div>
 
               {status === 'error' && (
