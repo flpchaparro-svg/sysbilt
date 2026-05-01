@@ -65,7 +65,8 @@ export default function NewsletterForm() {
       fields: [
         { name: 'firstname', value: firstName },
         { name: 'email', value: email },
-        { name: 'sysbilt_persona', value: persona } 
+        { name: 'sysbilt_persona', value: persona },
+        { name: 'lifecyclestage', value: 'subscriber' }
       ],
       context: {
         pageUri: window.location.href,
