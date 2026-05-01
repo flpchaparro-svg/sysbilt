@@ -299,9 +299,24 @@ const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
              <h2 className="font-serif text-4xl md:text-6xl lg:text-7xl leading-[0.95] tracking-tighter text-white mb-6">
                Got <span className="italic font-serif text-gold-on-dark">It</span>
              </h2>
-             <p className="font-sans text-lg md:text-xl font-light text-white/80 mb-12 leading-relaxed">
+             <p className="font-sans text-lg md:text-xl font-light text-white/80 mb-8 leading-relaxed">
                Thanks for reaching out. I'll review your details and get back to you within 24 hours.
              </p>
+             
+             {/* DIRECT BOOKING BLOCK */}
+             <div className="bg-white/5 border border-white/10 p-6 mb-12 rounded-sm">
+                <p className="font-sans text-sm text-white/90 mb-4">
+                  <strong className="text-white font-bold">Want to skip the wait?</strong> Book a 15-minute discovery call directly in my calendar.
+                </p>
+                <a
+                  href="https://meetings-ap1.hubspot.com/felipe-chaparro"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block w-full text-center bg-gold-on-dark text-dark px-6 py-4 font-mono text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-opacity"
+                >
+                  Book Discovery Call
+                </a>
+             </div>
              
              <div className="w-fit">
                 <CTAButton theme="dark" onClick={onBack}>
