@@ -10,7 +10,6 @@ interface FormState {
   phone: string;
   frictionPoint: string;
   message: string;
-  marketingConsent: boolean;
 }
 
 const INITIAL_STATE: FormState = {
@@ -20,7 +19,6 @@ const INITIAL_STATE: FormState = {
   phone: '',
   frictionPoint: '',
   message: '',
-  marketingConsent: false,
 };
 
 const getHubSpotCookie = () => {
@@ -66,7 +64,7 @@ export const useContactForm = () => {
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState<string>('');
 
-  const updateField = (field: keyof FormState, value: string | boolean) => {
+  const updateField = (field: keyof FormState, value: string) => {
     setFormState((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -94,19 +92,6 @@ export const useContactForm = () => {
         pageName: document.title,
         hutk: getHubSpotCookie(),
       },
-      legalConsentOptions: {
-        consent: {
-          consentToProcess: true,
-          text: "I agree to allow SYSBILT to store and process my personal data.",
-          communications: [
-            {
-              value: formState.marketingConsent,
-              subscriptionTypeId: 2628685226,
-              text: "I agree to receive the SYSBILT Updates weekly email."
-            }
-          ]
-        }
-      }
     };
 
     try {
