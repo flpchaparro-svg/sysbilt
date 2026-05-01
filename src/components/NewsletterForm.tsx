@@ -5,6 +5,7 @@ export default function NewsletterForm() {
   const [email, setEmail] = useState('');
   const [persona, setPersona] = useState('');
   const [marketingConsent, setMarketingConsent] = useState(false);
+  const [honeypot, setHoneypot] = useState('');
   
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [touched, setTouched] = useState<Record<string, boolean>>({});
@@ -47,6 +48,12 @@ export default function NewsletterForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (honeypot) {
+      console.log('Honeypot triggered, silently dropping bot submission');
+      setStatus('success');
+      return;
+    }
     
     const isNameValid = validateField('firstName', firstName);
     const isEmailValid = validateField('email', email);
@@ -138,6 +145,18 @@ export default function NewsletterForm() {
           ) : (
             <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
               
+              {/* HONEYPOT SPAM PROTECTION */}
+              <input
+                type="text"
+                name="website"
+                value={honeypot}
+                onChange={e => setHoneypot(e.target.value)}
+                autoComplete="off"
+                tabIndex={-1}
+                aria-hidden="true"
+                style={{ position: 'absolute', left: '-9999px', opacity: 0, pointerEvents: 'none' }}
+              />
+
               <div className="flex flex-col">
                 <label htmlFor="firstName" className="font-mono text-[10px] md:text-xs font-bold uppercase tracking-widest text-dark/70 mb-2">
                   First Name<span className="text-red-solid ml-1">*</span>

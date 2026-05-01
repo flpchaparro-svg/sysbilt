@@ -138,6 +138,19 @@ const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
             </div>
 
             <form onSubmit={onFormSubmit} noValidate className="space-y-6 lg:space-y-5">
+              
+              {/* HONEYPOT SPAM PROTECTION */}
+              <input
+                type="text"
+                name="website"
+                value={formState.honeypot}
+                onChange={e => updateField('honeypot', e.target.value)}
+                autoComplete="off"
+                tabIndex={-1}
+                aria-hidden="true"
+                style={{ position: 'absolute', left: '-9999px', opacity: 0, pointerEvents: 'none' }}
+              />
+
               {/* Row 1: Name & Email */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-5">
                 <div className="group relative">

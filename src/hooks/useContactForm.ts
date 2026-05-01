@@ -10,6 +10,7 @@ interface FormState {
   phone: string;
   frictionPoint: string;
   message: string;
+  honeypot: string;
 }
 
 const INITIAL_STATE: FormState = {
@@ -19,6 +20,7 @@ const INITIAL_STATE: FormState = {
   phone: '',
   frictionPoint: '',
   message: '',
+  honeypot: '',
 };
 
 const getHubSpotCookie = () => {
@@ -70,6 +72,13 @@ export const useContactForm = () => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+
+    if (formState.honeypot) {
+      console.log('Honeypot triggered, silently dropping bot submission');
+      setStatus('success');
+      return;
+    }
+
     setStatus('submitting');
     setErrorMessage('');
 
