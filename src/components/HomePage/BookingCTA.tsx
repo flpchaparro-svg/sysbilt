@@ -47,7 +47,7 @@ const BookingCTA: React.FC = () => {
              <div className="w-full">
                 <CTAButton 
                   theme="dark" 
-                  onClick={() => window.open("https://meetings-ap1.hubspot.com/felipe", "_blank")}
+                  onClick={() => window.open("https://meetings-ap1.hubspot.com/felipe-chaparro", "_blank")}
                   className="w-full"
                 >
                   BOOK A 15-MIN CALL
