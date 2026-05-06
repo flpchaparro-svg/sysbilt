@@ -31,8 +31,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     if (!bundle.deal.notion_proposal_url) {
       res.status(404).json({
-        error:
-          'No proposal URL set on this HubSpot deal. Paste the Notion page URL into the "Notion proposal URL" field on the deal.',
+        error: 'No proposal URL set on this HubSpot deal. Paste the Notion page URL into the "Notion proposal URL" field on the deal.',
       });
       return;
     }
@@ -40,8 +39,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const proposal = await fetchProposalPage(bundle.deal.notion_proposal_url);
     if (!proposal) {
       res.status(404).json({
-        error:
-          'Could not fetch the Notion proposal page. Check that the page exists and the SYSBILT Proposal Renderer integration is connected to it (or its parent database).',
+        error: 'Could not fetch the Notion proposal page. Check that the page exists and the SYSBILT Proposal Renderer integration is connected to it (or its parent database).',
       });
       return;
     }

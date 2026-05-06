@@ -1,4 +1,3 @@
-const HUBSPOT_TOKEN = process.env.HUBSPOT_PRIVATE_APP_TOKEN;
 const HUBSPOT_BASE = 'https://api.hubapi.com';
 
 export interface HubspotDeal {
@@ -37,9 +36,10 @@ export interface HubspotDealBundle {
 }
 
 async function hubspotGet<T>(path: string): Promise<T> {
-  if (!HUBSPOT_TOKEN) throw new Error('HUBSPOT_PRIVATE_APP_TOKEN is not set');
+  const token = process.env.HUBSPOT_PRIVATE_APP_TOKEN;
+  if (!token) throw new Error('HUBSPOT_PRIVATE_APP_TOKEN is not set');
   const resp = await fetch(`${HUBSPOT_BASE}${path}`, {
-    headers: { Authorization: `Bearer ${HUBSPOT_TOKEN}` },
+    headers: { Authorization: `Bearer ${token}` },
   });
   if (!resp.ok) {
     const text = await resp.text();

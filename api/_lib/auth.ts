@@ -1,8 +1,42 @@
 import crypto from 'node:crypto';
+import { existsSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 
-const SIGNING_SECRET = process.env.PROPOSAL_SIGNING_SECRET;
-const ADMIN_PASSCODE = process.env.ADMIN_PASSCODE;
 const TOKEN_TTL_DAYS = 90;
+
+/**
+ * `vercel dev` does not always inject `.env.local` into Node serverless handlers.
+ * Merge missing keys from `.env.local` when present (local dev only; file is not deployed).
+ */
+function loadEnvLocalIfMissing(): void {
+  try {
+    const path = join(process.cwd(), '.env.local');
+    if (!existsSync(path)) return;
+    const text = readFileSync(path, 'utf8');
+    for (const line of text.split('\n')) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) continue;
+      const eq = trimmed.indexOf('=');
+      if (eq === -1) continue;
+      const key = trimmed.slice(0, eq).trim();
+      let value = trimmed.slice(eq + 1).trim();
+      if (
+        (value.startsWith('"') && value.endsWith('"')) ||
+        (value.startsWith("'") && value.endsWith("'"))
+      ) {
+        value = value.slice(1, -1);
+      }
+      if (!key) continue;
+      if (process.env[key] === undefined || process.env[key] === '') {
+        process.env[key] = value;
+      }
+    }
+  } catch {
+    // ignore missing/unreadable .env.local
+  }
+}
+
+loadEnvLocalIfMissing();
 
 export interface ProposalTokenPayload {
   dealId: string;
@@ -21,8 +55,9 @@ function fromBase64url(input: string): Buffer {
 }
 
 function hmac(payload: string): string {
-  if (!SIGNING_SECRET) throw new Error('PROPOSAL_SIGNING_SECRET is not set');
-  return base64url(crypto.createHmac('sha256', SIGNING_SECRET).update(payload).digest());
+  const secret = process.env.PROPOSAL_SIGNING_SECRET;
+  if (!secret) throw new Error('PROPOSAL_SIGNING_SECRET is not set');
+  return base64url(crypto.createHmac('sha256', secret).update(payload).digest());
 }
 
 export function signProposalToken(dealId: string): string {
@@ -52,9 +87,14 @@ export function verifyProposalToken(token: string): ProposalTokenPayload {
 }
 
 export function requireAdmin(headers: Record<string, string | string[] | undefined>): void {
-  const provided = headers['x-admin-passcode'];
-  const passcode = Array.isArray(provided) ? provided[0] : provided;
-  if (!ADMIN_PASSCODE || !passcode || passcode !== ADMIN_PASSCODE) {
+  const provided =
+    headers['x-admin-passcode'] ??
+    headers['X-Admin-Passcode'] ??
+    headers['X-ADMIN-PASSCODE'];
+  const passcode = Array.isArray(provided) ? provided[0]?.trim() : provided?.trim();
+  const expected = process.env.ADMIN_PASSCODE?.trim();
+
+  if (!expected || !passcode || passcode !== expected) {
     throw new Error('Unauthorized');
   }
 }
