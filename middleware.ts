@@ -109,6 +109,10 @@ export default async function middleware(request: Request): Promise<Response> {
   const ua = request.headers.get('user-agent') ?? '';
   const normalizedPath = normalizePathname(url.pathname);
 
+  if (normalizedPath.startsWith('/proposal/')) {
+    return next();
+  }
+
   // Catch-all 404 URLs: index.html is still 200 — add header so bots get noindex without JS.
   if (!isSpaRoute(normalizedPath)) {
     const res = await next();

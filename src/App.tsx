@@ -23,6 +23,7 @@ const BlogPostPage = lazy(() => import('./pages/BlogPostPage'));
 const NewsPage = lazy(() => import('./pages/NewsPage'));
 const GuidesPage = lazy(() => import('./pages/GuidesHubPage'));
 const GuideDocumentPage = lazy(() => import('./pages/GuideDocumentPage'));
+const ProposalPage = lazy(() => import('./pages/proposal/ProposalPage'));
 
 const SystemPage = lazy(() => import('./pages/System/SystemPage'));
 const Pillar1 = lazy(() => import('./pages/System/Pillar1'));
@@ -179,6 +180,7 @@ const App: React.FC = () => {
                     <Route path="/pillar5" element={<Pillar5 onNavigate={handleGlobalNavigate} />} />
                     <Route path="/pillar6" element={<Pillar6 onNavigate={handleGlobalNavigate} />} />
                     <Route path="/pillar7" element={<Pillar7 onNavigate={handleGlobalNavigate} />} />
+                    <Route path="/proposal/:token" element={<ProposalPage />} />
                     
                     <Route path="*" element={<NotFoundPage onNavigate={handleGlobalNavigate} />} />
                   </Routes>
