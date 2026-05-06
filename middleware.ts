@@ -36,6 +36,36 @@ function isBot(userAgent: string): boolean {
   return BOT_PATTERNS.some((re) => re.test(userAgent));
 }
 
+/** Vite dev-server URLs (same origin as `vercel dev`). Production builds never hit these paths. */
+const VITE_DEV_FILE =
+  /\.(?:ts|tsx|js|jsx|mjs|css|json|svg|png|jpg|jpeg|gif|webp|ico|woff|woff2|ttf|map)$/i;
+
+function isViteInternalRequest(url: URL): boolean {
+  const { pathname, href } = url;
+
+  if (href.includes('hot-update')) return true;
+  if (href.includes('?import') || href.includes('&import')) return true;
+  if (href.includes('?t=') || href.includes('&t=')) return true;
+  if (href.includes('?v=') || href.includes('&v=')) return true;
+
+  if (
+    pathname.startsWith('/@vite/') ||
+    pathname === '/@vite' ||
+    pathname.startsWith('/@react-refresh') ||
+    pathname.startsWith('/@id/') ||
+    pathname.startsWith('/@fs/') ||
+    pathname === '/src' ||
+    pathname.startsWith('/src/') ||
+    pathname.startsWith('/node_modules/')
+  ) {
+    return true;
+  }
+
+  if (VITE_DEV_FILE.test(pathname)) return true;
+
+  return false;
+}
+
 /** Normalized pathname (no trailing slash except `/`). Must mirror `src/App.tsx` routes. */
 function normalizePathname(pathname: string): string {
   if (pathname === '/') return '/';
@@ -100,12 +130,18 @@ function shouldPrerenderPath(pathname: string): boolean {
 
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|assets|favicon.ico|robots.txt|sitemap.xml|images|videos).*)',
+    // Exclude Vite dev internals + static prefixes so middleware rarely runs for those in prod.
+    '/((?!api|_next/static|_next/image|assets|favicon.ico|robots.txt|sitemap.xml|images|videos|@vite|@react-refresh|@id|@fs|src|node_modules).*)',
   ],
 };
 
 export default async function middleware(request: Request): Promise<Response> {
   const url = new URL(request.url);
+
+  if (isViteInternalRequest(url)) {
+    return next();
+  }
+
   const ua = request.headers.get('user-agent') ?? '';
   const normalizedPath = normalizePathname(url.pathname);
 
