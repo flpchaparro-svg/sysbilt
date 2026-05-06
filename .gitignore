@@ -25,3 +25,4 @@ bundle-stats.html
 *.sw?
 dist/
 .env.local
+.vercel
