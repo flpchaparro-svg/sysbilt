@@ -153,17 +153,23 @@ export async function updateDealStage(dealId: string, stage: string): Promise<vo
 }
 
 export async function addDealNote(dealId: string, body: string): Promise<void> {
-  // Create a Note engagement and associate it to the deal
-  const noteResp: any = await hubspotPost('/crm/v3/objects/notes', {
+  // Create the note WITH a deal association in a single call.
+  // associationTypeId 214 is HubSpot's standard "Note to Deal" type.
+  await hubspotPost('/crm/v3/objects/notes', {
     properties: {
       hs_note_body: body,
       hs_timestamp: new Date().toISOString(),
     },
+    associations: [
+      {
+        to: { id: dealId },
+        types: [
+          {
+            associationCategory: 'HUBSPOT_DEFINED',
+            associationTypeId: 214,
+          },
+        ],
+      },
+    ],
   });
-  const noteId = noteResp.id;
-  // Default association type for Note → Deal is 214
-  await hubspotPost(
-    `/crm/v3/objects/notes/${noteId}/associations/deals/${encodeURIComponent(dealId)}/note_to_deal`,
-    {},
-  );
 }
