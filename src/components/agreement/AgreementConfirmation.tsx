@@ -132,9 +132,11 @@ export default function AgreementConfirmation({
             </div>
             <a
               href="https://sysbilt.com"
-              className="inline-flex w-fit shrink-0 items-center justify-center border-2 border-dark px-6 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark transition-colors hover:border-red-text hover:text-red-text"
+              className="group relative inline-flex w-fit max-w-full shrink-0 items-center justify-center gap-[2px] whitespace-nowrap px-3 py-2 font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark transition-colors hover:text-gold-on-cream"
             >
-              Return to SYSBILT
+              <span className="transition-transform duration-[250ms] group-hover:translate-x-[2px]">[</span>
+              <span className="mx-1">RETURN TO SYSBILT</span>
+              <span className="transition-transform duration-[250ms] group-hover:-translate-x-[2px]">]</span>
             </a>
           </div>
         </div>
