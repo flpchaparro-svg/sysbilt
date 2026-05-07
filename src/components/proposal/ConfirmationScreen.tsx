@@ -52,8 +52,8 @@ export default function ConfirmationScreen({
             </ol>
           </div>
 
-          <div className="proposal-actions mt-12 flex flex-col items-start gap-6 md:flex-row md:items-start md:gap-10">
-            <div className="inline-flex max-w-full flex-col items-start gap-2">
+          <div className="proposal-actions mt-12 flex flex-col items-start justify-start gap-6 md:flex-row md:flex-nowrap md:items-start md:gap-8">
+            <div className="flex max-w-full flex-none flex-col items-start gap-2">
               <CTAButton
                 theme="light"
                 type="button"
@@ -68,7 +68,7 @@ export default function ConfirmationScreen({
             </div>
             <a
               href="https://sysbilt.com"
-              className="group relative inline-flex items-center justify-center gap-[2px] px-3 py-2 font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark transition-colors hover:text-gold-on-cream"
+              className="group relative inline-flex flex-none shrink-0 items-center justify-center gap-[2px] whitespace-nowrap px-3 py-2 font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark transition-colors hover:text-gold-on-cream"
             >
               <span className="transition-transform duration-[250ms] group-hover:translate-x-[2px]">[</span>
               <span className="mx-1">RETURN TO SYSBILT</span>
