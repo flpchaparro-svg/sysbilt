@@ -1,0 +1,1712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Marmonyx Stone — Digital Audit Report · SYSBILT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0D0C0A;
+    --bg2: #131210;
+    --bg3: #1a1916;
+    --cream: #F2EDE4;
+    --cream-dim: #a89e8f;
+    --gold: #C8A96E;
+    --gold-dim: #8a7049;
+    --red: #e05c4b;
+    --orange: #d4854a;
+    --yellow: #c9b84a;
+    --green: #5a9e72;
+    --muted: #3a3833;
+    --border: rgba(200,169,110,0.15);
+    --border-strong: rgba(200,169,110,0.35);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE TEXTURE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.6;
+  }
+
+  /* ── TOP NAV ── */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 48px;
+    background: rgba(13,12,10,0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-brand {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--cream-dim);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--gold); }
+
+  .nav-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--cream-dim);
+    letter-spacing: 0.08em;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 80px 48px 72px;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(200,169,110,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(200,169,110,0.04) 1px, transparent 1px);
+    background-size: 80px 80px;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+  }
+
+  .hero-accent {
+    position: absolute;
+    top: 20%;
+    right: -10%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(ellipse at center, rgba(200,169,110,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.2s;
+  }
+
+  .hero-tag::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 1px;
+    background: var(--gold);
+  }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(52px, 7vw, 96px);
+    font-weight: 400;
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+    opacity: 0;
+    animation: fadeUp 0.9s ease forwards 0.4s;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .hero-subtitle {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(32px, 4vw, 56px);
+    font-weight: 400;
+    line-height: 1.1;
+    color: var(--cream-dim);
+    margin-bottom: 56px;
+    opacity: 0;
+    animation: fadeUp 0.9s ease forwards 0.55s;
+  }
+
+  .hero-meta {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--border);
+    padding-top: 40px;
+    opacity: 0;
+    animation: fadeUp 0.9s ease forwards 0.7s;
+  }
+
+  .hero-meta-item {
+    padding: 0 32px 0 0;
+    border-right: 1px solid var(--border);
+  }
+
+  .hero-meta-item:last-child { border-right: none; padding-left: 32px; }
+  .hero-meta-item:first-child { padding-left: 0; }
+
+  .hero-meta-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--cream-dim);
+    margin-bottom: 8px;
+  }
+
+  .hero-meta-value {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--cream);
+  }
+
+  .hero-meta-value.gold { color: var(--gold); }
+
+  /* ── SCORE BAR ── */
+  .score-section {
+    padding: 80px 48px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg2);
+  }
+
+  .score-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 2px;
+  }
+
+  .score-card {
+    background: var(--bg3);
+    padding: 36px 28px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+  }
+
+  .score-card:hover { background: #201e1b; }
+
+  .score-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+  }
+
+  .score-card.critical::after { background: var(--red); }
+  .score-card.poor::after { background: var(--orange); }
+  .score-card.fair::after { background: var(--yellow); }
+  .score-card.ok::after { background: var(--green); }
+
+  .score-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--cream-dim);
+    margin-bottom: 16px;
+  }
+
+  .score-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 56px;
+    font-weight: 600;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .score-card.critical .score-number { color: var(--red); }
+  .score-card.poor .score-number { color: var(--orange); }
+  .score-card.fair .score-number { color: var(--yellow); }
+  .score-card.ok .score-number { color: var(--green); }
+
+  .score-desc {
+    font-size: 12px;
+    color: var(--cream-dim);
+    margin-top: 8px;
+  }
+
+  /* ── SECTIONS ── */
+  .section {
+    padding: 96px 48px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .section.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .section-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-header {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 48px;
+    align-items: start;
+    margin-bottom: 64px;
+  }
+
+  .section-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 96px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--border-strong);
+    letter-spacing: -0.04em;
+    margin-top: -16px;
+  }
+
+  .section-title-group {}
+
+  .section-stage {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-stage::before {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 1px;
+    background: var(--gold);
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 3vw, 44px);
+    font-weight: 400;
+    line-height: 1.15;
+    margin-bottom: 16px;
+  }
+
+  .section-intro {
+    font-size: 16px;
+    color: var(--cream-dim);
+    max-width: 620px;
+    line-height: 1.8;
+  }
+
+  /* ── FINDING CARDS ── */
+  .findings-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    margin-bottom: 48px;
+  }
+
+  .finding-card {
+    background: var(--bg3);
+    padding: 32px;
+    position: relative;
+    border-left: 3px solid transparent;
+    transition: background 0.2s;
+  }
+
+  .finding-card:hover { background: #1e1c19; }
+  .finding-card.critical { border-left-color: var(--red); }
+  .finding-card.high { border-left-color: var(--orange); }
+  .finding-card.medium { border-left-color: var(--yellow); }
+  .finding-card.low { border-left-color: var(--muted); }
+  .finding-card.positive { border-left-color: var(--green); }
+
+  .finding-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 2px;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
+
+  .finding-card.critical .finding-badge { background: rgba(224,92,75,0.15); color: var(--red); }
+  .finding-card.high .finding-badge { background: rgba(212,133,74,0.15); color: var(--orange); }
+  .finding-card.medium .finding-badge { background: rgba(201,184,74,0.15); color: var(--yellow); }
+  .finding-card.low .finding-badge { background: rgba(58,56,51,0.5); color: var(--cream-dim); }
+  .finding-card.positive .finding-badge { background: rgba(90,158,114,0.15); color: var(--green); }
+
+  .finding-badge::before {
+    content: '';
+    display: block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .finding-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--cream);
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+
+  .finding-body {
+    font-size: 13.5px;
+    color: var(--cream-dim);
+    line-height: 1.75;
+  }
+
+  /* ── QUOTE BLOCK ── */
+  .quote-block {
+    border-left: 3px solid var(--gold);
+    padding: 20px 28px;
+    margin: 20px 0;
+    background: rgba(200,169,110,0.05);
+  }
+
+  .quote-block p {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--cream-dim);
+    line-height: 1.7;
+  }
+
+  .quote-block .quote-label {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-bottom: 8px;
+  }
+
+  /* ── PRIORITY TABLE ── */
+  .priority-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 48px;
+  }
+
+  .priority-table th {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--cream-dim);
+    text-align: left;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border-strong);
+    font-weight: 400;
+  }
+
+  .priority-table td {
+    font-size: 13px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    color: var(--cream-dim);
+  }
+
+  .priority-table tr:last-child td { border-bottom: none; }
+  .priority-table tr:hover td { background: rgba(200,169,110,0.03); }
+
+  .priority-table td:first-child { color: var(--cream); font-weight: 500; }
+
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 2px;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .badge.critical { background: rgba(224,92,75,0.15); color: var(--red); }
+  .badge.high { background: rgba(212,133,74,0.15); color: var(--orange); }
+  .badge.medium { background: rgba(201,184,74,0.15); color: var(--yellow); }
+  .badge.low { background: rgba(58,56,51,0.5); color: var(--cream-dim); }
+  .badge.pass { background: rgba(90,158,114,0.15); color: var(--green); }
+
+  /* ── STAT ROW ── */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin: 40px 0;
+  }
+
+  .stat-item {
+    background: var(--bg3);
+    padding: 28px 32px;
+    text-align: center;
+  }
+
+  .stat-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 48px;
+    font-weight: 600;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: var(--cream-dim);
+    letter-spacing: 0.05em;
+  }
+
+  /* ── SITEMAP TREE ── */
+  .sitemap {
+    background: var(--bg3);
+    padding: 36px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    line-height: 2;
+    color: var(--cream-dim);
+  }
+
+  .sitemap .live { color: var(--green); }
+  .sitemap .dead { color: var(--red); }
+  .sitemap .partial { color: var(--yellow); }
+  .sitemap .nav-item { color: var(--cream); font-size: 13px; }
+  .sitemap .indent { padding-left: 24px; }
+  .sitemap .indent2 { padding-left: 48px; }
+  .sitemap .tag {
+    display: inline-block;
+    padding: 1px 8px;
+    font-size: 9px;
+    border-radius: 2px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .sitemap .tag.live { background: rgba(90,158,114,0.2); color: var(--green); }
+  .sitemap .tag.dead { background: rgba(224,92,75,0.15); color: var(--red); }
+
+  /* ── VOICE COMPARISON ── */
+  .voice-compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    margin: 32px 0;
+  }
+
+  .voice-col {
+    background: var(--bg3);
+    padding: 32px;
+  }
+
+  .voice-col-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .voice-col.bad .voice-col-label { color: var(--red); }
+  .voice-col.good .voice-col-label { color: var(--green); }
+
+  .voice-excerpt {
+    font-size: 13px;
+    line-height: 1.8;
+    font-style: italic;
+    color: var(--cream-dim);
+    margin-bottom: 16px;
+  }
+
+  .voice-annotation {
+    font-size: 11.5px;
+    color: var(--cream-dim);
+    background: rgba(0,0,0,0.3);
+    padding: 12px 16px;
+    margin-top: 8px;
+  }
+
+  .voice-annotation strong { color: var(--cream); font-style: normal; }
+
+  /* ── SOCIAL CARDS ── */
+  .social-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    margin-bottom: 48px;
+  }
+
+  .social-card {
+    background: var(--bg3);
+    padding: 36px;
+  }
+
+  .social-platform {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .social-platform::before {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 1px;
+    background: var(--gold);
+  }
+
+  .social-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .social-stat {}
+  .social-stat-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 600;
+    color: var(--cream);
+    line-height: 1;
+  }
+  .social-stat-label {
+    font-size: 11px;
+    color: var(--cream-dim);
+    margin-top: 4px;
+  }
+
+  .social-findings { font-size: 13px; color: var(--cream-dim); line-height: 1.75; }
+  .social-findings li { margin-bottom: 8px; padding-left: 16px; position: relative; }
+  .social-findings li::before { content: '—'; position: absolute; left: 0; color: var(--gold-dim); }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 64px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid var(--border);
+  }
+
+  .footer-brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--gold);
+  }
+
+  .footer-copy {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--cream-dim);
+    letter-spacing: 0.08em;
+  }
+
+  .footer-note {
+    font-size: 12px;
+    color: var(--cream-dim);
+    text-align: right;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-strong), transparent);
+    margin: 48px 0;
+  }
+
+  /* ── FULL-WIDTH FINDING ── */
+  .finding-full {
+    grid-column: 1 / -1;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── COMPETITOR TABLE ── */
+  .competitor-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 32px 0;
+  }
+
+  .competitor-table th {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--cream-dim);
+    text-align: left;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-strong);
+    font-weight: 400;
+  }
+
+  .competitor-table td {
+    font-size: 13px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--cream-dim);
+  }
+
+  .competitor-table tr:hover td { background: rgba(200,169,110,0.03); }
+  .competitor-table td:first-child { color: var(--cream); font-weight: 500; }
+
+  /* ── CONVERSION FLOW ── */
+  .flow-diagram {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+    align-items: center;
+  }
+
+  .flow-step {
+    background: var(--bg);
+    padding: 20px 16px;
+    border: 1px solid var(--border);
+    text-align: center;
+    position: relative;
+  }
+
+  .flow-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold-dim);
+    font-size: 18px;
+    padding: 0 4px;
+  }
+
+  .flow-step-label { font-size: 10px; color: var(--cream-dim); margin-bottom: 6px; letter-spacing: 0.05em; }
+  .flow-step-value { font-size: 13px; font-weight: 500; line-height: 1.3; }
+  .flow-step-sub { font-size: 10px; color: var(--cream-dim); margin-top: 4px; }
+
+  /* ── CTA SECTION ── */
+  .cta-section {
+    padding: 96px 48px;
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-section::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(ellipse at center, rgba(200,169,110,0.07) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  .cta-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .cta-tag::before, .cta-tag::after {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 1px;
+    background: var(--gold-dim);
+  }
+
+  .cta-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(32px, 4vw, 56px);
+    font-weight: 400;
+    line-height: 1.15;
+    margin-bottom: 20px;
+    max-width: 680px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .cta-title em { font-style: italic; color: var(--gold); }
+
+  .cta-body {
+    font-size: 16px;
+    color: var(--cream-dim);
+    max-width: 520px;
+    margin: 0 auto 48px;
+    line-height: 1.8;
+  }
+
+  .cta-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 56px;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--gold);
+    color: var(--bg);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    padding: 16px 32px;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+  }
+
+  .btn-primary:hover { background: #d4b87a; transform: translateY(-1px); }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: transparent;
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    padding: 15px 32px;
+    text-decoration: none;
+    border: 1px solid var(--border-strong);
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .btn-secondary:hover { border-color: var(--gold); color: var(--gold); }
+
+  .cta-meta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+
+  .cta-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--cream-dim);
+  }
+
+  .cta-meta-item a {
+    color: var(--cream-dim);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .cta-meta-item a:hover { color: var(--gold); }
+
+  .cta-meta-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--border-strong);
+    display: none;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    .hero { padding: 80px 24px 56px; }
+    .hero-meta { grid-template-columns: 1fr 1fr; gap: 24px; }
+    .hero-meta-item { border-right: none; padding: 0; }
+    .score-section { padding: 56px 24px; }
+    .score-grid { grid-template-columns: 1fr 1fr; }
+    .section { padding: 64px 24px; }
+    .section-header { grid-template-columns: 1fr; gap: 16px; }
+    .section-number { font-size: 56px; }
+    .findings-grid { grid-template-columns: 1fr; }
+    .voice-compare { grid-template-columns: 1fr; }
+    .social-grid { grid-template-columns: 1fr; }
+    .stat-row { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 24px; text-align: center; }
+    .footer-note { text-align: center; }
+
+    /* Flow diagram stacks vertically on mobile */
+    .flow-diagram {
+      grid-template-columns: 1fr;
+      gap: 2px;
+    }
+    .flow-arrow {
+      transform: rotate(90deg);
+      padding: 4px 0;
+    }
+    .flow-step { padding: 16px; }
+
+    /* CTA section */
+    .cta-section { padding: 64px 24px; }
+    .cta-buttons { flex-direction: column; align-items: stretch; }
+    .btn-primary, .btn-secondary { justify-content: center; }
+    .cta-meta { flex-direction: column; gap: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <a href="https://sysbilt.com" target="_blank" class="nav-brand" style="text-decoration:none;">SYSBILT · Digital Audit</a>
+  <ul class="nav-links">
+    <li><a href="#structure">Structure</a></li>
+    <li><a href="#seo">SEO</a></li>
+    <li><a href="#brand">Brand Voice</a></li>
+    <li><a href="#conversion">Conversion</a></li>
+    <li><a href="#social">Social</a></li>
+    <li><a href="#contact" style="color:var(--gold);">Book a Call</a></li>
+  </ul>
+  <span class="nav-date">May 2026</span>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-accent"></div>
+
+  <div class="hero-tag">Confidential Client Report</div>
+
+  <h1 class="hero-title">Marmonyx <em>Stone</em></h1>
+  <p class="hero-subtitle">Website & Digital Presence Audit</p>
+
+  <div class="hero-meta">
+    <div class="hero-meta-item">
+      <div class="hero-meta-label">Client</div>
+      <div class="hero-meta-value">Marmonyx Stone Pty Ltd</div>
+    </div>
+    <div class="hero-meta-item">
+      <div class="hero-meta-label">Domain</div>
+      <div class="hero-meta-value">marmonyx.com.au</div>
+    </div>
+    <div class="hero-meta-item">
+      <div class="hero-meta-label">Audit Date</div>
+      <div class="hero-meta-value">May 2026</div>
+    </div>
+    <div class="hero-meta-item">
+      <div class="hero-meta-label">Prepared by</div>
+      <div class="hero-meta-value gold">SYSBILT · sysbilt.com</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SCORE OVERVIEW ── -->
+<section class="score-section">
+  <div class="score-grid">
+    <div class="score-card critical">
+      <div class="score-label">Indexation</div>
+      <div class="score-number">C+</div>
+      <div class="score-desc">Indexed but shallow. Plugin URLs limit ranking potential.</div>
+    </div>
+    <div class="score-card poor">
+      <div class="score-label">SEO Performance</div>
+      <div class="score-number">D</div>
+      <div class="score-desc">Invisible for core commercial keywords. No application pages.</div>
+    </div>
+    <div class="score-card poor">
+      <div class="score-label">Brand & Copy</div>
+      <div class="score-number">D+</div>
+      <div class="score-desc">Two conflicting voices. Outdated prose. American English.</div>
+    </div>
+    <div class="score-card critical">
+      <div class="score-label">Conversion</div>
+      <div class="score-number">F</div>
+      <div class="score-desc">Broken CTAs, broken social links, no tracking, no follow-up.</div>
+    </div>
+    <div class="score-card poor">
+      <div class="score-label">Social Presence</div>
+      <div class="score-number">D</div>
+      <div class="score-desc">288 FB followers. 445 IG. Zero reviews. No strategy.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── STAGE 1: STRUCTURE ── -->
+<section class="section" id="structure">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-number">01</div>
+      <div class="section-title-group">
+        <div class="section-stage">Stage One</div>
+        <h2 class="section-title">Site Structure &amp; Technical Foundation</h2>
+        <p class="section-intro">The site is built on Joomla! CMS with legacy plugins driving core functionality. The architecture is functional but carries significant technical debt that limits both performance and SEO potential.</p>
+      </div>
+    </div>
+
+    <!-- Sitemap -->
+    <div class="sitemap">
+      <div style="margin-bottom:16px;color:var(--cream-dim);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;">Navigation Structure</div>
+
+      <div class="nav-item">/ Home <span class="tag live">Live</span></div>
+
+      <div class="nav-item indent">Natural Stone <span class="tag live">Live</span></div>
+      <div class="indent2 live">→ Marble Slabs &nbsp; → Granite &nbsp; → Onyx &nbsp; → Quartzite &nbsp; → Dolomite &nbsp; → Travertine &nbsp; → Limestone</div>
+
+      <div class="nav-item indent">Engineered <span class="tag live">Live</span></div>
+      <div class="indent2" style="color:var(--orange);">→ "Caesare stone" &nbsp; → Quantum Stone &nbsp; → Smart Stone &nbsp; → "Sile stone" &nbsp; → Essa Stone</div>
+      <div class="indent2" style="font-size:10px;color:var(--orange);margin-top:4px;">⚠ Brand names misspelled: Caesarstone · Silestone</div>
+
+      <div class="nav-item indent">Services <span class="tag live">Live</span></div>
+      <div class="indent2 live">→ Projects (Gallery) &nbsp; → Material Choice</div>
+
+      <div class="nav-item indent" style="color:var(--red);">Applications <span class="tag dead">ALL DEAD</span></div>
+      <div class="indent2 dead">→ Benchtops (javascript:void) &nbsp; → Flooring (javascript:void) &nbsp; → Walls (javascript:void)</div>
+      <div class="indent2 dead">→ Splashbacks (javascript:void) &nbsp; → Staircases (javascript:void)</div>
+      <div class="indent2" style="font-size:10px;color:var(--red);margin-top:4px;">⚠ 8 high-intent menu items with zero pages behind them</div>
+
+      <div class="nav-item indent">About Us <span class="tag live">Live</span></div>
+      <div class="nav-item indent">Contact Us <span class="tag live">Live</span></div>
+      <div class="nav-item indent">Get a Quote <span class="tag live">Live — but empty</span></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="findings-grid">
+      <div class="finding-card critical">
+        <div class="finding-badge">Critical</div>
+        <div class="finding-title">Applications Section — 8 Dead Menu Items</div>
+        <div class="finding-body">The entire Applications navigation section uses <code style="background:rgba(255,255,255,0.07);padding:2px 6px;border-radius:2px;font-family:'DM Mono',monospace;font-size:11px;">javascript:void(0)</code> as the link destination. Benchtops, Splashbacks, Flooring, Walls, and Staircases — the highest-intent pages on the site — do not exist. These represent the core buyer journeys and are all invisible to Google.</div>
+      </div>
+
+      <div class="finding-card high">
+        <div class="finding-badge">High</div>
+        <div class="finding-title">Brand Name Misspellings in Navigation</div>
+        <div class="finding-body">"Caesare stone" should be <strong style="color:var(--cream);">Caesarstone</strong>. "Sile stone" should be <strong style="color:var(--cream);">Silestone</strong>. These are registered brand names. Misspelling them misses branded search traffic and signals poor attention to detail to clients who know the products.</div>
+      </div>
+
+      <div class="finding-card high">
+        <div class="finding-badge">High</div>
+        <div class="finding-title">All Social Icons Link to # on Every Page</div>
+        <div class="finding-body">Every social media icon — Facebook, Instagram, LinkedIn, WhatsApp — in both the header and footer links to <code style="background:rgba(255,255,255,0.07);padding:2px 6px;border-radius:2px;font-family:'DM Mono',monospace;font-size:11px;">#</code>. No actual profiles are connected to the website despite those profiles existing and containing genuine project content.</div>
+      </div>
+
+      <div class="finding-card medium">
+        <div class="finding-badge">Medium</div>
+        <div class="finding-title">Copyright Footer Reads 2022</div>
+        <div class="finding-body">The footer displays © 2022, three years out of date. A small detail but one that signals an unmaintained website to both visitors and search engines. The Google+ share button on the About page compounds this — Google+ closed in 2019.</div>
+      </div>
+
+      <div class="finding-card medium">
+        <div class="finding-badge">Medium</div>
+        <div class="finding-title">Joomla Plugin URL Architecture</div>
+        <div class="finding-body">Product pages use paths like <code style="background:rgba(255,255,255,0.07);padding:2px 6px;border-radius:2px;font-family:'DM Mono',monospace;font-size:11px;">/hikashop-menu-for-categories-listing/product/38-...</code> and <code style="background:rgba(255,255,255,0.07);padding:2px 6px;border-radius:2px;font-family:'DM Mono',monospace;font-size:11px;">/component/phocagallery/...</code>. These plugin-generated URLs carry no topical authority and limit SEO improvement without a migration.</div>
+      </div>
+
+      <div class="finding-card positive">
+        <div class="finding-badge">Pass</div>
+        <div class="finding-title">GTM Installed · Canonical Tags Set Correctly</div>
+        <div class="finding-body">Google Tag Manager (GTM-WPDPCB9) is present on every page. Canonical tags consistently point to the www subdomain. The phone number in the top bar is a working <code style="background:rgba(255,255,255,0.07);padding:2px 6px;border-radius:2px;font-family:'DM Mono',monospace;font-size:11px;">tel:</code> link. Slider images have descriptive filenames and alt text — the strongest technical SEO element on the site.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── STAGE 2: SEO ── -->
+<section class="section" id="seo">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-number">02</div>
+      <div class="section-title-group">
+        <div class="section-stage">Stage Two</div>
+        <h2 class="section-title">SEO Performance &amp; Keyword Visibility</h2>
+        <p class="section-intro">Marmonyx is indexed but effectively invisible for its most commercially valuable search terms. Competitors with comparable or weaker portfolios are ranking above them across every high-intent query.</p>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-item">
+        <div class="stat-value">0</div>
+        <div class="stat-label">Page-1 rankings for "marble benchtops Sydney"</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">8</div>
+        <div class="stat-label">Application pages that should exist but do not</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">2022</div>
+        <div class="stat-label">Year SEO meta practices were last reviewed</div>
+      </div>
+    </div>
+
+    <div class="findings-grid">
+      <div class="finding-card critical finding-full">
+        <div class="finding-badge">Critical</div>
+        <div class="finding-title">Missing Application Landing Pages — The Core SEO Gap</div>
+        <div class="finding-body" style="display:grid;grid-template-columns:1fr 1fr;gap:32px;">
+          <div>
+            <p style="margin-bottom:16px;">Every competitor ranking above Marmonyx for "marble benchtops Sydney" has one thing this site does not: a dedicated, content-rich landing page for each application. Avant Stone has <code style="background:rgba(255,255,255,0.07);padding:2px 5px;font-family:'DM Mono',monospace;font-size:11px;">/marble-kitchen-benchtops/</code>. AUSKStone has a full URL slug targeting the exact phrase. Marmonyx has a dead nav link.</p>
+            <p>These pages need to exist with 400+ words of targeted copy, suburb signals, and proper H1 targeting before any other SEO work will move the needle.</p>
+          </div>
+          <div>
+            <table style="width:100%;font-size:12px;border-collapse:collapse;">
+              <thead>
+                <tr>
+                  <th style="text-align:left;padding:8px 0;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--cream-dim);font-weight:400;">Page Needed</th>
+                  <th style="text-align:left;padding:8px 0;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--cream-dim);font-weight:400;">Target Keyword</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td style="padding:10px 0;border-bottom:1px solid var(--border);color:var(--cream);">Marble Benchtops Sydney</td><td style="padding:10px 0;border-bottom:1px solid var(--border);color:var(--cream-dim);">marble benchtops sydney</td></tr>
+                <tr><td style="padding:10px 0;border-bottom:1px solid var(--border);color:var(--cream);">Stone Splashbacks Sydney</td><td style="padding:10px 0;border-bottom:1px solid var(--border);color:var(--cream-dim);">stone splashback sydney</td></tr>
+                <tr><td style="padding:10px 0;border-bottom:1px solid var(--border);color:var(--cream);">Stone Wall Panelling</td><td style="padding:10px 0;border-bottom:1px solid var(--border);color:var(--cream-dim);">marble wall panels sydney</td></tr>
+                <tr><td style="padding:10px 0;border-bottom:1px solid var(--border);color:var(--cream);">Custom Staircases</td><td style="padding:10px 0;border-bottom:1px solid var(--border);color:var(--cream-dim);">stone staircase sydney</td></tr>
+                <tr><td style="padding:10px 0;border-bottom:1px solid var(--border);color:var(--cream);">Quartzite Benchtops</td><td style="padding:10px 0;border-bottom:1px solid var(--border);color:var(--cream-dim);">quartzite benchtop sydney</td></tr>
+                <tr><td style="padding:10px 0;color:var(--cream);">Stone Flooring Sydney</td><td style="padding:10px 0;color:var(--cream-dim);">marble flooring sydney</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="finding-card critical">
+        <div class="finding-badge">Critical</div>
+        <div class="finding-title">Homepage Title Tag — Brand Name Duplicated</div>
+        <div class="finding-body">
+          <div class="quote-block">
+            <div class="quote-label">Live title tag</div>
+            <p>"Custom Marble &amp; Granite &amp; Quartzite Stone Benchtop Specialists Sydney – Marmonyx Stone - Marmonyx Stone"</p>
+          </div>
+          The brand name appears twice. Google truncates this in SERPs. The "&amp; Granite &amp; Quartzite" structure also reads awkwardly and wastes character budget that could target a second keyword.
+        </div>
+      </div>
+
+      <div class="finding-card high">
+        <div class="finding-badge">High</div>
+        <div class="finding-title">No Structured Data (Schema.org)</div>
+        <div class="finding-body">Zero LocalBusiness schema on the homepage. No NAP (Name, Address, Phone) confirmation in structured form for Google. No Service schema. No FAQ schema. Competitors using these claim additional SERP real estate — star ratings, address pins, FAQ accordions. Marmonyx gets none of this.</div>
+      </div>
+
+      <div class="finding-card high">
+        <div class="finding-badge">High</div>
+        <div class="finding-title">Gallery Page Meta — Broken Template Tag</div>
+        <div class="finding-body">
+          <div class="quote-block">
+            <div class="quote-label">Live meta-description on /services/gallery-of-servises.html</div>
+            <p>{loadmoduleid 160}</p>
+          </div>
+          An unfired Joomla shortcode is sitting in the meta description of the Projects page — the most important proof-of-work page on the site. Google is auto-generating a snippet from whatever body content it can find, which is essentially nothing.
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:48px;">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--cream-dim);margin-bottom:20px;">Competitor Landscape — "Marble Benchtops Sydney"</div>
+      <table class="competitor-table">
+        <thead>
+          <tr>
+            <th>Competitor</th>
+            <th>Ranking Advantage</th>
+            <th>What Marmonyx Lacks vs Them</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Avant Stone</td>
+            <td>Dedicated /marble-kitchen-benchtops/ page, 20+ years signalled</td>
+            <td>Application pages, suburb-targeted copy</td>
+          </tr>
+          <tr>
+            <td>AUSKStone</td>
+            <td>Exact-match slug URL, modern site, blog content</td>
+            <td>Clean URL structure, content marketing</td>
+          </tr>
+          <tr>
+            <td>Made in Stone</td>
+            <td>25+ years domain age, heavy Google review signals, blog</td>
+            <td>Google reviews, regular content cadence</td>
+          </tr>
+          <tr>
+            <td>Marable (Eastern Suburbs)</td>
+            <td>Same geographic territory, showroom focus, strong imagery</td>
+            <td>Google review volume, showroom CTA</td>
+          </tr>
+          <tr>
+            <td>Marble Benchtops Hub</td>
+            <td>Keyword-first domain name, extensive FAQ content</td>
+            <td>FAQ pages, long-form educational content</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ── STAGE 3: BRAND VOICE ── -->
+<section class="section" id="brand">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-number">03</div>
+      <div class="section-title-group">
+        <div class="section-stage">Stage Three</div>
+        <h2 class="section-title">Brand Voice, Copy Quality &amp; Content Gaps</h2>
+        <p class="section-intro">Marmonyx has a strong engineering-led brand story. It appears on exactly one page. The remaining site copy was written in a different era for a different brand and was never updated. The result is three conflicting voices across five pages.</p>
+      </div>
+    </div>
+
+    <!-- Voice Comparison -->
+    <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--cream-dim);margin-bottom:16px;">Voice Inconsistency — Same Website, Two Different Businesses</div>
+    <div class="voice-compare">
+      <div class="voice-col bad">
+        <div class="voice-col-label">Homepage — Old Copy (Still Live)</div>
+        <div class="voice-excerpt">"Well, aside from the products we offer, our commitment to customer service that makes purchases a snap, We also happen to adore stone... you can walk on it, run your hand across it, you can feel the cool texture and really get a sense of where it came from."</div>
+        <div class="voice-annotation"><strong>Problem:</strong> Hobbyist language. No technical proof. No location. No differentiator. Positions the business as a stone enthusiast, not a precision fabrication specialist.</div>
+
+        <div class="voice-excerpt" style="margin-top:20px;">"The colours of stone cannot be mixed; they are completely unique and back to days of ancient antiquity."</div>
+        <div class="voice-annotation"><strong>Problem:</strong> "Back to days of ancient antiquity" is redundant and grammatically incomplete. Three sentences that convey zero commercial intent.</div>
+      </div>
+      <div class="voice-col good">
+        <div class="voice-col-label">About Page — Updated Copy</div>
+        <div class="voice-excerpt">"Led by a Mechanical Engineer with over 18 years of specialised expertise, we approach every slab with a level of rigour that traditional masonry cannot match."</div>
+        <div class="voice-annotation"><strong>This works:</strong> Technical credential front-loaded. Clear differentiator. Confident without being boastful. This is the voice the entire site should use.</div>
+
+        <div class="voice-excerpt" style="margin-top:20px;">"We are material-agnostic master fabricators. By focusing on the specialised processes of fabrication and installation, we provide a limitless range of options."</div>
+        <div class="voice-annotation"><strong>This works:</strong> "Material-agnostic" is a genuine differentiator and a phrase no competitor is using. Clear value proposition.</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="findings-grid">
+      <div class="finding-card critical">
+        <div class="finding-badge">Critical</div>
+        <div class="finding-title">Footer Copy — Errors on Every Page</div>
+        <div class="finding-body">
+          <div class="quote-block">
+            <div class="quote-label">Footer copy — appears on every page of the site</div>
+            <p>"We specialize in the precision fabrication of Marble, Granite, Quartzite, and Sintered Stone, Porcelain — creating luxury kitchen benchtops, bespoke vanities, and complex architectural features. Where others see a challenge, we provide innovative engineering solutions for Sydney's finest homes!"</p>
+          </div>
+          Three errors: (1) American English — "specialize" should be "specialise". (2) The comma structure "Sintered Stone, Porcelain" is ambiguous — needs "and". (3) Ends with an exclamation mark, which undercuts the authority of everything before it. The final line is actually the strongest copy on the site — it belongs on the homepage hero, not buried in a footer.
+        </div>
+      </div>
+
+      <div class="finding-card high">
+        <div class="finding-badge">High</div>
+        <div class="finding-title">Gallery Page — Zero Written Content</div>
+        <div class="finding-body">The Projects page is a thumbnail grid with no surrounding copy. No project names. No suburb. No stone type. No scope. The gallery contains evidence of extraordinary work — backlit onyx staircases, curved Calacatta Viola islands, commercial fitouts, overseas quarry sourcing — none of which is described or contextualised in any way. Every image is a case study that has never been written.</div>
+      </div>
+
+      <div class="finding-card high">
+        <div class="finding-badge">High</div>
+        <div class="finding-title">Zero Social Proof on the Website</div>
+        <div class="finding-body">There are no client testimonials, reviews, or quotes anywhere on the site. No star rating. No Houzz badge displayed. No Google review embed. For a high-consideration purchase like a bespoke stone benchtop, reviews are the primary trust signal. Every competitor in this category prominently features them.</div>
+      </div>
+
+      <div class="finding-card medium">
+        <div class="finding-badge">Medium</div>
+        <div class="finding-title">No Service Area Copy — Key Suburbs Invisible</div>
+        <div class="finding-body">The meta description mentions "Eastern Suburbs, North Shore &amp; Inner West" but these suburbs appear nowhere in the actual page copy. Sydney's high-value renovation postcodes — Paddington, Mosman, Woollahra, Neutral Bay, Balmain — are entirely absent from the site text. These are the suburbs where this business's ideal clients live.</div>
+      </div>
+
+      <div class="finding-card medium">
+        <div class="finding-badge">Medium</div>
+        <div class="finding-title">Trade Licence Missing from Website</div>
+        <div class="finding-body">The stonemason contractor licence number (342859C) is listed on the Houzz profile but does not appear anywhere on the website. For a licensed contractor doing high-value residential work, the licence number is both a trust signal and a consumer protection requirement that many clients look for.</div>
+      </div>
+
+      <div class="finding-card medium">
+        <div class="finding-badge">Medium</div>
+        <div class="finding-title">No Process Page — How We Work</div>
+        <div class="finding-body">There is no page or section explaining the client journey. The engineering narrative is on the About page but the practical sequence — enquire, consult, measure, select stone, fabricate, install — is never laid out. This creates uncertainty at the decision point. A client who does not understand the process is less likely to commit to an enquiry.</div>
+      </div>
+    </div>
+
+    <!-- Content gap table -->
+    <table class="priority-table" style="margin-top:48px;">
+      <thead>
+        <tr>
+          <th>Missing Content</th>
+          <th>Why It Matters</th>
+          <th>Priority</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Application landing pages (6–8)</td>
+          <td>Primary SEO gap — no pages for buyer-intent queries</td>
+          <td><span class="badge critical">Critical</span></td>
+        </tr>
+        <tr>
+          <td>Project case studies (minimum 5)</td>
+          <td>Social proof + long-tail SEO (suburb + stone type)</td>
+          <td><span class="badge high">High</span></td>
+        </tr>
+        <tr>
+          <td>Client testimonials / reviews section</td>
+          <td>Primary trust signal for high-consideration purchase</td>
+          <td><span class="badge high">High</span></td>
+        </tr>
+        <tr>
+          <td>How We Work / Process page</td>
+          <td>Reduces pre-enquiry friction for first-time clients</td>
+          <td><span class="badge high">High</span></td>
+        </tr>
+        <tr>
+          <td>FAQ page</td>
+          <td>Captures informational search traffic, builds trust</td>
+          <td><span class="badge medium">Medium</span></td>
+        </tr>
+        <tr>
+          <td>Service area page or suburb references</td>
+          <td>Local SEO — Eastern Suburbs, North Shore, Inner West</td>
+          <td><span class="badge medium">Medium</span></td>
+        </tr>
+        <tr>
+          <td>Blog / articles (ongoing)</td>
+          <td>Long-term SEO authority and referral traffic</td>
+          <td><span class="badge low">Low</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ── STAGE 4: CONVERSION ── -->
+<section class="section" id="conversion">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-number">04</div>
+      <div class="section-title-group">
+        <div class="section-stage">Stage Four</div>
+        <h2 class="section-title">Conversion Architecture &amp; Lead Capture</h2>
+        <p class="section-intro">The site has one primary lead capture mechanism — a form with six fields and no surrounding context. Multiple contact points are broken. Tracking is not configured. There is no secondary engagement path for visitors who are not yet ready to enquire.</p>
+      </div>
+    </div>
+
+    <!-- Conversion flow diagram — responsive -->
+    <div style="background:var(--bg3);padding:40px;margin-bottom:48px;">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--cream-dim);margin-bottom:28px;">Current Conversion Flow</div>
+
+      <div class="flow-diagram">
+        <div class="flow-step">
+          <div class="flow-step-label">Entry Point</div>
+          <div class="flow-step-value" style="color:var(--cream);">Visitor Arrives</div>
+          <div class="flow-step-sub">via Google Search</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <div class="flow-step-label">Hero CTA</div>
+          <div class="flow-step-value" style="color:var(--orange);">"Ask Us" ⚠</div>
+          <div class="flow-step-sub">Weak, uncommitted label</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <div class="flow-step-label">Quote Page</div>
+          <div class="flow-step-value" style="color:var(--red);">Blank form ✗</div>
+          <div class="flow-step-sub">No context or trust signals</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <div class="flow-step-label">After Submit</div>
+          <div class="flow-step-value" style="color:var(--red);">No confirmation ✗</div>
+          <div class="flow-step-sub">No response time stated</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <div class="flow-step-label">Outcome</div>
+          <div class="flow-step-value" style="color:var(--red);">Untracked ✗</div>
+          <div class="flow-step-sub">GTM not configured</div>
+        </div>
+      </div>
+
+      <div style="margin-top:24px;font-size:12px;color:var(--cream-dim);border-top:1px solid var(--border);padding-top:20px;">
+        There is also a second CTA — "Contact Us" in the nav — pointing to a different page with a different form. Two competing primary actions. No secondary engagement path for visitors who are not yet ready to enquire.
+      </div>
+    </div>
+
+    <div class="findings-grid">
+      <div class="finding-card critical">
+        <div class="finding-badge">Critical</div>
+        <div class="finding-title">WhatsApp Link — Broken on Every Page</div>
+        <div class="finding-body">The WhatsApp icon appears in the footer social block sitewide. It links to <code style="background:rgba(255,255,255,0.07);padding:2px 6px;border-radius:2px;font-family:'DM Mono',monospace;font-size:11px;">#</code>. For a luxury stone business targeting inner-Sydney homeowners, WhatsApp is the primary way this client type sends inspiration images, photos of their space, and quick questions. A working <code style="background:rgba(255,255,255,0.07);padding:2px 6px;border-radius:2px;font-family:'DM Mono',monospace;font-size:11px;">wa.me/</code> link with a pre-filled message costs five minutes to fix.</div>
+      </div>
+
+      <div class="finding-card critical">
+        <div class="finding-badge">Critical</div>
+        <div class="finding-title">Footer Phone Number Does Not Dial on Mobile</div>
+        <div class="finding-body">The phone number in the top bar is correctly formatted as a <code style="background:rgba(255,255,255,0.07);padding:2px 6px;border-radius:2px;font-family:'DM Mono',monospace;font-size:11px;">tel:</code> link and dials on mobile. The same number in the footer links to <code style="background:rgba(255,255,255,0.07);padding:2px 6px;border-radius:2px;font-family:'DM Mono',monospace;font-size:11px;">#</code>. On a mobile device, tapping the footer number does nothing. This is a broken conversion point repeated on every single page of the site.</div>
+      </div>
+
+      <div class="finding-card critical">
+        <div class="finding-badge">Critical</div>
+        <div class="finding-title">Quote Form — No Context, No Trust, No Guidance</div>
+        <div class="finding-body">The get-a-quote page contains six form fields and nothing else. No headline. No reassurance. No response time commitment. No testimonial near the submission point. No explanation of the process. No guidance on the attachment field. The "Products enquiring about" field is a freetext box — no dropdown or checkbox for project type. A visitor landing here from a high-intent search has no reason to trust the outcome of submitting.</div>
+      </div>
+
+      <div class="finding-card critical">
+        <div class="finding-badge">Critical</div>
+        <div class="finding-title">No Conversion Tracking — GTM Is Dormant</div>
+        <div class="finding-body">GTM is installed but no conversion tags appear to be configured inside it. Form submissions are not being tracked as conversion events. There is no Google Ads tag, no Meta Pixel, no GA4 event tracking for enquiries. Without this data, there is no way to know which pages or traffic sources are generating leads — and any future advertising spend will be flying completely blind.</div>
+      </div>
+
+      <div class="finding-card high">
+        <div class="finding-badge">High</div>
+        <div class="finding-title">CTA Inconsistency — Two Actions, Two Destinations</div>
+        <div class="finding-body">The homepage hero uses "Ask Us" (→ /get-a-quote.html). The homepage body and navigation use "Contact Us" (→ /contact.html). Both destinations have different forms. A visitor who clicks both links — as many do when evaluating a site — encounters two different experiences with no explanation of the difference. There is no defined primary conversion goal.</div>
+      </div>
+
+      <div class="finding-card high">
+        <div class="finding-badge">High</div>
+        <div class="finding-title">No Showroom Booking Option</div>
+        <div class="finding-body">The Marrickville workshop is open Monday to Saturday. The hours are published in the footer. There is no way to book a visit online — no calendar, no Calendly link, no "visit our showroom" CTA anywhere on the site. For a bespoke fabrication business, the showroom visit is a critical step in the sales process. The site does not present it as an option.</div>
+      </div>
+    </div>
+
+    <table class="priority-table" style="margin-top:48px;">
+      <thead>
+        <tr>
+          <th>Action</th>
+          <th>Priority</th>
+          <th>Effort</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Fix WhatsApp link — add working wa.me with pre-filled message</td><td><span class="badge critical">Critical</span></td><td>15 min</td></tr>
+        <tr><td>Fix footer phone number — replace # with tel: link</td><td><span class="badge critical">Critical</span></td><td>5 min</td></tr>
+        <tr><td>Configure GTM — GA4 form submit events + conversion tracking</td><td><span class="badge critical">Critical</span></td><td>2–3 hrs</td></tr>
+        <tr><td>Rewrite get-a-quote page — headline, reassurance, response time, trust signal</td><td><span class="badge critical">Critical</span></td><td>Half day</td></tr>
+        <tr><td>Unify CTAs — one primary action, consistent label and destination</td><td><span class="badge high">High</span></td><td>1 hr</td></tr>
+        <tr><td>Add structured dropdown to quote form (project type)</td><td><span class="badge high">High</span></td><td>1 hr</td></tr>
+        <tr><td>Add form auto-response with response time promise</td><td><span class="badge high">High</span></td><td>1 hr</td></tr>
+        <tr><td>Add showroom booking option (Calendly or similar)</td><td><span class="badge high">High</span></td><td>Half day</td></tr>
+        <tr><td>Install Meta Pixel and begin building retargeting audience</td><td><span class="badge medium">Medium</span></td><td>1 hr</td></tr>
+        <tr><td>Add secondary CTA — "View Our Work" path for non-ready visitors</td><td><span class="badge medium">Medium</span></td><td>Half day</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ── STAGE 5: SOCIAL ── -->
+<section class="section" id="social">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-number">05</div>
+      <div class="section-title-group">
+        <div class="section-stage">Stage Five</div>
+        <h2 class="section-title">Social Media Presence &amp; Brand Authority</h2>
+        <p class="section-intro">The work Marmonyx is producing is genuinely compelling content. The curved Paddington install. The backlit onyx staircase. The overseas quarry trips. The problem is not the work — it is distribution, consistency, and the absence of any strategy to grow the audience that would see it.</p>
+      </div>
+    </div>
+
+    <div class="social-grid">
+      <div class="social-card">
+        <div class="social-platform">Facebook</div>
+        <div class="social-stats">
+          <div class="social-stat">
+            <div class="social-stat-value">288</div>
+            <div class="social-stat-label">Followers</div>
+          </div>
+          <div class="social-stat">
+            <div class="social-stat-value" style="color:var(--red);">0</div>
+            <div class="social-stat-label">Reviews</div>
+          </div>
+          <div class="social-stat">
+            <div class="social-stat-value">2–4</div>
+            <div class="social-stat-label">Avg likes per post</div>
+          </div>
+          <div class="social-stat">
+            <div class="social-stat-value">Monthly</div>
+            <div class="social-stat-label">Post frequency</div>
+          </div>
+        </div>
+        <div class="divider" style="margin:20px 0;"></div>
+        <ul class="social-findings">
+          <li>Cover photo (backlit onyx staircase) is the strongest visual asset on the entire digital presence — correct placement</li>
+          <li>Profile photo is a small logo — barely readable at thumbnail size</li>
+          <li>Bio is truncated mid-sentence: "...into Staircase , Kitchen Benc" — never completed</li>
+          <li>Category listed as "Building Materials" — should reflect the premium positioning</li>
+          <li>Zero reviews despite multiple completed, high-quality projects — no one has ever been asked</li>
+          <li>Posts tag collaborators (interior designers, builders) — good instinct, but the reach is too small to generate meaningful referral traffic</li>
+          <li>Google+ share button still coded into the About page — platform shut down 2019</li>
+        </ul>
+      </div>
+
+      <div class="social-card">
+        <div class="social-platform">Instagram</div>
+        <div class="social-stats">
+          <div class="social-stat">
+            <div class="social-stat-value">445</div>
+            <div class="social-stat-label">Followers</div>
+          </div>
+          <div class="social-stat">
+            <div class="social-stat-value">58</div>
+            <div class="social-stat-label">Posts</div>
+          </div>
+          <div class="social-stat">
+            <div class="social-stat-value">29</div>
+            <div class="social-stat-label">Best post likes</div>
+          </div>
+          <div class="social-stat">
+            <div class="social-stat-value">138</div>
+            <div class="social-stat-label">Following</div>
+          </div>
+        </div>
+        <div class="divider" style="margin:20px 0;"></div>
+        <ul class="social-findings">
+          <li>Story highlights well structured: Awards, Installation, Fabrication, Homeshow — good information architecture</li>
+          <li>Grid shows genuinely impressive range — curved benchtops, feature walls, commercial fitouts, overseas quarry trips</li>
+          <li>Best post (29 likes): curved Calacatta Viola install in Paddington, geotagged — proves content resonates when execution is right</li>
+          <li>No visual consistency across the grid — professional shots sit next to raw on-site phone photos with no coherent palette or framing style</li>
+          <li>Bio truncated — no clear hook, no location signal in the text, no CTA</li>
+          <li>138 following is very low — suggests no active community engagement or outreach to collaborators and referral partners</li>
+          <li>No consistent hashtag strategy visible across posts</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Key insight -->
+    <div style="background:var(--bg3);border-left:3px solid var(--gold);padding:40px;margin-top:48px;">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:20px;">The Core Social Finding</div>
+      <p style="font-family:'Playfair Display',serif;font-size:22px;line-height:1.5;color:var(--cream);margin-bottom:16px;">The work is already there. The audience is not.</p>
+      <p style="font-size:14px;color:var(--cream-dim);line-height:1.8;max-width:700px;">A curved marble island with a bullnose edge in Paddington. A backlit onyx staircase that most Sydney stonemasons cannot fabricate. An overseas quarry sourcing trip that no competitor is showing. These are not ordinary content — they are category-defining proof points sitting in front of fewer than 500 people. The social media challenge here is not content creation. It is distribution, consistency, and a systematic approach to growing the audience of interior designers, architects, builders, and premium homeowners who would act on seeing this work.</p>
+    </div>
+
+    <table class="priority-table" style="margin-top:48px;">
+      <thead>
+        <tr>
+          <th>Action</th>
+          <th>Platform</th>
+          <th>Priority</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Connect all social links on website to real profiles</td><td>FB + IG + LinkedIn</td><td><span class="badge critical">Critical</span></td></tr>
+        <tr><td>Request reviews from every completed client — systematically</td><td>Google + Facebook</td><td><span class="badge critical">Critical</span></td></tr>
+        <tr><td>Complete and rewrite Facebook bio — remove truncation</td><td>Facebook</td><td><span class="badge high">High</span></td></tr>
+        <tr><td>Write a proper Instagram bio with hook, location and CTA</td><td>Instagram</td><td><span class="badge high">High</span></td></tr>
+        <tr><td>Establish a consistent post format for project reveals — location + stone type + collaborator tags</td><td>IG + FB</td><td><span class="badge high">High</span></td></tr>
+        <tr><td>Follow and engage with target referral partners — interior designers, architects, builders in target suburbs</td><td>Instagram</td><td><span class="badge high">High</span></td></tr>
+        <tr><td>Develop a visual style guide for grid consistency — 2 to 3 content types, consistent cropping and colour treatment</td><td>Instagram</td><td><span class="badge medium">Medium</span></td></tr>
+        <tr><td>Cross-post best Instagram content to Facebook with location tags</td><td>Facebook</td><td><span class="badge medium">Medium</span></td></tr>
+        <tr><td>Build a Reels strategy around fabrication process — CNC footage, waterjet cutting, installation reveals</td><td>Instagram</td><td><span class="badge medium">Medium</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ── SUMMARY ── -->
+<section class="section" style="background:var(--bg2);">
+  <div class="section-inner">
+    <div style="text-align:center;margin-bottom:72px;">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;">Summary</div>
+      <h2 style="font-family:'Playfair Display',serif;font-size:clamp(28px,3.5vw,48px);font-weight:400;line-height:1.2;max-width:700px;margin:0 auto;">The Work Justifies a Premium Position.<br><em>The Website Does Not.</em></h2>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px;">
+      <div style="background:var(--bg3);padding:36px;">
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--red);margin-bottom:16px;">Immediate Fixes</div>
+        <ul style="list-style:none;font-size:13px;color:var(--cream-dim);line-height:2.2;">
+          <li style="display:flex;gap:10px;align-items:start;"><span style="color:var(--red);margin-top:2px;">→</span>Fix all broken social links</li>
+          <li style="display:flex;gap:10px;align-items:start;"><span style="color:var(--red);margin-top:2px;">→</span>Fix footer phone number</li>
+          <li style="display:flex;gap:10px;align-items:start;"><span style="color:var(--red);margin-top:2px;">→</span>Fix WhatsApp link</li>
+          <li style="display:flex;gap:10px;align-items:start;"><span style="color:var(--red);margin-top:2px;">→</span>Fix gallery meta description</li>
+          <li style="display:flex;gap:10px;align-items:start;"><span style="color:var(--red);margin-top:2px;">→</span>Fix Caesarstone + Silestone spelling</li>
+          <li style="display:flex;gap:10px;align-items:start;"><span style="color:var(--red);margin-top:2px;">→</span>Remove old homepage copy block</li>
+          <li style="display:flex;gap:10px;align-items:start;"><span style="color:var(--red);margin-top:2px;">→</span>Fix footer exclamation + spelling</li>
+          <li style="display:flex;gap:10px;align-items:start;"><span style="color:var(--red);margin-top:2px;">→</span>Claim and complete GBP listing</li>
+          <li style="display:flex;gap:10px;align-items:start;"><span style="color:var(--red);margin-top:2px;">→</span>Configure GTM conversion tracking</li>
+          <li style="display:flex;gap:10px;align-items:start;"><span style="color:var(--red);margin-top:2px;">→</span>Request reviews from past clients</li>
+        </ul>
+      </div>
+
+      <div style="background:var(--bg3);padding:36px;">
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--orange);margin-bottom:16px;">Growth Moves</div>
+        <ul style="list-style:none;font-size:13px;color:var(--cream-dim);line-height:2.2;">
+          <li style="display:flex;gap:10px;align-items:start;"><span style="color:var(--orange);margin-top:2px;">→</span>Build 6–8 application landing pages</li>
+          <li style="display:flex;gap:10px;align-items:start;"><span style="color:var(--orange);margin-top:2px;">→</span>Add LocalBusiness schema to homepage</li>
+          <li style="display:flex;gap:10px;align-items:start;"><span style="color:var(--orange);margin-top:2px;">→</span>Write 5+ project case studies</li>
+          <li style="display:flex;gap:10px;align-items:start;"><span style="color:var(--orange);margin-top:2px;">→</span>Rewrite get-a-quote page</li>
+          <li style="display:flex;gap:10px;align-items:start;"><span style="color:var(--orange);margin-top:2px;">→</span>Add testimonials to homepage</li>
+          <li style="display:flex;gap:10px;align-items:start;"><span style="color:var(--orange);margin-top:2px;">→</span>Build How We Work section</li>
+          <li style="display:flex;gap:10px;align-items:start;"><span style="color:var(--orange);margin-top:2px;">→</span>Add showroom booking option</li>
+          <li style="display:flex;gap:10px;align-items:start;"><span style="color:var(--orange);margin-top:2px;">→</span>Fix title tags across all pages</li>
+          <li style="display:flex;gap:10px;align-items:start;"><span style="color:var(--orange);margin-top:2px;">→</span>Rewrite Instagram + Facebook bios</li>
+          <li style="display:flex;gap:10px;align-items:start;"><span style="color:var(--orange);margin-top:2px;">→</span>Establish content rhythm on social</li>
+        </ul>
+      </div>
+
+      <div style="background:var(--bg3);padding:36px;">
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;">Full System</div>
+        <ul style="list-style:none;font-size:13px;color:var(--cream-dim);line-height:2.2;">
+          <li style="display:flex;gap:10px;align-items:start;"><span style="color:var(--gold);margin-top:2px;">→</span>New website — modern stack</li>
+          <li style="display:flex;gap:10px;align-items:start;"><span style="color:var(--gold);margin-top:2px;">→</span>Clean URL architecture from day one</li>
+          <li style="display:flex;gap:10px;align-items:start;"><span style="color:var(--gold);margin-top:2px;">→</span>CMS for projects, gallery, blog</li>
+          <li style="display:flex;gap:10px;align-items:start;"><span style="color:var(--gold);margin-top:2px;">→</span>CRM + lead pipeline setup</li>
+          <li style="display:flex;gap:10px;align-items:start;"><span style="color:var(--gold);margin-top:2px;">→</span>Automated lead follow-up</li>
+          <li style="display:flex;gap:10px;align-items:start;"><span style="color:var(--gold);margin-top:2px;">→</span>Full SEO infrastructure</li>
+          <li style="display:flex;gap:10px;align-items:start;"><span style="color:var(--gold);margin-top:2px;">→</span>Social content system</li>
+          <li style="display:flex;gap:10px;align-items:start;"><span style="color:var(--gold);margin-top:2px;">→</span>Analytics + reporting dashboard</li>
+          <li style="display:flex;gap:10px;align-items:start;"><span style="color:var(--gold);margin-top:2px;">→</span>Review generation workflow</li>
+          <li style="display:flex;gap:10px;align-items:start;"><span style="color:var(--gold);margin-top:2px;">→</span>Google Ads + Meta retargeting</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── BOOK A CALL CTA ── -->
+<section class="cta-section" id="contact">
+  <div class="cta-tag">Next Step</div>
+  <h2 class="cta-title">Ready to turn this audit into <em>a working system?</em></h2>
+  <p class="cta-body">The first call is 15 minutes. No slides, no pitch deck. We find out if there is a fit, answer your questions, and if it makes sense we book a deeper session to map out exactly what needs to happen.</p>
+
+  <div class="cta-buttons">
+    <a href="https://meetings-ap1.hubspot.com/felipe-chaparro" target="_blank" class="btn-primary">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Book a 15-Minute Call
+    </a>
+    <a href="mailto:hello@sysbilt.com" class="btn-secondary">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      Send us an Email
+    </a>
+  </div>
+
+  <div class="cta-meta">
+    <div class="cta-meta-item">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      15 minutes, no obligation
+    </div>
+    <div class="cta-meta-item">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      Deeper session only if it makes sense
+    </div>
+    <div class="cta-meta-item">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      Sydney-based team
+    </div>
+    <div class="cta-meta-item">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      <a href="https://sysbilt.com" target="_blank">sysbilt.com</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <a href="https://sysbilt.com" target="_blank" class="footer-brand" style="text-decoration:none;">SYSBILT</a>
+  <div class="footer-copy">CONFIDENTIAL · Prepared for Marmonyx Stone · May 2026</div>
+  <div class="footer-note">
+    <a href="https://sysbilt.com" target="_blank" style="color:var(--gold);font-size:13px;margin-bottom:4px;display:block;text-decoration:none;">sysbilt.com</a>
+    <a href="mailto:hello@sysbilt.com" style="font-size:11px;color:var(--cream-dim);text-decoration:none;">hello@sysbilt.com</a>
+  </div>
+</footer>
+
+<script>
+  // Scroll-triggered section reveals
+  const sections = document.querySelectorAll('.section');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.08 });
+
+  sections.forEach(s => observer.observe(s));
+
+  // Active nav link highlighting
+  const navLinks = document.querySelectorAll('.nav-links a');
+  const sectionEls = document.querySelectorAll('section[id]');
+
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sectionEls.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 120) current = s.id;
+    });
+    navLinks.forEach(a => {
+      a.style.color = a.getAttribute('href') === '#' + current
+        ? 'var(--gold)'
+        : 'var(--cream-dim)';
+    });
+  });
+</script>
+</body>
+</html>
