@@ -1,0 +1,17 @@
+---
+description: Proposal, agreement, and similar document routes must follow DESIGN_GUIDELINES.md and mirror the proposal reference shell.
+globs: src/pages/proposal/**/*,src/pages/agreement/**/*,src/components/proposal/**/*,src/components/agreement/**/*
+alwaysApply: false
+---
+
+# Document surfaces (proposal, agreement, future MSA-style routes)
+
+When **adding or editing** files under the globs above (or any new tokenised customer document route):
+
+1. **Read** `DESIGN_GUIDELINES.md` first (tokens, typography, buttons, patterns).
+2. **Mirror the proposal reference** unless the task explicitly says otherwise:
+   - **Page shell:** Match `src/pages/proposal/ProposalPage.tsx` for the main view: `min-h-screen bg-cream font-sans text-dark selection:bg-dark selection:text-cream`. Do **not** use `bg-cream-light` for full-page document backgrounds (`cream` is the default page background per guidelines).
+   - **Cover header:** Match `src/components/proposal/CoverPage.tsx`: `SysbiltLogo` with `className="w-[160px] md:w-[200px] max-w-[85vw]"`, then the tagline (`font-sans text-sm text-dark/60 md:text-base`), then spacing (`mt-32 md:mt-48` before the primary eyebrow/content). Do **not** replace the logo with a plain-text wordmark.
+   - **Loading / error / footer:** Reuse the same patterns as `ProposalPage.tsx` (eyebrow loader, bordered card errors, `type-body` footer with `border-dark/10`).
+
+3. **Self-check before finishing:** Diff your page shell and cover against `ProposalPage` + `CoverPage` for background, selection, logo, and footer.

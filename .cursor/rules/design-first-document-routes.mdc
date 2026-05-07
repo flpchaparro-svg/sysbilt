@@ -1,0 +1,14 @@
+---
+description: New in-app document or contract routes must follow DESIGN_GUIDELINES.md and proposal reference patterns.
+alwaysApply: true
+---
+
+# New document routes (design)
+
+If you **create** a new customer-facing document route (anything like proposal, agreement, or contract viewers):
+
+1. Read **`DESIGN_GUIDELINES.md`** before implementing UI.
+2. Copy the **page shell and cover pattern** from **`src/pages/proposal/ProposalPage.tsx`** and **`src/components/proposal/CoverPage.tsx`** (including `SysbiltLogo`, `bg-cream`, selection styles, footer, loading/error).
+3. For edits under `src/pages/proposal/`, `src/pages/agreement/`, or matching `src/components/proposal/` / `agreement/`, follow **`.cursor/rules/document-surfaces-design.mdc`**.
+
+Do not invent alternate full-page backgrounds or text-only wordmarks where the proposal uses the logo component.
