@@ -53,9 +53,14 @@ export default function ConfirmationScreen({
           </div>
 
           <div className="proposal-actions mt-12 flex flex-col gap-6 md:flex-row md:items-center md:gap-10">
-            <CTAButton theme="light" type="button" onClick={() => window.print()}>
-              Download a copy
-            </CTAButton>
+            <div className="flex flex-col gap-2">
+              <CTAButton theme="light" type="button" onClick={() => window.print()}>
+                Save as PDF
+              </CTAButton>
+              <p className="font-mono uppercase tracking-widest text-dark/40 text-xs">
+                Opens your browser print dialog. Choose &apos;Save as PDF&apos; as the destination.
+              </p>
+            </div>
             <a
               href="https://sysbilt.com"
               className="group relative inline-flex items-center justify-center gap-[2px] px-3 py-2 font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark transition-colors hover:text-gold-on-cream"
