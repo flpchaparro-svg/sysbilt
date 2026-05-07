@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { verifyProposalToken } from '../_lib/auth';
-import { getDealBundle, updateDealStage, addDealNote } from '../_lib/hubspot';
-import { fetchProposalPage, markProposalAccepted } from '../_lib/notion';
+import { verifyProposalToken } from '../_lib/auth.js';
+import { getDealBundle, updateDealStage, addDealNote } from '../_lib/hubspot.js';
+import { fetchProposalPage, markProposalAccepted } from '../_lib/notion.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
