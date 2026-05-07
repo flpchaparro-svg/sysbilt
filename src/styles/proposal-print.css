@@ -1,0 +1,33 @@
+@media print {
+  @page {
+    size: A4;
+    margin: 18mm 16mm;
+  }
+
+  body {
+    background: #fff8f5 !important;
+    color: #1a1a1a !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Force new pages between chapters */
+  section[id^='chapter-'] {
+    break-before: page;
+    page-break-before: always;
+  }
+
+  /* Cover always prints first, by itself */
+  .proposal-cover {
+    break-after: page;
+    page-break-after: always;
+  }
+
+  /* Hide site nav, progress rail, acceptance form, buttons */
+  nav,
+  .proposal-rail,
+  .proposal-accept,
+  .proposal-actions {
+    display: none !important;
+  }
+}

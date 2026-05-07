@@ -115,3 +115,55 @@ async function fetchCompany(companyId: string): Promise<HubspotCompany | null> {
     return null;
   }
 }
+
+async function hubspotPatch<T>(path: string, body: unknown): Promise<T> {
+  const token = process.env.HUBSPOT_PRIVATE_APP_TOKEN;
+  if (!token) throw new Error('HUBSPOT_PRIVATE_APP_TOKEN is not set');
+  const resp = await fetch(`${HUBSPOT_BASE}${path}`, {
+    method: 'PATCH',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  if (!resp.ok) {
+    const text = await resp.text();
+    throw new Error(`HubSpot ${resp.status} ${path}: ${text}`);
+  }
+  return resp.json() as Promise<T>;
+}
+
+async function hubspotPost<T>(path: string, body: unknown): Promise<T> {
+  const token = process.env.HUBSPOT_PRIVATE_APP_TOKEN;
+  if (!token) throw new Error('HUBSPOT_PRIVATE_APP_TOKEN is not set');
+  const resp = await fetch(`${HUBSPOT_BASE}${path}`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  if (!resp.ok) {
+    const text = await resp.text();
+    throw new Error(`HubSpot ${resp.status} ${path}: ${text}`);
+  }
+  return resp.json() as Promise<T>;
+}
+
+export async function updateDealStage(dealId: string, stage: string): Promise<void> {
+  await hubspotPatch(`/crm/v3/objects/deals/${encodeURIComponent(dealId)}`, {
+    properties: { dealstage: stage },
+  });
+}
+
+export async function addDealNote(dealId: string, body: string): Promise<void> {
+  // Create a Note engagement and associate it to the deal
+  const noteResp: any = await hubspotPost('/crm/v3/objects/notes', {
+    properties: {
+      hs_note_body: body,
+      hs_timestamp: new Date().toISOString(),
+    },
+  });
+  const noteId = noteResp.id;
+  // Default association type for Note → Deal is 214
+  await hubspotPost(
+    `/crm/v3/objects/notes/${noteId}/associations/deals/${encodeURIComponent(dealId)}/note_to_deal`,
+    {},
+  );
+}

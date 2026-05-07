@@ -1,7 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import ProposalRenderer from '../../components/proposal/ProposalRenderer';
+import CoverPage from '../../components/proposal/CoverPage';
+import ProgressRail from '../../components/proposal/ProgressRail';
+import type { ProposalRailChapter } from '../../components/proposal/ProgressRail';
+import { useProposalRenderer } from '../../components/proposal/ProposalRenderer';
+import AcceptanceBlock from '../../components/proposal/AcceptanceBlock';
+import ConfirmationScreen from '../../components/proposal/ConfirmationScreen';
+import '../../styles/proposal-print.css';
 
 interface ProposalProperties {
   title: string;
@@ -23,22 +29,13 @@ interface ProposalData {
   };
 }
 
-function formatAUD(amount: number | null): string {
-  if (amount === null) return '';
-  return new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AUD', maximumFractionDigits: 0 }).format(amount);
-}
-
-function formatDate(iso: string | null): string {
-  if (!iso) return '';
-  const d = new Date(iso);
-  return d.toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' });
-}
-
 export default function ProposalPage() {
   const { token } = useParams<{ token: string }>();
   const [data, setData] = useState<ProposalData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [accepted, setAccepted] = useState<{ acceptedDate: string; acceptedByName: string } | null>(null);
+  const [activeChapter, setActiveChapter] = useState<ProposalRailChapter>('context');
 
   useEffect(() => {
     if (!token) {
@@ -58,7 +55,71 @@ export default function ProposalPage() {
       .finally(() => setLoading(false));
   }, [token]);
 
-  // Hide every proposal page from search engines and AI crawlers
+  const blocks = data?.proposal.blocks ?? [];
+  const { rendered, chapters } = useProposalRenderer(blocks);
+
+  useEffect(() => {
+    if (chapters.length > 0) {
+      setActiveChapter(chapters[0]);
+    }
+  }, [chapters]);
+
+  useEffect(() => {
+    if (!data || accepted) return;
+
+    const map: Record<string, ProposalRailChapter> = {
+      'chapter-context': 'context',
+      'chapter-scope': 'scope',
+      'chapter-investment': 'investment',
+      'chapter-sign': 'sign',
+      'chapter-sign-acceptance': 'sign',
+    };
+
+    let observer: IntersectionObserver | undefined;
+    let cancelled = false;
+
+    const raf = requestAnimationFrame(() => {
+      if (cancelled) return;
+      const roots: HTMLElement[] = [];
+      for (const id of Object.keys(map)) {
+        const el = document.getElementById(id);
+        if (el) roots.push(el);
+      }
+      if (roots.length === 0) return;
+
+      observer = new IntersectionObserver(
+        (entries) => {
+          const visible = entries.filter((e) => e.isIntersecting);
+          if (visible.length === 0) return;
+          visible.sort((a, b) => (b.intersectionRatio ?? 0) - (a.intersectionRatio ?? 0));
+          const id = visible[0].target.id;
+          const ch = map[id];
+          if (ch) setActiveChapter(ch);
+        },
+        { root: null, rootMargin: '-18% 0px -18% 0px', threshold: [0, 0.15, 0.35, 0.55, 0.75, 1] },
+      );
+
+      roots.forEach((el) => observer!.observe(el));
+    });
+
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(raf);
+      observer?.disconnect();
+    };
+  }, [data, accepted, chapters]);
+
+  const handleJump = useCallback((chapter: string) => {
+    const ch = chapter as ProposalRailChapter;
+    let el: HTMLElement | null = null;
+    if (ch === 'sign') {
+      el = document.getElementById('chapter-sign') ?? document.getElementById('chapter-sign-acceptance');
+    } else {
+      el = document.getElementById(`chapter-${ch}`);
+    }
+    el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, []);
+
   const robotsMeta = (
     <Helmet>
       <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
@@ -71,22 +132,27 @@ export default function ProposalPage() {
     return (
       <>
         {robotsMeta}
-        <div className="min-h-screen bg-[#FDFBF7] flex items-center justify-center">
-          <p className="text-stone-900 font-mono uppercase tracking-widest font-bold">Loading proposal</p>
+        <div className="flex min-h-screen items-center justify-center bg-cream">
+          <p className="type-eyebrow text-dark/60">Loading proposal</p>
         </div>
       </>
     );
   }
 
-  if (error || !data) {
+  if (error || !data || !token) {
     return (
       <>
         {robotsMeta}
-        <div className="min-h-screen bg-[#FDFBF7] p-8 flex items-center justify-center">
-          <div className="max-w-2xl w-full border-4 border-red-600 p-8 bg-white">
-            <h1 className="text-red-600 font-black text-2xl uppercase mb-4 tracking-wider">Proposal unavailable</h1>
-            <p className="text-stone-900 font-medium">{error ?? 'No data returned'}</p>
-            <p className="text-stone-600 mt-4 text-sm">If you believe this link should work, contact us at hello@sysbilt.com.</p>
+        <div className="flex min-h-screen items-center justify-center bg-cream p-8">
+          <div className="w-full max-w-2xl border border-dark/10 bg-white p-8 md:p-12">
+            <span className="mb-4 block font-mono text-xs font-bold uppercase tracking-[0.2em] text-red-text">
+              / Proposal unavailable
+            </span>
+            <h1 className="type-h3 text-dark">We could not load this proposal</h1>
+            <p className="type-body mt-4 text-dark/70">{error ?? 'No data returned'}</p>
+            <p className="mt-4 text-sm text-dark/70">
+              If you believe this link should work, contact us at hello@sysbilt.com.
+            </p>
           </div>
         </div>
       </>
@@ -94,50 +160,47 @@ export default function ProposalPage() {
   }
 
   const props = data.proposal.properties;
+  const clientName = props.clientBusinessName || data.company?.name || data.deal.dealname;
+
+  const coverProps = {
+    clientName,
+    pillars: props.pillars,
+    totalFeeAUD: props.totalFeeAUD,
+    validUntil: props.validUntil,
+    sentDate: props.sentDate,
+  };
+
+  if (accepted) {
+    return (
+      <>
+        {robotsMeta}
+        <ConfirmationScreen
+          acceptedByName={accepted.acceptedByName}
+          acceptedDate={accepted.acceptedDate}
+          printProposal={
+            <>
+              <CoverPage {...coverProps} />
+              {rendered}
+            </>
+          }
+        />
+      </>
+    );
+  }
 
   return (
     <>
       {robotsMeta}
-      <div className="min-h-screen bg-[#FDFBF7] text-stone-900 font-sans selection:bg-red-600 selection:text-white">
-        <main className="max-w-4xl mx-auto px-6 py-16 md:py-24">
-
-          {/* Cover */}
-          <header className="mb-24 border-b-8 border-stone-900 pb-12">
-            <p className="text-sm font-mono uppercase tracking-[0.3em] text-red-600 mb-4">SYSBILT Proposal</p>
-            <h1 className="text-5xl md:text-7xl font-serif font-black tracking-tighter mb-6 uppercase leading-none">
-              {props.clientBusinessName || data.company?.name || data.deal.dealname}
-            </h1>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 text-sm">
-              {props.pillars.length > 0 && (
-                <div>
-                  <p className="font-mono uppercase tracking-widest text-stone-500 mb-2">Scope</p>
-                  <p className="font-bold text-stone-900">{props.pillars.join(', ')}</p>
-                </div>
-              )}
-              {props.totalFeeAUD !== null && (
-                <div>
-                  <p className="font-mono uppercase tracking-widest text-stone-500 mb-2">Investment</p>
-                  <p className="font-bold text-stone-900">{formatAUD(props.totalFeeAUD)}</p>
-                </div>
-              )}
-              {props.validUntil && (
-                <div>
-                  <p className="font-mono uppercase tracking-widest text-stone-500 mb-2">Valid until</p>
-                  <p className="font-bold text-stone-900">{formatDate(props.validUntil)}</p>
-                </div>
-              )}
-            </div>
-          </header>
-
-          {/* Body */}
-          <ProposalRenderer blocks={data.proposal.blocks} />
-
-          {/* Footer */}
-          <footer className="mt-32 pt-8 border-t-2 border-stone-300 text-sm text-stone-600">
-            <p>SYSBILT  |  ABN 56 115 228 020  |  Sydney, Australia</p>
-            <p className="mt-1">hello@sysbilt.com  |  sysbilt.com</p>
+      <div className="min-h-screen bg-cream font-sans text-dark selection:bg-dark selection:text-cream">
+        <ProgressRail activeChapter={activeChapter} onJump={handleJump} />
+        <main className="mx-auto max-w-3xl px-6 py-12 md:py-20">
+          <CoverPage {...coverProps} />
+          <div>{rendered}</div>
+          <AcceptanceBlock token={token} onAccepted={(d) => setAccepted(d)} />
+          <footer className="type-body mt-32 border-t border-dark/10 pt-8 text-sm text-dark/60 print:mt-16">
+            <p>SYSBILT | ABN 56 115 228 020 | Sydney, Australia</p>
+            <p className="mt-1">hello@sysbilt.com | sysbilt.com</p>
           </footer>
-
         </main>
       </div>
     </>

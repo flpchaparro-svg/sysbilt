@@ -176,3 +176,18 @@ export async function fetchProposalPage(notionProposalUrl: string): Promise<Prop
     return null;
   }
 }
+
+export async function markProposalAccepted(
+  pageId: string,
+  acceptedByName: string,
+  acceptedDateISO: string,
+): Promise<void> {
+  await notion.pages.update({
+    page_id: pageId,
+    properties: {
+      'Status': { status: { name: 'Accepted' } },
+      'Accepted date': { date: { start: acceptedDateISO } },
+      'Accepted by name': { rich_text: [{ type: 'text', text: { content: acceptedByName } }] },
+    },
+  });
+}
