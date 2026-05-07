@@ -52,12 +52,17 @@ export default function ConfirmationScreen({
             </ol>
           </div>
 
-          <div className="proposal-actions mt-12 flex flex-col gap-6 md:flex-row md:items-center md:gap-10">
-            <div className="flex flex-col gap-2">
-              <CTAButton theme="light" type="button" onClick={() => window.print()}>
+          <div className="proposal-actions mt-12 flex flex-col items-start gap-6 md:flex-row md:items-start md:gap-10">
+            <div className="inline-flex max-w-full flex-col items-start gap-2">
+              <CTAButton
+                theme="light"
+                type="button"
+                className="w-fit shrink-0"
+                onClick={() => window.print()}
+              >
                 Save as PDF
               </CTAButton>
-              <p className="font-mono uppercase tracking-widest text-dark/40 text-xs">
+              <p className="max-w-[min(100%,18rem)] font-mono text-xs uppercase tracking-widest text-dark/40">
                 Opens your browser print dialog. Choose &apos;Save as PDF&apos; as the destination.
               </p>
             </div>
