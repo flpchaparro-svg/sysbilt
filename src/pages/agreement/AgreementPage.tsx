@@ -70,8 +70,8 @@ export default function AgreementPage() {
     return (
       <>
         {robotsMeta}
-        <div className="flex min-h-screen items-center justify-center bg-cream-light">
-          <p className="font-mono font-bold uppercase tracking-widest text-dark">Loading agreement</p>
+        <div className="flex min-h-screen items-center justify-center bg-cream">
+          <p className="type-eyebrow text-dark/60">Loading agreement</p>
         </div>
       </>
     );
@@ -81,13 +81,14 @@ export default function AgreementPage() {
     return (
       <>
         {robotsMeta}
-        <div className="flex min-h-screen items-center justify-center bg-cream-light p-8">
-          <div className="w-full max-w-2xl border-4 border-red-text bg-white p-8">
-            <h1 className="mb-4 text-2xl font-black uppercase tracking-wider text-red-text">
+        <div className="flex min-h-screen items-center justify-center bg-cream p-8">
+          <div className="w-full max-w-2xl border border-dark/10 bg-white p-8 md:p-12">
+            <span className="mb-4 block font-mono text-xs font-bold uppercase tracking-[0.2em] text-red-text">
               / Agreement unavailable
-            </h1>
-            <p className="font-medium text-dark">{error ?? 'No data returned'}</p>
-            <p className="mt-4 text-sm text-dark/60">
+            </span>
+            <h1 className="type-h3 text-dark">We could not load this agreement</h1>
+            <p className="type-body mt-4 text-dark/70">{error ?? 'No data returned'}</p>
+            <p className="mt-4 text-sm text-dark/70">
               If you believe this link should work, contact us at hello@sysbilt.com.
             </p>
           </div>
@@ -115,7 +116,7 @@ export default function AgreementPage() {
   return (
     <>
       {robotsMeta}
-      <div className="min-h-screen bg-cream-light font-sans text-dark selection:bg-red-text selection:text-cream">
+      <div className="min-h-screen bg-cream font-sans text-dark selection:bg-dark selection:text-cream">
         <ClauseRail activeClause={activeClause} onJump={handleJump} />
         <main className="mx-auto max-w-3xl px-6 py-12 md:py-20">
           <AgreementCover
@@ -134,7 +135,7 @@ export default function AgreementPage() {
             signedBySYSBILTDate={props.signedBySYSBILTDate}
             onSigned={(d) => setSigned(d)}
           />
-          <footer className="mt-32 border-t border-dark/20 pt-8 font-mono text-sm text-dark/60 print:mt-16">
+          <footer className="type-body mt-32 border-t border-dark/10 pt-8 text-sm text-dark/60 print:mt-16">
             <p>SYSBILT | ABN 56 115 228 020 | Sydney, Australia</p>
             <p className="mt-1">hello@sysbilt.com | sysbilt.com</p>
           </footer>

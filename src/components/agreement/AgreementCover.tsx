@@ -1,4 +1,5 @@
 import React from 'react';
+import { SysbiltLogo } from '../SysbiltLogo';
 
 export interface AgreementCoverProps {
   clientBusinessName: string;
@@ -38,17 +39,17 @@ export default function AgreementCover({
 
   return (
     <header className="proposal-cover mb-32 print:break-after-page">
-      <p className="font-mono text-xs uppercase tracking-[0.3em] text-red-text">
-        / Master Service Agreement
-      </p>
-      <h1 className="mt-4 font-serif text-3xl font-black uppercase tracking-tight text-dark md:text-4xl">
-        SYSBILT
-      </h1>
+      <SysbiltLogo className="w-[160px] md:w-[200px] max-w-[85vw]" />
+
       <p className="mt-2 font-sans text-sm text-dark/60 md:text-base">
         Business systems for growing companies
       </p>
 
-      <div className="mt-32">
+      <div className="mt-32 md:mt-48">
+        <p className="mb-6 font-mono text-xs uppercase tracking-[0.3em] text-red-text">
+          / Master Service Agreement
+        </p>
+
         <p className="mb-4 font-mono text-xs uppercase tracking-[0.3em] text-red-text">Between</p>
 
         <div className="grid grid-cols-1 gap-10 md:grid-cols-[1fr_auto_1fr] md:items-start md:gap-6">
