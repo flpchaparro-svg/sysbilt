@@ -24,6 +24,7 @@ const NewsPage = lazy(() => import('./pages/NewsPage'));
 const GuidesPage = lazy(() => import('./pages/GuidesHubPage'));
 const GuideDocumentPage = lazy(() => import('./pages/GuideDocumentPage'));
 const ProposalPage = lazy(() => import('./pages/proposal/ProposalPage'));
+const AgreementPage = lazy(() => import('./pages/agreement/AgreementPage'));
 
 const SystemPage = lazy(() => import('./pages/System/SystemPage'));
 const Pillar1 = lazy(() => import('./pages/System/Pillar1'));
@@ -145,7 +146,9 @@ const App: React.FC = () => {
       <LazyMotion features={domAnimation}>
         <div className="bg-cream font-sans selection:bg-dark selection:text-cream min-h-screen flex flex-col relative">
           
-          {location.pathname !== '/contact' && !location.pathname.startsWith('/proposal/') && (
+          {location.pathname !== '/contact' &&
+            !location.pathname.startsWith('/proposal/') &&
+            !location.pathname.startsWith('/agreement/') && (
             <GlobalHeader
               currentView={getCurrentView()}
               onNavigate={handleGlobalNavigate}
@@ -181,6 +184,7 @@ const App: React.FC = () => {
                     <Route path="/pillar6" element={<Pillar6 onNavigate={handleGlobalNavigate} />} />
                     <Route path="/pillar7" element={<Pillar7 onNavigate={handleGlobalNavigate} />} />
                     <Route path="/proposal/:token" element={<ProposalPage />} />
+                    <Route path="/agreement/:token" element={<AgreementPage />} />
                     
                     <Route path="*" element={<NotFoundPage onNavigate={handleGlobalNavigate} />} />
                   </Routes>
@@ -191,7 +195,8 @@ const App: React.FC = () => {
 
           {location.pathname !== '/system' &&
             location.pathname !== '/contact' &&
-            !location.pathname.startsWith('/proposal/') && <GlobalFooter onNavigate={handleGlobalNavigate} />}
+            !location.pathname.startsWith('/proposal/') &&
+            !location.pathname.startsWith('/agreement/') && <GlobalFooter onNavigate={handleGlobalNavigate} />}
           <Modal service={selectedService} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onViewPillar={(id) => handleGlobalNavigate(id)} />
           <CookieBanner />
         </div>

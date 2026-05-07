@@ -65,6 +65,17 @@
     margin-top: 12pt !important;
   }
 
+  /* Agreement clauses: page break before each clause */
+  section[id^='clause-'] {
+    break-before: page;
+    page-break-before: always;
+  }
+
+  section#clause-sign {
+    break-before: auto;
+    page-break-before: auto;
+  }
+
   /* Body type sizing for print */
   body {
     font-size: 11pt;

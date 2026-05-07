@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { verifyProposalToken } from '../_lib/auth.js';
-import { getDealBundle, progressDealStage, addDealNote } from '../_lib/hubspot.js';
-import { fetchProposalPage, markProposalAccepted } from '../_lib/notion.js';
+import { verifyAgreementToken } from '../_lib/auth.js';
+import { progressDealStage, addDealNote } from '../_lib/hubspot.js';
+import { fetchAgreementPage, markAgreementSigned } from '../_lib/notion.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
@@ -26,25 +26,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return;
   }
 
-  let dealId: string;
+  let agreementPageId: string;
   try {
-    const payload = verifyProposalToken(token);
-    dealId = payload.dealId;
+    const payload = verifyAgreementToken(token);
+    agreementPageId = payload.agreementPageId;
   } catch (err) {
     res.status(401).json({ error: 'Invalid or expired token' });
     return;
   }
 
   try {
-    const bundle = await getDealBundle(dealId);
-    if (!bundle.deal.notion_proposal_url) {
-      res.status(404).json({ error: 'No proposal URL on deal' });
+    const agreement = await fetchAgreementPage(agreementPageId);
+    if (!agreement) {
+      res.status(404).json({ error: 'Agreement not found' });
       return;
     }
 
-    const proposal = await fetchProposalPage(bundle.deal.notion_proposal_url);
-    if (!proposal) {
-      res.status(404).json({ error: 'Proposal page not found' });
+    const dealId = agreement.properties.hubspotDealId;
+    if (!dealId) {
+      res.status(400).json({ error: 'Agreement is missing HubSpot Deal ID property' });
       return;
     }
 
@@ -53,33 +53,33 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const ip = (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() || 'unknown';
     const ua = (req.headers['user-agent'] as string) || 'unknown';
 
-    // Update Notion proposal page
-    await markProposalAccepted(proposal.properties.pageId, name.trim(), todayISO);
+    await markAgreementSigned(agreement.properties.pageId, name.trim(), position.trim(), todayISO);
 
-    // Update HubSpot: stage moves forward to Negotiating only if currently below Negotiating
-    const negotiatingStage = process.env.HUBSPOT_NEGOTIATING_DEAL_STAGE || 'contractsent';
+    const wonStage = process.env.HUBSPOT_ACCEPTED_DEAL_STAGE || 'closedwon';
     let stageMoved = false;
     try {
-      stageMoved = await progressDealStage(dealId, negotiatingStage);
+      stageMoved = await progressDealStage(dealId, wonStage);
     } catch (err) {
       console.error('HubSpot stage update failed', err);
     }
 
-    const noteBody = `Proposal accepted via sysbilt.com on ${today.toLocaleString('en-AU', {
+    const noteBody = `Agreement (MSA) signed via sysbilt.com on ${today.toLocaleString('en-AU', {
       dateStyle: 'long',
       timeStyle: 'short',
       timeZone: 'Australia/Sydney',
-    })}. Accepted by ${name.trim()}, ${position.trim()}. IP: ${ip}. User agent: ${ua}.`;
+    })}. Signed by ${name.trim()}, ${position.trim()}. IP: ${ip}. User agent: ${ua}.${stageMoved ? ' Deal stage moved to Won.' : ' Deal stage was already at or beyond Won, no change.'}`;
     await addDealNote(dealId, noteBody);
 
     res.status(200).json({
       ok: true,
-      acceptedDate: todayISO,
-      acceptedByName: name.trim(),
+      signedDate: todayISO,
+      signedByName: name.trim(),
+      signedByPosition: position.trim(),
+      stageMoved,
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Server error';
-    console.error('Accept failed', err);
+    console.error('Agreement accept failed', err);
     res.status(500).json({ error: message });
   }
 }

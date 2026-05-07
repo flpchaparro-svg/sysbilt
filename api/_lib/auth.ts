@@ -86,6 +86,37 @@ export function verifyProposalToken(token: string): ProposalTokenPayload {
   return payload;
 }
 
+export interface AgreementTokenPayload {
+  agreementPageId: string;
+  exp: number;
+}
+
+export function signAgreementToken(agreementPageId: string): string {
+  const payload: AgreementTokenPayload = {
+    agreementPageId,
+    exp: Math.floor(Date.now() / 1000) + TOKEN_TTL_DAYS * 24 * 60 * 60,
+  };
+  const payloadB64 = base64url(JSON.stringify(payload));
+  const sig = hmac(payloadB64);
+  return `${payloadB64}.${sig}`;
+}
+
+export function verifyAgreementToken(token: string): AgreementTokenPayload {
+  const [payloadB64, sig] = token.split('.');
+  if (!payloadB64 || !sig) throw new Error('Malformed token');
+  const expected = hmac(payloadB64);
+  const sigBuf = Buffer.from(sig);
+  const expBuf = Buffer.from(expected);
+  if (sigBuf.length !== expBuf.length || !crypto.timingSafeEqual(sigBuf, expBuf)) {
+    throw new Error('Invalid token signature');
+  }
+  const payload: AgreementTokenPayload = JSON.parse(fromBase64url(payloadB64).toString('utf-8'));
+  if (payload.exp < Math.floor(Date.now() / 1000)) {
+    throw new Error('Token expired');
+  }
+  return payload;
+}
+
 export function requireAdmin(headers: Record<string, string | string[] | undefined>): void {
   const provided =
     headers['x-admin-passcode'] ??

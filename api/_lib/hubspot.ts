@@ -173,3 +173,37 @@ export async function addDealNote(dealId: string, body: string): Promise<void> {
     ],
   });
 }
+
+// Pipeline order. Lower index = earlier in the pipeline. closedlost is special and never auto-progresses.
+const STAGE_ORDER: Record<string, number> = {
+  qualifiedtobuy: 1, // Discovery Booked
+  presentationscheduled: 2, // Qualified
+  decisionmakerboughtin: 3, // Proposal Sent
+  contractsent: 4, // Negotiating
+  closedwon: 5, // Won
+};
+
+/**
+ * Move deal stage forward only. Never moves backwards. Never moves out of closedlost.
+ * Returns true if stage was changed, false if it was a no-op.
+ */
+export async function progressDealStage(dealId: string, targetStage: string): Promise<boolean> {
+  const dealResp: any = await hubspotGet(
+    `/crm/v3/objects/deals/${encodeURIComponent(dealId)}?properties=dealstage`,
+  );
+  const currentStage = dealResp.properties?.dealstage ?? '';
+
+  if (currentStage === 'closedlost') {
+    return false;
+  }
+
+  const currentRank = STAGE_ORDER[currentStage] ?? 0;
+  const targetRank = STAGE_ORDER[targetStage] ?? 0;
+
+  if (targetRank <= currentRank) {
+    return false;
+  }
+
+  await updateDealStage(dealId, targetStage);
+  return true;
+}

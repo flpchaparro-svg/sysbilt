@@ -131,6 +131,97 @@ function readUrl(prop: any): string {
   return prop?.url ?? '';
 }
 
+function readEmail(prop: any): string {
+  return prop?.email ?? '';
+}
+
+export interface AgreementPageProperties {
+  pageId: string;
+  pageUrl: string;
+  title: string;
+  status: string;
+  hubspotDealId: string;
+  hubspotDealUrl: string;
+  linkedProposal: string;
+  clientBusinessName: string;
+  clientABN: string;
+  clientAddress: string;
+  clientPrimaryContact: string;
+  clientContactEmail: string;
+  totalFeeAUD: number | null;
+  sentDate: string | null;
+  signedBySYSBILTDate: string | null;
+  signedByClientDate: string | null;
+  signedByClientName: string;
+  signedByClientPosition: string;
+}
+
+export interface AgreementPage {
+  properties: AgreementPageProperties;
+  blocks: NotionBlock[];
+}
+
+function pageToAgreementProperties(page: any): AgreementPageProperties {
+  const p = page.properties ?? {};
+  return {
+    pageId: page.id,
+    pageUrl: page.url,
+    title: readTitle(p['Title']),
+    status: readStatus(p['Status']),
+    hubspotDealId: readText(p['HubSpot Deal ID']),
+    hubspotDealUrl: readUrl(p['HubSpot Deal URL']),
+    linkedProposal: readUrl(p['Linked Proposal']),
+    clientBusinessName: readText(p['Client business name']),
+    clientABN: readText(p['Client ABN']),
+    clientAddress: readText(p['Client address']),
+    clientPrimaryContact: readText(p['Client primary contact']),
+    clientContactEmail: readEmail(p['Client contact email']),
+    totalFeeAUD: readNumber(p['Total fee (AUD)']),
+    sentDate: readDate(p['Sent date']),
+    signedBySYSBILTDate: readDate(p['Signed by SYSBILT date']),
+    signedByClientDate: readDate(p['Signed by client date']),
+    signedByClientName: readText(p['Signed by client name']),
+    signedByClientPosition: readText(p['Signed by client position']),
+  };
+}
+
+export async function fetchAgreementPage(notionPageIdOrUrl: string): Promise<AgreementPage | null> {
+  let pageId = notionPageIdOrUrl;
+  if (notionPageIdOrUrl.includes('notion.so') || notionPageIdOrUrl.includes('-')) {
+    const extracted = extractNotionPageId(notionPageIdOrUrl);
+    if (!extracted) return null;
+    pageId = extracted;
+  }
+
+  try {
+    const page = await notion.pages.retrieve({ page_id: pageId });
+    const blocks = await fetchChildren(pageId);
+    return {
+      properties: pageToAgreementProperties(page),
+      blocks,
+    };
+  } catch (err) {
+    return null;
+  }
+}
+
+export async function markAgreementSigned(
+  pageId: string,
+  signerName: string,
+  signerPosition: string,
+  signedDateISO: string,
+): Promise<void> {
+  await notion.pages.update({
+    page_id: pageId,
+    properties: {
+      'Status': { status: { name: 'Signed by client' } },
+      'Signed by client date': { date: { start: signedDateISO } },
+      'Signed by client name': { rich_text: [{ type: 'text', text: { content: signerName } }] },
+      'Signed by client position': { rich_text: [{ type: 'text', text: { content: signerPosition } }] },
+    },
+  });
+}
+
 function pageToProperties(page: any): ProposalPageProperties {
   const p = page.properties ?? {};
   return {
