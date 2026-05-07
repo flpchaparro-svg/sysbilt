@@ -52,23 +52,23 @@ export default function ConfirmationScreen({
             </ol>
           </div>
 
-          <div className="proposal-actions mt-12 flex flex-col items-start justify-start gap-6 md:flex-row md:flex-nowrap md:items-start md:gap-8">
-            <div className="flex max-w-full flex-none flex-col items-start gap-2">
+          <div className="proposal-actions mt-12 flex w-full min-w-0 flex-col items-start gap-6">
+            <div className="flex w-full min-w-0 max-w-full flex-col items-start gap-2">
               <CTAButton
                 theme="light"
                 type="button"
-                className="w-fit shrink-0"
+                className="w-fit max-w-full shrink-0"
                 onClick={() => window.print()}
               >
                 Save as PDF
               </CTAButton>
-              <p className="max-w-[min(100%,18rem)] font-mono text-xs uppercase tracking-widest text-dark/40">
+              <p className="max-w-full font-mono text-xs uppercase tracking-widest text-dark/40 sm:max-w-md">
                 Opens your browser print dialog. Choose &apos;Save as PDF&apos; as the destination.
               </p>
             </div>
             <a
               href="https://sysbilt.com"
-              className="group relative inline-flex flex-none shrink-0 items-center justify-center gap-[2px] whitespace-nowrap px-3 py-2 font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark transition-colors hover:text-gold-on-cream"
+              className="group relative inline-flex w-fit max-w-full shrink-0 items-center justify-center gap-[2px] self-start whitespace-nowrap px-3 py-2 font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark transition-colors hover:text-gold-on-cream"
             >
               <span className="transition-transform duration-[250ms] group-hover:translate-x-[2px]">[</span>
               <span className="mx-1">RETURN TO SYSBILT</span>
