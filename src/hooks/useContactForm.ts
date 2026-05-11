@@ -91,8 +91,6 @@ export const useContactForm = () => {
         { name: 'message', value: formState.message },
         { name: 'friction_point', value: formatFrictionPoint(formState.frictionPoint) },
         { name: 'lead_source_detail', value: window.location.href },
-        // Creates the associated Company Object
-        { objectTypeId: '0-2', name: 'name', value: formState.company },
         // Populates the standard Contact record for n8n extraction
         { name: 'company', value: formState.company },
         { name: 'phone', value: formState.phone },
