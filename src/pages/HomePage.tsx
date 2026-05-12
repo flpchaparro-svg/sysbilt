@@ -246,7 +246,13 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onServiceClick }) => {
               </div>
             </div>
 
-            <h1 id="homepage-hero-heading" className="font-serif text-5xl md:text-6xl lg:text-[6.5rem] leading-[1.1] lg:leading-[0.9] tracking-tighter text-dark mb-8 md:mb-10">
+            {/* SEO Optimized H1 (Visually Hidden) */}
+            <h1 id="homepage-hero-heading" className="sr-only">
+              Business Systems & Automation Agency Sydney | SYSBILT
+            </h1>
+
+            {/* Visual Conversion Copy (Hidden from Screen Readers/Bots to prevent conflict) */}
+            <div aria-hidden="true" className="font-serif text-5xl md:text-6xl lg:text-[6.5rem] leading-[1.1] lg:leading-[0.9] tracking-tighter text-dark mb-8 md:mb-10">
               <div className="overflow-hidden">
                 <span className="block reveal-text tracking-tighter font-serif" style={{ letterSpacing: '-0.04em' }}>Stop doing</span>
               </div>
@@ -255,7 +261,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onServiceClick }) => {
                   <span className="italic font-serif text-gold-on-cream drop-shadow-[0_0_20px_rgba(197,160,89,0.2)]">everyone's job</span>
                 </span>
               </div>
-            </h1>
+            </div>
 
             <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/70 max-w-2xl border-l-2 border-gold pl-6 animate-fade-in text-left mx-auto lg:mx-0 mb-12 md:mb-0" style={{ animationDelay: '0.6s' }}>
               We build the systems that run your business without you
