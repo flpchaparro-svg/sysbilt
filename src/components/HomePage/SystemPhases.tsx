@@ -79,7 +79,7 @@ export default function SystemPhases({ onNavigate }: SystemPhasesProps) {
                 </div>
               </div>
               <hr className="border-t border-slate-300 my-5" />
-              <h2 className="font-serif text-3xl uppercase leading-tight mb-4" style={{ color: colors.redText }}>Get Clients</h2>
+              <h3 className="font-serif text-3xl uppercase leading-tight mb-4" style={{ color: colors.redText }}>Get Clients</h3>
               <p className="font-sans text-base leading-relaxed" style={{ color: `${colors.dark}CC` }}>
                 Your website catches leads, your CRM holds them, and automation chases them. Nothing slips through.
               </p>
@@ -124,7 +124,7 @@ export default function SystemPhases({ onNavigate }: SystemPhasesProps) {
                 </div>
               </div>
               <hr className="border-t border-slate-300 my-5" />
-              <h2 className="font-serif text-3xl uppercase leading-tight mb-4" style={{ color: '#8B6914' }}>Scale Faster</h2>
+              <h3 className="font-serif text-3xl uppercase leading-tight mb-4" style={{ color: '#8B6914' }}>Scale Faster</h3>
               <p className="font-sans text-base leading-relaxed" style={{ color: `${colors.dark}CC` }}>
                 Content brings people to you, AI handles the questions and bookings, and training keeps your team sharp. You grow without burning out.
               </p>
@@ -161,7 +161,7 @@ export default function SystemPhases({ onNavigate }: SystemPhasesProps) {
                 </div>
               </div>
               <hr className="border-t border-slate-300 my-5" />
-              <h2 className="font-serif text-3xl uppercase leading-tight mb-4" style={{ color: colors.dark }}>See Clearly</h2>
+              <h3 className="font-serif text-3xl uppercase leading-tight mb-4" style={{ color: colors.dark }}>See Clearly</h3>
               <p className="font-sans text-base leading-relaxed" style={{ color: `${colors.dark}CC` }}>
                 One dashboard with live data. You see what's working and fix what's broken before it costs you money.
               </p>

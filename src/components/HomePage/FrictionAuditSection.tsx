@@ -123,10 +123,10 @@ const Card: React.FC<CardProps> = ({ data, index, total, scrollYProgress, onNavi
                     <span className="type-eyebrow text-red-text border border-red-solid/20 px-2 py-1">{data.label}</span>
                  </div>
                  <div>
-                    {/* Pain point title: Standardized H3 -> H2 (Fixed Accessibility Hierarchy) */}
-                    <h2 className="font-serif text-3xl md:text-4xl text-dark leading-[1.1] tracking-tight mb-8">
+                    {/* Pain point title: H3 under section H2 */}
+                    <h3 className="font-serif text-3xl md:text-4xl text-dark leading-[1.1] tracking-tight mb-8">
                       {data.title}
-                    </h2>
+                    </h3>
                     <div className="inline-block bg-red-solid/10 px-6 py-3">
                        {/* Stat callouts: text-base → text-lg (labels like "NO VISIBILITY" should be smaller) */}
                        <span className="font-mono text-xs md:text-sm text-red-text font-bold tracking-[0.2em] uppercase">{data.metric}</span>
@@ -272,10 +272,10 @@ const FrictionAuditSection: React.FC<FrictionAuditSectionProps> = ({ onNavigate 
                               {data.label}
                            </span>
                         </div>
-                        {/* Pain point title: Standardized H3 -> H2 (Fixed Accessibility Hierarchy) */}
-                        <h2 className="font-serif text-3xl md:text-4xl text-dark leading-[1.1] tracking-tight mb-4">
+                        {/* Pain point title: H3 under section H2 */}
+                        <h3 className="font-serif text-3xl md:text-4xl text-dark leading-[1.1] tracking-tight mb-4">
                           {data.title}
-                        </h2>
+                        </h3>
                         <div className="mb-6">
                            {/* Mobile: Stat callouts: text-base → text-lg (labels like "NO VISIBILITY" should be smaller) */}
                            <span className="font-mono text-xs md:text-sm text-red-text font-bold tracking-[0.2em] uppercase bg-red-solid/5 px-3 py-1">
