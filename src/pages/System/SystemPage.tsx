@@ -83,7 +83,10 @@ const SystemPage: React.FC<SystemPageProps> = ({ onBack, onNavigate }) => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 lg:gap-20 flex-1 content-center items-center">
             <div className="flex flex-col justify-center">
               <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl xl:text-8xl leading-[1.1] lg:leading-[0.9] tracking-tighter text-dark mb-6 md:mb-10 break-words">
-                You built the business, now the business <span className="italic font-serif text-gold-on-cream">runs you</span>
+                <span className="sr-only">Business Systems Architecture &amp; Revenue Operations</span>
+                <span aria-hidden="true">
+                  You built the business, now the business <span className="italic font-serif text-gold-on-cream">runs you</span>
+                </span>
               </h1>
               <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/70 max-w-2xl border-l-2 border-gold pl-6 mb-8 animate-fade-in">
                 Every decision waits on you. Leads slip through because nobody followed up. Your team asks you the same questions every day. We build a 7-part system that fixes the plumbing so you can focus on the work that actually grows revenue.
@@ -108,7 +111,10 @@ const SystemPage: React.FC<SystemPageProps> = ({ onBack, onNavigate }) => {
             / THE 3 STAGES
           </span>
           <h2 className="font-serif text-4xl md:text-5xl lg:text-7xl leading-[0.95] tracking-tighter text-dark mb-6">
-            Where are you <span className="italic font-serif text-gold-on-cream">right now</span>
+            <span className="sr-only">The 3 Stages of Business System Scalability</span>
+            <span aria-hidden="true">
+              Where are you <span className="italic font-serif text-gold-on-cream">right now</span>
+            </span>
           </h2>
           <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/70 max-w-2xl mx-auto">
             Most businesses fit into one of three stages. Find yours.
@@ -148,7 +154,20 @@ const SystemPage: React.FC<SystemPageProps> = ({ onBack, onNavigate }) => {
       </section>
 
       {/* 4. STATIC FOOTER CONTENT */}
-      <FAQSection faqs={systemFAQs} accentColor={colors.goldOnCream} title={<>Questions about <span className="italic text-gold-on-cream">how this works</span></>} subtitle="The most common things people ask before they book a call" onNavigate={onNavigate} />
+      <FAQSection
+        faqs={systemFAQs}
+        accentColor={colors.goldOnCream}
+        title={
+          <>
+            <span className="sr-only">Frequently Asked Questions about Business Systems</span>
+            <span aria-hidden="true">
+              Questions about <span className="italic text-gold-on-cream">how this works</span>
+            </span>
+          </>
+        }
+        subtitle="The most common things people ask before they book a call"
+        onNavigate={onNavigate}
+      />
       <GlobalFooter onNavigate={onNavigate} />
     </div>
   );

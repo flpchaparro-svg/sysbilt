@@ -74,7 +74,10 @@ const SystemGrid: React.FC<SystemGridProps> = ({ onNavigate }) => {
              / THE 7 PILLARS
           </span>
           <h2 className="font-serif text-4xl md:text-5xl lg:text-7xl leading-[0.95] tracking-tighter text-dark mb-6">
-            Pick what you <span className="italic font-serif text-gold-on-cream">need</span>
+            <span className="sr-only">The 7 Pillars of a Scalable Business System</span>
+            <span aria-hidden="true">
+              Pick what you <span className="italic font-serif text-gold-on-cream">need</span>
+            </span>
           </h2>
           <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/70 max-w-2xl mx-auto">
             Each pillar works on its own but they're built to connect. Click any one to see how.

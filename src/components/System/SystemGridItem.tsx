@@ -138,9 +138,9 @@ const GridItem: React.FC<GridItemProps> = ({ pillar, isSelected, selectedId, onT
                         {pillar.number} / {pillar.categoryLabel}
                      </span>
                   </div>
-                  <h2 className="font-serif text-4xl md:text-5xl lg:text-7xl text-white mb-6 leading-[0.95] tracking-tighter">
+                  <h3 className="font-serif text-4xl md:text-5xl lg:text-7xl text-white mb-6 leading-[0.95] tracking-tighter">
                      {pillar.title}
-                  </h2>
+                  </h3>
                   <p className="font-sans text-base md:text-lg lg:text-xl text-white/80 max-w-2xl font-light leading-relaxed">
                      {pillar.description}
                   </p>
