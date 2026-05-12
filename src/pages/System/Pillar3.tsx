@@ -135,7 +135,10 @@ const Pillar3: React.FC<Pillar3Props> = ({ onNavigate }) => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 lg:gap-20 flex-1 content-center items-center">
             <div className="flex flex-col items-start max-w-3xl">
               <h1 id="pillar-hero-title" className="font-serif text-[2.75rem] md:text-[3.5rem] lg:text-[4.75rem] xl:text-[5.5rem] leading-[1.1] lg:leading-[0.9] tracking-tighter text-dark mb-8 md:mb-10">
-                Tell us what you want to happen and we <span className="italic font-serif text-red-text drop-shadow-[0_0_20px_rgba(226,30,63,0.2)]">make it happen</span>
+                <span className="sr-only">Business Process Automation &amp; Workflow Agency Sydney</span>
+                <span aria-hidden="true">
+                  Tell us what you want to happen and we <span className="italic font-serif text-red-text drop-shadow-[0_0_20px_rgba(226,30,63,0.2)]">make it happen</span>
+                </span>
               </h1>
 
               <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/70 max-w-2xl border-l-2 border-red-solid pl-6 mb-10 md:mb-8">
@@ -181,7 +184,10 @@ const Pillar3: React.FC<Pillar3Props> = ({ onNavigate }) => {
               </span>
             </div>
             <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-dark leading-[0.95] tracking-tighter mb-6 max-w-4xl drop-shadow-sm">
-              You already know what should happen but it doesn't happen <span className="italic font-serif text-red-text drop-shadow-[0_0_20px_rgba(226,30,63,0.2)]">on its own</span>
+              <span className="sr-only">The Cost of Manual Processes and Broken Workflows</span>
+              <span aria-hidden="true">
+                You already know what should happen but it doesn&apos;t happen <span className="italic font-serif text-red-text drop-shadow-[0_0_20px_rgba(226,30,63,0.2)]">on its own</span>
+              </span>
             </h2>
             <p className="font-sans text-lg md:text-xl text-dark/70 leading-relaxed max-w-2xl border-l-2 border-red-solid pl-6">
               {gap.sub}
@@ -207,7 +213,10 @@ const Pillar3: React.FC<Pillar3Props> = ({ onNavigate }) => {
             {solution.eyebrow}
           </span>
           <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-dark leading-[0.95] tracking-tighter mb-6">
-            You say "when this, do that" and <span className="italic font-serif text-red-text drop-shadow-[0_0_20px_rgba(226,30,63,0.2)]">we build it</span>
+            <span className="sr-only">Custom Workflow Automation &amp; API Integration Services</span>
+            <span aria-hidden="true">
+              You say "when this, do that" and <span className="italic font-serif text-red-text drop-shadow-[0_0_20px_rgba(226,30,63,0.2)]">we build it</span>
+            </span>
           </h2>
           <div className="font-sans text-lg md:text-xl text-dark/70 leading-relaxed max-w-3xl space-y-4">
             <p>{solution.sub}</p>
@@ -232,7 +241,10 @@ const Pillar3: React.FC<Pillar3Props> = ({ onNavigate }) => {
               {engine.eyebrow}
             </span>
             <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-dark leading-[0.95] tracking-tighter mb-8 md:mb-6">
-              The layer that makes everything else <span className="italic font-serif text-red-text drop-shadow-[0_0_20px_rgba(226,30,63,0.2)]">work together</span>
+              <span className="sr-only">Connecting Business Software with Seamless Automation</span>
+              <span aria-hidden="true">
+                The layer that makes everything else <span className="italic font-serif text-red-text drop-shadow-[0_0_20px_rgba(226,30,63,0.2)]">work together</span>
+              </span>
             </h2>
             <div className="font-sans text-lg md:text-xl text-dark/70 leading-relaxed space-y-4 mt-2">
               <p>{engine.sub}</p>
@@ -329,7 +341,10 @@ const Pillar3: React.FC<Pillar3Props> = ({ onNavigate }) => {
             <p className="mb-4 font-mono text-[11px] font-bold uppercase tracking-[0.3em] text-gold-on-cream">
               / LEARN FIRST
             </p>
-            <h2 className="mb-6 font-serif text-3xl text-dark">Want to know what you should automate first?</h2>
+            <h2 className="mb-6 font-serif text-3xl text-dark">
+              <span className="sr-only">Read Our Complete Business Automation Strategy Guide</span>
+              <span aria-hidden="true">Want to know what you should automate first?</span>
+            </h2>
             <p className="mb-10 font-sans text-lg font-light leading-relaxed text-dark/70">
               Read the complete guide on automation that works for your business. Everything we described here, in depth,
               with examples and a diagnostic checklist.
@@ -349,7 +364,10 @@ const Pillar3: React.FC<Pillar3Props> = ({ onNavigate }) => {
             </p>
 
             <h2 className="font-serif text-6xl md:text-8xl text-white mb-12">
-              Let's <span className="italic text-[#D4A84B]">Talk</span>
+              <span className="sr-only">Book a Process Automation Consultation Call</span>
+              <span aria-hidden="true">
+                Let&apos;s <span className="italic text-[#D4A84B]">Talk</span>
+              </span>
             </h2>
 
             <div className="mb-16">
@@ -371,7 +389,14 @@ const Pillar3: React.FC<Pillar3Props> = ({ onNavigate }) => {
       <FAQSection
         faqs={pillarFAQs}
         accentColor={colors.goldOnCream}
-        title={<>Questions about <span className="italic text-gold-on-cream">automation</span></>}
+        title={
+          <>
+            <span className="sr-only">Frequently Asked Questions about Business Automation</span>
+            <span aria-hidden="true">
+              Questions about <span className="italic text-gold-on-cream">automation</span>
+            </span>
+          </>
+        }
         subtitle="Common questions about what we can automate and how it works"
         onNavigate={onNavigate}
       />
