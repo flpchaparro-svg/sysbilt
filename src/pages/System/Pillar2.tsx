@@ -135,7 +135,10 @@ const Pillar2: React.FC<Pillar2Props> = ({ onNavigate }) => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 lg:gap-20 flex-1 content-center items-center">
             <div className="flex flex-col items-start max-w-3xl">
               <h1 id="pillar-hero-title" className="font-serif text-[2.75rem] md:text-[3.5rem] lg:text-[4.75rem] xl:text-[5.5rem] leading-[1.1] lg:leading-[0.9] tracking-tighter text-dark mb-8 md:mb-10">
-                Never lose track of a <span className="italic font-serif text-red-text drop-shadow-[0_0_20px_rgba(226,30,63,0.2)]">lead again</span>
+                <span className="sr-only">CRM Setup &amp; Lead Tracking Agency Sydney</span>
+                <span aria-hidden="true">
+                  Never lose track of a <span className="italic font-serif text-red-text drop-shadow-[0_0_20px_rgba(226,30,63,0.2)]">lead again</span>
+                </span>
               </h1>
 
               <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/70 max-w-2xl border-l-2 border-red-solid pl-6 mb-10 md:mb-8">
@@ -181,7 +184,10 @@ const Pillar2: React.FC<Pillar2Props> = ({ onNavigate }) => {
               </span>
             </div>
             <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-dark leading-[0.95] tracking-tighter mb-6 max-w-4xl drop-shadow-sm">
-              You are not short on leads, you are short on <span className="italic font-serif text-red-text drop-shadow-[0_0_20px_rgba(226,30,63,0.2)]">follow-up</span>
+              <span className="sr-only">The Cost of Poor Lead Management &amp; Manual Follow-ups</span>
+              <span aria-hidden="true">
+                You are not short on leads, you are short on <span className="italic font-serif text-red-text drop-shadow-[0_0_20px_rgba(226,30,63,0.2)]">follow-up</span>
+              </span>
             </h2>
             <p className="font-sans text-lg md:text-xl text-dark/70 leading-relaxed max-w-2xl border-l-2 border-red-solid pl-6">
               {gap.sub}
@@ -208,7 +214,10 @@ const Pillar2: React.FC<Pillar2Props> = ({ onNavigate }) => {
             {solution.eyebrow}
           </span>
           <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-dark leading-[0.95] tracking-tighter mb-6">
-            One place for every lead, every deal, every <span className="italic font-serif text-red-text drop-shadow-[0_0_20px_rgba(226,30,63,0.2)]">follow-up</span>
+            <span className="sr-only">HubSpot CRM Setup &amp; Sales Pipeline Automation</span>
+            <span aria-hidden="true">
+              One place for every lead, every deal, every <span className="italic font-serif text-red-text drop-shadow-[0_0_20px_rgba(226,30,63,0.2)]">follow-up</span>
+            </span>
           </h2>
           <div className="font-sans text-lg md:text-xl text-dark/70 leading-relaxed max-w-3xl space-y-4">
             <p>{solution.sub}</p>
@@ -233,7 +242,10 @@ const Pillar2: React.FC<Pillar2Props> = ({ onNavigate }) => {
               {engine.eyebrow}
             </span>
             <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-dark leading-[0.95] tracking-tighter mb-8 md:mb-6">
-              The memory your business has been <span className="italic font-serif text-red-text drop-shadow-[0_0_20px_rgba(226,30,63,0.2)]">missing</span>
+              <span className="sr-only">Automated Lead Scoring and Follow-up Sequences</span>
+              <span aria-hidden="true">
+                The memory your business has been <span className="italic font-serif text-red-text drop-shadow-[0_0_20px_rgba(226,30,63,0.2)]">missing</span>
+              </span>
             </h2>
             <div className="font-sans text-lg md:text-xl text-dark/70 leading-relaxed space-y-4 mt-2">
               <p>{engine.sub}</p>
@@ -330,7 +342,10 @@ const Pillar2: React.FC<Pillar2Props> = ({ onNavigate }) => {
             <p className="mb-4 font-mono text-[11px] font-bold uppercase tracking-[0.3em] text-gold-on-cream">
               / LEARN FIRST
             </p>
-            <h2 className="mb-6 font-serif text-3xl text-dark">Want to know how to stop losing leads?</h2>
+            <h2 className="mb-6 font-serif text-3xl text-dark">
+              <span className="sr-only">Read Our Complete CRM Strategy Guide</span>
+              <span aria-hidden="true">Want to know how to stop losing leads?</span>
+            </h2>
             <p className="mb-10 font-sans text-lg font-light leading-relaxed text-dark/70">
               Read the complete guide on lead tracking that works for your business. Everything we described here, in
               depth, with examples and a diagnostic checklist.
@@ -350,7 +365,10 @@ const Pillar2: React.FC<Pillar2Props> = ({ onNavigate }) => {
             </p>
 
             <h2 className="font-serif text-6xl md:text-8xl text-white mb-12">
-              Let's <span className="italic text-[#D4A84B]">Talk</span>
+              <span className="sr-only">Book a CRM Consultation Call</span>
+              <span aria-hidden="true">
+                Let&apos;s <span className="italic text-[#D4A84B]">Talk</span>
+              </span>
             </h2>
 
             <div className="mb-16">
@@ -371,8 +389,15 @@ const Pillar2: React.FC<Pillar2Props> = ({ onNavigate }) => {
       <FAQSection
         faqs={pillarFAQs}
         accentColor={colors.goldOnCream}
-        title={<>Questions about <span className="italic text-gold-on-cream">CRM</span></>}
-        subtitle="Common questions about lead tracking, pipelines, and how we set it up"
+        title={
+          <>
+            <span className="sr-only">Frequently Asked Questions about CRM Setup</span>
+            <span aria-hidden="true">
+              Questions about <span className="italic text-gold-on-cream">CRM</span>
+            </span>
+          </>
+        }
+        subtitle="Common questions about how we build systems and what's included"
         onNavigate={onNavigate}
       />
     </article>
