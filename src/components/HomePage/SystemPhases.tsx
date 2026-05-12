@@ -23,9 +23,14 @@ export default function SystemPhases({ onNavigate }: SystemPhasesProps) {
             / HOW WE FIX IT
           </span>
           <h2 className="font-serif text-4xl md:text-6xl lg:text-7xl leading-[0.95] tracking-tighter mb-6 text-dark">
-            Three phases that connect your{' '}
-            <span className="italic font-serif text-gold-on-cream drop-shadow-[0_0_20px_rgba(197,160,89,0.25)]">
-              entire business
+            <span className="sr-only">
+              Our 3-Phase Revenue Architecture: Lead Gen, AI Operations, &amp; Reporting
+            </span>
+            <span aria-hidden="true">
+              Three phases that connect your{' '}
+              <span className="italic font-serif text-gold-on-cream drop-shadow-[0_0_20px_rgba(197,160,89,0.25)]">
+                entire business
+              </span>
             </span>
           </h2>
           <p className="font-sans text-lg md:text-xl font-light leading-relaxed max-w-2xl mx-auto text-dark/80">

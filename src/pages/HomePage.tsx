@@ -226,9 +226,8 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onServiceClick }) => {
       </Helmet>
       <article aria-labelledby="homepage-hero-heading" className="w-full min-w-0">
       <section id="hero" aria-label="Hero Section" className="min-h-[100svh] w-full flex items-center pt-32 md:pt-20 overflow-hidden relative z-20 content-layer">
-        
+
         <div className="absolute inset-0 z-[1]">
-          {/* Suspense allows the background to be transparent while waiting for HeroVisual */}
           <Suspense fallback={<div className="w-full h-full bg-transparent" />}>
             <HeroVisual />
           </Suspense>
@@ -236,40 +235,43 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onServiceClick }) => {
 
         <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 relative z-20">
           <div className="lg:col-span-12 flex flex-col justify-start md:justify-center items-center lg:items-start text-center lg:text-left pt-8 md:pt-0">
-            <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4 mb-6 md:mb-10 overflow-hidden justify-center lg:justify-start">
-              <span className="hidden md:inline font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark">/</span>
-              <div className="flex items-center gap-2">
-                <span className="font-mono text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-dark">
-                  SYDNEY BUSINESS SYSTEMS
-                </span>
-                <ScrambleTitle />
-              </div>
-            </div>
 
-            {/* SEO Optimized H1 (Visually Hidden) */}
             <h1 id="homepage-hero-heading" className="sr-only">
               Business Systems & Automation Agency Sydney | SYSBILT
             </h1>
 
-            {/* Visual Conversion Copy (Hidden from Screen Readers/Bots to prevent conflict) */}
-            <div aria-hidden="true" className="font-serif text-5xl md:text-6xl lg:text-[6.5rem] leading-[1.1] lg:leading-[0.9] tracking-tighter text-dark mb-8 md:mb-10">
-              <div className="overflow-hidden">
-                <span className="block reveal-text tracking-tighter font-serif" style={{ letterSpacing: '-0.04em' }}>Stop doing</span>
+            <div aria-hidden="true">
+              <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4 mb-6 md:mb-10 overflow-hidden justify-center lg:justify-start">
+                <span className="hidden md:inline font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark">/</span>
+                <div className="flex items-center gap-2">
+                  <span className="font-mono text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-dark">
+                    SYDNEY BUSINESS SYSTEMS
+                  </span>
+                  <ScrambleTitle />
+                </div>
               </div>
-              <div className="overflow-hidden">
-                <span className="block reveal-text tracking-tighter" style={{ animationDelay: '0.2s', letterSpacing: '-0.04em' }}>
-                  <span className="italic font-serif text-gold-on-cream drop-shadow-[0_0_20px_rgba(197,160,89,0.2)]">everyone's job</span>
+
+              <div className="font-serif text-5xl md:text-6xl lg:text-[6.5rem] leading-[1.1] lg:leading-[0.9] tracking-tighter text-dark mb-8 md:mb-10">
+                Stop doing{' '}
+                <span className="italic font-serif text-gold-on-cream drop-shadow-[0_0_20px_rgba(197,160,89,0.2)]">
+                  everyone&apos;s job
                 </span>
               </div>
+
+              <p
+                className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/70 max-w-2xl border-l-2 border-gold pl-6 animate-fade-in text-left mx-auto lg:mx-0 mb-12 md:mb-0"
+                style={{ animationDelay: '0.6s' }}
+              >
+                We build the systems that run your business without you
+              </p>
             </div>
 
-            <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/70 max-w-2xl border-l-2 border-gold pl-6 animate-fade-in text-left mx-auto lg:mx-0 mb-12 md:mb-0" style={{ animationDelay: '0.6s' }}>
-              We build the systems that run your business without you
-            </p>
-
-            <div className="mt-10 md:mt-16 flex flex-col sm:flex-row items-center gap-6 md:gap-12 animate-fade-in relative z-30" style={{ animationDelay: '0.8s' }}>
+            <div
+              className="mt-10 md:mt-16 flex flex-col sm:flex-row items-center gap-6 md:gap-12 animate-fade-in relative z-30"
+              style={{ animationDelay: '0.8s' }}
+            >
               <CTAButton theme="light" onClick={() => onNavigate('contact')}>
-                LET'S TALK
+                LET&apos;S TALK
               </CTAButton>
               <CTAButton variant="bracket" theme="light" onClick={() => onNavigate('system')}>
                 SEE THE SYSTEM
@@ -277,11 +279,11 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onServiceClick }) => {
             </div>
           </div>
         </div>
-        
+
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-10 md:h-12 w-[1px] bg-dark/10 overflow-hidden z-0">
-          <m.div 
+          <m.div
             style={{ y: useTransform(scrollLineY, (v) => `${v}%`) }}
-            className="absolute inset-0 bg-dark/40 w-full h-full" 
+            className="absolute inset-0 bg-dark/40 w-full h-full"
           />
         </div>
       </section>

@@ -24,8 +24,10 @@ const ProblemSection: React.FC = () => {
           <div className={`col-span-1 md:col-span-2 ${cellPad} border-r border-b border-dark/10 flex flex-col justify-center transition-colors duration-snap hover:bg-dark/5 group`}>
             <span className={`${eyebrow} text-red-text`}>/ WHAT WE SEE EVERY DAY</span>
             <h2 className="type-h2 text-dark">
-              You didn't build a business{' '}
-              <span className="italic text-red-text">to do paperwork</span>
+              <span className="sr-only">Inbound Lead &amp; Workflow Management Solutions</span>
+              <span aria-hidden="true">
+                You didn&apos;t build a business to do paperwork
+              </span>
             </h2>
           </div>
 

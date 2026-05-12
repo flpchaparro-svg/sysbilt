@@ -175,10 +175,13 @@ const FrictionAuditSection: React.FC<FrictionAuditSectionProps> = ({ onNavigate 
                  <div className="mb-8 font-mono text-xs font-bold uppercase tracking-[0.2em] text-red-text flex items-center gap-2">
                     / THE FRICTION AUDIT
                  </div>
-                 <h1 className="font-serif text-4xl md:text-5xl lg:text-7xl leading-[0.95] text-dark tracking-tighter mb-10">
-                    Where your <span className="text-red-text">week</span>{' '}
-                    <span className="italic text-red-text">disappears</span>
-                 </h1>
+                 <h2 className="font-serif text-4xl md:text-5xl lg:text-7xl leading-[0.95] text-dark tracking-tighter mb-10">
+                    <span className="sr-only">Business Process Audit: Identifying Revenue &amp; Time Leaks</span>
+                    <span aria-hidden="true">
+                      Where your <span className="text-red-text">week</span>{' '}
+                      <span className="italic text-red-text">disappears</span>
+                    </span>
+                 </h2>
                  <div className="w-16 h-1 bg-dark mb-10"></div>
                  <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/70 max-w-sm">
                     Your business isn't broken, but it is leaking. These are the four places where time and money vanish before you notice.
@@ -229,10 +232,13 @@ const FrictionAuditSection: React.FC<FrictionAuditSectionProps> = ({ onNavigate 
             <div className="mb-8 font-mono text-xs font-bold uppercase tracking-[0.2em] text-red-text flex items-center gap-2">
                / THE FRICTION AUDIT
             </div>
-            <h1 className="font-serif text-4xl md:text-5xl lg:text-7xl leading-[0.95] tracking-tighter text-dark mb-6">
-               Where your <span className="text-red-text">week</span>{' '}
-               <span className="italic text-red-text">disappears</span>
-            </h1>
+            <h2 className="font-serif text-4xl md:text-5xl lg:text-7xl leading-[0.95] tracking-tighter text-dark mb-6">
+               <span className="sr-only">Business Process Audit: Identifying Revenue &amp; Time Leaks</span>
+               <span aria-hidden="true">
+                 Where your <span className="text-red-text">week</span>{' '}
+                 <span className="italic text-red-text">disappears</span>
+               </span>
+            </h2>
             <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/70 max-w-sm">
                Your business isn't broken, but it is leaking. These are the four places where time and money vanish before you notice.
             </p>
