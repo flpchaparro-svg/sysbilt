@@ -156,7 +156,10 @@ const Pillar1: React.FC<Pillar1Props> = ({ onNavigate }) => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 lg:gap-20 flex-1 content-center items-center">
             <div className="flex flex-col items-start max-w-3xl">
               <h1 id="pillar-hero-title" className="font-serif text-[2.75rem] md:text-[3.5rem] lg:text-[4.75rem] xl:text-[5.5rem] leading-[1.1] lg:leading-[0.9] tracking-tighter text-dark mb-8 md:mb-10">
-                A website that works <span className="italic font-serif text-red-text drop-shadow-[0_0_20px_rgba(226,30,63,0.2)]">as hard as you do</span>
+                <span className="sr-only">Website Development &amp; E-commerce Agency Sydney</span>
+                <span aria-hidden="true">
+                  A website that works <span className="italic font-serif text-red-text drop-shadow-[0_0_20px_rgba(226,30,63,0.2)]">as hard as you do</span>
+                </span>
               </h1>
 
               <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/70 max-w-2xl border-l-2 border-red-solid pl-6 mb-10 md:mb-8">
@@ -205,7 +208,10 @@ const Pillar1: React.FC<Pillar1Props> = ({ onNavigate }) => {
               </span>
             </div>
             <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-dark leading-[0.95] tracking-tighter mb-6 max-w-4xl drop-shadow-sm">
-              Your website is either hurting your business or <span className="italic font-serif text-red-text drop-shadow-[0_0_20px_rgba(226,30,63,0.2)]">not helping it</span>
+              <span className="sr-only">The Hidden Costs of Outdated Business Websites</span>
+              <span aria-hidden="true">
+                Your website is either hurting your business or <span className="italic font-serif text-red-text drop-shadow-[0_0_20px_rgba(226,30,63,0.2)]">not helping it</span>
+              </span>
             </h2>
             <p className="font-sans text-lg md:text-xl text-dark/70 leading-relaxed max-w-2xl border-l-2 border-red-solid pl-6">
               {gap.sub}
@@ -231,7 +237,10 @@ const Pillar1: React.FC<Pillar1Props> = ({ onNavigate }) => {
             {solution.eyebrow}
           </span>
           <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-dark leading-[0.95] tracking-tighter mb-6">
-            A website built <span className="italic font-serif text-red-text drop-shadow-[0_0_20px_rgba(226,30,63,0.2)]">the right way</span>
+            <span className="sr-only">Custom Website Development &amp; E-commerce Platforms</span>
+            <span aria-hidden="true">
+              A website built <span className="italic font-serif text-red-text drop-shadow-[0_0_20px_rgba(226,30,63,0.2)]">the right way</span>
+            </span>
           </h2>
           <div className="font-sans text-lg md:text-xl text-dark/70 leading-relaxed max-w-3xl space-y-4">
             <p>{solution.sub}</p>
@@ -255,7 +264,10 @@ const Pillar1: React.FC<Pillar1Props> = ({ onNavigate }) => {
               {engine.eyebrow}
             </span>
             <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-dark leading-[0.95] tracking-tighter mb-8 md:mb-6">
-              A website that talks to the rest of <span className="italic font-serif text-red-text drop-shadow-[0_0_20px_rgba(226,30,63,0.2)]">your business</span>
+              <span className="sr-only">High-Performance Business Websites Built for Lead Capture</span>
+              <span aria-hidden="true">
+                A website that talks to the rest of <span className="italic font-serif text-red-text drop-shadow-[0_0_20px_rgba(226,30,63,0.2)]">your business</span>
+              </span>
             </h2>
             <div className="font-sans text-lg md:text-xl text-dark/70 leading-relaxed space-y-4 mt-2">
               <p>{engine.sub}</p>
@@ -360,7 +372,10 @@ const Pillar1: React.FC<Pillar1Props> = ({ onNavigate }) => {
             <p className="mb-4 font-mono text-[11px] font-bold uppercase tracking-[0.3em] text-gold-on-cream">
               / LEARN FIRST
             </p>
-            <h2 className="mb-6 font-serif text-3xl text-dark">Want to know how it all fits together?</h2>
+            <h2 className="mb-6 font-serif text-3xl text-dark">
+              <span className="sr-only">Read Our Complete Business Website Strategy Guide</span>
+              <span aria-hidden="true">Want to know how it all fits together?</span>
+            </h2>
             <p className="mb-10 font-sans text-lg font-light leading-relaxed text-dark/70">
               Read the complete guide on building a website that works for your business. Everything we described here,
               in depth, with examples and a diagnostic checklist.
@@ -380,7 +395,10 @@ const Pillar1: React.FC<Pillar1Props> = ({ onNavigate }) => {
             </p>
             
             <h2 className="font-serif text-6xl md:text-8xl text-white mb-12">
-              Let's <span className="italic text-[#D4A84B]">Talk</span>
+              <span className="sr-only">Book a Website Development Consultation</span>
+              <span aria-hidden="true">
+                Let&apos;s <span className="italic text-[#D4A84B]">Talk</span>
+              </span>
             </h2>
             
             <div className="mb-16">
@@ -402,7 +420,14 @@ const Pillar1: React.FC<Pillar1Props> = ({ onNavigate }) => {
       <FAQSection
         faqs={pillarFAQs}
         accentColor={colors.goldOnCream}
-        title={<>Questions about <span className="italic text-gold-on-cream">websites</span></>}
+        title={
+          <>
+            <span className="sr-only">Frequently Asked Questions about Website Development</span>
+            <span aria-hidden="true">
+              Questions about <span className="italic text-gold-on-cream">websites</span>
+            </span>
+          </>
+        }
         subtitle="Common questions about how we build websites and what's included"
         onNavigate={onNavigate}
       />
