@@ -81,8 +81,11 @@ const TheArchitect: React.FC = () => {
               / WHO WE ARE
             </span>
             <h2 className="font-serif text-5xl md:text-6xl lg:text-7xl leading-[0.9] mb-8 md:mb-10 text-dark tracking-tight">
-              Built by people who have{' '}
-              <span className="italic text-gold-on-cream">actually run businesses</span>
+              <span className="sr-only">About Felipe Chaparro, Revenue Systems Architect</span>
+              <span aria-hidden="true">
+                Built by people who have{' '}
+                <span className="italic text-gold-on-cream">actually run businesses</span>
+              </span>
             </h2>
             <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/70 border-l-2 border-dark/10 pl-8 max-w-xl">
               We don&apos;t just write code. We build systems based on what actually works on the floor.
