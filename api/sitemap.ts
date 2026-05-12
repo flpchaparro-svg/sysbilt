@@ -1,9 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@sanity/client';
 
-const BASE_URL = process.env.VERCEL_PROJECT_PRODUCTION_URL
-  ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-  : 'https://sysbilt.com';
+const BASE_URL = 'https://sysbilt.com';
 
 /** Slugs for guide documents (hub is /guides only). */
 const GUIDE_DOC_SLUGS = [
@@ -134,7 +132,7 @@ export default async function handler(_req: VercelRequest, res: VercelResponse):
     const xml = buildXml([...staticEntries, ...guideDocEntries, ...blogUrls]);
 
     res.setHeader('Content-Type', 'application/xml; charset=utf-8');
-    res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600');
+    res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=86400');
     res.status(200).send(xml);
   } catch (err) {
     console.error('sitemap:', err);
