@@ -94,7 +94,10 @@ const Pillar5: React.FC<Pillar5Props> = ({ onNavigate }) => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 lg:gap-20 flex-1 content-center items-center">
             <div className="flex flex-col items-start max-w-3xl">
               <h1 id="pillar-hero-title" className="font-serif text-[2.75rem] md:text-[3.5rem] lg:text-[4.75rem] xl:text-[5.5rem] leading-[1.1] lg:leading-[0.9] tracking-tighter text-dark mb-8 md:mb-10">
-                Be everywhere without <span className="italic font-serif text-gold-on-cream drop-shadow-[0_0_20px_rgba(197,160,89,0.3)]">doing everything</span>
+                <span className="sr-only">Content Marketing Systems &amp; Brand Authority Agency Sydney</span>
+                <span aria-hidden="true">
+                  Be everywhere without <span className="italic font-serif text-gold-on-cream drop-shadow-[0_0_20px_rgba(197,160,89,0.3)]">doing everything</span>
+                </span>
               </h1>
               <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/70 max-w-2xl border-l-2 border-gold pl-6 mb-10 md:mb-8">{hero.sub}</p>
               <div className="flex flex-col sm:flex-row gap-4 sm:items-center sm:gap-8 items-start mt-2">
@@ -127,7 +130,10 @@ const Pillar5: React.FC<Pillar5Props> = ({ onNavigate }) => {
               <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-gold-on-cream">{gap.eyebrow}</span>
             </div>
             <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-dark leading-[0.95] tracking-tighter mb-6 max-w-4xl drop-shadow-sm">
-              Your silence is costing you <span className="italic font-serif text-gold-on-cream drop-shadow-[0_0_20px_rgba(197,160,89,0.3)]">trust</span>
+              <span className="sr-only">The Problem with Manual Social Media and Content Creation</span>
+              <span aria-hidden="true">
+                Your silence is costing you <span className="italic font-serif text-gold-on-cream drop-shadow-[0_0_20px_rgba(197,160,89,0.3)]">trust</span>
+              </span>
             </h2>
             <p className="font-sans text-lg md:text-xl text-dark/70 leading-relaxed max-w-2xl border-l-2 border-gold pl-6">{gap.sub}</p>
           </div>
@@ -143,7 +149,10 @@ const Pillar5: React.FC<Pillar5Props> = ({ onNavigate }) => {
         <motion.div className="mb-16 max-w-3xl" variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}>
           <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-gold-on-cream mb-4 block">{solution.eyebrow}</span>
           <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-dark leading-[0.95] tracking-tighter mb-6">
-            A month of content from a <span className="italic font-serif text-gold-on-cream drop-shadow-[0_0_20px_rgba(197,160,89,0.3)]">single conversation</span>
+            <span className="sr-only">Omnichannel Content Distribution and Repurposing Architecture</span>
+            <span aria-hidden="true">
+              A month of content from a <span className="italic font-serif text-gold-on-cream drop-shadow-[0_0_20px_rgba(197,160,89,0.3)]">single conversation</span>
+            </span>
           </h2>
           <div className="font-sans text-lg md:text-xl text-dark/70 leading-relaxed max-w-3xl space-y-4">
             <p>{solution.sub}</p>
@@ -162,7 +171,10 @@ const Pillar5: React.FC<Pillar5Props> = ({ onNavigate }) => {
           <div className="text-center max-w-3xl mx-auto mb-16">
             <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-gold-on-cream mb-6 md:mb-4 block">{engine.eyebrow}</span>
             <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-dark leading-[0.95] tracking-tighter mb-8 md:mb-6">
-              Content that feeds the rest of <span className="italic font-serif text-gold-on-cream drop-shadow-[0_0_20px_rgba(197,160,89,0.3)]">your business</span>
+              <span className="sr-only">Automated Content Publishing and CMS Workflows</span>
+              <span aria-hidden="true">
+                Content that feeds the rest of <span className="italic font-serif text-gold-on-cream drop-shadow-[0_0_20px_rgba(197,160,89,0.3)]">your business</span>
+              </span>
             </h2>
             <div className="font-sans text-lg md:text-xl text-dark/70 leading-relaxed space-y-4 mt-2">
               <p>{engine.sub}</p>
@@ -227,7 +239,10 @@ const Pillar5: React.FC<Pillar5Props> = ({ onNavigate }) => {
             <p className="mb-4 font-mono text-[11px] font-bold uppercase tracking-[0.3em] text-gold-on-cream">
               / LEARN FIRST
             </p>
-            <h2 className="mb-6 font-serif text-3xl text-dark">Want to know how to build a content system?</h2>
+            <h2 className="mb-6 font-serif text-3xl text-dark">
+              <span className="sr-only">Read Our Complete Strategy Guide to Scaling Content</span>
+              <span aria-hidden="true">Want to know how to build a content system?</span>
+            </h2>
             <p className="mb-10 font-sans text-lg font-light leading-relaxed text-dark/70">
               Read the complete guide on building a content system that works for your business. Everything we described
               here, in depth, with examples and a diagnostic checklist.
@@ -243,7 +258,12 @@ const Pillar5: React.FC<Pillar5Props> = ({ onNavigate }) => {
           {/* FINAL CTA */}
           <div className="mt-20 md:mt-24 w-full bg-dark rounded-sm p-12 md:p-24 flex flex-col items-center justify-center text-center">
             <p className="font-mono text-[#D4A84B]/80 uppercase tracking-[0.2em] text-sm mb-6">/ READY?</p>
-            <h2 className="font-serif text-6xl md:text-8xl text-white mb-12">Let's <span className="italic text-[#D4A84B]">Talk</span></h2>
+            <h2 className="font-serif text-6xl md:text-8xl text-white mb-12">
+              <span className="sr-only">Book a Content Systems Consultation Call</span>
+              <span aria-hidden="true">
+                Let&apos;s <span className="italic text-[#D4A84B]">Talk</span>
+              </span>
+            </h2>
             <div className="mb-16">
               <CTAButton theme="dark" onClick={() => onNavigate('contact')}>BOOK A CALL</CTAButton>
             </div>
@@ -255,7 +275,20 @@ const Pillar5: React.FC<Pillar5Props> = ({ onNavigate }) => {
         </div>
       </section>
 
-      <FAQSection faqs={pillarFAQs} accentColor={colors.goldOnCream} title={<>Questions about <span className="italic text-gold-on-cream">content</span></>} subtitle="Common questions about what we create, how it works, and where it gets published" onNavigate={onNavigate} />
+      <FAQSection
+        faqs={pillarFAQs}
+        accentColor={colors.goldOnCream}
+        title={
+          <>
+            <span className="sr-only">Frequently Asked Questions about Content Systems</span>
+            <span aria-hidden="true">
+              Questions about <span className="italic text-gold-on-cream">content</span>
+            </span>
+          </>
+        }
+        subtitle="Common questions about content systems and distribution"
+        onNavigate={onNavigate}
+      />
     </article>
   );
 };
