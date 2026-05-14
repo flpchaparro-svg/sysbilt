@@ -1,0 +1,77 @@
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+import crypto from 'node:crypto';
+import { requireN8nWebhook, signAuditReportToken } from '../_lib/auth.js';
+import { saveDeepAuditReport, type DeepAuditReportRecord } from '../_lib/reportsStore.js';
+
+export default async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
+  if (req.method !== 'POST') {
+    res.status(405).json({ error: 'Method not allowed' });
+    return;
+  }
+
+  try {
+    requireN8nWebhook(req.headers as Record<string, string | string[] | undefined>);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unauthorized';
+    res.status(401).json({ error: message });
+    return;
+  }
+
+  const body = (req.body ?? {}) as {
+    contact_email?: unknown;
+    company_name?: unknown;
+    audit_data?: unknown;
+  };
+
+  const contactEmail =
+    typeof body.contact_email === 'string' ? body.contact_email.trim() : '';
+  const companyName = typeof body.company_name === 'string' ? body.company_name.trim() : '';
+  const auditData = body.audit_data;
+
+  if (!contactEmail) {
+    res.status(400).json({ error: 'Missing or invalid contact_email' });
+    return;
+  }
+  if (!companyName) {
+    res.status(400).json({ error: 'Missing or invalid company_name' });
+    return;
+  }
+  if (
+    auditData == null ||
+    typeof auditData !== 'object' ||
+    Array.isArray(auditData)
+  ) {
+    res.status(400).json({ error: 'Missing or invalid audit_data (expected a JSON object)' });
+    return;
+  }
+
+  const reportId = crypto.randomUUID();
+  const record: DeepAuditReportRecord = {
+    contact_email: contactEmail,
+    company_name: companyName,
+    audit_data: auditData,
+  };
+
+  let token: string;
+  try {
+    token = signAuditReportToken(reportId);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Could not sign token';
+    res.status(500).json({ error: message });
+    return;
+  }
+
+  try {
+    await saveDeepAuditReport(reportId, record);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Could not persist report';
+    res.status(503).json({ error: message });
+    return;
+  }
+
+  const baseUrl = (process.env.PUBLIC_BASE_URL ?? 'https://sysbilt.com').replace(/\/$/, '');
+  const url = `${baseUrl}/reports/${token}`;
+
+  res.setHeader('Cache-Control', 'no-store');
+  res.status(200).json({ url });
+}

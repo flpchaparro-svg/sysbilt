@@ -129,3 +129,70 @@ export function requireAdmin(headers: Record<string, string | string[] | undefin
     throw new Error('Unauthorized');
   }
 }
+
+function auditReportHmac(payloadB64: string): string {
+  const secret = process.env.AUDIT_REPORT_SIGNING_SECRET;
+  if (!secret) throw new Error('AUDIT_REPORT_SIGNING_SECRET is not set');
+  return base64url(crypto.createHmac('sha256', secret).update(payloadB64).digest());
+}
+
+export interface AuditReportTokenPayload {
+  reportId: string;
+  exp: number;
+}
+
+export function signAuditReportToken(reportId: string): string {
+  const payload: AuditReportTokenPayload = {
+    reportId,
+    exp: Math.floor(Date.now() / 1000) + TOKEN_TTL_DAYS * 24 * 60 * 60,
+  };
+  const payloadB64 = base64url(JSON.stringify(payload));
+  const sig = auditReportHmac(payloadB64);
+  return `${payloadB64}.${sig}`;
+}
+
+export function verifyAuditReportToken(token: string): AuditReportTokenPayload {
+  const [payloadB64, sig] = token.split('.');
+  if (!payloadB64 || !sig) throw new Error('Malformed token');
+  const expected = auditReportHmac(payloadB64);
+  const sigBuf = Buffer.from(sig);
+  const expBuf = Buffer.from(expected);
+  if (sigBuf.length !== expBuf.length || !crypto.timingSafeEqual(sigBuf, expBuf)) {
+    throw new Error('Invalid token signature');
+  }
+  const payload: AuditReportTokenPayload = JSON.parse(fromBase64url(payloadB64).toString('utf-8'));
+  if (payload.exp < Math.floor(Date.now() / 1000)) {
+    throw new Error('Token expired');
+  }
+  if (!payload.reportId || typeof payload.reportId !== 'string') {
+    throw new Error('Invalid token payload');
+  }
+  return payload;
+}
+
+/**
+ * Validates n8n (or other automation) calls to report ingest.
+ * Accepts `x-n8n-webhook-secret` header or `Authorization: Bearer <secret>`.
+ */
+export function requireN8nWebhook(headers: Record<string, string | string[] | undefined>): void {
+  const expected = process.env.N8N_WEBHOOK_SECRET?.trim();
+  if (!expected) {
+    throw new Error('N8N_WEBHOOK_SECRET is not configured');
+  }
+
+  const headerSecret =
+    headers['x-n8n-webhook-secret'] ?? headers['X-N8N-WEBHOOK-SECRET'];
+  const fromHeader = Array.isArray(headerSecret) ? headerSecret[0]?.trim() : headerSecret?.trim();
+
+  const auth = headers.authorization ?? headers.Authorization;
+  const authStr = Array.isArray(auth) ? auth[0] : auth;
+  let fromBearer: string | undefined;
+  if (authStr && /^Bearer\s+/i.test(authStr)) {
+    fromBearer = authStr.replace(/^Bearer\s+/i, '').trim();
+  }
+
+  const provided = fromHeader || fromBearer;
+  if (!provided || provided !== expected) {
+    throw new Error('Unauthorized');
+  }
+}
