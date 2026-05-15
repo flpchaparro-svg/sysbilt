@@ -25,6 +25,7 @@ const GuidesPage = lazy(() => import('./pages/GuidesHubPage'));
 const GuideDocumentPage = lazy(() => import('./pages/GuideDocumentPage'));
 const ProposalPage = lazy(() => import('./pages/proposal/ProposalPage'));
 const AgreementPage = lazy(() => import('./pages/agreement/AgreementPage'));
+const DeepAuditReportPage = lazy(() => import('./pages/reports/DeepAuditReportPage'));
 
 const SystemPage = lazy(() => import('./pages/System/SystemPage'));
 const Pillar1 = lazy(() => import('./pages/System/Pillar1'));
@@ -148,7 +149,8 @@ const App: React.FC = () => {
           
           {location.pathname !== '/contact' &&
             !location.pathname.startsWith('/proposal/') &&
-            !location.pathname.startsWith('/agreement/') && (
+            !location.pathname.startsWith('/agreement/') &&
+            !location.pathname.startsWith('/reports/') && (
             <GlobalHeader
               currentView={getCurrentView()}
               onNavigate={handleGlobalNavigate}
@@ -185,7 +187,8 @@ const App: React.FC = () => {
                     <Route path="/pillar7" element={<Pillar7 onNavigate={handleGlobalNavigate} />} />
                     <Route path="/proposal/:token" element={<ProposalPage />} />
                     <Route path="/agreement/:token" element={<AgreementPage />} />
-                    
+                    <Route path="/reports/:token" element={<DeepAuditReportPage />} />
+
                     <Route path="*" element={<NotFoundPage onNavigate={handleGlobalNavigate} />} />
                   </Routes>
                 </div>
@@ -196,7 +199,8 @@ const App: React.FC = () => {
           {location.pathname !== '/system' &&
             location.pathname !== '/contact' &&
             !location.pathname.startsWith('/proposal/') &&
-            !location.pathname.startsWith('/agreement/') && <GlobalFooter onNavigate={handleGlobalNavigate} />}
+            !location.pathname.startsWith('/agreement/') &&
+            !location.pathname.startsWith('/reports/') && <GlobalFooter onNavigate={handleGlobalNavigate} />}
           <Modal service={selectedService} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onViewPillar={(id) => handleGlobalNavigate(id)} />
           <CookieBanner />
         </div>

@@ -1,4 +1,15 @@
 {
+  "include": [
+    "src/**/*",
+    "api/**/*",
+    "vite.config.ts",
+    "middleware.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "studio",
+    "src/app"
+  ],
   "compilerOptions": {
     "target": "ES2022",
     "experimentalDecorators": true,
