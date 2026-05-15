@@ -10,28 +10,28 @@ export default function CompareCard({ pair }: CompareCardProps) {
   const rightMissing = isMissingSignal(pair.we_see) || !pair.we_see.trim();
   return (
     <div
-      className={`grid grid-cols-1 gap-0 overflow-hidden rounded-xl border md:grid-cols-2 ${
-        leftMissing || rightMissing ? 'border-dashed border-white/15 opacity-90' : 'border-white/[0.08]'
+      className={`grid grid-cols-1 gap-0 overflow-hidden rounded-xl border font-sans md:grid-cols-2 ${
+        leftMissing || rightMissing ? 'border-dashed border-white/15' : 'border-white/10'
       }`}
     >
-      <div className="border-b border-white/[0.06] bg-zinc-950/80 p-5 md:border-b-0 md:border-r">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-zinc-500">They say</p>
+      <div className="border-b border-white/10 bg-black/40 p-5 md:border-b-0 md:border-r md:border-white/10">
+        <span className="type-eyebrow text-white/50">/ THEY SAY</span>
         <p
           className={`mt-3 text-sm italic leading-relaxed md:text-[15px] ${
-            leftMissing ? 'text-zinc-500 not-italic' : 'text-zinc-200'
+            leftMissing ? 'text-white/40 not-italic' : 'text-white/85'
           }`}
         >
           {leftMissing ? 'Not found' : `"${pair.they_say}"`}
         </p>
       </div>
-      <div className="bg-black/30 p-5">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-gold-on-dark/90">We see</p>
-        <p className={`mt-3 text-sm leading-relaxed md:text-[15px] ${rightMissing ? 'text-zinc-500' : 'text-zinc-300'}`}>
+      <div className="bg-black/25 p-5">
+        <span className="type-eyebrow text-gold-on-dark">/ WE SEE</span>
+        <p className={`mt-3 text-sm leading-relaxed md:text-[15px] ${rightMissing ? 'text-white/40' : 'text-white/80'}`}>
           {rightMissing ? 'Not found' : pair.we_see}
         </p>
       </div>
       {leftMissing || rightMissing ? (
-        <p className="col-span-full border-t border-white/[0.06] bg-zinc-950/50 px-5 py-3 text-xs text-zinc-500">
+        <p className="col-span-full border-t border-white/10 bg-black/30 px-5 py-3 text-xs text-white/55">
           We could not read one side of this comparison. Use the section context for how we treat the gap.
         </p>
       ) : null}

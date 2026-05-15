@@ -18,8 +18,8 @@ const KEY_LABELS: Record<keyof AppendixPageHealth, string> = {
 };
 
 const qualityDot: Record<PageHealthQualityRating, string> = {
-  good: 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.35)]',
-  amber: 'bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.3)]',
+  good: 'bg-teal shadow-[0_0_10px_rgba(15,118,110,0.35)]',
+  amber: 'bg-gold-on-dark shadow-[0_0_10px_rgba(212,168,75,0.3)]',
   bad: 'bg-red-on-dark shadow-[0_0_10px_rgba(255,107,107,0.35)]',
 };
 
@@ -29,24 +29,30 @@ function QualityDot({ rating }: { rating: PageHealthQualityRating }) {
 
 function HealthCard({ fieldKey, metric }: { fieldKey: keyof AppendixPageHealth; metric: PageHealthMetric }) {
   const valMissing = isMissingSignal(metric.value) || !metric.value.trim();
+  const borderByRating =
+    metric.rating === 'good'
+      ? 'border-teal/40'
+      : metric.rating === 'bad'
+        ? 'border-red-on-dark/40'
+        : 'border-gold-on-dark/40';
   return (
     <div
       className={`rounded-xl border p-4 md:p-5 ${
-        valMissing ? 'border-dashed border-white/12 bg-white/[0.02] opacity-80' : 'border-white/[0.07] bg-zinc-950/70'
+        valMissing ? 'border-dashed border-white/15 bg-white/[0.02]' : `${borderByRating} bg-black/25`
       }`}
     >
       <div className="flex items-start justify-between gap-2">
         <div>
-          <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-zinc-600">{KEY_LABELS[fieldKey]}</p>
-          <p className="mt-1 text-sm font-medium leading-snug text-zinc-200">{metric.plain_english.trim() || 'Not found'}</p>
+          <p className="type-eyebrow text-white/50">/ {KEY_LABELS[fieldKey].toUpperCase()}</p>
+          <p className="mt-2 font-sans text-sm font-medium leading-snug text-white/90">{metric.plain_english.trim() || 'Not found'}</p>
         </div>
         <QualityDot rating={metric.rating} />
       </div>
-      <p className={`mt-3 font-mono text-xs md:text-sm ${valMissing ? 'text-zinc-500' : 'text-gold-on-dark/95'}`}>
+      <p className={`mt-3 font-mono text-xs md:text-sm ${valMissing ? 'text-white/40' : 'text-gold-on-dark'}`}>
         {metric.value.trim() || 'Not found'}
       </p>
       {valMissing ? (
-        <p className="mt-2 text-xs text-zinc-500">We could not read this field. Check the appendix note for consequence.</p>
+        <p className="mt-2 font-sans text-xs text-white/55">We could not read this field. Check the appendix note for consequence.</p>
       ) : null}
     </div>
   );

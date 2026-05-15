@@ -2,20 +2,20 @@ import type { ToolDetectedRow, ToolQualityRating } from '@/types/deepAuditReport
 
 function StatusIcon({ status }: { status: ToolDetectedRow['status'] }) {
   if (status === 'found') {
-    return <span className="text-emerald-400" aria-hidden>✓</span>;
+    return <span className="text-teal" aria-hidden>✓</span>;
   }
   if (status === 'broken') {
-    return <span className="text-amber-400" aria-hidden>⚠</span>;
+    return <span className="text-gold-on-dark" aria-hidden>⚠</span>;
   }
   return <span className="text-red-on-dark" aria-hidden>✗</span>;
 }
 
 function RatingBadge({ rating }: { rating: ToolQualityRating }) {
-  const styles: Record<ToolQualityRating, string> = {
-    good: 'border-emerald-500/30 text-emerald-300',
-    amber: 'border-amber-500/30 text-amber-200',
-    bad: 'border-red-on-dark/30 text-red-200',
-  };
+const styles: Record<ToolQualityRating, string> = {
+  good: 'border-teal/40 text-teal',
+  amber: 'border-gold-on-dark/40 text-gold-on-dark',
+  bad: 'border-red-on-dark/40 text-red-on-dark',
+};
   return (
     <span className={`rounded-full border px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider ${styles[rating]}`}>
       {rating}
@@ -37,7 +37,7 @@ export default function ToolDetectionList({ tools_detected }: ToolDetectionListP
   }
 
   return (
-    <div className="divide-y divide-white/[0.06] rounded-xl border border-white/[0.07] bg-zinc-950/60">
+    <div className="divide-y divide-white/10 rounded-xl border border-white/10 bg-black/30">
       {tools_detected.map((t, i) => (
         <div key={`${t.name}-${i}`} className="flex gap-4 px-4 py-4 md:px-5">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/[0.08] bg-black/30 text-base">
@@ -45,10 +45,10 @@ export default function ToolDetectionList({ tools_detected }: ToolDetectionListP
           </div>
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
-              <p className="font-semibold text-white">{t.name.trim() || 'Not found'}</p>
+              <p className="font-serif text-base font-semibold text-white md:text-lg">{t.name.trim() || 'Not found'}</p>
               <RatingBadge rating={t.rating} />
             </div>
-            <p className="mt-1 text-sm text-zinc-500">{t.plain_english.trim() || 'Not found'}</p>
+            <p className="mt-1 font-sans text-sm text-white/60">{t.plain_english.trim() || 'Not found'}</p>
           </div>
         </div>
       ))}

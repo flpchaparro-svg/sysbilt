@@ -22,7 +22,7 @@ export default function SentimentBar({ sentiment }: SentimentBarProps) {
   const allZero = p === 0 && n === 0 && neg === 0;
 
   return (
-    <div className="rounded-xl border border-white/[0.07] bg-zinc-950/60 p-5 md:p-6">
+    <div className="rounded-xl border border-white/10 bg-black/30 p-5 font-sans md:p-6">
       <div className="flex flex-wrap items-end justify-between gap-2">
         <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-zinc-500">Sentiment split</p>
         {allZero ? (
@@ -34,14 +34,14 @@ export default function SentimentBar({ sentiment }: SentimentBarProps) {
         role="img"
         aria-label={`Sentiment positive ${p.toFixed(0)} percent, neutral ${n.toFixed(0)} percent, negative ${neg.toFixed(0)} percent`}
       >
-        <span style={{ width: `${p}%` }} className="bg-emerald-500/90" />
+        <span style={{ width: `${p}%` }} className="bg-teal/90" />
         <span style={{ width: `${n}%` }} className="bg-zinc-500/90" />
         <span style={{ width: `${neg}%` }} className="bg-red-on-dark/90" />
       </div>
       <dl className="mt-4 grid grid-cols-3 gap-3 text-center text-xs md:text-sm">
         <div>
           <dt className="text-zinc-500">Positive</dt>
-          <dd className="mt-1 font-medium text-emerald-400">{allZero ? '—' : `${p.toFixed(0)}%`}</dd>
+          <dd className="mt-1 font-medium text-teal">{allZero ? '—' : `${p.toFixed(0)}%`}</dd>
         </div>
         <div>
           <dt className="text-zinc-500">Neutral</dt>

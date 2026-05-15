@@ -8,14 +8,14 @@ export interface ReviewSourceListProps {
 export default function ReviewSourceList({ review_sources }: ReviewSourceListProps) {
   if (review_sources.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed border-white/12 bg-white/[0.02] p-5 text-sm text-zinc-500">
+      <div className="rounded-xl border border-dashed border-white/15 bg-white/[0.02] p-5 font-sans text-sm text-white/60">
         No review sources were attached. We could not list platforms for this pass.
       </div>
     );
   }
 
   return (
-    <div className="divide-y divide-white/[0.06] rounded-xl border border-white/[0.07] bg-zinc-950/60">
+    <div className="divide-y divide-white/10 rounded-xl border border-white/10 bg-black/30 font-sans">
       {review_sources.map((s, i) => {
         const countStr = s.count;
         const weak =
@@ -24,21 +24,24 @@ export default function ReviewSourceList({ review_sources }: ReviewSourceListPro
           isMissingSignal(countStr) ||
           !countStr.trim();
         return (
-          <div key={`${s.platform}-${i}`} className={`grid gap-3 px-4 py-4 md:grid-cols-12 md:items-center md:px-5 ${weak ? 'bg-white/[0.02]' : ''}`}>
+          <div
+            key={`${s.platform}-${i}`}
+            className={`grid gap-3 px-4 py-4 md:grid-cols-12 md:items-center md:px-5 ${weak ? 'bg-white/[0.02]' : ''}`}
+          >
             <div className="md:col-span-3">
-              <p className={`text-sm font-semibold ${weak ? 'text-zinc-500' : 'text-white'}`}>{s.platform.trim() || 'Not found'}</p>
+              <p className={`text-sm font-semibold ${weak ? 'text-white/45' : 'text-white'}`}>{s.platform.trim() || 'Not found'}</p>
             </div>
             <div className="md:col-span-2">
-              <p className="text-xs uppercase tracking-wider text-zinc-500">Rating</p>
-              <p className="text-sm text-zinc-300">{s.rating.trim() || 'Not found'}</p>
+              <span className="type-eyebrow text-white/50">/ RATING</span>
+              <p className="mt-2 text-sm text-white/80">{s.rating.trim() || 'Not found'}</p>
             </div>
             <div className="md:col-span-2">
-              <p className="text-xs uppercase tracking-wider text-zinc-500">Count</p>
-              <p className="text-sm text-zinc-300">{countStr.trim() || 'Not found'}</p>
+              <span className="type-eyebrow text-white/50">/ COUNT</span>
+              <p className="mt-2 text-sm text-white/80">{countStr.trim() || 'Not found'}</p>
             </div>
             <div className="md:col-span-5">
-              <p className="text-xs uppercase tracking-wider text-zinc-500">Recent theme</p>
-              <p className="text-sm text-zinc-300">{s.recent_theme.trim() || 'Not found'}</p>
+              <span className="type-eyebrow text-white/50">/ RECENT THEME</span>
+              <p className="mt-2 text-sm text-white/80">{s.recent_theme.trim() || 'Not found'}</p>
             </div>
           </div>
         );

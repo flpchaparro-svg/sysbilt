@@ -13,9 +13,9 @@ function positionTier(position: string): 'top' | 'mid' | 'none' {
 }
 
 const tierClass = {
-  top: 'border-emerald-500/35 bg-emerald-500/10 text-emerald-100',
-  mid: 'border-amber-500/30 bg-amber-500/10 text-amber-50',
-  none: 'border-red-on-dark/30 bg-red-on-dark/10 text-red-100/95',
+  top: 'border-teal/40 bg-teal/10 text-teal',
+  mid: 'border-gold-on-dark/35 bg-gold-on-dark/10 text-gold-on-dark',
+  none: 'border-red-on-dark/35 bg-red-on-dark/10 text-red-on-dark',
 } as const;
 
 export interface KeywordGridProps {
@@ -25,7 +25,7 @@ export interface KeywordGridProps {
 export default function KeywordGrid({ keyword_grid }: KeywordGridProps) {
   if (keyword_grid.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed border-white/12 bg-white/[0.02] p-6 text-sm text-zinc-500">
+      <div className="rounded-xl border border-dashed border-white/15 bg-white/[0.02] p-6 font-sans text-sm text-white/60">
         No keyword rows were returned for this audit. We could not map search demand to your site from this pass.
       </div>
     );
