@@ -25,7 +25,7 @@ const GuidesPage = lazy(() => import('./pages/GuidesHubPage'));
 const GuideDocumentPage = lazy(() => import('./pages/GuideDocumentPage'));
 const ProposalPage = lazy(() => import('./pages/proposal/ProposalPage'));
 const AgreementPage = lazy(() => import('./pages/agreement/AgreementPage'));
-const DeepAuditReportPage = lazy(() => import('./pages/reports/DeepAuditReportPage'));
+const DeepAuditReportPage = lazy(() => import('./pages/DeepAuditReportPage'));
 
 const SystemPage = lazy(() => import('./pages/System/SystemPage'));
 const Pillar1 = lazy(() => import('./pages/System/Pillar1'));

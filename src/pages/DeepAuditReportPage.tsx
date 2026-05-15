@@ -1,39 +1,34 @@
-'use client';
-
-/**
- * Next.js App Router — place this file at `app/reports/[token]/page.tsx` (or `src/app/...`) in your Next project.
- * This repo excludes `src/app` from TypeScript so Vite does not require the `next` package; copy this file when using Next.
- *
- * Depends on `@/components/audit/DeepAuditReportDashboard` and the same fetch or prop wiring as the Vite site.
- */
-
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { Helmet } from 'react-helmet-async';
+import { useParams } from 'react-router-dom';
 import DeepAuditReportDashboard from '@/components/audit/DeepAuditReportDashboard';
 import type { DeepAuditReportPayload } from '@/types/deepAuditReport';
 import { normalizeDeepAuditReportPayload } from '@/types/deepAuditReport';
 
-export default function DeepAuditReportTokenPage() {
-  const params = useParams();
-  const raw = params?.token;
-  const token = typeof raw === 'string' ? raw : Array.isArray(raw) ? raw[0] ?? '' : '';
+export { normalizeDeepAuditReportPayload };
+
+export default function DeepAuditReportPage() {
+  const { token } = useParams<{ token: string }>();
+  const safe = token ?? '';
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [data, setData] = useState<DeepAuditReportPayload | null>(null);
 
   useEffect(() => {
-    if (!token.trim()) {
+    if (!safe.trim()) {
       setError(true);
       setLoading(false);
       setData(null);
       return;
     }
+
     let cancelled = false;
     setLoading(true);
     setError(false);
     setData(null);
-    fetch(`/api/reports/get?token=${encodeURIComponent(token)}`)
+
+    fetch(`/api/reports/get?token=${encodeURIComponent(safe)}`)
       .then(async (res) => {
         const json: unknown = await res.json().catch(() => ({}));
         if (!res.ok) throw new Error('bad');
@@ -53,10 +48,19 @@ export default function DeepAuditReportTokenPage() {
       .finally(() => {
         if (!cancelled) setLoading(false);
       });
+
     return () => {
       cancelled = true;
     };
-  }, [token]);
+  }, [safe]);
 
-  return <DeepAuditReportDashboard loading={loading} error={error} data={data} />;
+  return (
+    <>
+      <Helmet>
+        <title>Deep Audit Report · Sysbilt</title>
+        <meta name="robots" content="noindex,nofollow" />
+      </Helmet>
+      <DeepAuditReportDashboard loading={loading} error={error} data={data} />
+    </>
+  );
 }
