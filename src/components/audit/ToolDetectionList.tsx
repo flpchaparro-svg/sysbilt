@@ -11,11 +11,11 @@ function StatusIcon({ status }: { status: ToolDetectedRow['status'] }) {
 }
 
 function RatingBadge({ rating }: { rating: ToolQualityRating }) {
-const styles: Record<ToolQualityRating, string> = {
-  good: 'border-teal/40 text-teal',
-  amber: 'border-gold-on-dark/40 text-gold-on-dark',
-  bad: 'border-red-on-dark/40 text-red-on-dark',
-};
+  const styles: Record<ToolQualityRating, string> = {
+    good: 'border-teal/40 text-teal',
+    amber: 'border-gold-on-dark/40 text-gold-on-dark',
+    bad: 'border-red-on-dark/40 text-red-on-dark',
+  };
   return (
     <span className={`rounded-full border px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider ${styles[rating]}`}>
       {rating}
@@ -30,7 +30,7 @@ export interface ToolDetectionListProps {
 export default function ToolDetectionList({ tools_detected }: ToolDetectionListProps) {
   if (tools_detected.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed border-white/12 bg-white/[0.02] p-5 text-sm text-zinc-500">
+      <div className="rounded-xl border border-dashed border-white/12 bg-white/[0.02] p-5 text-sm text-white/75">
         No tool rows were returned. We could not show a stack map for this pass.
       </div>
     );
@@ -48,7 +48,7 @@ export default function ToolDetectionList({ tools_detected }: ToolDetectionListP
               <p className="font-serif text-base font-semibold text-white md:text-lg">{t.name.trim() || 'Not found'}</p>
               <RatingBadge rating={t.rating} />
             </div>
-            <p className="mt-1 font-sans text-sm text-white/60">{t.plain_english.trim() || 'Not found'}</p>
+            <p className="mt-1 font-sans text-sm text-white/80">{t.plain_english.trim() || 'Not found'}</p>
           </div>
         </div>
       ))}

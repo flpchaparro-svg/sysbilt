@@ -24,7 +24,7 @@ export default function SectionHeader({ eyebrow, preamble, headline, staticTitle
           <RatingDot rating={headline.rating} className="mt-3 shrink-0" />
           <h2
             id={id}
-            className={`type-h2 font-serif ${findingEmpty ? 'text-white/50' : 'text-white'}`}
+            className={`type-h2 font-serif ${findingEmpty ? 'text-white/75' : 'text-white'}`}
           >
             {findingEmpty ? 'We could not derive a headline for this section.' : headline.finding}
           </h2>
@@ -35,7 +35,7 @@ export default function SectionHeader({ eyebrow, preamble, headline, staticTitle
         </h2>
       ) : null}
 
-      <p className="mt-6 max-w-3xl border-l-2 border-gold-on-dark pl-6 font-sans text-lg font-light leading-relaxed text-white/80">
+      <p className="mt-6 max-w-3xl border-l-2 border-gold-on-dark pl-6 font-sans text-lg font-light leading-relaxed text-white/85">
         {preamble}
       </p>
     </header>

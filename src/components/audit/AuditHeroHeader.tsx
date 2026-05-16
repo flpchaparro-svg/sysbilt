@@ -44,7 +44,7 @@ export default function AuditHeroHeader({ company_name, contact_email }: AuditHe
           <p className="mt-2 font-sans text-lg text-white/90 md:text-xl">{contact_email}</p>
         </div>
 
-        <p className="type-eyebrow mt-8 text-white/60 md:mt-10">/ SYSBILT DEEP AUDIT</p>
+        <p className="type-eyebrow mt-8 text-white/75 md:mt-10">/ SYSBILT DEEP AUDIT</p>
 
         <div
           className="pointer-events-none absolute bottom-0 left-1/2 hidden h-12 w-px -translate-x-1/2 bg-gradient-to-b from-transparent via-gold-on-dark/35 to-transparent md:block"

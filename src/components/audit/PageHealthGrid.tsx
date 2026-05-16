@@ -18,9 +18,9 @@ const KEY_LABELS: Record<keyof AppendixPageHealth, string> = {
 };
 
 const qualityDot: Record<PageHealthQualityRating, string> = {
-  good: 'bg-teal shadow-[0_0_10px_rgba(15,118,110,0.35)]',
-  amber: 'bg-gold-on-dark shadow-[0_0_10px_rgba(212,168,75,0.3)]',
-  bad: 'bg-red-on-dark shadow-[0_0_10px_rgba(255,107,107,0.35)]',
+  good: 'bg-teal',
+  amber: 'bg-gold-on-dark',
+  bad: 'bg-red-on-dark',
 };
 
 function QualityDot({ rating }: { rating: PageHealthQualityRating }) {
@@ -43,16 +43,16 @@ function HealthCard({ fieldKey, metric }: { fieldKey: keyof AppendixPageHealth; 
     >
       <div className="flex items-start justify-between gap-2">
         <div>
-          <p className="type-eyebrow text-white/50">/ {KEY_LABELS[fieldKey].toUpperCase()}</p>
+          <p className="type-eyebrow text-white/70">/ {KEY_LABELS[fieldKey].toUpperCase()}</p>
           <p className="mt-2 font-sans text-sm font-medium leading-snug text-white/90">{metric.plain_english.trim() || 'Not found'}</p>
         </div>
         <QualityDot rating={metric.rating} />
       </div>
-      <p className={`mt-3 font-mono text-xs md:text-sm ${valMissing ? 'text-white/40' : 'text-gold-on-dark'}`}>
+      <p className={`mt-3 font-mono text-xs md:text-sm ${valMissing ? 'text-white/75' : 'text-gold-on-dark'}`}>
         {metric.value.trim() || 'Not found'}
       </p>
       {valMissing ? (
-        <p className="mt-2 font-sans text-xs text-white/55">We could not read this field. Check the appendix note for consequence.</p>
+        <p className="mt-2 font-sans text-xs text-white/75">We could not read this field. Check the appendix note for consequence.</p>
       ) : null}
     </div>
   );

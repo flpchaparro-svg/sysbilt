@@ -25,20 +25,20 @@ export default function AppendixSection({ appendix }: AppendixSectionProps) {
           <span className="type-eyebrow text-gold-on-dark">/ REGISTRY</span>
           <dl className="mt-5 space-y-4 text-sm">
             <div>
-              <dt className="type-eyebrow text-white/50">/ ABN STATUS</dt>
+              <dt className="type-eyebrow text-white/70">/ ABN STATUS</dt>
               <dd
                 className={`mt-2 font-sans ${
-                  isMissingSignal(registry.abn_status) || !registry.abn_status.trim() ? 'text-white/40' : 'text-white/90'
+                  isMissingSignal(registry.abn_status) || !registry.abn_status.trim() ? 'text-white/75' : 'text-white/90'
                 }`}
               >
                 {registry.abn_status.trim() || 'Not found'}
               </dd>
             </div>
             <div>
-              <dt className="type-eyebrow text-white/50">/ ENTITY TYPE</dt>
+              <dt className="type-eyebrow text-white/70">/ ENTITY TYPE</dt>
               <dd
                 className={`mt-2 font-sans ${
-                  isMissingSignal(registry.entity_type) || !registry.entity_type.trim() ? 'text-white/40' : 'text-white/90'
+                  isMissingSignal(registry.entity_type) || !registry.entity_type.trim() ? 'text-white/75' : 'text-white/90'
                 }`}
               >
                 {registry.entity_type.trim() || 'Not found'}
@@ -46,7 +46,7 @@ export default function AppendixSection({ appendix }: AppendixSectionProps) {
             </div>
           </dl>
         </div>
-        <div className="rounded-xl border border-dashed border-white/15 bg-white/[0.02] p-5 font-sans text-sm leading-relaxed text-white/70 md:p-6">
+        <div className="rounded-xl border border-dashed border-white/15 bg-white/[0.02] p-5 font-sans text-sm leading-relaxed text-white/80 md:p-6">
           This appendix is compiled from public signals and registry lookups. It is not legal advice, and it should be
           checked against your own records before you rely on it in a transaction.
         </div>

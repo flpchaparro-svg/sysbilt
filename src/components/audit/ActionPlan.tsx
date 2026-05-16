@@ -19,7 +19,7 @@ export default function ActionPlan({ action_plan }: ActionPlanProps) {
   const display = sorted.slice(0, 5);
   if (display.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed border-white/15 bg-white/[0.02] p-6 font-sans text-sm text-white/60">
+      <div className="rounded-xl border border-dashed border-white/15 bg-white/[0.02] p-6 font-sans text-sm text-white/75">
         No action plan rows were returned. We could not list prioritised moves for this pass.
       </div>
     );
@@ -43,7 +43,7 @@ export default function ActionPlan({ action_plan }: ActionPlanProps) {
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
-                <h4 className={`type-h4 font-serif ${titleMissing ? 'text-white/45' : 'text-white'}`}>
+                <h4 className={`type-h4 font-serif ${titleMissing ? 'text-white/75' : 'text-white'}`}>
                   {item.title.trim() || 'Not found'}
                 </h4>
                 {tag ? (
@@ -52,7 +52,7 @@ export default function ActionPlan({ action_plan }: ActionPlanProps) {
                   </span>
                 ) : null}
               </div>
-              <p className="mt-3 font-sans text-sm leading-relaxed text-white/80 md:text-base">
+              <p className="mt-3 font-sans text-sm leading-relaxed text-white/85 md:text-base">
                 {item.rationale.trim() || 'Not found'}
               </p>
             </div>

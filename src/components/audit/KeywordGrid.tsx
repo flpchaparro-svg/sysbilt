@@ -13,9 +13,9 @@ function positionTier(position: string): 'top' | 'mid' | 'none' {
 }
 
 const tierClass = {
-  top: 'border-teal/40 bg-teal/10 text-teal',
-  mid: 'border-gold-on-dark/35 bg-gold-on-dark/10 text-gold-on-dark',
-  none: 'border-red-on-dark/35 bg-red-on-dark/10 text-red-on-dark',
+  top: 'border-teal/50 bg-teal/15 text-white',
+  mid: 'border-gold-on-dark/45 bg-gold-on-dark/12 text-white',
+  none: 'border-red-on-dark/45 bg-red-on-dark/12 text-white',
 } as const;
 
 export interface KeywordGridProps {
@@ -25,7 +25,7 @@ export interface KeywordGridProps {
 export default function KeywordGrid({ keyword_grid }: KeywordGridProps) {
   if (keyword_grid.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed border-white/15 bg-white/[0.02] p-6 font-sans text-sm text-white/60">
+      <div className="rounded-xl border border-dashed border-white/15 bg-white/[0.02] p-6 font-sans text-sm text-white/75">
         No keyword rows were returned for this audit. We could not map search demand to your site from this pass.
       </div>
     );
@@ -40,14 +40,14 @@ export default function KeywordGrid({ keyword_grid }: KeywordGridProps) {
         return (
           <div
             key={`${k.keyword}-${i}`}
-            className={`rounded-xl border px-4 py-3 ${tierClass[tier]} ${kwMissing ? 'border-dashed opacity-70' : ''}`}
+            className={`rounded-xl border px-4 py-3 ${tierClass[tier]} ${kwMissing ? 'border-dashed' : ''}`}
           >
-            <p className={`text-sm font-semibold tracking-tight ${kwMissing ? 'text-zinc-500' : ''}`}>
+            <p className={`text-sm font-semibold tracking-tight ${kwMissing ? 'text-white/75' : ''}`}>
               {k.keyword.trim() || 'Not found'}
             </p>
-            <p className="mt-1 text-xs uppercase tracking-wider text-white/70">Position · {posLabel}</p>
+            <p className="mt-1 text-xs uppercase tracking-wider text-white/75">Position · {posLabel}</p>
             {k.competitor_ranking_here.trim() ? (
-              <p className="mt-2 border-t border-white/10 pt-2 text-xs text-zinc-300">
+              <p className="mt-2 border-t border-white/10 pt-2 text-xs text-white/80">
                 Competitor here: <span className="text-white">{k.competitor_ranking_here}</span>
               </p>
             ) : null}

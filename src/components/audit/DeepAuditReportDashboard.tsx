@@ -1,6 +1,7 @@
 import type { DeepAuditReportPayload } from '@/types/deepAuditReport';
 import { Loader2, ShieldAlert } from 'lucide-react';
 import AuditHeroHeader from './AuditHeroHeader';
+import AuditScrollReveal from './AuditScrollReveal';
 import AppendixSection from './AppendixSection';
 import CompareCard from './CompareCard';
 import CompetitorStrip from './CompetitorStrip';
@@ -30,7 +31,7 @@ function LoadingScreen() {
               <p className="mt-2 font-sans text-sm text-white/70">Fetching your report from secure storage.</p>
             </div>
             <div className="h-px w-full bg-gradient-to-r from-transparent via-white/15 to-transparent" aria-hidden />
-            <span className="type-eyebrow text-white/50">/ SYSBILT DEEP AUDIT</span>
+            <span className="type-eyebrow text-white/70">/ SYSBILT DEEP AUDIT</span>
           </div>
         </div>
       </div>
@@ -52,7 +53,7 @@ function InvalidReportScreen() {
             you believe this is an error, contact your Sysbilt advisor for a fresh link.
           </p>
           <div className="mt-10 h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent" aria-hidden />
-          <span className="type-eyebrow mt-8 block text-center text-white/50">/ SYSBILT DEEP AUDIT</span>
+          <span className="type-eyebrow mt-8 block text-center text-white/70">/ SYSBILT DEEP AUDIT</span>
         </div>
       </div>
     </div>
@@ -83,18 +84,21 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
       <AuditHeroHeader company_name={company_name} contact_email={contact_email} />
 
       <main className="relative mx-auto max-w-[1400px] space-y-16 px-6 py-12 md:space-y-20 md:px-12 md:py-16 lg:px-20">
-        <IntroParagraph firstName={firstName} companyName={company_name} />
+        <AuditScrollReveal>
+          <IntroParagraph firstName={firstName} companyName={company_name} />
+        </AuditScrollReveal>
 
-        <section className="space-y-6" aria-labelledby="diagnosis-heading">
-          <SectionHeader
-            id="diagnosis-heading"
-            eyebrow="DIAGNOSIS"
-            preamble="We have put together a snapshot of what we believe is creating the most drag in your front-of-house systems. Three findings, prioritised by impact."
-            staticTitle="Diagnosis"
-          />
+        <section aria-labelledby="diagnosis-heading">
+          <AuditScrollReveal className="space-y-6">
+            <SectionHeader
+              id="diagnosis-heading"
+              eyebrow="DIAGNOSIS"
+              preamble="We have put together a snapshot of what we believe is creating the most drag in your front-of-house systems. Three findings, prioritised by impact."
+              staticTitle="Diagnosis"
+            />
           <DiagnosisCard variant="critical" {...audit.diagnosis.critical} />
           {audit.diagnosis.secondary.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-white/15 bg-white/[0.02] p-6 font-sans text-sm text-white/60">
+            <div className="rounded-xl border border-dashed border-white/15 bg-white/[0.02] p-6 font-sans text-sm text-white/75">
               No secondary diagnosis cards were returned for this pass.
             </div>
           ) : (
@@ -106,114 +110,129 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
               ))}
             </div>
           )}
+          </AuditScrollReveal>
         </section>
 
-        <WhereToFocusSection action_plan={appendix.action_plan} />
+        <AuditScrollReveal>
+          <WhereToFocusSection action_plan={appendix.action_plan} />
+        </AuditScrollReveal>
 
-        <section className="space-y-8">
-          <SectionHeader
-            eyebrow="HOW THEY FIND YOU"
-            preamble="How prospects, search engines, and competitors see you in the discovery phase, before they ever land on your site."
-            headline={find.headline}
-          />
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-            {find.metrics.length === 0 ? (
-              <div className="col-span-full rounded-xl border border-dashed border-white/15 bg-white/[0.02] p-6 font-sans text-sm text-white/60">
-                No metric tiles were returned for this section.
-              </div>
-            ) : (
-              find.metrics.map((m, i) => (
-                <div key={`${m.label}-${i}`} className="min-w-0">
-                  <MetricTile label={m.label} value={m.value} rating={m.rating} />
+        <section>
+          <AuditScrollReveal className="space-y-8">
+            <SectionHeader
+              eyebrow="HOW THEY FIND YOU"
+              preamble="How prospects, search engines, and competitors see you in the discovery phase, before they ever land on your site."
+              headline={find.headline}
+            />
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+              {find.metrics.length === 0 ? (
+                <div className="col-span-full rounded-xl border border-dashed border-white/15 bg-white/[0.02] p-6 font-sans text-sm text-white/75">
+                  No metric tiles were returned for this section.
                 </div>
-              ))
-            )}
-          </div>
-          <div className="space-y-4">
-            <span className="type-eyebrow text-gold-on-dark">/ SEARCH TERMS</span>
-            <KeywordGrid keyword_grid={find.keyword_grid} />
-          </div>
-          <div className="space-y-4">
-            <span className="type-eyebrow text-gold-on-dark">/ COMPETITOR STRIP</span>
-            <CompetitorStrip competitors={find.competitors} />
-          </div>
-          <div className="space-y-4">
-            <span className="type-eyebrow text-gold-on-dark">/ SWOT</span>
-            <SwotPanel swot={find.swot} />
-          </div>
-          <SectionContext text={find.context} />
-        </section>
-
-        <section className="space-y-8">
-          <SectionHeader
-            eyebrow="HOW THEY PERCEIVE YOU"
-            preamble="What your website communicates the moment someone arrives, and how that compares to how you want to be seen."
-            headline={perceive.headline}
-          />
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-            {perceive.metrics.length === 0 ? (
-              <div className="col-span-full rounded-xl border border-dashed border-white/15 bg-white/[0.02] p-6 font-sans text-sm text-white/60">
-                No metric tiles were returned for this section.
-              </div>
-            ) : (
-              perceive.metrics.map((m, i) => (
-                <div key={`${m.label}-${i}`} className="min-w-0">
-                  <MetricTile label={m.label} value={m.value} rating={m.rating} />
-                </div>
-              ))
-            )}
-          </div>
-          <div className="space-y-4">
-            <span className="type-eyebrow text-gold-on-dark">/ POSITIONING CHECKS</span>
-            {perceive.compare.length === 0 ? (
-              <div className="rounded-xl border border-dashed border-white/15 bg-white/[0.02] p-6 font-sans text-sm text-white/60">
-                No comparison rows were returned.
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
-                {perceive.compare.map((pair, i) => (
-                  <div key={i} className="min-w-0">
-                    <CompareCard pair={pair} />
+              ) : (
+                find.metrics.map((m, i) => (
+                  <div key={`${m.label}-${i}`} className="min-w-0">
+                    <MetricTile label={m.label} value={m.value} rating={m.rating} />
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
-          <SectionContext text={perceive.context} />
+                ))
+              )}
+            </div>
+            <div className="space-y-4">
+              <span className="type-eyebrow text-gold-on-dark">/ SEARCH TERMS</span>
+              <KeywordGrid keyword_grid={find.keyword_grid} />
+            </div>
+            <div className="space-y-4">
+              <span className="type-eyebrow text-gold-on-dark">/ COMPETITOR STRIP</span>
+              <CompetitorStrip competitors={find.competitors} />
+            </div>
+            <div className="space-y-4">
+              <span className="type-eyebrow text-gold-on-dark">/ SWOT</span>
+              <SwotPanel swot={find.swot} />
+            </div>
+            <SectionContext text={find.context} />
+          </AuditScrollReveal>
         </section>
 
-        <section className="space-y-8">
-          <SectionHeader
-            eyebrow="WHAT PEOPLE SAY"
-            preamble="What the world is saying about you on review platforms, social media, and search."
-            headline={say.headline}
-          />
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-            {say.metrics.length === 0 ? (
-              <div className="col-span-full rounded-xl border border-dashed border-white/15 bg-white/[0.02] p-6 font-sans text-sm text-white/60">
-                No metric tiles were returned for this section.
-              </div>
-            ) : (
-              say.metrics.map((m, i) => (
-                <div key={`${m.label}-${i}`} className="min-w-0">
-                  <MetricTile label={m.label} value={m.value} rating={m.rating} />
+        <section>
+          <AuditScrollReveal className="space-y-8">
+            <SectionHeader
+              eyebrow="HOW THEY PERCEIVE YOU"
+              preamble="What your website communicates the moment someone arrives, and how that compares to how you want to be seen."
+              headline={perceive.headline}
+            />
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+              {perceive.metrics.length === 0 ? (
+                <div className="col-span-full rounded-xl border border-dashed border-white/15 bg-white/[0.02] p-6 font-sans text-sm text-white/75">
+                  No metric tiles were returned for this section.
                 </div>
-              ))
-            )}
-          </div>
-          <SentimentBar sentiment={say.sentiment} />
-          <div className="space-y-4">
-            <span className="type-eyebrow text-gold-on-dark">/ REVIEW SOURCES</span>
-            <ReviewSourceList review_sources={say.review_sources} />
-          </div>
-          <SectionContext text={say.context} />
+              ) : (
+                perceive.metrics.map((m, i) => (
+                  <div key={`${m.label}-${i}`} className="min-w-0">
+                    <MetricTile label={m.label} value={m.value} rating={m.rating} />
+                  </div>
+                ))
+              )}
+            </div>
+            <div className="space-y-4">
+              <span className="type-eyebrow text-gold-on-dark">/ POSITIONING CHECKS</span>
+              {perceive.compare.length === 0 ? (
+                <div className="rounded-xl border border-dashed border-white/15 bg-white/[0.02] p-6 font-sans text-sm text-white/75">
+                  No comparison rows were returned.
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+                  {perceive.compare.map((pair, i) => (
+                    <div key={i} className="min-w-0">
+                      <CompareCard pair={pair} />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <SectionContext text={perceive.context} />
+          </AuditScrollReveal>
         </section>
 
-        <AppendixSection appendix={appendix} />
+        <section>
+          <AuditScrollReveal className="space-y-8">
+            <SectionHeader
+              eyebrow="WHAT PEOPLE SAY"
+              preamble="What the world is saying about you on review platforms, social media, and search."
+              headline={say.headline}
+            />
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+              {say.metrics.length === 0 ? (
+                <div className="col-span-full rounded-xl border border-dashed border-white/15 bg-white/[0.02] p-6 font-sans text-sm text-white/75">
+                  No metric tiles were returned for this section.
+                </div>
+              ) : (
+                say.metrics.map((m, i) => (
+                  <div key={`${m.label}-${i}`} className="min-w-0">
+                    <MetricTile label={m.label} value={m.value} rating={m.rating} />
+                  </div>
+                ))
+              )}
+            </div>
+            <SentimentBar sentiment={say.sentiment} />
+            <div className="space-y-4">
+              <span className="type-eyebrow text-gold-on-dark">/ REVIEW SOURCES</span>
+              <ReviewSourceList review_sources={say.review_sources} />
+            </div>
+            <SectionContext text={say.context} />
+          </AuditScrollReveal>
+        </section>
 
-        <CTABlock />
+        <AuditScrollReveal>
+          <AppendixSection appendix={appendix} />
+        </AuditScrollReveal>
 
-        <FooterBlock transparency_note={appendix.transparency_note} />
+        <AuditScrollReveal>
+          <CTABlock />
+        </AuditScrollReveal>
+
+        <AuditScrollReveal>
+          <FooterBlock transparency_note={appendix.transparency_note} />
+        </AuditScrollReveal>
       </main>
     </div>
   );

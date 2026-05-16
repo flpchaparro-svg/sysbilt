@@ -34,7 +34,7 @@ export default function MetricTile({ label, value, rating }: MetricTileProps) {
     <div className={`flex min-h-full flex-col rounded-xl p-5 font-sans md:p-6 ${borderClass} bg-black/20`}>
       <div className={`h-0.5 w-full rounded-full bg-gradient-to-r ${ratingBar[rating]}`} aria-hidden />
       <span className="type-eyebrow mt-4 text-white/70">/ {label.trim() || 'METRIC'}</span>
-      <p className={`type-h4 mt-3 font-serif ${empty ? 'text-white/40' : 'text-white'}`}>
+      <p className={`type-h4 mt-3 font-serif ${empty ? 'text-white/75' : 'text-white'}`}>
         {value.trim() || 'Not found'}
       </p>
       <span
@@ -45,7 +45,7 @@ export default function MetricTile({ label, value, rating }: MetricTileProps) {
       {helper ? (
         <p
           className={`mt-4 font-sans text-xs leading-relaxed md:text-sm ${
-            empty ? 'text-white/80' : 'text-white/55'
+            empty ? 'text-white/85' : 'text-white/75'
           }`}
         >
           {helper}

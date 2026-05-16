@@ -24,13 +24,13 @@ export default function SentimentBar({ sentiment }: SentimentBarProps) {
   return (
     <div className="rounded-xl border border-white/10 bg-black/30 p-5 font-sans md:p-6">
       <div className="flex flex-wrap items-end justify-between gap-2">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-zinc-500">Sentiment split</p>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/70">Sentiment split</p>
         {allZero ? (
-          <p className="text-xs text-zinc-500">We could not derive percentages for this pass.</p>
+          <p className="text-xs text-white/75">We could not derive percentages for this pass.</p>
         ) : null}
       </div>
       <div
-        className={`mt-4 flex h-3 overflow-hidden rounded-full ${allZero ? 'border border-dashed border-white/12 opacity-60' : ''}`}
+        className={`mt-4 flex h-3 overflow-hidden rounded-full ${allZero ? 'border border-dashed border-white/12' : ''}`}
         role="img"
         aria-label={`Sentiment positive ${p.toFixed(0)} percent, neutral ${n.toFixed(0)} percent, negative ${neg.toFixed(0)} percent`}
       >
@@ -40,15 +40,15 @@ export default function SentimentBar({ sentiment }: SentimentBarProps) {
       </div>
       <dl className="mt-4 grid grid-cols-3 gap-3 text-center text-xs md:text-sm">
         <div>
-          <dt className="text-zinc-500">Positive</dt>
+          <dt className="text-white/70">Positive</dt>
           <dd className="mt-1 font-medium text-teal">{allZero ? '—' : `${p.toFixed(0)}%`}</dd>
         </div>
         <div>
-          <dt className="text-zinc-500">Neutral</dt>
-          <dd className="mt-1 font-medium text-zinc-300">{allZero ? '—' : `${n.toFixed(0)}%`}</dd>
+          <dt className="text-white/70">Neutral</dt>
+          <dd className="mt-1 font-medium text-white/90">{allZero ? '—' : `${n.toFixed(0)}%`}</dd>
         </div>
         <div>
-          <dt className="text-zinc-500">Negative</dt>
+          <dt className="text-white/70">Negative</dt>
           <dd className="mt-1 font-medium text-red-on-dark">{allZero ? '—' : `${neg.toFixed(0)}%`}</dd>
         </div>
       </dl>

@@ -11,7 +11,7 @@ export interface DiagnosisCardProps {
 
 function MissingNote() {
   return (
-    <p className="mt-2 font-sans text-xs leading-snug text-white/60">
+    <p className="mt-2 font-sans text-xs leading-snug text-white/75">
       We could not read this signal. Treat the diagnosis as incomplete until we re-run the pass.
     </p>
   );
@@ -30,7 +30,7 @@ export default function DiagnosisCard({ variant, title, evidence, consequence }:
   return (
     <article className={shell}>
       <h3
-        className={`type-h3 font-serif ${titleMissing ? 'text-white/45' : 'text-white'}`}
+        className={`type-h3 font-serif ${titleMissing ? 'text-white/75' : 'text-white'}`}
       >
         {title.trim() || 'Not found'}
       </h3>
@@ -40,9 +40,9 @@ export default function DiagnosisCard({ variant, title, evidence, consequence }:
             evidenceMissing ? 'rounded-lg border border-dashed border-white/15 bg-black/25 p-4' : ''
           }
         >
-          <dt className="type-eyebrow text-white/50">/ EVIDENCE</dt>
+          <dt className="type-eyebrow text-white/70">/ EVIDENCE</dt>
           <dd
-            className={`mt-2 leading-relaxed ${evidenceMissing ? 'text-white/45' : 'italic text-white/60'}`}
+            className={`mt-2 leading-relaxed ${evidenceMissing ? 'text-white/75' : 'italic text-white/85'}`}
           >
             {evidence.trim() || 'Not found'}
           </dd>
@@ -53,8 +53,8 @@ export default function DiagnosisCard({ variant, title, evidence, consequence }:
             consequenceMissing ? 'rounded-lg border border-dashed border-white/15 bg-black/25 p-4' : ''
           }
         >
-          <dt className="type-eyebrow text-white/50">/ CONSEQUENCE</dt>
-          <dd className={`mt-2 leading-relaxed ${consequenceMissing ? 'text-white/45' : 'text-white/90'}`}>
+          <dt className="type-eyebrow text-white/70">/ CONSEQUENCE</dt>
+          <dd className={`mt-2 leading-relaxed ${consequenceMissing ? 'text-white/75' : 'text-white/90'}`}>
             {consequence.trim() || 'Not found'}
           </dd>
           {consequenceMissing ? <MissingNote /> : null}

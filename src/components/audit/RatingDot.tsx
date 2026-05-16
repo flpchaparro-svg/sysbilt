@@ -1,9 +1,9 @@
 import type { SignalRating } from '@/types/deepAuditReport';
 
 const dotClass: Record<SignalRating, string> = {
-  red: 'bg-red-on-dark shadow-[0_0_12px_rgba(255,107,107,0.35)]',
-  amber: 'bg-gold-on-dark shadow-[0_0_12px_rgba(212,168,75,0.3)]',
-  green: 'bg-teal shadow-[0_0_12px_rgba(15,118,110,0.35)]',
+  red: 'bg-red-on-dark',
+  amber: 'bg-gold-on-dark',
+  green: 'bg-teal',
 };
 
 export interface RatingDotProps {
