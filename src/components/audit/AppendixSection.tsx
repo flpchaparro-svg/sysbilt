@@ -1,8 +1,8 @@
-import type { AppendixBlock } from '@/types/deepAuditReport';
+import { type AppendixBlock, isMissingSignal } from '@/types/deepAuditReport';
 import PageHealthGrid from './PageHealthGrid';
 import SectionHeader from './SectionHeader';
 import ToolDetectionList from './ToolDetectionList';
-import { isMissingSignal } from '@/types/deepAuditReport';
+import { auditCardLift } from './auditCardStyles';
 
 export interface AppendixSectionProps {
   appendix: AppendixBlock;
@@ -21,7 +21,9 @@ export default function AppendixSection({ appendix }: AppendixSectionProps) {
       />
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <div className="rounded-xl border border-white/10 bg-white/[0.03] p-5 font-sans md:p-6">
+        <div
+          className={`rounded-xl border border-white/10 bg-white/[0.03] p-5 font-sans md:p-6 ${auditCardLift} hover:border-gold-on-dark/35 hover:bg-white/[0.06] motion-safe:hover:shadow-[0_28px_64px_-24px_rgba(212,168,75,0.12)]`}
+        >
           <span className="type-eyebrow text-gold-on-dark">/ REGISTRY</span>
           <dl className="mt-5 space-y-4 text-sm">
             <div>
@@ -46,7 +48,9 @@ export default function AppendixSection({ appendix }: AppendixSectionProps) {
             </div>
           </dl>
         </div>
-        <div className="rounded-xl border border-dashed border-white/15 bg-white/[0.02] p-5 font-sans text-sm leading-relaxed text-white/80 md:p-6">
+        <div
+          className={`rounded-xl border border-dashed border-white/15 bg-white/[0.02] p-5 font-sans text-sm leading-relaxed text-white/80 md:p-6 ${auditCardLift} hover:border-white/28 hover:bg-white/[0.05] motion-safe:hover:shadow-[0_28px_64px_-24px_rgba(0,0,0,0.65)]`}
+        >
           This appendix is compiled from public signals and registry lookups. It is not legal advice, and it should be
           checked against your own records before you rely on it in a transaction.
         </div>

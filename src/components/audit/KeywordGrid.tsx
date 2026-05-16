@@ -1,5 +1,6 @@
 import type { KeywordGridItem } from '@/types/deepAuditReport';
 import { isMissingSignal } from '@/types/deepAuditReport';
+import { auditCardLift } from './auditCardStyles';
 
 function positionTier(position: string): 'top' | 'mid' | 'none' {
   const s = position.trim().toLowerCase();
@@ -17,6 +18,12 @@ const tierClass = {
   mid: 'border-gold-on-dark/45 bg-gold-on-dark/12 text-white',
   none: 'border-red-on-dark/45 bg-red-on-dark/12 text-white',
 } as const;
+
+const tierHover: Record<'top' | 'mid' | 'none', string> = {
+  top: 'hover:border-teal hover:bg-teal/22 motion-safe:hover:shadow-[0_28px_64px_-24px_rgba(15,118,110,0.24)]',
+  mid: 'hover:border-gold-on-dark hover:bg-gold-on-dark/18 motion-safe:hover:shadow-[0_28px_64px_-24px_rgba(212,168,75,0.2)]',
+  none: 'hover:border-red-on-dark hover:bg-red-on-dark/18 motion-safe:hover:shadow-[0_28px_64px_-24px_rgba(248,113,113,0.2)]',
+};
 
 export interface KeywordGridProps {
   keyword_grid: KeywordGridItem[];
@@ -40,7 +47,9 @@ export default function KeywordGrid({ keyword_grid }: KeywordGridProps) {
         return (
           <div
             key={`${k.keyword}-${i}`}
-            className={`rounded-xl border px-4 py-3 ${tierClass[tier]} ${kwMissing ? 'border-dashed' : ''}`}
+            className={`rounded-xl border px-4 py-3 ${tierClass[tier]} ${auditCardLift} ${tierHover[tier]} ${
+              kwMissing ? 'border-dashed hover:border-white/35' : ''
+            }`}
           >
             <p className={`text-sm font-semibold tracking-tight ${kwMissing ? 'text-white/75' : ''}`}>
               {k.keyword.trim() || 'Not found'}

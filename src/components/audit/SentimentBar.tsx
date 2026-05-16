@@ -1,4 +1,5 @@
 import type { SentimentModel } from '@/types/deepAuditReport';
+import { auditCardLift } from './auditCardStyles';
 
 export interface SentimentBarProps {
   sentiment: SentimentModel;
@@ -22,7 +23,9 @@ export default function SentimentBar({ sentiment }: SentimentBarProps) {
   const allZero = p === 0 && n === 0 && neg === 0;
 
   return (
-    <div className="rounded-xl border border-white/10 bg-black/30 p-5 font-sans md:p-6">
+    <div
+      className={`rounded-xl border border-white/10 bg-black/30 p-5 font-sans md:p-6 ${auditCardLift} hover:border-white/25 hover:bg-black/45 motion-safe:hover:shadow-[0_28px_64px_-24px_rgba(0,0,0,0.75)]`}
+    >
       <div className="flex flex-wrap items-end justify-between gap-2">
         <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/70">Sentiment split</p>
         {allZero ? (

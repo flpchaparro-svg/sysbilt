@@ -1,5 +1,6 @@
 import type { CompetitorModel } from '@/types/deepAuditReport';
 import { isMissingSignal } from '@/types/deepAuditReport';
+import { auditCardLift } from './auditCardStyles';
 
 export interface CompetitorStripProps {
   competitors: CompetitorModel[];
@@ -26,8 +27,10 @@ export default function CompetitorStrip({ competitors }: CompetitorStripProps) {
         return (
           <div
             key={`${c.domain}-${i}`}
-            className={`rounded-xl border border-white/10 bg-black/30 p-4 font-sans md:p-5 ${
-              weak ? 'border-dashed border-white/15' : ''
+            className={`rounded-xl border border-white/10 bg-black/30 p-4 font-sans md:p-5 ${auditCardLift} ${
+              weak
+                ? 'border-dashed border-white/15 hover:border-white/30 hover:bg-black/40 motion-safe:hover:shadow-[0_28px_64px_-24px_rgba(0,0,0,0.65)]'
+                : 'hover:border-gold-on-dark/40 hover:bg-black/45 motion-safe:hover:shadow-[0_28px_64px_-24px_rgba(212,168,75,0.14)]'
             }`}
           >
             <p className="type-h4 font-serif text-white">{c.name.trim() || 'Not found'}</p>

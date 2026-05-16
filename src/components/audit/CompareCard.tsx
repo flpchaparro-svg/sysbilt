@@ -1,5 +1,6 @@
 import type { ComparePairModel } from '@/types/deepAuditReport';
 import { isMissingSignal } from '@/types/deepAuditReport';
+import { auditCardLift } from './auditCardStyles';
 
 export interface CompareCardProps {
   pair: ComparePairModel;
@@ -10,8 +11,10 @@ export default function CompareCard({ pair }: CompareCardProps) {
   const rightMissing = isMissingSignal(pair.we_see) || !pair.we_see.trim();
   return (
     <div
-      className={`grid grid-cols-1 gap-0 overflow-hidden rounded-xl border font-sans md:grid-cols-2 ${
-        leftMissing || rightMissing ? 'border-dashed border-white/15' : 'border-white/10'
+      className={`grid grid-cols-1 gap-0 overflow-hidden rounded-xl border font-sans md:grid-cols-2 ${auditCardLift} ${
+        leftMissing || rightMissing
+          ? 'border-dashed border-white/15 hover:border-white/30 hover:bg-black/25 motion-safe:hover:shadow-[0_28px_64px_-24px_rgba(0,0,0,0.7)]'
+          : 'border-white/10 hover:border-gold-on-dark/45 hover:bg-black/35 motion-safe:hover:shadow-[0_28px_64px_-24px_rgba(212,168,75,0.12)]'
       }`}
     >
       <div className="border-b border-white/10 bg-black/40 p-5 md:border-b-0 md:border-r md:border-white/10">

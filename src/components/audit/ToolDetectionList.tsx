@@ -1,4 +1,5 @@
 import type { ToolDetectedRow, ToolQualityRating } from '@/types/deepAuditReport';
+import { auditRowHover } from './auditCardStyles';
 
 function StatusIcon({ status }: { status: ToolDetectedRow['status'] }) {
   if (status === 'found') {
@@ -39,7 +40,7 @@ export default function ToolDetectionList({ tools_detected }: ToolDetectionListP
   return (
     <div className="divide-y divide-white/10 rounded-xl border border-white/10 bg-black/30">
       {tools_detected.map((t, i) => (
-        <div key={`${t.name}-${i}`} className="flex gap-4 px-4 py-4 md:px-5">
+        <div key={`${t.name}-${i}`} className={`flex gap-4 px-4 py-4 md:px-5 ${auditRowHover}`}>
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/[0.08] bg-black/30 text-base">
             <StatusIcon status={t.status} />
           </div>

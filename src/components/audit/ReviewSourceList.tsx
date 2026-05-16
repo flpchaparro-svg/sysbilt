@@ -1,5 +1,6 @@
 import type { ReviewSourceModel } from '@/types/deepAuditReport';
 import { isMissingSignal } from '@/types/deepAuditReport';
+import { auditRowHover } from './auditCardStyles';
 
 export interface ReviewSourceListProps {
   review_sources: ReviewSourceModel[];
@@ -26,7 +27,9 @@ export default function ReviewSourceList({ review_sources }: ReviewSourceListPro
         return (
           <div
             key={`${s.platform}-${i}`}
-            className={`grid gap-3 px-4 py-4 md:grid-cols-12 md:items-center md:px-5 ${weak ? 'bg-white/[0.02]' : ''}`}
+            className={`grid gap-3 px-4 py-4 md:grid-cols-12 md:items-center md:px-5 ${auditRowHover} ${
+              weak ? 'bg-white/[0.02]' : ''
+            }`}
           >
             <div className="md:col-span-3">
               <p className={`text-sm font-semibold ${weak ? 'text-white/75' : 'text-white'}`}>{s.platform.trim() || 'Not found'}</p>

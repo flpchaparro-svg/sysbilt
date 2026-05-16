@@ -1,5 +1,6 @@
 import type { AppendixPageHealth, PageHealthMetric, PageHealthQualityRating } from '@/types/deepAuditReport';
 import { isMissingSignal } from '@/types/deepAuditReport';
+import { auditCardLift } from './auditCardStyles';
 
 const PAGE_HEALTH_KEYS: (keyof AppendixPageHealth)[] = [
   'meta_description',
@@ -23,6 +24,15 @@ const qualityDot: Record<PageHealthQualityRating, string> = {
   bad: 'bg-red-on-dark',
 };
 
+const healthHover: Record<PageHealthQualityRating, string> = {
+  good: 'hover:border-teal/85 hover:bg-black/38 motion-safe:hover:shadow-[0_28px_64px_-24px_rgba(15,118,110,0.22)]',
+  amber:
+    'hover:border-gold-on-dark/85 hover:bg-black/38 motion-safe:hover:shadow-[0_28px_64px_-24px_rgba(212,168,75,0.18)]',
+  bad: 'hover:border-red-on-dark/85 hover:bg-black/38 motion-safe:hover:shadow-[0_28px_64px_-24px_rgba(248,113,113,0.18)]',
+};
+
+const missingHealthHover = `${auditCardLift} hover:border-white/35 hover:bg-white/[0.06] motion-safe:hover:shadow-[0_28px_64px_-24px_rgba(0,0,0,0.68)]`;
+
 function QualityDot({ rating }: { rating: PageHealthQualityRating }) {
   return <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${qualityDot[rating]}`} aria-hidden />;
 }
@@ -38,7 +48,9 @@ function HealthCard({ fieldKey, metric }: { fieldKey: keyof AppendixPageHealth; 
   return (
     <div
       className={`rounded-xl border p-4 md:p-5 ${
-        valMissing ? 'border-dashed border-white/15 bg-white/[0.02]' : `${borderByRating} bg-black/25`
+        valMissing
+          ? `border-dashed border-white/15 bg-white/[0.02] ${missingHealthHover}`
+          : `${borderByRating} bg-black/25 ${auditCardLift} ${healthHover[metric.rating]}`
       }`}
     >
       <div className="flex items-start justify-between gap-2">

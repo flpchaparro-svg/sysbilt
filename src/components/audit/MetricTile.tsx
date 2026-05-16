@@ -1,4 +1,5 @@
 import type { MetricRating } from '@/types/deepAuditReport';
+import { auditCardLift } from './auditCardStyles';
 import { isMetricValueEmpty, metricHelperForLabel } from './metricHelpers';
 
 const ratingShell: Record<MetricRating, string> = {
@@ -19,6 +20,16 @@ const ratingBadge: Record<MetricRating, string> = {
   high: 'border-teal text-teal',
 };
 
+const ratingHover: Record<MetricRating, string> = {
+  low: 'hover:border-red-on-dark/90 hover:bg-red-on-dark/15 motion-safe:hover:shadow-[0_28px_64px_-24px_rgba(220,38,38,0.2)]',
+  medium:
+    'hover:border-gold-on-dark/90 hover:bg-gold-on-dark/16 motion-safe:hover:shadow-[0_28px_64px_-24px_rgba(212,168,75,0.18)]',
+  high: 'hover:border-teal/90 hover:bg-teal/18 motion-safe:hover:shadow-[0_28px_64px_-24px_rgba(15,118,110,0.22)]',
+};
+
+const emptyTileHover =
+  'hover:border-white/40 hover:bg-white/[0.06] motion-safe:hover:shadow-[0_28px_64px_-24px_rgba(0,0,0,0.65)]';
+
 export interface MetricTileProps {
   label: string;
   value: string;
@@ -29,9 +40,12 @@ export default function MetricTile({ label, value, rating }: MetricTileProps) {
   const empty = isMetricValueEmpty(value);
   const helper = metricHelperForLabel(label);
   const borderClass = empty ? 'border-dashed border-white/20' : `border ${ratingShell[rating]}`;
+  const hoverClass = empty ? emptyTileHover : ratingHover[rating];
 
   return (
-    <div className={`flex min-h-full flex-col rounded-xl p-5 font-sans md:p-6 ${borderClass} bg-black/20`}>
+    <div
+      className={`flex min-h-full flex-col rounded-xl p-5 font-sans md:p-6 ${borderClass} bg-black/20 ${auditCardLift} ${hoverClass}`}
+    >
       <div className={`h-0.5 w-full rounded-full bg-gradient-to-r ${ratingBar[rating]}`} aria-hidden />
       <span className="type-eyebrow mt-4 text-white/70">/ {label.trim() || 'METRIC'}</span>
       <p className={`type-h4 mt-3 font-serif ${empty ? 'text-white/75' : 'text-white'}`}>

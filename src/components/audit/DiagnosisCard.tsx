@@ -1,4 +1,5 @@
 import { isMissingSignal } from '@/types/deepAuditReport';
+import { auditCardLift } from './auditCardStyles';
 
 export type DiagnosisVariant = 'critical' | 'secondary';
 
@@ -24,11 +25,15 @@ export default function DiagnosisCard({ variant, title, evidence, consequence }:
 
   const shell =
     variant === 'critical'
-    ? 'rounded-2xl border border-red-on-dark/40 bg-red-on-dark/5 p-6 md:p-8'
-    : 'rounded-2xl border border-gold-on-dark/40 bg-gold-on-dark/10 p-5 md:p-6';
+      ? 'rounded-2xl border border-red-on-dark/40 bg-red-on-dark/5 p-6 md:p-8'
+      : 'rounded-2xl border border-gold-on-dark/40 bg-gold-on-dark/10 p-5 md:p-6';
+  const hoverShell =
+    variant === 'critical'
+      ? `${auditCardLift} hover:border-red-on-dark/85 hover:bg-red-on-dark/[0.12] motion-safe:hover:shadow-[0_32px_72px_-26px_rgba(220,38,38,0.22)]`
+      : `${auditCardLift} hover:border-gold-on-dark/80 hover:bg-gold-on-dark/[0.16] motion-safe:hover:shadow-[0_32px_72px_-26px_rgba(212,168,75,0.2)]`;
 
   return (
-    <article className={shell}>
+    <article className={`${shell} ${hoverShell}`}>
       <h3
         className={`type-h3 font-serif ${titleMissing ? 'text-white/75' : 'text-white'}`}
       >
