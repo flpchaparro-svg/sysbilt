@@ -1,5 +1,6 @@
 import type { DeepAuditReportPayload } from '@/types/deepAuditReport';
 import { Loader2, ShieldAlert } from 'lucide-react';
+import AuditHeroHeader from './AuditHeroHeader';
 import AppendixSection from './AppendixSection';
 import CompareCard from './CompareCard';
 import CompetitorStrip from './CompetitorStrip';
@@ -77,18 +78,11 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
 
   return (
     <div className="min-h-screen bg-dark font-sans text-white selection:bg-gold-on-dark/30 selection:text-dark">
-      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(212,168,75,0.08),transparent)]" aria-hidden />
+      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_100%_60%_at_50%_0%,rgba(212,168,75,0.05),transparent_50%)]" aria-hidden />
 
-      <header className="relative border-b border-white/10 bg-dark/90 backdrop-blur-xl">
-        <div className="mx-auto max-w-6xl px-5 py-12 md:px-8 md:py-16">
-          <h1 className="type-h1 font-serif text-gold-on-dark">{company_name}</h1>
-          <p className="type-eyebrow mt-8 text-white/70">/ PREPARED FOR</p>
-          <p className="mt-2 font-sans text-base text-white/90 md:text-lg">{contact_email}</p>
-          <p className="type-eyebrow mt-10 text-white/70">/ SYSBILT DEEP AUDIT</p>
-        </div>
-      </header>
+      <AuditHeroHeader company_name={company_name} contact_email={contact_email} />
 
-      <main className="relative mx-auto max-w-6xl space-y-16 px-5 py-12 md:space-y-20 md:px-8 md:py-16">
+      <main className="relative mx-auto max-w-[1400px] space-y-16 px-6 py-12 md:space-y-20 md:px-12 md:py-16 lg:px-20">
         <IntroParagraph firstName={firstName} companyName={company_name} />
 
         <section className="space-y-6" aria-labelledby="diagnosis-heading">
