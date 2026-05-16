@@ -25,7 +25,7 @@ export default function AuditHeroHeader({ company_name, contact_email }: AuditHe
         aria-hidden
       />
 
-      <div className="relative z-10 mx-auto max-w-[1400px] px-6 pb-14 pt-10 md:px-12 md:pb-20 md:pt-14 lg:px-20">
+      <div className="relative z-10 mx-auto max-w-[1400px] px-6 pb-16 pt-10 md:px-12 md:pb-24 md:pt-14 lg:px-20">
         <SysbiltLogo isDarkBg className="w-[130px] md:w-[160px] max-w-[70vw]" />
 
         <div className="mt-10 flex flex-wrap items-center gap-2 md:mt-12">

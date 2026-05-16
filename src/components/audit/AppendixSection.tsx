@@ -12,7 +12,7 @@ export default function AppendixSection({ appendix }: AppendixSectionProps) {
   const { registry, tools_detected, page_health } = appendix;
 
   return (
-    <section className="space-y-10 border-t border-white/10 pt-12 md:space-y-12 md:pt-16" aria-labelledby="appendix-heading">
+    <section className="flex flex-col gap-14 border-t border-white/10 pt-16 md:gap-16 md:pt-20" aria-labelledby="appendix-heading">
       <SectionHeader
         id="appendix-heading"
         eyebrow="APPENDIX"
@@ -20,7 +20,7 @@ export default function AppendixSection({ appendix }: AppendixSectionProps) {
         staticTitle="Appendix"
       />
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-6">
         <div
           className={`rounded-xl border border-white/10 bg-white/[0.03] p-5 font-sans md:p-6 ${auditCardLift} hover:border-gold-on-dark/35 hover:bg-white/[0.06] motion-safe:hover:shadow-[0_28px_64px_-24px_rgba(212,168,75,0.12)]`}
         >
@@ -56,12 +56,12 @@ export default function AppendixSection({ appendix }: AppendixSectionProps) {
         </div>
       </div>
 
-      <div className="space-y-4">
+      <div className="flex flex-col gap-10 border-t border-white/[0.08] pt-10 md:gap-12 md:pt-12">
         <span className="type-eyebrow text-gold-on-dark">/ TOOLS DETECTED</span>
         <ToolDetectionList tools_detected={tools_detected} />
       </div>
 
-      <div className="space-y-4">
+      <div className="flex flex-col gap-10 border-t border-white/[0.08] pt-10 md:gap-12 md:pt-12">
         <span className="type-eyebrow text-gold-on-dark">/ PAGE HEALTH</span>
         <PageHealthGrid page_health={page_health} />
       </div>

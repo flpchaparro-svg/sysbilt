@@ -7,8 +7,8 @@ const SECONDARY_HREF = 'https://sysbilt.com/guides';
 /** Same hover physics as `CTAButton` dark solid / light outline, as external links. */
 export default function CTABlock() {
   return (
-    <section className="border-t border-white/10 pt-12 md:pt-16" aria-label="Next steps">
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6">
+    <section className="border-t border-white/10 pt-16 md:pt-24" aria-label="Next steps">
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-6">
         <a
           href={PRIMARY_HREF}
           target="_blank"

@@ -83,13 +83,13 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
 
       <AuditHeroHeader company_name={company_name} contact_email={contact_email} />
 
-      <main className="relative mx-auto max-w-[1400px] space-y-16 px-6 py-12 md:space-y-20 md:px-12 md:py-16 lg:px-20">
+      <main className="relative mx-auto max-w-[1400px] space-y-24 px-6 py-16 md:space-y-32 md:px-12 md:py-20 lg:space-y-36 lg:px-20 lg:py-24">
         <AuditScrollReveal>
           <IntroParagraph firstName={firstName} companyName={company_name} />
         </AuditScrollReveal>
 
         <section aria-labelledby="diagnosis-heading">
-          <AuditScrollReveal className="space-y-6">
+          <AuditScrollReveal className="flex flex-col gap-10 md:gap-12">
             <SectionHeader
               id="diagnosis-heading"
               eyebrow="DIAGNOSIS"
@@ -118,13 +118,13 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
         </AuditScrollReveal>
 
         <section>
-          <AuditScrollReveal className="space-y-8">
+          <AuditScrollReveal className="flex flex-col gap-12 md:gap-14">
             <SectionHeader
               eyebrow="HOW THEY FIND YOU"
               preamble="How prospects, search engines, and competitors see you in the discovery phase, before they ever land on your site."
               headline={find.headline}
             />
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-5 xl:grid-cols-4">
               {find.metrics.length === 0 ? (
                 <div className="col-span-full rounded-xl border border-dashed border-white/15 bg-white/[0.02] p-6 font-sans text-sm text-white/75">
                   No metric tiles were returned for this section.
@@ -137,30 +137,34 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
                 ))
               )}
             </div>
-            <div className="space-y-4">
-              <span className="type-eyebrow text-gold-on-dark">/ SEARCH TERMS</span>
-              <KeywordGrid keyword_grid={find.keyword_grid} />
-            </div>
-            <div className="space-y-4">
-              <span className="type-eyebrow text-gold-on-dark">/ COMPETITOR STRIP</span>
-              <CompetitorStrip competitors={find.competitors} />
-            </div>
-            <div className="space-y-4">
-              <span className="type-eyebrow text-gold-on-dark">/ SWOT</span>
-              <SwotPanel swot={find.swot} />
+            <div className="border-t border-white/[0.08] pt-10 md:pt-14">
+              <div className="flex flex-col gap-12 md:gap-14">
+                <div className="space-y-5">
+                  <span className="type-eyebrow text-gold-on-dark">/ SEARCH TERMS</span>
+                  <KeywordGrid keyword_grid={find.keyword_grid} />
+                </div>
+                <div className="space-y-5">
+                  <span className="type-eyebrow text-gold-on-dark">/ COMPETITOR STRIP</span>
+                  <CompetitorStrip competitors={find.competitors} />
+                </div>
+                <div className="space-y-5">
+                  <span className="type-eyebrow text-gold-on-dark">/ SWOT</span>
+                  <SwotPanel swot={find.swot} />
+                </div>
+              </div>
             </div>
             <SectionContext text={find.context} />
           </AuditScrollReveal>
         </section>
 
         <section>
-          <AuditScrollReveal className="space-y-8">
+          <AuditScrollReveal className="flex flex-col gap-12 md:gap-14">
             <SectionHeader
               eyebrow="HOW THEY PERCEIVE YOU"
               preamble="What your website communicates the moment someone arrives, and how that compares to how you want to be seen."
               headline={perceive.headline}
             />
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-5 xl:grid-cols-4">
               {perceive.metrics.length === 0 ? (
                 <div className="col-span-full rounded-xl border border-dashed border-white/15 bg-white/[0.02] p-6 font-sans text-sm text-white/75">
                   No metric tiles were returned for this section.
@@ -173,14 +177,14 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
                 ))
               )}
             </div>
-            <div className="space-y-4">
+            <div className="space-y-5 border-t border-white/[0.08] pt-10 md:pt-14">
               <span className="type-eyebrow text-gold-on-dark">/ POSITIONING CHECKS</span>
               {perceive.compare.length === 0 ? (
                 <div className="rounded-xl border border-dashed border-white/15 bg-white/[0.02] p-6 font-sans text-sm text-white/75">
                   No comparison rows were returned.
                 </div>
               ) : (
-                <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                   {perceive.compare.map((pair, i) => (
                     <div key={i} className="min-w-0">
                       <CompareCard pair={pair} />
@@ -194,13 +198,13 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
         </section>
 
         <section>
-          <AuditScrollReveal className="space-y-8">
+          <AuditScrollReveal className="flex flex-col gap-12 md:gap-14">
             <SectionHeader
               eyebrow="WHAT PEOPLE SAY"
               preamble="What the world is saying about you on review platforms, social media, and search."
               headline={say.headline}
             />
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-5 xl:grid-cols-4">
               {say.metrics.length === 0 ? (
                 <div className="col-span-full rounded-xl border border-dashed border-white/15 bg-white/[0.02] p-6 font-sans text-sm text-white/75">
                   No metric tiles were returned for this section.
@@ -213,8 +217,10 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
                 ))
               )}
             </div>
-            <SentimentBar sentiment={say.sentiment} />
-            <div className="space-y-4">
+            <div className="border-t border-white/[0.08] pt-10 md:pt-14">
+              <SentimentBar sentiment={say.sentiment} />
+            </div>
+            <div className="space-y-5 border-t border-white/[0.08] pt-10 md:pt-14">
               <span className="type-eyebrow text-gold-on-dark">/ REVIEW SOURCES</span>
               <ReviewSourceList review_sources={say.review_sources} />
             </div>

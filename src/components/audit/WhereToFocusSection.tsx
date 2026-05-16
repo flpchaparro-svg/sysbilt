@@ -8,7 +8,7 @@ export interface WhereToFocusSectionProps {
 
 export default function WhereToFocusSection({ action_plan }: WhereToFocusSectionProps) {
   return (
-    <section className="space-y-8" aria-labelledby="where-to-focus-heading">
+    <section className="flex flex-col gap-10 md:gap-12" aria-labelledby="where-to-focus-heading">
       <SectionHeader
         id="where-to-focus-heading"
         eyebrow="WHERE TO FOCUS"

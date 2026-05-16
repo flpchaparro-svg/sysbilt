@@ -5,7 +5,7 @@ export interface IntroParagraphProps {
 
 export default function IntroParagraph({ firstName, companyName }: IntroParagraphProps) {
   return (
-    <section className="border-b border-white/10 pb-12 pt-6 md:pb-16 md:pt-8" aria-label="Introduction">
+    <section className="space-y-10 border-b border-white/10 pb-16 pt-8 md:space-y-12 md:pb-20 md:pt-10" aria-label="Introduction">
       <p className="max-w-3xl font-sans text-lg font-light leading-relaxed text-white/85 md:text-xl">
         Hi {firstName}, this is the audit we put together for {companyName}. It is a snapshot of how your front-of-house
         systems read from the outside, based on a research pass on public information about your business. It is not a

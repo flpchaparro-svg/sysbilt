@@ -27,7 +27,7 @@ export default function ActionPlan({ action_plan }: ActionPlanProps) {
   }
 
   return (
-    <ol className="space-y-5 pt-4">
+    <ol className="flex flex-col gap-6 pt-6 md:gap-7 md:pt-8">
       {display.map((item, idx) => {
         const rank = item.rank > 0 ? item.rank : idx + 1;
         const titleMissing = isMissingSignal(item.title) || !item.title.trim();
