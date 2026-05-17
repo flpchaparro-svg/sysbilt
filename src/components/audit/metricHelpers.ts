@@ -25,11 +25,26 @@ export function metricHelperForLabel(label: string): string | undefined {
   return h;
 }
 
+/**
+ * We could not observe this signal (paywall, tooling limits, etc.).
+ * Treated like a weak tile visually, but the rating badge shows "unknown" — we are not claiming low/medium/high.
+ */
+export function isMetricValueUnknown(value: string): boolean {
+  const v = value.trim();
+  if (!v) return false;
+  const lower = v.toLowerCase();
+  if (lower === 'unknown') return true;
+  if (lower.startsWith('hidden behind')) return true;
+  if (lower.startsWith('could not verify')) return true;
+  return false;
+}
+
 /** Empty or weak values: dashed tile treatment, helper stays full opacity. */
 export function isMetricValueEmpty(value: string): boolean {
   const v = value.trim();
   if (!v || isMissingSignal(v)) return true;
   const lower = v.toLowerCase();
+  if (isMetricValueUnknown(v)) return false;
   if (lower.includes('not detected')) return true;
   if (lower.startsWith('not ')) return true;
   return false;
