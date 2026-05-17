@@ -1,0 +1,196 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { MessageCircle, X, Send, Bot, User } from 'lucide-react';
+
+interface ChatMessage {
+  role: 'user' | 'model';
+  text: string;
+}
+
+export default function SybilChat() {
+  const [isVisible, setIsVisible] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Only show if ?ai=on is in the URL
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('ai') === 'on') {
+        setIsVisible(true);
+      }
+    }
+  }, []);
+
+  // Load history from localStorage
+  useEffect(() => {
+    if (isVisible) {
+      const saved = localStorage.getItem('sybil_chat_history');
+      if (saved) {
+        try {
+          setMessages(JSON.parse(saved));
+        } catch {
+          console.error('Failed to parse chat history');
+        }
+      } else {
+        // Initial greeting
+        const initialMsg: ChatMessage = {
+          role: 'model',
+          text: "Hi, I'm Sybil. We build systems for Australian businesses to get clients, scale faster, and see clearly. What are you trying to work out?",
+        };
+        setMessages([initialMsg]);
+        localStorage.setItem('sybil_chat_history', JSON.stringify([initialMsg]));
+      }
+    }
+  }, [isVisible]);
+
+  // Save history on update
+  useEffect(() => {
+    if (messages.length > 0) {
+      localStorage.setItem('sybil_chat_history', JSON.stringify(messages));
+    }
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  const sendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim() || isLoading) return;
+
+    const newMessages = [...messages, { role: 'user' as const, text: input.trim() }];
+    setMessages(newMessages);
+    setInput('');
+    setIsLoading(true);
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: newMessages }),
+      });
+
+      const data = await res.json();
+
+      if (data.reply) {
+        setMessages((prev) => [...prev, { role: 'model', text: data.reply }]);
+      } else {
+        throw new Error('No reply in response');
+      }
+    } catch {
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: 'model',
+          text: "I'm having trouble connecting right now. The contact form on sysbilt.com is the best way to reach the team.",
+        },
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (!isVisible) return null;
+
+  return (
+    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+      {isOpen ? (
+        <div className="mb-4 flex h-[550px] max-h-[80vh] w-[350px] flex-col overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-2xl sm:w-[400px]">
+          {/* Header */}
+          <div className="flex items-center justify-between bg-zinc-900 p-4 text-white">
+            <div className="flex items-center gap-2">
+              <div className="rounded-full bg-zinc-800 p-1.5">
+                <Bot size={20} className="text-zinc-300" />
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold">Sybil</h3>
+                <p className="text-xs text-zinc-400">SYSBILT AI Assistant</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsOpen(false)}
+              className="text-zinc-400 transition-colors hover:text-white"
+            >
+              <X size={20} />
+            </button>
+          </div>
+
+          {/* Chat Area */}
+          <div className="flex flex-1 flex-col gap-4 overflow-y-auto bg-zinc-50 p-4">
+            {messages.map((msg, idx) => (
+              <div
+                key={idx}
+                className={`flex max-w-[85%] gap-3 ${msg.role === 'user' ? 'ml-auto flex-row-reverse' : 'mr-auto'}`}
+              >
+                <div
+                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${msg.role === 'user' ? 'bg-zinc-200' : 'bg-zinc-900 text-white'}`}
+                >
+                  {msg.role === 'user' ? <User size={16} className="text-zinc-600" /> : <Bot size={16} />}
+                </div>
+                <div
+                  className={`rounded-lg p-3 text-sm whitespace-pre-wrap ${msg.role === 'user' ? 'rounded-tr-none bg-zinc-200 text-zinc-900' : 'rounded-tl-none border border-zinc-200 bg-white text-zinc-800 shadow-sm'}`}
+                >
+                  {msg.text}
+                </div>
+              </div>
+            ))}
+            {isLoading && (
+              <div className="mr-auto flex max-w-[85%] gap-3">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-zinc-900 text-white">
+                  <Bot size={16} />
+                </div>
+                <div className="flex items-center gap-1 rounded-lg rounded-tl-none border border-zinc-200 bg-white p-3 text-sm text-zinc-500 shadow-sm">
+                  <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-zinc-400" />
+                  <span
+                    className="h-1.5 w-1.5 animate-bounce rounded-full bg-zinc-400"
+                    style={{ animationDelay: '150ms' }}
+                  />
+                  <span
+                    className="h-1.5 w-1.5 animate-bounce rounded-full bg-zinc-400"
+                    style={{ animationDelay: '300ms' }}
+                  />
+                </div>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+
+          {/* Footer Input */}
+          <div className="border-t border-zinc-100 bg-white p-3">
+            <form onSubmit={sendMessage} className="relative">
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Ask about our systems..."
+                className="w-full rounded-lg border-none bg-zinc-100 py-3 pl-4 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900"
+                disabled={isLoading}
+              />
+              <button
+                type="submit"
+                disabled={!input.trim() || isLoading}
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-zinc-400 transition-colors hover:text-zinc-900 disabled:opacity-50"
+              >
+                <Send size={18} />
+              </button>
+            </form>
+            <div className="mt-2 text-center">
+              <span className="text-[10px] text-zinc-400">
+                Responses are AI-generated. A human follows up on serious queries.
+              </span>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={() => setIsOpen(true)}
+          className="flex items-center justify-center rounded-full bg-zinc-900 p-4 text-white shadow-lg transition-transform hover:scale-105 hover:bg-zinc-800"
+        >
+          <MessageCircle size={24} />
+        </button>
+      )}
+    </div>
+  );
+}
