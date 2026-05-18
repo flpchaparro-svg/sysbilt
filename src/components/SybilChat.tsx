@@ -1,6 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useLayoutEffect, useCallback } from 'react';
 import { MessageCircle, X, Send, Bot, User } from 'lucide-react';
 import { SybilContactForm } from './SybilContactForm';
+import RobotPeek from './RobotPeek';
+import { SYBIL_CHAT_OPEN_CHANGE_EVENT } from '../constants/sybilChatOpenEvent';
 
 interface ChatMessage {
   role: 'user' | 'model';
@@ -102,7 +104,10 @@ export default function SybilChat() {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [contactFormState, setContactFormState] = useState<'hidden' | 'shown' | 'submitted'>('hidden');
+  const [peekHiddenByScroll, setPeekHiddenByScroll] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const [panelRect, setPanelRect] = useState<{ left: number; top: number; height: number } | null>(null);
 
   // Only show if ?ai=on is in the URL
   useEffect(() => {
@@ -113,6 +118,20 @@ export default function SybilChat() {
       }
     }
   }, []);
+
+  useEffect(() => {
+    const shellOpen = isVisible && isOpen;
+    if (shellOpen) {
+      document.body.dataset.sybilOpen = 'true';
+    } else {
+      delete document.body.dataset.sybilOpen;
+    }
+    window.dispatchEvent(new Event(SYBIL_CHAT_OPEN_CHANGE_EVENT));
+    return () => {
+      delete document.body.dataset.sybilOpen;
+      window.dispatchEvent(new Event(SYBIL_CHAT_OPEN_CHANGE_EVENT));
+    };
+  }, [isVisible, isOpen]);
 
   // Load history from localStorage
   useEffect(() => {
@@ -141,8 +160,65 @@ export default function SybilChat() {
     if (messages.length > 0) {
       localStorage.setItem('sybil_chat_history', JSON.stringify(messages));
     }
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
   }, [messages]);
+
+  useEffect(() => {
+    if (!isLoading) {
+      setPeekHiddenByScroll(false);
+    }
+  }, [isLoading]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setPeekHiddenByScroll(false);
+    }
+  }, [isOpen]);
+
+  const measurePanel = useCallback(() => {
+    const el = panelRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    setPanelRect({ left: r.left, top: r.top, height: r.height });
+  }, []);
+
+  /** Keep robot coords in sync with the fixed panel; dismiss peek on any *page* scroll (capture), not in-panel scroll. */
+  useLayoutEffect(() => {
+    if (!isOpen) {
+      setPanelRect(null);
+      return;
+    }
+
+    measurePanel();
+
+    const onScrollCapture = (e: Event) => {
+      measurePanel();
+      if (!isLoading && !input.trim()) return;
+      const t = e.target;
+      if (t instanceof Node && panelRef.current?.contains(t)) return;
+      setPeekHiddenByScroll(true);
+    };
+
+    const onWheel = (e: WheelEvent) => {
+      measurePanel();
+      if (!isLoading && !input.trim()) return;
+      const el = e.target as HTMLElement | null;
+      if (el?.closest('[data-sybil-chat-panel]')) return;
+      setPeekHiddenByScroll(true);
+    };
+
+    const ro = new ResizeObserver(measurePanel);
+    if (panelRef.current) ro.observe(panelRef.current);
+    window.addEventListener('resize', measurePanel);
+    document.addEventListener('scroll', onScrollCapture, { capture: true, passive: true });
+    document.addEventListener('wheel', onWheel, { passive: true });
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', measurePanel);
+      document.removeEventListener('scroll', onScrollCapture, true);
+      document.removeEventListener('wheel', onWheel);
+    };
+  }, [isOpen, isLoading, input, measurePanel]);
 
   const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -185,7 +261,8 @@ export default function SybilChat() {
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
       {isOpen ? (
-        <div className="mb-4 flex h-[550px] max-h-[80vh] w-[350px] flex-col overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-2xl sm:w-[400px]">
+        <div ref={panelRef} className="relative mb-4 h-[550px] max-h-[80vh] w-[350px] sm:w-[400px]" data-sybil-chat-panel>
+          <div className="relative z-10 flex h-full w-full flex-col overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-2xl">
           {/* Header */}
           <div className="flex shrink-0 items-center justify-between bg-zinc-900 p-4 text-white">
             <div className="flex items-center gap-2">
@@ -306,6 +383,12 @@ export default function SybilChat() {
               </span>
             </div>
           </div>
+          </div>
+          <RobotPeek
+            attachment="chat"
+            isActive={isOpen && (isLoading || !!input.trim()) && !peekHiddenByScroll}
+            chatPanelRect={panelRect}
+          />
         </div>
       ) : (
         <button

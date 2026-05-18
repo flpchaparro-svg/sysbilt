@@ -6,7 +6,8 @@ import { client, urlFor, getCaseStudies } from '../sanityClient';
 import { SanityCaseStudy } from '../types';
 import { getAllPillars } from '../constants/systemPillars';
 import HeroVisualBrutalist from '../components/Blog/HeroVisualBrutalist';
-import RobotPeek from '../components/RobotPeek'; 
+import RobotPeek from '../components/RobotPeek';
+import { SYBIL_CHAT_OPEN_CHANGE_EVENT } from '../constants/sybilChatOpenEvent';
 import NewsletterForm from '../components/NewsletterForm';
 import { PageMeta } from '../components/PageMeta';
 import { SEO_META, SITE_ORIGIN } from '../constants/seoMeta';
@@ -273,6 +274,16 @@ export default function BlogPage() {
   const [currentText, setCurrentText] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const [sybilChatOpen, setSybilChatOpen] = useState(
+    () => typeof document !== 'undefined' && document.body.dataset.sybilOpen === 'true'
+  );
+
+  useEffect(() => {
+    const sync = () => setSybilChatOpen(document.body.dataset.sybilOpen === 'true');
+    window.addEventListener(SYBIL_CHAT_OPEN_CHANGE_EVENT, sync);
+    sync();
+    return () => window.removeEventListener(SYBIL_CHAT_OPEN_CHANGE_EVENT, sync);
+  }, []);
 
   const SEARCH_PHRASES = useMemo(() => [
     "Stop chasing leads manually",
@@ -396,7 +407,7 @@ export default function BlogPage() {
         canonical={SEO_META.blogIndex.canonical}
       />
 
-      <RobotPeek />
+      {!sybilChatOpen && <RobotPeek />}
 
       <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 pt-32 md:pt-48 pb-16 flex-1 w-full relative z-20 flex flex-col">
         
