@@ -177,6 +177,18 @@ export default function SybilChat() {
     }
   }, [isOpen]);
 
+  useEffect(() => {
+    if (!isOpen || !isFullscreen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        setIsFullscreen(false);
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [isOpen, isFullscreen]);
+
   const measurePanel = useCallback(() => {
     const el = panelRef.current;
     if (!el) return;
@@ -264,7 +276,7 @@ export default function SybilChat() {
     <div
       className={
         isOpen && isFullscreen
-          ? 'fixed inset-0 z-[100] flex min-h-0 flex-col'
+          ? 'fixed inset-0 z-[500] flex min-h-0 flex-col bg-white'
           : 'fixed bottom-6 right-6 z-50 flex flex-col items-end'
       }
     >
@@ -283,33 +295,47 @@ export default function SybilChat() {
               isFullscreen ? 'rounded-none' : 'rounded-lg'
             }`}
           >
-          {/* Header */}
-          <div className="flex shrink-0 items-center justify-between bg-zinc-900 p-4 text-white">
-            <div className="flex items-center gap-2">
-              <div className="rounded-full bg-zinc-800 p-1.5">
-                <Bot size={20} className="text-zinc-300" />
+          <div className="shrink-0 bg-zinc-900 text-white">
+            <div className="flex items-center justify-between gap-3 p-4">
+              <div className="flex min-w-0 flex-1 items-center gap-2">
+                <div className="shrink-0 rounded-full bg-zinc-800 p-1.5">
+                  <Bot size={20} className="text-zinc-300" />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="text-sm font-semibold">Sybil</h3>
+                  <p className="truncate text-xs text-zinc-400">SYSBILT AI Assistant</p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-sm font-semibold">Sybil</h3>
-                <p className="text-xs text-zinc-400">SYSBILT AI Assistant</p>
-              </div>
-            </div>
-            <div className="flex shrink-0 items-center gap-1">
-              <button
-                type="button"
-                onClick={() => setIsFullscreen((v) => !v)}
-                aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
-                className="rounded p-1.5 text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-white"
-              >
-                {isFullscreen ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
-              </button>
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
                 aria-label="Close chat"
-                className="rounded p-1.5 text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-white"
+                className="shrink-0 rounded p-1.5 text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-white"
               >
                 <X size={20} />
+              </button>
+            </div>
+            <div className="flex items-center justify-between gap-3 border-t border-zinc-700/80 px-4 py-2">
+              <p className="hidden text-[10px] text-zinc-500 sm:block">
+                {isFullscreen ? 'Press Esc to exit fullscreen' : 'Expand for a larger view'}
+              </p>
+              <button
+                type="button"
+                onClick={() => setIsFullscreen((v) => !v)}
+                aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+                className="ml-auto flex shrink-0 items-center gap-2 rounded px-2 py-1.5 text-xs font-medium text-zinc-300 transition-colors hover:bg-zinc-800 hover:text-white"
+              >
+                {isFullscreen ? (
+                  <>
+                    <Minimize2 size={18} className="shrink-0" />
+                    <span className="hidden sm:inline">Exit fullscreen</span>
+                  </>
+                ) : (
+                  <>
+                    <Maximize2 size={18} className="shrink-0" />
+                    <span className="hidden sm:inline">Fullscreen</span>
+                  </>
+                )}
               </button>
             </div>
           </div>
