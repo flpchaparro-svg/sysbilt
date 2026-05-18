@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useLayoutEffect, useCallback } from 'react';
-import { MessageCircle, X, Send, Bot, User } from 'lucide-react';
+import { MessageCircle, X, Send, Bot, User, Maximize2, Minimize2 } from 'lucide-react';
 import { SybilContactForm } from './SybilContactForm';
 import RobotPeek from './RobotPeek';
 import { SYBIL_CHAT_OPEN_CHANGE_EVENT } from '../constants/sybilChatOpenEvent';
@@ -105,6 +105,7 @@ export default function SybilChat() {
   const [isLoading, setIsLoading] = useState(false);
   const [contactFormState, setContactFormState] = useState<'hidden' | 'shown' | 'submitted'>('hidden');
   const [peekHiddenByScroll, setPeekHiddenByScroll] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const [panelRect, setPanelRect] = useState<{ left: number; top: number; height: number } | null>(null);
@@ -172,6 +173,7 @@ export default function SybilChat() {
   useEffect(() => {
     if (!isOpen) {
       setPeekHiddenByScroll(false);
+      setIsFullscreen(false);
     }
   }, [isOpen]);
 
@@ -259,10 +261,28 @@ export default function SybilChat() {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+    <div
+      className={
+        isOpen && isFullscreen
+          ? 'fixed inset-0 z-[100] flex min-h-0 flex-col'
+          : 'fixed bottom-6 right-6 z-50 flex flex-col items-end'
+      }
+    >
       {isOpen ? (
-        <div ref={panelRef} className="relative mb-4 h-[550px] max-h-[80vh] w-[350px] sm:w-[400px]" data-sybil-chat-panel>
-          <div className="relative z-10 flex h-full w-full flex-col overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-2xl">
+        <div
+          ref={panelRef}
+          className={`flex min-h-0 flex-col ${
+            isFullscreen
+              ? 'relative h-full w-full flex-1 mb-0'
+              : 'relative mb-4 h-[550px] max-h-[80vh] w-[350px] sm:w-[400px]'
+          }`}
+          data-sybil-chat-panel
+        >
+          <div
+            className={`relative z-10 flex h-full min-h-0 w-full flex-col overflow-hidden border border-zinc-200 bg-white shadow-2xl ${
+              isFullscreen ? 'rounded-none' : 'rounded-lg'
+            }`}
+          >
           {/* Header */}
           <div className="flex shrink-0 items-center justify-between bg-zinc-900 p-4 text-white">
             <div className="flex items-center gap-2">
@@ -274,18 +294,29 @@ export default function SybilChat() {
                 <p className="text-xs text-zinc-400">SYSBILT AI Assistant</p>
               </div>
             </div>
-            <button
-              type="button"
-              onClick={() => setIsOpen(false)}
-              className="text-zinc-400 transition-colors hover:text-white"
-            >
-              <X size={20} />
-            </button>
+            <div className="flex shrink-0 items-center gap-1">
+              <button
+                type="button"
+                onClick={() => setIsFullscreen((v) => !v)}
+                aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+                className="rounded p-1.5 text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-white"
+              >
+                {isFullscreen ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                aria-label="Close chat"
+                className="rounded p-1.5 text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-white"
+              >
+                <X size={20} />
+              </button>
+            </div>
           </div>
 
           <div className="flex min-h-0 min-w-0 flex-1 flex-col">
             {/* Chat Area (scroll) */}
-            <div className="flex flex-1 flex-col gap-4 overflow-y-auto bg-zinc-50 p-4">
+            <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto bg-zinc-50 p-4">
               {messages.map((msg, idx) => (
                 <div
                   key={idx}
