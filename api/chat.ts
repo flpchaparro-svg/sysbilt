@@ -1,6 +1,6 @@
 // /api/chat.ts
-// Sybil v2.6 — SYSBILT's AI assistant.
-// Adds: site map awareness, systems-bridge refusals, distinct error messages by status.
+// Sybil v2.7 — SYSBILT's AI assistant.
+// v2.7: catalogue markdown links, LINK FORMAT + LEAD WITH SERVICE in prompt; widget renders links (see SybilChat.tsx).
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@sanity/client';
@@ -59,7 +59,7 @@ async function buildContentCatalogue(): Promise<string> {
       .map((g) => {
         const tags = g.servicePillar?.length ? ` [covers: ${g.servicePillar.join(', ')}]` : '';
         const sub = g.subtitle ? `, ${g.subtitle}` : '';
-        return `- "${g.title}"${sub}${tags} at sysbilt.com/guides/${g.slug}`;
+        return `- "${g.title}"${sub}${tags} — [${g.title}](https://sysbilt.com/guides/${g.slug})`;
       })
       .join('\n');
 
@@ -67,7 +67,7 @@ async function buildContentCatalogue(): Promise<string> {
       .filter((p) => p.title && p.slug)
       .map((p) => {
         const ex = p.excerpt ? `, ${p.excerpt}` : '';
-        return `- "${p.title}"${ex} at sysbilt.com/blog/${p.slug}`;
+        return `- "${p.title}"${ex} — [${p.title}](https://sysbilt.com/blog/${p.slug})`;
       })
       .join('\n');
 
@@ -122,6 +122,20 @@ You are a consultant in the chat, not a brochure. Help the visitor think clearly
 - Never use pillar numbers in conversation. Always use service names.
 - Never invent SYSBILT page URLs, only use the routes listed in the SITE MAP below.
 
+# LINK FORMAT
+
+When mentioning a URL in your reply, ALWAYS format it as a markdown link with descriptive link text:
+- Correct: "We go into this on [our automation page](https://sysbilt.com/pillar3)."
+- Correct: "Read [How to Stop Losing Leads You Already Earned](https://sysbilt.com/guides/lead-tracking) for the full picture."
+- Wrong: "Visit sysbilt.com/pillar3"
+- Wrong: "Read it at https://sysbilt.com/pillar3"
+
+Always include the https:// in the URL. Always use descriptive text inside the brackets, never the raw URL.
+
+The contact form should be linked as [the contact form](https://sysbilt.com/contact).
+
+For the booking link, when needed: [book a time](https://meetings-ap1.hubspot.com/felipe-chaparro).
+
 # WHAT YOU CAN DO
 
 - Discuss the user's industry and common systems problems in that industry.
@@ -132,6 +146,11 @@ You are a consultant in the chat, not a brochure. Help the visitor think clearly
 - Recommend specific SYSBILT guides and blog posts by exact title and URL from the CONTENT CATALOGUE.
 - Route visitors to specific pages on sysbilt.com from the SITE MAP when relevant.
 - Suggest the contact form only when the conversation reaches a real handoff moment.
+
+# LEAD WITH THE RELEVANT SERVICE
+
+When the visitor's question maps to one of the seven services, lead your reply by naming that service in the first sentence. Then expand on what we do, then link to the relevant page. Example pattern:
+"That sounds like [service name] territory. We [what we do for them]. We go into this on [our service page link]."
 
 # DIAGNOSTIC MODE
 

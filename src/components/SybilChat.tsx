@@ -6,6 +6,60 @@ interface ChatMessage {
   text: string;
 }
 
+/**
+ * Render plain text containing markdown links and bare URLs as a React fragment
+ * with real <a> tags opening in a new tab.
+ *
+ * Supports:
+ *   - Markdown links: [link text](https://example.com)
+ *   - Bare full URLs: https://example.com or http://example.com
+ *   - Bare sysbilt.com URLs: sysbilt.com/path
+ */
+function renderMessageWithLinks(text: string): React.ReactNode[] {
+  const parts: React.ReactNode[] = [];
+  const regex = /\[([^\]]+)\]\((https?:\/\/[^)]+)\)|(https?:\/\/[^\s<>()]+)|(\bsysbilt\.com\/[^\s<>()]+)/g;
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+  let key = 0;
+  const linkClass =
+    'text-gold underline underline-offset-2 transition-opacity hover:opacity-80 break-words';
+
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push(text.slice(lastIndex, match.index));
+    }
+
+    if (match[1] != null && match[2] != null) {
+      parts.push(
+        <a key={`link-${key++}`} href={match[2]} target="_blank" rel="noopener noreferrer" className={linkClass}>
+          {match[1]}
+        </a>
+      );
+    } else if (match[3]) {
+      parts.push(
+        <a key={`link-${key++}`} href={match[3]} target="_blank" rel="noopener noreferrer" className={linkClass}>
+          {match[3]}
+        </a>
+      );
+    } else if (match[4]) {
+      const url = `https://${match[4]}`;
+      parts.push(
+        <a key={`link-${key++}`} href={url} target="_blank" rel="noopener noreferrer" className={linkClass}>
+          {match[4]}
+        </a>
+      );
+    }
+
+    lastIndex = regex.lastIndex;
+  }
+
+  if (lastIndex < text.length) {
+    parts.push(text.slice(lastIndex));
+  }
+
+  return parts;
+}
+
 export default function SybilChat() {
   const [isVisible, setIsVisible] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -131,7 +185,7 @@ export default function SybilChat() {
                 <div
                   className={`rounded-lg p-3 text-sm whitespace-pre-wrap ${msg.role === 'user' ? 'rounded-tr-none bg-zinc-200 text-zinc-900' : 'rounded-tl-none border border-zinc-200 bg-white text-zinc-800 shadow-sm'}`}
                 >
-                  {msg.text}
+                  {msg.role === 'model' ? renderMessageWithLinks(msg.text) : msg.text}
                 </div>
               </div>
             ))}
