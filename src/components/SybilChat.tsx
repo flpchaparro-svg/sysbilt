@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MessageCircle, X, Send, Bot, User } from 'lucide-react';
+import { SybilContactForm } from './SybilContactForm';
 
 interface ChatMessage {
   role: 'user' | 'model';
@@ -60,12 +61,47 @@ function renderMessageWithLinks(text: string): React.ReactNode[] {
   return parts;
 }
 
+const SHOW_FORM_MARKER = '[SHOW_FORM]';
+
+function stripShowFormMarker(text: string): { cleanText: string; showFormCta: boolean } {
+  if (text.includes(SHOW_FORM_MARKER)) {
+    return {
+      cleanText: text.replace(SHOW_FORM_MARKER, '').trim(),
+      showFormCta: true,
+    };
+  }
+  return { cleanText: text, showFormCta: false };
+}
+
+function detectFrictionFromTranscript(msgs: Array<{ role: string; text: string }>): string {
+  const joined = msgs.map((m) => m.text.toLowerCase()).join(' ');
+  if (joined.includes('crm') || joined.includes('losing leads') || joined.includes('track')) {
+    return "CRM & Sales — I'm losing track of leads";
+  }
+  if (joined.includes('automat') || joined.includes('manual')) return 'Automation — Too much manual work';
+  if (joined.includes('website') || joined.includes('enquir')) return 'Website & Leads — I need more enquiries';
+  if (joined.includes(' ai ') || joined.includes('chatbot') || joined.includes('assistant')) {
+    return 'AI — I want bots to handle things';
+  }
+  if (joined.includes('content') || joined.includes('blog') || joined.includes('social')) {
+    return "Content — I can't keep up with posting";
+  }
+  if (joined.includes('training') || joined.includes('team won')) {
+    return "Training — My team won't use the tools";
+  }
+  if (joined.includes('dashboard') || joined.includes('report') || joined.includes('numbers')) {
+    return "Dashboards — I can't see my numbers";
+  }
+  return '';
+}
+
 export default function SybilChat() {
   const [isVisible, setIsVisible] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [contactFormState, setContactFormState] = useState<'hidden' | 'shown' | 'submitted'>('hidden');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Only show if ?ai=on is in the URL
@@ -151,7 +187,7 @@ export default function SybilChat() {
       {isOpen ? (
         <div className="mb-4 flex h-[550px] max-h-[80vh] w-[350px] flex-col overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-2xl sm:w-[400px]">
           {/* Header */}
-          <div className="flex items-center justify-between bg-zinc-900 p-4 text-white">
+          <div className="flex shrink-0 items-center justify-between bg-zinc-900 p-4 text-white">
             <div className="flex items-center gap-2">
               <div className="rounded-full bg-zinc-800 p-1.5">
                 <Bot size={20} className="text-zinc-300" />
@@ -170,48 +206,83 @@ export default function SybilChat() {
             </button>
           </div>
 
-          {/* Chat Area */}
-          <div className="flex flex-1 flex-col gap-4 overflow-y-auto bg-zinc-50 p-4">
-            {messages.map((msg, idx) => (
-              <div
-                key={idx}
-                className={`flex max-w-[85%] gap-3 ${msg.role === 'user' ? 'ml-auto flex-row-reverse' : 'mr-auto'}`}
-              >
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+            {/* Chat Area (scroll) */}
+            <div className="flex flex-1 flex-col gap-4 overflow-y-auto bg-zinc-50 p-4">
+              {messages.map((msg, idx) => (
                 <div
-                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${msg.role === 'user' ? 'bg-zinc-200' : 'bg-zinc-900 text-white'}`}
+                  key={idx}
+                  className={`flex max-w-[85%] gap-3 ${msg.role === 'user' ? 'ml-auto flex-row-reverse' : 'mr-auto'}`}
                 >
-                  {msg.role === 'user' ? <User size={16} className="text-zinc-600" /> : <Bot size={16} />}
+                  <div
+                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${msg.role === 'user' ? 'bg-zinc-200' : 'bg-zinc-900 text-white'}`}
+                  >
+                    {msg.role === 'user' ? <User size={16} className="text-zinc-600" /> : <Bot size={16} />}
+                  </div>
+                  <div
+                    className={`rounded-lg p-3 text-sm whitespace-pre-wrap ${msg.role === 'user' ? 'rounded-tr-none bg-zinc-200 text-zinc-900' : 'rounded-tl-none border border-zinc-200 bg-white text-zinc-800 shadow-sm'}`}
+                  >
+                    {msg.role === 'user' ? (
+                      msg.text
+                    ) : (
+                      (() => {
+                        const { cleanText, showFormCta } = stripShowFormMarker(msg.text);
+                        const isLastAssistantMessage = idx === messages.length - 1;
+                        return (
+                          <>
+                            {renderMessageWithLinks(cleanText)}
+                            {showFormCta && isLastAssistantMessage && contactFormState === 'hidden' && (
+                              <button
+                                type="button"
+                                onClick={() => setContactFormState('shown')}
+                                className="mt-3 inline-block border-2 border-dark bg-dark px-4 py-2 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-cream transition-colors hover:bg-gold hover:text-dark"
+                              >
+                                [ SEND DETAILS TO THE TEAM ]
+                              </button>
+                            )}
+                          </>
+                        );
+                      })()
+                    )}
+                  </div>
                 </div>
-                <div
-                  className={`rounded-lg p-3 text-sm whitespace-pre-wrap ${msg.role === 'user' ? 'rounded-tr-none bg-zinc-200 text-zinc-900' : 'rounded-tl-none border border-zinc-200 bg-white text-zinc-800 shadow-sm'}`}
-                >
-                  {msg.role === 'model' ? renderMessageWithLinks(msg.text) : msg.text}
+              ))}
+              {isLoading && (
+                <div className="mr-auto flex max-w-[85%] gap-3">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-zinc-900 text-white">
+                    <Bot size={16} />
+                  </div>
+                  <div className="flex items-center gap-1 rounded-lg rounded-tl-none border border-zinc-200 bg-white p-3 text-sm text-zinc-500 shadow-sm">
+                    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-zinc-400" />
+                    <span
+                      className="h-1.5 w-1.5 animate-bounce rounded-full bg-zinc-400"
+                      style={{ animationDelay: '150ms' }}
+                    />
+                    <span
+                      className="h-1.5 w-1.5 animate-bounce rounded-full bg-zinc-400"
+                      style={{ animationDelay: '300ms' }}
+                    />
+                  </div>
                 </div>
-              </div>
-            ))}
-            {isLoading && (
-              <div className="mr-auto flex max-w-[85%] gap-3">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-zinc-900 text-white">
-                  <Bot size={16} />
-                </div>
-                <div className="flex items-center gap-1 rounded-lg rounded-tl-none border border-zinc-200 bg-white p-3 text-sm text-zinc-500 shadow-sm">
-                  <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-zinc-400" />
-                  <span
-                    className="h-1.5 w-1.5 animate-bounce rounded-full bg-zinc-400"
-                    style={{ animationDelay: '150ms' }}
-                  />
-                  <span
-                    className="h-1.5 w-1.5 animate-bounce rounded-full bg-zinc-400"
-                    style={{ animationDelay: '300ms' }}
-                  />
-                </div>
+              )}
+              <div ref={messagesEndRef} />
+            </div>
+
+            {contactFormState !== 'hidden' && (
+              <div className="max-h-[45%] shrink-0 overflow-y-auto border-t border-zinc-200 bg-zinc-50">
+                <SybilContactForm
+                  transcript={messages}
+                  initialFrictionFromContext={detectFrictionFromTranscript(messages)}
+                  onSuccess={() => setContactFormState('submitted')}
+                  onClose={() => setContactFormState('hidden')}
+                  isSubmitted={contactFormState === 'submitted'}
+                />
               </div>
             )}
-            <div ref={messagesEndRef} />
           </div>
 
           {/* Footer Input */}
-          <div className="border-t border-zinc-100 bg-white p-3">
+          <div className="shrink-0 border-t border-zinc-100 bg-white p-3">
             <form onSubmit={sendMessage} className="relative">
               <input
                 type="text"
