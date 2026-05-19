@@ -340,8 +340,8 @@ export default function SybilChat() {
             </div>
           </div>
 
-          <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-            {/* Chat Area (scroll) */}
+          <div className="relative flex min-h-0 min-w-0 flex-1 flex-col">
+            {/* Chat Area (scroll) — contact form overlays this region when shown */}
             <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto bg-zinc-50 p-4">
               {messages.map((msg, idx) => (
                 <div
@@ -403,15 +403,13 @@ export default function SybilChat() {
             </div>
 
             {contactFormState !== 'hidden' && (
-              <div className="max-h-[45%] shrink-0 overflow-y-auto border-t border-zinc-200 bg-zinc-50">
-                <SybilContactForm
-                  transcript={messages}
-                  initialFrictionFromContext={detectFrictionFromTranscript(messages)}
-                  onSuccess={() => setContactFormState('submitted')}
-                  onClose={() => setContactFormState('hidden')}
-                  isSubmitted={contactFormState === 'submitted'}
-                />
-              </div>
+              <SybilContactForm
+                transcript={messages}
+                initialFrictionFromContext={detectFrictionFromTranscript(messages)}
+                onSuccess={() => setContactFormState('submitted')}
+                onClose={() => setContactFormState('hidden')}
+                isSubmitted={contactFormState === 'submitted'}
+              />
             )}
           </div>
 

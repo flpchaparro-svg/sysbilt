@@ -2,7 +2,7 @@
 // Inline contact form rendered inside the Sybil chat widget.
 // Submits to the same HubSpot form as ContactPage so existing automations fire.
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const HUBSPOT_PORTAL_ID = '442914926';
 const HUBSPOT_FORM_ID = 'b73fe2b1-95e1-4d06-b275-349f3ac37386';
@@ -90,13 +90,31 @@ export function SybilContactForm({
   const [status, setStatus] = useState<'idle' | 'submitting' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
 
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      e.preventDefault();
+      e.stopPropagation();
+      onClose();
+    };
+    document.addEventListener('keydown', onKeyDown, true);
+    return () => document.removeEventListener('keydown', onKeyDown, true);
+  }, [onClose]);
+
   if (isSubmitted) {
     return (
-      <div className="mx-4 my-3 border-2 border-dark bg-cream p-4">
-        <p className="mb-2 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-gold-on-cream">/ DETAILS SENT</p>
-        <p className="font-sans text-sm leading-relaxed text-dark">
+      <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-dark p-6 text-center text-cream">
+        <p className="mb-2 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-gold-on-dark">/ DETAILS SENT</p>
+        <p className="mb-6 max-w-xs font-sans text-sm leading-relaxed text-cream/90">
           Got it. The team will be in touch within 24 hours, often the same day. Anything else I can help with while you wait?
         </p>
+        <button
+          type="button"
+          onClick={onClose}
+          className="border-2 border-gold bg-gold px-5 py-2.5 font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark transition-colors hover:border-cream hover:bg-cream"
+        >
+          [ BACK TO CHAT ]
+        </button>
       </div>
     );
   }
@@ -187,17 +205,22 @@ export function SybilContactForm({
     'w-full border border-cream/30 bg-cream/5 px-3 py-2 font-sans text-sm text-cream placeholder:text-cream/40 transition-colors focus:border-gold focus:outline-none';
 
   return (
-    <form onSubmit={handleSubmit} className="mx-4 my-3 space-y-3 border-2 border-dark bg-dark p-4 text-cream">
-      <div className="flex items-center justify-between">
+    <form
+      onSubmit={handleSubmit}
+      className="absolute inset-0 z-20 flex flex-col bg-dark overflow-y-auto p-5 text-cream"
+    >
+      <div className="flex shrink-0 items-start justify-between gap-3 border-b border-cream/15 pb-4">
         <p className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-gold-on-dark">/ SEND YOUR DETAILS</p>
         <button
           type="button"
           onClick={onClose}
-          className="font-mono text-[10px] uppercase tracking-[0.15em] text-cream/50 transition-colors hover:text-cream"
+          className="shrink-0 border border-cream/40 bg-cream/10 px-3 py-2 font-mono text-[10px] font-bold uppercase tracking-[0.15em] text-cream transition-colors hover:border-gold hover:bg-gold/20 hover:text-cream"
         >
-          CANCEL
+          Cancel
         </button>
       </div>
+
+      <div className="flex min-h-0 flex-1 flex-col space-y-5 pt-5">
 
       <input
         type="text"
@@ -324,6 +347,7 @@ export function SybilContactForm({
         </a>
         . The team replies within 24 hours.
       </p>
+      </div>
     </form>
   );
 }
