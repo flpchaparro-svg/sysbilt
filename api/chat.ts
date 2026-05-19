@@ -7,6 +7,9 @@ import { createClient } from '@sanity/client';
 import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
 
+const TRANSCRIPT_WEBHOOK_URL = process.env.SYBIL_TRANSCRIPT_WEBHOOK_URL || '';
+const TRANSCRIPT_MIN_MESSAGES = 6;
+
 // ============================================================
 // CONFIG
 // ============================================================
@@ -416,7 +419,49 @@ If the visitor asks how to contact, how to get in touch, what the next step is, 
 
 type ChatRole = 'user' | 'model';
 interface ChatMessage { role: ChatRole; text: string; }
-interface ChatRequestBody { messages: ChatMessage[]; }
+interface ChatRequestBody { messages: ChatMessage[]; sessionId?: string; }
+
+function getHubSpotCookie(req: VercelRequest): string | undefined {
+  const cookieHeader = req.headers.cookie || '';
+  const match = cookieHeader.match(/(?:^|; )hubspotutk=([^;]*)/);
+  return match ? match[1] : undefined;
+}
+
+async function sendTranscriptToWebhook(params: {
+  transcript: ChatMessage[];
+  ip: string;
+  userAgent: string;
+  referer: string;
+  hutk?: string;
+  sessionId?: string;
+}): Promise<void> {
+  if (!TRANSCRIPT_WEBHOOK_URL) return;
+  if (params.transcript.length < TRANSCRIPT_MIN_MESSAGES) return;
+  try {
+    const payload = {
+      sessionId: params.sessionId || 'unknown',
+      timestamp: new Date().toISOString(),
+      messageCount: params.transcript.length,
+      ip: params.ip,
+      hutk: params.hutk || 'anonymous',
+      userAgent: params.userAgent,
+      pageUrl: params.referer,
+      transcript: params.transcript.map((m) => ({
+        role: m.role,
+        text: m.text.replace('[SHOW_FORM]', '').trim(),
+      })),
+    };
+    fetch(TRANSCRIPT_WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    }).catch((err) => {
+      console.warn('[sybil] Transcript webhook failed', err);
+    });
+  } catch (err) {
+    console.warn('[sybil] Transcript send error', err);
+  }
+}
 
 // ============================================================
 // HANDLER
@@ -575,6 +620,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       reply: "I couldn't put together a clean answer for that. Try asking it a different way, or use the contact form on sysbilt.com.",
     });
   }
+
+  const fullTranscript: ChatMessage[] = [...body.messages, { role: 'model', text: reply }];
+  void sendTranscriptToWebhook({
+    transcript: fullTranscript,
+    ip: getClientIP(req),
+    userAgent: String(req.headers['user-agent'] || ''),
+    referer: String(req.headers['referer'] || ''),
+    hutk: getHubSpotCookie(req),
+    sessionId: body.sessionId,
+  });
 
   return res.status(200).json({ reply });
 }

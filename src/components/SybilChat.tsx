@@ -118,6 +118,14 @@ export default function SybilChat() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const [panelRect, setPanelRect] = useState<{ left: number; top: number; height: number } | null>(null);
+  const [sessionId] = useState(() => {
+    if (typeof window === 'undefined') return '';
+    const existing = sessionStorage.getItem('sybil_session_id');
+    if (existing) return existing;
+    const fresh = crypto.randomUUID();
+    sessionStorage.setItem('sybil_session_id', fresh);
+    return fresh;
+  });
 
   useEffect(() => {
     if (isOpen) {
@@ -251,8 +259,8 @@ export default function SybilChat() {
     e.preventDefault();
     if (!input.trim() || isLoading || isCapped) return;
 
-    const newMessages = [...messages, { role: 'user' as const, text: input.trim() }];
-    setMessages(newMessages);
+    const apiMessages = [...messages, { role: 'user' as const, text: input.trim() }];
+    setMessages(apiMessages);
     setInput('');
     setIsLoading(true);
 
@@ -260,7 +268,10 @@ export default function SybilChat() {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: newMessages }),
+        body: JSON.stringify({
+          messages: apiMessages,
+          sessionId: sessionId,
+        }),
       });
 
       const data = await res.json();
