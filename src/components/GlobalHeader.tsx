@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { m, AnimatePresence } from 'framer-motion';
 import { Menu, X, ChevronDown, Target, TrendingUp, BarChart3 } from 'lucide-react';
@@ -32,11 +32,25 @@ function isInsightsActive(currentView: string): boolean {
   );
 }
 
+type SybilChatStateDetail = { isOpen: boolean; isFullscreen: boolean };
+
 const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, scrolled, solidBackground = false }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
   const [openDesktopDropdown, setOpenDesktopDropdown] = useState<string | null>(null);
   const [hoveredNav, setHoveredNav] = useState<string | null>(null);
   const [mobileSubmenu, setMobileSubmenu] = useState<null | 'system' | 'insights'>(null);
+
+  useEffect(() => {
+    const onSybilChatState = (e: Event) => {
+      const detail = (e as CustomEvent<SybilChatStateDetail>).detail;
+      if (detail && typeof detail.isOpen === 'boolean') {
+        setIsChatOpen(detail.isOpen);
+      }
+    };
+    window.addEventListener('sybilChatState', onSybilChatState);
+    return () => window.removeEventListener('sybilChatState', onSybilChatState);
+  }, []);
 
   const navItems: NavItemConfig[] = [
     { id: 'architect', label: 'ABOUT', fullLabel: 'ABOUT' },
@@ -91,17 +105,22 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
     }
   };
 
+  const hideForChat = isChatOpen;
+
   return (
     <>
       {/* Always mounted + opacity (no AnimatePresence) so rapid scroll thresholds cannot flash mount/unmount */}
       <m.nav
         initial={false}
-        animate={{ opacity: scrolled ? 0 : 1 }}
+        animate={{
+          opacity: hideForChat ? 0 : scrolled ? 0 : 1,
+          y: hideForChat ? '-100%' : 0,
+        }}
         transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
-        aria-hidden={scrolled}
-        inert={scrolled ? true : undefined}
+        aria-hidden={hideForChat || scrolled}
+        inert={hideForChat || scrolled ? true : undefined}
         className={`fixed top-0 w-full z-[300] px-6 md:px-12 flex justify-between items-center h-20 md:h-24 ${
-          scrolled ? 'pointer-events-none' : 'pointer-events-none md:pointer-events-auto'
+          hideForChat || scrolled ? 'pointer-events-none' : 'pointer-events-none md:pointer-events-auto'
         } ${solidBackground ? 'bg-cream' : 'bg-transparent'}`}
         onMouseLeave={() => {
           setOpenDesktopDropdown(null);
@@ -277,12 +296,15 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
         role="navigation"
         aria-label="Quick links while scrolling"
         initial={false}
-        animate={{ opacity: scrolled ? 1 : 0, x: scrolled ? 0 : 16 }}
+        animate={{
+          opacity: hideForChat ? 0 : scrolled ? 1 : 0,
+          x: hideForChat ? 24 : scrolled ? 0 : 16,
+        }}
         transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
-        aria-hidden={!scrolled}
-        inert={!scrolled ? true : undefined}
+        aria-hidden={hideForChat || !scrolled}
+        inert={hideForChat || !scrolled ? true : undefined}
         className={`fixed right-0 top-[20vh] z-[300] hidden lg:flex flex-col bg-dark border-l border-y border-white/10 rounded-l-lg shadow-2xl overflow-hidden w-[54px] ${
-          scrolled ? '' : 'pointer-events-none'
+          hideForChat ? 'pointer-events-none' : scrolled ? '' : 'pointer-events-none'
         }`}
         style={{ maxHeight: 'calc(100vh - 20vh - 4rem)' }}
       >
@@ -329,9 +351,11 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
       </m.div>
 
       <div
-        className={`lg:hidden fixed top-0 w-full z-[310] h-20 flex items-center justify-end px-6 pointer-events-none transition-opacity duration-snap ${isMenuOpen ? 'opacity-0' : 'opacity-100'}`}
+        className={`lg:hidden fixed top-0 w-full z-[310] h-20 flex items-center justify-end px-6 pointer-events-none transition-transform transition-opacity duration-200 ${
+          hideForChat ? '-translate-y-full opacity-0' : isMenuOpen ? 'opacity-0' : 'opacity-100'
+        }`}
       >
-        <div className="flex items-center gap-3 pointer-events-auto">
+        <div className={`flex items-center gap-3 ${hideForChat ? 'pointer-events-none' : 'pointer-events-auto'}`}>
           <button
             type="button"
             onClick={() => onNavigate('contact')}

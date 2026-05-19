@@ -134,6 +134,12 @@ export default function SybilChat() {
     };
   }, [isVisible, isOpen]);
 
+  useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent('sybilChatState', { detail: { isOpen, isFullscreen } })
+    );
+  }, [isOpen, isFullscreen]);
+
   // Load history from localStorage
   useEffect(() => {
     if (isVisible) {
