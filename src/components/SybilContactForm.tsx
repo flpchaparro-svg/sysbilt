@@ -83,6 +83,7 @@ export function SybilContactForm({
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [company, setCompany] = useState('');
   const [frictionPoint, setFrictionPoint] = useState(initialFrictionFromContext);
   const [extraNote, setExtraNote] = useState('');
   const [honeypot, setHoneypot] = useState('');
@@ -122,6 +123,7 @@ export function SybilContactForm({
         { name: 'firstname', value: name.trim() },
         { name: 'email', value: email.trim() },
         { name: 'phone', value: phone.trim() },
+        { name: 'company', value: company.trim() || 'Not provided via chat' },
         { name: 'message', value: buildTranscriptText(transcript, extraNote) },
         { name: 'friction_point', value: formatFrictionPoint(frictionPoint) },
         { name: 'lead_source_detail', value: `${window.location.href} (Sybil chat)` },
@@ -155,7 +157,23 @@ export function SybilContactForm({
       } else {
         const errText = await res.text();
         console.error('[sybil-form] HubSpot error', res.status, errText);
-        setErrorMessage('Something went wrong sending your details. Try again, or email hello@sysbilt.com.');
+
+        let detail = '';
+        try {
+          const errJson = JSON.parse(errText);
+          if (errJson.errors && errJson.errors.length > 0) {
+            detail = `: ${errJson.errors[0].message}`;
+            if (errJson.errors[0].name) detail += ` (field: ${errJson.errors[0].name})`;
+          } else if (errJson.message) {
+            detail = `: ${errJson.message}`;
+          }
+        } catch {
+          // not JSON
+        }
+
+        setErrorMessage(
+          `Something went wrong sending your details${detail}. Try again, or email hello@sysbilt.com.`
+        );
         setStatus('error');
       }
     } catch (err) {
@@ -237,6 +255,20 @@ export function SybilContactForm({
       </div>
 
       <div>
+        <label htmlFor="sybil-company" className="mb-1 block font-mono text-[10px] uppercase tracking-[0.15em] text-gold-on-dark">
+          Business or website (optional)
+        </label>
+        <input
+          id="sybil-company"
+          type="text"
+          value={company}
+          onChange={(e) => setCompany(e.target.value)}
+          className={inputCls}
+          placeholder="Company name or website"
+        />
+      </div>
+
+      <div>
         <label htmlFor="sybil-friction" className="mb-1 block font-mono text-[10px] uppercase tracking-[0.15em] text-gold-on-dark">
           What do you need help with?
         </label>
@@ -285,7 +317,7 @@ export function SybilContactForm({
         {status === 'submitting' ? 'SENDING...' : '[ SEND ]'}
       </button>
 
-      <p className="font-sans text-[10px] leading-relaxed text-cream/50">
+      <p className="font-sans text-[10px] text-cream/50 leading-relaxed">
         By sending, you agree to our{' '}
         <a href="/privacy" target="_blank" rel="noopener noreferrer" className="underline hover:text-gold">
           privacy policy
