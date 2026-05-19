@@ -266,8 +266,8 @@ export default function SybilChat() {
     <div
       className={
         isOpen && isFullscreen
-          ? 'fixed inset-0 z-[500] flex min-h-0 flex-col bg-white'
-          : 'fixed bottom-6 right-6 z-50 flex flex-col items-end'
+          ? 'fixed inset-0 z-[9000] flex min-h-0 flex-col bg-white'
+          : 'fixed bottom-6 right-6 z-[9000] flex flex-col items-end'
       }
     >
       {isOpen ? (

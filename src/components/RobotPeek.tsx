@@ -31,13 +31,14 @@ export default function RobotPeek({
 
   const isChat = attachment === 'chat';
 
+  /* Tablet/desktop only: full-size peek is noisy on small phones (Sybil already owns that corner). */
   const pageWrapperClass =
-    'fixed top-[18%] lg:top-[5%] right-0 z-[100] pointer-events-none drop-shadow-2xl flex items-center';
+    'hidden md:flex fixed top-[18%] lg:top-[5%] right-0 z-[100] pointer-events-none drop-shadow-2xl items-center';
 
   /* Chat: viewport-fixed 140px strip; `left = panelLeft - 140` so the strip’s right edge meets the panel’s
      left edge; animate.x slides along X. z-[8] < inner card z-10 so the card paints on top of the overlap. */
   const chatFixedBase =
-    'fixed z-[8] flex h-[160px] w-[140px] items-center justify-end pointer-events-none drop-shadow-2xl';
+    'hidden md:flex fixed z-[8] h-[160px] w-[140px] items-center justify-end pointer-events-none drop-shadow-2xl';
 
   if (isChat && !chatPanelRect) {
     return null;
