@@ -9,6 +9,15 @@ interface ChatMessage {
   text: string;
 }
 
+const SYBIL_INITIAL_GREETING: ChatMessage = {
+  role: 'model',
+  text: "Hi, I'm Sybil. We build systems for Australian businesses to get clients, scale faster, and see clearly. What are you trying to work out?",
+};
+
+function initialMessages(): ChatMessage[] {
+  return [SYBIL_INITIAL_GREETING];
+}
+
 /**
  * Render plain text containing markdown links and bare URLs as a React fragment
  * with real <a> tags opening in a new tab.
@@ -103,6 +112,7 @@ export default function SybilChat() {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [contactFormState, setContactFormState] = useState<'hidden' | 'shown' | 'submitted'>('hidden');
+  const [isCapped, setIsCapped] = useState(false);
   const [peekHiddenByScroll, setPeekHiddenByScroll] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -133,18 +143,20 @@ export default function SybilChat() {
     const saved = localStorage.getItem('sybil_chat_history');
     if (saved) {
       try {
-        setMessages(JSON.parse(saved));
+        const parsed = JSON.parse(saved) as ChatMessage[];
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setMessages(parsed);
+          if (parsed.length >= 40) {
+            setIsCapped(true);
+          }
+        }
       } catch {
         console.error('Failed to parse chat history');
       }
     } else {
-      // Initial greeting
-      const initialMsg: ChatMessage = {
-        role: 'model',
-        text: "Hi, I'm Sybil. We build systems for Australian businesses to get clients, scale faster, and see clearly. What are you trying to work out?",
-      };
-      setMessages([initialMsg]);
-      localStorage.setItem('sybil_chat_history', JSON.stringify([initialMsg]));
+      const greeting = initialMessages();
+      setMessages(greeting);
+      localStorage.setItem('sybil_chat_history', JSON.stringify(greeting));
     }
   }, []);
 
@@ -226,9 +238,18 @@ export default function SybilChat() {
     };
   }, [isOpen, isLoading, input, measurePanel]);
 
+  function resetChat() {
+    const greeting = initialMessages();
+    setMessages(greeting);
+    localStorage.setItem('sybil_chat_history', JSON.stringify(greeting));
+    setIsCapped(false);
+    setContactFormState('hidden');
+    setInput('');
+  }
+
   const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || isLoading) return;
+    if (!input.trim() || isLoading || isCapped) return;
 
     const newMessages = [...messages, { role: 'user' as const, text: input.trim() }];
     setMessages(newMessages);
@@ -246,6 +267,9 @@ export default function SybilChat() {
 
       if (data.reply) {
         setMessages((prev) => [...prev, { role: 'model', text: data.reply }]);
+        if (data.conversationCapped) {
+          setIsCapped(true);
+        }
       } else {
         throw new Error('No reply in response');
       }
@@ -405,23 +429,36 @@ export default function SybilChat() {
 
           {/* Footer Input */}
           <div className="shrink-0 border-t border-zinc-100 bg-white p-3">
-            <form onSubmit={sendMessage} className="relative">
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask about our systems..."
-                className="w-full rounded-lg border-none bg-zinc-100 py-3 pl-4 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900"
-                disabled={isLoading}
-              />
-              <button
-                type="submit"
-                disabled={!input.trim() || isLoading}
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-zinc-400 transition-colors hover:text-zinc-900 disabled:opacity-50"
-              >
-                <Send size={18} />
-              </button>
-            </form>
+            {isCapped ? (
+              <div className="flex flex-col items-center justify-center gap-3 py-2 text-center">
+                <p className="text-xs text-zinc-600">This conversation has reached its limit.</p>
+                <button
+                  type="button"
+                  onClick={resetChat}
+                  className="bg-dark text-cream font-mono text-[10px] font-bold uppercase tracking-[0.2em] px-4 py-3 border-2 border-dark hover:bg-gold hover:text-dark transition-colors"
+                >
+                  Start a New Chat
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={sendMessage} className="relative">
+                <input
+                  type="text"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Ask about our systems..."
+                  className="w-full rounded-lg border-none bg-zinc-100 py-3 pl-4 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900"
+                  disabled={isLoading}
+                />
+                <button
+                  type="submit"
+                  disabled={!input.trim() || isLoading}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-zinc-400 transition-colors hover:text-zinc-900 disabled:opacity-50"
+                >
+                  <Send size={18} />
+                </button>
+              </form>
+            )}
             <div className="mt-2 text-center">
               <span className="text-[10px] text-zinc-400">
                 Responses are AI-generated. A human follows up on serious queries.
