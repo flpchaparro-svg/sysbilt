@@ -4,6 +4,8 @@
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@sanity/client';
+import { Ratelimit } from '@upstash/ratelimit';
+import { Redis } from '@upstash/redis';
 
 // ============================================================
 // CONFIG
@@ -12,11 +14,57 @@ import { createClient } from '@sanity/client';
 const MODEL = 'gemini-2.5-flash';
 const MAX_CONVERSATION_MESSAGES = 40;
 const MAX_INPUT_CHARS_PER_MESSAGE = 1000;
+const RATE_LIMIT_PER_MINUTE = 10;
+const RATE_LIMIT_PER_DAY = 30;
 const MAX_OUTPUT_TOKENS = 400;
 const TEMPERATURE = 0.4;
 const CONTENT_CACHE_MS = 10 * 60 * 1000;
 
 const GEMINI_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
+
+// ============================================================
+// RATE LIMITING (UPSTASH REDIS)
+// Fails open if Upstash env vars are missing or unreachable.
+// ============================================================
+const rateLimitEnabled = Boolean(
+  process.env.SYBIL_UPSTASH_REDIS_REST_URL && process.env.SYBIL_UPSTASH_REDIS_REST_TOKEN
+);
+
+const redis = rateLimitEnabled
+  ? new Redis({
+      url: process.env.SYBIL_UPSTASH_REDIS_REST_URL!,
+      token: process.env.SYBIL_UPSTASH_REDIS_REST_TOKEN!,
+    })
+  : null;
+
+const ratelimitPerMinute = redis
+  ? new Ratelimit({
+      redis,
+      limiter: Ratelimit.slidingWindow(RATE_LIMIT_PER_MINUTE, '60 s'),
+      analytics: true,
+      prefix: 'sybil:minute',
+    })
+  : null;
+
+const ratelimitPerDay = redis
+  ? new Ratelimit({
+      redis,
+      limiter: Ratelimit.slidingWindow(RATE_LIMIT_PER_DAY, '86400 s'),
+      analytics: true,
+      prefix: 'sybil:day',
+    })
+  : null;
+
+function getClientIP(req: VercelRequest): string {
+  const forwarded = req.headers['x-forwarded-for'];
+  if (typeof forwarded === 'string') return forwarded.split(',')[0].trim();
+  if (Array.isArray(forwarded)) {
+    return forwarded[0]?.split(',')[0]?.trim() ?? 'unknown';
+  }
+  const real = req.headers['x-real-ip'];
+  if (typeof real === 'string') return real;
+  return 'unknown';
+}
 
 // ============================================================
 // SANITY CLIENT
@@ -412,6 +460,36 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
     if (m.text.length > MAX_INPUT_CHARS_PER_MESSAGE) {
       return res.status(413).json({ error: 'Message too long' });
+    }
+  }
+
+  // Rate limit check, fails open if Upstash is unreachable
+  if (ratelimitPerMinute && ratelimitPerDay) {
+    try {
+      const ip = getClientIP(req);
+
+      // 1. Check Per-Minute Limit
+      const minuteCheck = await ratelimitPerMinute.limit(ip);
+      if (!minuteCheck.success) {
+        console.warn('[sybil] Rate limit per-minute hit', { ip });
+        return res.status(200).json({
+          reply:
+            "Slow down for a moment, I'm catching up. Try again in a minute, or use [the contact form](https://sysbilt.com/contact) if you want a faster path.",
+        });
+      }
+
+      // 2. Check Per-Day Limit
+      const dayCheck = await ratelimitPerDay.limit(ip);
+      if (!dayCheck.success) {
+        console.warn('[sybil] Rate limit per-day hit', { ip });
+        return res.status(200).json({
+          reply:
+            "You've reached the chat limit for today. If you want to keep going, [the contact form](https://sysbilt.com/contact) goes straight to the team and they reply within 24 hours.\n\n[SHOW_FORM]",
+        });
+      }
+    } catch (err) {
+      // Fail open: log the issue but let the chat continue
+      console.error('[sybil] Rate limit check failed, allowing request', err);
     }
   }
 
