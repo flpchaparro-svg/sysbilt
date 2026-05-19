@@ -38,7 +38,7 @@ const PrivacyPolicyPage: React.FC<PrivacyPolicyPageProps> = ({ onBack }) => {
           <p className="mt-8 font-sans text-lg text-dark/80 max-w-2xl">
             We do not sell your data. We use it to build your system. Here is the plain English explanation of how we handle information on sysbilt.com.
           </p>
-          <p className="mt-4 font-mono text-xs text-dark/50 uppercase tracking-widest">Last updated: 22 April 2026</p>
+          <p className="mt-4 font-mono text-xs text-dark/50 uppercase tracking-widest">Last updated: 19 May 2026</p>
         </div>
 
         <div className="space-y-16 max-w-3xl">
@@ -60,6 +60,10 @@ const PrivacyPolicyPage: React.FC<PrivacyPolicyPageProps> = ({ onBack }) => {
               <li>Understand your current business systems so we can prepare a useful conversation.</li>
               <li>Send you follow-up materials you have asked for, such as an audit or a guide.</li>
               <li>Measure which parts of our site are useful, so we can improve it.</li>
+              <li>
+                Power Sybil, our AI chat assistant. Conversation transcripts are sent to Google Gemini (the AI model) and
+                stored on our HubSpot CRM when you submit your details through the chat form.
+              </li>
             </ul>
             <p className="font-sans text-base text-dark/70 leading-relaxed mt-4">
               We do not sell your data to third-party lead brokers, and we do not share it with anyone who is not directly involved in delivering the work you asked for.
@@ -69,7 +73,8 @@ const PrivacyPolicyPage: React.FC<PrivacyPolicyPageProps> = ({ onBack }) => {
           <section>
             <h2 className="font-serif text-2xl mb-4">3. Tools we use</h2>
             <p className="font-sans text-base text-dark/70 leading-relaxed">
-              Our system runs on a small stack of trusted providers.
+              Our system runs on a small stack of trusted providers. Sybil, our AI chat assistant, runs on Google Gemini
+              for the conversation and HubSpot for storing submitted enquiries.
             </p>
             <ul className="list-disc pl-5 mt-4 space-y-2 font-sans text-base text-dark/70">
               <li>

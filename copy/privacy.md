@@ -9,7 +9,7 @@
 - Eyebrow: `/ LEGAL`
 - Headline: `Privacy Policy.` ("Policy." italic, gold)
 - Intro: `We do not sell your data. We use it to build your system. Here is the plain English explanation of how we handle information on sysbilt.com.`
-- Last updated: `Last updated: 22 April 2026`
+- Last updated: `Last updated: 19 May 2026`
 
 ## Sections
 
@@ -27,12 +27,13 @@ We use your data to:
 - Understand your current business systems so we can prepare a useful conversation.
 - Send you follow-up materials you have asked for, such as an audit or a guide.
 - Measure which parts of our site are useful, so we can improve it.
+- Power Sybil, our AI chat assistant. Conversation transcripts are sent to Google Gemini (the AI model) and stored on our HubSpot CRM when you submit your details through the chat form.
 
 We do not sell your data to third-party lead brokers, and we do not share it with anyone who is not directly involved in delivering the work you asked for.
 
 ### 3. Tools we use
 
-Our system runs on a small stack of trusted providers.
+Our system runs on a small stack of trusted providers. Sybil, our AI chat assistant, runs on Google Gemini for the conversation and HubSpot for storing submitted enquiries.
 
 - **Vercel** hosts the website and processes server logs.
 - **Cloudflare** manages DNS for sysbilt.com.

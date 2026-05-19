@@ -98,7 +98,6 @@ function detectFrictionFromTranscript(msgs: Array<{ role: string; text: string }
 }
 
 export default function SybilChat() {
-  const [isVisible, setIsVisible] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
@@ -110,19 +109,8 @@ export default function SybilChat() {
   const panelRef = useRef<HTMLDivElement>(null);
   const [panelRect, setPanelRect] = useState<{ left: number; top: number; height: number } | null>(null);
 
-  // Only show if ?ai=on is in the URL
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('ai') === 'on') {
-        setIsVisible(true);
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    const shellOpen = isVisible && isOpen;
-    if (shellOpen) {
+    if (isOpen) {
       document.body.dataset.sybilOpen = 'true';
     } else {
       delete document.body.dataset.sybilOpen;
@@ -132,7 +120,7 @@ export default function SybilChat() {
       delete document.body.dataset.sybilOpen;
       window.dispatchEvent(new Event(SYBIL_CHAT_OPEN_CHANGE_EVENT));
     };
-  }, [isVisible, isOpen]);
+  }, [isOpen]);
 
   useEffect(() => {
     window.dispatchEvent(
@@ -142,25 +130,23 @@ export default function SybilChat() {
 
   // Load history from localStorage
   useEffect(() => {
-    if (isVisible) {
-      const saved = localStorage.getItem('sybil_chat_history');
-      if (saved) {
-        try {
-          setMessages(JSON.parse(saved));
-        } catch {
-          console.error('Failed to parse chat history');
-        }
-      } else {
-        // Initial greeting
-        const initialMsg: ChatMessage = {
-          role: 'model',
-          text: "Hi, I'm Sybil. We build systems for Australian businesses to get clients, scale faster, and see clearly. What are you trying to work out?",
-        };
-        setMessages([initialMsg]);
-        localStorage.setItem('sybil_chat_history', JSON.stringify([initialMsg]));
+    const saved = localStorage.getItem('sybil_chat_history');
+    if (saved) {
+      try {
+        setMessages(JSON.parse(saved));
+      } catch {
+        console.error('Failed to parse chat history');
       }
+    } else {
+      // Initial greeting
+      const initialMsg: ChatMessage = {
+        role: 'model',
+        text: "Hi, I'm Sybil. We build systems for Australian businesses to get clients, scale faster, and see clearly. What are you trying to work out?",
+      };
+      setMessages([initialMsg]);
+      localStorage.setItem('sybil_chat_history', JSON.stringify([initialMsg]));
     }
-  }, [isVisible]);
+  }, []);
 
   // Save history on update
   useEffect(() => {
@@ -275,8 +261,6 @@ export default function SybilChat() {
       setIsLoading(false);
     }
   };
-
-  if (!isVisible) return null;
 
   return (
     <div
