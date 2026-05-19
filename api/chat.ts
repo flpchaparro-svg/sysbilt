@@ -571,10 +571,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
   }
 
+  // Up to 3 attempts with exponential backoff on 5xx or network errors
   let geminiRes: Response | Error = await callGemini();
-  if (geminiRes instanceof Error || (geminiRes.status >= 500 && geminiRes.status < 600)) {
-    await new Promise((r) => setTimeout(r, 500));
+  const isFailure = (r: Response | Error): boolean =>
+    r instanceof Error || (r.status >= 500 && r.status < 600);
+
+  if (isFailure(geminiRes)) {
+    await new Promise((r) => setTimeout(r, 600));
     geminiRes = await callGemini();
+    if (isFailure(geminiRes)) {
+      await new Promise((r) => setTimeout(r, 1500));
+      geminiRes = await callGemini();
+    }
   }
 
   if (geminiRes instanceof Error) {
