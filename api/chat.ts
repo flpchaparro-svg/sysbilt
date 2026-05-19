@@ -27,13 +27,13 @@ const GEMINI_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models
 // Fails open if Upstash env vars are missing or unreachable.
 // ============================================================
 const rateLimitEnabled = Boolean(
-  process.env.SYBIL_UPSTASH_REDIS_REST_URL && process.env.SYBIL_UPSTASH_REDIS_REST_TOKEN
+  process.env.SYBIL_KV_REST_API_URL && process.env.SYBIL_KV_REST_API_TOKEN
 );
 
 const redis = rateLimitEnabled
   ? new Redis({
-      url: process.env.SYBIL_UPSTASH_REDIS_REST_URL!,
-      token: process.env.SYBIL_UPSTASH_REDIS_REST_TOKEN!,
+      url: process.env.SYBIL_KV_REST_API_URL!,
+      token: process.env.SYBIL_KV_REST_API_TOKEN!,
     })
   : null;
 
