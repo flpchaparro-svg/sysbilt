@@ -3,20 +3,10 @@
 // Submits to the same HubSpot form as ContactPage so existing automations fire.
 
 import React, { useEffect, useState } from 'react';
+import { DIAGNOSIS_OPTIONS } from '../constants/contactData';
 
 const HUBSPOT_PORTAL_ID = '442914926';
 const HUBSPOT_FORM_ID = 'b73fe2b1-95e1-4d06-b275-349f3ac37386';
-
-const FRICTION_OPTIONS = [
-  'Website & Leads — I need more enquiries',
-  "CRM & Sales — I'm losing track of leads",
-  'Automation — Too much manual work',
-  'AI — I want bots to handle things',
-  "Content — I can't keep up with posting",
-  "Training — My team won't use the tools",
-  "Dashboards — I can't see my numbers",
-  "Not sure — I just know something's broken",
-];
 
 interface ChatMessage {
   role: 'user' | 'model';
@@ -51,26 +41,63 @@ function getConsentState(): string {
   }
 }
 
+/** Matches `useContactForm` / ContactPage mapping for HubSpot `friction_point`. */
 function formatFrictionPoint(val: string): string {
   if (!val) return '';
-  const v = val.toLowerCase();
-  if (v.includes('website') || v.includes('lead')) return 'website_and_leads';
-  if (v.includes('crm') || v.includes('sales')) return 'crm_and_sales';
-  if (v.includes('automation')) return 'automation';
-  if (v.includes(' ai ') || v.startsWith('ai ') || v.includes('ai —')) return 'ai_assistants';
-  if (v.includes('content')) return 'content';
-  if (v.includes('training')) return 'training';
-  if (v.includes('dashboard')) return 'dashboards';
-  return 'not_sure';
+  const lowercased = val.toLowerCase();
+
+  if (lowercased.includes('website') || lowercased.includes('lead')) return 'website_and_leads';
+  if (lowercased.includes('crm') || lowercased.includes('sales')) return 'crm_and_sales';
+  if (lowercased.includes('automation')) return 'automation';
+  if (lowercased.includes('ai')) return 'ai_assistants';
+  if (lowercased.includes('content')) return 'content';
+  if (lowercased.includes('training')) return 'training';
+  if (lowercased.includes('dashboard')) return 'dashboards';
+  if (lowercased.includes('not sure') || lowercased.includes('unsure')) return 'not_sure';
+
+  console.warn('[sybil-form] Unmapped friction point value:', val);
+  return '';
 }
 
-function buildTranscriptText(transcript: ChatMessage[], extraNote: string): string {
-  const formatted = transcript
+function formatTranscriptLines(transcript: ChatMessage[]): string {
+  return transcript
     .map((m) => `${m.role === 'user' ? 'Visitor' : 'Sybil'}: ${m.text.replace('[SHOW_FORM]', '').trim()}`)
     .filter((line) => line.length > 8)
     .join('\n\n');
-  const note = extraNote.trim() ? `Note from visitor:\n${extraNote.trim()}\n\n` : '';
-  return `[Submitted via Sybil chat widget]\n\n${note}Conversation transcript:\n\n${formatted}`;
+}
+
+/** Visitor message (required, like ContactPage) plus transcript for ops context. */
+function buildHubSpotMessage(transcript: ChatMessage[], userMessage: string): string {
+  const body = userMessage.trim();
+  const lines = formatTranscriptLines(transcript);
+  return `[Submitted via Sybil chat widget]\n\n${body}\n\n---\n\nConversation transcript:\n\n${lines || '(no messages in thread)'}`;
+}
+
+/** Same rules as ContactPage `validateField`. */
+function validateField(field: string, value: string): string {
+  if (field === 'name') {
+    if (!value.trim()) return 'Name is required';
+    if (!/^[A-Za-z\s\-']+$/.test(value)) return 'Letters, spaces, and hyphens only';
+  }
+  if (field === 'email') {
+    if (!value.trim()) return 'Email is required';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'Please enter a valid email address';
+  }
+  if (field === 'company') {
+    if (!value.trim()) return 'Business name is required';
+  }
+  if (field === 'phone') {
+    const cleanPhone = value.replace(/\s+/g, '');
+    if (!cleanPhone) return 'Phone number is required';
+    if (!/^(0[23478])\d{8}$/.test(cleanPhone)) return 'Must be a 10-digit Aus number (e.g., 0412 345 678)';
+  }
+  if (field === 'frictionPoint') {
+    if (!value) return 'Please select an option';
+  }
+  if (field === 'message') {
+    if (!value.trim()) return 'Please provide some details';
+  }
+  return '';
 }
 
 export function SybilContactForm({
@@ -85,10 +112,12 @@ export function SybilContactForm({
   const [phone, setPhone] = useState('');
   const [company, setCompany] = useState('');
   const [frictionPoint, setFrictionPoint] = useState(initialFrictionFromContext);
-  const [extraNote, setExtraNote] = useState('');
+  const [message, setMessage] = useState('');
   const [honeypot, setHoneypot] = useState('');
   const [status, setStatus] = useState<'idle' | 'submitting' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -100,6 +129,18 @@ export function SybilContactForm({
     document.addEventListener('keydown', onKeyDown, true);
     return () => document.removeEventListener('keydown', onKeyDown, true);
   }, [onClose]);
+
+  const runValidate = (field: string, value: string): boolean => {
+    const errorMsg = validateField(field, value);
+    setErrors((prev) => ({ ...prev, [field]: errorMsg }));
+    return !errorMsg;
+  };
+
+  const handleBlur = (field: 'name' | 'email' | 'company' | 'phone' | 'frictionPoint' | 'message') => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+    const values = { name, email, company, phone, frictionPoint, message };
+    runValidate(field, values[field]);
+  };
 
   if (isSubmitted) {
     return (
@@ -127,8 +168,24 @@ export function SybilContactForm({
       return;
     }
 
-    if (!name.trim() || !email.trim() || !frictionPoint) {
-      setErrorMessage('Name, email, and what you need help with are required.');
+    const isNameValid = runValidate('name', name);
+    const isEmailValid = runValidate('email', email);
+    const isCompanyValid = runValidate('company', company);
+    const isPhoneValid = runValidate('phone', phone);
+    const isFrictionValid = runValidate('frictionPoint', frictionPoint);
+    const isMessageValid = runValidate('message', message);
+
+    setTouched({
+      name: true,
+      email: true,
+      company: true,
+      phone: true,
+      frictionPoint: true,
+      message: true,
+    });
+
+    if (!isNameValid || !isEmailValid || !isCompanyValid || !isPhoneValid || !isFrictionValid || !isMessageValid) {
+      setErrorMessage('');
       setStatus('error');
       return;
     }
@@ -136,15 +193,15 @@ export function SybilContactForm({
     setStatus('submitting');
     setErrorMessage('');
 
-    const payload = {
+    const hubspotData = {
       fields: [
         { name: 'firstname', value: name.trim() },
         { name: 'email', value: email.trim() },
-        { name: 'phone', value: phone.trim() },
-        { name: 'company', value: company.trim() || 'Not provided via chat' },
-        { name: 'message', value: buildTranscriptText(transcript, extraNote) },
+        { name: 'message', value: buildHubSpotMessage(transcript, message) },
         { name: 'friction_point', value: formatFrictionPoint(frictionPoint) },
         { name: 'lead_source_detail', value: `${window.location.href} (Sybil chat)` },
+        { name: 'company', value: company.trim() },
+        { name: 'phone', value: phone.replace(/\s+/g, '') },
         { name: 'consent_state', value: getConsentState() },
         { name: 'lifecyclestage', value: 'lead' },
       ],
@@ -161,7 +218,7 @@ export function SybilContactForm({
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
+          body: JSON.stringify(hubspotData),
         }
       );
 
@@ -203,10 +260,12 @@ export function SybilContactForm({
 
   const inputCls =
     'w-full border border-cream/30 bg-cream/5 px-3 py-2 font-sans text-sm text-cream placeholder:text-cream/40 transition-colors focus:border-gold focus:outline-none';
+  const fieldErr = (field: string) => touched[field] && errors[field];
 
   return (
     <form
       onSubmit={handleSubmit}
+      noValidate
       className="absolute inset-0 z-20 flex flex-col bg-dark overflow-y-auto p-5 text-cream"
     >
       <div className="flex shrink-0 items-start justify-between gap-3 border-b border-cream/15 pb-4">
@@ -221,132 +280,170 @@ export function SybilContactForm({
       </div>
 
       <div className="flex min-h-0 flex-1 flex-col space-y-5 pt-5">
-
-      <input
-        type="text"
-        name="website_url"
-        value={honeypot}
-        onChange={(e) => setHoneypot(e.target.value)}
-        autoComplete="off"
-        tabIndex={-1}
-        aria-hidden="true"
-        style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', opacity: 0 }}
-      />
-
-      <div>
-        <label htmlFor="sybil-name" className="mb-1 block font-mono text-[10px] uppercase tracking-[0.15em] text-gold-on-dark">
-          Your name
-        </label>
         <input
-          id="sybil-name"
           type="text"
-          required
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className={inputCls}
-          placeholder="Your name"
+          name="website_url"
+          value={honeypot}
+          onChange={(e) => setHoneypot(e.target.value)}
+          autoComplete="off"
+          tabIndex={-1}
+          aria-hidden="true"
+          style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', opacity: 0 }}
         />
-      </div>
 
-      <div>
-        <label htmlFor="sybil-email" className="mb-1 block font-mono text-[10px] uppercase tracking-[0.15em] text-gold-on-dark">
-          Email
-        </label>
-        <input
-          id="sybil-email"
-          type="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className={inputCls}
-          placeholder="you@business.com.au"
-        />
-      </div>
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+          <div>
+            <label htmlFor="sybil-name" className="mb-1 block font-mono text-[10px] uppercase tracking-[0.15em] text-gold-on-dark">
+              Your name<span className="text-gold-on-dark ml-0.5">*</span>
+            </label>
+            <input
+              id="sybil-name"
+              type="text"
+              required
+              value={name}
+              onChange={(e) => {
+                setName(e.target.value);
+                if (touched.name) runValidate('name', e.target.value);
+              }}
+              onBlur={() => handleBlur('name')}
+              className={`${inputCls} ${fieldErr('name') ? 'border-red-solid' : ''}`}
+              placeholder="Your name"
+            />
+            {fieldErr('name') && <p className="mt-1 font-sans text-xs text-red-solid">{errors.name}</p>}
+          </div>
 
-      <div>
-        <label htmlFor="sybil-phone" className="mb-1 block font-mono text-[10px] uppercase tracking-[0.15em] text-gold-on-dark">
-          Phone (optional)
-        </label>
-        <input
-          id="sybil-phone"
-          type="tel"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          className={inputCls}
-          placeholder="Best contact number"
-        />
-      </div>
+          <div>
+            <label htmlFor="sybil-email" className="mb-1 block font-mono text-[10px] uppercase tracking-[0.15em] text-gold-on-dark">
+              Email<span className="text-gold-on-dark ml-0.5">*</span>
+            </label>
+            <input
+              id="sybil-email"
+              type="email"
+              required
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (touched.email) runValidate('email', e.target.value);
+              }}
+              onBlur={() => handleBlur('email')}
+              className={`${inputCls} ${fieldErr('email') ? 'border-red-solid' : ''}`}
+              placeholder="Your email"
+            />
+            {fieldErr('email') && <p className="mt-1 font-sans text-xs text-red-solid">{errors.email}</p>}
+          </div>
+        </div>
 
-      <div>
-        <label htmlFor="sybil-company" className="mb-1 block font-mono text-[10px] uppercase tracking-[0.15em] text-gold-on-dark">
-          Business or website (optional)
-        </label>
-        <input
-          id="sybil-company"
-          type="text"
-          value={company}
-          onChange={(e) => setCompany(e.target.value)}
-          className={inputCls}
-          placeholder="Company name or website"
-        />
-      </div>
+        <div>
+          <label htmlFor="sybil-company" className="mb-1 block font-mono text-[10px] uppercase tracking-[0.15em] text-gold-on-dark">
+            Business<span className="text-gold-on-dark ml-0.5">*</span>
+          </label>
+          <input
+            id="sybil-company"
+            type="text"
+            required
+            value={company}
+            onChange={(e) => {
+              setCompany(e.target.value);
+              if (touched.company) runValidate('company', e.target.value);
+            }}
+            onBlur={() => handleBlur('company')}
+            className={`${inputCls} ${fieldErr('company') ? 'border-red-solid' : ''}`}
+            placeholder="Company name or website"
+          />
+          {fieldErr('company') && <p className="mt-1 font-sans text-xs text-red-solid">{errors.company}</p>}
+        </div>
 
-      <div>
-        <label htmlFor="sybil-friction" className="mb-1 block font-mono text-[10px] uppercase tracking-[0.15em] text-gold-on-dark">
-          What do you need help with?
-        </label>
-        <select
-          id="sybil-friction"
-          required
-          value={frictionPoint}
-          onChange={(e) => setFrictionPoint(e.target.value)}
-          className={`${inputCls} cursor-pointer`}
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+          <div>
+            <label htmlFor="sybil-phone" className="mb-1 block font-mono text-[10px] uppercase tracking-[0.15em] text-gold-on-dark">
+              Phone number<span className="text-gold-on-dark ml-0.5">*</span>
+            </label>
+            <input
+              id="sybil-phone"
+              type="tel"
+              required
+              value={phone}
+              onChange={(e) => {
+                setPhone(e.target.value);
+                if (touched.phone) runValidate('phone', e.target.value);
+              }}
+              onBlur={() => handleBlur('phone')}
+              className={`${inputCls} ${fieldErr('phone') ? 'border-red-solid' : ''}`}
+              placeholder="Your best number"
+            />
+            {fieldErr('phone') && <p className="mt-1 font-sans text-xs text-red-solid">{errors.phone}</p>}
+          </div>
+
+          <div>
+            <label htmlFor="sybil-friction" className="mb-1 block font-mono text-[10px] uppercase tracking-[0.15em] text-gold-on-dark">
+              What do you need help with?<span className="text-gold-on-dark ml-0.5">*</span>
+            </label>
+            <select
+              id="sybil-friction"
+              required
+              value={frictionPoint}
+              onChange={(e) => {
+                setFrictionPoint(e.target.value);
+                if (touched.frictionPoint) runValidate('frictionPoint', e.target.value);
+              }}
+              onBlur={() => handleBlur('frictionPoint')}
+              className={`${inputCls} cursor-pointer ${fieldErr('frictionPoint') ? 'border-red-solid' : ''}`}
+            >
+              <option value="" disabled>
+                Pick the closest match
+              </option>
+              {DIAGNOSIS_OPTIONS.map((o) => (
+                <option key={o} value={o} className="bg-dark text-cream">
+                  {o}
+                </option>
+              ))}
+            </select>
+            {fieldErr('frictionPoint') && <p className="mt-1 font-sans text-xs text-red-solid">{errors.frictionPoint}</p>}
+          </div>
+        </div>
+
+        <div>
+          <label htmlFor="sybil-message" className="mb-1 block font-mono text-[10px] uppercase tracking-[0.15em] text-gold-on-dark">
+            Anything else?<span className="text-gold-on-dark ml-0.5">*</span>
+          </label>
+          <textarea
+            id="sybil-message"
+            rows={3}
+            required
+            value={message}
+            onChange={(e) => {
+              setMessage(e.target.value);
+              if (touched.message) runValidate('message', e.target.value);
+            }}
+            onBlur={() => handleBlur('message')}
+            className={`${inputCls} resize-none ${fieldErr('message') ? 'border-red-solid' : ''}`}
+            placeholder="Tell us a bit about your situation."
+          />
+          <p className="mt-1 font-sans text-[10px] text-cream/50">
+            Same fields as the contact page. Your chat transcript is appended when you send.
+          </p>
+          {fieldErr('message') && <p className="mt-1 font-sans text-xs text-red-solid">{errors.message}</p>}
+        </div>
+
+        {status === 'error' && errorMessage && (
+          <div className="border border-red-solid bg-red-solid/10 p-2 font-sans text-xs text-red-solid">{errorMessage}</div>
+        )}
+
+        <button
+          type="submit"
+          disabled={status === 'submitting'}
+          className="w-full border-2 border-gold bg-gold px-4 py-3 font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark transition-colors hover:border-cream hover:bg-cream disabled:cursor-wait disabled:opacity-50"
         >
-          <option value="" disabled>
-            Pick the closest match
-          </option>
-          {FRICTION_OPTIONS.map((o) => (
-            <option key={o} value={o} className="bg-dark text-cream">
-              {o}
-            </option>
-          ))}
-        </select>
-      </div>
+          {status === 'submitting' ? 'SENDING...' : '[ SEND ]'}
+        </button>
 
-      <div>
-        <label htmlFor="sybil-note" className="mb-1 block font-mono text-[10px] uppercase tracking-[0.15em] text-gold-on-dark">
-          Anything to add? (optional)
-        </label>
-        <textarea
-          id="sybil-note"
-          rows={2}
-          value={extraNote}
-          onChange={(e) => setExtraNote(e.target.value)}
-          className={`${inputCls} resize-none`}
-          placeholder="Anything else the team should know."
-        />
-        <p className="mt-1 font-sans text-[10px] text-cream/50">Our chat goes through with your details so the team has the full picture.</p>
-      </div>
-
-      {status === 'error' && errorMessage && (
-        <div className="border border-red-solid bg-red-solid/10 p-2 font-sans text-xs text-red-solid">{errorMessage}</div>
-      )}
-
-      <button
-        type="submit"
-        disabled={status === 'submitting'}
-        className="w-full border-2 border-gold bg-gold px-4 py-3 font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark transition-colors hover:border-cream hover:bg-cream disabled:cursor-wait disabled:opacity-50"
-      >
-        {status === 'submitting' ? 'SENDING...' : '[ SEND ]'}
-      </button>
-
-      <p className="font-sans text-[10px] text-cream/50 leading-relaxed">
-        By sending, you agree to our{' '}
-        <a href="/privacy" target="_blank" rel="noopener noreferrer" className="underline hover:text-gold">
-          privacy policy
-        </a>
-        . The team replies within 24 hours.
-      </p>
+        <p className="font-sans text-[10px] text-cream/50 leading-relaxed">
+          By sending, you agree to our{' '}
+          <a href="/privacy" target="_blank" rel="noopener noreferrer" className="underline hover:text-gold">
+            privacy policy
+          </a>
+          . The team replies within 24 hours.
+        </p>
       </div>
     </form>
   );
