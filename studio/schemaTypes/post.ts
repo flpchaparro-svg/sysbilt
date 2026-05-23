@@ -202,7 +202,7 @@ export default defineType({
       description: 'Which persona is this post written for? Pick one.',
       options: {
         list: [
-          {title: 'The Visionary Operator', value: 'The Visionary Operator'},
+          {title: 'The Visionary', value: 'The Visionary'},
           {title: 'The Builder', value: 'The Builder'},
           {title: 'The Scaler', value: 'The Scaler'},
           {title: 'The Controller', value: 'The Controller'},
