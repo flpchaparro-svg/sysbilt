@@ -145,6 +145,7 @@ export interface DeepAuditData {
 export interface DeepAuditReportPayload {
   contact_email: string;
   company_name: string;
+  contact_first_name?: string;
   audit_data: DeepAuditData;
 }
 
@@ -485,6 +486,7 @@ export function normalizeDeepAuditReportPayload(raw: unknown): DeepAuditReportPa
   const o = raw as Record<string, unknown>;
   const contact = str(o.contact_email).trim();
   const company = str(o.company_name).trim();
+  const contactFirstName = str(o.contact_first_name).trim();
   if (!contact || !company) return null;
   const audit = o.audit_data;
   if (audit == null || typeof audit !== 'object' || Array.isArray(audit)) return null;
@@ -494,6 +496,7 @@ export function normalizeDeepAuditReportPayload(raw: unknown): DeepAuditReportPa
   return {
     contact_email: contact,
     company_name: company,
+    contact_first_name: contactFirstName,
     audit_data: {
       diagnosis,
       how_they_find_you: parseFindYou(a.how_they_find_you),

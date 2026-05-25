@@ -75,7 +75,7 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
   const find = audit.how_they_find_you;
   const perceive = audit.how_they_perceive_you;
   const say = audit.what_people_say;
-  const firstName = firstNameFromEmail(contact_email);
+  const firstName = data.contact_first_name?.trim() || firstNameFromEmail(contact_email);
 
   return (
     <div className="min-h-screen bg-dark font-sans text-white selection:bg-gold-on-dark/30 selection:text-dark">

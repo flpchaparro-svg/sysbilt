@@ -20,12 +20,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const body = (req.body ?? {}) as {
     contact_email?: unknown;
     company_name?: unknown;
+    contact_first_name?: unknown;
     audit_data?: unknown;
   };
 
   const contactEmail =
     typeof body.contact_email === 'string' ? body.contact_email.trim() : '';
   const companyName = typeof body.company_name === 'string' ? body.company_name.trim() : '';
+  const contactFirstName =
+    typeof body.contact_first_name === 'string' ? body.contact_first_name.trim() : '';
   const auditData = body.audit_data;
 
   if (!contactEmail) {
@@ -49,6 +52,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const record: DeepAuditReportRecord = {
     contact_email: contactEmail,
     company_name: companyName,
+    ...(contactFirstName ? { contact_first_name: contactFirstName } : {}),
     audit_data: auditData,
   };
 

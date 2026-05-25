@@ -36,6 +36,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     res.status(200).json({
       contact_email: record.contact_email,
       company_name: record.company_name,
+      contact_first_name: record.contact_first_name,
       audit_data: record.audit_data,
     });
   } catch (err) {

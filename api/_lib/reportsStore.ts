@@ -7,6 +7,7 @@ const KEY_PREFIX = 'deepAudit:';
 export interface DeepAuditReportRecord {
   contact_email: string;
   company_name: string;
+  contact_first_name?: string;
   audit_data: unknown;
 }
 
