@@ -139,8 +139,20 @@ const GUIDE_IMAGE_RATIO_CLASS: Record<NonNullable<ImagePlaceholderBlock['ratio']
 const PRINT_PAGE_SHELL =
   'print-page relative flex w-full max-w-[794px] min-h-[100svh] h-[100svh] md:h-[1123px] md:min-h-0 md:flex-shrink-0 flex-col overflow-hidden bg-[#FFF2EC] text-[#1a1a1a] shadow-neu border border-white/40'
 
-type GuideImageOrientation = 'landscape' | 'portrait' | 'square'
-
+/**
+ * Guide image layout (A4 page shell)
+ *
+ * Page shell: fixed height → header/footer shrink-0 → main flex-1 min-h-0.
+ *
+ * Two page modes (set via `fillPage`):
+ * - solo (`fillPage=true`): image is the only block; may grow into remaining main height.
+ * - shared (`fillPage=false`): text/callouts are flex-shrink-0; image block flex-1 min-h-0
+ *   and shrinks so caption + footer are never clipped.
+ *
+ * Image sizing: slot is a bounded box (absolute inset-0 inside flex-1). Frame + img use
+ * max-width/max-height 100% + object-contain — no orientation-specific width/height rules,
+ * no Sanity ratio, never object-cover.
+ */
 type GuidePageImageProps = {
   imageSrc: string
   altText: string
@@ -150,48 +162,28 @@ type GuidePageImageProps = {
 }
 
 function GuidePageImage({imageSrc, altText, caption, fillPage = false}: GuidePageImageProps) {
-  const [orientation, setOrientation] = React.useState<GuideImageOrientation>('landscape')
-
   return (
     <div
-      className={`guide-image-fill w-full flex flex-col min-h-0 ${
-        fillPage ? 'my-4 flex-1 md:my-6' : 'my-4 flex-1'
-      }`}
+      className="guide-image-block my-4 flex min-h-0 w-full flex-1 flex-col md:my-6"
       data-fill={fillPage ? 'true' : 'false'}
     >
-      <div className="guide-image-slot flex min-h-0 w-full flex-1 items-center justify-center">
-        <figure
-          className={`guide-image-frame max-h-full max-w-full rounded-[16px] bg-[#FFF2EC] p-2 shadow-neu border border-white/50 md:rounded-[24px] md:p-3 ${
-            orientation === 'portrait' ? 'h-full' : 'w-full'
-          }`}
-        >
-          <div
-            className={`overflow-hidden rounded-xl border border-black/5 bg-[#FFF2EC] shadow-neu-inner leading-[0] ${
-              orientation === 'portrait' ? 'h-full' : ''
-            }`}
-          >
-            <img
-              src={imageSrc}
-              alt={altText}
-              data-orient={orientation}
-              className="guide-uploaded-image"
-              onLoad={(event) => {
-                const {naturalWidth, naturalHeight} = event.currentTarget
-                if (naturalWidth <= 0 || naturalHeight <= 0) return
-                if (naturalHeight > naturalWidth) {
-                  setOrientation('portrait')
-                } else if (naturalWidth > naturalHeight) {
-                  setOrientation('landscape')
-                } else {
-                  setOrientation('square')
-                }
-              }}
-            />
-          </div>
-        </figure>
+      <div className="guide-image-slot relative min-h-0 w-full min-w-0 flex-1">
+        <div className="guide-image-bounds absolute inset-0 overflow-hidden">
+          <figure className="guide-image-frame m-0 rounded-[16px] bg-[#FFF2EC] p-2 shadow-neu border border-white/50 md:rounded-[24px] md:p-3">
+            <div className="guide-image-inner overflow-hidden rounded-xl border border-black/5 bg-[#FFF2EC] shadow-neu-inner leading-[0]">
+              <img
+                src={imageSrc}
+                alt={altText}
+                className="guide-image-img"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+          </figure>
+        </div>
       </div>
       {caption ? (
-        <p className="mt-4 flex-shrink-0 px-4 text-center font-sans text-[12.5px] md:text-[13.5px] italic text-[#1a1a1a]/60">
+        <p className="guide-image-caption mt-4 flex-shrink-0 px-4 text-center font-sans text-[12.5px] md:text-[13.5px] italic text-[#1a1a1a]/60">
           {caption}
         </p>
       ) : null}
@@ -947,81 +939,56 @@ const GUIDE_STYLES = `
   pointer-events: none;
 }
 
-/* Uploaded guide images: size from the file — not the Sanity ratio dropdown */
-.guide-root .guide-uploaded-image {
+/* --- Guide image layout (see GuidePageImage comment) --- */
+
+.guide-root .guide-image-block {
+  min-height: 0;
+}
+
+.guide-root .guide-image-slot {
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+}
+
+/* Bounded box: slot height comes from flex; inset-0 gives explicit limits */
+.guide-root .guide-image-bounds {
+  container-type: size;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Frame shrink-wraps the image; never exceeds the bounded slot */
+.guide-root .guide-image-frame {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.guide-root .guide-image-inner {
+  max-width: calc(100cqw - 1.5rem);
+  max-height: calc(100cqh - 1.5rem);
+}
+
+.guide-root .guide-image-img {
   display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
   object-position: center;
 }
 
-/* Mixed-content pages: image shrinks into remaining space above caption/footer */
+/* Mixed-content pages: siblings keep their height; only the image block shrinks */
 .guide-root .guide-page-flow > * {
   flex-shrink: 0;
 }
 
-.guide-root .guide-page-flow > .guide-image-fill[data-fill='false'] {
+.guide-root .guide-page-flow > .guide-image-block[data-fill='false'] {
   flex: 1 1 auto;
   min-height: 0;
   flex-shrink: 1;
-}
-
-.guide-root .guide-image-fill[data-fill='false'] .guide-image-slot {
-  flex: 1 1 auto;
-  min-height: 0;
-}
-
-.guide-root .guide-image-fill[data-fill='false'] .guide-image-frame {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  max-height: 100%;
-}
-
-.guide-root .guide-image-fill[data-fill='false'] .guide-uploaded-image[data-orient='landscape'],
-.guide-root .guide-image-fill[data-fill='false'] .guide-uploaded-image[data-orient='square'] {
-  width: 100%;
-  height: auto;
-  max-height: 100%;
-}
-
-.guide-root .guide-image-fill[data-fill='false'] .guide-uploaded-image[data-orient='portrait'] {
-  width: auto;
-  height: 100%;
-  max-width: 100%;
-  max-height: 100%;
-}
-
-/* Image-only page: expand into available page height */
-.guide-root .guide-image-fill[data-fill='true'] {
-  min-height: 0;
-}
-
-.guide-root .guide-image-fill[data-fill='true'] .guide-image-slot {
-  min-height: 0;
-}
-
-.guide-root .guide-image-fill[data-fill='true'] .guide-uploaded-image[data-orient='landscape'],
-.guide-root .guide-image-fill[data-fill='true'] .guide-uploaded-image[data-orient='square'] {
-  width: 100%;
-  height: auto;
-  max-height: 100%;
-}
-
-.guide-root .guide-image-fill[data-fill='true'] .guide-uploaded-image[data-orient='portrait'] {
-  width: auto;
-  height: 100%;
-  max-width: 100%;
-  max-height: 100%;
-}
-
-@media (min-width: 768px) {
-  .guide-root main:has(.guide-image-fill[data-fill='true']) > div {
-    min-height: 0;
-  }
-
-  .guide-root .guide-image-fill[data-fill='true'] .guide-image-slot {
-    height: 100%;
-  }
 }
 
 /* Print Styles for Save as PDF */
@@ -1104,18 +1071,10 @@ const GUIDE_STYLES = `
     -webkit-filter: none !important;
   }
 
-  .guide-root .guide-uploaded-image[data-orient='landscape'],
-  .guide-root .guide-uploaded-image[data-orient='square'] {
-    width: 100% !important;
-    height: auto !important;
-    max-height: 680px !important;
-  }
-
-  .guide-root .guide-uploaded-image[data-orient='portrait'] {
-    width: auto !important;
-    height: 680px !important;
+  .guide-root .guide-image-img {
     max-width: 100% !important;
-    max-height: 680px !important;
+    max-height: 100% !important;
+    object-fit: contain !important;
   }
   
   /* Force text rendering back to normal */
