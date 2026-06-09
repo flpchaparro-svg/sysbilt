@@ -139,75 +139,46 @@ const GUIDE_IMAGE_RATIO_CLASS: Record<NonNullable<ImagePlaceholderBlock['ratio']
 const PRINT_PAGE_SHELL =
   'print-page relative flex w-full max-w-[794px] min-h-[100svh] h-[100svh] md:h-[1123px] md:min-h-0 md:flex-shrink-0 flex-col overflow-hidden bg-[#FFF2EC] text-[#1a1a1a] shadow-neu border border-white/40'
 
-function parseRatioNumbers(ratio?: ImagePlaceholderBlock['ratio']): [number, number] {
-  const value = ratio ?? '16:9'
-  const [w, h] = value.split(':').map(Number)
-  return [w, h]
-}
-
-function getGuideImageFrameClasses(
-  ratio?: ImagePlaceholderBlock['ratio'],
-  naturalWidth?: number,
-  naturalHeight?: number,
-): string {
-  const base =
-    'relative mx-auto max-w-full flex-shrink min-h-0 rounded-[16px] bg-[#FFF2EC] p-2 shadow-neu border border-white/50 md:rounded-[24px] md:p-3'
-
-  const width = naturalWidth && naturalWidth > 0 ? naturalWidth : parseRatioNumbers(ratio)[0]
-  const height = naturalHeight && naturalHeight > 0 ? naturalHeight : parseRatioNumbers(ratio)[1]
-  const isPortrait = height > width
-
-  if (isPortrait) {
-    return `${base} w-full md:h-full md:w-auto`
-  }
-
-  return `${base} w-full`
-}
-
-function getGuideImageAspectStyle(
-  ratio?: ImagePlaceholderBlock['ratio'],
-  naturalWidth?: number,
-  naturalHeight?: number,
-): React.CSSProperties {
-  if (naturalWidth && naturalHeight && naturalWidth > 0 && naturalHeight > 0) {
-    return {aspectRatio: `${naturalWidth} / ${naturalHeight}`}
-  }
-
-  const [w, h] = parseRatioNumbers(ratio)
-  return {aspectRatio: `${w} / ${h}`}
-}
+type GuideImageOrientation = 'landscape' | 'portrait' | 'square'
 
 type GuidePageImageProps = {
   imageSrc: string
   altText: string
-  ratio?: ImagePlaceholderBlock['ratio']
   caption?: string
 }
 
-function GuidePageImage({imageSrc, altText, ratio, caption}: GuidePageImageProps) {
-  const [naturalSize, setNaturalSize] = React.useState<{width: number; height: number} | null>(null)
+function GuidePageImage({imageSrc, altText, caption}: GuidePageImageProps) {
+  const [orientation, setOrientation] = React.useState<GuideImageOrientation>('landscape')
 
-  const frameClass = getGuideImageFrameClasses(ratio, naturalSize?.width, naturalSize?.height)
-  const aspectStyle = getGuideImageAspectStyle(ratio, naturalSize?.width, naturalSize?.height)
+  const isPortrait = orientation === 'portrait'
 
   return (
-    <div className="my-6 flex w-full flex-col items-center justify-center md:flex-1 md:min-h-0">
-      <div className={frameClass}>
-        <div
-          className="relative w-full overflow-hidden rounded-xl border border-black/5 bg-[#FFF2EC] shadow-neu-inner"
-          style={aspectStyle}
-        >
-          <img
-            src={imageSrc}
-            alt={altText}
-            className="block h-full w-full object-contain object-center"
-            onLoad={(event) => {
-              const img = event.currentTarget
-              if (img.naturalWidth > 0 && img.naturalHeight > 0) {
-                setNaturalSize({width: img.naturalWidth, height: img.naturalHeight})
-              }
-            }}
-          />
+    <div className="guide-image-fill my-4 flex w-full flex-1 flex-col items-center justify-center min-h-0 md:my-6">
+      <div className="guide-image-slot flex w-full flex-1 min-h-0 items-center justify-center">
+        <div className="inline-flex max-h-full max-w-full rounded-[16px] bg-[#FFF2EC] p-2 shadow-neu border border-white/50 md:rounded-[24px] md:p-3">
+          <div className="overflow-hidden rounded-xl border border-black/5 bg-[#FFF2EC] shadow-neu-inner">
+            <img
+              src={imageSrc}
+              alt={altText}
+              data-orient={orientation}
+              className={`guide-uploaded-image block object-contain object-center ${
+                isPortrait
+                  ? 'h-auto max-h-[min(72svh,760px)] w-auto max-w-full md:h-full md:max-h-full'
+                  : 'h-auto w-full max-w-full max-h-[min(72svh,760px)] md:max-h-full'
+              }`}
+              onLoad={(event) => {
+                const {naturalWidth, naturalHeight} = event.currentTarget
+                if (naturalWidth <= 0 || naturalHeight <= 0) return
+                if (naturalHeight > naturalWidth) {
+                  setOrientation('portrait')
+                } else if (naturalWidth > naturalHeight) {
+                  setOrientation('landscape')
+                } else {
+                  setOrientation('square')
+                }
+              }}
+            />
+          </div>
         </div>
       </div>
       {caption ? (
@@ -674,12 +645,7 @@ function renderCustomBlock(block: GuideContentBlock, key: number): React.ReactNo
       if (imageSrc) {
         return (
           <React.Fragment key={key}>
-            <GuidePageImage
-              imageSrc={imageSrc}
-              altText={altText}
-              ratio={p.ratio}
-              caption={p.caption}
-            />
+            <GuidePageImage imageSrc={imageSrc} altText={altText} caption={p.caption} />
           </React.Fragment>
         )
       }
@@ -929,6 +895,25 @@ const GUIDE_STYLES = `
   pointer-events: none;
 }
 
+/* Uploaded guide images: ignore Sanity ratio — size from the file itself */
+.guide-root .guide-image-fill {
+  min-height: 0;
+}
+
+.guide-root .guide-image-slot {
+  min-height: 0;
+}
+
+@media (min-width: 768px) {
+  .guide-root main:has(.guide-image-fill) > div {
+    min-height: 0;
+  }
+
+  .guide-root .guide-image-slot {
+    height: 100%;
+  }
+}
+
 /* Print Styles for Save as PDF */
 @media print {
   @page {
@@ -1007,6 +992,19 @@ const GUIDE_STYLES = `
   .print-page {
     filter: none !important;
     -webkit-filter: none !important;
+  }
+
+  .guide-root .guide-uploaded-image[data-orient='landscape'],
+  .guide-root .guide-uploaded-image[data-orient='square'] {
+    width: 100% !important;
+    height: auto !important;
+    max-height: 720px !important;
+  }
+
+  .guide-root .guide-uploaded-image[data-orient='portrait'] {
+    height: 720px !important;
+    width: auto !important;
+    max-width: 100% !important;
   }
   
   /* Force text rendering back to normal */

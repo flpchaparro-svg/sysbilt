@@ -152,6 +152,8 @@ export default defineType({
           name: 'ratio',
           type: 'string',
           title: 'Aspect ratio',
+          description:
+            'Placeholder only — shown before an image is uploaded. Once uploaded, the live guide sizes the frame from the image file itself; this field is ignored.',
           options: {
             list: [
               {title: '16:9', value: '16:9'},
