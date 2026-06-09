@@ -136,6 +136,23 @@ const GUIDE_IMAGE_RATIO_CLASS: Record<NonNullable<ImagePlaceholderBlock['ratio']
   '9:16': 'aspect-[9/16]',
 }
 
+const GUIDE_IMAGE_FRAME_BASE =
+  'relative mx-auto max-w-full flex-shrink min-h-0 rounded-[16px] bg-[#FFF2EC] p-2 shadow-neu border border-white/50 md:rounded-[24px] md:p-3'
+
+/** Portrait ratios grow from page height; landscape/square grow from page width. */
+function getGuideImageFrameClasses(ratio?: ImagePlaceholderBlock['ratio']): string {
+  const key = ratio ?? '16:9'
+  const ratioClass = GUIDE_IMAGE_RATIO_CLASS[key] ?? 'aspect-video'
+  const [w, h] = key.split(':').map(Number)
+  const isPortrait = h > w
+
+  if (isPortrait) {
+    return `${GUIDE_IMAGE_FRAME_BASE} w-full md:h-full md:w-auto ${ratioClass}`
+  }
+
+  return `${GUIDE_IMAGE_FRAME_BASE} w-full md:max-h-full ${ratioClass}`
+}
+
 const GUIDE_BY_SLUG_QUERY = `*[_type == "guide" && slug.current == $slug && !(_id in path("drafts.**"))][0]{
   title,
   subtitle,
@@ -582,17 +599,20 @@ function renderCustomBlock(block: GuideContentBlock, key: number): React.ReactNo
     }
     case 'imagePlaceholder': {
       const p = block as ImagePlaceholderBlock
-      const ratioClass = GUIDE_IMAGE_RATIO_CLASS[p.ratio ?? '16:9'] ?? 'aspect-video'
+      const frameClass = getGuideImageFrameClasses(p.ratio)
+      const [ratioW, ratioH] = (p.ratio ?? '16:9').split(':').map(Number)
+      const isPortrait = ratioH > ratioW
 
       const hasAsset = Boolean(p.image?.asset?._ref)
       const imageSrc = hasAsset && p.image ? urlFor(p.image).width(1800).fit('max').url() : null
       const altText = (p.image?.alt ?? p.caption ?? '').trim() || ''
 
       return (
-        <div key={key} className="my-4 flex w-full flex-col items-center justify-center md:my-6 md:flex-1 md:min-h-0">
-          <div
-            className={`relative mx-auto w-full max-w-full flex-shrink min-h-0 rounded-[16px] bg-[#FFF2EC] p-2 shadow-neu border border-white/50 md:w-auto md:max-h-full md:h-full md:rounded-[24px] md:p-3 ${ratioClass}`}
-          >
+        <div
+          key={key}
+          className={`my-4 flex w-full flex-col items-center justify-center md:my-6 md:min-h-0 ${isPortrait ? 'md:flex-1' : ''}`}
+        >
+          <div className={frameClass}>
             <div className="relative flex h-full w-full items-center justify-center rounded-xl border border-black/5 bg-[#FFF8F5] shadow-neu-inner">
               {imageSrc ? (
                 <img
