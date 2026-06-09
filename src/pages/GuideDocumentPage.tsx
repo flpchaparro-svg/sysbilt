@@ -149,20 +149,47 @@ type GuidePageImageProps = {
 
 /** Original neumorphic frame markup; only sizing/flex behaviour changed (object-contain, flex shrink). */
 function GuidePageImage({imageSrc, altText, caption, fillPage = false}: GuidePageImageProps) {
+  const [orientation, setOrientation] = React.useState<'landscape' | 'portrait' | 'square'>('landscape')
+
   return (
     <div
       className="guide-image-wrap my-6 flex w-full flex-1 min-h-0 flex-col items-center justify-center"
       data-fill={fillPage ? 'true' : 'false'}
     >
-      <div className="guide-image-outer relative mx-auto flex min-h-0 max-h-full w-full max-w-full flex-1 flex-shrink flex-col p-2 md:p-3 rounded-[16px] md:rounded-[24px] bg-[#FFF2EC] shadow-neu border border-white/50">
-        <div className="relative flex min-h-0 w-full flex-1 items-center justify-center overflow-hidden rounded-xl border border-black/5 bg-[#FFF8F5] shadow-neu-inner">
-          <img
-            src={imageSrc}
-            alt={altText}
-            className="guide-image-img"
-            loading="lazy"
-            decoding="async"
-          />
+      <div className="guide-image-stage flex min-h-0 w-full flex-1 items-center justify-center">
+        <div
+          className={`guide-image-outer relative mx-auto min-h-0 max-h-full max-w-full flex-shrink p-2 md:p-3 rounded-[16px] md:rounded-[24px] bg-[#FFF2EC] shadow-neu border border-white/50 ${
+            orientation === 'portrait' ? 'h-full w-auto' : 'w-full'
+          }`}
+        >
+          <div
+            className={`relative min-h-0 max-h-full w-full overflow-hidden rounded-xl border border-black/5 bg-[#FFF8F5] shadow-neu-inner ${
+              orientation === 'portrait' ? 'h-full' : ''
+            }`}
+          >
+            <img
+              src={imageSrc}
+              alt={altText}
+              className={`guide-image-img ${
+                orientation === 'portrait'
+                  ? 'block h-full w-auto max-w-full'
+                  : 'block h-auto w-full'
+              }`}
+              loading="lazy"
+              decoding="async"
+              onLoad={(event) => {
+                const {naturalWidth, naturalHeight} = event.currentTarget
+                if (!naturalWidth || !naturalHeight) return
+                if (naturalHeight > naturalWidth) {
+                  setOrientation('portrait')
+                } else if (naturalWidth > naturalHeight) {
+                  setOrientation('landscape')
+                } else {
+                  setOrientation('square')
+                }
+              }}
+            />
+          </div>
         </div>
       </div>
       {caption ? (
@@ -924,9 +951,6 @@ const GUIDE_STYLES = `
 
 /* Uploaded images: full file visible inside original frame; shrink on busy pages */
 .guide-root .guide-image-img {
-  display: block;
-  width: auto;
-  height: auto;
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;

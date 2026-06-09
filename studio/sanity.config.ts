@@ -1,6 +1,7 @@
 import {defineConfig} from 'sanity'
 import {structureTool} from 'sanity/structure'
 import {visionTool} from '@sanity/vision'
+import {media} from 'sanity-plugin-media'
 import {schemaTypes} from './schemaTypes'
 import {table} from '@sanity/table'
 import {codeInput} from '@sanity/code-input'
@@ -13,10 +14,11 @@ export default defineConfig({
   dataset: 'production',
 
   plugins: [
-    structureTool(), 
+    structureTool(),
     visionTool(),
-    table(), 
-    codeInput() 
+    table(),
+    codeInput(),
+    media(),
   ],
 
   schema: {
