@@ -154,20 +154,22 @@ function GuidePageImage({imageSrc, altText, caption, fillPage = false}: GuidePag
 
   return (
     <div
-      className={`guide-image-fill w-full ${fillPage ? 'my-4 flex flex-1 flex-col min-h-0 md:my-6' : 'my-6'}`}
+      className={`guide-image-fill w-full flex flex-col min-h-0 ${
+        fillPage ? 'my-4 flex-1 md:my-6' : 'my-4 flex-1'
+      }`}
       data-fill={fillPage ? 'true' : 'false'}
     >
-      <div
-        className={`guide-image-slot w-full ${
-          fillPage ? 'flex min-h-0 flex-1 items-center justify-center' : 'flex justify-center'
-        }`}
-      >
+      <div className="guide-image-slot flex min-h-0 w-full flex-1 items-center justify-center">
         <figure
-          className={`guide-image-frame max-w-full rounded-[16px] bg-[#FFF2EC] p-2 shadow-neu border border-white/50 md:rounded-[24px] md:p-3 ${
-            orientation === 'portrait' && !fillPage ? 'inline-block' : 'w-full'
-          } ${fillPage ? 'max-h-full' : ''}`}
+          className={`guide-image-frame max-h-full max-w-full rounded-[16px] bg-[#FFF2EC] p-2 shadow-neu border border-white/50 md:rounded-[24px] md:p-3 ${
+            orientation === 'portrait' ? 'h-full' : 'w-full'
+          }`}
         >
-          <div className="overflow-hidden rounded-xl border border-black/5 bg-[#FFF2EC] shadow-neu-inner leading-[0]">
+          <div
+            className={`overflow-hidden rounded-xl border border-black/5 bg-[#FFF2EC] shadow-neu-inner leading-[0] ${
+              orientation === 'portrait' ? 'h-full' : ''
+            }`}
+          >
             <img
               src={imageSrc}
               alt={altText}
@@ -699,11 +701,23 @@ function renderCustomBlock(
 
 // --- A4 shell ---
 
+type PageContentLayout = 'center' | 'flow'
+
+function pageContentLayout(blocks: GuideContentBlock[]): PageContentLayout {
+  if (blocks.length === 1) {
+    const blockType = blocks[0]._type
+    if (blockType === 'sectionCover' || blockType === 'imagePlaceholder') return 'center'
+  }
+  if (blocks.length > 1) return 'flow'
+  return 'center'
+}
+
 type PageContainerProps = {
   pageIndex: number
   totalPages: number
   badgeLabel?: string | null
   badgeLink?: string
+  contentLayout?: PageContentLayout
   children: React.ReactNode
 }
 
@@ -831,7 +845,16 @@ function CoverPage({ guideData }: { guideData: GuideDocument }) {
   )
 }
 
-function PageContainer({pageIndex, totalPages, badgeLabel, badgeLink, children}: PageContainerProps) {
+function PageContainer({
+  pageIndex,
+  totalPages,
+  badgeLabel,
+  badgeLink,
+  contentLayout = 'center',
+  children,
+}: PageContainerProps) {
+  const flowLayout = contentLayout === 'flow'
+
   return (
     <div className={PRINT_PAGE_SHELL}>
       <NoiseLayer />
@@ -854,8 +877,18 @@ function PageContainer({pageIndex, totalPages, badgeLabel, badgeLink, children}:
         </header>
 
        {/* UPDATED: Added print: margins for the Content Body */}
-       <main className="flex min-h-0 flex-1 flex-col justify-center overflow-hidden px-8 md:px-24 print:px-24 py-8 md:py-12 print:py-12">
-          <div className="flex min-h-0 w-full flex-1 flex-col">{children}</div>
+       <main
+          className={`flex min-h-0 flex-1 flex-col overflow-hidden px-8 md:px-24 print:px-24 py-8 md:py-12 print:py-12 ${
+            flowLayout ? 'justify-start' : 'justify-center'
+          }`}
+        >
+          <div
+            className={`flex min-h-0 w-full flex-1 flex-col ${
+              flowLayout ? 'guide-page-flow' : ''
+            }`}
+          >
+            {children}
+          </div>
         </main>
 
         {/* UPDATED: Added print: margins for the Content Footers */}
@@ -921,19 +954,41 @@ const GUIDE_STYLES = `
   object-position: center;
 }
 
-/* Shared page (callout + image, text + image, etc.) */
+/* Mixed-content pages: image shrinks into remaining space above caption/footer */
+.guide-root .guide-page-flow > * {
+  flex-shrink: 0;
+}
+
+.guide-root .guide-page-flow > .guide-image-fill[data-fill='false'] {
+  flex: 1 1 auto;
+  min-height: 0;
+  flex-shrink: 1;
+}
+
+.guide-root .guide-image-fill[data-fill='false'] .guide-image-slot {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.guide-root .guide-image-fill[data-fill='false'] .guide-image-frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-height: 100%;
+}
+
 .guide-root .guide-image-fill[data-fill='false'] .guide-uploaded-image[data-orient='landscape'],
 .guide-root .guide-image-fill[data-fill='false'] .guide-uploaded-image[data-orient='square'] {
   width: 100%;
   height: auto;
-  max-height: min(50svh, 620px);
+  max-height: 100%;
 }
 
 .guide-root .guide-image-fill[data-fill='false'] .guide-uploaded-image[data-orient='portrait'] {
   width: auto;
-  height: auto;
+  height: 100%;
   max-width: 100%;
-  max-height: min(50svh, 620px);
+  max-height: 100%;
 }
 
 /* Image-only page: expand into available page height */
@@ -1147,6 +1202,7 @@ export default function GuideDocumentPage() {
             totalPages={totalPages} 
             badgeLabel={badgeLabel}
             badgeLink={badgeLink}
+            contentLayout={pageContentLayout(blocks)}
           >
             {renderGuideBlocks(blocks)}
           </PageContainer>
