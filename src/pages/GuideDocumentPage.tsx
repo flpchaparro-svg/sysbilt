@@ -156,15 +156,15 @@ function GuidePageImage({imageSrc, altText, caption, fillPage = false}: GuidePag
       className="guide-image-wrap my-6 flex w-full flex-1 min-h-0 flex-col items-center justify-center"
       data-fill={fillPage ? 'true' : 'false'}
     >
-      <div className="guide-image-stage flex min-h-0 w-full flex-1 items-center justify-center">
+      <div className="guide-image-stage flex min-h-0 w-full flex-1 items-center justify-center overflow-hidden">
         <div
-          className={`guide-image-outer relative mx-auto min-h-0 max-h-full max-w-full flex-shrink p-2 md:p-3 rounded-[16px] md:rounded-[24px] bg-[#FFF2EC] shadow-neu border border-white/50 ${
+          className={`guide-image-outer relative mx-auto max-h-full max-w-full flex-shrink p-2 md:p-3 rounded-[16px] md:rounded-[24px] bg-[#FFF2EC] shadow-neu border border-white/50 ${
             orientation === 'portrait' ? 'h-full w-auto' : 'w-full'
           }`}
         >
           <div
-            className={`relative min-h-0 max-h-full w-full overflow-hidden rounded-xl border border-black/5 bg-[#FFF8F5] shadow-neu-inner ${
-              orientation === 'portrait' ? 'h-full' : ''
+            className={`relative flex min-h-0 max-h-full items-center justify-center overflow-hidden rounded-xl border border-black/5 bg-[#FFF8F5] shadow-neu-inner ${
+              orientation === 'portrait' ? 'h-full w-auto' : 'w-full'
             }`}
           >
             <img
@@ -172,8 +172,8 @@ function GuidePageImage({imageSrc, altText, caption, fillPage = false}: GuidePag
               alt={altText}
               className={`guide-image-img ${
                 orientation === 'portrait'
-                  ? 'block h-full w-auto max-w-full'
-                  : 'block h-auto w-full'
+                  ? 'block h-full w-auto max-h-full max-w-full'
+                  : 'block h-auto w-full max-h-full max-w-full'
               }`}
               loading="lazy"
               decoding="async"
