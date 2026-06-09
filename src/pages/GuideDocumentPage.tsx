@@ -154,12 +154,12 @@ function GuidePageImage({imageSrc, altText, caption, fillPage = false}: GuidePag
       className="guide-image-wrap my-6 flex w-full flex-1 min-h-0 flex-col items-center justify-center"
       data-fill={fillPage ? 'true' : 'false'}
     >
-      <div className="guide-image-outer relative mx-auto flex min-h-0 w-full max-w-full flex-1 flex-shrink flex-col p-2 md:p-3 rounded-[16px] md:rounded-[24px] bg-[#FFF2EC] shadow-neu border border-white/50">
-        <div className="relative min-h-0 w-full flex-1 overflow-hidden rounded-xl border border-black/5 bg-[#FFF8F5] shadow-neu-inner">
+      <div className="guide-image-outer relative mx-auto flex min-h-0 max-h-full w-full max-w-full flex-1 flex-shrink flex-col p-2 md:p-3 rounded-[16px] md:rounded-[24px] bg-[#FFF2EC] shadow-neu border border-white/50">
+        <div className="relative flex min-h-0 w-full flex-1 items-center justify-center overflow-hidden rounded-xl border border-black/5 bg-[#FFF8F5] shadow-neu-inner">
           <img
             src={imageSrc}
             alt={altText}
-            className="guide-image-img absolute inset-0 z-10 h-full w-full"
+            className="guide-image-img"
             loading="lazy"
             decoding="async"
           />
@@ -924,6 +924,11 @@ const GUIDE_STYLES = `
 
 /* Uploaded images: full file visible inside original frame; shrink on busy pages */
 .guide-root .guide-image-img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
   object-position: center;
 }
