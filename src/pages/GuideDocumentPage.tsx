@@ -136,21 +136,23 @@ const GUIDE_IMAGE_RATIO_CLASS: Record<NonNullable<ImagePlaceholderBlock['ratio']
   '9:16': 'aspect-[9/16]',
 }
 
-const GUIDE_IMAGE_FRAME_BASE =
-  'relative mx-auto max-w-full flex-shrink min-h-0 rounded-[16px] bg-[#FFF2EC] p-2 shadow-neu border border-white/50 md:rounded-[24px] md:p-3'
+const PRINT_PAGE_SHELL =
+  'print-page relative flex w-full max-w-[794px] min-h-[100svh] h-[100svh] md:h-[1123px] md:min-h-0 md:flex-shrink-0 flex-col overflow-hidden bg-[#FFF2EC] text-[#1a1a1a] shadow-neu border border-white/40'
 
-/** Portrait ratios grow from page height; landscape/square grow from page width. */
+/** Portrait: grow from page height on desktop. Landscape/square: grow from page width. */
 function getGuideImageFrameClasses(ratio?: ImagePlaceholderBlock['ratio']): string {
   const key = ratio ?? '16:9'
   const ratioClass = GUIDE_IMAGE_RATIO_CLASS[key] ?? 'aspect-video'
   const [w, h] = key.split(':').map(Number)
   const isPortrait = h > w
+  const base =
+    'relative mx-auto max-w-full flex-shrink min-h-0 rounded-[16px] bg-[#FFF2EC] p-2 shadow-neu border border-white/50 md:rounded-[24px] md:p-3'
 
   if (isPortrait) {
-    return `${GUIDE_IMAGE_FRAME_BASE} w-full md:h-full md:w-auto ${ratioClass}`
+    return `${base} w-full md:h-full md:w-auto ${ratioClass}`
   }
 
-  return `${GUIDE_IMAGE_FRAME_BASE} w-full md:max-h-full ${ratioClass}`
+  return `${base} w-full ${ratioClass}`
 }
 
 const GUIDE_BY_SLUG_QUERY = `*[_type == "guide" && slug.current == $slug && !(_id in path("drafts.**"))][0]{
@@ -600,30 +602,25 @@ function renderCustomBlock(block: GuideContentBlock, key: number): React.ReactNo
     case 'imagePlaceholder': {
       const p = block as ImagePlaceholderBlock
       const frameClass = getGuideImageFrameClasses(p.ratio)
-      const [ratioW, ratioH] = (p.ratio ?? '16:9').split(':').map(Number)
-      const isPortrait = ratioH > ratioW
 
       const hasAsset = Boolean(p.image?.asset?._ref)
       const imageSrc = hasAsset && p.image ? urlFor(p.image).width(1800).fit('max').url() : null
       const altText = (p.image?.alt ?? p.caption ?? '').trim() || ''
 
       return (
-        <div
-          key={key}
-          className={`my-4 flex w-full flex-col items-center justify-center md:my-6 md:min-h-0 ${isPortrait ? 'md:flex-1' : ''}`}
-        >
+        <div key={key} className="my-6 flex w-full flex-col items-center justify-center md:flex-1 md:min-h-0">
           <div className={frameClass}>
-            <div className="relative flex h-full w-full items-center justify-center rounded-xl border border-black/5 bg-[#FFF8F5] shadow-neu-inner">
+            <div className="relative h-full w-full overflow-hidden rounded-xl border border-black/5 bg-[#FFF2EC] shadow-neu-inner">
               {imageSrc ? (
                 <img
                   src={imageSrc}
                   alt={altText}
-                  className="h-full w-full object-contain object-center"
+                  className="absolute inset-0 z-10 h-full w-full object-contain object-center"
                 />
               ) : (
                 <>
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:8px_8px] mix-blend-multiply opacity-50" />
-                  <div className="relative z-10 flex flex-col items-center gap-3 opacity-40">
+                  <div className="absolute inset-0 bg-[#FFF8F5] bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:8px_8px] mix-blend-multiply opacity-50" />
+                  <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 opacity-40">
                     <svg className="h-8 w-8 md:h-10 md:w-10 text-[#1a1a1a]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
@@ -687,7 +684,7 @@ function CoverPage({ guideData }: { guideData: GuideDocument }) {
   };
 
   return (
-    <div className="print-page relative flex w-full max-w-[794px] h-auto min-h-[100vh] md:min-h-0 md:h-[1123px] md:flex-shrink-0 flex-col overflow-hidden bg-[#FFF2EC] text-[#1a1a1a] shadow-neu border border-white/40">
+    <div className={PRINT_PAGE_SHELL}>
       <NoiseLayer />
       
       <button 
@@ -784,9 +781,9 @@ function CoverPage({ guideData }: { guideData: GuideDocument }) {
 
 function PageContainer({pageIndex, totalPages, badgeLabel, badgeLink, children}: PageContainerProps) {
   return (
-    <div className="print-page relative flex w-full max-w-[794px] h-auto min-h-[100vh] md:min-h-0 md:h-[1123px] md:flex-shrink-0 flex-col overflow-hidden bg-[#FFF2EC] text-[#1a1a1a] shadow-neu border border-white/40">
+    <div className={PRINT_PAGE_SHELL}>
       <NoiseLayer />
-      <div className="relative z-[2] flex h-full min-h-0 flex-col">
+      <div className="relative z-[2] flex min-h-0 flex-1 flex-col">
         {/* UPDATED: Added print: margins for the Content Headers */}
         <header className="a4-header flex h-[90px] md:h-[110px] print:h-[110px] shrink-0 items-center justify-between border-b border-black/5 px-8 md:px-24 print:px-24">
           <SysbiltLogo className="w-[70px] md:w-[85px] h-auto text-[#1a1a1a] opacity-70" />
@@ -805,8 +802,8 @@ function PageContainer({pageIndex, totalPages, badgeLabel, badgeLink, children}:
         </header>
 
        {/* UPDATED: Added print: margins for the Content Body */}
-       <main className="min-h-0 flex-1 overflow-hidden px-8 md:px-24 print:px-24 py-8 md:py-12 print:py-12 flex flex-col justify-center">
-          <div className="flex h-full min-h-0 w-full flex-col">{children}</div>
+       <main className="flex min-h-0 flex-1 flex-col justify-center overflow-hidden px-8 md:px-24 print:px-24 py-8 md:py-12 print:py-12">
+          <div className="flex min-h-0 w-full flex-1 flex-col">{children}</div>
         </main>
 
         {/* UPDATED: Added print: margins for the Content Footers */}
