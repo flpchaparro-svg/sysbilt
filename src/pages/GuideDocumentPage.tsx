@@ -139,20 +139,84 @@ const GUIDE_IMAGE_RATIO_CLASS: Record<NonNullable<ImagePlaceholderBlock['ratio']
 const PRINT_PAGE_SHELL =
   'print-page relative flex w-full max-w-[794px] min-h-[100svh] h-[100svh] md:h-[1123px] md:min-h-0 md:flex-shrink-0 flex-col overflow-hidden bg-[#FFF2EC] text-[#1a1a1a] shadow-neu border border-white/40'
 
-/** Portrait: grow from page height on desktop. Landscape/square: grow from page width. */
-function getGuideImageFrameClasses(ratio?: ImagePlaceholderBlock['ratio']): string {
-  const key = ratio ?? '16:9'
-  const ratioClass = GUIDE_IMAGE_RATIO_CLASS[key] ?? 'aspect-video'
-  const [w, h] = key.split(':').map(Number)
-  const isPortrait = h > w
+function parseRatioNumbers(ratio?: ImagePlaceholderBlock['ratio']): [number, number] {
+  const value = ratio ?? '16:9'
+  const [w, h] = value.split(':').map(Number)
+  return [w, h]
+}
+
+function getGuideImageFrameClasses(
+  ratio?: ImagePlaceholderBlock['ratio'],
+  naturalWidth?: number,
+  naturalHeight?: number,
+): string {
   const base =
     'relative mx-auto max-w-full flex-shrink min-h-0 rounded-[16px] bg-[#FFF2EC] p-2 shadow-neu border border-white/50 md:rounded-[24px] md:p-3'
 
+  const width = naturalWidth && naturalWidth > 0 ? naturalWidth : parseRatioNumbers(ratio)[0]
+  const height = naturalHeight && naturalHeight > 0 ? naturalHeight : parseRatioNumbers(ratio)[1]
+  const isPortrait = height > width
+
   if (isPortrait) {
-    return `${base} w-full md:h-full md:w-auto ${ratioClass}`
+    return `${base} w-full md:h-full md:w-auto`
   }
 
-  return `${base} w-full ${ratioClass}`
+  return `${base} w-full`
+}
+
+function getGuideImageAspectStyle(
+  ratio?: ImagePlaceholderBlock['ratio'],
+  naturalWidth?: number,
+  naturalHeight?: number,
+): React.CSSProperties {
+  if (naturalWidth && naturalHeight && naturalWidth > 0 && naturalHeight > 0) {
+    return {aspectRatio: `${naturalWidth} / ${naturalHeight}`}
+  }
+
+  const [w, h] = parseRatioNumbers(ratio)
+  return {aspectRatio: `${w} / ${h}`}
+}
+
+type GuidePageImageProps = {
+  imageSrc: string
+  altText: string
+  ratio?: ImagePlaceholderBlock['ratio']
+  caption?: string
+}
+
+function GuidePageImage({imageSrc, altText, ratio, caption}: GuidePageImageProps) {
+  const [naturalSize, setNaturalSize] = React.useState<{width: number; height: number} | null>(null)
+
+  const frameClass = getGuideImageFrameClasses(ratio, naturalSize?.width, naturalSize?.height)
+  const aspectStyle = getGuideImageAspectStyle(ratio, naturalSize?.width, naturalSize?.height)
+
+  return (
+    <div className="my-6 flex w-full flex-col items-center justify-center md:flex-1 md:min-h-0">
+      <div className={frameClass}>
+        <div
+          className="relative w-full overflow-hidden rounded-xl border border-black/5 bg-[#FFF2EC] shadow-neu-inner"
+          style={aspectStyle}
+        >
+          <img
+            src={imageSrc}
+            alt={altText}
+            className="block h-full w-full object-contain object-center"
+            onLoad={(event) => {
+              const img = event.currentTarget
+              if (img.naturalWidth > 0 && img.naturalHeight > 0) {
+                setNaturalSize({width: img.naturalWidth, height: img.naturalHeight})
+              }
+            }}
+          />
+        </div>
+      </div>
+      {caption ? (
+        <p className="mt-4 flex-shrink-0 px-4 text-center font-sans text-[12.5px] md:text-[13.5px] italic text-[#1a1a1a]/60">
+          {caption}
+        </p>
+      ) : null}
+    </div>
+  )
 }
 
 const GUIDE_BY_SLUG_QUERY = `*[_type == "guide" && slug.current == $slug && !(_id in path("drafts.**"))][0]{
@@ -601,35 +665,38 @@ function renderCustomBlock(block: GuideContentBlock, key: number): React.ReactNo
     }
     case 'imagePlaceholder': {
       const p = block as ImagePlaceholderBlock
-      const frameClass = getGuideImageFrameClasses(p.ratio)
+      const ratioClass = GUIDE_IMAGE_RATIO_CLASS[p.ratio ?? '16:9'] ?? 'aspect-video'
 
       const hasAsset = Boolean(p.image?.asset?._ref)
       const imageSrc = hasAsset && p.image ? urlFor(p.image).width(1800).fit('max').url() : null
       const altText = (p.image?.alt ?? p.caption ?? '').trim() || ''
 
+      if (imageSrc) {
+        return (
+          <React.Fragment key={key}>
+            <GuidePageImage
+              imageSrc={imageSrc}
+              altText={altText}
+              ratio={p.ratio}
+              caption={p.caption}
+            />
+          </React.Fragment>
+        )
+      }
+
       return (
         <div key={key} className="my-6 flex w-full flex-col items-center justify-center md:flex-1 md:min-h-0">
-          <div className={frameClass}>
-            <div className="relative h-full w-full overflow-hidden rounded-xl border border-black/5 bg-[#FFF2EC] shadow-neu-inner">
-              {imageSrc ? (
-                <img
-                  src={imageSrc}
-                  alt={altText}
-                  className="absolute inset-0 z-10 h-full w-full object-contain object-center"
-                />
-              ) : (
-                <>
-                  <div className="absolute inset-0 bg-[#FFF8F5] bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:8px_8px] mix-blend-multiply opacity-50" />
-                  <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 opacity-40">
-                    <svg className="h-8 w-8 md:h-10 md:w-10 text-[#1a1a1a]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    <span className="font-mono text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-[#1a1a1a]">
-                      Image / {p.ratio ?? '16:9'}
-                    </span>
-                  </div>
-                </>
-              )}
+          <div className={`relative mx-auto w-full max-w-full flex-shrink min-h-0 rounded-[16px] bg-[#FFF2EC] p-2 shadow-neu border border-white/50 md:rounded-[24px] md:p-3 ${ratioClass}`}>
+            <div className="relative h-full w-full overflow-hidden rounded-xl border border-black/5 bg-[#FFF8F5] shadow-neu-inner">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:8px_8px] mix-blend-multiply opacity-50" />
+              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 opacity-40">
+                <svg className="h-8 w-8 md:h-10 md:w-10 text-[#1a1a1a]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span className="font-mono text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-[#1a1a1a]">
+                  Image / {p.ratio ?? '16:9'}
+                </span>
+              </div>
             </div>
           </div>
           {p.caption && (

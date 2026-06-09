@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
-import { client } from '../sanityClient';
+import { client, urlFor } from '../sanityClient';
 import { PortableText } from '@portabletext/react';
-import imageUrlBuilder from '@sanity/image-url';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowDownLeft, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -9,12 +8,6 @@ import NewsletterForm from '../components/NewsletterForm';
 import { PageMeta } from '../components/PageMeta';
 import { SEO_META, SITE_ORIGIN } from '../constants/seoMeta';
 import ShareButton from '../components/ShareButton';
-
-// Setup Image Builder
-const builder = imageUrlBuilder(client);
-function urlFor(source: any) {
-  return builder.image(source);
-}
 
 // Interfaces
 interface NewsItem {

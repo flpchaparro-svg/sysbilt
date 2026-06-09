@@ -1,5 +1,5 @@
 import { createClient } from '@sanity/client';
-import imageUrlBuilder from '@sanity/image-url';
+import {createImageUrlBuilder} from '@sanity/image-url';
 import { SanityService, SanityCaseStudy } from './types';
 
 export const client = createClient({
@@ -9,7 +9,7 @@ export const client = createClient({
   apiVersion: '2024-02-20',
 });
 
-const builder = imageUrlBuilder(client);
+const builder = createImageUrlBuilder(client);
 export const urlFor = (source: any) => builder.image(source);
 
 export async function getServicesByPillar(pillarName: string): Promise<SanityService[]> {
