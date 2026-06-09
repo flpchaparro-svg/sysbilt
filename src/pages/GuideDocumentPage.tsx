@@ -139,20 +139,6 @@ const GUIDE_IMAGE_RATIO_CLASS: Record<NonNullable<ImagePlaceholderBlock['ratio']
 const PRINT_PAGE_SHELL =
   'print-page relative flex w-full max-w-[794px] min-h-[100svh] h-[100svh] md:h-[1123px] md:min-h-0 md:flex-shrink-0 flex-col overflow-hidden bg-[#FFF2EC] text-[#1a1a1a] shadow-neu border border-white/40'
 
-/**
- * Guide image layout (A4 page shell)
- *
- * Page shell: fixed height → header/footer shrink-0 → main flex-1 min-h-0.
- *
- * Two page modes (set via `fillPage`):
- * - solo (`fillPage=true`): image is the only block; may grow into remaining main height.
- * - shared (`fillPage=false`): text/callouts are flex-shrink-0; image block flex-1 min-h-0
- *   and shrinks so caption + footer are never clipped.
- *
- * Image sizing: slot is a bounded box (absolute inset-0 inside flex-1). Frame + img use
- * max-width/max-height 100% + object-contain — no orientation-specific width/height rules,
- * no Sanity ratio, never object-cover.
- */
 type GuidePageImageProps = {
   imageSrc: string
   altText: string
@@ -161,29 +147,26 @@ type GuidePageImageProps = {
   fillPage?: boolean
 }
 
+/** Original neumorphic frame markup; only sizing/flex behaviour changed (object-contain, flex shrink). */
 function GuidePageImage({imageSrc, altText, caption, fillPage = false}: GuidePageImageProps) {
   return (
     <div
-      className="guide-image-block my-4 flex min-h-0 w-full flex-1 flex-col md:my-6"
+      className="guide-image-wrap my-6 flex w-full flex-1 min-h-0 flex-col items-center justify-center"
       data-fill={fillPage ? 'true' : 'false'}
     >
-      <div className="guide-image-slot relative min-h-0 w-full min-w-0 flex-1">
-        <div className="guide-image-bounds absolute inset-0 overflow-hidden">
-          <figure className="guide-image-frame m-0 rounded-[16px] bg-[#FFF2EC] p-2 shadow-neu border border-white/50 md:rounded-[24px] md:p-3">
-            <div className="guide-image-inner overflow-hidden rounded-xl border border-black/5 bg-[#FFF2EC] shadow-neu-inner leading-[0]">
-              <img
-                src={imageSrc}
-                alt={altText}
-                className="guide-image-img"
-                loading="lazy"
-                decoding="async"
-              />
-            </div>
-          </figure>
+      <div className="guide-image-outer relative mx-auto flex min-h-0 w-full max-w-full flex-1 flex-shrink flex-col p-2 md:p-3 rounded-[16px] md:rounded-[24px] bg-[#FFF2EC] shadow-neu border border-white/50">
+        <div className="relative min-h-0 w-full flex-1 overflow-hidden rounded-xl border border-black/5 bg-[#FFF8F5] shadow-neu-inner">
+          <img
+            src={imageSrc}
+            alt={altText}
+            className="guide-image-img absolute inset-0 z-10 h-full w-full"
+            loading="lazy"
+            decoding="async"
+          />
         </div>
       </div>
       {caption ? (
-        <p className="guide-image-caption mt-4 flex-shrink-0 px-4 text-center font-sans text-[12.5px] md:text-[13.5px] italic text-[#1a1a1a]/60">
+        <p className="mt-4 flex-shrink-0 px-4 text-center font-sans text-[12.5px] md:text-[13.5px] italic text-[#1a1a1a]/60">
           {caption}
         </p>
       ) : null}
@@ -939,53 +922,18 @@ const GUIDE_STYLES = `
   pointer-events: none;
 }
 
-/* --- Guide image layout (see GuidePageImage comment) --- */
-
-.guide-root .guide-image-block {
-  min-height: 0;
-}
-
-.guide-root .guide-image-slot {
-  flex: 1 1 auto;
-  min-height: 0;
-  min-width: 0;
-}
-
-/* Bounded box: slot height comes from flex; inset-0 gives explicit limits */
-.guide-root .guide-image-bounds {
-  container-type: size;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Frame shrink-wraps the image; never exceeds the bounded slot */
-.guide-root .guide-image-frame {
-  max-width: 100%;
-  max-height: 100%;
-}
-
-.guide-root .guide-image-inner {
-  max-width: calc(100cqw - 1.5rem);
-  max-height: calc(100cqh - 1.5rem);
-}
-
+/* Uploaded images: full file visible inside original frame; shrink on busy pages */
 .guide-root .guide-image-img {
-  display: block;
-  width: auto;
-  height: auto;
-  max-width: 100%;
-  max-height: 100%;
   object-fit: contain;
   object-position: center;
 }
 
-/* Mixed-content pages: siblings keep their height; only the image block shrinks */
+/* Mixed-content pages: text/callouts keep height; image area shrinks */
 .guide-root .guide-page-flow > * {
   flex-shrink: 0;
 }
 
-.guide-root .guide-page-flow > .guide-image-block[data-fill='false'] {
+.guide-root .guide-page-flow > .guide-image-wrap[data-fill='false'] {
   flex: 1 1 auto;
   min-height: 0;
   flex-shrink: 1;
