@@ -1,0 +1,1768 @@
+{
+  "_id": "drafts.3fd0c965-e2fb-4f02-b98b-b14037b4d9f8",
+  "_type": "guide",
+  "title": "How to stop running your building company on sticky notes and spreadsheets",
+  "subtitle": "A practical guide to building a connected digital ecosystem that runs your NSW construction business for you.",
+  "slug": {
+    "_type": "slug",
+    "current": "how-to-build-connected-construction-ecosystem"
+  },
+  "servicePillar": [
+    "Automation"
+  ],
+  "businessPhase": "All Phases",
+  "coverLegend": "For NSW custom builders who are tired of disconnected software and manual admin",
+  "targetPersonas": [
+    {
+      "_type": "reference",
+      "_ref": "d2bf12d0-136d-4fdc-8649-e760da5739e7",
+      "_key": "persona-builder"
+    },
+    {
+      "_type": "reference",
+      "_ref": "9b0487c5-8a4d-4465-b79c-11b129d560a8",
+      "_key": "persona-controller"
+    }
+  ],
+  "includeCtaPage": true,
+  "ctaTitle": "Ready to fix this?",
+  "ctaDescription": "Book a call and we will walk you through how this applies to your building company.",
+  "ctaButtonText": "Book a call",
+  "ctaLink": "https://sysbilt.com/contact",
+  "ctaLegend": "We do not upsell. We do not surprise you with hidden costs.",
+  "seoTitle": "Construction Business System Automation NSW",
+  "seoDescription": "Stop losing money to disconnected software. A practical guide for NSW builders to connect their website, CRM, estimating, and accounting into one system.",
+  "focusKeyword": "construction business automation sydney",
+  "pages": [
+    {
+      "_type": "guidePage",
+      "_key": "27f10d0a814d",
+      "content": [
+        {
+          "_type": "sectionCover",
+          "_key": "96c7d7af9635",
+          "sectionNumber": "1",
+          "sectionTitle": "Why this matters now",
+          "sectionIntro": "Construction companies are failing at record rates despite massive industry demand. The builders surviving this market are not just better at building. They are better at running their operations."
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "ea32d3c2c06c",
+      "content": [
+        {
+          "_type": "block",
+          "_key": "1f37c9fb8bfd",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "be27d051f39b",
+              "text": "The residential construction sector in New South Wales is operating in a deeply contradictory environment. On one hand, there is a massive pipeline of infrastructure and housing demand across the state. On the other hand, building companies are failing at an alarming rate. In a single financial year, nearly 3,000 construction businesses entered insolvency.",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "a058cb432f1c",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "8859affa4f5e",
+              "text": "",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "d16bc4b95806",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "416af15d484b",
+              "text": "The root cause of these failures is rarely a lack of building skill or a shortage of enquiries. The primary driver of collapse is a lack of operational control. Many building companies are running complex, multi-million dollar projects with admin methods that were never built for this level of complexity. With material costs moving constantly and compliance tightening, manual spreadsheets and a whiteboard in the site office leave too much room for mistakes.",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "14cba1c4e56d",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "2b87652319ea",
+              "text": "",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "5a7c8650d310",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "e02364b875ba",
+              "text": "If you rely on your accountant to tell you whether a project made a profit weeks after handover, you are making decisions too late. By the time you realise the framing costs went over budget, the cash is already gone. You cannot negotiate a variation for a delay that happened a month ago. You absorb the loss and hope the next progress payment covers the shortfall.",
+              "marks": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "842a99627d15",
+      "content": [
+        {
+          "_type": "imagePlaceholder",
+          "_key": "09ffe6eaca45",
+          "ratio": "16:9",
+          "caption": "Buying software does not help if the platforms refuse to talk to each other."
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "4d6d00c07641",
+      "content": [
+        {
+          "_type": "block",
+          "_key": "fb7468c368ce",
+          "style": "h3",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "569ab6e022a4",
+              "text": "The trap of fragmented growth",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "a9d762be8666",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "fd698cab92ad",
+              "text": "",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "49019f9f6db2",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "41fa191e9f7a",
+              "text": "When builders try to fix these operational leaks, they usually make a classic mistake. They buy a random piece of software to solve an immediate pain. They buy a CRM for the sales team, an estimating tool for the pre-construction team, and a scheduling app for the site supervisors. Because these tools were bought at different times and were never designed to talk to each other, the business becomes fragmented.",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "c846a63250d2",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "eb0a3aa31f1b",
+              "text": "",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "f77e05f657f7",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "e5d1f71a3ed8",
+              "text": "Instead of becoming more efficient, the administration team now has three different platforms to keep in sync. They copy client details out of an email, type them into the CRM, then type them again into the estimating software. That double handling guarantees errors. When one missed digit on an order can throw off a profitability forecast, the risk is not theoretical.",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "b62393334e0d",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "7cddae1e15fe",
+              "text": "",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "395a2bdfe35f",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "30a6aae58233",
+              "text": "Internal Verification Note: The insolvency claims (~3,000 in one FY) and $1.14T pipeline stats are sourced from 2024 ASIC data and WT Partnership/CommBank market reports.",
+              "marks": [
+                "em"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "a3a1e260a648",
+      "content": [
+        {
+          "_type": "darkQuote",
+          "_key": "2c99b8447b1c",
+          "body": "Buying five different software subscriptions does not make you a digital business. If the tools do not talk to each other, you just created five new administration jobs."
+        },
+        {
+          "_type": "calloutBox",
+          "_key": "bd80a21d5c69",
+          "label": "How we do it",
+          "body": "We audited the operations of a Sydney custom builder who was drowning in paperwork despite spending heavily on software. By ripping out their redundant tools and connecting their core estimating platform directly to their accounting system, the team recovered 15 hours of administrative time per week, eliminating the data entry errors that were destroying their margins."
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "2c50d45d9034",
+      "content": [
+        {
+          "_type": "sectionCover",
+          "_key": "657cb744ab62",
+          "sectionNumber": "2",
+          "sectionTitle": "The front door to your business",
+          "sectionIntro": "A connected system starts before you even speak to the client. Your website and content must act as an automated sales representative that qualifies leads while you sleep."
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "908d0ef26374",
+      "content": [
+        {
+          "_type": "block",
+          "_key": "4902c128b5c8",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "fc507773370e",
+              "text": "A truly connected digital ecosystem begins at the first touchpoint a homeowner has with your business. In the modern NSW market, that touchpoint is usually a digital search, not a phone call. Most buyers have hundreds of small research moments across a journey that can stretch over a year. They are looking for proof of competence, financial stability, and local expertise. If your website is a static brochure with a few photos and a contact form, you are invisible during the exact period when they are deciding who to trust.",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "658f10f35233",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "4af0a23e25bc",
+              "text": "",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "71adace6219c",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "45786cca791f",
+              "text": "Your website must function as the highly intelligent front door to your business operations. It needs to proactively answer the questions your sales team fields every day. When a homeowner is considering a knockdown rebuild on a sloping block, they do not want to read generic marketing copy about building dreams. They want to read a detailed case study explaining exactly how you managed tight site access, navigated local council approvals, and delivered a similar project on budget.",
+              "marks": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "673bfb5239ba",
+      "content": [
+        {
+          "_type": "imagePlaceholder",
+          "_key": "ec8a7d6745b9",
+          "ratio": "4:3",
+          "caption": "Your systems should educate and qualify clients before you ever meet them."
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "dca28d77bdbc",
+      "content": [
+        {
+          "_type": "block",
+          "_key": "abea3cc017a2",
+          "style": "h3",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "0360c71405cc",
+              "text": "Capturing and routing the right data",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "ce67c78d1bcc",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "e0f6f7d68e79",
+              "text": "",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "a447c824d841",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "82094dd7d132",
+              "text": "When that educated prospect finally decides to submit an enquiry, the way your system handles their data dictates your conversion rate. The old method involves a prospect filling out a basic form, which sends an email to an unmonitored inbox. Two days later, an administrator forwards that email to a sales manager, who eventually calls the prospect back. By that time, the high-value client has already engaged a faster competitor.",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "dd81353b7202",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "3499a6c8b7a5",
+              "text": "",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "fbc691f26259",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "96a100453886",
+              "text": "In a connected ecosystem, the website form is highly strategic. It asks specific qualifying questions about land ownership, budget brackets, and project timelines. When the prospect hits submit, the website pushes that structured data directly into your CRM. The system automatically creates a client file, notifies the appropriate sales manager via SMS, and sends the prospect a branded guide detailing your building process.",
+              "marks": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "968bc75f88de",
+      "content": [
+        {
+          "_type": "contrastDemo",
+          "_key": "134b8735a9ac",
+          "failLabel": "Disconnected intake",
+          "failText": "A web form sends a basic email. A staff member manually copies the details into a spreadsheet three days later.",
+          "convertLabel": "Connected intake",
+          "convertText": "A web form instantly creates a CRM record, qualifies the budget, and sends the client a process guide automatically."
+        },
+        {
+          "_type": "block",
+          "_key": "27bef08fab4e",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "0568eaecf581",
+              "text": "",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "5e6c0910108e",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "d3b274abb0fb",
+              "text": "This immediate, highly professional response sets the tone for the entire relationship. It proves to the client that you are organised and reliable before you even pick up the phone.",
+              "marks": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "a736120e84bb",
+      "content": [
+        {
+          "_type": "calloutBox",
+          "_key": "f9ab2299b0ba",
+          "label": "How we do it",
+          "body": "We rebuilt the digital front door for a luxury builder who was exhausted from dealing with underfunded enquiries. By implementing an automated qualification form that synced directly with their CRM, the total volume of their leads dropped slightly, but their lead-to-contract conversion rate doubled because every enquiry was financially qualified before the first meeting."
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "53b4b59f1ce7",
+      "content": [
+        {
+          "_type": "sectionCover",
+          "_key": "13092786ab60",
+          "sectionNumber": "3",
+          "sectionTitle": "The engine room of estimating and sales",
+          "sectionIntro": "The moment a prospect is ready for a quote is when most builders drop the ball. Handing over manual notes to your estimating team guarantees margin erosion."
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "2af951b7fa3d",
+      "content": [
+        {
+          "_type": "block",
+          "_key": "0e36a546aef1",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "f139dba34edc",
+              "text": "The handover from the sales pipeline into the estimating department is one of the highest-risk points in any construction business. This is where abstract client discussions turn into hard financial commitments. If your estimators are working from incomplete details, or trying to decipher muddy notes from a site visit, they will inevitably make assumptions. In construction, assumptions lead to inaccurate quotes, and inaccurate quotes lead to severe margin loss. A connected digital system ensures that this handover is rigorous, standardised, and entirely free from human transcription errors.",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "5deb22f2f2a8",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "30fa9b1f8da9",
+              "text": "",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "f2d29792a97c",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "def009fcf221",
+              "text": "When a sales representative marks a lead as ready for a quote in the CRM, the system should take over. The client name, contact details, site address, and initial budget parameters should flow straight into your estimating software, such as Buildxact or CostX. If an estimator has to retype this information, errors are inevitable, and they always show up later as margin loss.",
+              "marks": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "87bc5929a983",
+      "content": [
+        {
+          "_type": "imagePlaceholder",
+          "_key": "cf3e2f01dec1",
+          "ratio": "16:9",
+          "caption": "A connected ecosystem removes manual data entry entirely."
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "4ff86d43e0f4",
+      "content": [
+        {
+          "_type": "block",
+          "_key": "20131df92c4f",
+          "style": "h3",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "82c308269a72",
+              "text": "Standardising your scope and pricing",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "3566b51bcaba",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "b61e8b8dbd34",
+              "text": "",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "927b40bc207b",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "6cc3a48429da",
+              "text": "The most significant cause of budget blowouts on custom builds is a poorly defined initial scope. If your team manually builds every quote from a blank document, you are inviting inconsistency. Your connected system must utilise standardised templates linked directly to your supplier pricing databases. When a new custom home project is initiated in the software, it should automatically pull the most current material rates and standard labour allocations based on the specific design type.",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "bdc2d67aa2c6",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "0a34df334d84",
+              "text": "",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "4b3742ec139c",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "05c23bf3d76c",
+              "text": "Simultaneously, the system must maintain strict version control. If a client requests a major variation to the kitchen design, the automation must ensure that the new pricing overwrites the old data everywhere. It must update the central CRM, adjust the final contract document, and alter the projected timeline.",
+              "marks": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "ce77044cb274",
+      "content": [
+        {
+          "_type": "bulletCard",
+          "_key": "e028d78fdeb9",
+          "items": [
+            "Connect your CRM directly to your estimating software via secure APIs",
+            "Ensure approved quotes automatically generate draft budgets in accounting",
+            "Utilise standard estimating templates that pull live supplier pricing",
+            "Implement mandatory data fields so sales cannot hand over incomplete files",
+            "Automate client updates when a quote moves to the next approval stage"
+          ]
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "ec3e4ed01733",
+      "content": [
+        {
+          "_type": "block",
+          "_key": "c1f342b70e66",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "a6aeb96b1a86",
+              "text": "Every element of ambiguity you remove from this quoting process directly protects your company profit. When the estimating engine is connected to the rest of the business, you stop guessing and start engineering predictable returns.",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "calloutBox",
+          "_key": "8faca046fc49",
+          "label": "How we do it",
+          "body": "We connected the sales and estimating platforms for a residential builder specialising in complex extensions. By forcing all sales data through an automated validation checklist before it reached the estimating team, we eliminated the constant back-and-forth emails that were previously delaying their quote delivery times by up to a week."
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "2effa86b01bf",
+      "content": [
+        {
+          "_type": "sectionCover",
+          "_key": "2d8d2c976b8a",
+          "sectionNumber": "4",
+          "sectionTitle": "The control tower of financial visibility",
+          "sectionIntro": "A positive bank balance does not mean you are making a profit. You need a dashboard that shows your true margins while the project is still active."
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "ca4b7b84aeab",
+      "content": [
+        {
+          "_type": "block",
+          "_key": "654c66d1ed90",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "a4c31d455ec3",
+              "text": "The ultimate goal of connecting your software tools is to gain absolute financial clarity. The most dangerous habit a construction business owner can develop is checking their bank account to determine the health of their company. Because of how progress payments are structured, a builder can receive a massive cash injection at the framing stage, making the bank balance look incredibly healthy. But if the costs to reach that stage were higher than estimated, or if there are massive upcoming expenses for the lock-up stage that have not yet been invoiced by suppliers, that cash does not actually belong to the builder. It is already spoken for.",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "d9c0e3de96c2",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "fb33e44fe24f",
+              "text": "",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "95852ce11966",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "43764a56d81d",
+              "text": "To survive and grow, you must transition from cash accounting to rigorous Work In Progress reporting. This requires a live dashboard that pulls data from your estimating software, your project management tools, and your accounting platform like Xero. A connected dashboard tells you the exact financial position of a project relative to its completion percentage. It is the only reliable way to know if you are actually making a profit while a build is still active.",
+              "marks": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "2830dbdad016",
+      "content": [
+        {
+          "_type": "block",
+          "_key": "cc8732e575cb",
+          "style": "h3",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "4989de4d227e",
+              "text": "Metrics that drive confident decisions",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "458dc86bf468",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "8fc85fb92201",
+              "text": "",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "c9c2f4cc8ba9",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "7ac9190ea32a",
+              "text": "When builders finally get access to live data, the immediate temptation is to measure absolutely everything. They build massive screens displaying dozens of charts, which leads directly to analysis paralysis. A reporting system should not overwhelm your management team. To run a highly profitable construction firm, directors only need to review a few core metrics.",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "a13fbfdb18db",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "47a0aeb10464",
+              "text": "",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "3150e37ff80b",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "12e354e1678b",
+              "text": "You must track your true cost of acquisition to ensure your marketing spend is sustainable. You must track your project margin variance to see if a job is slipping from a 15 percent margin down to 11 percent by the framing stage. Most importantly, you must track your cash flow runway.",
+              "marks": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "3dd7b9cea606",
+      "content": [
+        {
+          "_type": "darkQuote",
+          "_key": "415ea671851d",
+          "body": "Your cash flow runway tells you exactly how many months your business can survive. When you have a solid runway, you stop taking desperate, low-margin jobs."
+        },
+        {
+          "_type": "block",
+          "_key": "85e764bc2c23",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "aed49127e0fc",
+              "text": "When you can clearly see the margin variance across all your projects, distinct patterns emerge. You will quickly identify that the vast majority of your profit is likely generated by a specific type of build. Armed with this undeniable data, you can confidently turn down requests to quote on high-risk, low-margin work.",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "calloutBox",
+          "_key": "fdc9f59f5270",
+          "label": "How we do it",
+          "body": "We designed a custom executive dashboard for a property developer, stripping away the visual clutter and highlighting only their acquisition costs, margin variance, and cash runway. By forcing the directors to focus on these indicators, they quickly identified that their marketing spend was skewed toward low-margin renovation leads, prompting an immediate strategic pivot."
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "5872a2585375",
+      "content": [
+        {
+          "_type": "sectionCover",
+          "_key": "9396301b0b5f",
+          "sectionNumber": "5",
+          "sectionTitle": "The safety net of training and artificial intelligence",
+          "sectionIntro": "Buying an expensive system is useless if your team refuses to use it. You must digitise your operational knowledge and train your staff to follow the new rules."
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "4b2b63261ddf",
+      "content": [
+        {
+          "_type": "block",
+          "_key": "e801782c29cc",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "19a3f2558517",
+              "text": "There is a dangerous misconception in the construction industry that deploying a new software ecosystem instantly solves all operational problems. You connect the tools, turn on the workflows, and expect the business to run flawlessly. This approach guarantees failure. A connected digital system is an operational asset that requires maintenance, discipline, and rigorous team training. The most advanced automation in the world cannot compensate for a project manager who refuses to enter data correctly in the first place. If the initial input is flawed, the automation will simply distribute that flawed data faster.",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "83a4de37785e",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "f851977aac76",
+              "text": "",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "84bf62d3c41a",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "cec5efc4b0ff",
+              "text": "The traditional method of training a new hire by telling them to shadow a senior site supervisor is deeply flawed. It passes on undocumented shortcuts and bad habits. To make a connected system work, you must extract the knowledge from your senior staff and digitise it. Your standard operating procedures must be highly visual, concise, and accessible from a mobile phone on site.",
+              "marks": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "ad6a72108e67",
+      "content": [
+        {
+          "_type": "imagePlaceholder",
+          "_key": "ba21bf26d21a",
+          "ratio": "16:9",
+          "caption": "Your team needs a central brain they can access from the job site."
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "443398372230",
+      "content": [
+        {
+          "_type": "block",
+          "_key": "2b32e613e8a5",
+          "style": "h3",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "c7295bbff825",
+              "text": "Leveraging AI to protect your time",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "c5d239ff26a3",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "da970ad43a5c",
+              "text": "",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "73341083f0f6",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "9617ee4c7379",
+              "text": "Once your data is clean and centralised, you can introduce artificial intelligence to act as a safety net and a productivity multiplier. AI should not be used to write fluffy marketing copy; it should be used to retrieve complex information instantly. When your business data is structured correctly within a central CRM or knowledge base, you can deploy internal AI assistants.",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "c690bae3c55c",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "f03e20613e90",
+              "text": "",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "f7214cac7669",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "0b8c1bcdbd47",
+              "text": "If a site supervisor needs to know the specific defect resolution protocol for a project, they can ask the internal AI rather than calling the director. If a sales manager needs to qualify a lead, an agentic AI workflow can handle the initial conversation, check the prospect against local council zoning maps, and book the calendar appointment without a human lifting a finger.",
+              "marks": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "583ad4a92a76",
+      "content": [
+        {
+          "_type": "checklistGroup",
+          "_key": "15c6c4f77654",
+          "categoryTitle": "System health and adoption",
+          "categoryColour": "red",
+          "items": [
+            "Do your staff have a digital learning path showing exactly how to use the CRM",
+            "Is your internal knowledge base accessible from a mobile phone on site",
+            "Are your standard operating procedures updated when the software is upgraded",
+            "Do you actively monitor if staff are reverting to manual spreadsheets"
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "8a8c5453152b",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "474157d6ff0b",
+              "text": "However, you must maintain strict security boundaries. Feeding sensitive client financial data or proprietary floor plans into public AI tools is a massive regulatory breach. Your AI solutions must be private, enterprise-grade systems hosted onshore in Australia to comply with the Privacy Act.",
+              "marks": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "afee1aea8a32",
+      "content": [
+        {
+          "_type": "calloutBox",
+          "_key": "58547fb44910",
+          "label": "How we do it",
+          "body": "We migrated a commercial contractor away from physical safety manuals into a secure, mobile-friendly digital library. By replacing pages of dense text with clear flowcharts and short video demonstrations on how to use their new project management software, the site teams achieved full system adoption within a month."
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "9cf4c4ddf88d",
+      "content": [
+        {
+          "_type": "sectionCover",
+          "_key": "7776430ee92f",
+          "sectionNumber": "6",
+          "sectionTitle": "The non-negotiables for handling client data in NSW",
+          "sectionIntro": "When you connect all your software platforms, you create a highly attractive target for cyber threats. Security is a board-level priority."
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "603519a62201",
+      "content": [
+        {
+          "_type": "block",
+          "_key": "e7e6cf3aba57",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "2df1f1bf08ee",
+              "text": "Disclaimer: This is general information. Builders should verify their specific compliance obligations directly with NSW Fair Trading and the ACCC.",
+              "marks": [
+                "em"
+              ]
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "5f6b7d502d67",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "72df7ebac52a",
+              "text": "",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "d8c793e8e78c",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "0dcfb6e901e4",
+              "text": "The construction industry has become a primary target for sophisticated cyber attacks. Builders handle large amounts of money and maintain extensive databases containing sensitive client financial information, subcontractor bank details, and proprietary estimating formulas. When you architect a connected system that pulls data from a website, pushes it through a CRM, and feeds it into an accounting dashboard, you are building digital pipes across the internet. If your reporting infrastructure is insecure, you are exposing your business to devastating financial theft and severe regulatory penalties.",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "9fe2751bce0e",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "a8468cee5cf5",
+              "text": "",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "0bdadedd5cab",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "063dab2e5128",
+              "text": "A secure digital environment begins with controlling exactly who has access to your data. You cannot provide every employee with universal administrative rights to your entire software stack. A junior estimator needs to see the material cost variance for their specific project; they do not need to see the overall net profit of the entire company or the director's dividend reports. Implementing strict, role-based access control is the absolute baseline of digital security.",
+              "marks": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "92167a242d08",
+      "content": [
+        {
+          "_type": "block",
+          "_key": "05055c37f450",
+          "style": "h3",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "0cc1afc12d5b",
+              "text": "Data sovereignty and encrypted connections",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "9c07e61000ef",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "f16cbad701fd",
+              "text": "",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "16db23b523ae",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "3c850e9e1ff8",
+              "text": "You need to understand the technical pathways your data takes when it moves between your systems. If you use cheap, unverified third-party integration tools to move financial data from your estimating platform to your reporting screen, you may be passing sensitive information through unsecured servers located overseas. That is a major compliance risk. Your architecture should rely on enterprise-grade, encrypted connections, and your data storage should ideally be located onshore within Australia to align with local privacy requirements.",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "9f2511f09abf",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "610ba115ea1e",
+              "text": "",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "5d2e329abaf2",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "8d818407b684",
+              "text": "Furthermore, every user accessing your connected system must be mandated to use Two-Factor Authentication. Passwords are routinely compromised in broader internet data breaches. If a hacker acquires a project manager's password, two-factor authentication ensures they still cannot access your financial dashboards without physical possession of the manager's mobile phone.",
+              "marks": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "a0f461f9d7f2",
+      "content": [
+        {
+          "_type": "calloutBox",
+          "_key": "31ebcb80d56d",
+          "label": "How we do it",
+          "body": "We audited the new software infrastructure of a residential developer and discovered they were sharing a single, unencrypted login credential across their entire management team. We immediately restructured their access protocols, implemented mandatory Two-Factor Authentication, and ensured their live financial data was strictly compartmentalised based on individual job roles."
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "0ed7e5907719",
+      "content": [
+        {
+          "_type": "sectionCover",
+          "_key": "623b6039814b",
+          "sectionNumber": "7",
+          "sectionTitle": "Why now",
+          "sectionIntro": "The NSW building sector is tightening. Running a multi-million dollar construction firm without connected operations is a luxury you can no longer afford."
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "2209eb89f374",
+      "content": [
+        {
+          "_type": "block",
+          "_key": "e3bcf7b314b8",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "588eaab79dd9",
+              "text": "The construction industry in New South Wales is currently navigating a highly volatile period. While there is a documented housing shortage driving long-term demand, the immediate reality for builders is defined by tightened lending, cautious consumers, and intense competition for high-quality projects. The days of relying on a booming market and easy credit to hide administrative inefficiencies and margin erosion are ending. When economic pressure mounts, profit margins become razor-thin. You simply cannot afford to pay for the rework, the wasted administrative hours, and the unforeseen material cost spikes that stem from operating blindly across disconnected software.",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "999288e44f40",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "871fffc804c9",
+              "text": "",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "a0bf20ea4c56",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "d0cf40ebeb7f",
+              "text": "Your operational efficiency and your ability to forecast cash flow accurately are the battlegrounds for the coming years. If your business relies entirely on delayed accounting reports to tell you if you made money last month, your capacity to survive an economic shock is severely compromised. You become dependent on the next progress payment to stay afloat, which creates a cycle of high-stress survival.",
+              "marks": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "8cd1bdf421b8",
+      "content": [
+        {
+          "_type": "block",
+          "_key": "218a13480543",
+          "style": "h3",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "84dba305509a",
+              "text": "The permanent competitive advantage",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "4e039d9b6f95",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "5bf37e6a0fba",
+              "text": "",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "d7e00f595130",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "6574b142369f",
+              "text": "The cost of inaction is severe. As acquisition costs and material prices rise, the gap between builders with solid, connected reporting and those without it grows quickly. The builders who dominate the market in 2026 will treat their data architecture and digital ecosystems as critical infrastructure. With connected tracking, decisions are based on facts, not guesswork. You can spot margin slip on day three of a build, not day thirty. You can adjust marketing spend faster, and you can protect the margin you priced the job on.",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "298d90171e76",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "f8749f598e48",
+              "text": "",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "b7bdef5f0d0c",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "cf09556fbeb7",
+              "text": "If you keep running multi-million dollar projects using isolated spreadsheets, messy site notes, and gut instinct, you will end up competing on price and chasing low-margin work that better-run businesses avoid. Fixing your operational systems is no longer an optional admin upgrade. It is a requirement for survival.",
+              "marks": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "f3dc7c205e17",
+      "content": [
+        {
+          "_type": "calloutBox",
+          "_key": "5a795740e834",
+          "label": "How we do it",
+          "body": "We partner with NSW builders to extract their operational data and rebuild their digital architecture before the economic squeeze impacts their profitability. By deploying structured, real-time digital ecosystems, we ensure they remain highly efficient, highly profitable, and entirely scalable, regardless of broader market volatility."
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "e014c98004cd",
+      "content": [
+        {
+          "_type": "sectionCover",
+          "_key": "7c6fe8f5f5d9",
+          "sectionNumber": "8",
+          "sectionTitle": "How we build it",
+          "sectionIntro": "We do not just sell software subscriptions. We engineer structured data pipelines that extract the truth from your operations and protect your profit margins."
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "170606da6835",
+      "content": [
+        {
+          "_type": "block",
+          "_key": "f52b60339f35",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "a361faeb828a",
+              "text": "Our approach to building connected digital ecosystems for the construction sector is entirely driven by data accuracy and operational decision-making. We strip away the technical jargon and focus exclusively on the mechanics of connecting your specific tools so your management team has total clarity.",
+              "marks": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "d24a2ba183fe",
+      "content": [
+        {
+          "_type": "imagePlaceholder",
+          "_key": "f4fce4c419da",
+          "ratio": "9:16",
+          "caption": "The systematic approach to building a connected construction business."
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "33a2512f5c9c",
+      "content": [
+        {
+          "_type": "block",
+          "_key": "9d667262e32a",
+          "style": "h3",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "006d6b53e03a",
+              "text": "1. Operational bottleneck audit",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "13a58d7c13e7",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "821528d2af32",
+              "text": "",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "19f7ddfadaf9",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "29efcb63036f",
+              "text": "Before we design a single integration, we map your business to identify where the data silos exist. We find the points where staff manually copy numbers between systems, then we prioritise automating those connections to protect data integrity.",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "9ebf90732616",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "001bf2c6ba4e",
+              "text": "",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "7903df1e8e7d",
+          "style": "h3",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "3645f00cd9e2",
+              "text": "2. Architecture and integration",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "a9bff2fe43bf",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "11846205c85a",
+              "text": "",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "860ca15e43ce",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "3f01f63e757a",
+              "text": "We do not ask your accountants to change how they work. We build secure digital pipelines via APIs to pull live data from your website, CRM, estimating software, and accounting platforms. This creates a clean flow of information across the entire business.",
+              "marks": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "8c72a155e139",
+      "content": [
+        {
+          "_type": "block",
+          "_key": "6e6268a7e8ae",
+          "style": "h3",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "8ee2c38ee5b6",
+              "text": "3. Front-end content structuring",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "8322e8eb53da",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "5fa8ccb22e7e",
+              "text": "",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "4c4f74c58698",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "c32264a386ba",
+              "text": "We engineer your website and content to serve as an automated sales engine. We ensure it answers client questions, qualifies leads financially, and feeds structured data directly into your newly integrated CRM system.",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "eb738ed7eb17",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "59100f22e2ad",
+              "text": "",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "37559c4cbc9b",
+          "style": "h3",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "2f831c5f3895",
+              "text": "4. Secure central deployment",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "cbc4c8c489a4",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "47fea9920050",
+              "text": "",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "47ea0944be7f",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "670f56f85bdb",
+              "text": "We refuse to let financial data sit exposed. We deploy dashboards and AI tools in secure onshore Australian cloud environments, with strict role-based access and two-factor authentication to support privacy compliance.",
+              "marks": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "593485b5fcfa",
+      "content": [
+        {
+          "_type": "block",
+          "_key": "f3cf8c3ed12e",
+          "style": "h3",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "4e5da0c0c0f5",
+              "text": "5. Management training and measurement",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "48bcdc62cba5",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "1a25731bd3af",
+              "text": "",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "36cf47b44f22",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "65fd42fa1c2b",
+              "text": "A live system is just the beginning. We help you design the weekly routines needed to use the data. We digitise your standard operating procedures and set the specific metrics directors review every Friday, refining the system as the business grows.",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "calloutBox",
+          "_key": "9b5d657ff6ca",
+          "label": "How we do it",
+          "body": "We execute this exact five-step process for every building client we take on. By controlling the data architecture, the visual formatting, and the secure deployment, we deliver a final product that stops the endless guesswork and turns your construction firm into a highly predictable financial machine."
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "0cd9b73dcc0b",
+      "content": [
+        {
+          "_type": "sectionCover",
+          "_key": "c83aa7da8129",
+          "sectionNumber": "9",
+          "sectionTitle": "Run this against your current setup",
+          "sectionIntro": "Run this brutally honest assessment of your current business systems to see exactly where you are losing operational visibility."
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "2d93bb08141d",
+      "content": [
+        {
+          "_type": "block",
+          "_key": "ffd8b06a99cd",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "c473f86d71be",
+              "text": "Use this diagnostic tool to assess the real state of your reporting and data. If you fail these baseline checks, the lack of connected systems is already damaging your profitability.",
+              "marks": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "5deb6c6e06dd",
+      "content": [
+        {
+          "_type": "checklistGroup",
+          "_key": "b574ddbe8b57",
+          "categoryTitle": "Visibility and lead tracking",
+          "categoryColour": "red",
+          "items": [
+            "Does your website form automatically create a qualified record in your CRM",
+            "Do you rely on end-of-month accounting reports to know if a project is profitable",
+            "Can your directors instantly see the true cash runway for the business on their phones",
+            "Do you definitively know your true cost to acquire a signed building contract"
+          ]
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "e4a0f67b4e46",
+      "content": [
+        {
+          "_type": "checklistGroup",
+          "_key": "c70ea79c1d5e",
+          "categoryTitle": "Software and integration",
+          "categoryColour": "gold",
+          "items": [
+            "Does your estimating software push approved budgets directly into your accounting platform",
+            "Are staff manually exporting spreadsheets to move data between different departments",
+            "Is your project scheduling tool synced with your financial reporting system",
+            "Do you have a single source of truth for all project-related expenditures"
+          ]
+        }
+      ]
+    },
+    {
+      "_type": "guidePage",
+      "_key": "1a059dbf9fb9",
+      "content": [
+        {
+          "_type": "checklistGroup",
+          "_key": "424e3492a4ac",
+          "categoryTitle": "Security and compliance",
+          "categoryColour": "black",
+          "items": [
+            "Is your financial reporting data stored securely on servers located within Australia",
+            "Do you enforce Two-Factor Authentication for all staff accessing business metrics",
+            "Is your system access strictly restricted based on employee job roles",
+            "Are you certain your data integration methods comply with the Privacy Act"
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "0b35febd8326",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "af7b51adec84",
+              "text": "",
+              "marks": []
+            }
+          ]
+        },
+        {
+          "_type": "block",
+          "_key": "b8559b46e8dc",
+          "style": "normal",
+          "markDefs": [],
+          "children": [
+            {
+              "_type": "span",
+              "_key": "9266ff8973ef",
+              "text": "Tally your unchecked boxes. Every missing element is a point where you are relying on manual effort to manage an operational risk that a connected system should handle automatically.",
+              "marks": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

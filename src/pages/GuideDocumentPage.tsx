@@ -588,33 +588,44 @@ function renderCustomBlock(block: GuideContentBlock, key: number): React.ReactNo
       const altText = (p.image?.alt ?? p.caption ?? '').trim() || ''
 
       return (
-        <div key={key} className="my-6 flex w-full flex-col items-center justify-center md:flex-1 md:min-h-0">
-          <div className={`relative p-2 md:p-3 rounded-[16px] md:rounded-[24px] bg-[#FFF2EC] shadow-neu border border-white/50 w-full md:w-auto md:h-full max-w-full flex-shrink min-h-0 mx-auto ${ratioClass}`}>
-            <div className="relative w-full h-full flex items-center justify-center overflow-hidden rounded-xl border border-black/5 bg-[#FFF8F5] shadow-neu-inner">
-              {imageSrc ? (
-                // UPDATED: Removed loading="lazy" so print catches the image immediately
-                <img
-                  src={imageSrc}
-                  alt={altText}
-                  className="absolute inset-0 z-10 h-full w-full object-cover"
-                />
-              ) : (
-                <>
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:8px_8px] mix-blend-multiply opacity-50" />
-                  <div className="z-10 flex flex-col items-center gap-3 opacity-40">
-                    <svg className="h-8 w-8 md:h-10 md:w-10 text-[#1a1a1a]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    <span className="font-mono text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-[#1a1a1a]">
-                      Image / {p.ratio ?? '16:9'}
-                    </span>
-                  </div>
-                </>
-              )}
+        <div key={key} className="guide-image-block my-2 flex w-full flex-1 flex-col items-center justify-center min-h-0 md:my-4">
+          <div className="flex w-full flex-1 min-h-0 items-center justify-center">
+            <div
+              className={`relative mx-auto rounded-[16px] md:rounded-[24px] bg-[#FFF2EC] p-2 md:p-3 shadow-neu border border-white/50 ${
+                imageSrc
+                  ? 'inline-flex max-h-full max-w-full'
+                  : `w-full max-w-full ${ratioClass}`
+              }`}
+            >
+              <div
+                className={`relative flex items-center justify-center rounded-xl border border-black/5 bg-[#FFF8F5] shadow-neu-inner ${
+                  imageSrc ? '' : 'h-full w-full overflow-hidden'
+                }`}
+              >
+                {imageSrc ? (
+                  <img
+                    src={imageSrc}
+                    alt={altText}
+                    className="guide-page-image block h-auto w-auto max-h-full max-w-full object-contain"
+                  />
+                ) : (
+                  <>
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:8px_8px] mix-blend-multiply opacity-50" />
+                    <div className="z-10 flex flex-col items-center gap-3 opacity-40">
+                      <svg className="h-8 w-8 md:h-10 md:w-10 text-[#1a1a1a]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      <span className="font-mono text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-[#1a1a1a]">
+                        Image / {p.ratio ?? '16:9'}
+                      </span>
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
           </div>
           {p.caption && (
-            <p className="mt-4 text-center font-sans text-[12.5px] md:text-[13.5px] italic text-[#1a1a1a]/60 flex-shrink-0 px-4">
+            <p className="mt-3 flex-shrink-0 px-4 text-center font-sans text-[12.5px] md:mt-4 md:text-[13.5px] italic text-[#1a1a1a]/60">
               {p.caption}
             </p>
           )}
@@ -843,6 +854,24 @@ const GUIDE_STYLES = `
   pointer-events: none;
 }
 
+/* Guide images: always show the full asset — never crop to a ratio box */
+.guide-root .guide-image-block {
+  min-height: 0;
+}
+
+.guide-root .guide-page-image {
+  object-fit: contain;
+  object-position: center;
+  max-width: min(100%, 646px);
+  max-height: min(100%, 780px);
+}
+
+@media (min-width: 768px) {
+  .guide-root main:has(.guide-image-block) > div {
+    min-height: 0;
+  }
+}
+
 /* Print Styles for Save as PDF */
 @media print {
   @page {
@@ -921,6 +950,13 @@ const GUIDE_STYLES = `
   .print-page {
     filter: none !important;
     -webkit-filter: none !important;
+  }
+
+  .guide-root .guide-page-image {
+    max-width: 100% !important;
+    max-height: 720px !important;
+    object-fit: contain !important;
+    object-position: center !important;
   }
   
   /* Force text rendering back to normal */
