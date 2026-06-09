@@ -145,27 +145,34 @@ type GuidePageImageProps = {
   imageSrc: string
   altText: string
   caption?: string
+  /** True when this image is the only block on the page — may use full page height. */
+  fillPage?: boolean
 }
 
-function GuidePageImage({imageSrc, altText, caption}: GuidePageImageProps) {
+function GuidePageImage({imageSrc, altText, caption, fillPage = false}: GuidePageImageProps) {
   const [orientation, setOrientation] = React.useState<GuideImageOrientation>('landscape')
 
-  const isPortrait = orientation === 'portrait'
-
   return (
-    <div className="guide-image-fill my-4 flex w-full flex-1 flex-col items-center justify-center min-h-0 md:my-6">
-      <div className="guide-image-slot flex w-full flex-1 min-h-0 items-center justify-center">
-        <div className="inline-flex max-h-full max-w-full rounded-[16px] bg-[#FFF2EC] p-2 shadow-neu border border-white/50 md:rounded-[24px] md:p-3">
-          <div className="overflow-hidden rounded-xl border border-black/5 bg-[#FFF2EC] shadow-neu-inner">
+    <div
+      className={`guide-image-fill w-full ${fillPage ? 'my-4 flex flex-1 flex-col min-h-0 md:my-6' : 'my-6'}`}
+      data-fill={fillPage ? 'true' : 'false'}
+    >
+      <div
+        className={`guide-image-slot w-full ${
+          fillPage ? 'flex min-h-0 flex-1 items-center justify-center' : 'flex justify-center'
+        }`}
+      >
+        <figure
+          className={`guide-image-frame max-w-full rounded-[16px] bg-[#FFF2EC] p-2 shadow-neu border border-white/50 md:rounded-[24px] md:p-3 ${
+            orientation === 'portrait' && !fillPage ? 'inline-block' : 'w-full'
+          } ${fillPage ? 'max-h-full' : ''}`}
+        >
+          <div className="overflow-hidden rounded-xl border border-black/5 bg-[#FFF2EC] shadow-neu-inner leading-[0]">
             <img
               src={imageSrc}
               alt={altText}
               data-orient={orientation}
-              className={`guide-uploaded-image block object-contain object-center ${
-                isPortrait
-                  ? 'h-auto max-h-[min(72svh,760px)] w-auto max-w-full md:h-full md:max-h-full'
-                  : 'h-auto w-full max-w-full max-h-[min(72svh,760px)] md:max-h-full'
-              }`}
+              className="guide-uploaded-image"
               onLoad={(event) => {
                 const {naturalWidth, naturalHeight} = event.currentTarget
                 if (naturalWidth <= 0 || naturalHeight <= 0) return
@@ -179,7 +186,7 @@ function GuidePageImage({imageSrc, altText, caption}: GuidePageImageProps) {
               }}
             />
           </div>
-        </div>
+        </figure>
       </div>
       {caption ? (
         <p className="mt-4 flex-shrink-0 px-4 text-center font-sans text-[12.5px] md:text-[13.5px] italic text-[#1a1a1a]/60">
@@ -411,13 +418,16 @@ function renderSingleTextBlock(block: PortableTextBlock, key: number): React.Rea
 
 /** Lightweight Portable Text renderer (no @portabletext/react). */
 function renderGuideBlocks(blocks: GuideContentBlock[]): React.ReactNode[] {
+  const imageOnlyPage =
+    blocks.length === 1 && (blocks[0] as GuideContentBlock)?._type === 'imagePlaceholder'
+
   const out: React.ReactNode[] = []
   let i = 0
   while (i < blocks.length) {
     const b = blocks[i]
 
     if (!isPortableBlock(b)) {
-      out.push(renderCustomBlock(b, i))
+      out.push(renderCustomBlock(b, i, {imageOnlyPage}))
       i += 1
       continue
     }
@@ -535,7 +545,11 @@ function InteractiveChecklist({ items, categoryTitle, categoryColour }: any) {
   );
 }
 
-function renderCustomBlock(block: GuideContentBlock, key: number): React.ReactNode {
+function renderCustomBlock(
+  block: GuideContentBlock,
+  key: number,
+  options?: {imageOnlyPage?: boolean},
+): React.ReactNode {
   switch (block._type) {
     case 'sectionCover': {
       const s = block as SectionCoverBlock
@@ -645,7 +659,12 @@ function renderCustomBlock(block: GuideContentBlock, key: number): React.ReactNo
       if (imageSrc) {
         return (
           <React.Fragment key={key}>
-            <GuidePageImage imageSrc={imageSrc} altText={altText} caption={p.caption} />
+            <GuidePageImage
+              imageSrc={imageSrc}
+              altText={altText}
+              caption={p.caption}
+              fillPage={options?.imageOnlyPage ?? false}
+            />
           </React.Fragment>
         )
       }
@@ -895,21 +914,57 @@ const GUIDE_STYLES = `
   pointer-events: none;
 }
 
-/* Uploaded guide images: ignore Sanity ratio — size from the file itself */
-.guide-root .guide-image-fill {
+/* Uploaded guide images: size from the file — not the Sanity ratio dropdown */
+.guide-root .guide-uploaded-image {
+  display: block;
+  object-fit: contain;
+  object-position: center;
+}
+
+/* Shared page (callout + image, text + image, etc.) */
+.guide-root .guide-image-fill[data-fill='false'] .guide-uploaded-image[data-orient='landscape'],
+.guide-root .guide-image-fill[data-fill='false'] .guide-uploaded-image[data-orient='square'] {
+  width: 100%;
+  height: auto;
+  max-height: min(50svh, 620px);
+}
+
+.guide-root .guide-image-fill[data-fill='false'] .guide-uploaded-image[data-orient='portrait'] {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: min(50svh, 620px);
+}
+
+/* Image-only page: expand into available page height */
+.guide-root .guide-image-fill[data-fill='true'] {
   min-height: 0;
 }
 
-.guide-root .guide-image-slot {
+.guide-root .guide-image-fill[data-fill='true'] .guide-image-slot {
   min-height: 0;
+}
+
+.guide-root .guide-image-fill[data-fill='true'] .guide-uploaded-image[data-orient='landscape'],
+.guide-root .guide-image-fill[data-fill='true'] .guide-uploaded-image[data-orient='square'] {
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+}
+
+.guide-root .guide-image-fill[data-fill='true'] .guide-uploaded-image[data-orient='portrait'] {
+  width: auto;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
 }
 
 @media (min-width: 768px) {
-  .guide-root main:has(.guide-image-fill) > div {
+  .guide-root main:has(.guide-image-fill[data-fill='true']) > div {
     min-height: 0;
   }
 
-  .guide-root .guide-image-slot {
+  .guide-root .guide-image-fill[data-fill='true'] .guide-image-slot {
     height: 100%;
   }
 }
@@ -998,13 +1053,14 @@ const GUIDE_STYLES = `
   .guide-root .guide-uploaded-image[data-orient='square'] {
     width: 100% !important;
     height: auto !important;
-    max-height: 720px !important;
+    max-height: 680px !important;
   }
 
   .guide-root .guide-uploaded-image[data-orient='portrait'] {
-    height: 720px !important;
     width: auto !important;
+    height: 680px !important;
     max-width: 100% !important;
+    max-height: 680px !important;
   }
   
   /* Force text rendering back to normal */
