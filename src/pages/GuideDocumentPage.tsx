@@ -128,6 +128,15 @@ const DEFAULT_CTA_BUTTON = 'Book a call'
 const DEFAULT_CTA_LEGEND =
   'We do not upsell. We do not surprise you with hidden costs. We tell you what you need, what it costs, and how long it takes. If it is not worth doing, we will tell you that too.'
 
+type GuideImageRatio = NonNullable<ImagePlaceholderBlock['ratio']>
+
+function parseGuideImageRatio(ratio?: GuideImageRatio): {aspectRatio: string; orientation: 'landscape' | 'portrait' | 'square'} {
+  const value = ratio ?? '16:9'
+  const [w, h] = value.split(':').map(Number)
+  const orientation = w === h ? 'square' : h > w ? 'portrait' : 'landscape'
+  return {aspectRatio: `${w} / ${h}`, orientation}
+}
+
 const GUIDE_BY_SLUG_QUERY = `*[_type == "guide" && slug.current == $slug && !(_id in path("drafts.**"))][0]{
   title,
   subtitle,
@@ -574,14 +583,7 @@ function renderCustomBlock(block: GuideContentBlock, key: number): React.ReactNo
     }
     case 'imagePlaceholder': {
       const p = block as ImagePlaceholderBlock
-
-      const ratioClass = {
-        '16:9': 'aspect-video',
-        '4:3': 'aspect-[4/3]',
-        '1:1': 'aspect-square',
-        '3:4': 'aspect-[3/4]',
-        '9:16': 'aspect-[9/16]',
-      }[p.ratio ?? '16:9'] || 'aspect-video'
+      const {aspectRatio, orientation} = parseGuideImageRatio(p.ratio)
 
       const hasAsset = Boolean(p.image?.asset?._ref)
       const imageSrc = hasAsset && p.image ? urlFor(p.image).width(1800).fit('max').url() : null
@@ -590,28 +592,22 @@ function renderCustomBlock(block: GuideContentBlock, key: number): React.ReactNo
       return (
         <div key={key} className="guide-image-block my-2 flex w-full flex-1 flex-col items-center justify-center min-h-0 md:my-4">
           <div className="flex w-full flex-1 min-h-0 items-center justify-center">
-            <div
-              className={`relative mx-auto rounded-[16px] md:rounded-[24px] bg-[#FFF2EC] p-2 md:p-3 shadow-neu border border-white/50 ${
-                imageSrc
-                  ? 'inline-flex max-h-full max-w-full'
-                  : `w-full max-w-full ${ratioClass}`
-              }`}
-            >
+            <div className="guide-image-shell rounded-[16px] md:rounded-[24px] bg-[#FFF2EC] p-2 md:p-3 shadow-neu border border-white/50">
               <div
-                className={`relative flex items-center justify-center rounded-xl border border-black/5 bg-[#FFF8F5] shadow-neu-inner ${
-                  imageSrc ? '' : 'h-full w-full overflow-hidden'
-                }`}
+                className="guide-image-viewport relative overflow-hidden rounded-xl border border-black/5 bg-[#FFF8F5] shadow-neu-inner"
+                data-guide-orient={orientation}
+                style={{aspectRatio}}
               >
                 {imageSrc ? (
                   <img
                     src={imageSrc}
                     alt={altText}
-                    className="guide-page-image block h-auto w-auto max-h-full max-w-full object-contain"
+                    className="guide-page-image absolute inset-0 h-full w-full object-contain object-center"
                   />
                 ) : (
                   <>
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:8px_8px] mix-blend-multiply opacity-50" />
-                    <div className="z-10 flex flex-col items-center gap-3 opacity-40">
+                    <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 opacity-40">
                       <svg className="h-8 w-8 md:h-10 md:w-10 text-[#1a1a1a]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
@@ -795,7 +791,7 @@ function PageContainer({pageIndex, totalPages, badgeLabel, badgeLink, children}:
 
        {/* UPDATED: Added print: margins for the Content Body */}
        <main className="min-h-0 flex-1 overflow-hidden px-8 md:px-24 print:px-24 py-8 md:py-12 print:py-12 flex flex-col justify-center">
-          <div className="flex flex-col w-full h-full min-h-0">{children}</div>
+          <div className="flex min-h-0 w-full flex-1 flex-col">{children}</div>
         </main>
 
         {/* UPDATED: Added print: margins for the Content Footers */}
@@ -854,16 +850,34 @@ const GUIDE_STYLES = `
   pointer-events: none;
 }
 
-/* Guide images: always show the full asset — never crop to a ratio box */
+/* Guide images: ratio from Sanity sizes the frame; object-contain keeps the full asset visible */
 .guide-root .guide-image-block {
+  --guide-max-w: 100%;
+  --guide-max-h: min(780px, 100%);
   min-height: 0;
+}
+
+.guide-root .guide-image-viewport {
+  max-width: var(--guide-max-w);
+  max-height: var(--guide-max-h);
+}
+
+/* Landscape & square: expand to full content width, height follows ratio */
+.guide-root .guide-image-viewport[data-guide-orient='landscape'],
+.guide-root .guide-image-viewport[data-guide-orient='square'] {
+  width: var(--guide-max-w);
+  height: auto;
+}
+
+/* Portrait & tall: expand to full available height, width follows ratio */
+.guide-root .guide-image-viewport[data-guide-orient='portrait'] {
+  width: auto;
+  height: var(--guide-max-h);
 }
 
 .guide-root .guide-page-image {
   object-fit: contain;
   object-position: center;
-  max-width: min(100%, 646px);
-  max-height: min(100%, 780px);
 }
 
 @media (min-width: 768px) {
@@ -953,10 +967,20 @@ const GUIDE_STYLES = `
   }
 
   .guide-root .guide-page-image {
-    max-width: 100% !important;
-    max-height: 720px !important;
     object-fit: contain !important;
     object-position: center !important;
+  }
+
+  .guide-root .guide-image-viewport[data-guide-orient='landscape'],
+  .guide-root .guide-image-viewport[data-guide-orient='square'] {
+    width: 100% !important;
+    max-height: 720px !important;
+  }
+
+  .guide-root .guide-image-viewport[data-guide-orient='portrait'] {
+    height: 720px !important;
+    width: auto !important;
+    max-width: 100% !important;
   }
   
   /* Force text rendering back to normal */
