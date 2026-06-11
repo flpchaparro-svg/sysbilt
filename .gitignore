@@ -26,3 +26,4 @@ bundle-stats.html
 dist/
 .env.local
 .vercel
+.cursor/mcp.json
