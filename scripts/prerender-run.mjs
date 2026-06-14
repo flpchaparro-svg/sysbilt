@@ -32,6 +32,7 @@ const ROUTES = [
   '/blog',
   '/news',
   '/guides',
+  '/toolkit',
 ];
 
 const SITE = 'https://sysbilt.com';

@@ -10,6 +10,7 @@ import newsBlockContent from './newsBlockContent'
 import persona from './persona'
 import guideBlockContent from './guideBlockContent'
 import guide from './guide'
+import toolkitItem from './toolkitItem'
 
 export const schemaTypes = [
   post,
@@ -24,4 +25,5 @@ export const schemaTypes = [
   persona,
   guideBlockContent,
   guide,
+  toolkitItem,
 ]

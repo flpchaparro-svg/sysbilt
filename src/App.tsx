@@ -24,6 +24,8 @@ const BlogPostPage = lazy(() => import('./pages/BlogPostPage'));
 const NewsPage = lazy(() => import('./pages/NewsPage'));
 const GuidesPage = lazy(() => import('./pages/GuidesHubPage'));
 const GuideDocumentPage = lazy(() => import('./pages/GuideDocumentPage'));
+const ToolkitPage = lazy(() => import('./pages/ToolkitPage'));
+const ToolkitItemPage = lazy(() => import('./pages/ToolkitItemPage'));
 const ProposalPage = lazy(() => import('./pages/proposal/ProposalPage'));
 const AgreementPage = lazy(() => import('./pages/agreement/AgreementPage'));
 const DeepAuditReportPage = lazy(() => import('./pages/DeepAuditReportPage'));
@@ -98,6 +100,7 @@ const App: React.FC = () => {
       'blog': '/blog',
       'news': '/news',
       'guides': '/guides',
+      'toolkit': '/toolkit',
       'architect': '/architect',
       'system': '/system',
       'process': '/process',
@@ -178,6 +181,8 @@ const App: React.FC = () => {
                     <Route path="/news" element={<NewsPage />} />
                     <Route path="/guides/:slug" element={<GuideDocumentPage />} />
                     <Route path="/guides" element={<GuidesPage />} />
+                    <Route path="/toolkit/:slug" element={<ToolkitItemPage />} />
+                    <Route path="/toolkit" element={<ToolkitPage />} />
                     
                     <Route path="/pillar1" element={<Pillar1 onNavigate={handleGlobalNavigate} />} />
                     <Route path="/pillar2" element={<Pillar2 onNavigate={handleGlobalNavigate} />} />

@@ -35,6 +35,7 @@ const STATIC_PAGES: readonly StaticPage[] = [
   { path: '/pillar6', priority: '0.8' },
   { path: '/pillar7', priority: '0.8' },
   { path: '/guides', priority: '0.7' },
+  { path: '/toolkit', priority: '0.7' },
 ] as const;
 
 const POSTS_QUERY = `*[_type == "post" && !(_id in path("drafts.**"))]{
@@ -46,8 +47,14 @@ const GUIDES_QUERY = `*[_type == "guide" && !(_id in path("drafts.**"))]{
   publishedAt
 }`;
 
+const TOOLKIT_QUERY = `*[_type == "toolkitItem" && !(_id in path("drafts.**"))]{
+  "slug": slug.current,
+  _updatedAt
+}`;
+
 type PostRow = { slug: string | null; publishedAt: string | null };
 type GuideRow = { slug: string | null; publishedAt: string | null };
+type ToolkitRow = { slug: string | null; _updatedAt: string | null };
 
 function escapeXml(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -92,9 +99,10 @@ export default async function handler(_req: VercelRequest, res: VercelResponse):
       apiVersion: '2024-02-20',
     });
 
-    const [posts, guidesFromCms] = await Promise.all([
+    const [posts, guidesFromCms, toolkitItems] = await Promise.all([
       client.fetch<PostRow[]>(POSTS_QUERY),
       client.fetch<GuideRow[]>(GUIDES_QUERY),
+      client.fetch<ToolkitRow[]>(TOOLKIT_QUERY),
     ]);
 
     const today = isoDateOnly(new Date());
@@ -129,7 +137,16 @@ export default async function handler(_req: VercelRequest, res: VercelResponse):
         priority: '0.65',
       }));
 
-    const xml = buildXml([...staticEntries, ...guideDocEntries, ...blogUrls]);
+    const toolkitUrls: UrlEntry[] = toolkitItems
+      .filter((t): t is { slug: string; _updatedAt: string | null } => typeof t.slug === 'string' && t.slug.length > 0)
+      .map((t) => ({
+        loc: `${BASE_URL}/toolkit/${encodeURIComponent(t.slug)}`,
+        lastmod: t._updatedAt ? new Date(t._updatedAt).toISOString().split('T')[0] : today,
+        changefreq: 'weekly',
+        priority: '0.65',
+      }));
+
+    const xml = buildXml([...staticEntries, ...guideDocEntries, ...blogUrls, ...toolkitUrls]);
 
     res.setHeader('Content-Type', 'application/xml; charset=utf-8');
     res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=86400');

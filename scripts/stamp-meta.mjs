@@ -83,6 +83,12 @@ const STATIC_ROUTES = [
       'Deep guides on building business systems. Websites, CRM, automation, AI assistants, content systems, team training, and dashboards. Free to read and download.',
   },
   {
+    path: '/toolkit',
+    title: 'Business Toolkit | SYSBILT',
+    description:
+      'Tools we rate for running a business, with a plain explanation of what each one does.',
+  },
+  {
     path: '/pillar1',
     title: 'Websites & E-commerce for Australian Businesses | SYSBILT',
     description:
@@ -139,6 +145,14 @@ const GUIDES_QUERY = `*[_type == "guide" && !(_id in path("drafts.**"))]{
   seoTitle,
   seoDescription,
   subtitle
+}`;
+
+const TOOLKIT_QUERY = `*[_type == "toolkitItem" && !(_id in path("drafts.**"))]{
+  "slug": slug.current,
+  name,
+  metaTitle,
+  metaDescription,
+  summary
 }`;
 
 function escapeAttr(value) {
@@ -249,9 +263,10 @@ async function fetchSanityRoutes() {
     apiVersion: '2024-02-20',
   });
 
-  const [posts, guides] = await Promise.all([
+  const [posts, guides, toolkitItems] = await Promise.all([
     client.fetch(POSTS_QUERY),
     client.fetch(GUIDES_QUERY),
+    client.fetch(TOOLKIT_QUERY),
   ]);
 
   const skipped = [];
@@ -287,6 +302,22 @@ async function fetchSanityRoutes() {
       title,
       description,
       ogTitle,
+    });
+  }
+
+  for (const item of toolkitItems) {
+    if (!item.slug || !item.name) {
+      skipped.push(`toolkitItem:${item.slug ?? '(no slug)'} — missing slug or name`);
+      continue;
+    }
+    const rawTitle = (item.metaTitle?.trim() || item.name).trim();
+    const title = `${rawTitle} | SYSBILT`;
+    const description = (item.metaDescription?.trim() || item.summary?.trim() || '').trim();
+    dynamic.push({
+      path: `/toolkit/${item.slug}`,
+      title,
+      description,
+      ogTitle: title,
     });
   }
 

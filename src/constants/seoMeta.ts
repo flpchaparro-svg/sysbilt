@@ -39,6 +39,12 @@ export const SEO_META = {
       'Industry news and updates for Australian businesses. Filtered by growth stage.',
     canonical: `${SITE_ORIGIN}/news`,
   },
+  toolkitIndex: {
+    title: 'Business Toolkit | SYSBILT',
+    description:
+      'Tools we rate for running a business, with a plain explanation of what each one does.',
+    canonical: `${SITE_ORIGIN}/toolkit`,
+  },
   contact: {
     title: "Let's Talk | SYSBILT",
     description:

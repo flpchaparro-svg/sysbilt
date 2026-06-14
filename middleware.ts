@@ -58,10 +58,12 @@ function isSpaRoute(normalizedPathname: string): boolean {
     '/blog',
     '/news',
     '/guides',
+    '/toolkit',
   ]);
   if (exact.has(normalizedPathname)) return true;
   if (/^\/blog\/[^/]+$/i.test(normalizedPathname)) return true;
   if (/^\/guides\/[^/]+$/i.test(normalizedPathname)) return true;
+  if (/^\/toolkit\/[^/]+$/i.test(normalizedPathname)) return true;
   return false;
 }
 
