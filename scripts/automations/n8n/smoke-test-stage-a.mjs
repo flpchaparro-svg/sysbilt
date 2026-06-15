@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { execSync } from 'node:child_process';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = resolve(__dirname, '../..');
+const ROOT = resolve(__dirname, '../../..');
 const BASE = 'https://postiz.sysbilt.com/api/public/v1';
 const FB_ID = 'cmqdhhxms0001pe760w6chubg';
 const IMAGE =

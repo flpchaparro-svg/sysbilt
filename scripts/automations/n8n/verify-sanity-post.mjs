@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { execSync } from 'node:child_process';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = resolve(__dirname, '../..');
+const ROOT = resolve(__dirname, '../../..');
 const POSTIZ_BASE = 'https://postiz.sysbilt.com/api/public/v1';
 const SANITY_QUERY =
   '*[_type == "newsItem" && !(_id in path("drafts.**"))] | order(publishedAt desc) [0...1] { _id, title, "imageUrl": mainImage.asset->url, "introText": pt::text(body) }';

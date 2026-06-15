@@ -2,7 +2,7 @@
 # Launch HubSpot MCP using the private app token from .env.local (no OAuth).
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
 ENV_FILE="${ROOT}/.env.local"
 NPX="/usr/local/bin/npx"
 

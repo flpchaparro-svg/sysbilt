@@ -8,8 +8,8 @@
  *   OUTBOUND_LEADS_SHEET_ID — spreadsheet ID (written by --setup-sheet)
  *
  * Usage:
- *   node scripts/n8n/deploy-outbound-list-builder.mjs --setup-sheet
- *   node scripts/n8n/deploy-outbound-list-builder.mjs
+ *   node scripts/automations/n8n/deploy-outbound-list-builder.mjs --setup-sheet
+ *   node scripts/automations/n8n/deploy-outbound-list-builder.mjs
  */
 import { readFileSync, existsSync, writeFileSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
@@ -17,7 +17,7 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = resolve(__dirname, '../..');
+const ROOT = resolve(__dirname, '../../..');
 const INBOUND_AUDIT_WORKFLOW_ID = 'TvkvfhrMWWHAEQFd';
 const GOOGLE_SHEETS_CRED_ID = 'W8jOFatMKmraYw0F';
 const GOOGLE_SHEETS_CRED_NAME = 'Google Sheets account';
@@ -1056,7 +1056,7 @@ async function setupSheet() {
 
   saveDeployState({ OUTBOUND_LEADS_SHEET_ID: sheetId });
   console.log(`\nSheet ready: https://docs.google.com/spreadsheets/d/${sheetId}/edit`);
-  console.log('Saved OUTBOUND_LEADS_SHEET_ID to scripts/n8n/.deploy-state.env');
+  console.log('Saved OUTBOUND_LEADS_SHEET_ID to scripts/automations/n8n/.deploy-state.env');
   console.log('\nManual step: add data validation on Status column (column K):');
   console.log(`  ${STATUS_VALUES.join(', ')}`);
   return sheetId;
@@ -1145,7 +1145,7 @@ if (runTest) {
   const run = async () => {
     const sheetId = process.env.OUTBOUND_LEADS_SHEET_ID;
     if (!sheetId && fixSheetOnly) {
-      console.error('Missing OUTBOUND_LEADS_SHEET_ID in scripts/n8n/.deploy-state.env');
+      console.error('Missing OUTBOUND_LEADS_SHEET_ID in scripts/automations/n8n/.deploy-state.env');
       process.exit(1);
     }
     if (fixSheetOnly && sheetId) {

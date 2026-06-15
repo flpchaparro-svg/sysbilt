@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # Deploy Social Distribute workflow + NEWS branch to n8n.
 set -euo pipefail
-ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
 cd "$ROOT"
+STATE_ENV="scripts/automations/n8n/.deploy-state.env"
 
 # n8n API key from .env.local (cursor-mcp JWT)
 if [[ -z "${N8N_API_KEY:-}" && -f .env.local ]]; then
@@ -21,12 +22,12 @@ if [[ -z "${POSTIZ_API_KEY:-}" ]]; then
   export POSTIZ_API_KEY
 fi
 
-if [[ -z "${POSTIZ_CREDENTIAL_ID:-}" && -f scripts/n8n/.deploy-state.env ]]; then
+if [[ -z "${POSTIZ_CREDENTIAL_ID:-}" && -f "${STATE_ENV}" ]]; then
   # shellcheck disable=SC1091
-  source scripts/n8n/.deploy-state.env
+  source "${STATE_ENV}"
 fi
 
 : "${N8N_API_KEY:?Set N8N_API_KEY or cursor-mcp in .env.local}"
 : "${POSTIZ_API_KEY:?Set POSTIZ_API_KEY}"
 
-exec node scripts/n8n/deploy-social-pipeline.mjs "$@"
+exec node scripts/automations/n8n/deploy-social-pipeline.mjs "$@"

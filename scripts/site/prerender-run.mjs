@@ -2,7 +2,7 @@
  * Post-build: serves `dist/` via Vite preview, captures HTML per route with Puppeteer
  * so crawlers receive rendered <title> / meta from react-helmet-async.
  *
- * Loaded from scripts/prerender.mjs (after Vercel skip check). Run after `vite build`.
+ * Loaded from scripts/site/prerender.mjs (after Vercel skip check). Run after `vite build`.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -11,7 +11,7 @@ import { preview } from 'vite';
 import puppeteer from 'puppeteer';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const root = path.resolve(__dirname, '..');
+const root = path.resolve(__dirname, '../..');
 
 const ROUTES = [
   '/',

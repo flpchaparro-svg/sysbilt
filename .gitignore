@@ -27,3 +27,6 @@ dist/
 .env.local
 .vercel
 .cursor/mcp.json
+
+# Local automation deploy state (machine-specific IDs, never commit)
+scripts/automations/n8n/.deploy-state.env

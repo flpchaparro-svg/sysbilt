@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "postinstall": "npx puppeteer browsers install chrome",
-    "build": "vite build && node scripts/stamp-meta.mjs",
+    "build": "vite build && node scripts/site/stamp-meta.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

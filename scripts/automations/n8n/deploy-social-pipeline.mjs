@@ -14,7 +14,7 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = resolve(__dirname, '../..');
+const ROOT = resolve(__dirname, '../../..');
 
 function loadEnvLocal() {
   const path = resolve(ROOT, '.env.local');
@@ -731,7 +731,7 @@ async function main() {
   );
   console.log(`Wrote ${statePath}`);
 
-  console.log('\nDone. Verify: node scripts/n8n/verify-sanity-post.mjs');
+  console.log('\nDone. Verify: node scripts/automations/n8n/verify-sanity-post.mjs');
   console.log('Manual n8n test: paste real news JSON on Execute Workflow Trigger (no pinned data).');
 }
 
