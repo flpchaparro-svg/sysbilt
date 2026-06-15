@@ -4,7 +4,7 @@ import {motion} from 'framer-motion'
 import {Helmet} from 'react-helmet-async'
 import {ArrowLeft, ArrowUpRight} from 'lucide-react'
 import ShareButton from '../components/ShareButton'
-import CTAButton from '../components/CTAButton'
+import PostEndCTA from '../components/PostEndCTA'
 import {PageMeta} from '../components/PageMeta'
 import {SITE_ORIGIN} from '../constants/seoMeta'
 import {client, urlFor} from '../sanityClient'
@@ -226,7 +226,7 @@ export default function ToolkitItemPage() {
   }
 
   return (
-    <main className="min-h-screen bg-dark text-cream font-sans selection:bg-cream selection:text-dark pb-24 border-t border-white/10">
+    <main className="min-h-screen bg-dark text-cream font-sans selection:bg-cream selection:text-dark pb-14 border-t border-white/10">
       <PageMeta title={htmlTitle} description={pageDescription} canonical={canonicalUrl} />
       <Helmet>
         <script type="application/ld+json">{JSON.stringify(breadcrumbJsonLd)}</script>
@@ -307,12 +307,12 @@ export default function ToolkitItemPage() {
                   )}
                 </div>
 
-                <div className="mt-6 pt-6 border-t border-cream/20">
+                <div className="mt-6 pt-6 border-t-2 border-cream/20">
                   <a
                     href={tool.url}
                     target="_blank"
                     rel={getToolkitOutboundRel(tool.linkType)}
-                    className={`w-full px-5 py-3 ${TOOLKIT_BTN_PRIMARY}`}
+                    className={`px-5 py-3 ${TOOLKIT_BTN_PRIMARY}`}
                   >
                     Visit {tool.name}
                     <ArrowUpRight className="w-4 h-4" />
@@ -530,17 +530,7 @@ export default function ToolkitItemPage() {
           </div>
         )}
 
-        <div className="mt-24 pt-16 border-t border-white/20 max-w-3xl">
-          <h3 className="font-sans font-bold text-2xl md:text-3xl text-white tracking-tight mb-4 normal-case">
-            Want to talk about this
-          </h3>
-          <p className="font-sans text-white/70 font-light mb-8 max-w-xl leading-relaxed">
-            Book a free call and we&apos;ll walk you through how this applies to your business
-          </p>
-          <CTAButton theme="dark" variant="bracket" onClick={() => navigate('/contact')}>
-            BOOK A CALL
-          </CTAButton>
-        </div>
+        <PostEndCTA onCtaClick={() => navigate('/contact')} />
       </div>
     </main>
   )

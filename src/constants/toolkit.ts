@@ -89,17 +89,20 @@ export function truncateToolkitSummary(text: string | undefined, max = TOOLKIT_S
   return `${text.slice(0, max - 1).trimEnd()}…`
 }
 
-/** Primary action on dark toolkit surfaces — gold, not red. */
-export const TOOLKIT_BTN_PRIMARY =
-  'inline-flex items-center justify-center gap-2 border-2 border-gold bg-gold text-dark type-eyebrow transition-all duration-300 hover:bg-transparent hover:text-gold-on-dark hover:border-gold-on-dark'
+/** Brutalist action — cream border, hard shadow lift on hover (toolkit tiles). */
+export const TOOLKIT_BTN_BRUTAL =
+  'inline-flex items-center justify-center gap-2 border-2 border-cream type-eyebrow text-cream transition-all duration-300 hover:bg-cream hover:border-cream hover:text-dark hover:shadow-[6px_6px_0px_0px_#FFF2EC] hover:-translate-y-0.5'
 
-/** Secondary / outline action on dark toolkit surfaces. */
+/** Primary outbound action on toolkit detail (Visit tool). */
+export const TOOLKIT_BTN_PRIMARY = `${TOOLKIT_BTN_BRUTAL} w-full`
+
+/** Secondary / inline action on dark toolkit surfaces. */
 export const TOOLKIT_BTN_SECONDARY =
-  'inline-flex items-center justify-center gap-2 border-2 border-cream type-eyebrow text-cream transition-all duration-300 hover:bg-gold hover:border-gold hover:text-dark'
+  'inline-flex items-center justify-center gap-2 border-2 border-cream type-eyebrow text-cream transition-all duration-300 hover:bg-gold hover:border-gold hover:text-dark hover:shadow-[4px_4px_0px_0px_#D4A84B] hover:-translate-y-0.5'
 
-/** Inline CTA inside conversion blocks (matches blog gold pillar). */
+/** Inline CTA inside conversion blocks. */
 export const TOOLKIT_BTN_INLINE_CTA =
-  'font-mono text-xs font-bold uppercase transition-all duration-300 border-gold bg-gold text-dark hover:bg-transparent hover:text-gold-on-dark hover:border-gold-on-dark px-8 py-4 inline-flex items-center gap-3'
+  'font-mono text-xs font-bold uppercase transition-all duration-300 border-2 border-cream bg-cream text-dark type-eyebrow hover:bg-gold hover:border-gold hover:shadow-[4px_4px_0px_0px_#D4A84B] hover:-translate-y-0.5 px-8 py-4 inline-flex items-center gap-3'
 
 export function getToolkitOutboundRel(linkType: ToolkitLinkType): string {
   if (linkType === 'standard') return 'noopener noreferrer'

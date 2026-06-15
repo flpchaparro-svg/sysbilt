@@ -6,7 +6,7 @@ import { client, urlFor } from '../sanityClient';
 import { SITE_ORIGIN } from '../constants/seoMeta';
 import { PortableText } from '@portabletext/react';
 import { ArrowLeft, ArrowUpRight, Quote, Copy, Check, Info, AlertTriangle } from 'lucide-react';
-import CTAButton from '../components/CTAButton';
+import PostEndCTA from '../components/PostEndCTA';
 import ShareButton from '../components/ShareButton';
 
 // Helper function to extract YouTube ID
@@ -793,7 +793,7 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
   const shareImage = post?.ogImage ? urlFor(post.ogImage).width(1200).height(630).url() : (post?.mainImage ? urlFor(post.mainImage).width(1200).height(630).url() : '');
 
   return (
-    <main className="min-h-screen bg-dark text-white font-sans selection:bg-white selection:text-dark pb-24 border-t border-white/10 relative">
+    <main className="min-h-screen bg-dark text-white font-sans selection:bg-white selection:text-dark pb-14 border-t border-white/10 relative">
       <Helmet>
         <title>{brandedTitle}</title>
         <meta name="description" content={pageDescription} />
@@ -1219,17 +1219,7 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
           </div>
         )}
 
-        <div className="mt-24 pt-16 border-t border-white/20 max-w-3xl">
-          <h3 className="font-sans font-bold text-2xl md:text-3xl text-white tracking-tight mb-4 normal-case">
-            Want to talk about this
-          </h3>
-          <p className="font-sans text-white/70 font-light mb-8 max-w-xl leading-relaxed">
-            Book a free call and we'll walk you through how this applies to your business
-          </p>
-          <CTAButton theme="dark" variant="bracket" onClick={() => onNavigate('contact')}>
-            BOOK A CALL
-          </CTAButton>
-        </div>
+        <PostEndCTA onCtaClick={() => onNavigate('contact')} />
 
       </div>
     </main>

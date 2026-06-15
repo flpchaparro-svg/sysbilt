@@ -21,6 +21,11 @@ if [[ -z "${POSTIZ_API_KEY:-}" ]]; then
   export POSTIZ_API_KEY
 fi
 
+if [[ -z "${POSTIZ_CREDENTIAL_ID:-}" && -f scripts/n8n/.deploy-state.env ]]; then
+  # shellcheck disable=SC1091
+  source scripts/n8n/.deploy-state.env
+fi
+
 : "${N8N_API_KEY:?Set N8N_API_KEY or cursor-mcp in .env.local}"
 : "${POSTIZ_API_KEY:?Set POSTIZ_API_KEY}"
 
