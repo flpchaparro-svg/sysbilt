@@ -39,8 +39,8 @@ export default defineType({
       name: 'tagline',
       title: 'Tagline',
       type: 'string',
-      description: 'One line on what it gives the owner, outcome first. No full stop.',
-      validation: (Rule) => Rule.max(120),
+      description: 'One line on what it gives the owner, outcome first. No full stop. Max 160 characters (about one short post line).',
+      validation: (Rule) => Rule.max(160),
     }),
     defineField({
       name: 'category',
@@ -105,6 +105,15 @@ export default defineType({
           {title: 'Best for small business', value: 'best-for-small-business'},
         ],
       },
+    }),
+    defineField({
+      name: 'tags',
+      title: 'Tags',
+      type: 'array',
+      of: [{type: 'string'}],
+      description:
+        'Keywords for related blog posts, e.g. ChatGPT, AI assistants. Used to surface related insights on the tool page.',
+      options: {layout: 'tags'},
     }),
     defineField({
       name: 'linkType',

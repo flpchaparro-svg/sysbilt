@@ -2,7 +2,19 @@ import React from 'react';
 import { Clock, CheckCircle2 } from 'lucide-react';
 import CTAButton from '../CTAButton';
 
-const BookingCTA: React.FC = () => {
+const HUBSPOT_MEETING_URL = 'https://meetings-ap1.hubspot.com/felipe-chaparro';
+
+export type BookingCTAProps = {
+  onCtaClick?: () => void;
+  ctaLabel?: string;
+  ctaNote?: string;
+};
+
+const BookingCTA: React.FC<BookingCTAProps> = ({
+  onCtaClick = () => window.open(HUBSPOT_MEETING_URL, '_blank'),
+  ctaLabel = 'BOOK A 15-MIN CALL',
+  ctaNote = 'No sales pitch, just a conversation about your system',
+}) => {
   return (
     <section className="w-full bg-cream text-dark py-24 px-6 md:px-12 lg:px-20 border-t border-black/10 relative overflow-hidden z-30">
       
@@ -47,15 +59,15 @@ const BookingCTA: React.FC = () => {
              <div className="w-full">
                 <CTAButton 
                   theme="dark" 
-                  onClick={() => window.open("https://meetings-ap1.hubspot.com/felipe-chaparro", "_blank")}
+                  onClick={onCtaClick}
                   className="w-full"
                 >
-                  BOOK A 15-MIN CALL
+                  {ctaLabel}
                 </CTAButton>
              </div>
              
              <p className="text-center mt-4 font-mono text-xs font-bold text-white/70 uppercase tracking-[0.2em]">
-                No sales pitch, just a conversation about your system
+                {ctaNote}
              </p>
           </div>
         </div>

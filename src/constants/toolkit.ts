@@ -56,6 +56,51 @@ export const TOOLKIT_PICK_LABELS: Record<ToolkitPick, string> = {
   'best-for-small-business': 'Best for small business',
 }
 
+export const TOOLKIT_TAGLINE_MAX_CHARS = 160
+
+/** Detail-page summary display cap (hero-adjacent copy). */
+export const TOOLKIT_SUMMARY_MAX_CHARS = 200
+
+const PICK_PRIORITY: ToolkitPick[] = ['our-pick', 'best-value', 'best-for-small-business']
+
+export const TOOLKIT_PICK_BADGE_CLASSES: Record<ToolkitPick, string> = {
+  'our-pick': 'bg-red-solid text-white',
+  'best-value': 'bg-gold text-dark',
+  'best-for-small-business': 'bg-cream text-dark',
+}
+
+export function getPrimaryPick(picks?: ToolkitPick[] | null): ToolkitPick | null {
+  if (!picks?.length) return null
+  for (const pick of PICK_PRIORITY) {
+    if (picks.includes(pick)) return pick
+  }
+  return picks[0]
+}
+
+export function truncateToolkitTagline(text: string | undefined, max = TOOLKIT_TAGLINE_MAX_CHARS): string {
+  if (!text) return ''
+  if (text.length <= max) return text
+  return `${text.slice(0, max - 1).trimEnd()}…`
+}
+
+export function truncateToolkitSummary(text: string | undefined, max = TOOLKIT_SUMMARY_MAX_CHARS): string {
+  if (!text) return ''
+  if (text.length <= max) return text
+  return `${text.slice(0, max - 1).trimEnd()}…`
+}
+
+/** Primary action on dark toolkit surfaces — gold, not red. */
+export const TOOLKIT_BTN_PRIMARY =
+  'inline-flex items-center justify-center gap-2 border-2 border-gold bg-gold text-dark type-eyebrow transition-all duration-300 hover:bg-transparent hover:text-gold-on-dark hover:border-gold-on-dark'
+
+/** Secondary / outline action on dark toolkit surfaces. */
+export const TOOLKIT_BTN_SECONDARY =
+  'inline-flex items-center justify-center gap-2 border-2 border-cream type-eyebrow text-cream transition-all duration-300 hover:bg-gold hover:border-gold hover:text-dark'
+
+/** Inline CTA inside conversion blocks (matches blog gold pillar). */
+export const TOOLKIT_BTN_INLINE_CTA =
+  'font-mono text-xs font-bold uppercase transition-all duration-300 border-gold bg-gold text-dark hover:bg-transparent hover:text-gold-on-dark hover:border-gold-on-dark px-8 py-4 inline-flex items-center gap-3'
+
 export function getToolkitOutboundRel(linkType: ToolkitLinkType): string {
   if (linkType === 'standard') return 'noopener noreferrer'
   return 'sponsored nofollow noopener noreferrer'
@@ -94,5 +139,7 @@ export const TOOLKIT_ITEM_QUERY = `*[_type == "toolkitItem" && slug.current == $
   url,
   promoCode,
   metaTitle,
-  metaDescription
+  metaDescription,
+  tags,
+  _updatedAt
 }`

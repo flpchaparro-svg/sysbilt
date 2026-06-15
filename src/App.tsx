@@ -159,7 +159,10 @@ const App: React.FC = () => {
               currentView={getCurrentView()}
               onNavigate={handleGlobalNavigate}
               scrolled={scrolled}
-              solidBackground={/^\/blog\/[^/]+$/.test(location.pathname)}
+              solidBackground={
+                location.pathname === '/toolkit' ||
+                /^\/(blog|toolkit)\/[^/]+$/.test(location.pathname)
+              }
             />
           )}
 
