@@ -39,6 +39,9 @@ Requires `N8N_API_KEY` (or `cursor-mcp=` in `.env.local`).
 # Deploy outbound list builder
 ./scripts/automations/n8n/deploy-outbound-list-builder.sh
 
+# Deploy outbound audit runner (Workflow B)
+./scripts/automations/n8n/deploy-outbound-audit-runner.sh
+
 # Verify a Sanity post after pipeline run
 node scripts/automations/n8n/verify-sanity-post.mjs
 ```

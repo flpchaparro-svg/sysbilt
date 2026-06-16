@@ -39,7 +39,7 @@ const SHEET_HEADERS = [
   'Notes',
 ];
 
-const SHEET_DATA_RANGE = 'A2:N5000';
+const SHEET_DATA_RANGE = 'A1:N5000';
 const GEMINI_CRED_ID = 'fYynkgKRlOyjBhLi';
 const GEMINI_CRED_NAME = 'Gemini News Free';
 
@@ -74,6 +74,85 @@ function buildHeaderRowNode(position) {
     parameters: {
       mode: 'runOnceForAllItems',
       jsCode: HEADER_ROW_JS,
+    },
+  };
+}
+
+function buildSetHeaderRowHttpNode(sheetId, position) {
+  const encodedRange = encodeURIComponent('Sheet1!A1:N1');
+  return {
+    id: uid(),
+    name: 'Set Header Row',
+    type: 'n8n-nodes-base.httpRequest',
+    typeVersion: 4.4,
+    position,
+    credentials: {
+      googleSheetsOAuth2Api: { id: GOOGLE_SHEETS_CRED_ID, name: GOOGLE_SHEETS_CRED_NAME },
+    },
+    parameters: {
+      method: 'PUT',
+      url: `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodedRange}?valueInputOption=USER_ENTERED`,
+      authentication: 'predefinedCredentialType',
+      nodeCredentialType: 'googleSheetsOAuth2Api',
+      sendBody: true,
+      specifyBody: 'json',
+      jsonBody: JSON.stringify({
+        range: 'Sheet1!A1:N1',
+        majorDimension: 'ROWS',
+        values: [SHEET_HEADERS],
+      }),
+      options: {},
+    },
+  };
+}
+
+const BUILD_DELETE_TABLE_REQUESTS_JS = `const requests = [];
+for (const sheet of ($input.first().json.sheets || [])) {
+  for (const table of sheet.tables || []) {
+    if (table.tableId) requests.push({ deleteTable: { tableId: table.tableId } });
+  }
+}
+return [{ json: { requests, hasTables: requests.length > 0 } }];`;
+
+function buildGetSpreadsheetMetaNode(sheetId, position) {
+  return {
+    id: uid(),
+    name: 'Get Spreadsheet Meta',
+    type: 'n8n-nodes-base.httpRequest',
+    typeVersion: 4.4,
+    position,
+    credentials: {
+      googleSheetsOAuth2Api: { id: GOOGLE_SHEETS_CRED_ID, name: GOOGLE_SHEETS_CRED_NAME },
+    },
+    parameters: {
+      method: 'GET',
+      url: `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}?fields=sheets(properties.sheetId,tables(tableId))`,
+      authentication: 'predefinedCredentialType',
+      nodeCredentialType: 'googleSheetsOAuth2Api',
+      options: {},
+    },
+  };
+}
+
+function buildDeleteTablesNode(sheetId, position) {
+  return {
+    id: uid(),
+    name: 'Delete Tables',
+    type: 'n8n-nodes-base.httpRequest',
+    typeVersion: 4.4,
+    position,
+    credentials: {
+      googleSheetsOAuth2Api: { id: GOOGLE_SHEETS_CRED_ID, name: GOOGLE_SHEETS_CRED_NAME },
+    },
+    parameters: {
+      method: 'POST',
+      url: `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}:batchUpdate`,
+      authentication: 'predefinedCredentialType',
+      nodeCredentialType: 'googleSheetsOAuth2Api',
+      sendBody: true,
+      specifyBody: 'json',
+      jsonBody: '={{ ({ requests: $json.requests }) }}',
+      options: {},
     },
   };
 }
@@ -114,7 +193,7 @@ function buildWriteHeadersNode(sheetIdExpr, position) {
   };
 }
 
-const PASS_HEADERS_THROUGH_JS = `return $('Build Header Row').all();`;
+const TRIGGER_AFTER_CLEAR_JS = `return [{ json: { _ok: true } }];`;
 
 function buildPassHeadersNode(position) {
   return {
@@ -125,7 +204,7 @@ function buildPassHeadersNode(position) {
     position,
     parameters: {
       mode: 'runOnceForAllItems',
-      jsCode: PASS_HEADERS_THROUGH_JS,
+      jsCode: TRIGGER_AFTER_CLEAR_JS,
     },
   };
 }
@@ -137,6 +216,7 @@ function buildClearEntireSheetNode(sheetIdExpr, position) {
     type: 'n8n-nodes-base.googleSheets',
     typeVersion: 4.7,
     position,
+    alwaysOutputData: true,
     credentials: {
       googleSheetsOAuth2Api: { id: GOOGLE_SHEETS_CRED_ID, name: GOOGLE_SHEETS_CRED_NAME },
     },
@@ -153,8 +233,7 @@ function buildClearEntireSheetNode(sheetIdExpr, position) {
         mode: 'name',
         cachedResultName: 'Sheet1',
       },
-      clear: 'specificRange',
-      range: 'A1:Z2000',
+      clear: 'wholeSheet',
       options: {},
     },
   };
@@ -373,13 +452,16 @@ const JINA_CONTACT_URL = `={{ (() => {
 
 const FILTER_NEEDS_EMAIL_JS = `return $input.all()
   .map((item) => item.json)
+  .filter((row) => String(row['Business Name'] || '').trim() && row['Business Name'] !== 'Business Name')
   .filter((r) => (r.Website || '').trim() && !(r.Email || '').trim() && (r['Maps ID'] || '').trim())
   .map((row) => ({ json: row }));`;
 
 const DEDUP_ROWS_JS = `const newRows = $('Map SerpAPI Results').all().map((item) => item.json);
 const existingIds = new Set(
   $('Read Sheet For Dedup').all()
-    .map((item) => String(item.json['Maps ID'] || '').trim())
+    .map((item) => item.json)
+    .filter((row) => String(row['Business Name'] || '').trim() && row['Business Name'] !== 'Business Name')
+    .map((row) => String(row['Maps ID'] || '').trim())
     .filter(Boolean)
 );
 
@@ -953,10 +1035,12 @@ async function upsertWorkflow(workflow, { activate = false } = {}) {
 function buildHeadersOnlyWorkflow(sheetId) {
   const webhookId = uid();
   const respondId = uid();
-  const headerCode = buildHeaderRowNode([-280, 0]);
-  const clearSheet = buildClearEntireSheetNode(sheetId, [-40, 0]);
-  const passHeaders = buildPassHeadersNode([200, 0]);
-  const writeHeaders = buildWriteHeadersNode(sheetId, [440, 0]);
+  const buildDeleteId = uid();
+  const hasTablesIfId = uid();
+  const getMeta = buildGetSpreadsheetMetaNode(sheetId, [-360, 0]);
+  const deleteTables = buildDeleteTablesNode(sheetId, [120, 0]);
+  const clearSheet = buildClearEntireSheetNode(sheetId, [360, 0]);
+  const setHeaders = buildSetHeaderRowHttpNode(sheetId, [600, 0]);
 
   const nodes = [
     {
@@ -964,7 +1048,7 @@ function buildHeadersOnlyWorkflow(sheetId) {
       name: 'Headers Webhook',
       type: 'n8n-nodes-base.webhook',
       typeVersion: 2.1,
-      position: [-480, 0],
+      position: [-640, 0],
       parameters: {
         path: 'sysbilt-outbound-sheet-headers',
         httpMethod: 'POST',
@@ -973,16 +1057,50 @@ function buildHeadersOnlyWorkflow(sheetId) {
       },
       webhookId: 'sysbilt-outbound-sheet-headers',
     },
-    headerCode,
+    getMeta,
+    {
+      id: buildDeleteId,
+      name: 'Build Delete Table Requests',
+      type: 'n8n-nodes-base.code',
+      typeVersion: 2,
+      position: [-120, 0],
+      parameters: {
+        mode: 'runOnceForAllItems',
+        jsCode: BUILD_DELETE_TABLE_REQUESTS_JS,
+      },
+    },
+    {
+      id: hasTablesIfId,
+      name: 'Has Tables',
+      type: 'n8n-nodes-base.if',
+      typeVersion: 2.3,
+      position: [0, 0],
+      parameters: {
+        conditions: {
+          options: { caseSensitive: true, leftValue: '', typeValidation: 'loose', version: 3 },
+          conditions: [
+            {
+              id: uid(),
+              leftValue: '={{ $json.hasTables }}',
+              rightValue: true,
+              operator: { type: 'boolean', operation: 'equals' },
+            },
+          ],
+          combinator: 'and',
+        },
+        looseTypeValidation: true,
+        options: {},
+      },
+    },
+    deleteTables,
     clearSheet,
-    passHeaders,
-    writeHeaders,
+    setHeaders,
     {
       id: respondId,
       name: 'Respond OK',
       type: 'n8n-nodes-base.respondToWebhook',
       typeVersion: 1.1,
-      position: [680, 0],
+      position: [840, 0],
       parameters: {
         respondWith: 'json',
         responseBody: '={{ ({ ok: true, spreadsheetId: "' + sheetId + '" }) }}',
@@ -995,11 +1113,18 @@ function buildHeadersOnlyWorkflow(sheetId) {
     name: 'SYSBILT - Outbound Sheet Headers',
     nodes,
     connections: {
-      'Headers Webhook': { main: [[{ node: 'Build Header Row', type: 'main', index: 0 }]] },
-      'Build Header Row': { main: [[{ node: 'Clear Sheet', type: 'main', index: 0 }]] },
-      'Clear Sheet': { main: [[{ node: 'Pass Headers Through', type: 'main', index: 0 }]] },
-      'Pass Headers Through': { main: [[{ node: 'Append Header Row', type: 'main', index: 0 }]] },
-      'Append Header Row': { main: [[{ node: 'Respond OK', type: 'main', index: 0 }]] },
+      'Headers Webhook': { main: [[{ node: 'Get Spreadsheet Meta', type: 'main', index: 0 }]] },
+      'Get Spreadsheet Meta': { main: [[{ node: 'Build Delete Table Requests', type: 'main', index: 0 }]] },
+      'Build Delete Table Requests': { main: [[{ node: 'Has Tables', type: 'main', index: 0 }]] },
+      'Has Tables': {
+        main: [
+          [{ node: 'Delete Tables', type: 'main', index: 0 }],
+          [{ node: 'Clear Sheet', type: 'main', index: 0 }],
+        ],
+      },
+      'Delete Tables': { main: [[{ node: 'Clear Sheet', type: 'main', index: 0 }]] },
+      'Clear Sheet': { main: [[{ node: 'Set Header Row', type: 'main', index: 0 }]] },
+      'Set Header Row': { main: [[{ node: 'Respond OK', type: 'main', index: 0 }]] },
     },
     settings: { executionOrder: 'v1' },
   };
@@ -1110,7 +1235,7 @@ async function runListBuilderTest() {
     body: JSON.stringify({ test: true }),
   });
   console.log('Webhook status', res.status);
-  await new Promise((r) => setTimeout(r, 180000));
+  await new Promise((r) => setTimeout(r, 300000));
   const { data } = await n8n('GET', `/executions?workflowId=${wf.id}&limit=1`);
   const execId = data?.[0]?.id;
   const exec = await n8n('GET', `/executions/${execId}?includeData=true`);
@@ -1156,6 +1281,9 @@ if (runTest) {
       );
       if (!data.ok) throw new Error(`Header reset failed: ${JSON.stringify(data)}`);
       console.log(`\nSheet fixed: https://docs.google.com/spreadsheets/d/${sheetId}/edit`);
+      console.log(
+        'If row 1 still shows "Column 1", "Column 2": click Table1 → Convert to range, then run --fix-sheet again.',
+      );
       console.log('Re-run Workflow A in n8n to repopulate rows (Address + scraped email).');
       await deployAll();
       return;
