@@ -5,6 +5,7 @@ import {Helmet} from 'react-helmet-async'
 import {ArrowLeft, ArrowUpRight} from 'lucide-react'
 import ShareButton from '../components/ShareButton'
 import PostEndCTA from '../components/PostEndCTA'
+import {ToolkitPortableText, getToolkitSectionsFromBody} from '../components/toolkit/ToolkitPortableText'
 import {PageMeta} from '../components/PageMeta'
 import {SITE_ORIGIN} from '../constants/seoMeta'
 import {client, urlFor} from '../sanityClient'
@@ -30,7 +31,8 @@ type ToolkitItem = {
   slug: string
   tagline?: string
   summary: string
-  benefits: string[]
+  benefits?: string[]
+  body?: unknown[]
   category: ToolkitCategory
   phase?: string
   pricingModel: ToolkitPricingModel
@@ -68,6 +70,7 @@ const PAGE_QUERY = `*[_type == "toolkitItem" && slug.current == $slug][0] {
   tagline,
   summary,
   benefits,
+  body,
   category,
   phase,
   pricingModel,
@@ -118,13 +121,24 @@ export default function ToolkitItemPage() {
       .catch(() => setLoading(false))
   }, [slug])
 
+  const hasBody = Boolean(tool?.body?.length)
+
   const sections = useMemo(() => {
+    if (hasBody && tool?.body) {
+      return getToolkitSectionsFromBody(tool.body as Parameters<typeof getToolkitSectionsFromBody>[0])
+    }
     const items = [{id: 'what-it-is', text: 'What it is'}]
     if (tool?.benefits?.length) {
       items.push({id: 'how-it-helps', text: 'How it helps your business'})
     }
     return items
-  }, [tool?.benefits])
+  }, [tool?.benefits, tool?.body, hasBody])
+
+  useEffect(() => {
+    if (!sections.length) return
+    const initialId = sections[0]?.id
+    if (initialId) setActiveSection(initialId)
+  }, [sections])
 
   useEffect(() => {
     const handleScroll = () => {
@@ -426,30 +440,36 @@ export default function ToolkitItemPage() {
               </ul>
             </div>
 
-            <section id="what-it-is" className="scroll-mt-32 mb-16 md:mb-20">
-              <h2 className="font-sans font-bold text-xl md:text-2xl uppercase tracking-tight text-white mb-5 flex items-center gap-3">
-                <span className={TOOLKIT_THEME.textMain}>//</span> What it is
-              </h2>
-              <p className="type-body text-white/75 leading-relaxed text-pretty">{tool.summary}</p>
-            </section>
+            {hasBody ? (
+              <ToolkitPortableText value={tool.body} />
+            ) : (
+              <>
+                <section id="what-it-is" className="scroll-mt-32 mb-16 md:mb-20">
+                  <h2 className="font-sans font-bold text-xl md:text-2xl uppercase tracking-tight text-white mb-5 flex items-center gap-3">
+                    <span className={TOOLKIT_THEME.textMain}>//</span> What it is
+                  </h2>
+                  <p className="type-body text-white/75 leading-relaxed text-pretty">{tool.summary}</p>
+                </section>
 
-            {tool.benefits?.length > 0 && (
-              <section id="how-it-helps" className="scroll-mt-32 mb-16 md:mb-20">
-                <h2 className="font-sans font-bold text-xl md:text-2xl uppercase tracking-tight text-white mb-6 flex items-center gap-3">
-                  <span className={TOOLKIT_THEME.textMain}>//</span> How it helps your business
-                </h2>
-                <ul className="border-t border-white/15">
-                  {tool.benefits.map((benefit) => (
-                    <li
-                      key={benefit}
-                      className="flex gap-4 py-4 border-b border-white/10 type-body text-white/75 leading-relaxed"
-                    >
-                      <span className={`type-eyebrow ${TOOLKIT_THEME.textMain} shrink-0 pt-0.5`}>→</span>
-                      <span>{benefit}</span>
-                    </li>
-                  ))}
-                </ul>
-              </section>
+                {tool.benefits && tool.benefits.length > 0 && (
+                  <section id="how-it-helps" className="scroll-mt-32 mb-16 md:mb-20">
+                    <h2 className="font-sans font-bold text-xl md:text-2xl uppercase tracking-tight text-white mb-6 flex items-center gap-3">
+                      <span className={TOOLKIT_THEME.textMain}>//</span> How it helps your business
+                    </h2>
+                    <ul className="border-t border-white/15">
+                      {tool.benefits.map((benefit) => (
+                        <li
+                          key={benefit}
+                          className="flex gap-4 py-4 border-b border-white/10 type-body text-white/75 leading-relaxed"
+                        >
+                          <span className={`type-eyebrow ${TOOLKIT_THEME.textMain} shrink-0 pt-0.5`}>→</span>
+                          <span>{benefit}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                )}
+              </>
             )}
 
             <div className="mt-20 pt-12 border-t border-white/10 flex flex-col sm:flex-row gap-6 md:gap-8 items-start">

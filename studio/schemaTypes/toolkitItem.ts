@@ -161,8 +161,14 @@ export default defineType({
       type: 'array',
       of: [{type: 'string'}],
       description:
-        'Concrete uses for an owner, e.g. "Draft client quotes in minutes". One per line.',
-      validation: (Rule) => Rule.min(1),
+        'Short bullet list for tools without a full body. Ignored on the page when body is filled in.',
+    }),
+    defineField({
+      name: 'body',
+      title: 'Full tool page',
+      type: 'blockContent',
+      description:
+        'Long-form sections (What it is, what it does, when to use it, etc.). When present, this replaces the summary and benefits on the detail page.',
     }),
     defineField({
       name: 'featured',

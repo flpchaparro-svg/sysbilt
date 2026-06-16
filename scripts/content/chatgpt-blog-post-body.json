@@ -1,0 +1,846 @@
+[
+  {
+    "_key": "k1v0gap1",
+    "_type": "block",
+    "style": "normal",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k2ed1o12",
+        "text": "The cheapest first draft in your business, if you check its work",
+        "marks": []
+      }
+    ]
+  },
+  {
+    "_key": "k3c6h0ig",
+    "_type": "block",
+    "style": "h2",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k4uwc549",
+        "text": "What it is",
+        "marks": []
+      }
+    ]
+  },
+  {
+    "_key": "k5mk5qe3",
+    "_type": "block",
+    "style": "normal",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k6yltmyr",
+        "text": "ChatGPT is an AI assistant from OpenAI, and for most small business owners it's the easiest place to start with AI. You ask for something in plain English and it answers in seconds, a draft, a summary, a plan, a straight answer. We've found it gets you the first 80% of almost any writing or thinking job in the time it takes to make a coffee. The last 20%, the judgement, the facts, the parts a customer actually sees, still need you. Get that split right and it's the best value tool in your business. Get it wrong and it'll embarrass you. Most of this page is about getting it right.",
+        "marks": []
+      }
+    ]
+  },
+  {
+    "_key": "k78jhe51",
+    "_type": "block",
+    "style": "h2",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k8ja3etw",
+        "text": "What it can actually do",
+        "marks": []
+      }
+    ]
+  },
+  {
+    "_key": "k9hnexk6",
+    "_type": "callout",
+    "type": "info",
+    "title": "[Image placeholder: Skills grid]",
+    "text": "Replace with the 4:5 skills grid illustration (4:5). Delete this callout in Studio and insert the real image block."
+  },
+  {
+    "_key": "k105fh0w4",
+    "_type": "block",
+    "style": "normal",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k11d1q0m2",
+        "text": "Strip away the hype and here's what it genuinely does for a business, day to day.",
+        "marks": []
+      }
+    ]
+  },
+  {
+    "_key": "k14mhnpca",
+    "_type": "block",
+    "style": "normal",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k121fw5c9",
+        "text": "Writes and tidies words.",
+        "marks": [
+          "strong"
+        ]
+      },
+      {
+        "_type": "span",
+        "_key": "k13neh8go",
+        "text": " Emails, replies, quotes, and a summary of that document you'd been avoiding. This is the bread and butter, and where most of your time comes back.",
+        "marks": []
+      }
+    ],
+    "listItem": "bullet",
+    "level": 1
+  },
+  {
+    "_key": "k174k1oei",
+    "_type": "block",
+    "style": "normal",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k15v6eeme",
+        "text": "Reads your files and your numbers.",
+        "marks": [
+          "strong"
+        ]
+      },
+      {
+        "_type": "span",
+        "_key": "k16y6vvyj",
+        "text": " Drop in a PDF, a contract, or an Excel or CSV file and it'll pull out what matters, clean up the mess, and build a quick chart. Useful for making sense of your finances or a fat report without a calculator and a long night.",
+        "marks": []
+      }
+    ],
+    "listItem": "bullet",
+    "level": 1
+  },
+  {
+    "_key": "k20x85frz",
+    "_type": "block",
+    "style": "normal",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k18ys41h5",
+        "text": "Makes images on the spot.",
+        "marks": [
+          "strong"
+        ]
+      },
+      {
+        "_type": "span",
+        "_key": "k19ql6w8j",
+        "text": " Describe what you want and it draws it, enough for a quick social post or a rough concept. A few a day on the free plan, more and editable if you pay.",
+        "marks": []
+      }
+    ],
+    "listItem": "bullet",
+    "level": 1
+  },
+  {
+    "_key": "k232uwwb4",
+    "_type": "block",
+    "style": "normal",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k21jeshtb",
+        "text": "Does real research, with receipts.",
+        "marks": [
+          "strong"
+        ]
+      },
+      {
+        "_type": "span",
+        "_key": "k22zg1ykc",
+        "text": " Its research mode reads across the web and hands back an answer showing where every point came from, so you can check it instead of taking its word. A handful a month free, plenty on the paid plans.",
+        "marks": []
+      }
+    ],
+    "listItem": "bullet",
+    "level": 1
+  },
+  {
+    "_key": "k262lhfwy",
+    "_type": "block",
+    "style": "normal",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k24wad0v8",
+        "text": "Talks back.",
+        "marks": [
+          "strong"
+        ]
+      },
+      {
+        "_type": "span",
+        "_key": "k25muyn0f",
+        "text": " You can speak to it and it answers out loud, which helps when you're driving between jobs or away from the desk.",
+        "marks": []
+      }
+    ],
+    "listItem": "bullet",
+    "level": 1
+  },
+  {
+    "_key": "k27kzm0bt",
+    "_type": "block",
+    "style": "h2",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k28zrqees",
+        "text": "What it connects to",
+        "marks": []
+      }
+    ]
+  },
+  {
+    "_key": "k29nsn2bs",
+    "_type": "callout",
+    "type": "info",
+    "title": "[Image placeholder: Connections diagram]",
+    "text": "Replace with the 16:9 connections diagram (16:9). Delete this callout in Studio and insert the real image block."
+  },
+  {
+    "_key": "k30s2yqgw",
+    "_type": "block",
+    "style": "normal",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k313pbjdb",
+        "text": "This is the part that matters most to us, because connecting your tools is what we do. On its own, ChatGPT is clever but cut off from your business. Hooked into your systems, it actually knows it.",
+        "marks": []
+      }
+    ]
+  },
+  {
+    "_key": "k34dz2tou",
+    "_type": "block",
+    "style": "normal",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k32d8tz3p",
+        "text": "Out of the box, you feed it.",
+        "marks": [
+          "strong"
+        ]
+      },
+      {
+        "_type": "span",
+        "_key": "k33lykcyl",
+        "text": " You paste or upload, and it works with whatever you hand over. Free plan, nothing to set up.",
+        "marks": []
+      }
+    ],
+    "listItem": "bullet",
+    "level": 1
+  },
+  {
+    "_key": "k37tf050x",
+    "_type": "block",
+    "style": "normal",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k35roml1m",
+        "text": "On the paid business plans, it plugs into your tools.",
+        "marks": [
+          "strong"
+        ]
+      },
+      {
+        "_type": "span",
+        "_key": "k365z6sno",
+        "text": " It can connect to your Google Workspace, your Microsoft 365, Slack, and your CRM like HubSpot, so it answers from your real customer and company information instead of guessing. This is the jump from a clever assistant to one that knows your business by name.",
+        "marks": []
+      }
+    ],
+    "listItem": "bullet",
+    "level": 1
+  },
+  {
+    "_key": "k409y8ds9",
+    "_type": "block",
+    "style": "normal",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k383qsjlt",
+        "text": "The deeper connections are a build.",
+        "marks": [
+          "strong"
+        ]
+      },
+      {
+        "_type": "span",
+        "_key": "k39wfpfi6",
+        "text": " Wiring it into your own systems, and the tools that don't come with a ready-made plug, is the kind of job we do every week, getting software to talk to software so the whole thing runs as one.",
+        "marks": []
+      }
+    ],
+    "listItem": "bullet",
+    "level": 1
+  },
+  {
+    "_key": "k41gqi9gx",
+    "_type": "block",
+    "style": "normal",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k42q9dizp",
+        "text": "Two honest catches. Those direct connections sit behind a paid plan, not the free one, and the list of what connects changes month to month, so check before you count on it. Some countries can't switch them on yet, and anything touching customer or money data needs setting up properly, with a clear eye on where that data ends up.",
+        "marks": []
+      }
+    ]
+  },
+  {
+    "_key": "k43nfk9xz",
+    "_type": "block",
+    "style": "h2",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k44bgkcpv",
+        "text": "How it makes you more money",
+        "marks": []
+      }
+    ]
+  },
+  {
+    "_key": "k458n7g23",
+    "_type": "block",
+    "style": "normal",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k463qfb6o",
+        "text": "Three ways it puts money in the till, not vague productivity talk.",
+        "marks": []
+      }
+    ]
+  },
+  {
+    "_key": "k49owmeg5",
+    "_type": "block",
+    "style": "normal",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k47qdhf0c",
+        "text": "Faster quotes win more work.",
+        "marks": [
+          "strong"
+        ]
+      },
+      {
+        "_type": "span",
+        "_key": "k48680lk8",
+        "text": " Most jobs are lost to a slow reply, not a high price. Turn an enquiry into a proper proposal in ten minutes instead of \"I'll sort it tonight\", and you reach the customer while they still care. You close more of the leads you already paid to get.",
+        "marks": []
+      }
+    ],
+    "listItem": "bullet",
+    "level": 1
+  },
+  {
+    "_key": "k529mlars",
+    "_type": "block",
+    "style": "normal",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k50t2k38y",
+        "text": "Clearer pitches get more yeses.",
+        "marks": [
+          "strong"
+        ]
+      },
+      {
+        "_type": "span",
+        "_key": "k517bw0sk",
+        "text": " It helps you say the same thing in plainer, sharper words, so the quote that used to get a \"we'll think about it\" gets signed.",
+        "marks": []
+      }
+    ],
+    "listItem": "bullet",
+    "level": 1
+  },
+  {
+    "_key": "k5567m1zi",
+    "_type": "block",
+    "style": "normal",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k53vboz49",
+        "text": "More out the door without more hires.",
+        "marks": [
+          "strong"
+        ]
+      },
+      {
+        "_type": "span",
+        "_key": "k54bkr0bz",
+        "text": " The follow-up, the proposal, the listing, the post, you ship them yourself in minutes instead of waiting on someone or letting them slide.",
+        "marks": []
+      }
+    ],
+    "listItem": "bullet",
+    "level": 1
+  },
+  {
+    "_key": "k562ig3hv",
+    "_type": "block",
+    "style": "h2",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k57db5cv2",
+        "text": "How it saves you money",
+        "marks": []
+      }
+    ]
+  },
+  {
+    "_key": "k58cyj5k3",
+    "_type": "block",
+    "style": "normal",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k59r1jom2",
+        "text": "And here's where it quietly stops money leaking out.",
+        "marks": []
+      }
+    ]
+  },
+  {
+    "_key": "k621qwjxf",
+    "_type": "block",
+    "style": "normal",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k60466f0r",
+        "text": "It does the jobs you used to pay out for.",
+        "marks": [
+          "strong"
+        ]
+      },
+      {
+        "_type": "span",
+        "_key": "k61ytf2l9",
+        "text": " The eighty-dollar copy tweak, the first draft you'd hand a junior, the hours a VA spends summarising, you do them yourself in minutes. Not replacing people, just the small bills that quietly stack up.",
+        "marks": []
+      }
+    ],
+    "listItem": "bullet",
+    "level": 1
+  },
+  {
+    "_key": "k655rfy2x",
+    "_type": "block",
+    "style": "normal",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k637gu6bv",
+        "text": "The free version is genuinely enough for most owners, for months.",
+        "marks": [
+          "strong"
+        ]
+      },
+      {
+        "_type": "span",
+        "_key": "k64taqqxh",
+        "text": " We've found very few small businesses need the top tier early on, so don't pay for power you aren't using yet.",
+        "marks": []
+      }
+    ],
+    "listItem": "bullet",
+    "level": 1
+  },
+  {
+    "_key": "k66hsbg0j",
+    "_type": "block",
+    "style": "h2",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k67kfu45d",
+        "text": "How it lowers your stress",
+        "marks": []
+      }
+    ]
+  },
+  {
+    "_key": "k68yylu5q",
+    "_type": "block",
+    "style": "normal",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k69x373b3",
+        "text": "Money matters, but the quiet win is what it does to your week.",
+        "marks": []
+      }
+    ]
+  },
+  {
+    "_key": "k72umgxt5",
+    "_type": "block",
+    "style": "normal",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k7075h2kz",
+        "text": "It kills the blank page.",
+        "marks": [
+          "strong"
+        ]
+      },
+      {
+        "_type": "span",
+        "_key": "k71latnqz",
+        "text": " The policy, the awkward email, the job ad you've dodged for a week turns into \"fix this draft\" instead of \"write this from nothing\", so the thing hanging over you finally gets done.",
+        "marks": []
+      }
+    ],
+    "listItem": "bullet",
+    "level": 1
+  },
+  {
+    "_key": "k75mcmr0z",
+    "_type": "block",
+    "style": "normal",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k73hoa23v",
+        "text": "It's a second brain at 11pm.",
+        "marks": [
+          "strong"
+        ]
+      },
+      {
+        "_type": "span",
+        "_key": "k74qo1vcs",
+        "text": " You can think a tough call out loud with something that asks the obvious questions, so you're not carrying every decision on your own.",
+        "marks": []
+      }
+    ],
+    "listItem": "bullet",
+    "level": 1
+  },
+  {
+    "_key": "k769sq82n",
+    "_type": "block",
+    "style": "h2",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k77m86zpy",
+        "text": "Where it falls down, and what it can cost you",
+        "marks": []
+      }
+    ]
+  },
+  {
+    "_key": "k78uu6qlc",
+    "_type": "block",
+    "style": "normal",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k79cmaron",
+        "text": "Now the part most tool pages skip. This is where it bites, and how to stay out of trouble.",
+        "marks": []
+      }
+    ]
+  },
+  {
+    "_key": "k827k3h66",
+    "_type": "block",
+    "style": "normal",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k804e5b3b",
+        "text": "It's confidently wrong.",
+        "marks": [
+          "strong"
+        ]
+      },
+      {
+        "_type": "span",
+        "_key": "k813k4rrp",
+        "text": " It will give you a wrong number, invent a source, or make up a detail and sound dead certain. Check anything that counts, numbers, legal, customer facts, and never let its words go straight into a quote, a contract or a client email without your eyes on them first.",
+        "marks": []
+      }
+    ],
+    "listItem": "bullet",
+    "level": 1
+  },
+  {
+    "_key": "k85kh62t7",
+    "_type": "block",
+    "style": "normal",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k83dlek1a",
+        "text": "Costs can run away.",
+        "marks": [
+          "strong"
+        ]
+      },
+      {
+        "_type": "span",
+        "_key": "k84o26sbw",
+        "text": " The chat is cheap. The bill bites when you wire it into your systems with no limits and the usage quietly climbs. Start small, set a cap, and only scale the parts that pay for themselves.",
+        "marks": []
+      }
+    ],
+    "listItem": "bullet",
+    "level": 1
+  },
+  {
+    "_key": "k88j76tn3",
+    "_type": "block",
+    "style": "normal",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k86hs24uh",
+        "text": "Your team can go lazy.",
+        "marks": [
+          "strong"
+        ]
+      },
+      {
+        "_type": "span",
+        "_key": "k87hdmntd",
+        "text": " Lean on it for everything and judgement slips, the writing turns bland, and everyone's work starts to sound the same. Use it to draft, not to think for you. The businesses that win with it treat it like a sharp junior, not an oracle.",
+        "marks": []
+      }
+    ],
+    "listItem": "bullet",
+    "level": 1
+  },
+  {
+    "_key": "k9118igej",
+    "_type": "block",
+    "style": "normal",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k89p5c4eo",
+        "text": "It doesn't know your business until you tell it.",
+        "marks": [
+          "strong"
+        ]
+      },
+      {
+        "_type": "span",
+        "_key": "k901jyatq",
+        "text": " Out of the box it writes like everyone else's. The genuinely useful answers only show up once you feed it your context, your tone and your numbers, and that's either a habit you build or a connection we set up.",
+        "marks": []
+      }
+    ],
+    "listItem": "bullet",
+    "level": 1
+  },
+  {
+    "_key": "k92086eyf",
+    "_type": "block",
+    "style": "h2",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k93dz1c6p",
+        "text": "When to try it, pay for it, or build it in",
+        "marks": []
+      }
+    ]
+  },
+  {
+    "_key": "k94s63p2q",
+    "_type": "block",
+    "style": "normal",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k95dhlcso",
+        "text": "So what should you actually do. Here's the honest path, in order.",
+        "marks": []
+      }
+    ]
+  },
+  {
+    "_key": "k98hu6wd2",
+    "_type": "block",
+    "style": "normal",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k96mwv96a",
+        "text": "Try it today, for free.",
+        "marks": [
+          "strong"
+        ]
+      },
+      {
+        "_type": "span",
+        "_key": "k97le0u1k",
+        "text": " Give it one real job you do every week and see how close it gets. That's the only test that counts.",
+        "marks": []
+      }
+    ],
+    "listItem": "bullet",
+    "level": 1
+  },
+  {
+    "_key": "k10057z18m",
+    "_type": "block",
+    "style": "normal",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k990pe53f",
+        "text": "Pay for it when the free version starts getting in your way day to day, and not a moment before.",
+        "marks": [
+          "strong"
+        ]
+      }
+    ],
+    "listItem": "bullet",
+    "level": 1
+  },
+  {
+    "_key": "k103e3ll5j",
+    "_type": "block",
+    "style": "normal",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k101cg5z6v",
+        "text": "Build it into your business when the same job repeats so often a person shouldn't be doing it.",
+        "marks": [
+          "strong"
+        ]
+      },
+      {
+        "_type": "span",
+        "_key": "k102utgd91",
+        "text": " That's the API, it's a proper build, and it's where the cost and the payoff both climb. That's the point you'd call us.",
+        "marks": []
+      }
+    ],
+    "listItem": "bullet",
+    "level": 1
+  },
+  {
+    "_key": "k104ooy6ey",
+    "_type": "block",
+    "style": "h2",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k10519lx0p",
+        "text": "Chat or API, in plain terms",
+        "marks": []
+      }
+    ]
+  },
+  {
+    "_key": "k106lz71rc",
+    "_type": "block",
+    "style": "normal",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k1074tbihm",
+        "text": "The chat is what almost everyone needs, you type, it answers. The API is the same assistant wired into your tools so it works on its own, sorting enquiries, drafting from a form, replying first, all without you in the middle. You never touch the API yourself, that's a build, and we'd only set it up once the chat has proven its worth.",
+        "marks": []
+      }
+    ]
+  },
+  {
+    "_key": "k108gra26r",
+    "_type": "block",
+    "style": "h2",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k109tx6vnu",
+        "text": "How we do it",
+        "marks": []
+      }
+    ]
+  },
+  {
+    "_key": "k110k36xqv",
+    "_type": "block",
+    "style": "normal",
+    "markDefs": [],
+    "children": [
+      {
+        "_type": "span",
+        "_key": "k111ntkfbj",
+        "text": "We start clients on the free chat to prove it earns its place on real work, then build the jobs that repeat into the background with sensible limits, so it does the boring work without the runaway bill or the bad habits.",
+        "marks": []
+      }
+    ]
+  }
+]
