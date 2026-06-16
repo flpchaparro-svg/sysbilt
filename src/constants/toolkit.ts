@@ -136,7 +136,11 @@ export const TOOLKIT_ITEM_QUERY = `*[_type == "toolkitItem" && slug.current == $
   benefits,
   body,
   mainImage,
-  logo,
+  author->{
+    name,
+    image,
+    bio
+  },
   category,
   phase,
   pricingModel,
@@ -146,6 +150,9 @@ export const TOOLKIT_ITEM_QUERY = `*[_type == "toolkitItem" && slug.current == $
   promoCode,
   metaTitle,
   metaDescription,
+  focusKeyword,
+  ogImage,
+  internalLinkDestination,
   tags,
   _updatedAt
 }`

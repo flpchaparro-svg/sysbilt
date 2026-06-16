@@ -26,6 +26,8 @@ function isInsightsActive(currentView: string): boolean {
   return (
     currentView === 'blog' ||
     currentView.startsWith('blog') ||
+    currentView === 'toolkit' ||
+    currentView.startsWith('toolkit/') ||
     currentView === 'news' ||
     currentView === 'guides' ||
     currentView.startsWith('guides/')
@@ -249,6 +251,17 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
                                 className="text-left font-serif text-lg text-dark/80 hover:pl-2 transition-all duration-200 hover:text-red-text"
                               >
                                 Blog
+                              </button>
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onNavigate('toolkit');
+                                  setOpenDesktopDropdown(null);
+                                }}
+                                className="text-left font-serif text-lg text-dark/80 hover:pl-2 transition-all duration-200 hover:text-red-text"
+                              >
+                                Toolkit
                               </button>
                               <Link
                                 to="/guides"
@@ -514,6 +527,16 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
                                 className="text-left font-serif text-lg text-dark/70 hover:text-dark active:text-gold-on-cream transition-colors"
                               >
                                 Blog
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  onNavigate('toolkit');
+                                  setIsMenuOpen(false);
+                                }}
+                                className="text-left font-serif text-lg text-dark/70 hover:text-dark active:text-gold-on-cream transition-colors"
+                              >
+                                Toolkit
                               </button>
                               <Link
                                 to="/guides"

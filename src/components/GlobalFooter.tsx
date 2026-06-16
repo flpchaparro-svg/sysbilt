@@ -65,6 +65,7 @@ const GlobalFooter: React.FC<GlobalFooterProps> = ({ onNavigate }) => {
       color: 'text-white/80',
       links: [
         { label: 'Blog', action: () => onNavigate('blog') },
+        { label: 'Toolkit', action: () => onNavigate('toolkit') },
         { label: 'Guides', action: () => onNavigate('guides') },
         { label: 'News', action: () => onNavigate('news') },
       ],

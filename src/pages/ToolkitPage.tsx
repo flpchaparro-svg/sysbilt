@@ -4,7 +4,7 @@ import { m, AnimatePresence } from 'framer-motion'
 import { Helmet } from 'react-helmet-async'
 import { ArrowRight, BookOpen, ChevronDown, ChevronUp, FileText } from 'lucide-react'
 import { PageMeta } from '../components/PageMeta'
-import { SITE_ORIGIN } from '../constants/seoMeta'
+import { SEO_META, SITE_ORIGIN } from '../constants/seoMeta'
 import { client } from '../sanityClient'
 import {
   getCategoryLabel,
@@ -58,7 +58,8 @@ const toolkitBreadcrumbJsonLd = {
   '@type': 'BreadcrumbList',
   itemListElement: [
     {'@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_ORIGIN}/`},
-    {'@type': 'ListItem', position: 2, name: 'Toolkit', item: TOOLKIT_URL},
+    {'@type': 'ListItem', position: 2, name: 'Insights', item: `${SITE_ORIGIN}/blog`},
+    {'@type': 'ListItem', position: 3, name: 'Toolkit', item: TOOLKIT_URL},
   ],
 }
 
@@ -134,9 +135,9 @@ export default function ToolkitPage() {
   return (
     <section className="w-full min-h-screen bg-dark text-cream font-sans selection:bg-cream selection:text-dark">
       <PageMeta
-        title="Business Toolkit | SYSBILT"
-        description="Tools we rate for running a business, with a plain explanation of what each one does."
-        canonical={TOOLKIT_URL}
+        title={SEO_META.toolkitIndex.title}
+        description={SEO_META.toolkitIndex.description}
+        canonical={SEO_META.toolkitIndex.canonical}
       />
       <Helmet>
         <script type="application/ld+json">{JSON.stringify(toolkitCollectionJsonLd)}</script>

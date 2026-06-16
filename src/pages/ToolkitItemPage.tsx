@@ -1,3 +1,4 @@
+import {PortableText} from '@portabletext/react'
 import React, {useEffect, useMemo, useState} from 'react'
 import {Link, useNavigate, useParams} from 'react-router-dom'
 import {motion} from 'framer-motion'
@@ -9,6 +10,7 @@ import {ToolkitPortableText, getToolkitBodyMainSections, getToolkitSectionsFromB
 import {PageMeta} from '../components/PageMeta'
 import {SITE_ORIGIN} from '../constants/seoMeta'
 import {client, urlFor} from '../sanityClient'
+import {buildToolkitArticleJsonLd} from '../utils/toolkitSeoJsonLd'
 import {
   getCategoryLabel,
   getPricingLabel,
@@ -25,6 +27,12 @@ import {
   type ToolkitPricingModel,
 } from '../constants/toolkit'
 
+type ToolkitAuthor = {
+  name?: string
+  image?: unknown
+  bio?: unknown[]
+}
+
 type ToolkitItem = {
   _id: string
   name: string
@@ -34,7 +42,8 @@ type ToolkitItem = {
   benefits?: string[]
   body?: unknown[]
   mainImage?: {alt?: string; asset?: {_ref?: string}}
-  logo?: {alt?: string; asset?: {_ref?: string}}
+  author?: ToolkitAuthor | null
+  internalLinkDestination?: string
   category: ToolkitCategory
   phase?: string
   pricingModel: ToolkitPricingModel
@@ -44,6 +53,8 @@ type ToolkitItem = {
   promoCode?: string
   metaTitle?: string
   metaDescription?: string
+  focusKeyword?: string
+  ogImage?: unknown
   tags?: string[]
   _updatedAt?: string
   relatedPosts?: RelatedPost[]
@@ -74,7 +85,11 @@ const PAGE_QUERY = `*[_type == "toolkitItem" && slug.current == $slug][0] {
   benefits,
   body,
   mainImage,
-  logo,
+  author->{
+    name,
+    image,
+    bio
+  },
   category,
   phase,
   pricingModel,
@@ -84,6 +99,9 @@ const PAGE_QUERY = `*[_type == "toolkitItem" && slug.current == $slug][0] {
   promoCode,
   metaTitle,
   metaDescription,
+  focusKeyword,
+  ogImage,
+  internalLinkDestination,
   tags,
   _updatedAt,
   "relatedPosts": *[_type == "post" && count((tags)[@ in ^.tags]) > 0] | order(publishedAt desc) [0...3] {
@@ -201,9 +219,14 @@ export default function ToolkitItemPage() {
 
   const pageTitle = (tool.metaTitle?.trim() || tool.name).trim()
   const pageDescription = (tool.metaDescription?.trim() || tool.summary).trim()
-  const htmlTitle = `${pageTitle} | SYSBILT`
+  const brandedTitle = `${pageTitle} | SYSBILT`
   const canonicalUrl = `${SITE_ORIGIN}/toolkit/${tool.slug}`
   const shareUrl = canonicalUrl
+  const shareImage = tool.ogImage
+    ? urlFor(tool.ogImage).width(1200).height(630).url()
+    : tool.mainImage?.asset?._ref
+      ? urlFor(tool.mainImage).width(1200).height(630).url()
+      : ''
   const heroTagline = truncateToolkitTagline(tool.tagline)
   const primaryPick = getPrimaryPick(tool.picks)
   const updatedLabel = tool._updatedAt
@@ -220,7 +243,10 @@ export default function ToolkitItemPage() {
     ...(tool.tags ?? []),
   ]
 
-  const heroImage = tool.mainImage?.asset?._ref ? tool.mainImage : tool.logo?.asset?._ref ? tool.logo : null
+  const authorName = tool.author?.name?.trim() || 'SYSBILT TEAM'
+  const authorInitial = authorName.charAt(0).toUpperCase() || 'S'
+
+  const heroImage = tool.mainImage?.asset?._ref ? tool.mainImage : null
   const heroImageAlt =
     (typeof heroImage?.alt === 'string' && heroImage.alt.trim()) ||
     `${tool.name} visual`
@@ -230,35 +256,42 @@ export default function ToolkitItemPage() {
     '@type': 'BreadcrumbList',
     itemListElement: [
       {'@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_ORIGIN}/`},
-      {'@type': 'ListItem', position: 2, name: 'Toolkit', item: `${SITE_ORIGIN}/toolkit`},
-      {'@type': 'ListItem', position: 3, name: tool.name, item: canonicalUrl},
+      {'@type': 'ListItem', position: 2, name: 'Insights', item: `${SITE_ORIGIN}/blog`},
+      {'@type': 'ListItem', position: 3, name: 'Toolkit', item: `${SITE_ORIGIN}/toolkit`},
+      {'@type': 'ListItem', position: 4, name: tool.name, item: canonicalUrl},
     ],
   }
 
-  const webPageJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'WebPage',
-    name: pageTitle,
-    description: pageDescription,
-    url: canonicalUrl,
-    isPartOf: {
-      '@type': 'CollectionPage',
-      name: 'Business Toolkit',
-      url: `${SITE_ORIGIN}/toolkit`,
-    },
-    publisher: {
-      '@type': 'Organization',
-      name: 'SYSBILT',
-      url: SITE_ORIGIN,
-    },
-  }
+  const articleJsonLd = buildToolkitArticleJsonLd({
+    tool,
+    canonicalUrl,
+    pageDescription,
+    shareImage,
+    headline: pageTitle,
+  })
 
   return (
     <main className="min-h-screen bg-dark text-cream font-sans selection:bg-cream selection:text-dark pb-14 border-t border-white/10">
-      <PageMeta title={htmlTitle} description={pageDescription} canonical={canonicalUrl} />
       <Helmet>
+        <title>{brandedTitle}</title>
+        <meta name="description" content={pageDescription} />
+        <link rel="canonical" href={canonicalUrl} />
+        {tool.focusKeyword ? <meta name="keywords" content={tool.focusKeyword} /> : null}
+
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content={canonicalUrl} />
+        <meta property="og:title" content={brandedTitle} />
+        <meta property="og:description" content={pageDescription} />
+        {shareImage ? <meta property="og:image" content={shareImage} /> : null}
+
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content={canonicalUrl} />
+        <meta name="twitter:title" content={brandedTitle} />
+        <meta name="twitter:description" content={pageDescription} />
+        {shareImage ? <meta name="twitter:image" content={shareImage} /> : null}
+
+        <script type="application/ld+json">{JSON.stringify(articleJsonLd)}</script>
         <script type="application/ld+json">{JSON.stringify(breadcrumbJsonLd)}</script>
-        <script type="application/ld+json">{JSON.stringify(webPageJsonLd)}</script>
       </Helmet>
 
       <div className="pt-32 px-4 md:px-8 max-w-7xl mx-auto">
@@ -359,10 +392,10 @@ export default function ToolkitItemPage() {
                   initial={{opacity: 0, x: 30}}
                   animate={{opacity: 1, x: 0}}
                   transition={{duration: 1, delay: 0.25, ease: [0.16, 1, 0.3, 1]}}
-                  className="relative w-full max-w-[520px] mx-auto lg:mx-0 lg:ml-auto lg:h-full aspect-[4/3] lg:aspect-auto lg:min-h-[240px] border-2 border-cream/25 overflow-hidden bg-white/5"
+                  className="relative w-full max-w-[520px] mx-auto lg:mx-0 lg:ml-auto lg:h-full aspect-video border-2 border-cream/25 overflow-hidden bg-white/5"
                 >
                   <img
-                    src={urlFor(heroImage).width(900).height(675).url()}
+                    src={urlFor(heroImage).width(960).height(540).url()}
                     alt={heroImageAlt}
                     className="absolute inset-0 w-full h-full object-cover"
                     loading="eager"
@@ -377,7 +410,7 @@ export default function ToolkitItemPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 border-t border-l border-white/20 mb-16 md:mb-24 bg-white/5 relative z-20">
           <div className="p-4 md:p-6 type-eyebrow text-white border-b border-r border-white/20">
             <span className="block opacity-40 mb-2">AUTHOR</span>
-            SYSBILT TEAM
+            {authorName.toUpperCase()}
           </div>
           <div className="p-4 md:p-6 type-eyebrow text-white border-b border-r border-white/20">
             <span className="block opacity-40 mb-2">UPDATED</span>
@@ -495,18 +528,59 @@ export default function ToolkitItemPage() {
 
             {hasBodyMain && <ToolkitPortableText value={bodyMainSections} />}
 
-            <div className="mt-20 pt-12 border-t border-white/10 flex flex-col sm:flex-row gap-6 md:gap-8 items-start">
-              <div className="shrink-0 w-20 h-20 md:w-24 md:h-24 rounded-full bg-white/5 border-2 border-white/20 flex items-center justify-center">
-                <span className="font-mono text-2xl text-gold-on-dark">S</span>
+            {tool.internalLinkDestination && (
+              <div className="mt-20 border border-gold-on-dark/20 bg-gold-on-dark/5 p-8 md:p-12 relative overflow-hidden group">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gold scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-700 ease-out" />
+
+                <h3 className="font-sans font-black text-3xl md:text-4xl text-white tracking-tight mb-4 normal-case">
+                  See how we fix this
+                </h3>
+                <p className="font-sans text-white/70 font-light mb-8 max-w-md">
+                  See the exact system we build to fix this
+                </p>
+
+                <button
+                  type="button"
+                  onClick={() => navigate(tool.internalLinkDestination!)}
+                  className={`font-mono text-xs font-bold uppercase transition-all duration-300 border-2 border-white bg-white text-dark px-8 py-4 inline-flex items-center gap-3 hover:bg-gold hover:border-gold hover:text-dark hover:shadow-[4px_4px_0px_0px_#D4A84B] hover:-translate-y-0.5`}
+                >
+                  AUDIT MY BUSINESS SYSTEMS <ArrowUpRight className="w-4 h-4" />
+                </button>
               </div>
+            )}
+
+            <div className="mt-20 pt-12 border-t border-white/10 flex flex-col sm:flex-row gap-6 md:gap-8 items-start">
+              {tool.author?.image ? (
+                <div className="shrink-0 relative">
+                  <div className="absolute -inset-1 bg-white/5 rounded-full" />
+                  <img
+                    src={urlFor(tool.author.image).width(200).height(200).url()}
+                    alt={authorName}
+                    className="relative w-20 h-20 md:w-24 md:h-24 rounded-full object-cover border-2 border-white/10 opacity-90 hover:opacity-100 transition-all duration-500 hover:scale-[1.02]"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+              ) : (
+                <div className="shrink-0 w-20 h-20 md:w-24 md:h-24 rounded-full bg-white/5 border-2 border-white/20 flex items-center justify-center">
+                  <span className="font-mono text-2xl text-gold-on-dark">{authorInitial}</span>
+                </div>
+              )}
               <div className="flex-1">
                 <p className="type-eyebrow text-white/40 mb-2">WRITTEN BY</p>
                 <h4 className="font-sans font-bold text-xl md:text-2xl text-white uppercase tracking-widest mb-4">
-                  SYSBILT TEAM
+                  {authorName}
                 </h4>
-                <p className="font-sans text-white/60 font-light leading-relaxed max-w-2xl text-base md:text-lg">
-                  The team behind SYSBILT builds business systems for growing Australian companies
-                </p>
+                <div className="font-sans text-white/60 font-light leading-relaxed max-w-2xl text-base md:text-lg">
+                  {tool.author?.bio ? (
+                    <PortableText
+                      value={tool.author.bio}
+                      components={{block: {normal: ({children}: {children?: React.ReactNode}) => <p className="mb-4">{children}</p>}}}
+                    />
+                  ) : (
+                    <p>The team behind SYSBILT builds business systems for growing Australian companies</p>
+                  )}
+                </div>
               </div>
             </div>
           </div>

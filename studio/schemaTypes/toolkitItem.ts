@@ -4,11 +4,18 @@ export default defineType({
   name: 'toolkitItem',
   title: 'Toolkit Item',
   type: 'document',
+  groups: [
+    {name: 'core', title: 'Core setup', default: true},
+    {name: 'content', title: 'Page content'},
+    {name: 'seo', title: 'SEO & routing'},
+    {name: 'publishing', title: 'Publishing & author'},
+  ],
   fields: [
     defineField({
       name: 'name',
       title: 'Tool name',
       type: 'string',
+      group: 'core',
       description: 'The tool as people search for it, e.g. ChatGPT, Claude, Perplexity.',
       validation: (Rule) => Rule.required(),
     }),
@@ -16,36 +23,24 @@ export default defineType({
       name: 'slug',
       title: 'Slug',
       type: 'slug',
+      group: 'core',
       description: 'Sets the page URL, e.g. /toolkit/chatgpt.',
       options: {source: 'name', maxLength: 96},
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: 'logo',
-      title: 'Logo',
-      type: 'image',
-      description: 'Optional fallback if no main visual is set.',
-      options: {hotspot: true},
-      fields: [
-        defineField({
-          name: 'alt',
-          title: 'Alt text',
-          type: 'string',
-          description: 'For accessibility and SEO, e.g. "ChatGPT logo".',
-        }),
-      ],
-    }),
-    defineField({
       name: 'mainImage',
       title: 'Main visual',
       type: 'image',
-      description: 'Hero image on the tool page, same role as a blog post main visual.',
+      group: 'core',
+      description: 'Hero image on the tool page (16:9 works best). Same role as a blog post main visual.',
       options: {hotspot: true},
       fields: [
         defineField({
           name: 'alt',
           title: 'Alt text',
           type: 'string',
+          description: 'Describe the image for accessibility and SEO, e.g. "ChatGPT logo".',
         }),
       ],
     }),
@@ -53,6 +48,7 @@ export default defineType({
       name: 'tagline',
       title: 'Tagline',
       type: 'string',
+      group: 'core',
       description: 'One line on what it gives the owner, outcome first. No full stop. Max 160 characters (about one short post line).',
       validation: (Rule) => Rule.max(160),
     }),
@@ -60,6 +56,7 @@ export default defineType({
       name: 'category',
       title: 'Category',
       type: 'string',
+      group: 'core',
       description: 'The primary filter. What the tool is for.',
       options: {
         list: [
@@ -80,6 +77,7 @@ export default defineType({
       name: 'phase',
       title: 'Phase (optional)',
       type: 'string',
+      group: 'core',
       description: 'Not used as a launch filter. Reserved for the wider directory later.',
       options: {
         list: [
@@ -94,6 +92,7 @@ export default defineType({
       name: 'pricingModel',
       title: 'Pricing model',
       type: 'string',
+      group: 'core',
       description: 'Useful metadata and an optional secondary filter.',
       options: {
         list: [
@@ -110,6 +109,7 @@ export default defineType({
       name: 'picks',
       title: 'Editorial badges',
       type: 'array',
+      group: 'core',
       of: [{type: 'string'}],
       description: 'Your picks. Choose any. Used to drive clicks toward tools we rate.',
       options: {
@@ -124,6 +124,7 @@ export default defineType({
       name: 'tags',
       title: 'Tags',
       type: 'array',
+      group: 'core',
       of: [{type: 'string'}],
       description:
         'Keywords for related blog posts, e.g. ChatGPT, AI assistants. Used to surface related insights on the tool page.',
@@ -133,6 +134,7 @@ export default defineType({
       name: 'linkType',
       title: 'Link type',
       type: 'string',
+      group: 'core',
       description:
         'Drives the disclosure on the page. Affiliate and Referral show a "we may earn a commission" note. Reader discount shows a "you get a discount" note. Standard link shows nothing.',
       initialValue: 'standard',
@@ -151,6 +153,7 @@ export default defineType({
       name: 'url',
       title: 'Sign-up link',
       type: 'url',
+      group: 'core',
       description: 'The affiliate, referral, or plain sign-up URL.',
       validation: (Rule) => Rule.required().uri({scheme: ['https'], allowRelative: false}),
     }),
@@ -158,6 +161,7 @@ export default defineType({
       name: 'promoCode',
       title: 'Promo or referral code (optional)',
       type: 'string',
+      group: 'core',
       description:
         'For tools that give a code rather than a tracked link. Shown on the page if present.',
     }),
@@ -165,14 +169,16 @@ export default defineType({
       name: 'summary',
       title: 'What it is',
       type: 'text',
-      rows: 3,
-      description: 'Plain English, two or three sentences. What the tool actually is.',
+      group: 'content',
+      rows: 4,
+      description: 'Short intro at the top of the page. The deep dive below should not repeat this section.',
       validation: (Rule) => Rule.required().max(400),
     }),
     defineField({
       name: 'benefits',
       title: 'How it helps your business',
       type: 'array',
+      group: 'content',
       of: [{type: 'string'}],
       description:
         'Quick scan bullets under “How it helps your business”. Always shown on the detail page.',
@@ -181,13 +187,72 @@ export default defineType({
       name: 'body',
       title: 'Deep dive',
       type: 'blockContent',
+      group: 'content',
       description:
         'Long-form sections below the intro (what it does, connections, when to pay, etc.). Do not repeat “What it is” here — that lives in Summary.',
+    }),
+    defineField({
+      name: 'focusKeyword',
+      title: 'Focus SEO keyword',
+      type: 'string',
+      group: 'seo',
+      description: 'What is the user Googling to find this? (e.g. "ChatGPT for small business").',
+    }),
+    defineField({
+      name: 'metaTitle',
+      title: 'SEO title override (optional)',
+      type: 'string',
+      group: 'seo',
+      description:
+        'If the tool name is too generic for Google, write a punchy, keyword-rich title here. Max 60 characters.',
+      validation: (Rule) => Rule.max(60).warning('Keep under 60 characters for Google.'),
+    }),
+    defineField({
+      name: 'metaDescription',
+      title: 'SEO meta description',
+      type: 'text',
+      group: 'seo',
+      rows: 2,
+      description: 'The 160-character snippet on Google under the title. Falls back to summary if blank.',
+      validation: (Rule) => Rule.max(160),
+    }),
+    defineField({
+      name: 'internalLinkDestination',
+      title: 'Internal link routing',
+      type: 'string',
+      group: 'seo',
+      description:
+        'Pillar page linked from the “See how we fix this” block above the author. Same options as blog posts.',
+      options: {
+        list: [
+          {title: 'Websites & E-commerce', value: '/pillar1'},
+          {title: 'CRM & Lead Tracking', value: '/pillar2'},
+          {title: 'Automation', value: '/pillar3'},
+          {title: 'AI Assistants', value: '/pillar4'},
+          {title: 'Content Systems', value: '/pillar5'},
+          {title: 'Team Training', value: '/pillar6'},
+          {title: 'Dashboards & Reporting', value: '/pillar7'},
+          {title: 'The System (Overview)', value: '/system'},
+          {title: 'Homepage', value: '/'},
+          {title: 'Contact', value: '/contact'},
+        ],
+        layout: 'dropdown',
+      },
+    }),
+    defineField({
+      name: 'ogImage',
+      title: 'Social share image (Open Graph)',
+      type: 'image',
+      group: 'seo',
+      description:
+        'Optional 1200×630 image for LinkedIn, Slack, iMessage, etc. Falls back to main visual if blank.',
+      options: {hotspot: true},
     }),
     defineField({
       name: 'featured',
       title: 'Featured',
       type: 'boolean',
+      group: 'publishing',
       description: 'Surfaces the tool at the top of the index.',
       initialValue: false,
     }),
@@ -195,22 +260,16 @@ export default defineType({
       name: 'orderRank',
       title: 'Manual order',
       type: 'number',
-      description: 'Lower numbers show first. Optional.',
+      group: 'publishing',
+      description: 'Lower numbers show first on the toolkit index. Optional.',
     }),
     defineField({
-      name: 'metaTitle',
-      title: 'SEO title',
-      type: 'string',
-      description: 'Optional. Falls back to the tool name if blank.',
-      validation: (Rule) => Rule.max(60),
-    }),
-    defineField({
-      name: 'metaDescription',
-      title: 'SEO description',
-      type: 'text',
-      rows: 2,
-      description: 'Optional. Falls back to the summary if blank.',
-      validation: (Rule) => Rule.max(160),
+      name: 'author',
+      title: 'Author',
+      type: 'reference',
+      group: 'publishing',
+      to: [{type: 'author'}],
+      description: 'Shown in the meta row and author block at the end of the page.',
     }),
   ],
   orderings: [
@@ -225,6 +284,6 @@ export default defineType({
     },
   ],
   preview: {
-    select: {title: 'name', subtitle: 'category', media: 'logo'},
+    select: {title: 'name', subtitle: 'category', media: 'mainImage'},
   },
 })
