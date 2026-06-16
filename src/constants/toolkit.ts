@@ -135,6 +135,8 @@ export const TOOLKIT_ITEM_QUERY = `*[_type == "toolkitItem" && slug.current == $
   summary,
   benefits,
   body,
+  mainImage,
+  logo,
   category,
   phase,
   pricingModel,

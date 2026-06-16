@@ -16,7 +16,25 @@ const ROOT = resolve(__dirname, '../../..');
 const INBOUND_AUDIT_WORKFLOW_ID = 'TvkvfhrMWWHAEQFd';
 const GOOGLE_SHEETS_CRED_ID = 'W8jOFatMKmraYw0F';
 const GOOGLE_SHEETS_CRED_NAME = 'Google Sheets account';
+const DEEPSEEK_CRED_ID = 'XgmuWh1nV8XX7x83';
+const DEEPSEEK_CRED_NAME = 'SYSBILT DeepSeek';
 const SHEET_DATA_RANGE = 'A1:N5000';
+
+const FORMAT_AI_OUTPUT_JS = `const raw = $input.first().json || {};
+const text =
+  raw.message?.content ||
+  raw.text ||
+  raw.output ||
+  raw.content?.parts?.[0]?.text ||
+  raw.choices?.[0]?.message?.content ||
+  '';
+return [{ json: { content: { parts: [{ text: String(text) }] } } }];`;
+
+const DEEPSEEK_SWAPS = [
+  { name: 'Client deep research', model: 'deepseek-chat', jsonOutput: true },
+  { name: 'Client brief', model: 'deepseek-chat', jsonOutput: false },
+  { name: 'Master Analyst', model: 'deepseek-reasoner', jsonOutput: true },
+];
 
 const PICK_AUDIT_ROW_JS = `const staticData = $getWorkflowStaticData('global');
 const STALE_MS = 35 * 60 * 1000;
@@ -298,6 +316,91 @@ function patchIfAlwaysAudit(wf) {
   ];
 }
 
+function findDownstream(connections, nodeName) {
+  const targets = [];
+  for (const [from, conn] of Object.entries(connections)) {
+    if (from !== nodeName) continue;
+    for (const branch of conn.main || []) {
+      for (const edge of branch || []) targets.push(edge.node);
+    }
+  }
+  return targets;
+}
+
+function retargetIncoming(connections, fromName, toName) {
+  for (const conn of Object.values(connections)) {
+    for (const branch of conn.main || []) {
+      for (const edge of branch || []) {
+        if (edge.node === fromName) edge.node = toName;
+      }
+    }
+  }
+}
+
+function geminiToDeepSeek(node, { model, jsonOutput }) {
+  const prompt = node.parameters?.messages?.values?.[0]?.content || '';
+  return {
+    ...node,
+    type: '@n8n/n8n-nodes-langchain.openAi',
+    typeVersion: 1.1,
+    retryOnFail: true,
+    maxTries: 3,
+    waitBetweenTries: 8000,
+    credentials: {
+      openAiApi: { id: DEEPSEEK_CRED_ID, name: DEEPSEEK_CRED_NAME },
+    },
+    parameters: {
+      model,
+      messages: { values: [{ content: prompt }] },
+      ...(jsonOutput ? { jsonOutput: true } : {}),
+      options: {},
+    },
+  };
+}
+
+function applyDeepSeekSwap(wf) {
+  for (const swap of DEEPSEEK_SWAPS) {
+    const idx = wf.nodes.findIndex((n) => n.name === swap.name);
+    if (idx === -1) continue;
+    if (wf.nodes[idx].type === '@n8n/n8n-nodes-langchain.openAi' && wf.nodes[idx].name.startsWith('DS ')) {
+      continue;
+    }
+
+    const geminiNode = wf.nodes[idx];
+    const downstream = findDownstream(wf.connections, swap.name);
+    if (downstream.length !== 1) continue;
+
+    const nextNode = downstream[0];
+    const llmName = `DS ${swap.name}`;
+    const llmNode = geminiToDeepSeek({ ...geminiNode, name: llmName, id: uid() }, swap);
+    const formatNode = {
+      id: uid(),
+      name: swap.name,
+      type: 'n8n-nodes-base.code',
+      typeVersion: 2,
+      position: [geminiNode.position[0] + 140, geminiNode.position[1]],
+      parameters: { mode: 'runOnceForAllItems', jsCode: FORMAT_AI_OUTPUT_JS },
+    };
+
+    llmNode.position = [geminiNode.position[0] - 140, geminiNode.position[1]];
+    wf.nodes[idx] = llmNode;
+    wf.nodes.push(formatNode);
+
+    retargetIncoming(wf.connections, swap.name, llmName);
+    delete wf.connections[swap.name];
+    wf.connections[llmName] = { main: [[{ node: swap.name, type: 'main', index: 0 }]] };
+    wf.connections[swap.name] = { main: [[{ node: nextNode, type: 'main', index: 0 }]] };
+  }
+
+  const vercel = findNode(wf, 'Vercel Push');
+  if (vercel?.parameters?.jsonBody) {
+    vercel.parameters.jsonBody = vercel.parameters.jsonBody.replace(
+      'Gemini produced an invalid JSON format',
+      'DeepSeek produced an invalid JSON format',
+    );
+  }
+}
+
 function buildOutboundWorkflow(inbound, sheetId, serpApiKey) {
   const wf = JSON.parse(JSON.stringify(inbound));
   wf.name = 'SYSBILT - Outbound Audit Runner';
@@ -459,6 +562,8 @@ Gmail draft is in your Drafts folder — add the recipient before sending.`;
   setConnection(wf, 'Filter', 'Aggregate Chat');
   setConnection(wf, 'Vercel Push', 'Update Sheet Audited');
   setConnection(wf, 'Update Sheet Audited', 'Send a message');
+
+  applyDeepSeekSwap(wf);
 
   return {
     name: wf.name,

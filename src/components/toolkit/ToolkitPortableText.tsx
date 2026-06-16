@@ -20,8 +20,36 @@ function blockText(block: {children?: {text?: string}[]}): string {
   return block.children?.map((c) => c.text ?? '').join('') ?? ''
 }
 
+type ToolkitBodyBlock = {
+  _type?: string
+  style?: string
+  children?: {text?: string}[]
+}
+
+/** Drop a leading “What it is” section when summary already covers it. */
+export function getToolkitBodyMainSections(
+  body: ToolkitBodyBlock[] | undefined,
+): ToolkitBodyBlock[] {
+  if (!body?.length) return []
+  const whatItIsIdx = body.findIndex(
+    (block) =>
+      block._type === 'block' &&
+      block.style === 'h2' &&
+      blockText(block).trim().toLowerCase() === 'what it is',
+  )
+  if (whatItIsIdx === -1) return body
+
+  let end = whatItIsIdx + 1
+  while (end < body.length) {
+    const block = body[end]
+    if (block._type === 'block' && block.style === 'h2') break
+    end++
+  }
+  return body.slice(end)
+}
+
 export function getToolkitSectionsFromBody(
-  body: { _type?: string; style?: string; children?: {text?: string}[] }[] | undefined,
+  body: ToolkitBodyBlock[] | undefined,
 ): {id: string; text: string}[] {
   if (!body?.length) return []
   return body

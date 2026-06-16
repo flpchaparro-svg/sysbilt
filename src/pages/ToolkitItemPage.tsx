@@ -5,7 +5,7 @@ import {Helmet} from 'react-helmet-async'
 import {ArrowLeft, ArrowUpRight} from 'lucide-react'
 import ShareButton from '../components/ShareButton'
 import PostEndCTA from '../components/PostEndCTA'
-import {ToolkitPortableText, getToolkitSectionsFromBody} from '../components/toolkit/ToolkitPortableText'
+import {ToolkitPortableText, getToolkitBodyMainSections, getToolkitSectionsFromBody} from '../components/toolkit/ToolkitPortableText'
 import {PageMeta} from '../components/PageMeta'
 import {SITE_ORIGIN} from '../constants/seoMeta'
 import {client, urlFor} from '../sanityClient'
@@ -33,6 +33,8 @@ type ToolkitItem = {
   summary: string
   benefits?: string[]
   body?: unknown[]
+  mainImage?: {alt?: string; asset?: {_ref?: string}}
+  logo?: {alt?: string; asset?: {_ref?: string}}
   category: ToolkitCategory
   phase?: string
   pricingModel: ToolkitPricingModel
@@ -71,6 +73,8 @@ const PAGE_QUERY = `*[_type == "toolkitItem" && slug.current == $slug][0] {
   summary,
   benefits,
   body,
+  mainImage,
+  logo,
   category,
   phase,
   pricingModel,
@@ -121,18 +125,22 @@ export default function ToolkitItemPage() {
       .catch(() => setLoading(false))
   }, [slug])
 
-  const hasBody = Boolean(tool?.body?.length)
+  const bodyMainSections = useMemo(
+    () => getToolkitBodyMainSections(tool?.body as Parameters<typeof getToolkitBodyMainSections>[0]),
+    [tool?.body],
+  )
+  const hasBodyMain = bodyMainSections.length > 0
 
   const sections = useMemo(() => {
-    if (hasBody && tool?.body) {
-      return getToolkitSectionsFromBody(tool.body as Parameters<typeof getToolkitSectionsFromBody>[0])
-    }
     const items = [{id: 'what-it-is', text: 'What it is'}]
     if (tool?.benefits?.length) {
       items.push({id: 'how-it-helps', text: 'How it helps your business'})
     }
+    if (hasBodyMain) {
+      items.push(...getToolkitSectionsFromBody(bodyMainSections))
+    }
     return items
-  }, [tool?.benefits, tool?.body, hasBody])
+  }, [tool?.benefits, bodyMainSections, hasBodyMain])
 
   useEffect(() => {
     if (!sections.length) return
@@ -207,9 +215,15 @@ export default function ToolkitItemPage() {
     : 'UPDATED'
 
   const displayTags = [
-    getCategoryLabel(tool.category).replace(/\s+/g, ''),
+    getCategoryLabel(tool.category),
+    getPricingLabel(tool.pricingModel),
     ...(tool.tags ?? []),
   ]
+
+  const heroImage = tool.mainImage?.asset?._ref ? tool.mainImage : tool.logo?.asset?._ref ? tool.logo : null
+  const heroImageAlt =
+    (typeof heroImage?.alt === 'string' && heroImage.alt.trim()) ||
+    `${tool.name} visual`
 
   const breadcrumbJsonLd = {
     '@context': 'https://schema.org',
@@ -259,8 +273,8 @@ export default function ToolkitItemPage() {
         </nav>
 
         <div className="relative mb-12 md:mb-16 overflow-hidden lg:overflow-visible">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
-            <div className="lg:col-span-7 flex flex-col justify-center z-20">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-stretch">
+            <div className="lg:col-span-7 flex flex-col z-20">
               {primaryPick && (
                 <span
                   className={`inline-flex w-fit mb-4 type-eyebrow px-3 py-1.5 ${TOOLKIT_PICK_BADGE_CLASSES[primaryPick]}`}
@@ -273,7 +287,7 @@ export default function ToolkitItemPage() {
                 initial={{opacity: 0, x: -30}}
                 animate={{opacity: 1, x: 0}}
                 transition={{duration: 1, ease: [0.16, 1, 0.3, 1]}}
-                className={`font-sans font-black break-words text-balance uppercase tracking-tighter text-white mb-6 ${
+                className={`font-sans font-black break-words text-balance uppercase tracking-tighter text-white mb-4 md:mb-5 ${
                   tool.name.length < 16
                     ? 'text-[clamp(2.5rem,8vw,5rem)] leading-[0.9]'
                     : tool.name.length < 28
@@ -284,11 +298,49 @@ export default function ToolkitItemPage() {
                 {tool.name}
               </motion.h1>
 
+              {heroTagline && (
+                <motion.p
+                  initial={{opacity: 0}}
+                  animate={{opacity: 1}}
+                  transition={{duration: 0.8, delay: 0.15}}
+                  className="font-sans text-lg md:text-xl font-light leading-snug text-cream/85 text-pretty mb-6 max-w-2xl"
+                >
+                  {heroTagline}
+                </motion.p>
+              )}
+
+              <motion.div
+                initial={{opacity: 0, y: 8}}
+                animate={{opacity: 1, y: 0}}
+                transition={{duration: 0.8, delay: 0.25}}
+                className="mb-6"
+              >
+                <a
+                  href={tool.url}
+                  target="_blank"
+                  rel={getToolkitOutboundRel(tool.linkType)}
+                  className={`inline-flex px-5 py-3 ${TOOLKIT_BTN_PRIMARY}`}
+                >
+                  Visit {tool.name}
+                  <ArrowUpRight className="w-4 h-4" />
+                </a>
+                {tool.promoCode && (
+                  <p className="mt-3 font-mono text-[10px] uppercase tracking-wider text-cream/70">
+                    Use code: <span className="text-gold-on-dark font-bold">{tool.promoCode}</span>
+                  </p>
+                )}
+                {getToolkitDisclosure(tool.linkType) && (
+                  <p className="mt-3 text-[10px] text-cream/45 leading-relaxed max-w-md">
+                    {getToolkitDisclosure(tool.linkType)}
+                  </p>
+                )}
+              </motion.div>
+
               <motion.div
                 initial={{opacity: 0}}
                 animate={{opacity: 1}}
-                transition={{duration: 0.8, delay: 0.2}}
-                className="flex flex-wrap gap-3 font-mono text-[10px] md:text-xs uppercase tracking-widest"
+                transition={{duration: 0.8, delay: 0.35}}
+                className="flex flex-wrap gap-3 font-mono text-[10px] md:text-xs uppercase tracking-widest mt-auto"
               >
                 {displayTags.map((tag) => (
                   <span
@@ -301,49 +353,24 @@ export default function ToolkitItemPage() {
               </motion.div>
             </div>
 
-            <div className="lg:col-span-5 relative z-10 w-full max-w-[450px] mx-auto lg:mx-0 lg:ml-auto">
-              <motion.div
-                initial={{opacity: 0, x: 30}}
-                animate={{opacity: 1, x: 0}}
-                transition={{duration: 1, delay: 0.25, ease: [0.16, 1, 0.3, 1]}}
-                className="relative aspect-square w-full border-2 border-cream bg-white/5 p-6 md:p-8 flex flex-col justify-between"
-              >
-                <div>
-                  <span className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-cream/50 block mb-4">
-                    / AT A GLANCE
-                  </span>
-                  {heroTagline ? (
-                    <p className="font-sans text-lg md:text-xl font-light leading-snug text-cream/85 text-pretty">
-                      {heroTagline}
-                    </p>
-                  ) : (
-                    <p className="font-sans text-lg font-light text-cream/50">No tagline yet.</p>
-                  )}
-                </div>
-
-                <div className="mt-6 pt-6 border-t-2 border-cream/20">
-                  <a
-                    href={tool.url}
-                    target="_blank"
-                    rel={getToolkitOutboundRel(tool.linkType)}
-                    className={`px-5 py-3 ${TOOLKIT_BTN_PRIMARY}`}
-                  >
-                    Visit {tool.name}
-                    <ArrowUpRight className="w-4 h-4" />
-                  </a>
-                  {tool.promoCode && (
-                    <p className="mt-3 font-mono text-[10px] uppercase tracking-wider text-cream/70 text-center">
-                      Use code: <span className="text-gold-on-dark font-bold">{tool.promoCode}</span>
-                    </p>
-                  )}
-                  {getToolkitDisclosure(tool.linkType) && (
-                    <p className="mt-3 text-[10px] text-cream/45 leading-relaxed text-center">
-                      {getToolkitDisclosure(tool.linkType)}
-                    </p>
-                  )}
-                </div>
-              </motion.div>
-            </div>
+            {heroImage && (
+              <div className="lg:col-span-5 relative z-10 w-full lg:flex lg:min-h-0">
+                <motion.div
+                  initial={{opacity: 0, x: 30}}
+                  animate={{opacity: 1, x: 0}}
+                  transition={{duration: 1, delay: 0.25, ease: [0.16, 1, 0.3, 1]}}
+                  className="relative w-full max-w-[520px] mx-auto lg:mx-0 lg:ml-auto lg:h-full aspect-[4/3] lg:aspect-auto lg:min-h-[240px] border-2 border-cream/25 overflow-hidden bg-white/5"
+                >
+                  <img
+                    src={urlFor(heroImage).width(900).height(675).url()}
+                    alt={heroImageAlt}
+                    className="absolute inset-0 w-full h-full object-cover"
+                    loading="eager"
+                    decoding="async"
+                  />
+                </motion.div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -440,37 +467,33 @@ export default function ToolkitItemPage() {
               </ul>
             </div>
 
-            {hasBody ? (
-              <ToolkitPortableText value={tool.body} />
-            ) : (
-              <>
-                <section id="what-it-is" className="scroll-mt-32 mb-16 md:mb-20">
-                  <h2 className="font-sans font-bold text-xl md:text-2xl uppercase tracking-tight text-white mb-5 flex items-center gap-3">
-                    <span className={TOOLKIT_THEME.textMain}>//</span> What it is
-                  </h2>
-                  <p className="type-body text-white/75 leading-relaxed text-pretty">{tool.summary}</p>
-                </section>
+            <section id="what-it-is" className="scroll-mt-32 mb-16 md:mb-20">
+              <h2 className="font-sans font-bold text-xl md:text-2xl uppercase tracking-tight text-white mb-5 flex items-center gap-3">
+                <span className={TOOLKIT_THEME.textMain}>//</span> What it is
+              </h2>
+              <p className="type-body text-white/75 leading-relaxed text-pretty">{tool.summary}</p>
+            </section>
 
-                {tool.benefits && tool.benefits.length > 0 && (
-                  <section id="how-it-helps" className="scroll-mt-32 mb-16 md:mb-20">
-                    <h2 className="font-sans font-bold text-xl md:text-2xl uppercase tracking-tight text-white mb-6 flex items-center gap-3">
-                      <span className={TOOLKIT_THEME.textMain}>//</span> How it helps your business
-                    </h2>
-                    <ul className="border-t border-white/15">
-                      {tool.benefits.map((benefit) => (
-                        <li
-                          key={benefit}
-                          className="flex gap-4 py-4 border-b border-white/10 type-body text-white/75 leading-relaxed"
-                        >
-                          <span className={`type-eyebrow ${TOOLKIT_THEME.textMain} shrink-0 pt-0.5`}>→</span>
-                          <span>{benefit}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </section>
-                )}
-              </>
+            {tool.benefits && tool.benefits.length > 0 && (
+              <section id="how-it-helps" className="scroll-mt-32 mb-16 md:mb-20">
+                <h2 className="font-sans font-bold text-xl md:text-2xl uppercase tracking-tight text-white mb-6 flex items-center gap-3">
+                  <span className={TOOLKIT_THEME.textMain}>//</span> How it helps your business
+                </h2>
+                <ul className="border-t border-white/15">
+                  {tool.benefits.map((benefit) => (
+                    <li
+                      key={benefit}
+                      className="flex gap-4 py-4 border-b border-white/10 type-body text-white/75 leading-relaxed"
+                    >
+                      <span className={`type-eyebrow ${TOOLKIT_THEME.textMain} shrink-0 pt-0.5`}>→</span>
+                      <span>{benefit}</span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
             )}
+
+            {hasBodyMain && <ToolkitPortableText value={bodyMainSections} />}
 
             <div className="mt-20 pt-12 border-t border-white/10 flex flex-col sm:flex-row gap-6 md:gap-8 items-start">
               <div className="shrink-0 w-20 h-20 md:w-24 md:h-24 rounded-full bg-white/5 border-2 border-white/20 flex items-center justify-center">

@@ -24,7 +24,7 @@ export default defineType({
       name: 'logo',
       title: 'Logo',
       type: 'image',
-      description: 'Optional. Not shown on cards at launch, kept for later.',
+      description: 'Optional fallback if no main visual is set.',
       options: {hotspot: true},
       fields: [
         defineField({
@@ -32,6 +32,20 @@ export default defineType({
           title: 'Alt text',
           type: 'string',
           description: 'For accessibility and SEO, e.g. "ChatGPT logo".',
+        }),
+      ],
+    }),
+    defineField({
+      name: 'mainImage',
+      title: 'Main visual',
+      type: 'image',
+      description: 'Hero image on the tool page, same role as a blog post main visual.',
+      options: {hotspot: true},
+      fields: [
+        defineField({
+          name: 'alt',
+          title: 'Alt text',
+          type: 'string',
         }),
       ],
     }),
@@ -161,14 +175,14 @@ export default defineType({
       type: 'array',
       of: [{type: 'string'}],
       description:
-        'Short bullet list for tools without a full body. Ignored on the page when body is filled in.',
+        'Quick scan bullets under “How it helps your business”. Always shown on the detail page.',
     }),
     defineField({
       name: 'body',
-      title: 'Full tool page',
+      title: 'Deep dive',
       type: 'blockContent',
       description:
-        'Long-form sections (What it is, what it does, when to use it, etc.). When present, this replaces the summary and benefits on the detail page.',
+        'Long-form sections below the intro (what it does, connections, when to pay, etc.). Do not repeat “What it is” here — that lives in Summary.',
     }),
     defineField({
       name: 'featured',
