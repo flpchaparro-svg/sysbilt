@@ -42,8 +42,17 @@ Requires `N8N_API_KEY` (or `cursor-mcp=` in `.env.local`).
 # Deploy outbound audit runner (Workflow B)
 ./scripts/automations/n8n/deploy-outbound-audit-runner.sh
 
+# Deploy outbound HubSpot engage (Workflow C)
+./scripts/automations/n8n/deploy-outbound-hubspot-engage.sh
+
+# Add/update sticky-note guides on SYSBILT workflows
+node scripts/automations/n8n/add-workflow-guide-stickies.mjs
+
 # Verify a Sanity post after pipeline run
 node scripts/automations/n8n/verify-sanity-post.mjs
+
+# Patch NEWS workflow (Groq JSON, Cleanup Gate, DeepSeek tokens)
+node scripts/automations/n8n/patch-news-workflow.mjs
 ```
 
 Local deploy state (sheet IDs, credential IDs) is written to  

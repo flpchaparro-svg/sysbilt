@@ -1,40 +1,23 @@
-export type ToolkitCategory =
-  | 'chat-research'
-  | 'writing-content'
-  | 'images-design'
-  | 'video'
-  | 'voice-audio'
-  | 'meetings-notes'
-  | 'coding'
-  | 'automation-agents'
-
 export type ToolkitPricingModel = 'free' | 'freemium' | 'free-trial' | 'paid'
 
 export type ToolkitPick = 'our-pick' | 'best-value' | 'best-for-small-business'
 
 export type ToolkitLinkType = 'affiliate' | 'referral' | 'discount' | 'standard'
 
-export const TOOLKIT_CATEGORY_LABELS: Record<ToolkitCategory, string> = {
-  'chat-research': 'Chat & research',
-  'writing-content': 'Writing & content',
-  'images-design': 'Images & design',
-  video: 'Video',
-  'voice-audio': 'Voice & audio',
-  'meetings-notes': 'Meetings & notes',
-  coding: 'Coding',
-  'automation-agents': 'Automation & agents',
-}
-
-export const TOOLKIT_CATEGORY_ORDER: ToolkitCategory[] = [
-  'chat-research',
-  'writing-content',
-  'images-design',
-  'video',
-  'voice-audio',
-  'meetings-notes',
-  'coding',
-  'automation-agents',
-]
+export {
+  getCategoryDefaultPillar,
+  getCategoryGroup,
+  getCategoryLabel,
+  getGroupedCategories,
+  TOOLKIT_CATEGORIES,
+  TOOLKIT_CATEGORY_LABELS,
+  TOOLKIT_CATEGORY_ORDER,
+  TOOLKIT_PHASE_GROUPS,
+  type ToolkitCategory,
+  type ToolkitCategoryDef,
+  type ToolkitPhaseGroup,
+  type ToolkitPillarPath,
+} from '../lib/toolkitCategories'
 
 export const TOOLKIT_PRICING_LABELS: Record<ToolkitPricingModel, string> = {
   free: 'Free',
@@ -107,10 +90,6 @@ export const TOOLKIT_BTN_INLINE_CTA =
 export function getToolkitOutboundRel(linkType: ToolkitLinkType): string {
   if (linkType === 'standard') return 'noopener noreferrer'
   return 'sponsored nofollow noopener noreferrer'
-}
-
-export function getCategoryLabel(category: string): string {
-  return TOOLKIT_CATEGORY_LABELS[category as ToolkitCategory] ?? category
 }
 
 export function getPricingLabel(pricingModel: string): string {

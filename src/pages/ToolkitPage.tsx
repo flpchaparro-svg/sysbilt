@@ -8,10 +8,12 @@ import { SEO_META, SITE_ORIGIN } from '../constants/seoMeta'
 import { client } from '../sanityClient'
 import {
   getCategoryLabel,
+  getGroupedCategories,
   getPricingLabel,
   getPrimaryPick,
   TOOLKIT_BTN_SECONDARY,
   TOOLKIT_CATEGORY_ORDER,
+  TOOLKIT_PHASE_GROUPS,
   TOOLKIT_PICK_BADGE_CLASSES,
   TOOLKIT_PICK_LABELS,
   TOOLKIT_PRICING_ORDER,
@@ -20,6 +22,7 @@ import {
   type ToolkitLinkType,
   type ToolkitPick,
   type ToolkitPricingModel,
+  type ToolkitPhaseGroup,
 } from '../constants/toolkit'
 
 const BookingCTA = lazy(() => import('../components/HomePage/BookingCTA'))
@@ -103,9 +106,16 @@ export default function ToolkitPage() {
       .catch(() => setIsLoading(false))
   }, [])
 
-  const categoryFilters = useMemo(() => {
+  const groupedCategoryFilters = useMemo(() => {
     const present = new Set(tools.map((tool) => tool.category))
-    return TOOLKIT_CATEGORY_ORDER.filter((category) => present.has(category))
+    const available = TOOLKIT_CATEGORY_ORDER.filter((category) => present.has(category))
+    const grouped = getGroupedCategories()
+    const result: Partial<Record<ToolkitPhaseGroup, ToolkitCategory[]>> = {}
+    for (const phase of TOOLKIT_PHASE_GROUPS) {
+      const categories = grouped[phase].filter((category) => available.includes(category))
+      if (categories.length > 0) result[phase] = categories
+    }
+    return result
   }, [tools])
 
   const pricingFilters = useMemo(() => {
@@ -133,7 +143,7 @@ export default function ToolkitPage() {
     activePricing === 'all' ? 'All pricing' : getPricingLabel(activePricing)
 
   return (
-    <section className="w-full min-h-screen bg-dark text-cream font-sans selection:bg-cream selection:text-dark">
+    <section className="w-full min-h-screen bg-dark text-cream font-sans">
       <PageMeta
         title={SEO_META.toolkitIndex.title}
         description={SEO_META.toolkitIndex.description}
@@ -179,7 +189,7 @@ export default function ToolkitPage() {
                   initial={{opacity: 0, height: 0}}
                   animate={{opacity: 1, height: 'auto'}}
                   exit={{opacity: 0, height: 0}}
-                  className="border-2 border-cream border-t-0 overflow-hidden"
+                  className="border-2 border-cream border-t-0 overflow-hidden max-h-[min(70vh,28rem)] overflow-y-auto"
                 >
                   <button
                     type="button"
@@ -191,38 +201,64 @@ export default function ToolkitPage() {
                   >
                     All categories
                   </button>
-                  {categoryFilters.map((category) => (
-                    <button
-                      key={category}
-                      type="button"
-                      onClick={() => {
-                        setActiveCategory(category)
-                        setIsMobileCategoryOpen(false)
-                      }}
-                      className="w-full text-left px-4 py-3 type-eyebrow border-b border-cream/20 last:border-0 text-cream/80 hover:bg-gold hover:text-dark transition-colors"
-                    >
-                      {getCategoryLabel(category)}
-                    </button>
-                  ))}
+                  {TOOLKIT_PHASE_GROUPS.map((phase) => {
+                    const categories = groupedCategoryFilters[phase]
+                    if (!categories?.length) return null
+                    return (
+                      <div key={phase}>
+                        <div className="px-4 py-2 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-cream/40 bg-white/5 border-b border-cream/10">
+                          {phase}
+                        </div>
+                        {categories.map((category) => (
+                          <button
+                            key={category}
+                            type="button"
+                            onClick={() => {
+                              setActiveCategory(category)
+                              setIsMobileCategoryOpen(false)
+                            }}
+                            className="w-full text-left px-4 py-3 type-eyebrow border-b border-cream/20 last:border-0 text-cream/80 hover:bg-gold hover:text-dark transition-colors"
+                          >
+                            {getCategoryLabel(category)}
+                          </button>
+                        ))}
+                      </div>
+                    )
+                  })}
                 </m.div>
               )}
             </AnimatePresence>
           </div>
 
-          <div className="hidden md:flex flex-wrap gap-2">
-            <button type="button" onClick={() => setActiveCategory('all')} className={filterButtonClass(activeCategory === 'all')}>
-              All
-            </button>
-            {categoryFilters.map((category) => (
-              <button
-                key={category}
-                type="button"
-                onClick={() => setActiveCategory(category)}
-                className={filterButtonClass(activeCategory === category)}
-              >
-                {getCategoryLabel(category)}
+          <div className="hidden md:block space-y-8">
+            <div className="flex flex-wrap gap-2">
+              <button type="button" onClick={() => setActiveCategory('all')} className={filterButtonClass(activeCategory === 'all')}>
+                All
               </button>
-            ))}
+            </div>
+            {TOOLKIT_PHASE_GROUPS.map((phase) => {
+              const categories = groupedCategoryFilters[phase]
+              if (!categories?.length) return null
+              return (
+                <div key={phase}>
+                  <span className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-cream/40 mb-3 block">
+                    {phase}
+                  </span>
+                  <div className="flex flex-wrap gap-2">
+                    {categories.map((category) => (
+                      <button
+                        key={category}
+                        type="button"
+                        onClick={() => setActiveCategory(category)}
+                        className={filterButtonClass(activeCategory === category)}
+                      >
+                        {getCategoryLabel(category)}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )
+            })}
           </div>
         </div>
 

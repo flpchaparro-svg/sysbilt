@@ -218,7 +218,7 @@ if (rows.length > 1) {
 const provider = (i) => i.providerIdentifier || i.platform || i.provider || i.identifier || '';
 const active = ints.filter((i) => !i.disabled);
 const targets = {
-  linkedinTargets: active.filter((i) => provider(i).includes('linkedin')).map((i) => ({ id: i.id, provider: provider(i) })),
+  linkedinTargets: active.filter((i) => provider(i) === 'linkedin-page').map((i) => ({ id: i.id, provider: provider(i) })),
   facebookTargets: active.filter((i) => provider(i) === 'facebook').map((i) => ({ id: i.id, provider: provider(i) })),
 };
 if (!targets.linkedinTargets.length && !targets.facebookTargets.length) {

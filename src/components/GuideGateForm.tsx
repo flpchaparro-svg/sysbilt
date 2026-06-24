@@ -3,13 +3,30 @@ import React, { useState } from 'react';
 interface GuideGateFormProps {
   guideSlug: string;
   guideName: string;
-  pdfUrl?: string; 
-  onSuccess?: () => void; 
+  pdfUrl?: string;
+  onSuccess?: () => void;
 }
 
 const HUBSPOT_PORTAL_ID = '442914926';
 const HUBSPOT_GUIDE_FORM_ID = '6702ab07-e01e-42c7-97b5-3cc68822b566';
 const SYSBILT_UPDATES_SUBSCRIPTION_ID = 2628685226;
+
+/** Slug → HubSpot guide_downloaded option value. Must match HubSpot property options. */
+const GUIDE_SLUG_TO_HUBSPOT: Record<string, string> = {
+  'ai-assistants': 'ai_assistants',
+  'content-systems': 'content_systems',
+  'team-training': 'team_training',
+  websites: 'websites',
+  'revenue-engine': 'revenue_engine',
+  'lead-tracking': 'lead_tracking',
+  automation: 'automation',
+  dashboards: 'dashboards',
+  'how-to-build-connected-construction-ecosystem': 'how_to_build_connected_construction_ecosystem',
+};
+
+export function guideSlugToHubspotValue(guideSlug: string): string {
+  return GUIDE_SLUG_TO_HUBSPOT[guideSlug] ?? guideSlug.replace(/-/g, '_');
+}
 
 const getHubSpotCookie = () => {
   if (typeof document === 'undefined') return undefined;
@@ -43,9 +60,8 @@ export const GuideGateForm: React.FC<GuideGateFormProps> = ({
     setStatus('submitting');
     setErrorMessage('');
 
-    // DYNAMIC SLUG HANDLING: Converts "my-guide-name" to "my_guide_name" automatically.
-    // Ensure this exact value is added as an option in HubSpot's "guide_downloaded" property.
-    const hubspotValue = guideSlug.replace(/-/g, '_');
+    const hubspotValue = guideSlugToHubspotValue(guideSlug);
+    const pageUri = typeof window !== 'undefined' ? window.location.href : '';
 
     const url = `https://api.hsforms.com/submissions/v3/integration/submit/${HUBSPOT_PORTAL_ID}/${HUBSPOT_GUIDE_FORM_ID}`;
 
@@ -55,11 +71,13 @@ export const GuideGateForm: React.FC<GuideGateFormProps> = ({
         { name: 'email', value: email },
         { name: 'sysbilt_persona', value: persona },
         { name: 'guide_downloaded', value: hubspotValue },
+        { name: 'lifecyclestage', value: 'subscriber' },
+        { name: 'lead_source_detail', value: pageUri },
       ],
       context: {
-        pageUri: window.location.href,
-        pageName: document.title,
-        hutk: getHubSpotCookie()
+        pageUri,
+        pageName: typeof document !== 'undefined' ? document.title : guideName,
+        hutk: getHubSpotCookie(),
       },
       legalConsentOptions: {
         consent: {
@@ -112,9 +130,9 @@ export const GuideGateForm: React.FC<GuideGateFormProps> = ({
         </div>
         <h3 className="font-serif text-3xl mb-4">Access Granted</h3>
         <p className="font-sans text-white/80 mb-6">
-          {onSuccess 
-            ? "Unlocking your guide now..." 
-            : "Click below to open your guide. We have also sent a copy to your inbox."}
+          {onSuccess
+            ? 'Unlocking your guide now...'
+            : 'Click below to open your guide. We have also sent a copy to your inbox.'}
         </p>
         {!onSuccess && pdfUrl && (
           <a
@@ -131,20 +149,22 @@ export const GuideGateForm: React.FC<GuideGateFormProps> = ({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-dark text-white p-8 md:p-12 border-2 border-dark shadow-[12px_12px_0px_0px_#1a1a1a] relative overflow-hidden group">
+    <form
+      onSubmit={handleSubmit}
+      className="bg-dark text-white p-8 md:p-12 border-2 border-dark shadow-[12px_12px_0px_0px_#1a1a1a] relative overflow-hidden group"
+    >
       <div className="absolute top-0 left-0 w-full h-1.5 bg-red-solid scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-700 ease-out" />
-      
+
       <h3 className="font-serif text-3xl md:text-4xl mb-4">Get the full guide</h3>
       <p className="font-sans text-white/70 mb-8 border-l-2 border-gold pl-4 max-w-md">
         First name and email, that is all we need. We'll unlock the guide instantly and send a backup copy to your inbox.
       </p>
 
-      {/* HONEYPOT SPAM PROTECTION */}
       <input
         type="text"
         name="website"
         value={honeypot}
-        onChange={e => setHoneypot(e.target.value)}
+        onChange={(e) => setHoneypot(e.target.value)}
         autoComplete="off"
         tabIndex={-1}
         aria-hidden="true"
@@ -156,7 +176,7 @@ export const GuideGateForm: React.FC<GuideGateFormProps> = ({
           type="text"
           placeholder="First name"
           value={firstName}
-          onChange={e => setFirstName(e.target.value)}
+          onChange={(e) => setFirstName(e.target.value)}
           required
           className="w-full bg-white text-dark px-4 py-3 md:py-4 font-sans text-sm focus:outline-none border-2 border-dark focus:border-gold placeholder:text-dark/40"
         />
@@ -164,17 +184,19 @@ export const GuideGateForm: React.FC<GuideGateFormProps> = ({
           type="email"
           placeholder="Your work email"
           value={email}
-          onChange={e => setEmail(e.target.value)}
+          onChange={(e) => setEmail(e.target.value)}
           required
           className="w-full bg-white text-dark px-4 py-3 md:py-4 font-sans text-sm focus:outline-none border-2 border-dark focus:border-gold placeholder:text-dark/40"
         />
         <select
           value={persona}
-          onChange={e => setPersona(e.target.value)}
+          onChange={(e) => setPersona(e.target.value)}
           required
           className={`w-full bg-white text-dark px-4 py-3 md:py-4 font-sans text-sm focus:outline-none border-2 border-dark focus:border-gold appearance-none cursor-pointer ${!persona ? 'text-dark/40' : ''}`}
         >
-          <option value="" disabled>Where are you right now?</option>
+          <option value="" disabled>
+            Where are you right now?
+          </option>
           <option value="the_builder">Getting clients (I need more leads)</option>
           <option value="the_scaler">Scaling up (I am doing too much myself)</option>
           <option value="the_controller">Seeing clearly (I do not know my real numbers)</option>

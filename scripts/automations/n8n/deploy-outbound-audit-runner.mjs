@@ -21,19 +21,20 @@ const DEEPSEEK_CRED_NAME = 'SYSBILT DeepSeek';
 const SHEET_DATA_RANGE = 'A1:N5000';
 
 const FORMAT_AI_OUTPUT_JS = `const raw = $input.first().json || {};
-const text =
-  raw.message?.content ||
-  raw.text ||
-  raw.output ||
-  raw.content?.parts?.[0]?.text ||
-  raw.choices?.[0]?.message?.content ||
+const value =
+  raw.message?.content ??
+  raw.text ??
+  raw.output ??
+  raw.content?.parts?.[0]?.text ??
+  raw.choices?.[0]?.message?.content ??
   '';
-return [{ json: { content: { parts: [{ text: String(text) }] } } }];`;
+const text = typeof value === 'string' ? value : JSON.stringify(value);
+return [{ json: { content: { parts: [{ text }] } } }];`;
 
 const DEEPSEEK_SWAPS = [
   { name: 'Client deep research', model: 'deepseek-chat', jsonOutput: true },
   { name: 'Client brief', model: 'deepseek-chat', jsonOutput: false },
-  { name: 'Master Analyst', model: 'deepseek-reasoner', jsonOutput: true },
+  { name: 'Master Analyst', model: 'deepseek-chat', jsonOutput: true },
 ];
 
 const PICK_AUDIT_ROW_JS = `const staticData = $getWorkflowStaticData('global');
@@ -284,12 +285,107 @@ function patchMapsLookup(wf, serpApiKey) {
 
 function patchVercelPush(wf) {
   const node = findNode(wf, 'Vercel Push');
-  if (!node?.parameters?.jsonBody) return;
-  node.parameters.jsonBody = node.parameters.jsonBody.replace(
-    `"contact_email\": $('Filter').item.json.properties.email?.value || 'Unknown'`,
-    `"contact_email\": $('Filter').item.json._realEmail || $('Filter').item.json.properties.email?.value || 'Unknown'`,
-  );
+  if (!node) return;
+  node.parameters.jsonBody = '={{ JSON.stringify($json) }}';
 }
+
+const PARSE_AUDIT_JSON_JS = `function repairAuditJson(raw) {
+  let t = String(raw || '').replace(/^\\\`\\\`\\\`(json)?/mi, '').replace(/\\\`\\\`\\\$/mi, '').trim();
+  t = t.replace(/[\\u0000-\\u001F]+/g, ' ');
+  t = t.replace(/,\\s*([}\\]])/g, '$1');
+  t = t.replace(/"([a-zA-Z_][a-zA-Z0-9_]*)"\\s+\\\\"/g, '"$1": "');
+  t = t.replace(/"([a-zA-Z_][a-zA-Z0-9_]*) "(?=[^:])/g, '"$1": "');
+  const m = t.match(/\\{[\\s\\S]*\\}/);
+  return m ? m[0] : t;
+}
+
+function parseAuditText(raw) {
+  if (raw && typeof raw === 'object' && !Array.isArray(raw)) return raw;
+  const cleaned = repairAuditJson(raw);
+  try {
+    return JSON.parse(cleaned);
+  } catch (first) {
+    const m = cleaned.match(/\\{[\\s\\S]*\\}/);
+    if (m) return JSON.parse(repairAuditJson(m[0]));
+    throw first;
+  }
+}
+
+const filter = $('Filter').item.json;
+const company = filter.properties.company?.value || 'Unknown';
+const firstName = filter.properties.firstname?.value || '';
+const email = filter._realEmail || filter.properties.email?.value || 'Unknown';
+
+try {
+  const rawStr = $('Master Analyst').item.json.content.parts[0].text;
+  const auditObj = parseAuditText(rawStr);
+  return [{
+    json: {
+      contact_first_name: firstName,
+      contact_email: email,
+      company_name: company,
+      audit_data: auditObj,
+    },
+  }];
+} catch (e) {
+  return [{
+    json: {
+      contact_first_name: firstName,
+      contact_email: email,
+      company_name: company,
+      audit_data: {
+        diagnosis: {
+          critical: {
+            title: 'Failed to parse AI JSON',
+            evidence: String(e.message || e),
+            consequence: 'The audit model returned malformed JSON. Re-run the workflow or inspect Master Analyst output in n8n.',
+          },
+          secondary: [],
+        },
+      },
+    },
+  }];
+}`;
+
+function patchParseAuditJsonNode(wf) {
+  let node = wf.nodes.find((n) => n.name === 'Parse Audit JSON');
+  const masterFmt = findNode(wf, 'Master Analyst');
+  if (!masterFmt) return;
+
+  if (!node) {
+    node = {
+      id: uid(),
+      name: 'Parse Audit JSON',
+      type: 'n8n-nodes-base.code',
+      typeVersion: 2,
+      position: [masterFmt.position[0] + 160, masterFmt.position[1]],
+      parameters: { mode: 'runOnceForAllItems', jsCode: PARSE_AUDIT_JSON_JS },
+    };
+    wf.nodes.push(node);
+  } else {
+    node.parameters = { mode: 'runOnceForAllItems', jsCode: PARSE_AUDIT_JSON_JS };
+  }
+
+  wf.connections['Master Analyst'] = {
+    main: [[{ node: 'Parse Audit JSON', type: 'main', index: 0 }]],
+  };
+  wf.connections['Parse Audit JSON'] = {
+    main: [[{ node: 'Vercel Push', type: 'main', index: 0 }]],
+  };
+}
+
+const MASTER_ANALYST_JSON_RULE =
+  '\\n\\nJSON SYNTAX (mandatory): Return ONLY one valid JSON object. Every key must use a colon: \\"key\\": \\"value\\". Never write \\"key \\"value. No markdown fences.';
+
+function patchMasterAnalystPrompt(wf) {
+  const node = wf.nodes.find((n) => n.name === 'DS Master Analyst');
+  if (!node?.parameters?.messages?.values?.[0]) return;
+  const content = node.parameters.messages.values[0].content || '';
+  if (!content.includes('JSON SYNTAX (mandatory)')) {
+    node.parameters.messages.values[0].content = content + MASTER_ANALYST_JSON_RULE;
+  }
+}
+
 
 function patchGmailDraft(wf) {
   const node = findNode(wf, 'Gmail Draft to prospect');
@@ -350,7 +446,12 @@ function geminiToDeepSeek(node, { model, jsonOutput }) {
       openAiApi: { id: DEEPSEEK_CRED_ID, name: DEEPSEEK_CRED_NAME },
     },
     parameters: {
-      model,
+      modelId: {
+        __rl: true,
+        value: model,
+        mode: 'id',
+        cachedResultName: model,
+      },
       messages: { values: [{ content: prompt }] },
       ...(jsonOutput ? { jsonOutput: true } : {}),
       options: {},
@@ -392,13 +493,10 @@ function applyDeepSeekSwap(wf) {
     wf.connections[swap.name] = { main: [[{ node: nextNode, type: 'main', index: 0 }]] };
   }
 
+  patchMasterAnalystPrompt(wf);
+
   const vercel = findNode(wf, 'Vercel Push');
-  if (vercel?.parameters?.jsonBody) {
-    vercel.parameters.jsonBody = vercel.parameters.jsonBody.replace(
-      'Gemini produced an invalid JSON format',
-      'DeepSeek produced an invalid JSON format',
-    );
-  }
+  if (vercel) vercel.parameters.jsonBody = '={{ JSON.stringify($json) }}';
 }
 
 function buildOutboundWorkflow(inbound, sheetId, serpApiKey) {
@@ -541,6 +639,8 @@ function buildOutboundWorkflow(inbound, sheetId, serpApiKey) {
 
   patchMapsLookup(wf, serpApiKey);
   patchVercelPush(wf);
+  patchParseAuditJsonNode(wf);
+  patchMasterAnalystPrompt(wf);
   patchGmailDraft(wf);
   patchIfAlwaysAudit(wf);
 
@@ -581,6 +681,83 @@ async function fetchSerpApiKey(inbound) {
   return m[1];
 }
 
+async function fetchAuditServiceKeys(inbound) {
+  const serpApiKey = await fetchSerpApiKey(inbound);
+  const rawUrl = inbound.nodes?.find((n) => n.name === 'Raw HTML Fetch')?.parameters?.url || '';
+  const pageSpeedUrl = inbound.nodes?.find((n) => n.name === 'PageSpeed')?.parameters?.url || '';
+  const scrapingBeeKey = String(rawUrl).match(/api_key=([^&']+)/)?.[1];
+  const pageSpeedKey = String(pageSpeedUrl).match(/key=([^&']+)/)?.[1];
+  if (!scrapingBeeKey) throw new Error('Could not extract ScrapingBee key from inbound Raw HTML Fetch node');
+  if (!pageSpeedKey) throw new Error('Could not extract PageSpeed key from inbound PageSpeed node');
+  return { serpApiKey, scrapingBeeKey, pageSpeedKey };
+}
+
+function patchOutboundResearchInputs(workflow, { serpApiKey, scrapingBeeKey, pageSpeedKey }) {
+  const node = (name) => workflow.nodes.find((n) => n.name === name);
+  const googleSearch = node('Google search');
+  if (googleSearch) {
+    googleSearch.parameters.q = `={{ (() => {
+  const f = $('Filter').item.json;
+  const s = f._sheetRow || {};
+  return [s['Business Name'] || f.properties.company?.value || '', s.Suburb || '', s.Address || ''].filter(Boolean).join(' ');
+})() }}`;
+    googleSearch.parameters.location = 'Sydney, New South Wales, Australia';
+  }
+
+  const socialSearch = node('Google search - social');
+  if (socialSearch) {
+    socialSearch.parameters.q = `={{ (() => {
+  const f = $('Filter').item.json;
+  const s = f._sheetRow || {};
+  return [s['Business Name'] || f.properties.company?.value || '', s.Suburb || '', 'LinkedIn OR Facebook OR reviews'].filter(Boolean).join(' ');
+})() }}`;
+    socialSearch.parameters.location = 'Sydney, New South Wales, Australia';
+  }
+
+  const maps = node('Maps Lookup');
+  if (maps) {
+    maps.parameters.url = `={{ (() => {
+  const f = $('Filter').item.json;
+  const s = f._sheetRow || {};
+  const q = encodeURIComponent([s['Business Name'] || f.properties.company?.value || '', s.Suburb || '', s.Address || ''].filter(Boolean).join(' '));
+  return 'https://serpapi.com/search.json?engine=google_maps&type=search&q=' + q + '&hl=en&gl=au&api_key=${serpApiKey}';
+})() }}`;
+  }
+
+  const reviews = node('Reviews Fetch');
+  if (reviews) {
+    reviews.parameters.url = `={{ (() => {
+  const j = $('Maps Lookup').item.json;
+  const dataId = j.place_results?.data_id || (Array.isArray(j.local_results) && j.local_results[0]?.data_id) || '';
+  if (!dataId) return 'https://serpapi.com/search.json?engine=google_maps_reviews&data_id=none&api_key=${serpApiKey}';
+  return 'https://serpapi.com/search.json?engine=google_maps_reviews&data_id=' + encodeURIComponent(dataId) + '&hl=en&api_key=${serpApiKey}';
+})() }}`;
+  }
+
+  const rawHtml = node('Raw HTML Fetch');
+  if (rawHtml) {
+    rawHtml.parameters.url = `={{ (() => {
+  const s = $('Filter').item.json._sheetRow || {};
+  let site = String(s.Website || '').trim();
+  if (!site) site = 'https://example.com';
+  if (!/^https?:/i.test(site)) site = 'https://' + site;
+  return 'https://app.scrapingbee.com/api/v1/?api_key=${scrapingBeeKey}&url=' + encodeURIComponent(site);
+})() }}`;
+  }
+
+  const pageSpeed = node('PageSpeed');
+  if (pageSpeed) {
+    pageSpeed.parameters.url = `={{ (() => {
+  const s = $('Filter').item.json._sheetRow || {};
+  let site = String(s.Website || '').trim();
+  if (!site) site = 'https://example.com';
+  if (!/^https?:/i.test(site)) site = 'https://' + site;
+  return 'https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=' + encodeURIComponent(site) + '&key=${pageSpeedKey}&strategy=mobile&category=SEO&category=ACCESSIBILITY&category=PERFORMANCE&category=BEST_PRACTICES';
+})() }}`;
+    pageSpeed.parameters.options = { timeout: 70000 };
+  }
+}
+
 async function findWorkflowByName(name) {
   const { data } = await n8n('GET', '/workflows?limit=250');
   return data?.find((w) => w.name === name);
@@ -612,8 +789,9 @@ async function main() {
   }
 
   const inbound = await n8n('GET', `/workflows/${INBOUND_AUDIT_WORKFLOW_ID}`);
-  const serpApiKey = await fetchSerpApiKey(inbound);
-  const workflow = buildOutboundWorkflow(inbound, sheetId, serpApiKey);
+  const auditKeys = await fetchAuditServiceKeys(inbound);
+  const workflow = buildOutboundWorkflow(inbound, sheetId, auditKeys.serpApiKey);
+  patchOutboundResearchInputs(workflow, auditKeys);
   const wf = await upsertWorkflow(workflow);
 
   saveDeployState({ OUTBOUND_AUDIT_RUNNER_WORKFLOW_ID: wf.id });

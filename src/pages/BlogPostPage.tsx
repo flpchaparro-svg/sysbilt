@@ -793,7 +793,7 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
   const shareImage = post?.ogImage ? urlFor(post.ogImage).width(1200).height(630).url() : (post?.mainImage ? urlFor(post.mainImage).width(1200).height(630).url() : '');
 
   return (
-    <main className="min-h-screen bg-dark text-white font-sans selection:bg-white selection:text-dark pb-14 border-t border-white/10 relative">
+    <main className="min-h-screen bg-dark text-white font-sans pb-14 border-t border-white/10 relative">
       <Helmet>
         <title>{brandedTitle}</title>
         <meta name="description" content={pageDescription} />

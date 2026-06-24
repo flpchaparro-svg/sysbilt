@@ -13,19 +13,20 @@ const WORKFLOW_ID = 'zOZh6wE70PikOCqI';
 const DEEPSEEK_CRED = { id: 'XgmuWh1nV8XX7x83', name: 'SYSBILT DeepSeek' };
 
 const FORMAT_AI_OUTPUT_JS = `const raw = $input.first().json || {};
-const text =
-  raw.message?.content ||
-  raw.text ||
-  raw.output ||
-  raw.content?.parts?.[0]?.text ||
-  raw.choices?.[0]?.message?.content ||
+const value =
+  raw.message?.content ??
+  raw.text ??
+  raw.output ??
+  raw.content?.parts?.[0]?.text ??
+  raw.choices?.[0]?.message?.content ??
   '';
-return [{ json: { content: { parts: [{ text: String(text) }] } } }];`;
+const text = typeof value === 'string' ? value : JSON.stringify(value);
+return [{ json: { content: { parts: [{ text }] } } }];`;
 
 const SWAPS = [
   { name: 'Client deep research', model: 'deepseek-chat', jsonOutput: true },
   { name: 'Client brief', model: 'deepseek-chat', jsonOutput: false },
-  { name: 'Master Analyst', model: 'deepseek-reasoner', jsonOutput: true },
+  { name: 'Master Analyst', model: 'deepseek-chat', jsonOutput: true },
 ];
 
 function loadEnv() {
@@ -67,7 +68,12 @@ function geminiToDeepSeek(node, { model, jsonOutput }) {
     waitBetweenTries: 8000,
     credentials: { openAiApi: DEEPSEEK_CRED },
     parameters: {
-      model,
+      modelId: {
+        __rl: true,
+        value: model,
+        mode: 'id',
+        cachedResultName: model,
+      },
       messages: { values: [{ content: prompt }] },
       ...(jsonOutput ? { jsonOutput: true } : {}),
       options: {},

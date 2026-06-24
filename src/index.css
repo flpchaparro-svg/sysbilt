@@ -50,6 +50,19 @@
     color: var(--bg);
   }
 
+  /* Dark surfaces: gold highlight + ink text (avoids black-on-black when utilities conflict) */
+  .bg-dark ::selection,
+  .bg-dark *::selection {
+    background-color: var(--gold-on-dark);
+    color: var(--dark);
+  }
+
+  .bg-dark ::-moz-selection,
+  .bg-dark *::-moz-selection {
+    background-color: var(--gold-on-dark);
+    color: var(--dark);
+  }
+
   /* Scrollbar */
   ::-webkit-scrollbar {
     width: 6px;

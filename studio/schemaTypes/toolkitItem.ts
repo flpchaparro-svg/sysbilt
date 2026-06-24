@@ -1,4 +1,5 @@
 import {defineField, defineType} from 'sanity'
+import {TOOLKIT_CATEGORY_SANITY_OPTIONS} from '../../src/lib/toolkitCategories'
 
 export default defineType({
   name: 'toolkitItem',
@@ -59,16 +60,7 @@ export default defineType({
       group: 'core',
       description: 'The primary filter. What the tool is for.',
       options: {
-        list: [
-          {title: 'Chat & research', value: 'chat-research'},
-          {title: 'Writing & content', value: 'writing-content'},
-          {title: 'Images & design', value: 'images-design'},
-          {title: 'Video', value: 'video'},
-          {title: 'Voice & audio', value: 'voice-audio'},
-          {title: 'Meetings & notes', value: 'meetings-notes'},
-          {title: 'Coding', value: 'coding'},
-          {title: 'Automation & agents', value: 'automation-agents'},
-        ],
+        list: TOOLKIT_CATEGORY_SANITY_OPTIONS,
         layout: 'dropdown',
       },
       validation: (Rule) => Rule.required(),

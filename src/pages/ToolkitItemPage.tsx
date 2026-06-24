@@ -271,7 +271,7 @@ export default function ToolkitItemPage() {
   })
 
   return (
-    <main className="min-h-screen bg-dark text-cream font-sans selection:bg-cream selection:text-dark pb-14 border-t border-white/10">
+    <main className="min-h-screen bg-dark text-cream font-sans pb-14 border-t border-white/10">
       <Helmet>
         <title>{brandedTitle}</title>
         <meta name="description" content={pageDescription} />
