@@ -18,7 +18,6 @@ export default function HelpDock() {
   });
   const [offscreen, setOffscreen] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   const guide = getPageAudioGuide(pathname);
   const hasAudio = Boolean(guide);
@@ -50,7 +49,6 @@ export default function HelpDock() {
     audio.pause();
     audio.currentTime = 0;
     setIsPlaying(false);
-    setIsLoading(false);
 
     return () => {
       audio.pause();
@@ -61,27 +59,23 @@ export default function HelpDock() {
     const audio = audioRef.current;
     if (!audio) return;
 
-    const onEnded = () => {
-      setIsPlaying(false);
-      setIsLoading(false);
-    };
-    const onPause = () => {
-      if (!audio.ended) setIsPlaying(false);
-    };
-    const onPlay = () => {
-      setIsPlaying(true);
-      setIsLoading(false);
+    const syncPlaybackState = () => {
+      setIsPlaying(!audio.paused && !audio.ended);
     };
 
+    const onEnded = () => setIsPlaying(false);
+
+    audio.addEventListener('play', syncPlaybackState);
+    audio.addEventListener('playing', syncPlaybackState);
+    audio.addEventListener('pause', syncPlaybackState);
     audio.addEventListener('ended', onEnded);
-    audio.addEventListener('pause', onPause);
-    audio.addEventListener('play', onPlay);
     return () => {
+      audio.removeEventListener('play', syncPlaybackState);
+      audio.removeEventListener('playing', syncPlaybackState);
+      audio.removeEventListener('pause', syncPlaybackState);
       audio.removeEventListener('ended', onEnded);
-      audio.removeEventListener('pause', onPause);
-      audio.removeEventListener('play', onPlay);
     };
-  }, [guide?.src]);
+  }, [guide?.src, sybilState.isOpen]);
 
   useEffect(() => {
     if (sybilState.isOpen && audioRef.current) {
@@ -94,17 +88,18 @@ export default function HelpDock() {
     const audio = audioRef.current;
     if (!audio || !guide) return;
 
-    if (isPlaying) {
+    if (!audio.paused) {
       audio.pause();
+      setIsPlaying(false);
       return;
     }
 
-    setIsLoading(true);
-    void audio.play().catch(() => {
-      setIsLoading(false);
+    void audio.play().then(() => {
+      setIsPlaying(true);
+    }).catch(() => {
       setIsPlaying(false);
     });
-  }, [guide, isPlaying]);
+  }, [guide]);
 
   const openChat = useCallback(() => {
     window.dispatchEvent(new Event(OPEN_SYBIL_CHAT_EVENT));
@@ -114,7 +109,7 @@ export default function HelpDock() {
     return <SybilChat embedded hideLauncher />;
   }
 
-  const iconState = isLoading ? 'loading' : isPlaying ? 'playing' : 'idle';
+  const iconState = isPlaying ? 'playing' : 'idle';
 
   return (
     <div

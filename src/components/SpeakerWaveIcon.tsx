@@ -1,15 +1,11 @@
-import { Loader2, Pause } from 'lucide-react';
+import { Pause } from 'lucide-react';
 
 type SpeakerWaveIconProps = {
-  state: 'idle' | 'playing' | 'loading';
+  state: 'idle' | 'playing';
   size?: number;
 };
 
 export function SpeakerWaveIcon({ state, size = 14 }: SpeakerWaveIconProps) {
-  if (state === 'loading') {
-    return <Loader2 size={size} className="animate-spin" aria-hidden />;
-  }
-
   if (state === 'playing') {
     return <Pause size={size} fill="currentColor" aria-hidden />;
   }
