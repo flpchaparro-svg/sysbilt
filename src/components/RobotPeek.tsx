@@ -23,22 +23,26 @@ export default function RobotPeek({
 }: RobotPeekProps) {
   const { scrollYProgress } = useScroll();
 
+  /* Side nav is 54px — subtle left nudge so both eyes show without spilling into content. */
+  const PAGE_PEEK_X = '-28px';
+  const ROBOT_W = 136;
+  const ROBOT_H = 142;
+
   const xFromScroll = useTransform(
     scrollYProgress,
     [0, 0.1, 0.2, 0.7, 0.8, 1],
-    ['100%', '100%', '0%', '0%', '100%', '100%']
+    ['100%', '100%', PAGE_PEEK_X, PAGE_PEEK_X, '100%', '100%']
   );
 
   const isChat = attachment === 'chat';
 
-  /* Tablet/desktop only: full-size peek is noisy on small phones (Sybil already owns that corner). */
+  /* lg+ only: anchors to the scroll side nav (top 18vh, right 0), sits behind z-[300] menu. */
   const pageWrapperClass =
-    'hidden md:flex fixed top-[18%] lg:top-[5%] right-0 z-[100] pointer-events-none drop-shadow-2xl items-center';
+    'hidden lg:flex fixed top-[18vh] right-0 z-[250] pointer-events-none drop-shadow-2xl items-center justify-end';
 
-  /* Chat: viewport-fixed 140px strip; `left = panelLeft - 140` so the strip’s right edge meets the panel’s
-     left edge; animate.x slides along X. z-[8] < inner card z-10 so the card paints on top of the overlap. */
+  /* Chat: viewport-fixed strip; left edge meets panel; z-[8] < chat card. */
   const chatFixedBase =
-    'hidden md:flex fixed z-[8] h-[160px] w-[140px] items-center justify-end pointer-events-none drop-shadow-2xl';
+    `hidden md:flex fixed z-[8] items-center justify-end pointer-events-none drop-shadow-2xl`;
 
   if (isChat && !chatPanelRect) {
     return null;
@@ -47,8 +51,10 @@ export default function RobotPeek({
   const chatStyle =
     isChat && chatPanelRect
       ? {
-          left: chatPanelRect.left - 140,
+          left: chatPanelRect.left - ROBOT_W,
           top: chatPanelRect.top + chatPanelRect.height * 0.26,
+          width: ROBOT_W,
+          height: ROBOT_H,
         }
       : undefined;
 
@@ -60,21 +66,21 @@ export default function RobotPeek({
             style: chatStyle,
             animate: {
               /* In: visible peek from panel edge; out: tucked behind the panel (not left on the page). */
-              x: isActive ? 30 : 170,
+              x: isActive ? 26 : ROBOT_W + 30,
             },
             transition: { type: 'spring', stiffness: 280, damping: 26 },
           }
-        : { style: { x: xFromScroll } })}
+        : { style: { x: xFromScroll, transformOrigin: 'right center' } })}
       className={`${isChat ? chatFixedBase : pageWrapperClass} ${className}`.trim()}
     >
       {/* The Live System Watcher SVG */}
       <svg
-        width="140"
-        height="160"
-        viewBox="0 0 140 160"
+        width={ROBOT_W}
+        height={ROBOT_H}
+        viewBox="0 0 140 148"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className={isChat ? 'shrink-0' : '-mr-6'}
+        className="shrink-0"
       >
         {/* Wiggling Antenna */}
         <motion.line
