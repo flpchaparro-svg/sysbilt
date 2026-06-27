@@ -421,6 +421,7 @@
     0 4px 10px rgba(0, 0, 0, 0.28),
     inset 0 2px 0 rgba(255, 255, 255, 0.14),
     inset 0 -3px 6px rgba(0, 0, 0, 0.55);
+  transition: box-shadow 0.2s ease;
 }
 
 .help-dock-pill::before {
@@ -482,11 +483,57 @@
   height: 100%;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.15s ease, transform 0.15s ease;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s cubic-bezier(0.25, 0.1, 0.25, 1),
+    box-shadow 0.2s ease,
+    color 0.2s ease,
+    filter 0.2s ease;
+}
+
+@media (hover: hover) {
+  .help-dock-half:hover {
+    transform: translateY(-2px);
+  }
+
+  .help-dock-half--listen:hover {
+    color: var(--gold-on-dark);
+    background: rgba(0, 0, 0, 0.14);
+    box-shadow:
+      inset 0 1px 2px rgba(0, 0, 0, 0.32),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.14),
+      0 4px 10px rgba(212, 168, 75, 0.22);
+    filter: brightness(1.08);
+  }
+
+  .help-dock-half--chat:hover {
+    background: rgba(255, 255, 255, 0.03);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
+  }
+
+  .help-dock-half--chat:hover .help-dock-chat-ring {
+    transform: scale(1.07);
+    filter: drop-shadow(0 0 12px rgba(226, 30, 63, 0.45));
+  }
+
+  .help-dock-half--chat:hover .help-dock-chat-icon {
+    color: #fff;
+    box-shadow:
+      inset 0 2px 0 rgba(255, 255, 255, 0.2),
+      inset 0 -2px 4px rgba(0, 0, 0, 0.55);
+  }
+
+  .help-dock-pill:has(.help-dock-half:hover) {
+    box-shadow:
+      0 14px 36px rgba(0, 0, 0, 0.42),
+      0 5px 12px rgba(0, 0, 0, 0.3),
+      inset 0 2px 0 rgba(255, 255, 255, 0.16),
+      inset 0 -3px 6px rgba(0, 0, 0, 0.55);
+  }
 }
 
 .help-dock-half:active {
-  transform: scale(0.96);
+  transform: translateY(0) scale(0.97);
 }
 
 .help-dock-half--listen {
@@ -500,13 +547,13 @@
     0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
-.help-dock-half--listen:hover,
 .help-dock-half--listen.is-active {
   color: var(--gold-on-dark);
   background: rgba(0, 0, 0, 0.2);
   box-shadow:
     inset 0 2px 3px rgba(0, 0, 0, 0.45),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.09);
+    inset 0 -1px 0 rgba(255, 255, 255, 0.09),
+    0 0 10px rgba(212, 168, 75, 0.18);
 }
 
 .help-dock-half--chat {
@@ -560,6 +607,7 @@
   padding: 2px;
   overflow: hidden;
   filter: drop-shadow(0 0 8px rgba(226, 30, 63, 0.32));
+  transition: transform 0.2s cubic-bezier(0.25, 0.1, 0.25, 1), filter 0.2s ease;
 }
 
 .help-dock-chat-ring-spin {
@@ -605,6 +653,7 @@
   box-shadow:
     inset 0 2px 0 rgba(255, 255, 255, 0.12),
     inset 0 -2px 4px rgba(0, 0, 0, 0.65);
+  transition: color 0.2s ease, box-shadow 0.2s ease;
 }
 
 @media (prefers-reduced-motion: reduce) {
