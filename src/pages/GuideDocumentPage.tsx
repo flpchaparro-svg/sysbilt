@@ -147,83 +147,48 @@ type GuidePageImageProps = {
   fillPage?: boolean
 }
 
-/** Original neumorphic frame markup; only sizing/flex behaviour changed (object-contain, flex shrink). */
+/** Neumorphic frame; orientation from natural dimensions so images show without flex sizing. */
 function GuidePageImage({imageSrc, altText, caption, fillPage = false}: GuidePageImageProps) {
-  const stageRef = React.useRef<HTMLDivElement | null>(null)
-  const [naturalSize, setNaturalSize] = React.useState<{width: number; height: number} | null>(null)
-  const [fittedSize, setFittedSize] = React.useState<{width: number; height: number} | null>(null)
+  const [orientation, setOrientation] = React.useState<'landscape' | 'portrait' | 'square'>('landscape')
 
   React.useEffect(() => {
-    setNaturalSize(null)
-    setFittedSize(null)
+    setOrientation('landscape')
   }, [imageSrc])
 
-  const fitImageToStage = React.useCallback(() => {
-    const stage = stageRef.current
-    if (!stage || !naturalSize) return
-
-    const stageRect = stage.getBoundingClientRect()
-    // Reserve a little room for outer frame padding + border so we never overflow.
-    const maxWidth = Math.max(stageRect.width - 28, 1)
-    const maxHeight = Math.max(stageRect.height - 28, 1)
-    if (maxWidth <= 0 || maxHeight <= 0) return
-
-    const scale = Math.min(maxWidth / naturalSize.width, maxHeight / naturalSize.height)
-    const nextWidth = Math.max(1, Math.floor(naturalSize.width * scale))
-    const nextHeight = Math.max(1, Math.floor(naturalSize.height * scale))
-
-    setFittedSize((prev) => {
-      if (prev && prev.width === nextWidth && prev.height === nextHeight) return prev
-      return {width: nextWidth, height: nextHeight}
-    })
-  }, [naturalSize])
-
-  React.useEffect(() => {
-    fitImageToStage()
-  }, [fitImageToStage, caption, fillPage])
-
-  React.useEffect(() => {
-    const stage = stageRef.current
-    if (!stage) return
-
-    if (typeof ResizeObserver === 'undefined') {
-      window.addEventListener('resize', fitImageToStage)
-      return () => window.removeEventListener('resize', fitImageToStage)
-    }
-
-    const observer = new ResizeObserver(() => {
-      fitImageToStage()
-    })
-    observer.observe(stage)
-    return () => observer.disconnect()
-  }, [fitImageToStage])
+  const portrait = fillPage && orientation === 'portrait'
+  const outerClass = portrait ? 'h-full w-auto' : 'w-full'
+  const imgClass = portrait
+    ? 'block h-full w-auto max-h-full max-w-full'
+    : 'block h-auto w-full max-h-full max-w-full'
 
   return (
     <div
       className="guide-image-wrap my-6 flex w-full flex-1 min-h-0 flex-col items-center justify-center"
       data-fill={fillPage ? 'true' : 'false'}
     >
-      <div ref={stageRef} className="guide-image-stage flex min-h-0 w-full flex-1 items-center justify-center overflow-hidden">
-        <div className="guide-image-outer relative mx-auto inline-flex max-h-full max-w-full flex-shrink p-2 md:p-3 rounded-[16px] md:rounded-[24px] bg-[#FFF2EC] shadow-neu border border-white/50">
+      <div className="guide-image-stage flex min-h-0 w-full flex-1 items-center justify-center overflow-hidden">
+        <div
+          className={`guide-image-outer relative mx-auto max-h-full max-w-full flex-shrink p-2 md:p-3 rounded-[16px] md:rounded-[24px] bg-[#FFF2EC] shadow-neu border border-white/50 ${outerClass}`}
+        >
           <div
-            className="relative flex min-h-0 max-h-full items-center justify-center overflow-hidden rounded-xl border border-black/5 bg-[#FFF8F5] shadow-neu-inner"
-            style={
-              fittedSize
-                ? {width: `${fittedSize.width}px`, height: `${fittedSize.height}px`}
-                : undefined
-            }
+            className={`relative flex min-h-0 max-h-full items-center justify-center overflow-hidden rounded-xl border border-black/5 bg-[#FFF8F5] shadow-neu-inner ${outerClass}`}
           >
             <img
               src={imageSrc}
               alt={altText}
-              className={`guide-image-img ${fittedSize ? 'visible' : 'invisible'}`}
+              className={`guide-image-img ${imgClass}`}
               loading="lazy"
               decoding="async"
               onLoad={(event) => {
                 const {naturalWidth, naturalHeight} = event.currentTarget
                 if (!naturalWidth || !naturalHeight) return
-                setNaturalSize({width: naturalWidth, height: naturalHeight})
-                requestAnimationFrame(() => fitImageToStage())
+                if (naturalHeight > naturalWidth) {
+                  setOrientation('portrait')
+                } else if (naturalWidth > naturalHeight) {
+                  setOrientation('landscape')
+                } else {
+                  setOrientation('square')
+                }
               }}
             />
           </div>
