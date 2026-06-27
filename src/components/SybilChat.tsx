@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef, useLayoutEffect, useCallback } from 'react';
-import { MessageCircle, X, Send, Bot, User, Maximize2, Minimize2 } from 'lucide-react';
+import { X, Send, Bot, User, Maximize2, Minimize2 } from 'lucide-react';
 import { SybilContactForm } from './SybilContactForm';
 import RobotPeek from './RobotPeek';
-import { SYBIL_CHAT_OPEN_CHANGE_EVENT } from '../constants/sybilChatOpenEvent';
+import { OPEN_SYBIL_CHAT_EVENT, SYBIL_CHAT_OPEN_CHANGE_EVENT } from '../constants/sybilChatOpenEvent';
 
 interface ChatMessage {
   role: 'user' | 'model';
@@ -106,7 +106,14 @@ function detectFrictionFromTranscript(msgs: Array<{ role: string; text: string }
   return '';
 }
 
-export default function SybilChat() {
+interface SybilChatProps {
+  /** When true, positioning is handled by `HelpDock` instead of viewport-fixed (except fullscreen). */
+  embedded?: boolean;
+  /** When true, closed-state launcher is rendered by `HelpDock` instead. */
+  hideLauncher?: boolean;
+}
+
+export default function SybilChat({ embedded = false, hideLauncher = false }: SybilChatProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
@@ -145,6 +152,12 @@ export default function SybilChat() {
       new CustomEvent('sybilChatState', { detail: { isOpen, isFullscreen } })
     );
   }, [isOpen, isFullscreen]);
+
+  useEffect(() => {
+    const open = () => setIsOpen(true);
+    window.addEventListener(OPEN_SYBIL_CHAT_EVENT, open);
+    return () => window.removeEventListener(OPEN_SYBIL_CHAT_EVENT, open);
+  }, []);
 
   // Load history from localStorage
   useEffect(() => {
@@ -297,12 +310,18 @@ export default function SybilChat() {
     }
   };
 
+  if (hideLauncher && !isOpen) {
+    return null;
+  }
+
   return (
     <div
       className={
         isOpen && isFullscreen
           ? 'fixed inset-0 z-[9000] flex min-h-0 flex-col bg-white'
-          : 'fixed bottom-6 right-6 z-[9000] flex flex-col items-end'
+          : embedded
+            ? 'relative flex flex-col items-end'
+            : 'fixed bottom-6 right-6 z-[9000] flex flex-col items-end'
       }
     >
       {isOpen ? (
@@ -483,15 +502,7 @@ export default function SybilChat() {
             chatPanelRect={panelRect}
           />
         </div>
-      ) : (
-        <button
-          type="button"
-          onClick={() => setIsOpen(true)}
-          className="flex items-center justify-center rounded-full bg-zinc-900 p-4 text-white shadow-lg transition-transform hover:scale-105 hover:bg-zinc-800"
-        >
-          <MessageCircle size={24} />
-        </button>
-      )}
+      ) : null}
     </div>
   );
 }

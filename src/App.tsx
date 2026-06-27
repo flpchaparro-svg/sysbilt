@@ -7,7 +7,7 @@ import GlobalHeader from './components/GlobalHeader';
 import GlobalFooter from './components/GlobalFooter'; // Standard Import (Stable)
 import Modal from './components/Modal';
 import CookieBanner from './components/CookieBanner';
-import SybilChat from './components/SybilChat';
+import HelpDock from './components/HelpDock';
 import { ServiceDetail } from './types';
 import NotFoundPage from './pages/NotFoundPage';
 
@@ -212,7 +212,7 @@ const App: React.FC = () => {
             !location.pathname.startsWith('/reports/') && <GlobalFooter onNavigate={handleGlobalNavigate} />}
           <Modal service={selectedService} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onViewPillar={(id) => handleGlobalNavigate(id)} />
           <CookieBanner />
-          <SybilChat />
+          <HelpDock />
         </div>
       </LazyMotion>
     </HelmetProvider>

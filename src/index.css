@@ -400,6 +400,262 @@
   animation: march 0.8s linear infinite;
 }
 
+/* Help dock — soft UX dark pill */
+@keyframes help-dock-ring-rotate {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+.help-dock-pill {
+  position: relative;
+  border-radius: 9999px;
+  padding-top: 0.5625rem;
+  background: linear-gradient(168deg, #353535 0%, #121212 40%, #232323 100%);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.38),
+    0 4px 10px rgba(0, 0, 0, 0.28),
+    inset 0 2px 0 rgba(255, 255, 255, 0.14),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.55);
+}
+
+.help-dock-pill::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 85% 60% at 22% 16%, rgba(255, 255, 255, 0.11) 0%, transparent 52%),
+    radial-gradient(ellipse 75% 55% at 80% 90%, rgba(0, 0, 0, 0.32) 0%, transparent 48%);
+}
+
+.help-dock-pill--dual {
+  width: 6.25rem;
+}
+
+.help-dock-pill--solo {
+  width: 3.625rem;
+}
+
+.help-dock-led {
+  position: absolute;
+  top: 0.3125rem;
+  left: 50%;
+  z-index: 2;
+  width: 1rem;
+  height: 0.25rem;
+  transform: translateX(-50%);
+  border-radius: 9999px;
+  background: rgba(0, 0, 0, 0.65);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.75);
+}
+
+.help-dock-led::after {
+  content: '';
+  position: absolute;
+  inset: 1px 2px;
+  border-radius: inherit;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 0 7px rgba(255, 255, 255, 0.7);
+  opacity: 0.88;
+}
+
+.help-dock-body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  height: 2.625rem;
+  padding: 0 0.4rem 0.3rem;
+  gap: 0.2rem;
+}
+
+.help-dock-half {
+  flex: 1 1 0;
+  display: flex;
+  min-width: 0;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s ease, transform 0.15s ease;
+}
+
+.help-dock-half:active {
+  transform: scale(0.96);
+}
+
+.help-dock-half--listen {
+  color: var(--gold);
+  margin-right: 0.05rem;
+  border-radius: 9999px 0.45rem 0.45rem 9999px;
+  background: rgba(0, 0, 0, 0.28);
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.55),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.07),
+    0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.help-dock-half--listen:hover,
+.help-dock-half--listen.is-active {
+  color: var(--gold-on-dark);
+  background: rgba(0, 0, 0, 0.2);
+  box-shadow:
+    inset 0 2px 3px rgba(0, 0, 0, 0.45),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.09);
+}
+
+.help-dock-half--chat {
+  padding: 0 0.1rem;
+  border-radius: 0.4rem 9999px 9999px 0.4rem;
+}
+
+.help-dock-divider {
+  position: relative;
+  width: 0.25rem;
+  align-self: center;
+  height: 1.625rem;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  background: rgba(0, 0, 0, 0.72);
+  box-shadow:
+    inset 0 2px 3px rgba(0, 0, 0, 0.75),
+    1px 0 0 rgba(255, 255, 255, 0.08),
+    -1px 0 0 rgba(0, 0, 0, 0.45);
+}
+
+.help-dock-divider::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 2px;
+  bottom: 2px;
+  width: 2px;
+  transform: translateX(-50%);
+  border-radius: 9999px;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    var(--gold-on-dark) 15%,
+    var(--gold) 50%,
+    var(--gold-on-dark) 85%,
+    transparent 100%
+  );
+  box-shadow: 0 0 8px rgba(212, 168, 75, 0.7);
+  opacity: 0.95;
+}
+
+.help-dock-chat-ring {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.125rem;
+  height: 2.125rem;
+  border-radius: 9999px;
+  padding: 2px;
+  overflow: hidden;
+  filter: drop-shadow(0 0 8px rgba(226, 30, 63, 0.32));
+}
+
+.help-dock-chat-ring-spin {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  pointer-events: none;
+}
+
+.help-dock-chat-ring-spin::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 200%;
+  height: 200%;
+  transform: translate(-50%, -50%);
+  background: conic-gradient(
+    from 0deg,
+    #1a1a1a 0deg,
+    #1a1a1a 205deg,
+    var(--red-solid) 232deg,
+    var(--gold-on-dark) 258deg,
+    var(--white) 282deg,
+    var(--cream) 300deg,
+    #1a1a1a 328deg,
+    #1a1a1a 360deg
+  );
+  animation: help-dock-ring-rotate 2.6s linear infinite;
+}
+
+.help-dock-chat-icon {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+  background: linear-gradient(165deg, #2a2a2a 0%, #0f0f0f 100%);
+  color: rgba(255, 255, 255, 0.95);
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.12),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.65);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .help-dock-chat-ring-spin::before {
+    animation: none;
+    background: var(--gold-on-dark);
+  }
+
+  .speaker-wave-arc-1,
+  .speaker-wave-arc-2 {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+/* Pause decorative animations when off-screen */
+.help-dock-offscreen .help-dock-chat-ring-spin::before,
+.help-dock-offscreen .speaker-wave-arc-1,
+.help-dock-offscreen .speaker-wave-arc-2 {
+  animation-play-state: paused;
+}
+
+/* Speaker icon — 0 → 1 arc → 2 arcs → 0 */
+@keyframes speaker-wave-arc-1 {
+  0%, 18%, 82%, 100% {
+    opacity: 0;
+  }
+  28%, 72% {
+    opacity: 1;
+  }
+}
+
+@keyframes speaker-wave-arc-2 {
+  0%, 48%, 88%, 100% {
+    opacity: 0;
+  }
+  58%, 78% {
+    opacity: 1;
+  }
+}
+
+.speaker-wave-arc-1 {
+  opacity: 0;
+  animation: speaker-wave-arc-1 2.8s ease-in-out infinite;
+}
+
+.speaker-wave-arc-2 {
+  opacity: 0;
+  animation: speaker-wave-arc-2 2.8s ease-in-out infinite;
+}
+
 
 /* ============================================
    ACCESSIBILITY REFERENCE (DO NOT DELETE)

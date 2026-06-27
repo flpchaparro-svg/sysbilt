@@ -316,10 +316,10 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
         transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
         aria-hidden={hideForChat || !scrolled}
         inert={hideForChat || !scrolled ? true : undefined}
-        className={`fixed right-0 top-[20vh] z-[300] hidden lg:flex flex-col bg-dark border-l border-y border-white/10 rounded-l-lg shadow-2xl overflow-hidden w-[54px] ${
+        className={`fixed right-0 top-[18vh] z-[300] hidden lg:flex flex-col bg-dark border-l border-y border-white/10 rounded-l-lg shadow-2xl overflow-hidden w-[54px] ${
           hideForChat ? 'pointer-events-none' : scrolled ? '' : 'pointer-events-none'
         }`}
-        style={{ maxHeight: 'calc(100vh - 20vh - 4rem)' }}
+        style={{ maxHeight: 'calc(100vh - 18vh - 6rem)' }}
       >
             <button
               onClick={() => onNavigate('homepage')}
