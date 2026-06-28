@@ -604,7 +604,7 @@
   width: 2.125rem;
   height: 2.125rem;
   border-radius: 9999px;
-  padding: 2px;
+  padding: 0.5px;
   overflow: hidden;
   filter: drop-shadow(0 0 8px rgba(226, 30, 63, 0.32));
   transition: transform 0.2s cubic-bezier(0.25, 0.1, 0.25, 1), filter 0.2s ease;
@@ -665,7 +665,7 @@
   .speaker-wave-arc-1,
   .speaker-wave-arc-2 {
     animation: none;
-    opacity: 0;
+    opacity: 1;
   }
 }
 
@@ -676,33 +676,57 @@
   animation-play-state: paused;
 }
 
-/* Speaker icon — 0 → 1 arc → 2 arcs → 0 */
-@keyframes speaker-wave-arc-1 {
-  0%, 18%, 82%, 100% {
+/* Speaker icon — intro: 0 → 1 arc → 2 arcs, rests with both visible; hover pulses waves */
+@keyframes speaker-wave-intro-1 {
+  0% {
     opacity: 0;
   }
-  28%, 72% {
+  22% {
+    opacity: 1;
+  }
+  100% {
     opacity: 1;
   }
 }
 
-@keyframes speaker-wave-arc-2 {
-  0%, 48%, 88%, 100% {
+@keyframes speaker-wave-intro-2 {
+  0%, 42% {
     opacity: 0;
   }
-  58%, 78% {
+  62%, 100% {
     opacity: 1;
+  }
+}
+
+@keyframes speaker-wave-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
   }
 }
 
 .speaker-wave-arc-1 {
-  opacity: 0;
-  animation: speaker-wave-arc-1 2.8s ease-in-out infinite;
+  opacity: 1;
+  transform-origin: 12px 12px;
+  animation: speaker-wave-intro-1 2.4s ease-in-out 1 forwards;
 }
 
 .speaker-wave-arc-2 {
-  opacity: 0;
-  animation: speaker-wave-arc-2 2.8s ease-in-out infinite;
+  opacity: 1;
+  transform-origin: 12px 12px;
+  animation: speaker-wave-intro-2 2.4s ease-in-out 1 forwards;
+}
+
+@media (hover: hover) {
+  .help-dock-half--listen:not(.is-active):hover .speaker-wave-arc-1 {
+    animation: speaker-wave-pulse 0.85s ease-in-out infinite;
+  }
+
+  .help-dock-half--listen:not(.is-active):hover .speaker-wave-arc-2 {
+    animation: speaker-wave-pulse 0.85s ease-in-out 0.18s infinite;
+  }
 }
 
 

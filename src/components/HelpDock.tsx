@@ -132,7 +132,7 @@ export default function HelpDock() {
                   title={isPlaying ? 'Pause' : 'Listen'}
                   className={`help-dock-half help-dock-half--listen ${isPlaying ? 'is-active' : ''}`}
                 >
-                  <SpeakerWaveIcon state={iconState} size={19} />
+                  <SpeakerWaveIcon key={pathname} state={iconState} size={19} />
                 </button>
                 <div className="help-dock-divider" aria-hidden />
               </>
