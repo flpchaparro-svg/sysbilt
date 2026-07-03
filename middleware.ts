@@ -8,6 +8,22 @@ import { next } from '@vercel/functions';
 const VITE_DEV_FILE =
   /\.(?:ts|tsx|js|jsx|mjs|css|json|svg|png|jpg|jpeg|gif|webp|ico|woff|woff2|ttf|map)$/i;
 
+/** Keep in sync with Built to Work public chapter routes. */
+const BTW_CHAPTER_SLUGS = new Set([
+  'what-a-business-website-is-for',
+  'do-you-own-your-website',
+  'web-page-that-converts',
+  'pages-a-business-website-needs',
+  'business-website-features',
+  'running-your-website-day-to-day',
+  'website-maintenance-speed-accessibility',
+  'how-to-get-your-website-found',
+  'website-crm-automation-hub',
+  'growing-your-website-over-time',
+  'using-ai-for-website-content',
+  'website-terms-glossary',
+]);
+
 function isViteInternalRequest(url: URL): boolean {
   const { pathname, href } = url;
 
@@ -62,6 +78,8 @@ function isSpaRoute(normalizedPathname: string): boolean {
   ]);
   if (exact.has(normalizedPathname)) return true;
   if (/^\/blog\/[^/]+$/i.test(normalizedPathname)) return true;
+  const builtToWorkChapter = normalizedPathname.match(/^\/guides\/built-to-work\/([^/]+)$/i);
+  if (builtToWorkChapter && BTW_CHAPTER_SLUGS.has(builtToWorkChapter[1])) return true;
   if (/^\/guides\/[^/]+$/i.test(normalizedPathname)) return true;
   if (/^\/toolkit\/[^/]+$/i.test(normalizedPathname)) return true;
   return false;

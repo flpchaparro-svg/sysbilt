@@ -9,6 +9,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { preview } from 'vite';
 import puppeteer from 'puppeteer';
+import { btwPublicRoutes } from './btw-seo-routes.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, '../..');
@@ -33,6 +34,7 @@ const ROUTES = [
   '/news',
   '/guides',
   '/toolkit',
+  ...btwPublicRoutes(),
 ];
 
 const SITE = 'https://sysbilt.com';

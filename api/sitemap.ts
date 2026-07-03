@@ -1,6 +1,23 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@sanity/client';
 
+/** Keep in sync with scripts/site/btw-seo-routes.mjs and src/built-to-work/chapter-seo.ts */
+const BTW_HUB_PATH = '/guides/built-to-work';
+const BTW_CHAPTER_SLUGS = [
+  'what-a-business-website-is-for',
+  'do-you-own-your-website',
+  'web-page-that-converts',
+  'pages-a-business-website-needs',
+  'business-website-features',
+  'running-your-website-day-to-day',
+  'website-maintenance-speed-accessibility',
+  'how-to-get-your-website-found',
+  'website-crm-automation-hub',
+  'growing-your-website-over-time',
+  'using-ai-for-website-content',
+  'website-terms-glossary',
+] as const;
+
 const BASE_URL = 'https://sysbilt.com';
 
 /** Slugs for guide documents (hub is /guides only). */
@@ -128,6 +145,13 @@ export default async function handler(_req: VercelRequest, res: VercelResponse):
       priority: '0.8',
     }));
 
+    const btwChapterEntries: UrlEntry[] = BTW_CHAPTER_SLUGS.map((slug) => ({
+      loc: `${BASE_URL}${BTW_HUB_PATH}/${encodeURIComponent(slug)}`,
+      lastmod: today,
+      changefreq: 'monthly',
+      priority: '0.75',
+    }));
+
     const blogUrls: UrlEntry[] = posts
       .filter((p): p is { slug: string; publishedAt: string | null } => typeof p.slug === 'string' && p.slug.length > 0)
       .map((p) => ({
@@ -146,7 +170,14 @@ export default async function handler(_req: VercelRequest, res: VercelResponse):
         priority: '0.65',
       }));
 
-    const xml = buildXml([...staticEntries, ...guideDocEntries, ...blogUrls, ...toolkitUrls]);
+    const seen = new Set<string>();
+    const entries = [...staticEntries, ...guideDocEntries, ...btwChapterEntries, ...blogUrls, ...toolkitUrls].filter((entry) => {
+      if (seen.has(entry.loc)) return false;
+      seen.add(entry.loc);
+      return true;
+    });
+
+    const xml = buildXml(entries);
 
     res.setHeader('Content-Type', 'application/xml; charset=utf-8');
     res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=86400');

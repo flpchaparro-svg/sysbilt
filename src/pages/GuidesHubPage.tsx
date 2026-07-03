@@ -154,6 +154,36 @@ export default function GuidesHubPage() {
           </m.div>
         </section>
 
+        {/* FEATURED — Built to Work */}
+        <section className="px-6 md:px-12 max-w-5xl mx-auto mb-16 md:mb-20 relative z-10">
+          <div className="mb-6 border-b-2 border-dark pb-4">
+            <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark">/ Featured</span>
+          </div>
+          <Link
+            to="/guides/built-to-work"
+            className="group block border-2 border-[#1a1a1a] bg-[#1B1714] text-[#FFF2EC] p-8 md:p-12 shadow-[8px_8px_0px_0px_#1a1a1a] hover:shadow-[12px_12px_0px_0px_#C5A059] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden"
+          >
+            <div className="absolute top-0 left-0 w-full h-1 bg-[#C5A059] scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500" />
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 relative z-10">
+              <div className="max-w-2xl">
+                <span className="font-mono text-[10px] font-bold uppercase tracking-[0.25em] text-[#D4A84B] mb-4 block">
+                  Premium guide · 12 chapters
+                </span>
+                <h2 className="font-serif text-3xl md:text-5xl text-[#FFF2EC] mb-4 group-hover:text-[#D4A84B] transition-colors leading-tight">
+                  Built to Work
+                </h2>
+                <p className="font-serif text-base md:text-lg italic text-[#FFF2EC]/70 leading-relaxed">
+                  How websites really work now, and why the businesses that adapt pull ahead.
+                </p>
+              </div>
+              <div className="shrink-0 flex items-center gap-3 border-2 border-[#FFF2EC]/30 px-6 py-4 font-mono text-[11px] font-bold uppercase tracking-widest text-[#FFF2EC] group-hover:border-[#D4A84B] group-hover:text-[#D4A84B] transition-colors">
+                Read the guide
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+              </div>
+            </div>
+          </Link>
+        </section>
+
         {/* FILTER SYSTEM */}
         <section className="max-w-[1000px] mx-auto mb-12 relative z-20 px-6">
           <div className="md:hidden">

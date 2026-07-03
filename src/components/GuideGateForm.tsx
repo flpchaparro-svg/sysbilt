@@ -21,7 +21,9 @@ const GUIDE_SLUG_TO_HUBSPOT: Record<string, string> = {
   'lead-tracking': 'lead_tracking',
   automation: 'automation',
   dashboards: 'dashboards',
+  'built-to-work': 'built_to_work',
   'how-to-build-connected-construction-ecosystem': 'how_to_build_connected_construction_ecosystem',
+  'how-to-build-a-branded-carousel-system': 'how_to_build_a_branded_carousel_system',
 };
 
 export function guideSlugToHubspotValue(guideSlug: string): string {
