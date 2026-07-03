@@ -1070,6 +1070,7 @@ export default function GuideDocumentPage() {
   const [guideData, setGuideData] = useState<GuideDocument | null>(null)
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
+  const [fetchError, setFetchError] = useState(false)
   // UNIVERSAL UNLOCK: If they ever filled out ANY form, unlock all guides forever
   const [isUnlocked, setIsUnlocked] = useState(() => {
     if (typeof window === 'undefined') return false;
@@ -1087,12 +1088,14 @@ export default function GuideDocumentPage() {
     let cancelled = false
     setLoading(true)
     setNotFound(false)
+    setFetchError(false)
 
     client
       .fetch<GuideDocument | null>(GUIDE_BY_SLUG_QUERY, {slug})
       .then((data) => {
         if (cancelled) return
         if (!data?.title) {
+          // Query succeeded and returned nothing — confirmed absence.
           setGuideData(null)
           setNotFound(true)
         } else {
@@ -1106,8 +1109,10 @@ export default function GuideDocumentPage() {
       .catch((err) => {
         console.error('Guide fetch failed:', err)
         if (!cancelled) {
+          // Fetch failed (network/API error) — NOT a confirmed absence.
+          // Do not set notFound (which emits noindex); flag a transient error.
           setGuideData(null)
-          setNotFound(true)
+          setFetchError(true)
         }
       })
       .finally(() => {
@@ -1201,6 +1206,26 @@ export default function GuideDocumentPage() {
       <div className="guide-root flex min-h-screen items-center justify-center bg-[#FFF2EC] px-4 py-20">
         <style>{GUIDE_STYLES}</style>
         <p className="font-mono text-sm uppercase tracking-widest text-[#1a1a1a]/50">Loading guide…</p>
+      </div>
+    )
+  }
+
+  if (fetchError && !guideData) {
+    // Content could not be loaded (fetch/API error). This is NOT a confirmed
+    // absence, so we must not emit noindex — a transient failure during a crawl
+    // would otherwise deindex a real guide.
+    return (
+      <div className="guide-root flex min-h-screen flex-col items-center justify-center gap-6 bg-[#FFF2EC] px-4 py-20 text-center">
+        <style>{GUIDE_STYLES}</style>
+        <h1 className="font-serif text-2xl text-[#1a1a1a]">Couldn’t load this guide</h1>
+        <p className="max-w-md text-[#1a1a1a]/70">Something went wrong loading this page. Please refresh to try again.</p>
+        <button
+          type="button"
+          onClick={() => window.location.reload()}
+          className="font-mono text-sm uppercase tracking-widest text-[#9A1730] underline underline-offset-4 hover:text-[#E21E3F]"
+        >
+          Reload
+        </button>
       </div>
     )
   }

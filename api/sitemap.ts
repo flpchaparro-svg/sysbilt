@@ -20,18 +20,6 @@ const BTW_CHAPTER_SLUGS = [
 
 const BASE_URL = 'https://sysbilt.com';
 
-/** Slugs for guide documents (hub is /guides only). */
-const GUIDE_DOC_SLUGS = [
-  'revenue-engine',
-  'websites',
-  'lead-tracking',
-  'automation',
-  'ai-assistants',
-  'content-systems',
-  'team-training',
-  'dashboards',
-] as const;
-
 type StaticPage = { path: string; priority: string };
 
 const STATIC_PAGES: readonly StaticPage[] = [
@@ -138,12 +126,24 @@ export default async function handler(_req: VercelRequest, res: VercelResponse):
       priority,
     }));
 
-    const guideDocEntries: UrlEntry[] = GUIDE_DOC_SLUGS.map((slug) => ({
-      loc: `${BASE_URL}/guides/${encodeURIComponent(slug)}`,
-      lastmod: guideLastmodBySlug.get(slug) ?? today,
-      changefreq: 'weekly',
+    const guideDocEntries: UrlEntry[] = guidesFromCms
+      .filter(
+        (g): g is { slug: string; publishedAt: string | null } =>
+          typeof g.slug === 'string' && g.slug.length > 0 && g.slug !== 'built-to-work',
+      )
+      .map((g) => ({
+        loc: `${BASE_URL}/guides/${encodeURIComponent(g.slug)}`,
+        lastmod: guideLastmodBySlug.get(g.slug) ?? today,
+        changefreq: 'weekly',
+        priority: '0.8',
+      }));
+
+    const btwHubEntry: UrlEntry = {
+      loc: `${BASE_URL}${BTW_HUB_PATH}`,
+      lastmod: today,
+      changefreq: 'monthly',
       priority: '0.8',
-    }));
+    };
 
     const btwChapterEntries: UrlEntry[] = BTW_CHAPTER_SLUGS.map((slug) => ({
       loc: `${BASE_URL}${BTW_HUB_PATH}/${encodeURIComponent(slug)}`,
@@ -171,7 +171,7 @@ export default async function handler(_req: VercelRequest, res: VercelResponse):
       }));
 
     const seen = new Set<string>();
-    const entries = [...staticEntries, ...guideDocEntries, ...btwChapterEntries, ...blogUrls, ...toolkitUrls].filter((entry) => {
+    const entries = [...staticEntries, ...guideDocEntries, btwHubEntry, ...btwChapterEntries, ...blogUrls, ...toolkitUrls].filter((entry) => {
       if (seen.has(entry.loc)) return false;
       seen.add(entry.loc);
       return true;

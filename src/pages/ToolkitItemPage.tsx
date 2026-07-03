@@ -118,6 +118,7 @@ export default function ToolkitItemPage() {
   const [tool, setTool] = useState<ToolkitItem | null>(null)
   const [relatedPosts, setRelatedPosts] = useState<RelatedPost[]>([])
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState(false)
   const [activeSection, setActiveSection] = useState('what-it-is')
 
   useEffect(() => {
@@ -127,6 +128,7 @@ export default function ToolkitItemPage() {
     }
 
     setLoading(true)
+    setLoadError(false)
     client
       .fetch<ToolkitItem | null>(PAGE_QUERY, {slug})
       .then((data) => {
@@ -140,7 +142,12 @@ export default function ToolkitItemPage() {
         }
         setLoading(false)
       })
-      .catch(() => setLoading(false))
+      .catch(() => {
+        // Fetch failed (network/API error) — NOT a confirmed absence.
+        // Do not emit noindex; the stamped <head> canonical/title remain intact.
+        setLoadError(true)
+        setLoading(false)
+      })
   }, [slug])
 
   const bodyMainSections = useMemo(
@@ -191,6 +198,27 @@ export default function ToolkitItemPage() {
     return (
       <div className="min-h-screen bg-dark flex items-center justify-center">
         <div className="type-eyebrow text-cream border-2 border-cream px-6 py-4 animate-pulse">Loading...</div>
+      </div>
+    )
+  }
+
+  if (!tool && loadError) {
+    // Content could not be loaded (fetch/API error). This is NOT a confirmed
+    // absence, so we must not emit noindex — a transient failure during a crawl
+    // would otherwise deindex a real page.
+    return (
+      <div className="min-h-screen bg-dark flex flex-col items-center justify-center gap-6 px-6 py-24 text-center">
+        <h1 className="font-sans font-black text-2xl uppercase tracking-tight text-cream">Couldn’t load this tool</h1>
+        <p className="max-w-md type-body text-cream/60">
+          Something went wrong loading this page. Please refresh to try again.
+        </p>
+        <button
+          type="button"
+          onClick={() => window.location.reload()}
+          className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-cream border-b-2 border-cream hover:text-gold-on-dark hover:border-gold transition-colors"
+        >
+          Reload
+        </button>
       </div>
     )
   }

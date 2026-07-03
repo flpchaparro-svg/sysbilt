@@ -5,7 +5,7 @@ import { SanityService, SanityCaseStudy } from './types';
 export const client = createClient({
   projectId: 'wdlc9pg8',
   dataset: 'production',
-  useCdn: false,
+  useCdn: true,
   apiVersion: '2024-02-20',
 });
 
