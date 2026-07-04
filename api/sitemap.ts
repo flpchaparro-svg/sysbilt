@@ -1,22 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@sanity/client';
-
-/** Keep in sync with scripts/site/btw-seo-routes.mjs and src/built-to-work/chapter-seo.ts */
-const BTW_HUB_PATH = '/guides/built-to-work';
-const BTW_CHAPTER_SLUGS = [
-  'what-a-business-website-is-for',
-  'do-you-own-your-website',
-  'web-page-that-converts',
-  'pages-a-business-website-needs',
-  'business-website-features',
-  'running-your-website-day-to-day',
-  'website-maintenance-speed-accessibility',
-  'how-to-get-your-website-found',
-  'website-crm-automation-hub',
-  'growing-your-website-over-time',
-  'using-ai-for-website-content',
-  'website-terms-glossary',
-] as const;
+import { BTW_CHAPTER_SLUGS, BTW_HUB_ROUTE as BTW_HUB_PATH } from '../scripts/site/btw-seo-routes.mjs';
 
 const BASE_URL = 'https://sysbilt.com';
 

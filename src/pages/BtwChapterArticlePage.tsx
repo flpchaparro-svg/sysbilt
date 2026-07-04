@@ -1,15 +1,12 @@
 import { Link, useParams, Navigate } from 'react-router-dom'
-import { ArrowLeft, ArrowRight } from 'lucide-react'
-import { Helmet } from 'react-helmet-async'
+import { ArrowLeft } from 'lucide-react'
 import { PageMeta } from '../components/PageMeta'
 import { SITE_ORIGIN } from '../constants/seoMeta'
-import PillarFAQJsonLd from '../components/PillarFAQJsonLd'
 import {
   BTW_CHAPTERS,
   BTW_HUB_PATH,
   btwChapterPath,
   extractChapterBlocks,
-  extractGlossaryFaqs,
   getBtwChapterBySlug,
   getBtwChapterByNum,
   pillarLabel,
@@ -19,8 +16,6 @@ import { BtwFlowList } from '../built-to-work/components/BtwBlocks'
 import { BtwPdfCta } from '../built-to-work/components/BtwPdfCta'
 import { BTW_STYLES } from '../built-to-work/styles'
 import { BTW_META } from '../built-to-work/types'
-
-const PUBLISHED = '2026-06-01T00:00:00.000Z'
 
 export default function BtwChapterArticlePage() {
   const { chapterSlug } = useParams<{ chapterSlug: string }>()
@@ -37,42 +32,6 @@ export default function BtwChapterArticlePage() {
   const prev = chapter.num > 1 ? getBtwChapterByNum(chapter.num - 1) : undefined
   const next = chapter.num < BTW_CHAPTERS.length ? getBtwChapterByNum(chapter.num + 1) : undefined
 
-  const articleJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
-    headline: chapter.h1,
-    description: chapter.seoDescription,
-    datePublished: PUBLISHED,
-    dateModified: PUBLISHED,
-    author: { '@type': 'Organization', name: 'SYSBILT', url: SITE_ORIGIN },
-    publisher: {
-      '@type': 'Organization',
-      name: 'SYSBILT',
-      url: SITE_ORIGIN,
-      logo: { '@type': 'ImageObject', url: `${SITE_ORIGIN}/images/og-sysbilt.png` },
-    },
-    mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
-    image: cover ? `${SITE_ORIGIN}${cover.src}` : `${SITE_ORIGIN}/images/og-sysbilt.png`,
-    isPartOf: {
-      '@type': 'Book',
-      name: BTW_META.title,
-      url: `${SITE_ORIGIN}${BTW_HUB_PATH}`,
-    },
-  }
-
-  const breadcrumbJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElements: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_ORIGIN}/` },
-      { '@type': 'ListItem', position: 2, name: 'Guides', item: `${SITE_ORIGIN}/guides` },
-      { '@type': 'ListItem', position: 3, name: BTW_META.title, item: `${SITE_ORIGIN}${BTW_HUB_PATH}` },
-      { '@type': 'ListItem', position: 4, name: chapter.h1, item: canonical },
-    ],
-  }
-
-  const glossaryFaqs = chapter.num === 12 ? extractGlossaryFaqs(blocks) : []
-
   return (
     <div className="btw-root min-h-screen bg-cream text-dark selection:bg-dark selection:text-cream pt-[100px] md:pt-[140px] pb-16 md:pb-24">
       <style>{BTW_STYLES}</style>
@@ -82,11 +41,7 @@ export default function BtwChapterArticlePage() {
         canonical={canonical}
         ogImage={cover ? `${SITE_ORIGIN}${cover.src}` : `${SITE_ORIGIN}/images/og-sysbilt.png`}
       />
-      <Helmet>
-        <script type="application/ld+json">{JSON.stringify(articleJsonLd)}</script>
-        <script type="application/ld+json">{JSON.stringify(breadcrumbJsonLd)}</script>
-      </Helmet>
-      {glossaryFaqs.length > 0 ? <PillarFAQJsonLd faqs={glossaryFaqs} /> : null}
+      {/* JSON-LD (Article + BreadcrumbList + glossary FAQPage on ch12) is stamped at build time. */}
 
       <article className="mx-auto w-full max-w-[720px] px-4 md:px-6">
         <nav aria-label="Breadcrumb" className="mb-8 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-dark/45">

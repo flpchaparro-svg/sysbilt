@@ -1252,54 +1252,6 @@ export default function GuideDocumentPage() {
   const ogTitle = guideData.seoTitle?.trim() || guideData.title
   const defaultOgImage = `${SITE_ORIGIN}/images/og-sysbilt.png`
 
-  const articleJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
-    headline: guideData.title,
-    description: pageDescription,
-    datePublished: guideData.publishedAt,
-    author: {
-      '@type': 'Organization',
-      name: 'SYSBILT',
-      url: SITE_ORIGIN,
-    },
-    publisher: {
-      '@type': 'Organization',
-      name: 'SYSBILT',
-      url: SITE_ORIGIN,
-    },
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': `${SITE_ORIGIN}/guides/${guideSlug}`,
-    },
-    educationalUse: 'Professional Development',
-  }
-
-  const breadcrumbJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      {
-        '@type': 'ListItem',
-        position: 1,
-        name: 'Home',
-        item: `${SITE_ORIGIN}/`,
-      },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: 'Guides',
-        item: `${SITE_ORIGIN}/guides`,
-      },
-      {
-        '@type': 'ListItem',
-        position: 3,
-        name: guideData.title,
-        item: guidePageUrl,
-      },
-    ],
-  }
-
   return (
     <div className="guide-root min-h-screen bg-[#FFF2EC] pt-[100px] md:pt-[140px] pb-16 md:pb-24 text-[#1a1a1a]">
       <style>{GUIDE_STYLES}</style>
@@ -1317,8 +1269,7 @@ export default function GuideDocumentPage() {
         <meta name="twitter:url" content={guidePageUrl} />
         <meta name="twitter:title" content={ogTitle} />
         <meta name="twitter:description" content={pageDescription} />
-        <script type="application/ld+json">{JSON.stringify(articleJsonLd)}</script>
-        <script type="application/ld+json">{JSON.stringify(breadcrumbJsonLd)}</script>
+        {/* JSON-LD (Article + BreadcrumbList) is stamped into static HTML at build time. */}
       </Helmet>
       
       <div className="guide-page-stack mx-auto flex w-full max-w-[840px] flex-col items-center gap-12 md:gap-16 px-4">

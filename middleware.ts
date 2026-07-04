@@ -3,26 +3,37 @@
  * (paths not handled by the SPA router) so crawlers see noindex without executing JS.
  */
 import { next } from '@vercel/functions';
+import {
+  BLOG_SLUGS,
+  GUIDE_SLUGS,
+  TOOLKIT_SLUGS,
+  BTW_CHAPTER_SLUGS as BTW_CHAPTER_SLUG_LIST,
+  BTW_HUB_ROUTE,
+} from './src/generated/contentManifest.generated';
 
 /** Vite dev-server URLs (same origin as `vercel dev`). Production builds never hit these paths. */
 const VITE_DEV_FILE =
   /\.(?:ts|tsx|js|jsx|mjs|css|json|svg|png|jpg|jpeg|gif|webp|ico|woff|woff2|ttf|map)$/i;
 
-/** Keep in sync with Built to Work public chapter routes. */
-const BTW_CHAPTER_SLUGS = new Set([
-  'what-a-business-website-is-for',
-  'do-you-own-your-website',
-  'web-page-that-converts',
-  'pages-a-business-website-needs',
-  'business-website-features',
-  'running-your-website-day-to-day',
-  'website-maintenance-speed-accessibility',
-  'how-to-get-your-website-found',
-  'website-crm-automation-hub',
-  'growing-your-website-over-time',
-  'using-ai-for-website-content',
-  'website-terms-glossary',
-]);
+/**
+ * Valid CMS + Built to Work slug sets, inlined at build time from
+ * src/generated/contentManifest.generated.ts. Used to reject bogus content
+ * children (soft-404s) so `/blog/does-not-exist` etc. get noindex without a
+ * runtime Sanity lookup.
+ */
+const BLOG_SLUG_SET = new Set(BLOG_SLUGS);
+const GUIDE_SLUG_SET = new Set(GUIDE_SLUGS);
+const TOOLKIT_SLUG_SET = new Set(TOOLKIT_SLUGS);
+const BTW_CHAPTER_SLUGS = new Set(BTW_CHAPTER_SLUG_LIST);
+
+/** Decode a single path segment; malformed encodings are treated as invalid. */
+function decodeSegment(segment: string): string | null {
+  try {
+    return decodeURIComponent(segment);
+  } catch {
+    return null;
+  }
+}
 
 function isViteInternalRequest(url: URL): boolean {
   const { pathname, href } = url;
@@ -77,11 +88,33 @@ function isSpaRoute(normalizedPathname: string): boolean {
     '/toolkit',
   ]);
   if (exact.has(normalizedPathname)) return true;
-  if (/^\/blog\/[^/]+$/i.test(normalizedPathname)) return true;
+
+  const blog = normalizedPathname.match(/^\/blog\/([^/]+)$/i);
+  if (blog) {
+    const slug = decodeSegment(blog[1]);
+    return slug != null && BLOG_SLUG_SET.has(slug);
+  }
+
+  // Built to Work hub + code-defined chapters (not Sanity guides).
+  if (normalizedPathname === BTW_HUB_ROUTE) return true;
   const builtToWorkChapter = normalizedPathname.match(/^\/guides\/built-to-work\/([^/]+)$/i);
-  if (builtToWorkChapter && BTW_CHAPTER_SLUGS.has(builtToWorkChapter[1])) return true;
-  if (/^\/guides\/[^/]+$/i.test(normalizedPathname)) return true;
-  if (/^\/toolkit\/[^/]+$/i.test(normalizedPathname)) return true;
+  if (builtToWorkChapter) {
+    const slug = decodeSegment(builtToWorkChapter[1]);
+    return slug != null && BTW_CHAPTER_SLUGS.has(slug);
+  }
+
+  const guide = normalizedPathname.match(/^\/guides\/([^/]+)$/i);
+  if (guide) {
+    const slug = decodeSegment(guide[1]);
+    return slug != null && GUIDE_SLUG_SET.has(slug);
+  }
+
+  const toolkit = normalizedPathname.match(/^\/toolkit\/([^/]+)$/i);
+  if (toolkit) {
+    const slug = decodeSegment(toolkit[1]);
+    return slug != null && TOOLKIT_SLUG_SET.has(slug);
+  }
+
   return false;
 }
 

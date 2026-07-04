@@ -10,7 +10,6 @@ import {ToolkitPortableText, getToolkitBodyMainSections, getToolkitSectionsFromB
 import {PageMeta} from '../components/PageMeta'
 import {SITE_ORIGIN} from '../constants/seoMeta'
 import {client, urlFor} from '../sanityClient'
-import {buildToolkitArticleJsonLd} from '../utils/toolkitSeoJsonLd'
 import {
   getCategoryLabel,
   getPricingLabel,
@@ -279,25 +278,6 @@ export default function ToolkitItemPage() {
     (typeof heroImage?.alt === 'string' && heroImage.alt.trim()) ||
     `${tool.name} visual`
 
-  const breadcrumbJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      {'@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_ORIGIN}/`},
-      {'@type': 'ListItem', position: 2, name: 'Insights', item: `${SITE_ORIGIN}/blog`},
-      {'@type': 'ListItem', position: 3, name: 'Toolkit', item: `${SITE_ORIGIN}/toolkit`},
-      {'@type': 'ListItem', position: 4, name: tool.name, item: canonicalUrl},
-    ],
-  }
-
-  const articleJsonLd = buildToolkitArticleJsonLd({
-    tool,
-    canonicalUrl,
-    pageDescription,
-    shareImage,
-    headline: pageTitle,
-  })
-
   return (
     <main className="min-h-screen bg-dark text-cream font-sans pb-14 border-t border-white/10">
       <Helmet>
@@ -317,9 +297,7 @@ export default function ToolkitItemPage() {
         <meta name="twitter:title" content={brandedTitle} />
         <meta name="twitter:description" content={pageDescription} />
         {shareImage ? <meta name="twitter:image" content={shareImage} /> : null}
-
-        <script type="application/ld+json">{JSON.stringify(articleJsonLd)}</script>
-        <script type="application/ld+json">{JSON.stringify(breadcrumbJsonLd)}</script>
+        {/* JSON-LD (Article + BreadcrumbList) is stamped into static HTML at build time. */}
       </Helmet>
 
       <div className="pt-32 px-4 md:px-8 max-w-7xl mx-auto">

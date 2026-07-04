@@ -8,7 +8,7 @@ import { PortableText } from '@portabletext/react';
 import { ArrowLeft, ArrowUpRight, Quote, Copy, Check, Info, AlertTriangle } from 'lucide-react';
 import PostEndCTA from '../components/PostEndCTA';
 import ShareButton from '../components/ShareButton';
-import { buildBlogPostingJsonLd } from '../utils/blogSeoJsonLd';
+import { PageMeta } from '../components/PageMeta';
 
 // Helper function to extract YouTube ID
 const getYouTubeId = (url: string) => {
@@ -191,12 +191,15 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
   const [post, setPost] = useState<any>(null);
   const [relatedPosts, setRelatedPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [activeToc, setActiveToc] = useState<string>('');
   
   const [email, setEmail] = useState('');
   const [formStatus, setFormStatus] = useState<'idle' | 'loading' | 'success'>('idle');
 
   useEffect(() => {
+    setLoading(true);
+    setLoadError(false);
     client
       .fetch(
         `{
@@ -255,7 +258,11 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
         setRelatedPosts(related);
         setLoading(false);
       })
-      .catch(console.error);
+      .catch(() => {
+        // Fetch failed (network/API error) — NOT a confirmed absence.
+        setLoadError(true);
+        setLoading(false);
+      });
   }, [slug]);
 
   const activeThemeKey = useMemo(() => {
@@ -337,7 +344,43 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
   };
 
   if (loading) return <div className="min-h-screen bg-dark text-white pt-32 px-6 text-center font-sans text-sm md:text-base animate-pulse">Loading...</div>;
-  if (!post) return <div className="min-h-screen bg-dark text-red-solid pt-32 px-6 text-center font-sans text-sm md:text-base">Article not found</div>;
+
+  if (!post && loadError) {
+    return (
+      <div className="min-h-screen bg-dark flex flex-col items-center justify-center gap-6 px-6 py-24 text-center">
+        <h1 className="font-sans font-black text-2xl uppercase tracking-tight text-white">Couldn&apos;t load this article</h1>
+        <p className="max-w-md text-white/60 text-sm md:text-base">
+          Something went wrong loading this page. Please refresh to try again.
+        </p>
+        <button
+          type="button"
+          onClick={() => window.location.reload()}
+          className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-white border-b-2 border-white hover:text-red-solid hover:border-red-solid transition-colors"
+        >
+          Reload
+        </button>
+      </div>
+    );
+  }
+
+  if (!post) {
+    return (
+      <div className="min-h-screen bg-dark flex flex-col items-center justify-center gap-6 px-6 py-24 text-center">
+        <PageMeta
+          title="Article not found | SYSBILT"
+          description="This article does not exist or is unpublished."
+          robots="noindex, follow"
+        />
+        <h1 className="font-sans font-black text-2xl uppercase tracking-tight text-red-solid">Article not found</h1>
+        <Link
+          to="/blog"
+          className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-white/50 hover:text-white transition-colors"
+        >
+          Back to Insights
+        </Link>
+      </div>
+    );
+  }
 
   const components = {
     types: {
@@ -697,47 +740,7 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
         <meta name="twitter:title" content={brandedTitle} />
         <meta name="twitter:description" content={pageDescription} />
         {shareImage && <meta name="twitter:image" content={shareImage} />}
-        {canonicalUrl && post && (
-          <script type="application/ld+json">
-            {JSON.stringify(
-              buildBlogPostingJsonLd({
-                post,
-                canonicalUrl,
-                pageDescription,
-                shareImage,
-                headline: (resolvedArticleTitle || post.title) ?? '',
-              })
-            )}
-          </script>
-        )}
-        {canonicalUrl && post && (
-          <script type="application/ld+json">
-            {JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'BreadcrumbList',
-              itemListElement: [
-                {
-                  '@type': 'ListItem',
-                  position: 1,
-                  name: 'Home',
-                  item: `${SITE_ORIGIN}/`,
-                },
-                {
-                  '@type': 'ListItem',
-                  position: 2,
-                  name: 'Insights',
-                  item: `${SITE_ORIGIN}/blog`,
-                },
-                {
-                  '@type': 'ListItem',
-                  position: 3,
-                  name: post.title,
-                  item: canonicalUrl,
-                },
-              ],
-            })}
-          </script>
-        )}
+        {/* JSON-LD (BlogPosting + BreadcrumbList) is stamped into static HTML at build time. */}
       </Helmet>
       
       <div className="pt-32 px-4 md:px-8 max-w-7xl mx-auto">

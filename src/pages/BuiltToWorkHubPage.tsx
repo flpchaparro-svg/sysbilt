@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
-import { Helmet } from 'react-helmet-async'
 import { PageMeta } from '../components/PageMeta'
 import { SITE_ORIGIN } from '../constants/seoMeta'
 import {
@@ -16,32 +15,6 @@ export default function BuiltToWorkHubPage() {
   const htmlTitle = `Lead-Generation Websites: The Complete Guide | SYSBILT`
   const description = BTW_META.seoDescription
 
-  const bookJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Book',
-    name: BTW_META.title,
-    description,
-    author: { '@type': 'Organization', name: 'SYSBILT', url: SITE_ORIGIN },
-    publisher: { '@type': 'Organization', name: 'SYSBILT', url: SITE_ORIGIN },
-    url: hubUrl,
-    hasPart: BTW_CHAPTERS.map((ch) => ({
-      '@type': 'Chapter',
-      name: ch.h1,
-      url: `${SITE_ORIGIN}${btwChapterPath(ch.slug)}`,
-      position: ch.num,
-    })),
-  }
-
-  const breadcrumbJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElements: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_ORIGIN}/` },
-      { '@type': 'ListItem', position: 2, name: 'Guides', item: `${SITE_ORIGIN}/guides` },
-      { '@type': 'ListItem', position: 3, name: BTW_META.title, item: hubUrl },
-    ],
-  }
-
   return (
     <div className="min-h-screen bg-cream text-dark selection:bg-dark selection:text-cream pt-[100px] md:pt-[140px] pb-16 md:pb-24">
       <PageMeta
@@ -50,10 +23,7 @@ export default function BuiltToWorkHubPage() {
         canonical={hubUrl}
         ogImage={`${SITE_ORIGIN}/images/og-sysbilt.png`}
       />
-      <Helmet>
-        <script type="application/ld+json">{JSON.stringify(bookJsonLd)}</script>
-        <script type="application/ld+json">{JSON.stringify(breadcrumbJsonLd)}</script>
-      </Helmet>
+      {/* JSON-LD (CollectionPage + BreadcrumbList) is stamped into static HTML at build time. */}
 
       <div className="mx-auto w-full max-w-[840px] px-4 md:px-6">
         <Link

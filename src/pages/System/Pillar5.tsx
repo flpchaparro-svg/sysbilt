@@ -10,7 +10,6 @@ import { getPillarFAQs } from '../../constants/faqData';
 import { colors } from '../../constants/theme';
 import SolutionCardPillar from '../../components/System/SolutionCardPillar';
 import { PageMeta } from '../../components/PageMeta';
-import PillarFAQJsonLd from '../../components/PillarFAQJsonLd';
 import PillarServiceJsonLd from '../../components/PillarServiceJsonLd';
 import { SEO_META } from '../../constants/seoMeta';
 
@@ -82,7 +81,6 @@ const Pillar5: React.FC<Pillar5Props> = ({ onNavigate }) => {
         description={SEO_META.pillar5.description}
         canonical={SEO_META.pillar5.canonical}
       />
-      <PillarFAQJsonLd faqs={pillarFAQs} />
       <PillarServiceJsonLd pillarKey="pillar5" />
 
       {/* HERO */}

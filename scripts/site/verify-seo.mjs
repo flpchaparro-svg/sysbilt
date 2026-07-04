@@ -15,7 +15,14 @@
  * Hard-fails on Sanity fetch errors, matching stamp-meta's behaviour.
  */
 import { readFile } from 'node:fs/promises';
-import { BTW_CHAPTER_SLUGS, BTW_HUB_ROUTE } from './btw-seo-routes.mjs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import {
+  BTW_CHAPTER_SLUGS,
+  BTW_HUB_ROUTE,
+  BTW_CHAPTER_META_BY_SLUG,
+} from './btw-seo-routes.mjs';
+import { BTW_CHAPTERS } from '../../src/built-to-work/chapter-seo.ts';
 import {
   STATIC_ROUTES,
   canonicalUrl,
@@ -25,6 +32,9 @@ import {
   fetchSanityContent,
   buildAllRoutes,
 } from './stamp-meta.mjs';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const ROOT = path.resolve(__dirname, '../..');
 
 const violations = [];
 const addViolation = (msg) => violations.push(msg);
@@ -81,6 +91,50 @@ function checkRouteHtml(route, html) {
   }
 }
 
+/**
+ * Anti-drift: the shared BTW route module is the single source consumed by
+ * stamp-meta, api/sitemap and (via the generated manifest) middleware. Assert it
+ * stays in lock-step with the content source (chapter-seo.ts) and that no
+ * consumer has re-introduced its own hardcoded copy of the chapter slugs.
+ */
+async function checkBtwAntiDrift() {
+  const contentSlugs = BTW_CHAPTERS.map((c) => c.slug);
+  const sharedSlugs = [...BTW_CHAPTER_SLUGS];
+
+  if (JSON.stringify(sharedSlugs) !== JSON.stringify(contentSlugs)) {
+    addViolation(
+      `anti-drift — btw-seo-routes.mjs BTW_CHAPTER_SLUGS != chapter-seo.ts BTW_CHAPTERS slugs ` +
+        `(shared: ${sharedSlugs.length}, content: ${contentSlugs.length}). ` +
+        `shared=${JSON.stringify(sharedSlugs)} content=${JSON.stringify(contentSlugs)}`
+    );
+  }
+
+  for (const slug of sharedSlugs) {
+    if (!BTW_CHAPTER_META_BY_SLUG[slug]) {
+      addViolation(`anti-drift — btw-seo-routes.mjs missing BTW_CHAPTER_META_BY_SLUG entry for "${slug}"`);
+    }
+  }
+
+  // No consumer should keep its own hardcoded chapter-slug list.
+  const consumers = ['middleware.ts', 'api/sitemap.ts'];
+  for (const rel of consumers) {
+    let src;
+    try {
+      src = await readFile(path.join(ROOT, rel), 'utf8');
+    } catch {
+      addViolation(`anti-drift — could not read ${rel} to check for a hardcoded slug copy`);
+      continue;
+    }
+    const hardcoded = sharedSlugs.filter((slug) => src.includes(`'${slug}'`) || src.includes(`"${slug}"`));
+    if (hardcoded.length > 0) {
+      addViolation(
+        `anti-drift — ${rel} contains ${hardcoded.length} hardcoded BTW chapter slug literal(s); ` +
+          `it must import from the shared module instead (e.g. ${hardcoded[0]})`
+      );
+    }
+  }
+}
+
 /** Sitemap URL set derived from the same source data the API route uses. */
 function buildSitemapPathSet(content) {
   const set = new Set();
@@ -118,6 +172,8 @@ async function main() {
     checkRouteHtml(route, html);
   }
 
+  await checkBtwAntiDrift();
+
   const sitemapSet = buildSitemapPathSet(content);
   const indexableSet = new Set(routes.map((r) => r.path).filter((p) => !INDEXABLE_EXCLUDE.has(p)));
 
@@ -135,7 +191,7 @@ async function main() {
   }
 
   console.log(
-    `[verify-seo] PASS — ${routes.length} routes verified (title, canonical, noindex, JSON-LD, sitemap set of ${sitemapSet.size}).`
+    `[verify-seo] PASS — ${routes.length} routes verified (title, canonical, noindex, JSON-LD, anti-drift, sitemap set of ${sitemapSet.size}).`
   );
 }
 

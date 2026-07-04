@@ -10,7 +10,6 @@ import { getPillarFAQs } from '../../constants/faqData';
 import { colors } from '../../constants/theme';
 import SolutionCardPillar from '../../components/System/SolutionCardPillar';
 import { PageMeta } from '../../components/PageMeta';
-import PillarFAQJsonLd from '../../components/PillarFAQJsonLd';
 import PillarServiceJsonLd from '../../components/PillarServiceJsonLd';
 import { SEO_META } from '../../constants/seoMeta';
 
@@ -123,7 +122,6 @@ const Pillar4: React.FC<Pillar4Props> = ({ onNavigate }) => {
         description={SEO_META.pillar4.description}
         canonical={SEO_META.pillar4.canonical}
       />
-      <PillarFAQJsonLd faqs={pillarFAQs} />
       <PillarServiceJsonLd pillarKey="pillar4" />
       {/* HERO */}
       <section className="relative min-h-[700px] h-[100dvh] w-full flex flex-col overflow-hidden">

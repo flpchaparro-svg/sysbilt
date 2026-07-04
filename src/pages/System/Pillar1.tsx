@@ -10,7 +10,6 @@ import { getPillarFAQs } from '../../constants/faqData';
 import { colors } from '../../constants/theme';
 import SolutionCardPillar from '../../components/System/SolutionCardPillar';
 import { PageMeta } from '../../components/PageMeta';
-import PillarFAQJsonLd from '../../components/PillarFAQJsonLd';
 import PillarServiceJsonLd from '../../components/PillarServiceJsonLd';
 import { SEO_META } from '../../constants/seoMeta';
 
@@ -145,7 +144,6 @@ const Pillar1: React.FC<Pillar1Props> = ({ onNavigate }) => {
         description={SEO_META.pillar1.description}
         canonical={SEO_META.pillar1.canonical}
       />
-      <PillarFAQJsonLd faqs={pillarFAQs} />
       <PillarServiceJsonLd pillarKey="pillar1" />
       <section aria-label="Hero" className="relative min-h-[700px] h-[100dvh] w-full flex flex-col overflow-hidden">
         <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 w-full h-full flex flex-col relative z-10">
