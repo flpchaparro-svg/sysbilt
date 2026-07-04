@@ -1,19 +1,40 @@
 #!/usr/bin/env node
 /**
- * Post-build: stamp per-route <title>, meta, canonical, and og/twitter tags into
- * dist/<path>/index.html so crawlers receive unique raw HTML per URL.
+ * Post-build: stamp per-route <title>, meta, canonical, og/twitter tags, and
+ * build-time JSON-LD into dist/<path>/index.html so crawlers (including non-JS
+ * AI fetchers) receive unique raw HTML per URL.
+ *
+ * Runs under tsx so it can import the app's TypeScript SEO builders directly
+ * (zero duplication with the client Helmet JSON-LD).
  */
 import { createClient } from '@sanity/client';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { BTW_CHAPTER_SLUGS, BTW_HUB_ROUTE } from './btw-seo-routes.mjs';
+import { buildBlogPostingJsonLd } from '../../src/utils/blogSeoJsonLd';
+import { buildToolkitArticleJsonLd } from '../../src/utils/toolkitSeoJsonLd';
+import { generateFAQSchema, getPillarFAQs, getSystemPageFAQs } from '../../src/constants/faqData';
+import {
+  BTW_CHAPTERS,
+  btwChapterPath,
+  extractChapterBlocks,
+  extractGlossaryFaqs,
+} from '../../src/built-to-work/chapter-seo';
+import { BTW_CHAPTER_COVERS } from '../../src/built-to-work/chapter-covers';
+import { BTW_META } from '../../src/built-to-work/types';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '../..');
 const DIST = path.join(ROOT, 'dist');
 const TEMPLATE_PATH = path.join(DIST, 'index.html');
 const BASE_URL = 'https://sysbilt.com';
+
+/** Title present in the un-stamped dist/index.html template; a stamped page must differ. */
+const GENERIC_TITLE = 'SYSBILT | Business Systems';
+
+/** Routes that are intentionally noindex and therefore excluded from the sitemap. */
+const INDEXABLE_EXCLUDE = new Set(['/news']);
 
 const BLOG_FALLBACK_DESCRIPTION =
   'We build the systems that help Australian businesses stop doing everything manually';
@@ -196,19 +217,22 @@ const BTW_CHAPTER_META_BY_SLUG = {
   },
 };
 
+const BTW_HUB_ROUTE_DEF = {
+  path: BTW_HUB_ROUTE,
+  title: 'Lead-Generation Websites: The Complete Guide | SYSBILT',
+  description:
+    'A deep guide to lead-generation websites: ownership, conversion, features, automation, SEO, and growing your site as a business hub. Free from SYSBILT.',
+};
+
 const BTW_ROUTES = [
-  {
-    path: BTW_HUB_ROUTE,
-    title: 'Lead-Generation Websites: The Complete Guide | SYSBILT',
-    description:
-      'A deep guide to lead-generation websites: ownership, conversion, features, automation, SEO, and growing your site as a business hub. Free from SYSBILT.',
-  },
+  { ...BTW_HUB_ROUTE_DEF, jsonLd: btwHubJsonLd(BTW_HUB_ROUTE_DEF) },
   ...BTW_CHAPTER_SLUGS.map((slug) => {
     const meta = BTW_CHAPTER_META_BY_SLUG[slug];
     if (!meta) throw new Error(`[stamp-meta] Missing Built to Work metadata for ${slug}`);
     return {
       path: `${BTW_HUB_ROUTE}/${slug}`,
       ...meta,
+      jsonLd: btwChapterJsonLd(slug),
     };
   }),
 ];
@@ -217,7 +241,13 @@ const POSTS_QUERY = `*[_type == "post" && !(_id in path("drafts.**"))]{
   "slug": slug.current,
   title,
   seoTitle,
-  seoDescription
+  seoDescription,
+  publishedAt,
+  _updatedAt,
+  servicePillar,
+  focusKeyword,
+  "authorName": author->name,
+  "imageUrl": coalesce(ogImage.asset->url, mainImage.asset->url)
 }`;
 
 const GUIDES_QUERY = `*[_type == "guide" && !(_id in path("drafts.**"))]{
@@ -225,7 +255,8 @@ const GUIDES_QUERY = `*[_type == "guide" && !(_id in path("drafts.**"))]{
   title,
   seoTitle,
   seoDescription,
-  subtitle
+  subtitle,
+  "imageUrl": ogImage.asset->url
 }`;
 
 const TOOLKIT_QUERY = `*[_type == "toolkitItem" && !(_id in path("drafts.**"))]{
@@ -233,7 +264,12 @@ const TOOLKIT_QUERY = `*[_type == "toolkitItem" && !(_id in path("drafts.**"))]{
   name,
   metaTitle,
   metaDescription,
-  summary
+  summary,
+  category,
+  focusKeyword,
+  _updatedAt,
+  "authorName": author->name,
+  "imageUrl": coalesce(ogImage.asset->url, mainImage.asset->url)
 }`;
 
 function escapeAttr(value) {
@@ -244,6 +280,11 @@ function escapeAttr(value) {
     .replace(/>/g, '&gt;');
 }
 
+/** Safe inline JSON-LD: prevent `</script>` breakout by escaping `<`. */
+function escapeJsonLd(schema) {
+  return JSON.stringify(schema).replace(/</g, '\\u003c');
+}
+
 function canonicalUrl(routePath) {
   if (routePath === '/') return `${BASE_URL}/`;
   return `${BASE_URL}${routePath}`;
@@ -252,6 +293,132 @@ function canonicalUrl(routePath) {
 function ogUrl(routePath) {
   if (routePath === '/') return BASE_URL;
   return `${BASE_URL}${routePath}`;
+}
+
+// --- JSON-LD builders (build-time; mirror the client Helmet schemas) ---------
+
+function organizationJsonLd() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'SYSBILT',
+    url: `${BASE_URL}/`,
+    logo: { '@type': 'ImageObject', url: `${BASE_URL}/images/og-sysbilt.png` },
+  };
+}
+
+function webSiteJsonLd() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'SYSBILT',
+    url: `${BASE_URL}/`,
+    inLanguage: 'en-AU',
+  };
+}
+
+function breadcrumbJsonLd(items) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((it, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: it.name,
+      item: it.item,
+    })),
+  };
+}
+
+function genericArticleJsonLd({ canonical, headline, description, image }) {
+  const schema = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    '@id': `${canonical}#article`,
+    url: canonical,
+    headline,
+    description,
+    author: { '@type': 'Organization', name: 'SYSBILT', url: `${BASE_URL}/` },
+    publisher: {
+      '@type': 'Organization',
+      name: 'SYSBILT',
+      url: `${BASE_URL}/`,
+      logo: { '@type': 'ImageObject', url: `${BASE_URL}/images/og-sysbilt.png` },
+    },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
+    inLanguage: 'en-AU',
+  };
+  if (image) {
+    schema.image = { '@type': 'ImageObject', url: image, width: 1200, height: 630 };
+  }
+  return schema;
+}
+
+function btwHubJsonLd(hubRoute) {
+  const canonical = canonicalUrl(hubRoute.path);
+  const collection = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: hubRoute.title,
+    description: hubRoute.description,
+    url: canonical,
+    inLanguage: 'en-AU',
+  };
+  const crumb = breadcrumbJsonLd([
+    { name: 'Home', item: `${BASE_URL}/` },
+    { name: 'Guides', item: `${BASE_URL}/guides` },
+    { name: BTW_META.title, item: canonical },
+  ]);
+  return [collection, crumb];
+}
+
+function btwChapterJsonLd(slug) {
+  const chapter = BTW_CHAPTERS.find((c) => c.slug === slug);
+  if (!chapter) return [];
+  const canonical = `${BASE_URL}${btwChapterPath(chapter.slug)}`;
+  const cover = BTW_CHAPTER_COVERS[chapter.num];
+  const image = cover ? `${BASE_URL}${cover.src}` : `${BASE_URL}/images/og-sysbilt.png`;
+  const article = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: chapter.h1,
+    description: chapter.seoDescription,
+    author: { '@type': 'Organization', name: 'SYSBILT', url: `${BASE_URL}/` },
+    publisher: {
+      '@type': 'Organization',
+      name: 'SYSBILT',
+      url: `${BASE_URL}/`,
+      logo: { '@type': 'ImageObject', url: `${BASE_URL}/images/og-sysbilt.png` },
+    },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
+    image,
+    isPartOf: { '@type': 'Book', name: BTW_META.title, url: `${BASE_URL}${BTW_HUB_ROUTE}` },
+    inLanguage: 'en-AU',
+  };
+  const crumb = breadcrumbJsonLd([
+    { name: 'Home', item: `${BASE_URL}/` },
+    { name: 'Guides', item: `${BASE_URL}/guides` },
+    { name: BTW_META.title, item: `${BASE_URL}${BTW_HUB_ROUTE}` },
+    { name: chapter.h1, item: canonical },
+  ]);
+  const out = [article, crumb];
+  const glossary = chapter.num === 12 ? extractGlossaryFaqs(extractChapterBlocks(chapter.pages)) : [];
+  if (glossary.length > 0) out.push(generateFAQSchema(glossary));
+  return out;
+}
+
+/** JSON-LD for static routes (homepage Organization/WebSite, pillar/system FAQ). */
+function staticJsonLd(routePath) {
+  if (routePath === '/') return [organizationJsonLd(), webSiteJsonLd()];
+  if (/^\/pillar[1-7]$/.test(routePath)) {
+    const faqs = getPillarFAQs(routePath.slice(1));
+    return faqs.length > 0 ? [generateFAQSchema(faqs)] : [];
+  }
+  if (routePath === '/system') {
+    const faqs = getSystemPageFAQs();
+    return faqs.length > 0 ? [generateFAQSchema(faqs)] : [];
+  }
+  return [];
 }
 
 function replaceOrFail(html, pattern, replacement, label) {
@@ -327,6 +494,18 @@ function stampHtml(template, route) {
     'twitter:description'
   );
 
+  const jsonLd = Array.isArray(route.jsonLd) ? route.jsonLd : [];
+  if (jsonLd.length > 0) {
+    if (!html.includes('</head>')) {
+      throw new Error(`[stamp-meta] </head> not found while injecting JSON-LD for ${routePath}`);
+    }
+    const scripts = jsonLd
+      .map((schema) => `    <script type="application/ld+json">${escapeJsonLd(schema)}</script>`)
+      .join('\n');
+    // Function replacement avoids `$` being treated as a capture reference.
+    html = html.replace('</head>', () => `${scripts}\n  </head>`);
+  }
+
   return html;
 }
 
@@ -336,7 +515,7 @@ function distPathForRoute(routePath) {
   return path.join(DIST, ...segments, 'index.html');
 }
 
-async function fetchSanityRoutes() {
+async function fetchSanityContent() {
   const client = createClient({
     projectId: 'wdlc9pg8',
     dataset: 'production',
@@ -350,6 +529,11 @@ async function fetchSanityRoutes() {
     client.fetch(TOOLKIT_QUERY),
   ]);
 
+  return { posts, guides, toolkitItems };
+}
+
+/** Pure transform: content rows -> full stamped route list (static + BTW + dynamic). */
+function buildAllRoutes({ posts, guides, toolkitItems }) {
   const skipped = [];
   const dynamic = [];
 
@@ -361,12 +545,29 @@ async function fetchSanityRoutes() {
     const rawTitle = (post.seoTitle || post.title).trim();
     const title = `${rawTitle} | SYSBILT`;
     const description = (post.seoDescription || BLOG_FALLBACK_DESCRIPTION).trim();
-    dynamic.push({
-      path: `/blog/${post.slug}`,
-      title,
-      description,
-      ogTitle: title,
-    });
+    const canonical = canonicalUrl(`/blog/${post.slug}`);
+    const jsonLd = [
+      buildBlogPostingJsonLd({
+        post: {
+          title: rawTitle,
+          publishedAt: post.publishedAt,
+          _updatedAt: post._updatedAt,
+          servicePillar: post.servicePillar,
+          focusKeyword: post.focusKeyword,
+          author: post.authorName ? { name: post.authorName } : undefined,
+        },
+        canonicalUrl: canonical,
+        pageDescription: description,
+        shareImage: post.imageUrl || '',
+        headline: rawTitle,
+      }),
+      breadcrumbJsonLd([
+        { name: 'Home', item: `${BASE_URL}/` },
+        { name: 'Insights', item: `${BASE_URL}/blog` },
+        { name: rawTitle, item: canonical },
+      ]),
+    ];
+    dynamic.push({ path: `/blog/${post.slug}`, title, description, ogTitle: title, jsonLd });
   }
 
   for (const guide of guides) {
@@ -381,13 +582,17 @@ async function fetchSanityRoutes() {
     const rawTitle = (guide.seoTitle?.trim() || guide.title).trim();
     const title = `${rawTitle} | SYSBILT`;
     const description = (guide.seoDescription?.trim() || guide.subtitle?.trim() || '').trim();
-    const ogTitle = (guide.seoTitle?.trim() || guide.title).trim();
-    dynamic.push({
-      path: `/guides/${guide.slug}`,
-      title,
-      description,
-      ogTitle,
-    });
+    const ogTitle = rawTitle;
+    const canonical = canonicalUrl(`/guides/${guide.slug}`);
+    const jsonLd = [
+      genericArticleJsonLd({ canonical, headline: rawTitle, description, image: guide.imageUrl || '' }),
+      breadcrumbJsonLd([
+        { name: 'Home', item: `${BASE_URL}/` },
+        { name: 'Guides', item: `${BASE_URL}/guides` },
+        { name: rawTitle, item: canonical },
+      ]),
+    ];
+    dynamic.push({ path: `/guides/${guide.slug}`, title, description, ogTitle, jsonLd });
   }
 
   for (const item of toolkitItems) {
@@ -398,15 +603,40 @@ async function fetchSanityRoutes() {
     const rawTitle = (item.metaTitle?.trim() || item.name).trim();
     const title = `${rawTitle} | SYSBILT`;
     const description = (item.metaDescription?.trim() || item.summary?.trim() || '').trim();
-    dynamic.push({
-      path: `/toolkit/${item.slug}`,
-      title,
-      description,
-      ogTitle: title,
-    });
+    const canonical = canonicalUrl(`/toolkit/${item.slug}`);
+    const jsonLd = [
+      buildToolkitArticleJsonLd({
+        tool: {
+          name: item.name,
+          summary: description,
+          category: item.category,
+          _updatedAt: item._updatedAt,
+          focusKeyword: item.focusKeyword,
+          author: item.authorName ? { name: item.authorName } : null,
+        },
+        canonicalUrl: canonical,
+        pageDescription: description,
+        shareImage: item.imageUrl || '',
+        headline: rawTitle,
+      }),
+      breadcrumbJsonLd([
+        { name: 'Home', item: `${BASE_URL}/` },
+        { name: 'Insights', item: `${BASE_URL}/blog` },
+        { name: 'Toolkit', item: `${BASE_URL}/toolkit` },
+        { name: item.name, item: canonical },
+      ]),
+    ];
+    dynamic.push({ path: `/toolkit/${item.slug}`, title, description, ogTitle: title, jsonLd });
   }
 
-  return { routes: dynamic, skipped };
+  const staticRoutes = STATIC_ROUTES.map((r) => ({ ...r, jsonLd: staticJsonLd(r.path) }));
+
+  return { routes: [...staticRoutes, ...BTW_ROUTES, ...dynamic], skipped };
+}
+
+async function collectAllRoutes() {
+  const content = await fetchSanityContent();
+  return buildAllRoutes(content);
 }
 
 async function main() {
@@ -418,19 +648,17 @@ async function main() {
     process.exit(1);
   }
 
-  let sanityRoutes;
+  let allRoutes;
   let skipped = [];
   try {
-    const result = await fetchSanityRoutes();
-    sanityRoutes = result.routes;
+    const result = await collectAllRoutes();
+    allRoutes = result.routes;
     skipped = result.skipped;
   } catch (err) {
     console.error('[stamp-meta] Sanity fetch failed — aborting build.');
     console.error(err instanceof Error ? err.message : err);
     process.exit(1);
   }
-
-  const allRoutes = [...STATIC_ROUTES, ...BTW_ROUTES, ...sanityRoutes];
 
   for (const route of allRoutes) {
     const html = stampHtml(template, route);
@@ -439,7 +667,10 @@ async function main() {
     await writeFile(outPath, html, 'utf8');
   }
 
-  console.log(`[stamp-meta] Stamped ${allRoutes.length} routes (${STATIC_ROUTES.length} static, ${sanityRoutes.length} from Sanity).`);
+  const sanityCount = allRoutes.length - STATIC_ROUTES.length - BTW_ROUTES.length;
+  console.log(
+    `[stamp-meta] Stamped ${allRoutes.length} routes (${STATIC_ROUTES.length} static, ${sanityCount} from Sanity).`
+  );
   if (skipped.length > 0) {
     console.log('[stamp-meta] Skipped Sanity entries:');
     for (const line of skipped) {
@@ -448,7 +679,23 @@ async function main() {
   }
 }
 
-main().catch((err) => {
-  console.error('[stamp-meta] Fatal error:', err);
-  process.exit(1);
-});
+const isMain = import.meta.url === pathToFileURL(process.argv[1]).href;
+if (isMain) {
+  main().catch((err) => {
+    console.error('[stamp-meta] Fatal error:', err);
+    process.exit(1);
+  });
+}
+
+export {
+  BASE_URL,
+  GENERIC_TITLE,
+  INDEXABLE_EXCLUDE,
+  STATIC_ROUTES,
+  BTW_ROUTES,
+  canonicalUrl,
+  distPathForRoute,
+  fetchSanityContent,
+  buildAllRoutes,
+  collectAllRoutes,
+};

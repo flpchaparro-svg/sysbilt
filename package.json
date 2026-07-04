@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "postinstall": "npx puppeteer browsers install chrome",
-    "build": "vite build && node scripts/site/stamp-meta.mjs",
+    "build": "vite build && tsx scripts/site/stamp-meta.mjs && tsx scripts/site/verify-seo.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -39,6 +39,7 @@
     "puppeteer": "^24.41.0",
     "rollup-plugin-visualizer": "^6.0.5",
     "tailwindcss": "^3.4.17",
+    "tsx": "^4.21.0",
     "typescript": "~5.8.2",
     "vite": "^6.2.0",
     "vite-plugin-css-injected-by-js": "^4.0.1"
