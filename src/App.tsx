@@ -27,6 +27,9 @@ const GuideDocumentPage = lazy(() => import('./pages/GuideDocumentPage'));
 const BuiltToWorkHubPage = lazy(() => import('./pages/BuiltToWorkHubPage'));
 const BuiltToWorkBookPage = lazy(() => import('./pages/BuiltToWorkBookPage'));
 const BtwChapterArticlePage = lazy(() => import('./pages/BtwChapterArticlePage'));
+const BuiltToSellHubPage = lazy(() => import('./pages/BuiltToSellHubPage'));
+const BuiltToSellBookPage = lazy(() => import('./pages/BuiltToSellBookPage'));
+const BtsChapterArticlePage = lazy(() => import('./pages/BtsChapterArticlePage'));
 const ToolkitPage = lazy(() => import('./pages/ToolkitPage'));
 const ToolkitItemPage = lazy(() => import('./pages/ToolkitItemPage'));
 const ProposalPage = lazy(() => import('./pages/proposal/ProposalPage'));
@@ -166,6 +169,8 @@ const App: React.FC = () => {
                 location.pathname === '/toolkit' ||
                 location.pathname === '/guides/built-to-work' ||
                 location.pathname.startsWith('/guides/built-to-work/') ||
+                location.pathname === '/guides/built-to-sell' ||
+                location.pathname.startsWith('/guides/built-to-sell/') ||
                 /^\/(blog|toolkit)\/[^/]+$/.test(location.pathname)
               }
             />
@@ -190,6 +195,9 @@ const App: React.FC = () => {
                     <Route path="/guides/built-to-work/read" element={<BuiltToWorkBookPage />} />
                     <Route path="/guides/built-to-work/:chapterSlug" element={<BtwChapterArticlePage />} />
                     <Route path="/guides/built-to-work" element={<BuiltToWorkHubPage />} />
+                    <Route path="/guides/built-to-sell/read" element={<BuiltToSellBookPage />} />
+                    <Route path="/guides/built-to-sell/:chapterSlug" element={<BtsChapterArticlePage />} />
+                    <Route path="/guides/built-to-sell" element={<BuiltToSellHubPage />} />
                     <Route path="/guides/:slug" element={<GuideDocumentPage />} />
                     <Route path="/guides" element={<GuidesPage />} />
                     <Route path="/toolkit/:slug" element={<ToolkitItemPage />} />

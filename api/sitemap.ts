@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@sanity/client';
 import { BTW_CHAPTER_SLUGS, BTW_HUB_ROUTE as BTW_HUB_PATH } from '../scripts/site/btw-seo-routes.mjs';
+import { BTS_CHAPTER_SLUGS, BTS_HUB_ROUTE as BTS_HUB_PATH } from '../scripts/site/bts-seo-routes.mjs';
 
 const BASE_URL = 'https://sysbilt.com';
 
@@ -113,7 +114,7 @@ export default async function handler(_req: VercelRequest, res: VercelResponse):
     const guideDocEntries: UrlEntry[] = guidesFromCms
       .filter(
         (g): g is { slug: string; publishedAt: string | null } =>
-          typeof g.slug === 'string' && g.slug.length > 0 && g.slug !== 'built-to-work',
+          typeof g.slug === 'string' && g.slug.length > 0 && g.slug !== 'built-to-work' && g.slug !== 'built-to-sell',
       )
       .map((g) => ({
         loc: `${BASE_URL}/guides/${encodeURIComponent(g.slug)}`,
@@ -131,6 +132,20 @@ export default async function handler(_req: VercelRequest, res: VercelResponse):
 
     const btwChapterEntries: UrlEntry[] = BTW_CHAPTER_SLUGS.map((slug) => ({
       loc: `${BASE_URL}${BTW_HUB_PATH}/${encodeURIComponent(slug)}`,
+      lastmod: today,
+      changefreq: 'monthly',
+      priority: '0.75',
+    }));
+
+    const btsHubEntry: UrlEntry = {
+      loc: `${BASE_URL}${BTS_HUB_PATH}`,
+      lastmod: today,
+      changefreq: 'monthly',
+      priority: '0.8',
+    };
+
+    const btsChapterEntries: UrlEntry[] = BTS_CHAPTER_SLUGS.map((slug) => ({
+      loc: `${BASE_URL}${BTS_HUB_PATH}/${encodeURIComponent(slug)}`,
       lastmod: today,
       changefreq: 'monthly',
       priority: '0.75',
@@ -155,7 +170,7 @@ export default async function handler(_req: VercelRequest, res: VercelResponse):
       }));
 
     const seen = new Set<string>();
-    const entries = [...staticEntries, ...guideDocEntries, btwHubEntry, ...btwChapterEntries, ...blogUrls, ...toolkitUrls].filter((entry) => {
+    const entries = [...staticEntries, ...guideDocEntries, btwHubEntry, ...btwChapterEntries, btsHubEntry, ...btsChapterEntries, ...blogUrls, ...toolkitUrls].filter((entry) => {
       if (seen.has(entry.loc)) return false;
       seen.add(entry.loc);
       return true;

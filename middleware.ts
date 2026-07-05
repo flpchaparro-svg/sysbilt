@@ -9,6 +9,8 @@ import {
   TOOLKIT_SLUGS,
   BTW_CHAPTER_SLUGS as BTW_CHAPTER_SLUG_LIST,
   BTW_HUB_ROUTE,
+  BTS_CHAPTER_SLUGS as BTS_CHAPTER_SLUG_LIST,
+  BTS_HUB_ROUTE,
 } from './src/generated/contentManifest.generated';
 
 /** Vite dev-server URLs (same origin as `vercel dev`). Production builds never hit these paths. */
@@ -25,6 +27,7 @@ const BLOG_SLUG_SET = new Set(BLOG_SLUGS);
 const GUIDE_SLUG_SET = new Set(GUIDE_SLUGS);
 const TOOLKIT_SLUG_SET = new Set(TOOLKIT_SLUGS);
 const BTW_CHAPTER_SLUGS = new Set(BTW_CHAPTER_SLUG_LIST);
+const BTS_CHAPTER_SLUGS = new Set(BTS_CHAPTER_SLUG_LIST);
 
 /** Decode a single path segment; malformed encodings are treated as invalid. */
 function decodeSegment(segment: string): string | null {
@@ -101,6 +104,14 @@ function isSpaRoute(normalizedPathname: string): boolean {
   if (builtToWorkChapter) {
     const slug = decodeSegment(builtToWorkChapter[1]);
     return slug != null && BTW_CHAPTER_SLUGS.has(slug);
+  }
+
+  // Built to Sell hub + code-defined chapters (not Sanity guides).
+  if (normalizedPathname === BTS_HUB_ROUTE) return true;
+  const builtToSellChapter = normalizedPathname.match(/^\/guides\/built-to-sell\/([^/]+)$/i);
+  if (builtToSellChapter) {
+    const slug = decodeSegment(builtToSellChapter[1]);
+    return slug != null && BTS_CHAPTER_SLUGS.has(slug);
   }
 
   const guide = normalizedPathname.match(/^\/guides\/([^/]+)$/i);

@@ -22,7 +22,13 @@ import {
   BTW_HUB_ROUTE,
   BTW_CHAPTER_META_BY_SLUG,
 } from './btw-seo-routes.mjs';
+import {
+  BTS_CHAPTER_SLUGS,
+  BTS_HUB_ROUTE,
+  BTS_CHAPTER_META_BY_SLUG,
+} from './bts-seo-routes.mjs';
 import { BTW_CHAPTERS } from '../../src/built-to-work/chapter-seo.ts';
+import { BTS_CHAPTERS } from '../../src/built-to-sell/chapter-seo.ts';
 import {
   STATIC_ROUTES,
   canonicalUrl,
@@ -135,6 +141,43 @@ async function checkBtwAntiDrift() {
   }
 }
 
+async function checkBtsAntiDrift() {
+  const contentSlugs = BTS_CHAPTERS.map((c) => c.slug);
+  const sharedSlugs = [...BTS_CHAPTER_SLUGS];
+
+  if (JSON.stringify(sharedSlugs) !== JSON.stringify(contentSlugs)) {
+    addViolation(
+      `anti-drift — bts-seo-routes.mjs BTS_CHAPTER_SLUGS != chapter-seo.ts BTS_CHAPTERS slugs ` +
+        `(shared: ${sharedSlugs.length}, content: ${contentSlugs.length}). ` +
+        `shared=${JSON.stringify(sharedSlugs)} content=${JSON.stringify(contentSlugs)}`
+    );
+  }
+
+  for (const slug of sharedSlugs) {
+    if (!BTS_CHAPTER_META_BY_SLUG[slug]) {
+      addViolation(`anti-drift — bts-seo-routes.mjs missing BTS_CHAPTER_META_BY_SLUG entry for "${slug}"`);
+    }
+  }
+
+  const consumers = ['middleware.ts', 'api/sitemap.ts'];
+  for (const rel of consumers) {
+    let src;
+    try {
+      src = await readFile(path.join(ROOT, rel), 'utf8');
+    } catch {
+      addViolation(`anti-drift — could not read ${rel} to check for a hardcoded slug copy`);
+      continue;
+    }
+    const hardcoded = sharedSlugs.filter((slug) => src.includes(`'${slug}'`) || src.includes(`"${slug}"`));
+    if (hardcoded.length > 0) {
+      addViolation(
+        `anti-drift — ${rel} contains ${hardcoded.length} hardcoded BTS chapter slug literal(s); ` +
+          `it must import from the shared module instead (e.g. ${hardcoded[0]})`
+      );
+    }
+  }
+}
+
 /** Sitemap URL set derived from the same source data the API route uses. */
 function buildSitemapPathSet(content) {
   const set = new Set();
@@ -142,10 +185,12 @@ function buildSitemapPathSet(content) {
     if (!INDEXABLE_EXCLUDE.has(r.path)) set.add(r.path);
   }
   for (const g of content.guides) {
-    if (g.slug && g.slug !== 'built-to-work') set.add(`/guides/${g.slug}`);
+    if (g.slug && g.slug !== 'built-to-work' && g.slug !== 'built-to-sell') set.add(`/guides/${g.slug}`);
   }
   set.add(BTW_HUB_ROUTE);
   for (const slug of BTW_CHAPTER_SLUGS) set.add(`${BTW_HUB_ROUTE}/${slug}`);
+  set.add(BTS_HUB_ROUTE);
+  for (const slug of BTS_CHAPTER_SLUGS) set.add(`${BTS_HUB_ROUTE}/${slug}`);
   for (const post of content.posts) {
     if (post.slug) set.add(`/blog/${post.slug}`);
   }
@@ -173,6 +218,7 @@ async function main() {
   }
 
   await checkBtwAntiDrift();
+  await checkBtsAntiDrift();
 
   const sitemapSet = buildSitemapPathSet(content);
   const indexableSet = new Set(routes.map((r) => r.path).filter((p) => !INDEXABLE_EXCLUDE.has(p)));

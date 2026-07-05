@@ -22,6 +22,7 @@ const GUIDE_SLUG_TO_HUBSPOT: Record<string, string> = {
   automation: 'automation',
   dashboards: 'dashboards',
   'built-to-work': 'built_to_work',
+  'built-to-sell': 'built_to_sell',
   'how-to-build-connected-construction-ecosystem': 'how_to_build_connected_construction_ecosystem',
   'how-to-build-a-branded-carousel-system': 'how_to_build_a_branded_carousel_system',
 };
