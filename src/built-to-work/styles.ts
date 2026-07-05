@@ -80,7 +80,7 @@ ${BTW_TOKEN_CSS}
   }
 
   html, body, #root {
-    background-color: #1a1a1a !important;
+    background-color: #fff2ec !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     margin: 0 !important;
@@ -92,14 +92,30 @@ ${BTW_TOKEN_CSS}
   header:not(.btw-running-head),
   footer:not(.btw-folio),
   nav,
+  .help-dock,
   .print\\:hidden {
     display: none !important;
   }
 
   .btw-root {
     padding: 0 !important;
-    background-color: #1a1a1a !important;
+    padding-top: 0 !important;
+    background-color: #fff2ec !important;
     min-height: 0 !important;
+  }
+
+  .btw-page-cream {
+    background-color: #fff2ec !important;
+    color: #1a1a1a !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .btw-page-dark {
+    background-color: #16130f !important;
+    color: #fff2ec !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
   .btw-page-stack {
@@ -130,6 +146,8 @@ ${BTW_TOKEN_CSS}
     break-inside: avoid !important;
     box-shadow: none !important;
     position: relative !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
   .btw-print-page * {
@@ -150,5 +168,11 @@ ${BTW_TOKEN_CSS}
 `
 
 /** A4 sheet — cream reading page or dark special page */
-export const BTW_PRINT_PAGE_SHELL =
-  'btw-print-page btw-sheet relative flex w-full max-w-[794px] min-h-[100svh] h-auto md:h-[1123px] md:min-h-0 md:flex-shrink-0 flex-col overflow-visible md:overflow-hidden rounded-[3px]'
+export const BTW_PRINT_PAGE_CREAM =
+  'btw-print-page btw-page-cream btw-sheet relative flex w-full max-w-[794px] min-h-[100svh] h-auto md:h-[1123px] md:min-h-0 md:flex-shrink-0 flex-col overflow-visible md:overflow-hidden rounded-[3px]'
+
+export const BTW_PRINT_PAGE_DARK =
+  'btw-print-page btw-page-dark btw-sheet relative flex w-full max-w-[794px] min-h-[100svh] h-auto md:h-[1123px] md:min-h-0 md:flex-shrink-0 flex-col overflow-visible md:overflow-hidden rounded-[3px]'
+
+/** @deprecated Use BTW_PRINT_PAGE_CREAM or BTW_PRINT_PAGE_DARK */
+export const BTW_PRINT_PAGE_SHELL = BTW_PRINT_PAGE_CREAM

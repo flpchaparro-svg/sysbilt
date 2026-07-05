@@ -1,5 +1,5 @@
 import { Link, useParams, Navigate } from 'react-router-dom'
-import { ArrowLeft, ArrowRight } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import { PageMeta } from '../components/PageMeta'
 import { SITE_ORIGIN } from '../constants/seoMeta'
 import {
@@ -14,6 +14,7 @@ import {
 import { BTS_CHAPTER_COVERS } from '../built-to-sell/chapter-covers'
 import { BtwFlowList } from '../built-to-work/components/BtwBlocks'
 import { BtsPdfCta } from '../built-to-sell/components/BtsPdfCta'
+import { GuideChapterNav } from '../components/GuideChapterNav'
 import { BTW_STYLES } from '../built-to-work/styles'
 import { BTS_META } from '../built-to-sell/types'
 
@@ -105,6 +106,8 @@ export default function BtsChapterArticlePage() {
           <BtwFlowList blocks={blocks} />
         </div>
 
+        <GuideChapterNav prev={prev} next={next} chapterPath={btsChapterPath} />
+
         {chapter.pillars.length > 0 ? (
           <section className="mt-14 pt-8 border-t border-dark/10" aria-label="Related services">
             <h2 className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-dark/45 mb-4 m-0">
@@ -128,36 +131,6 @@ export default function BtsChapterArticlePage() {
         <div className="mt-12">
           <BtsPdfCta />
         </div>
-
-        <nav
-          className="mt-12 flex flex-col sm:flex-row gap-4 justify-between border-t border-dark/10 pt-8"
-          aria-label="Chapter navigation"
-        >
-          {prev ? (
-            <Link
-              to={btsChapterPath(prev.slug)}
-              className="group flex flex-col gap-1 max-w-[48%] font-sans text-sm text-dark/70 hover:text-dark"
-            >
-              <span className="font-mono text-[10px] uppercase tracking-widest text-dark/40 group-hover:text-dark/60">
-                ← Previous
-              </span>
-              <span className="font-medium text-dark">{prev.h1}</span>
-            </Link>
-          ) : (
-            <span />
-          )}
-          {next ? (
-            <Link
-              to={btsChapterPath(next.slug)}
-              className="group flex flex-col gap-1 text-right sm:ml-auto max-w-[48%] font-sans text-sm text-dark/70 hover:text-dark"
-            >
-              <span className="font-mono text-[10px] uppercase tracking-widest text-dark/40 group-hover:text-dark/60">
-                Next →
-              </span>
-              <span className="font-medium text-dark">{next.h1}</span>
-            </Link>
-          ) : null}
-        </nav>
       </article>
     </div>
   )

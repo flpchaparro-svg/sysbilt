@@ -525,12 +525,15 @@ async function clearWorkflowPinData(workflowId) {
   console.log('Pinned data may still exist — clear manually in n8n UI if needed');
 }
 
-const BUILD_CONTENT_JS = `const rows = $json.result || [];
+const BUILD_CONTENT_JS = `// Runs after Sanity publish — read the pull node, not the mutation response.
+const pull = $('Pull Published News').first()?.json || $json;
+const rows = pull.result || pull.items || [];
 const sanityImage = (url) => {
   const u = (url || '').trim();
   if (!u.startsWith('https://cdn.sanity.io/images/')) return '';
   return u.split('?')[0];
 };
+// All published news with image — Prepare Items assigns 8am + 1pm Sydney slots across weekdays.
 const items = rows
   .map((r) => ({
     type: 'news',
@@ -567,9 +570,10 @@ function updateNewsCallDistributor(wf, distributorId) {
       workflowId: { __rl: true, value: distributorId, mode: 'id' },
       workflowInputs: { mappingMode: 'passThrough' },
       mode: 'once',
-      options: {},
+      options: { waitForSubWorkflow: true },
     };
-    console.log('Updated Call Distributor (passThrough inputs)');
+    node.typeVersion = 1.2;
+    console.log('Updated Call Distributor (passThrough inputs, wait for sub-workflow)');
   }
   return wf;
 }
@@ -583,56 +587,85 @@ function updateNewsBuildContent(wf) {
   return wf;
 }
 
-function patchNewsWorkflow(wf, distributorId) {
-  const buildContentId = uid();
-  const callDistributorId = uid();
+function ensureSocialNodes(wf, distributorId) {
+  let build = wf.nodes.find((n) => n.name === 'Build Content Objects');
+  let call = wf.nodes.find((n) => n.name === 'Call Distributor');
+  let restore = wf.nodes.find((n) => n.name === 'Restore Pull For Newsletter');
 
-  const buildContentNode = {
-    parameters: {
-      jsCode: BUILD_CONTENT_JS,
-    },
-    type: 'n8n-nodes-base.code',
-    typeVersion: 2,
-    position: [5008, -1040],
-    id: buildContentId,
-    name: 'Build Content Objects',
-  };
-
-  const callDistributorNode = {
-    parameters: {
-      workflowId: {
-        __rl: true,
-        value: distributorId,
-        mode: 'id',
-      },
-      workflowInputs: {
-        mappingMode: 'passThrough',
-      },
-      mode: 'once',
-      options: {},
-    },
-    type: 'n8n-nodes-base.executeWorkflow',
-    typeVersion: 1.2,
-    position: [5248, -1040],
-    id: callDistributorId,
-    name: 'Call Distributor',
-  };
-
-  const hasBuild = wf.nodes.some((n) => n.name === 'Build Content Objects');
-  if (hasBuild) {
-    console.log('NEWS workflow already has Build Content Objects — skipping node add');
-    return wf;
+  if (!build) {
+    build = {
+      parameters: { jsCode: BUILD_CONTENT_JS },
+      type: 'n8n-nodes-base.code',
+      typeVersion: 2,
+      position: [5008, -1040],
+      id: uid(),
+      name: 'Build Content Objects',
+    };
+    wf.nodes.push(build);
+    console.log('Added Build Content Objects node');
   }
 
-  wf.nodes.push(buildContentNode, callDistributorNode);
+  if (!call) {
+    call = {
+      parameters: {
+        workflowId: { __rl: true, value: distributorId, mode: 'id' },
+        workflowInputs: { mappingMode: 'passThrough' },
+        mode: 'once',
+        options: { waitForSubWorkflow: true },
+      },
+      type: 'n8n-nodes-base.executeWorkflow',
+      typeVersion: 1.2,
+      position: [5248, -1040],
+      id: uid(),
+      name: 'Call Distributor',
+    };
+    wf.nodes.push(call);
+    console.log('Added Call Distributor node');
+  }
 
-  const conn = wf.connections['Pull Published News']?.main?.[0] || [];
-  conn.push({ node: 'Build Content Objects', type: 'main', index: 0 });
-  wf.connections['Pull Published News'] = { main: [conn] };
+  if (!restore) {
+    restore = {
+      parameters: {
+        jsCode: `const pull = $('Pull Published News').first()?.json || {};
+return [{ json: pull }];`,
+      },
+      type: 'n8n-nodes-base.code',
+      typeVersion: 2,
+      position: [5488, -1040],
+      id: uid(),
+      name: 'Restore Pull For Newsletter',
+    };
+    wf.nodes.push(restore);
+    console.log('Added Restore Pull For Newsletter node');
+  }
+
+  return wf;
+}
+
+/** Wire social in series before newsletter (parallel fork never ran in production). */
+function wireNewsSocialBranch(wf, distributorId) {
+  ensureSocialNodes(wf, distributorId);
+
+  const pullOut = wf.connections['Pull Published News']?.main?.[0] || [];
+  const newsletterEntry = pullOut.find((c) => c.node === 'Build News HTML')?.node || 'Build News HTML';
+
+  // Serial: Pull Published News → Build Content Objects → Call Distributor → newsletter
+  wf.connections['Pull Published News'] = {
+    main: [[{ node: 'Build Content Objects', type: 'main', index: 0 }]],
+  };
   wf.connections['Build Content Objects'] = {
     main: [[{ node: 'Call Distributor', type: 'main', index: 0 }]],
   };
+  wf.connections['Call Distributor'] = {
+    main: [[{ node: 'Restore Pull For Newsletter', type: 'main', index: 0 }]],
+  };
+  wf.connections['Restore Pull For Newsletter'] = {
+    main: [[{ node: newsletterEntry, type: 'main', index: 0 }]],
+  };
 
+  console.log(
+    `Wired social serial: Pull Published News → Build Content Objects → Call Distributor → Restore Pull For Newsletter → ${newsletterEntry}`,
+  );
   return wf;
 }
 
@@ -712,7 +745,7 @@ async function main() {
   console.log(`Test webhook: POST ${N8N_BASE}/webhook/sysbilt-social-test`);
 
   const newsWf = await n8n('GET', `/workflows/${NEWS_WF_ID}`);
-  let patched = patchNewsWorkflow(newsWf, deployed.id);
+  let patched = wireNewsSocialBranch(newsWf, deployed.id);
   patched = updateNewsPullPublished(patched);
   patched = updateNewsBuildContent(patched);
   patched = updateNewsCallDistributor(patched, deployed.id);

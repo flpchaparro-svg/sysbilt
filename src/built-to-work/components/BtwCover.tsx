@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import ShareButton from '../../components/ShareButton'
 import { SITE_ORIGIN } from '../../constants/seoMeta'
 import { BTW_META } from '../types'
-import { BTW_PRINT_PAGE_SHELL } from '../styles'
+import { BTW_PRINT_PAGE_CREAM, BTW_PRINT_PAGE_DARK } from '../styles'
 import { BTW_TOKENS } from '../tokens'
 
 export function BtwCoverPage() {
@@ -17,7 +17,7 @@ export function BtwCoverPage() {
   const shareUrl = `${SITE_ORIGIN}/guides/${BTW_META.slug}`
 
   return (
-    <div className={BTW_PRINT_PAGE_SHELL} style={{ backgroundColor: BTW_TOKENS.cream, color: BTW_TOKENS.ink }}>
+    <div className={BTW_PRINT_PAGE_CREAM} style={{ backgroundColor: BTW_TOKENS.cream, color: BTW_TOKENS.ink }}>
       <div
         className="pointer-events-none absolute inset-[clamp(18px,2.4vw,30px)]"
         style={{ border: '1px solid rgba(26,26,26,0.22)' }}
@@ -113,7 +113,7 @@ export function BtwCoverPage() {
 
 export function BtwClosingPage() {
   return (
-    <div className={`${BTW_PRINT_PAGE_SHELL} bg-[#111111] text-[#FFF2EC]`}>
+    <div className={`${BTW_PRINT_PAGE_DARK} bg-[#111111] text-[#FFF2EC]`}>
       <div className="pointer-events-none absolute inset-[clamp(18px,2.4vw,30px)] border border-[#FFF2EC]/12" />
 
       <div className="relative flex flex-1 flex-col justify-between p-[clamp(48px,7vw,80px)]">

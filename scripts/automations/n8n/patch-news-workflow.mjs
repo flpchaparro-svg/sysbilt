@@ -691,8 +691,9 @@ function patchWorkflow(wf) {
   const socialOk =
     wf.nodes.some((n) => n.name === 'Build Content Objects') &&
     wf.nodes.some((n) => n.name === 'Call Distributor') &&
-    wf.connections['Pull Published News']?.main?.[0]?.some((l) => l.node === 'Build Content Objects');
-  console.log(socialOk ? 'Social branch: OK' : 'Social branch: MISSING — run deploy-social-pipeline.sh');
+    wf.connections['Pull Published News']?.main?.[0]?.some((l) => l.node === 'Build Content Objects') &&
+    wf.connections['Call Distributor']?.main?.[0]?.some((l) => l.node === 'Restore Pull For Newsletter');
+  console.log(socialOk ? 'Social branch: OK (serial)' : 'Social branch: MISSING — run deploy-social-pipeline.sh');
 
   return changes;
 }

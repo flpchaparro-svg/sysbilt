@@ -1,6 +1,6 @@
 import { BtwBlocks, BtwFlowList } from './BtwBlocks'
 import { BTW_CHAPTER_COVERS } from '../chapter-covers'
-import { BTW_PRINT_PAGE_SHELL } from '../styles'
+import { BTW_PRINT_PAGE_CREAM, BTW_PRINT_PAGE_DARK } from '../styles'
 import { BTW_TOKENS } from '../tokens'
 import type { BtwBlock, BtwPage, BtwPageLayout } from '../types'
 
@@ -54,7 +54,7 @@ export function BtwChapterOpenerPage({
   const imageAlt = block.imageAlt ?? cover?.alt ?? ''
 
   return (
-    <div className={`${BTW_PRINT_PAGE_SHELL} text-[#FFF2EC]`} style={{ backgroundColor: BTW_TOKENS.inkOpener }}>
+    <div className={`${BTW_PRINT_PAGE_DARK} text-[#FFF2EC]`} style={{ backgroundColor: BTW_TOKENS.inkOpener }}>
       <div
         className="absolute inset-[clamp(24px,4vw,48px)] overflow-hidden rounded-sm"
         style={{ backgroundColor: BTW_TOKENS.inkOpener }}
@@ -140,7 +140,7 @@ export function BtwPageShell({ pageIndex, layout = 'flow', blocks, runningHeadRi
     : 'px-[clamp(28px,5vw,64px)] pt-[clamp(36px,5vw,60px)] pb-[clamp(32px,4vw,52px)]'
 
   return (
-    <div className={`${BTW_PRINT_PAGE_SHELL} flex flex-col`} style={{ backgroundColor: BTW_TOKENS.cream, color: BTW_TOKENS.ink }}>
+    <div className={`${BTW_PRINT_PAGE_CREAM} flex flex-col`} style={{ backgroundColor: BTW_TOKENS.cream, color: BTW_TOKENS.ink }}>
       <div className={`flex min-h-0 flex-1 flex-col ${pagePadding}`}>
         {runningHeadRight ? (
           <header

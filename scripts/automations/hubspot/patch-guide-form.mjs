@@ -32,6 +32,12 @@ const GUIDE_OPTIONS = [
     description: '',
     displayOrder: 8,
   },
+  {
+    label: 'Branded Carousel System',
+    value: 'how_to_build_a_branded_carousel_system',
+    description: '',
+    displayOrder: 9,
+  },
 ];
 
 function loadToken() {

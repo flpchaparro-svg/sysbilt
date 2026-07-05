@@ -22,7 +22,7 @@ export default function BuiltToWorkBookPage() {
   const bookUrl = `${SITE_ORIGIN}${BTW_BOOK_PATH}`
 
   return (
-    <div className="btw-root min-h-screen bg-[#1A1A1A] selection:bg-[#C5A059] selection:text-[#1A1A1A] pt-[100px] md:pt-[140px] pb-16 md:pb-24">
+    <div className="btw-root min-h-screen bg-[#1A1A1A] selection:bg-[#C5A059] selection:text-[#1A1A1A] pt-[100px] md:pt-[140px] pb-16 md:pb-24 print:pt-0 print:pb-0">
       <style>{BTW_STYLES}</style>
       <PageMeta
         title={`${BTW_META.title} — Full edition | SYSBILT`}
