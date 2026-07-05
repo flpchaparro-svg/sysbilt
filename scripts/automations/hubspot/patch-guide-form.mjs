@@ -38,9 +38,6 @@ const GUIDE_OPTIONS = [
     description: '',
     displayOrder: 9,
   },
-  { label: 'Built to Work', value: 'built_to_work', description: '', displayOrder: 10 },
-  { label: 'Built to Sell', value: 'built_to_sell', description: '', displayOrder: 11 },
-  { label: 'Built to Close', value: 'built_to_close', description: '', displayOrder: 12 },
 ];
 
 function loadToken() {

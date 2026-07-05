@@ -3,7 +3,6 @@ import { BtwFigure, CREAM, GOLD_READABLE, INK } from '../BtwFigure'
 import { AnatomyDiagram } from './AnatomyDiagram'
 import { HubSpokeDiagram } from './HubSpokeDiagram'
 import { BTS_DIAGRAMS } from '../../../built-to-sell/components/diagrams'
-import { BTC_DIAGRAMS } from '../../../built-to-close/components/diagrams'
 
 function MonoBox({
   x,
@@ -560,7 +559,6 @@ const DIAGRAMS: Record<string, React.FC<{ caption: string }>> = {
   'five-stages': FiveStagesDiagram,
   'four-checks': FourChecksDiagram,
   ...BTS_DIAGRAMS,
-  ...BTC_DIAGRAMS,
 }
 
 export function BtwDiagramById({ id, caption }: { id: string; caption: string }) {

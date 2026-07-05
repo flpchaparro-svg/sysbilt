@@ -11,8 +11,6 @@ import {
   BTW_HUB_ROUTE,
   BTS_CHAPTER_SLUGS as BTS_CHAPTER_SLUG_LIST,
   BTS_HUB_ROUTE,
-  BTC_CHAPTER_SLUGS as BTC_CHAPTER_SLUG_LIST,
-  BTC_HUB_ROUTE,
 } from './src/generated/contentManifest.generated';
 
 /** Vite dev-server URLs (same origin as `vercel dev`). Production builds never hit these paths. */
@@ -30,7 +28,6 @@ const GUIDE_SLUG_SET = new Set(GUIDE_SLUGS);
 const TOOLKIT_SLUG_SET = new Set(TOOLKIT_SLUGS);
 const BTW_CHAPTER_SLUGS = new Set(BTW_CHAPTER_SLUG_LIST);
 const BTS_CHAPTER_SLUGS = new Set(BTS_CHAPTER_SLUG_LIST);
-const BTC_CHAPTER_SLUGS = new Set(BTC_CHAPTER_SLUG_LIST);
 
 /** Decode a single path segment; malformed encodings are treated as invalid. */
 function decodeSegment(segment: string): string | null {
@@ -115,14 +112,6 @@ function isSpaRoute(normalizedPathname: string): boolean {
   if (builtToSellChapter) {
     const slug = decodeSegment(builtToSellChapter[1]);
     return slug != null && BTS_CHAPTER_SLUGS.has(slug);
-  }
-
-  // Built to Close hub + code-defined chapters (not Sanity guides).
-  if (normalizedPathname === BTC_HUB_ROUTE) return true;
-  const builtToCloseChapter = normalizedPathname.match(/^\/guides\/built-to-close\/([^/]+)$/i);
-  if (builtToCloseChapter) {
-    const slug = decodeSegment(builtToCloseChapter[1]);
-    return slug != null && BTC_CHAPTER_SLUGS.has(slug);
   }
 
   const guide = normalizedPathname.match(/^\/guides\/([^/]+)$/i);
