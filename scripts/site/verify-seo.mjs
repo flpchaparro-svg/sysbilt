@@ -32,9 +32,15 @@ import {
   BTC_HUB_ROUTE,
   BTC_CHAPTER_META_BY_SLUG,
 } from './btc-seo-routes.mjs';
+import {
+  BTR_CHAPTER_SLUGS,
+  BTR_HUB_ROUTE,
+  BTR_CHAPTER_META_BY_SLUG,
+} from './btr-seo-routes.mjs';
 import { BTW_CHAPTERS } from '../../src/built-to-work/chapter-seo.ts';
 import { BTS_CHAPTERS } from '../../src/built-to-sell/chapter-seo.ts';
 import { BTC_CHAPTERS } from '../../src/built-to-close/chapter-seo.ts';
+import { BTR_CHAPTERS } from '../../src/built-to-run/chapter-seo.ts';
 import {
   STATIC_ROUTES,
   canonicalUrl,
@@ -221,6 +227,43 @@ async function checkBtcAntiDrift() {
   }
 }
 
+async function checkBtrAntiDrift() {
+  const contentSlugs = BTR_CHAPTERS.map((c) => c.slug);
+  const sharedSlugs = [...BTR_CHAPTER_SLUGS];
+
+  if (JSON.stringify(sharedSlugs) !== JSON.stringify(contentSlugs)) {
+    addViolation(
+      `anti-drift — btr-seo-routes.mjs BTR_CHAPTER_SLUGS != chapter-seo.ts BTR_CHAPTERS slugs ` +
+        `(shared: ${sharedSlugs.length}, content: ${contentSlugs.length}). ` +
+        `shared=${JSON.stringify(sharedSlugs)} content=${JSON.stringify(contentSlugs)}`
+    );
+  }
+
+  for (const slug of sharedSlugs) {
+    if (!BTR_CHAPTER_META_BY_SLUG[slug]) {
+      addViolation(`anti-drift — btr-seo-routes.mjs missing BTR_CHAPTER_META_BY_SLUG entry for "${slug}"`);
+    }
+  }
+
+  const consumers = ['middleware.ts', 'api/sitemap.ts'];
+  for (const rel of consumers) {
+    let src;
+    try {
+      src = await readFile(path.join(ROOT, rel), 'utf8');
+    } catch {
+      addViolation(`anti-drift — could not read ${rel} to check for a hardcoded slug copy`);
+      continue;
+    }
+    const hardcoded = sharedSlugs.filter((slug) => src.includes(`'${slug}'`) || src.includes(`"${slug}"`));
+    if (hardcoded.length > 0) {
+      addViolation(
+        `anti-drift — ${rel} contains ${hardcoded.length} hardcoded BTR chapter slug literal(s); ` +
+          `it must import from the shared module instead (e.g. ${hardcoded[0]})`
+      );
+    }
+  }
+}
+
 /** Sitemap URL set derived from the same source data the API route uses. */
 function buildSitemapPathSet(content) {
   const set = new Set();
@@ -228,7 +271,7 @@ function buildSitemapPathSet(content) {
     if (!INDEXABLE_EXCLUDE.has(r.path)) set.add(r.path);
   }
   for (const g of content.guides) {
-    if (g.slug && g.slug !== 'built-to-work' && g.slug !== 'built-to-sell' && g.slug !== 'built-to-close') set.add(`/guides/${g.slug}`);
+    if (g.slug && g.slug !== 'built-to-work' && g.slug !== 'built-to-sell' && g.slug !== 'built-to-close' && g.slug !== 'built-to-run') set.add(`/guides/${g.slug}`);
   }
   set.add(BTW_HUB_ROUTE);
   for (const slug of BTW_CHAPTER_SLUGS) set.add(`${BTW_HUB_ROUTE}/${slug}`);
@@ -236,6 +279,8 @@ function buildSitemapPathSet(content) {
   for (const slug of BTS_CHAPTER_SLUGS) set.add(`${BTS_HUB_ROUTE}/${slug}`);
   set.add(BTC_HUB_ROUTE);
   for (const slug of BTC_CHAPTER_SLUGS) set.add(`${BTC_HUB_ROUTE}/${slug}`);
+  set.add(BTR_HUB_ROUTE);
+  for (const slug of BTR_CHAPTER_SLUGS) set.add(`${BTR_HUB_ROUTE}/${slug}`);
   for (const post of content.posts) {
     if (post.slug) set.add(`/blog/${post.slug}`);
   }
@@ -265,6 +310,7 @@ async function main() {
   await checkBtwAntiDrift();
   await checkBtsAntiDrift();
   await checkBtcAntiDrift();
+  await checkBtrAntiDrift();
 
   const sitemapSet = buildSitemapPathSet(content);
   const indexableSet = new Set(routes.map((r) => r.path).filter((p) => !INDEXABLE_EXCLUDE.has(p)));

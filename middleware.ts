@@ -13,6 +13,8 @@ import {
   BTS_HUB_ROUTE,
   BTC_CHAPTER_SLUGS as BTC_CHAPTER_SLUG_LIST,
   BTC_HUB_ROUTE,
+  BTR_CHAPTER_SLUGS as BTR_CHAPTER_SLUG_LIST,
+  BTR_HUB_ROUTE,
 } from './src/generated/contentManifest.generated';
 
 /** Vite dev-server URLs (same origin as `vercel dev`). Production builds never hit these paths. */
@@ -31,6 +33,7 @@ const TOOLKIT_SLUG_SET = new Set(TOOLKIT_SLUGS);
 const BTW_CHAPTER_SLUGS = new Set(BTW_CHAPTER_SLUG_LIST);
 const BTS_CHAPTER_SLUGS = new Set(BTS_CHAPTER_SLUG_LIST);
 const BTC_CHAPTER_SLUGS = new Set(BTC_CHAPTER_SLUG_LIST);
+const BTR_CHAPTER_SLUGS = new Set(BTR_CHAPTER_SLUG_LIST);
 
 /** Decode a single path segment; malformed encodings are treated as invalid. */
 function decodeSegment(segment: string): string | null {
@@ -123,6 +126,14 @@ function isSpaRoute(normalizedPathname: string): boolean {
   if (builtToCloseChapter) {
     const slug = decodeSegment(builtToCloseChapter[1]);
     return slug != null && BTC_CHAPTER_SLUGS.has(slug);
+  }
+
+  // Built to Run hub + code-defined chapters (not Sanity guides).
+  if (normalizedPathname === BTR_HUB_ROUTE) return true;
+  const builtToRunChapter = normalizedPathname.match(/^\/guides\/built-to-run\/([^/]+)$/i);
+  if (builtToRunChapter) {
+    const slug = decodeSegment(builtToRunChapter[1]);
+    return slug != null && BTR_CHAPTER_SLUGS.has(slug);
   }
 
   const guide = normalizedPathname.match(/^\/guides\/([^/]+)$/i);

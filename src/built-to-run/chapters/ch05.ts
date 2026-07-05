@@ -1,0 +1,250 @@
+import type { BtwPage } from '../types'
+import { flow, opener, p, section, subsection } from '../../built-to-work/helpers'
+
+export const ch05Pages: BtwPage[] = [
+  opener({
+    type: 'chapterOpener',
+    num: 5,
+    title: 'The automation library',
+    subtitle: 'The idea machine. Raid it rather than read it.',
+  }),
+  flow(
+    ...p(
+      'This is the idea machine, and it is the chapter to raid rather than read. What follows is a library of automations organised by the part of the business they serve, each entry in the same compact shape: the trigger, what happens, and what it saves. None of them is exotic. Every one is machinery that large companies have run for years, now available at your scale, and most are an afternoon\'s build once the foundations from this series exist. Take what stings, leave the rest, and remember chapter four\'s rule: the best candidates are the ones already on your own week\'s list.',
+    ),
+    ...p(
+      'A note on reading the entries: what it saves is measured in the honest currencies, hours of ferrying, leads that stopped leaking, mistakes that stopped happening, and the quiet one, things no longer carried in anyone\'s head.',
+    ),
+    {
+      type: 'diagram',
+      id: 'btr-ch05-read-entry',
+      caption: 'How to read an entry. TRIGGER: what starts it. WHAT HAPPENS: the steps. WHAT IT SAVES: hours, leaks, mistakes, things carried in heads.',
+    },
+    {
+      type: 'diagram',
+      id: 'btr-ch05-library-map',
+      caption: 'The library map. Six shelves: Leads and sales (7), Marketing and content (5), Operations and admin (6), Customer service (3), Money and reporting (4). Raid it. Do not read it.',
+    },
+  ),
+  flow(
+    ...subsection(
+      'LEADS AND SALES',
+      'Leads and sales',
+      ...subsection(
+        'INSTANT ACKNOWLEDGEMENT',
+        'The instant acknowledgement',
+        ...p('Trigger: any enquiry arrives, form, chat, message.'),
+        ...p('What happens: the enquirer receives a warm, specific reply within the minute, and the owner gets the alert.'),
+        ...p('Saves: the first and biggest leak, because the business that answers first wins, and this answers first every single time, at midnight, on your busiest day.'),
+      ),
+      ...subsection(
+        'MISSED-CALL TEXT-BACK',
+        'Missed-call text-back',
+        ...p('Trigger: a call rings out.'),
+        ...p('What happens: the caller instantly receives a text, sorry we missed you, with a callback promise or a booking link, and the missed call becomes a logged lead with a task.'),
+        ...p('Saves: the hottest, most perishable lead there is, the one that was literally calling you.'),
+      ),
+      ...subsection(
+        'LEAD RESEARCH',
+        'The lead that researches itself',
+        ...p('Trigger: a business enquires through the website.'),
+        ...p('What happens: the system quietly looks up who they are, gathers what is publicly knowable about their situation, assembles a short briefing, and drafts the reply, so that what lands in your drafts folder is not a blank page but a prepared, personalised response with the homework attached, waiting for one human review and one click.'),
+        ...p('Saves: the half hour of research per serious lead, and something money struggles to buy, the experience on the other end of replying to an enquiry within the hour with an answer that clearly understood them. This one is a signature, and chapter nine takes it apart bolt by bolt.'),
+        {
+          type: 'diagram',
+          id: 'btr-ch05-signature-preview',
+          caption: 'The lead that researches itself. Enquiry arrives, system researches, briefing and reply drafted, waiting in drafts, one tap. The signature. Chapter nine takes it apart bolt by bolt.',
+        },
+      ),
+      ...subsection(
+        'QUOTE FOLLOW-UP',
+        'Quote follow-up on rails',
+        ...p('Trigger: a quote is sent.'),
+        ...p('What happens: the sequence from this series\' CRM book arms itself, the gentle touches, spaced and decaying, stopping the instant the client replies.'),
+        ...p('Saves: the second great leak, the quote that went quiet, which is where most businesses lose more revenue than anywhere else.'),
+      ),
+      ...subsection(
+        'STALE-LEAD ESCALATION',
+        'Stale-lead escalation',
+        ...p('Trigger: a new lead sits untouched past a set number of hours.'),
+        ...p('What happens: the owner is nudged, and past a second threshold, escalated.'),
+        ...p('Saves: the lead lost not to a decision but to a busy Tuesday, which is most of them.'),
+      ),
+      ...subsection(
+        'WON-DEAL MACHINERY',
+        'Won-deal machinery',
+        ...p('Trigger: a deal is marked won.'),
+        ...p('What happens: the invoice drafts itself, the onboarding email sends, the job appears wherever jobs are managed, the file structure is created, and the team is told.'),
+        ...p('Saves: the fifteen fiddly minutes after every yes, and the occasional catastrophe of a won client nobody actually onboarded.'),
+      ),
+      ...subsection(
+        'LOST-DEAL LEARNING',
+        'Lost-deal learning',
+        ...p('Trigger: a deal is marked lost.'),
+        ...p('What happens: the why-lost reason is captured, and quarterly, the patterns are summarised and sent to the owner.'),
+        ...p('Saves: losing the same deals the same way forever and calling it luck.'),
+      ),
+    ),
+  ),
+  flow(
+    ...subsection(
+      'MARKETING AND CONTENT',
+      'Marketing and content',
+      ...subsection(
+        'ONE ARTICLE',
+        'One article, many assets',
+        ...p('Trigger: a new article is published.'),
+        ...p('What happens: drafts are generated for the social posts, the newsletter mention, and the repurposed formats, queued for human review, never auto-published.'),
+        ...p('Saves: the multiplication work that makes content sustainable, and it is the spine of this series\' content book.'),
+      ),
+      ...subsection(
+        'REVIEW ENGINE',
+        'The review engine',
+        ...p('Trigger: a job completes or an order is delivered.'),
+        ...p('What happens: the review request goes out at the moment satisfaction peaks, with the direct link; a good review triggers a thank-you, a poor one alerts a human immediately, before it becomes public history.'),
+        ...p('Saves: the steady reputation-building that never happens when it depends on remembering, and the occasional saved relationship.'),
+      ),
+      ...subsection(
+        'COMMENT-TO-CAPTURE',
+        'Comment-to-capture',
+        ...p('Trigger: someone comments a keyword on a social post.'),
+        ...p('What happens: they receive the promised link by direct message, and arrive tagged in the system as a lead from that post.'),
+        ...p('Saves: the gap between social attention and owned ground, the exact gap where social effort usually evaporates.'),
+      ),
+      ...subsection(
+        'WELCOME SERIES',
+        'The welcome series',
+        ...p('Trigger: someone joins the list, downloads the guide, subscribes.'),
+        ...p('What happens: a short, warm sequence introduces the business over the following days, ending with an easy next step.'),
+        ...p('Saves: the awkward silence after someone raises their hand, which is where most captured interest quietly expires.'),
+      ),
+      ...subsection(
+        'WIN-BACK RHYTHMS',
+        'Win-back rhythms',
+        ...p('Trigger: a good client\'s silence passes its honest threshold, months for some businesses, a year for others.'),
+        ...p('What happens: the check-in that references the real history, drafted for human review.'),
+        ...p('Saves: the third great leak, the client you already won, drifting back to the open market.'),
+      ),
+    ),
+  ),
+  flow(
+    ...subsection(
+      'OPERATIONS AND ADMIN',
+      'Operations and admin',
+      ...subsection(
+        'INVOICE CHASER',
+        'The invoice chaser',
+        ...p('Trigger: an invoice passes due.'),
+        ...p('What happens: the polite reminder, then the firmer one, then the escalation to a human for the conversation automations must never have.'),
+        ...p('Saves: the most universally hated chore in business, and real cash-flow days, because chased invoices get paid weeks earlier than remembered ones.'),
+      ),
+      ...subsection(
+        'APPOINTMENT REMINDERS',
+        'Appointment reminders',
+        ...p('Trigger: a booking approaches.'),
+        ...p('What happens: the reminder lands the day before, with reschedule handling built in.'),
+        ...p('Saves: no-shows, which for appointment businesses is not admin but revenue, directly.'),
+      ),
+      ...subsection(
+        'DOCUMENT GENERATION',
+        'Document generation',
+        ...p('Trigger: a deal reaches a stage, or a form completes.'),
+        ...p('What happens: the proposal, agreement or welcome pack assembles itself from the record\'s details into the clean template.'),
+        ...p('Saves: the retyping, and the retyping\'s errors, the wrong name in the contract that a client never quite forgets.'),
+      ),
+      ...subsection(
+        'ONBOARDING CHECKLISTS',
+        'Onboarding checklists',
+        ...p('Trigger: a new client, or a new staff member, is confirmed.'),
+        ...p('What happens: the full checklist of tasks spawns, assigned and dated, so nothing depends on someone remembering the eleven steps.'),
+        ...p('Saves: the wildly uneven first impressions that happen when onboarding lives in heads.'),
+      ),
+      ...subsection(
+        'INTAKE FERRY',
+        'The intake ferry',
+        ...p('Trigger: information arrives anywhere it arrives, the emailed PDF, the filled form, the uploaded document.'),
+        ...p('What happens: the details are extracted and land where they belong, the job system, the records, the folder structure.'),
+        ...p('Saves: the purest form of the ferrying tax, a human retyping what a machine already held.'),
+      ),
+      ...subsection(
+        'RENEWAL WATCH',
+        'Renewal and expiry watch',
+        ...p('Trigger: anything with a date approaches it, the domain, the insurance, the certification, the subscription worth reviewing.'),
+        ...p('What happens: the right human is told with time to act.'),
+        ...p('Saves: the small category of misses that are cheap to prevent and mortifying to explain.'),
+      ),
+    ),
+  ),
+  flow(
+    ...subsection(
+      'CUSTOMER SERVICE',
+      'Customer service',
+      ...subsection(
+        'ROUTING',
+        'Routing by content',
+        ...p('Trigger: a message arrives in the shared inbox.'),
+        ...p('What happens: it is read, classified, and routed, the sales question to sales, the support issue to support, the invoice query to accounts, each with its context attached.'),
+        ...p('Saves: the triage hour, and the message that sat three days in the wrong queue.'),
+      ),
+      ...subsection(
+        'INSTANT ANSWER',
+        'The instant answer, gated',
+        ...p('Trigger: a common question arrives, the hours, the pricing structure, the how-do-I.'),
+        ...p('What happens: the answer drafts itself from the knowledge base for a human to approve, or, where confidence is genuinely high and stakes genuinely low, sends, clearly signed as automated help with a human one reply away.'),
+        ...p('Saves: the repetition, while the gating saves the reputation.'),
+      ),
+      ...subsection(
+        'FEEDBACK LOOP',
+        'Post-job feedback loop',
+        ...p('Trigger: work completes.'),
+        ...p('What happens: the short feedback ask goes out; scores flow to the dashboard; anything below the bar alerts a human the same day.'),
+        ...p('Saves: finding out about unhappiness from a public review instead of a private message, which is the expensive way.'),
+      ),
+    ),
+    ...subsection(
+      'MONEY AND REPORTING',
+      'Money and reporting',
+      ...subsection(
+        'MORNING DIGEST',
+        'The morning digest',
+        ...p('Trigger: seven oclock, every morning.'),
+        ...p('What happens: one message assembles itself, yesterday\'s leads and their sources, today\'s follow-ups due, anything overdue, anything that failed overnight.'),
+        ...p('Saves: the twenty minutes of checking five systems, and the surprises that used to arrive at Friday\'s end instead of Tuesday\'s start.'),
+      ),
+      ...subsection(
+        'FRIDAY PIPELINE',
+        'The Friday pipeline summary',
+        ...p('Trigger: Friday afternoon.'),
+        ...p('What happens: the week\'s movement, the board\'s honest total, and the deals with no next step, summarised to the owner.'),
+        ...p('Saves: walking into Monday\'s review cold, and the slow drift of a board nobody is watching.'),
+      ),
+      ...subsection(
+        'RECONCILIATION',
+        'Reconciliation flags',
+        ...p('Trigger: the numbers that should agree, the system\'s takings and the bank\'s, the CRM\'s won deals and the ledger\'s invoices, are compared on schedule.'),
+        ...p('What happens: matches pass silently; mismatches get flagged while they are one line, not one quarter.'),
+        ...p('Saves: the archaeology, as the e-commerce book in this series calls it.'),
+      ),
+      ...subsection(
+        'ANOMALY ALERTS',
+        'Anomaly alerts',
+        ...p('Trigger: a number moves in a way it should not, enquiries suddenly zero for a day, a cost suddenly double.'),
+        ...p('What happens: a human is told the same day.'),
+        ...p('Saves: the silent fortnight, the broken form discovered as a mysteriously quiet month, which this series keeps returning to because it keeps happening to businesses without this one automation.'),
+      ),
+    ),
+  ),
+  flow(
+    ...section(
+      'PATTERNS',
+      'Reading the library',
+      ...p('Thirty-odd entries, and the honest patterns worth noticing before you raid it. Almost every entry is when this happens, do that, chapter two\'s plain anatomy, no magic anywhere. The highest-return items cluster where this series keeps pointing: the speed of the first response, the persistence of the follow-up, and the watching of the numbers. Nearly everything customer-facing drafts for human approval rather than firing blind, a line chapter six turns into doctrine. And nothing here requires the everything-machine; each entry stands alone, which is exactly what lets chapter four\'s quick-win ordering work.'),
+      ...p('The menu is served. The next chapter is how to run the kitchen: the daily rhythm, the approval gates, and the habits that keep several dozen of these running without anyone holding their breath.'),
+      {
+        type: 'diagram',
+        id: 'btr-ch05-returns-cluster',
+        caption: 'Where the returns cluster. The speed of the first response, the persistence of the follow-up, the watching of the numbers.',
+      },
+    ),
+  ),
+]

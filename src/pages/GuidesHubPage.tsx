@@ -11,6 +11,7 @@ import { client } from '../sanityClient';
 import { BTW_META } from '../built-to-work/types';
 import { BTS_META } from '../built-to-sell/types';
 import { BTC_META } from '../built-to-close/types';
+import { BTR_META } from '../built-to-run/types';
 
 type HubGuide = {
   title: string;
@@ -46,9 +47,15 @@ const FEATURED_CODE_GUIDES = [
     title: BTC_META.title,
     subtitle: BTC_META.subtitle,
   },
+  {
+    path: '/guides/built-to-run',
+    badge: 'Premium guide · 12 chapters · Automation',
+    title: BTR_META.title,
+    subtitle: BTR_META.subtitle,
+  },
 ] as const;
 
-const CODE_GUIDE_SLUGS = new Set(['built-to-work', 'built-to-sell', 'built-to-close']);
+const CODE_GUIDE_SLUGS = new Set(['built-to-work', 'built-to-sell', 'built-to-close', 'built-to-run']);
 
 const guidesHubCollectionJsonLd = {
   '@context': 'https://schema.org',

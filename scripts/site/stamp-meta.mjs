@@ -28,6 +28,12 @@ import {
   BTC_CHAPTER_META_BY_SLUG,
   BTC_HUB_META,
 } from './btc-seo-routes.mjs';
+import {
+  BTR_CHAPTER_SLUGS,
+  BTR_HUB_ROUTE,
+  BTR_CHAPTER_META_BY_SLUG,
+  BTR_HUB_META,
+} from './btr-seo-routes.mjs';
 import { buildBlogPostingJsonLd } from '../../src/utils/blogSeoJsonLd';
 import { buildToolkitArticleJsonLd } from '../../src/utils/toolkitSeoJsonLd';
 import { generateFAQSchema, getPillarFAQs, getSystemPageFAQs } from '../../src/constants/faqData';
@@ -53,6 +59,13 @@ import {
 } from '../../src/built-to-close/chapter-seo';
 import { BTC_CHAPTER_COVERS, BTC_HUB_OG } from '../../src/built-to-close/chapter-covers';
 import { BTC_META } from '../../src/built-to-close/types';
+import {
+  BTR_CHAPTERS,
+  btrChapterPath,
+  extractGlossaryFaqs as extractBtrGlossaryFaqs,
+} from '../../src/built-to-run/chapter-seo';
+import { BTR_CHAPTER_COVERS, BTR_HUB_OG } from '../../src/built-to-run/chapter-covers';
+import { BTR_META } from '../../src/built-to-run/types';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '../..');
@@ -238,6 +251,25 @@ const BTC_ROUTES = [
       path: `${BTC_HUB_ROUTE}/${slug}`,
       ...meta,
       jsonLd: btcChapterJsonLd(slug),
+    };
+  }),
+];
+
+const BTR_HUB_ROUTE_DEF = {
+  path: BTR_HUB_ROUTE,
+  title: BTR_HUB_META.title,
+  description: BTR_HUB_META.description,
+};
+
+const BTR_ROUTES = [
+  { ...BTR_HUB_ROUTE_DEF, jsonLd: btrHubJsonLd(BTR_HUB_ROUTE_DEF) },
+  ...BTR_CHAPTER_SLUGS.map((slug) => {
+    const meta = BTR_CHAPTER_META_BY_SLUG[slug];
+    if (!meta) throw new Error(`[stamp-meta] Missing Built to Run metadata for ${slug}`);
+    return {
+      path: `${BTR_HUB_ROUTE}/${slug}`,
+      ...meta,
+      jsonLd: btrChapterJsonLd(slug),
     };
   }),
 ];
@@ -522,6 +554,61 @@ function btcChapterJsonLd(slug) {
   return out;
 }
 
+function btrHubJsonLd(hubRoute) {
+  const canonical = canonicalUrl(hubRoute.path);
+  const collection = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: hubRoute.title,
+    description: hubRoute.description,
+    url: canonical,
+    image: `${BASE_URL}${BTR_HUB_OG}`,
+    inLanguage: 'en-AU',
+  };
+  const crumb = breadcrumbJsonLd([
+    { name: 'Home', item: `${BASE_URL}/` },
+    { name: 'Guides', item: `${BASE_URL}/guides` },
+    { name: BTR_META.title, item: canonical },
+  ]);
+  return [collection, crumb];
+}
+
+function btrChapterJsonLd(slug) {
+  const chapter = BTR_CHAPTERS.find((c) => c.slug === slug);
+  if (!chapter) return [];
+  const canonical = `${BASE_URL}${btrChapterPath(chapter.slug)}`;
+  const cover = BTR_CHAPTER_COVERS[chapter.num];
+  const image = cover ? `${BASE_URL}${cover.src}` : `${BASE_URL}/images/og-sysbilt.png`;
+  const article = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: chapter.h1,
+    description: chapter.seoDescription,
+    author: { '@type': 'Organization', name: 'SYSBILT', url: `${BASE_URL}/` },
+    publisher: {
+      '@type': 'Organization',
+      name: 'SYSBILT',
+      url: `${BASE_URL}/`,
+      logo: { '@type': 'ImageObject', url: `${BASE_URL}/images/og-sysbilt.png` },
+    },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
+    image,
+    isPartOf: { '@type': 'Book', name: BTR_META.title, url: `${BASE_URL}${BTR_HUB_ROUTE}` },
+    inLanguage: 'en-AU',
+  };
+  const crumb = breadcrumbJsonLd([
+    { name: 'Home', item: `${BASE_URL}/` },
+    { name: 'Guides', item: `${BASE_URL}/guides` },
+    { name: BTR_META.title, item: `${BASE_URL}${BTR_HUB_ROUTE}` },
+    { name: chapter.h1, item: canonical },
+  ]);
+  const out = [article, crumb];
+  const glossary =
+    chapter.num === 12 ? extractBtrGlossaryFaqs(extractChapterBlocks(chapter.pages)) : [];
+  if (glossary.length > 0) out.push(generateFAQSchema(glossary));
+  return out;
+}
+
 /** JSON-LD for static routes (homepage Organization/WebSite, pillar/system FAQ). */
 function staticJsonLd(routePath) {
   if (routePath === '/') return [organizationJsonLd(), webSiteJsonLd()];
@@ -702,6 +789,10 @@ function buildAllRoutes({ posts, guides, toolkitItems }) {
       skipped.push('guide:built-to-close — handled by static Built to Close routes');
       continue;
     }
+    if (guide.slug === 'built-to-run') {
+      skipped.push('guide:built-to-run — handled by static Built to Run routes');
+      continue;
+    }
     const rawTitle = (guide.seoTitle?.trim() || guide.title).trim();
     const title = `${rawTitle} | SYSBILT`;
     const description = (guide.seoDescription?.trim() || guide.subtitle?.trim() || '').trim();
@@ -754,7 +845,7 @@ function buildAllRoutes({ posts, guides, toolkitItems }) {
 
   const staticRoutes = STATIC_ROUTES.map((r) => ({ ...r, jsonLd: staticJsonLd(r.path) }));
 
-  return { routes: [...staticRoutes, ...BTW_ROUTES, ...BTS_ROUTES, ...BTC_ROUTES, ...dynamic], skipped };
+  return { routes: [...staticRoutes, ...BTW_ROUTES, ...BTS_ROUTES, ...BTC_ROUTES, ...BTR_ROUTES, ...dynamic], skipped };
 }
 
 async function collectAllRoutes() {
@@ -790,10 +881,10 @@ async function main() {
     await writeFile(outPath, html, 'utf8');
   }
 
-  const codeDefinedCount = BTW_ROUTES.length + BTS_ROUTES.length + BTC_ROUTES.length;
+  const codeDefinedCount = BTW_ROUTES.length + BTS_ROUTES.length + BTC_ROUTES.length + BTR_ROUTES.length;
   const sanityCount = allRoutes.length - STATIC_ROUTES.length - codeDefinedCount;
   console.log(
-    `[stamp-meta] Stamped ${allRoutes.length} routes (${STATIC_ROUTES.length} static, ${sanityCount} from Sanity, ${BTW_ROUTES.length} BTW, ${BTS_ROUTES.length} BTS, ${BTC_ROUTES.length} BTC).`
+    `[stamp-meta] Stamped ${allRoutes.length} routes (${STATIC_ROUTES.length} static, ${sanityCount} from Sanity, ${BTW_ROUTES.length} BTW, ${BTS_ROUTES.length} BTS, ${BTC_ROUTES.length} BTC, ${BTR_ROUTES.length} BTR).`
   );
   if (skipped.length > 0) {
     console.log('[stamp-meta] Skipped Sanity entries:');
@@ -819,6 +910,7 @@ export {
   BTW_ROUTES,
   BTS_ROUTES,
   BTC_ROUTES,
+  BTR_ROUTES,
   canonicalUrl,
   distPathForRoute,
   fetchSanityContent,

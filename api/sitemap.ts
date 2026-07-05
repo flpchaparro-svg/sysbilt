@@ -3,6 +3,7 @@ import { createClient } from '@sanity/client';
 import { BTW_CHAPTER_SLUGS, BTW_HUB_ROUTE as BTW_HUB_PATH } from '../scripts/site/btw-seo-routes.mjs';
 import { BTS_CHAPTER_SLUGS, BTS_HUB_ROUTE as BTS_HUB_PATH } from '../scripts/site/bts-seo-routes.mjs';
 import { BTC_CHAPTER_SLUGS, BTC_HUB_ROUTE as BTC_HUB_PATH } from '../scripts/site/btc-seo-routes.mjs';
+import { BTR_CHAPTER_SLUGS, BTR_HUB_ROUTE as BTR_HUB_PATH } from '../scripts/site/btr-seo-routes.mjs';
 
 const BASE_URL = 'https://sysbilt.com';
 
@@ -115,7 +116,7 @@ export default async function handler(_req: VercelRequest, res: VercelResponse):
     const guideDocEntries: UrlEntry[] = guidesFromCms
       .filter(
         (g): g is { slug: string; publishedAt: string | null } =>
-          typeof g.slug === 'string' && g.slug.length > 0 && g.slug !== 'built-to-work' && g.slug !== 'built-to-sell' && g.slug !== 'built-to-close',
+          typeof g.slug === 'string' && g.slug.length > 0 && g.slug !== 'built-to-work' && g.slug !== 'built-to-sell' && g.slug !== 'built-to-close' && g.slug !== 'built-to-run',
       )
       .map((g) => ({
         loc: `${BASE_URL}/guides/${encodeURIComponent(g.slug)}`,
@@ -166,6 +167,20 @@ export default async function handler(_req: VercelRequest, res: VercelResponse):
       priority: '0.75',
     }));
 
+    const btrHubEntry: UrlEntry = {
+      loc: `${BASE_URL}${BTR_HUB_PATH}`,
+      lastmod: today,
+      changefreq: 'monthly',
+      priority: '0.8',
+    };
+
+    const btrChapterEntries: UrlEntry[] = BTR_CHAPTER_SLUGS.map((slug) => ({
+      loc: `${BASE_URL}${BTR_HUB_PATH}/${encodeURIComponent(slug)}`,
+      lastmod: today,
+      changefreq: 'monthly',
+      priority: '0.75',
+    }));
+
     const blogUrls: UrlEntry[] = posts
       .filter((p): p is { slug: string; publishedAt: string | null } => typeof p.slug === 'string' && p.slug.length > 0)
       .map((p) => ({
@@ -185,7 +200,7 @@ export default async function handler(_req: VercelRequest, res: VercelResponse):
       }));
 
     const seen = new Set<string>();
-    const entries = [...staticEntries, ...guideDocEntries, btwHubEntry, ...btwChapterEntries, btsHubEntry, ...btsChapterEntries, btcHubEntry, ...btcChapterEntries, ...blogUrls, ...toolkitUrls].filter((entry) => {
+    const entries = [...staticEntries, ...guideDocEntries, btwHubEntry, ...btwChapterEntries, btsHubEntry, ...btsChapterEntries, btcHubEntry, ...btcChapterEntries, btrHubEntry, ...btrChapterEntries, ...blogUrls, ...toolkitUrls].filter((entry) => {
       if (seen.has(entry.loc)) return false;
       seen.add(entry.loc);
       return true;
