@@ -2,6 +2,7 @@ import { useId, type FC, type ReactNode } from 'react'
 import { BtwFigure, CREAM, GOLD_READABLE, INK } from '../BtwFigure'
 import { AnatomyDiagram } from './AnatomyDiagram'
 import { HubSpokeDiagram } from './HubSpokeDiagram'
+import { BtsProductPageAnatomyDiagram } from '../../../built-to-sell/components/diagrams/BtsProductPageAnatomyDiagram'
 
 function MonoBox({
   x,
@@ -557,6 +558,7 @@ const DIAGRAMS: Record<string, React.FC<{ caption: string }>> = {
   'owned-vs-rented': OwnedVsRentedDiagram,
   'five-stages': FiveStagesDiagram,
   'four-checks': FourChecksDiagram,
+  'bts-ch03-anatomy': BtsProductPageAnatomyDiagram,
 }
 
 export function BtwDiagramById({ id, caption }: { id: string; caption: string }) {
