@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img">
+  <rect width="1600" height="900" fill="#111111"/>
+  <defs>
+    <linearGradient id="fadeL" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#111111" stop-opacity="0.92"/>
+      <stop offset="45%" stop-color="#111111" stop-opacity="0.55"/>
+      <stop offset="72%" stop-color="#111111" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#111111" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  
+  <rect x="900" y="420" width="480" height="140" rx="6" fill="#FFF2EC" opacity="0.08" stroke="#FFF2EC" stroke-width="1.5"/>
+  <rect x="940" y="450" width="72" height="22" fill="#FFF2EC" opacity="0.15"/>
+  <rect x="1040" y="450" width="72" height="22" fill="#FFF2EC" opacity="0.15"/>
+  <rect x="1140" y="450" width="72" height="22" fill="#FFF2EC" opacity="0.15"/>
+  <rect x="1240" y="450" width="72" height="22" fill="#FFF2EC" opacity="0.15"/>
+  <rect x="940" y="482" width="72" height="22" fill="#FFF2EC" opacity="0.15"/>
+  <rect x="1040" y="482" width="72" height="22" fill="#FFF2EC" opacity="0.15"/>
+  <rect x="1140" y="482" width="72" height="22" fill="#FFF2EC" opacity="0.15"/>
+  <rect x="1240" y="482" width="72" height="22" fill="#FFF2EC" opacity="0.15"/>
+  <rect x="940" y="514" width="72" height="22" fill="#FFF2EC" opacity="0.15"/>
+  <rect x="1040" y="514" width="72" height="22" fill="#FFF2EC" opacity="0.15"/>
+  <rect x="1140" y="514" width="72" height="22" fill="#FFF2EC" opacity="0.15"/>
+  <rect x="1240" y="514" width="72" height="22" fill="#FFF2EC" opacity="0.15"/>
+  <rect x="1180" y="340" width="120" height="60" fill="none" stroke="#C5A059" stroke-width="2"/>
+  <text x="1240" y="378" text-anchor="middle" font-family="ui-monospace,monospace" font-size="18" fill="#C5A059" font-weight="700">AI</text>
+  <rect width="880.0000000000001" height="900" fill="url(#fadeL)"/>
+</svg>

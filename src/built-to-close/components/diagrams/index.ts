@@ -1,0 +1,83 @@
+import type { FC } from 'react'
+import {
+  BtcCh01OldWay,
+  BtcCh01ThreeLeaks,
+  BtcCh01InboxOrSystem,
+  BtcCh02FourWords,
+  BtcCh02RightSized,
+  BtcCh02WhatYouOwn,
+  BtcCh03TooManyFew,
+  BtcCh03Pipeline,
+  BtcCh03OneOwner,
+  BtcCh03ReadingBoard,
+} from './btcCh01-03'
+import {
+  BtcCh04FieldEarns,
+  BtcCh04OneHuman,
+  BtcCh04HygieneRhythm,
+  BtcCh05FourWays,
+  BtcCh05LeaksMap,
+  BtcCh05SequenceRails,
+  BtcCh05Spine,
+  BtcCh06FifteenMinutes,
+  BtcCh06WeeklyReview,
+  BtcCh07PersistentPest,
+  BtcCh07FollowupShape,
+  BtcCh07Reputation,
+  BtcCh08LeadsOrWork,
+  BtcCh08SourceBirth,
+  BtcCh08DarkFunnel,
+} from './btcCh04-08'
+import {
+  BtcCh09Hub,
+  BtcCh09OneLead,
+  BtcCh09SentReceived,
+  BtcCh09SpokeOrder,
+  BtcCh10WhyDie,
+  BtcCh10DesignLaziness,
+  BtcCh10RolloutArc,
+  BtcCh11DivisionLabour,
+  BtcCh11SelfWritingRecord,
+} from './btcCh09-11'
+
+type DiagramProps = { caption: string }
+
+/** All Built to Close diagram IDs → components. */
+export const BTC_DIAGRAMS: Record<string, FC<DiagramProps>> = {
+  'btc-ch01-old-way': BtcCh01OldWay,
+  'btc-ch01-three-leaks': BtcCh01ThreeLeaks,
+  'btc-ch01-inbox-or-system': BtcCh01InboxOrSystem,
+  'btc-ch02-four-words': BtcCh02FourWords,
+  'btc-ch02-right-sized': BtcCh02RightSized,
+  'btc-ch02-what-you-own': BtcCh02WhatYouOwn,
+  'btc-ch03-too-many-few': BtcCh03TooManyFew,
+  'btc-ch03-pipeline': BtcCh03Pipeline,
+  'btc-ch03-one-owner': BtcCh03OneOwner,
+  'btc-ch03-reading-board': BtcCh03ReadingBoard,
+  'btc-ch04-field-earns': BtcCh04FieldEarns,
+  'btc-ch04-one-human': BtcCh04OneHuman,
+  'btc-ch04-hygiene-rhythm': BtcCh04HygieneRhythm,
+  'btc-ch05-four-ways': BtcCh05FourWays,
+  'btc-ch05-leaks-map': BtcCh05LeaksMap,
+  'btc-ch05-sequence-rails': BtcCh05SequenceRails,
+  'btc-ch05-spine': BtcCh05Spine,
+  'btc-ch06-fifteen-minutes': BtcCh06FifteenMinutes,
+  'btc-ch06-weekly-review': BtcCh06WeeklyReview,
+  'btc-ch07-persistent-pest': BtcCh07PersistentPest,
+  'btc-ch07-followup-shape': BtcCh07FollowupShape,
+  'btc-ch07-reputation': BtcCh07Reputation,
+  'btc-ch08-leads-or-work': BtcCh08LeadsOrWork,
+  'btc-ch08-source-birth': BtcCh08SourceBirth,
+  'btc-ch08-dark-funnel': BtcCh08DarkFunnel,
+  'btc-ch09-hub': BtcCh09Hub,
+  'btc-ch09-one-lead': BtcCh09OneLead,
+  'btc-ch09-sent-received': BtcCh09SentReceived,
+  'btc-ch09-spoke-order': BtcCh09SpokeOrder,
+  'btc-ch10-why-die': BtcCh10WhyDie,
+  'btc-ch10-design-laziness': BtcCh10DesignLaziness,
+  'btc-ch10-rollout-arc': BtcCh10RolloutArc,
+  'btc-ch11-division-labour': BtcCh11DivisionLabour,
+  'btc-ch11-self-writing-record': BtcCh11SelfWritingRecord,
+}
+
+export const BTC_DIAGRAM_IDS = Object.keys(BTC_DIAGRAMS)
