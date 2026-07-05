@@ -5,9 +5,18 @@ import { Helmet } from 'react-helmet-async'
 import { PageMeta } from '../components/PageMeta'
 import { SITE_ORIGIN } from '../constants/seoMeta'
 import { GuideGateForm } from '../components/GuideGateForm'
+import { BtwMeasuredGuide } from '../built-to-work/components/BtwMeasuredGuide'
 import { BTW_STYLES } from '../built-to-work/styles'
 import { BTS_HUB_PATH, BTS_BOOK_PATH } from '../built-to-sell/chapter-seo'
+import { BTS_CHAPTER_COVERS, BTS_HUB_OG } from '../built-to-sell/chapter-covers'
+import { BtsCoverPage, BtsClosingPage } from '../built-to-sell/components/BtsCover'
+import { BTS_CONTENT_PAGES } from '../built-to-sell/pages'
 import { BTS_META } from '../built-to-sell/types'
+
+const BTS_GUIDE_BOOK = {
+  runningHeadTitle: BTS_META.title,
+  chapterCovers: BTS_CHAPTER_COVERS,
+} as const
 
 /** Gated A4 book — noindex; public chapters are the canonical SEO surface. */
 export default function BuiltToSellBookPage() {
@@ -26,7 +35,7 @@ export default function BuiltToSellBookPage() {
         description="Download or print the full A4 edition of Built to Sell."
         canonical={bookUrl}
         robots="noindex, follow"
-        ogImage={`${SITE_ORIGIN}/images/og-sysbilt.png`}
+        ogImage={`${SITE_ORIGIN}${BTS_HUB_OG}`}
       />
       <Helmet>
         <meta name="robots" content="noindex, follow" />
@@ -50,17 +59,7 @@ export default function BuiltToSellBookPage() {
           </div>
         </nav>
 
-        <header className="w-full max-w-[794px] border-2 border-[#FFF2EC]/20 bg-[#111111] p-8 md:p-12 text-center">
-          <div className="font-mono text-[10px] font-bold uppercase tracking-[0.24em] text-[#D4A84B] mb-4">
-            / {BTS_META.badgeLabel}
-          </div>
-          <h1 className="font-serif text-[clamp(32px,5vw,48px)] font-medium leading-[1.05] tracking-[-0.03em] text-[#FFF2EC] m-0 mb-4">
-            {BTS_META.title}
-          </h1>
-          <p className="font-sans text-[15px] leading-relaxed text-[#FFF2EC]/65 m-0 max-w-prose mx-auto">
-            {BTS_META.coverLegend}
-          </p>
-        </header>
+        <BtsCoverPage />
 
         {!isUnlocked ? (
           <div className="w-full max-w-[794px] relative z-20 print:hidden">
@@ -70,19 +69,14 @@ export default function BuiltToSellBookPage() {
               onSuccess={() => setIsUnlocked(true)}
             />
           </div>
-        ) : (
-          <div className="w-full max-w-[794px] border border-[#FFF2EC]/15 bg-[#111111] p-8 md:p-10 text-center print:hidden">
-            <p className="font-sans text-[15px] leading-relaxed text-[#FFF2EC]/70 m-0 mb-6">
-              The full A4 book layout is being prepared. Read every chapter free on the web in the meantime.
-            </p>
-            <Link
-              to={BTS_HUB_PATH}
-              className="inline-flex font-mono text-[11px] font-bold uppercase tracking-[0.18em] border-2 border-[#D4A84B] text-[#D4A84B] px-5 py-3 hover:bg-[#D4A84B] hover:text-[#1A1A1A] transition-colors"
-            >
-              Browse chapters
-            </Link>
-          </div>
-        )}
+        ) : null}
+
+        {isUnlocked ? (
+          <>
+            <BtwMeasuredGuide rawPages={BTS_CONTENT_PAGES} guide={BTS_GUIDE_BOOK} />
+            <BtsClosingPage />
+          </>
+        ) : null}
       </div>
     </div>
   )

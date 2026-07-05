@@ -14,7 +14,7 @@ import {
   type BtwSegment,
 } from '../paginate'
 import { BtwFlowList } from './BtwBlocks'
-import { BtwPageShell } from './BtwPageShell'
+import { BtwPageShell, type BtwGuideBookOptions } from './BtwPageShell'
 
 /** Small safety gap (px) kept clear at the foot of every page. */
 const PAGE_SAFETY = 6
@@ -137,10 +137,12 @@ const MAX_OVERFLOW_PASSES = 16
 function PageOverflowFixer({
   pages,
   rawPages,
+  guide,
   onReady,
 }: {
   pages: BtwPage[]
   rawPages: BtwPage[]
+  guide?: BtwGuideBookOptions
   onReady: (pages: BtwPage[]) => void
 }) {
   const [workPages, setWorkPages] = useState(pages)
@@ -236,6 +238,7 @@ function PageOverflowFixer({
             layout={pg.layout ?? 'flow'}
             blocks={pg.blocks}
             runningHeadRight={deriveRunningHead(workPages, idx)}
+            guide={guide}
           />
         </div>
       ))}
@@ -287,7 +290,13 @@ function enrichContents(pages: BtwPage[]): BtwPage[] {
   }))
 }
 
-export function BtwMeasuredGuide({ rawPages }: { rawPages: BtwPage[] }) {
+export function BtwMeasuredGuide({
+  rawPages,
+  guide,
+}: {
+  rawPages: BtwPage[]
+  guide?: BtwGuideBookOptions
+}) {
   const segments = useMemo(() => segmentContentPages(rawPages), [rawPages])
   const hasFlow = segments.some((s) => s.kind === 'flow')
 
@@ -310,7 +319,7 @@ export function BtwMeasuredGuide({ rawPages }: { rawPages: BtwPage[] }) {
         />
       )
     }
-    return <PageOverflowFixer pages={packedPages} rawPages={rawPages} onReady={setPages} />
+    return <PageOverflowFixer pages={packedPages} rawPages={rawPages} guide={guide} onReady={setPages} />
   }
 
   return (
@@ -322,6 +331,7 @@ export function BtwMeasuredGuide({ rawPages }: { rawPages: BtwPage[] }) {
           layout={pg.layout ?? 'flow'}
           blocks={pg.blocks}
           runningHeadRight={deriveRunningHead(enriched, idx)}
+          guide={guide}
         />
       ))}
     </>

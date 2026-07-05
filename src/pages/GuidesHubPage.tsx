@@ -8,6 +8,9 @@ import ShareButton from '../components/ShareButton';
 import { ArrowRight, BookOpen, FileText, Rss, ChevronDown, ChevronUp } from 'lucide-react';
 import { client } from '../sanityClient';
 
+import { BTW_META } from '../built-to-work/types';
+import { BTS_META } from '../built-to-sell/types';
+
 type HubGuide = {
   title: string;
   subtitle?: string;
@@ -21,6 +24,24 @@ const PHASE_2_SERVICES = ['AI Assistants', 'Content Systems', 'Team Training'];
 const PHASE_3_SERVICES = ['Dashboards & Reporting'];
 
 const GUIDES_HUB_URL = `${SITE_ORIGIN}/guides`;
+
+/** Code-defined premium guides (not Sanity CMS). */
+const FEATURED_CODE_GUIDES = [
+  {
+    path: '/guides/built-to-work',
+    badge: 'Premium guide · 12 chapters',
+    title: BTW_META.title,
+    subtitle: BTW_META.subtitle,
+  },
+  {
+    path: '/guides/built-to-sell',
+    badge: 'Premium guide · 12 chapters · E-commerce',
+    title: BTS_META.title,
+    subtitle: BTS_META.subtitle,
+  },
+] as const;
+
+const CODE_GUIDE_SLUGS = new Set(['built-to-work', 'built-to-sell']);
 
 const guidesHubCollectionJsonLd = {
   '@context': 'https://schema.org',
@@ -112,7 +133,11 @@ export default function GuidesHubPage() {
 
   const filteredGuides = useMemo(() => {
     return guides
-      .filter(guide => matchesFilter(guide.servicePillar, activeFilter))
+      .filter((guide) => {
+        const slug = guide.slug?.current ?? '';
+        if (CODE_GUIDE_SLUGS.has(slug)) return false;
+        return matchesFilter(guide.servicePillar, activeFilter);
+      })
       .slice(0, 10);
   }, [guides, activeFilter]);
 
@@ -154,34 +179,36 @@ export default function GuidesHubPage() {
           </m.div>
         </section>
 
-        {/* FEATURED — Built to Work */}
-        <section className="px-6 md:px-12 max-w-5xl mx-auto mb-16 md:mb-20 relative z-10">
-          <div className="mb-6 border-b-2 border-dark pb-4">
+        {/* FEATURED — premium field guides */}
+        <section className="px-6 md:px-12 max-w-5xl mx-auto mb-12 md:mb-14 relative z-10">
+          <div className="mb-5 border-b border-black/10 pb-3">
             <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark">/ Featured</span>
           </div>
-          <Link
-            to="/guides/built-to-work"
-            className="group block border-2 border-[#1a1a1a] bg-[#1B1714] text-[#FFF2EC] p-8 md:p-12 shadow-[8px_8px_0px_0px_#1a1a1a] hover:shadow-[12px_12px_0px_0px_#C5A059] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden"
-          >
-            <div className="absolute top-0 left-0 w-full h-1 bg-[#C5A059] scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500" />
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 relative z-10">
-              <div className="max-w-2xl">
-                <span className="font-mono text-[10px] font-bold uppercase tracking-[0.25em] text-[#D4A84B] mb-4 block">
-                  Premium guide · 12 chapters
-                </span>
-                <h2 className="font-serif text-3xl md:text-5xl text-[#FFF2EC] mb-4 group-hover:text-[#D4A84B] transition-colors leading-tight">
-                  Built to Work
-                </h2>
-                <p className="font-serif text-base md:text-lg italic text-[#FFF2EC]/70 leading-relaxed">
-                  How websites really work now, and why the businesses that adapt pull ahead.
-                </p>
-              </div>
-              <div className="shrink-0 flex items-center gap-3 border-2 border-[#FFF2EC]/30 px-6 py-4 font-mono text-[11px] font-bold uppercase tracking-widest text-[#FFF2EC] group-hover:border-[#D4A84B] group-hover:text-[#D4A84B] transition-colors">
-                Read the guide
-                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-              </div>
-            </div>
-          </Link>
+          <div className="flex flex-col gap-4 md:gap-5">
+            {FEATURED_CODE_GUIDES.map((guide) => (
+              <Link
+                key={guide.path}
+                to={guide.path}
+                className="group flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5 rounded-2xl border border-[#C5A059]/25 bg-[#1a1816] px-6 py-5 md:px-8 md:py-6 shadow-[0_6px_28px_rgba(17,17,17,0.14),0_2px_8px_rgba(17,17,17,0.08)] hover:border-[#C5A059]/50 hover:bg-[#1e1b18] hover:shadow-[0_10px_36px_rgba(17,17,17,0.18),0_4px_16px_rgba(197,160,89,0.12)] hover:-translate-y-px transition-all duration-300"
+              >
+                <div className="flex-1 min-w-0">
+                  <span className="font-mono text-[10px] font-bold uppercase tracking-[0.25em] text-[#D4A84B] mb-2.5 block">
+                    {guide.badge}
+                  </span>
+                  <h2 className="font-serif text-2xl md:text-[1.75rem] text-[#FFF2EC] mb-2 group-hover:text-[#D4A84B] transition-colors leading-tight">
+                    {guide.title}
+                  </h2>
+                  <p className="font-serif text-sm md:text-base italic text-[#FFF2EC]/65 leading-relaxed">
+                    {guide.subtitle}
+                  </p>
+                </div>
+                <div className="shrink-0 flex items-center gap-2 border border-[#FFF2EC]/30 px-4 py-2.5 font-mono text-[10px] font-bold uppercase tracking-widest text-[#FFF2EC] shadow-[inset_0_1px_0_rgba(255,242,236,0.06)] group-hover:border-[#D4A84B] group-hover:text-[#D4A84B] group-hover:shadow-[0_2px_12px_rgba(197,160,89,0.15)] transition-all duration-300 sm:self-end">
+                  Read the guide
+                  <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+                </div>
+              </Link>
+            ))}
+          </div>
         </section>
 
         {/* FILTER SYSTEM */}

@@ -38,7 +38,7 @@ import {
   btsChapterPath,
   extractGlossaryFaqs as extractBtsGlossaryFaqs,
 } from '../../src/built-to-sell/chapter-seo';
-import { BTS_CHAPTER_COVERS } from '../../src/built-to-sell/chapter-covers';
+import { BTS_CHAPTER_COVERS, BTS_HUB_OG } from '../../src/built-to-sell/chapter-covers';
 import { BTS_META } from '../../src/built-to-sell/types';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -388,6 +388,7 @@ function btsHubJsonLd(hubRoute) {
     name: hubRoute.title,
     description: hubRoute.description,
     url: canonical,
+    image: `${BASE_URL}${BTS_HUB_OG}`,
     inLanguage: 'en-AU',
   };
   const crumb = breadcrumbJsonLd([

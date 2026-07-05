@@ -4,6 +4,16 @@ import { BTW_PRINT_PAGE_SHELL } from '../styles'
 import { BTW_TOKENS } from '../tokens'
 import type { BtwBlock, BtwPage, BtwPageLayout } from '../types'
 
+export type BtwGuideBookOptions = {
+  runningHeadTitle: string
+  chapterCovers: Record<number, { src: string; alt: string }>
+}
+
+const DEFAULT_GUIDE_OPTIONS: BtwGuideBookOptions = {
+  runningHeadTitle: 'Built to Work',
+  chapterCovers: BTW_CHAPTER_COVERS,
+}
+
 const CHAPTER_WORDS = [
   'ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX',
   'SEVEN', 'EIGHT', 'NINE', 'TEN', 'ELEVEN', 'TWELVE',
@@ -14,6 +24,7 @@ type Props = {
   layout?: BtwPageLayout
   blocks?: BtwPage['blocks']
   runningHeadRight?: string
+  guide?: BtwGuideBookOptions
 }
 
 function ImagePlaceholderIcon() {
@@ -26,13 +37,19 @@ function ImagePlaceholderIcon() {
   )
 }
 
-export function BtwChapterOpenerPage({ blocks }: { blocks: BtwBlock[] }) {
+export function BtwChapterOpenerPage({
+  blocks,
+  chapterCovers = BTW_CHAPTER_COVERS,
+}: {
+  blocks: BtwBlock[]
+  chapterCovers?: Record<number, { src: string; alt: string }>
+}) {
   const block = blocks.find((b) => b.type === 'chapterOpener')
   if (!block || block.type !== 'chapterOpener') return null
 
   const chapterLabel = `/ CHAPTER ${CHAPTER_WORDS[block.num - 1] ?? String(block.num).padStart(2, '0')}`
   const numeral = String(block.num).padStart(2, '0')
-  const cover = BTW_CHAPTER_COVERS[block.num]
+  const cover = chapterCovers[block.num]
   const imageSrc = block.imageSrc ?? cover?.src
   const imageAlt = block.imageAlt ?? cover?.alt ?? ''
 
@@ -109,9 +126,11 @@ export function BtwChapterOpenerPage({ blocks }: { blocks: BtwBlock[] }) {
   )
 }
 
-export function BtwPageShell({ pageIndex, layout = 'flow', blocks, runningHeadRight }: Props) {
+export function BtwPageShell({ pageIndex, layout = 'flow', blocks, runningHeadRight, guide }: Props) {
+  const { runningHeadTitle, chapterCovers } = guide ?? DEFAULT_GUIDE_OPTIONS
+
   if (layout === 'opener' && blocks) {
-    return <BtwChapterOpenerPage blocks={blocks} />
+    return <BtwChapterOpenerPage blocks={blocks} chapterCovers={chapterCovers} />
   }
 
   const isContents = layout === 'contents'
@@ -128,7 +147,7 @@ export function BtwPageShell({ pageIndex, layout = 'flow', blocks, runningHeadRi
             className="btw-running-head flex justify-between items-center pb-3.5 mb-[clamp(28px,4vw,44px)] font-mono text-[10px] font-bold uppercase tracking-[0.2em]"
             style={{ borderBottom: '1px solid rgba(26,26,26,0.12)', color: 'rgba(26,26,26,0.45)' }}
           >
-            <span>Built to Work</span>
+            <span>{runningHeadTitle}</span>
             <span>{runningHeadRight}</span>
           </header>
         ) : null}

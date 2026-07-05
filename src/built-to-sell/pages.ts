@@ -1,4 +1,38 @@
 import type { BtwPage } from './types'
+import { frontPages } from './chapters/front'
+import { ch01Pages } from './chapters/ch01'
+import { ch02Pages } from './chapters/ch02'
+import { ch03Pages } from './chapters/ch03'
+import { ch04Pages } from './chapters/ch04'
+import { ch05Pages } from './chapters/ch05'
+import { ch06Pages } from './chapters/ch06'
+import { ch07Pages } from './chapters/ch07'
+import { ch08Pages } from './chapters/ch08'
+import { ch09Pages } from './chapters/ch09'
+import { ch10Pages } from './chapters/ch10'
+import { ch11Pages } from './chapters/ch11'
+import { ch12Pages } from './chapters/ch12'
 
-/** Full A4 book pagination — populated as chapters are authored. */
-export const BTS_CONTENT_PAGES: BtwPage[] = []
+export const BTS_RAW_CONTENT_PAGES: BtwPage[] = [
+  ...frontPages,
+  ...ch01Pages,
+  ...ch02Pages,
+  ...ch03Pages,
+  ...ch04Pages,
+  ...ch05Pages,
+  ...ch06Pages,
+  ...ch07Pages,
+  ...ch08Pages,
+  ...ch09Pages,
+  ...ch10Pages,
+  ...ch11Pages,
+  ...ch12Pages,
+]
+
+/** Author-defined pages; flow sections are paginated at render time via DOM measurement. */
+export const BTS_CONTENT_PAGES: BtwPage[] = BTS_RAW_CONTENT_PAGES
+
+/** Cover (1) + content + closing (1). */
+export function btsTotalPages(contentCount: number): number {
+  return 1 + contentCount + 1
+}

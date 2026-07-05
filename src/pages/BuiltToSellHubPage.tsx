@@ -9,6 +9,7 @@ import {
 } from '../built-to-sell/chapter-seo'
 import { BtsPdfCta } from '../built-to-sell/components/BtsPdfCta'
 import { BTS_META } from '../built-to-sell/types'
+import { BTS_HUB_OG } from '../built-to-sell/chapter-covers'
 
 export default function BuiltToSellHubPage() {
   const hubUrl = `${SITE_ORIGIN}${BTS_HUB_PATH}`
@@ -21,7 +22,7 @@ export default function BuiltToSellHubPage() {
         title={htmlTitle}
         description={description}
         canonical={hubUrl}
-        ogImage={`${SITE_ORIGIN}/images/og-sysbilt.png`}
+        ogImage={`${SITE_ORIGIN}${BTS_HUB_OG}`}
       />
       {/* JSON-LD (CollectionPage + BreadcrumbList) is stamped into static HTML at build time. */}
 
