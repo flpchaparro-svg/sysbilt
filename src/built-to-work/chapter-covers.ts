@@ -4,8 +4,8 @@ export const BTW_CHAPTER_COVERS: Record<
   { src: string; alt: string }
 > = {
   1: {
-    src: '/images/built-to-work/chapters/ch01.png',
-    alt: 'A business website shown on a phone held in a softly lit workspace.',
+    src: '/images/built-to-work/chapters/ch01.webp',
+    alt: 'A business website on a phone and laptop in a softly lit workspace.',
   },
   2: {
     src: '/images/built-to-work/chapters/ch02.webp',
@@ -13,7 +13,7 @@ export const BTW_CHAPTER_COVERS: Record<
   },
   3: {
     src: '/images/built-to-work/chapters/ch03.webp',
-    alt: 'A website layout sketched on paper on a dark desk.',
+    alt: 'A hand-drawn website wireframe on paper on a dark desk.',
   },
   4: {
     src: '/images/built-to-work/chapters/ch04.webp',
@@ -25,7 +25,7 @@ export const BTW_CHAPTER_COVERS: Record<
   },
   6: {
     src: '/images/built-to-work/chapters/ch06.webp',
-    alt: 'A calm morning desk with coffee, a phone and a notebook.',
+    alt: 'A desk with coffee, a phone and an open notebook in warm light.',
   },
   7: {
     src: '/images/built-to-work/chapters/ch07.webp',
@@ -33,7 +33,7 @@ export const BTW_CHAPTER_COVERS: Record<
   },
   8: {
     src: '/images/built-to-work/chapters/ch08.webp',
-    alt: 'A single lit marker standing out on a dark map.',
+    alt: 'A glowing location pin on a dark map, lit warmly from above.',
   },
   9: {
     src: '/images/built-to-work/chapters/ch09.webp',
@@ -45,7 +45,7 @@ export const BTW_CHAPTER_COVERS: Record<
   },
   11: {
     src: '/images/built-to-work/chapters/ch11.webp',
-    alt: 'A hand at a keyboard lit by a soft glow in a dark room.',
+    alt: 'Hands typing on a backlit keyboard in a softly lit workspace.',
   },
   12: {
     src: '/images/built-to-work/chapters/ch12.webp',
