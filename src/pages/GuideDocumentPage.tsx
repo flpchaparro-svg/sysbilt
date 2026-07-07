@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useState} from 'react'
+import React, {useCallback, useEffect, useMemo, useState} from 'react'
 import {useParams, Link} from 'react-router-dom'
 import {ArrowLeft} from 'lucide-react'
 import {client, urlFor} from '../sanityClient'
@@ -8,7 +8,6 @@ import {SITE_ORIGIN} from '../constants/seoMeta'
 import {SysbiltLogo} from '../components/SysbiltLogo'
 import ShareButton from '../components/ShareButton'
 import {GuideGateForm} from '../components/GuideGateForm'
-
 // --- Types aligned with Sanity `guide` + `guideBlockContent` ---
 
 type MarkDef = {
@@ -743,14 +742,12 @@ function NoiseLayer() {
   )
 }
 
-function CoverPage({ guideData }: { guideData: GuideDocument }) {
+function CoverPage({guideData, onRequestPdf}: {guideData: GuideDocument; onRequestPdf: () => void}) {
   const [showModal, setShowModal] = useState(false);
 
   const handlePrint = () => {
     setShowModal(false);
-    setTimeout(() => {
-      window.print();
-    }, 100);
+    onRequestPdf();
   };
 
   return (
@@ -780,7 +777,7 @@ function CoverPage({ guideData }: { guideData: GuideDocument }) {
             </button>
             
             <h3 className="font-serif text-[22px] font-semibold text-[#1a1a1a] mb-2 mt-2">How to save?</h3>
-            <p className="font-sans text-[14px] text-[#1a1a1a]/60 mb-6">Choose how you want to keep or share this guide.</p>
+            <p className="font-sans text-[14px] text-[#1a1a1a]/60 mb-6">Share the link free, or download the PDF edition.</p>
             
             <div className="flex flex-col gap-3">
               <div className="relative rounded-2xl border border-white/50 bg-gradient-to-b from-white/40 to-[#FFF8F5]/80 px-2 py-3 shadow-neu-inner overflow-hidden">
@@ -814,7 +811,7 @@ function CoverPage({ guideData }: { guideData: GuideDocument }) {
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
                 </svg>
-                Print
+                Download PDF
               </button>
             </div>
           </div>
@@ -844,6 +841,90 @@ function CoverPage({ guideData }: { guideData: GuideDocument }) {
               {guideData.coverLegend?.trim() || DEFAULT_COVER_LEGEND}
             </p>
          </div>
+      </div>
+    </div>
+  )
+}
+
+function triggerGuidePrint() {
+  setTimeout(() => window.print(), 150)
+}
+
+function isKnownSysbiltUser(): boolean {
+  if (typeof window === 'undefined') return false
+  return localStorage.getItem('sysbilt_known_user') === 'true'
+}
+
+type GuidePdfEditionCtaProps = {
+  guideName: string
+  onRequestPdf: () => void
+}
+
+function GuidePdfEditionCta({guideName, onRequestPdf}: GuidePdfEditionCtaProps) {
+  return (
+    <aside
+      className="print:hidden w-full max-w-[794px] border-2 border-[#1a1a1a] bg-[#1a1a1a] p-6 md:p-8 shadow-[8px_8px_0px_0px_rgba(26,26,26,0.15)] text-[#FFF2EC]"
+      aria-label="Download PDF edition"
+    >
+      <div className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-[#D4A84B] mb-2">
+        / PDF edition
+      </div>
+      <h2 className="font-serif text-xl md:text-2xl font-semibold text-[#FFF2EC] mb-3 m-0">
+        Save this guide as a PDF
+      </h2>
+      <p className="font-sans text-[15px] leading-relaxed text-[#FFF2EC]/75 mb-5 m-0 max-w-prose">
+        Read free on the web above. Enter your details once to open the print dialog and save the full A4 edition of{' '}
+        <span className="text-[#FFF2EC]">{guideName}</span>.
+      </p>
+      <button
+        type="button"
+        onClick={onRequestPdf}
+        className="inline-flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-[0.18em] border-2 border-[#D4A84B] bg-[#D4A84B] text-[#1a1a1a] px-5 py-3 hover:opacity-90 transition-opacity"
+      >
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+          />
+        </svg>
+        Download the PDF edition
+      </button>
+    </aside>
+  )
+}
+
+type GuidePdfGateModalProps = {
+  guideSlug: string
+  guideName: string
+  onClose: () => void
+  onSuccess: () => void
+}
+
+function GuidePdfGateModal({guideSlug, guideName, onClose, onSuccess}: GuidePdfGateModalProps) {
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#1a1a1a]/50 backdrop-blur-sm p-4 print:hidden">
+      <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute top-4 right-4 z-10 text-white/50 hover:text-white transition-colors"
+          aria-label="Close"
+        >
+          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+        <GuideGateForm
+          guideSlug={guideSlug}
+          guideName={guideName}
+          variant="pdf"
+          onSuccess={() => {
+            onClose()
+            onSuccess()
+          }}
+        />
       </div>
     </div>
   )
@@ -1071,11 +1152,15 @@ export default function GuideDocumentPage() {
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
   const [fetchError, setFetchError] = useState(false)
-  // UNIVERSAL UNLOCK: If they ever filled out ANY form, unlock all guides forever
-  const [isUnlocked, setIsUnlocked] = useState(() => {
-    if (typeof window === 'undefined') return false;
-    return localStorage.getItem('sysbilt_known_user') === 'true';
-  });
+  const [showPdfGate, setShowPdfGate] = useState(false)
+
+  const requestPdfDownload = useCallback(() => {
+    if (isKnownSysbiltUser()) {
+      triggerGuidePrint()
+      return
+    }
+    setShowPdfGate(true)
+  }, [])
 
   useEffect(() => {
     if (!slug?.trim()) {
@@ -1134,7 +1219,6 @@ export default function GuideDocumentPage() {
   const includeCtaPage = guideData?.includeCtaPage !== false
   const totalPages = 1 + pages.length + (includeCtaPage ? 1 : 0)
 
-  // SPLIT THE PAGES INTO CONTENT AND CTA SO WE CAN HIDE THEM
   const { contentPages, ctaEndPage } = useMemo(() => {
     const contentPages = pages.map((page, idx) => {
       const blocks = page.content ?? []
@@ -1290,28 +1374,25 @@ export default function GuideDocumentPage() {
           </div>
         </nav>
         
-        {/* COVER PAGE ALWAYS VISIBLE */}
-        {guideData && <CoverPage guideData={guideData} />}
+        {guideData && <CoverPage guideData={guideData} onRequestPdf={requestPdfDownload} />}
 
-        {/* THE GATE */}
-        {!isUnlocked && guideData && (
-          <div className="w-full max-w-[794px] relative z-20 -mt-16 md:-mt-24 print:hidden">
-            <GuideGateForm 
-              guideSlug={guideSlug}
-              guideName={guideData.title}
-              onSuccess={() => setIsUnlocked(true)}
-            />
-          </div>
-        )}
+        {contentPages}
+        {ctaEndPage}
 
-        {/* UNLOCKED CONTENT */}
-        {isUnlocked && (
-          <>
-            {contentPages}
-            {ctaEndPage}
-          </>
-        )}
+        <GuidePdfEditionCta
+          guideName={guideData.title}
+          onRequestPdf={requestPdfDownload}
+        />
       </div>
+
+      {showPdfGate ? (
+        <GuidePdfGateModal
+          guideSlug={guideSlug}
+          guideName={guideData.title}
+          onClose={() => setShowPdfGate(false)}
+          onSuccess={triggerGuidePrint}
+        />
+      ) : null}
     </div>
   )
 }

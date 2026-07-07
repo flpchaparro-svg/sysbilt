@@ -5,6 +5,8 @@ interface GuideGateFormProps {
   guideName: string;
   pdfUrl?: string;
   onSuccess?: () => void;
+  /** `unlock` = gated full guide (premium /read). `pdf` = PDF download after public read. */
+  variant?: 'unlock' | 'pdf';
 }
 
 const HUBSPOT_PORTAL_ID = '442914926';
@@ -48,6 +50,7 @@ export const GuideGateForm: React.FC<GuideGateFormProps> = ({
   guideName,
   pdfUrl,
   onSuccess,
+  variant = 'unlock',
 }) => {
   const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
@@ -55,6 +58,17 @@ export const GuideGateForm: React.FC<GuideGateFormProps> = ({
   const [honeypot, setHoneypot] = useState('');
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+
+  const isPdf = variant === 'pdf';
+  const formTitle = isPdf ? 'Get the PDF edition' : 'Get the full guide';
+  const formDescription = isPdf
+    ? `First name and email — we will open the print dialog so you can save ${guideName} as a PDF. You can read the full guide on this page anytime.`
+    : "First name and email, that is all we need. We'll unlock the guide instantly and send a backup copy to your inbox.";
+  const submitLabel = isPdf ? 'Download PDF' : `Read ${guideName}`;
+  const submittingLabel = isPdf ? 'Preparing PDF...' : 'Unlocking...';
+  const consentText = isPdf
+    ? `I agree to receive the ${guideName} PDF and weekly SYSBILT updates.`
+    : `I agree to receive ${guideName} and weekly SYSBILT updates.`;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -91,7 +105,7 @@ export const GuideGateForm: React.FC<GuideGateFormProps> = ({
       legalConsentOptions: {
         consent: {
           consentToProcess: true,
-          text: `I agree to receive ${guideName} and weekly SYSBILT updates.`,
+          text: consentText,
           communications: [
             {
               value: true,
@@ -137,10 +151,12 @@ export const GuideGateForm: React.FC<GuideGateFormProps> = ({
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h3 className="font-serif text-3xl mb-4">Access Granted</h3>
+        <h3 className="font-serif text-3xl mb-4">{isPdf ? 'Ready to save' : 'Access Granted'}</h3>
         <p className="font-sans text-white/80 mb-6">
           {onSuccess
-            ? 'Unlocking your guide now...'
+            ? isPdf
+              ? 'Opening print dialog… Choose Save as PDF in the next step.'
+              : 'Unlocking your guide now...'
             : 'Click below to open your guide. We have also sent a copy to your inbox.'}
         </p>
         {!onSuccess && pdfUrl && (
@@ -164,9 +180,9 @@ export const GuideGateForm: React.FC<GuideGateFormProps> = ({
     >
       <div className="absolute top-0 left-0 w-full h-1.5 bg-red-solid scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-700 ease-out" />
 
-      <h3 className="font-serif text-3xl md:text-4xl mb-4">Get the full guide</h3>
+      <h3 className="font-serif text-3xl md:text-4xl mb-4">{formTitle}</h3>
       <p className="font-sans text-white/70 mb-8 border-l-2 border-gold pl-4 max-w-md">
-        First name and email, that is all we need. We'll unlock the guide instantly and send a backup copy to your inbox.
+        {formDescription}
       </p>
 
       <input
@@ -221,7 +237,7 @@ export const GuideGateForm: React.FC<GuideGateFormProps> = ({
           disabled={status === 'submitting'}
           className="w-full font-mono text-xs md:text-sm font-bold uppercase border-2 border-dark bg-gold-on-dark text-dark px-6 py-4 hover:opacity-90 transition-opacity mt-4"
         >
-          {status === 'submitting' ? 'Unlocking...' : `Read ${guideName}`}
+          {status === 'submitting' ? submittingLabel : submitLabel}
         </button>
       </div>
     </form>
