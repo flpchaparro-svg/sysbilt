@@ -12,6 +12,7 @@ import {
   pillarLabel,
 } from '../built-to-sell/chapter-seo'
 import { BTS_CHAPTER_COVERS } from '../built-to-sell/chapter-covers'
+import { chapterCoverWebSrc } from '../guides/chapter-cover-types'
 import { BtwFlowList } from '../built-to-work/components/BtwBlocks'
 import { BtsPdfCta } from '../built-to-sell/components/BtsPdfCta'
 import { GuideChapterNav } from '../components/GuideChapterNav'
@@ -40,7 +41,7 @@ export default function BtsChapterArticlePage() {
         title={htmlTitle}
         description={chapter.seoDescription}
         canonical={canonical}
-        ogImage={cover ? `${SITE_ORIGIN}${cover.src}` : `${SITE_ORIGIN}/images/og-sysbilt.png`}
+        ogImage={cover ? `${SITE_ORIGIN}${chapterCoverWebSrc(cover)}` : `${SITE_ORIGIN}/images/og-sysbilt.png`}
       />
       {/* JSON-LD (Article + BreadcrumbList + glossary FAQPage on ch12) is stamped at build time. */}
 
@@ -67,7 +68,7 @@ export default function BtsChapterArticlePage() {
         {cover ? (
           <div className="relative mb-10 aspect-[16/9] overflow-hidden rounded-sm bg-[#111111]">
             <img
-              src={cover.src}
+              src={chapterCoverWebSrc(cover)}
               alt={cover.alt}
               className="absolute inset-0 h-full w-full object-cover object-center"
               decoding="async"

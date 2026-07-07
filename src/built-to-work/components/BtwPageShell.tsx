@@ -1,12 +1,14 @@
 import { BtwBlocks, BtwFlowList } from './BtwBlocks'
 import { BTW_CHAPTER_COVERS } from '../chapter-covers'
+import type { GuideChapterCover } from '../../guides/chapter-cover-types'
+import { chapterCoverPrintSrc } from '../../guides/chapter-cover-types'
 import { BTW_PRINT_PAGE_CREAM, BTW_PRINT_PAGE_DARK } from '../styles'
 import { BTW_TOKENS } from '../tokens'
 import type { BtwBlock, BtwPage, BtwPageLayout } from '../types'
 
 export type BtwGuideBookOptions = {
   runningHeadTitle: string
-  chapterCovers: Record<number, { src: string; alt: string }>
+  chapterCovers: Record<number, GuideChapterCover>
 }
 
 const DEFAULT_GUIDE_OPTIONS: BtwGuideBookOptions = {
@@ -42,7 +44,7 @@ export function BtwChapterOpenerPage({
   chapterCovers = BTW_CHAPTER_COVERS,
 }: {
   blocks: BtwBlock[]
-  chapterCovers?: Record<number, { src: string; alt: string }>
+  chapterCovers?: Record<number, GuideChapterCover>
 }) {
   const block = blocks.find((b) => b.type === 'chapterOpener')
   if (!block || block.type !== 'chapterOpener') return null
@@ -50,7 +52,7 @@ export function BtwChapterOpenerPage({
   const chapterLabel = `/ CHAPTER ${CHAPTER_WORDS[block.num - 1] ?? String(block.num).padStart(2, '0')}`
   const numeral = String(block.num).padStart(2, '0')
   const cover = chapterCovers[block.num]
-  const imageSrc = block.imageSrc ?? cover?.src
+  const imageSrc = block.imageSrc ?? (cover ? chapterCoverPrintSrc(cover) : undefined)
   const imageAlt = block.imageAlt ?? cover?.alt ?? ''
 
   return (

@@ -12,6 +12,7 @@ import {
   pillarLabel,
 } from '../built-to-see/chapter-seo'
 import { BSE_CHAPTER_COVERS } from '../built-to-see/chapter-covers'
+import { chapterCoverWebSrc } from '../guides/chapter-cover-types'
 import { BtwFlowList } from '../built-to-work/components/BtwBlocks'
 import { BsePdfCta } from '../built-to-see/components/BsePdfCta'
 import { GuideChapterNav } from '../components/GuideChapterNav'
@@ -40,7 +41,7 @@ export default function BseChapterArticlePage() {
         title={htmlTitle}
         description={chapter.seoDescription}
         canonical={canonical}
-        ogImage={cover ? `${SITE_ORIGIN}${cover.src}` : `${SITE_ORIGIN}/images/og-sysbilt.png`}
+        ogImage={cover ? `${SITE_ORIGIN}${chapterCoverWebSrc(cover)}` : `${SITE_ORIGIN}/images/og-sysbilt.png`}
       />
 
       <article className="mx-auto w-full max-w-[720px] px-4 md:px-6">
@@ -66,7 +67,7 @@ export default function BseChapterArticlePage() {
         {cover ? (
           <div className="relative mb-10 aspect-[16/9] overflow-hidden rounded-sm bg-[#111111]">
             <img
-              src={cover.src}
+              src={chapterCoverWebSrc(cover)}
               alt={cover.alt}
               className="absolute inset-0 h-full w-full object-cover object-center"
               decoding="async"

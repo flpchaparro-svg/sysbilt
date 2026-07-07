@@ -542,7 +542,7 @@ function btwChapterJsonLd(slug) {
   if (!chapter) return [];
   const canonical = `${BASE_URL}${btwChapterPath(chapter.slug)}`;
   const cover = BTW_CHAPTER_COVERS[chapter.num];
-  const image = cover ? `${BASE_URL}${cover.src}` : `${BASE_URL}/images/og-sysbilt.png`;
+  const image = cover ? `${BASE_URL}${cover.webSrc}` : `${BASE_URL}/images/og-sysbilt.png`;
   const article = {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -596,7 +596,7 @@ function btsChapterJsonLd(slug) {
   if (!chapter) return [];
   const canonical = `${BASE_URL}${btsChapterPath(chapter.slug)}`;
   const cover = BTS_CHAPTER_COVERS[chapter.num];
-  const image = cover ? `${BASE_URL}${cover.src}` : `${BASE_URL}/images/og-sysbilt.png`;
+  const image = cover ? `${BASE_URL}${cover.webSrc}` : `${BASE_URL}/images/og-sysbilt.png`;
   const article = {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -651,7 +651,7 @@ function btcChapterJsonLd(slug) {
   if (!chapter) return [];
   const canonical = `${BASE_URL}${btcChapterPath(chapter.slug)}`;
   const cover = BTC_CHAPTER_COVERS[chapter.num];
-  const image = cover ? `${BASE_URL}${cover.src}` : `${BASE_URL}/images/og-sysbilt.png`;
+  const image = cover ? `${BASE_URL}${cover.webSrc}` : `${BASE_URL}/images/og-sysbilt.png`;
   const article = {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -706,7 +706,7 @@ function btrChapterJsonLd(slug) {
   if (!chapter) return [];
   const canonical = `${BASE_URL}${btrChapterPath(chapter.slug)}`;
   const cover = BTR_CHAPTER_COVERS[chapter.num];
-  const image = cover ? `${BASE_URL}${cover.src}` : `${BASE_URL}/images/og-sysbilt.png`;
+  const image = cover ? `${BASE_URL}${cover.webSrc}` : `${BASE_URL}/images/og-sysbilt.png`;
   const article = {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -761,7 +761,7 @@ function bttChapterJsonLd(slug) {
   if (!chapter) return [];
   const canonical = `${BASE_URL}${bttChapterPath(chapter.slug)}`;
   const cover = BTT_CHAPTER_COVERS[chapter.num];
-  const image = cover ? `${BASE_URL}${cover.src}` : `${BASE_URL}/images/og-sysbilt.png`;
+  const image = cover ? `${BASE_URL}${cover.webSrc}` : `${BASE_URL}/images/og-sysbilt.png`;
   const article = {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -816,7 +816,7 @@ function btmChapterJsonLd(slug) {
   if (!chapter) return [];
   const canonical = `${BASE_URL}${btmChapterPath(chapter.slug)}`;
   const cover = BTM_CHAPTER_COVERS[chapter.num];
-  const image = cover ? `${BASE_URL}${cover.src}` : `${BASE_URL}/images/og-sysbilt.png`;
+  const image = cover ? `${BASE_URL}${cover.webSrc}` : `${BASE_URL}/images/og-sysbilt.png`;
   const article = {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -871,7 +871,7 @@ function bteChapterJsonLd(slug) {
   if (!chapter) return [];
   const canonical = `${BASE_URL}${bteChapterPath(chapter.slug)}`;
   const cover = BTE_CHAPTER_COVERS[chapter.num];
-  const image = cover ? `${BASE_URL}${cover.src}` : `${BASE_URL}/images/og-sysbilt.png`;
+  const image = cover ? `${BASE_URL}${cover.webSrc}` : `${BASE_URL}/images/og-sysbilt.png`;
   const article = {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -926,7 +926,7 @@ function bseChapterJsonLd(slug) {
   if (!chapter) return [];
   const canonical = `${BASE_URL}${bseChapterPath(chapter.slug)}`;
   const cover = BSE_CHAPTER_COVERS[chapter.num];
-  const image = cover ? `${BASE_URL}${cover.src}` : `${BASE_URL}/images/og-sysbilt.png`;
+  const image = cover ? `${BASE_URL}${cover.webSrc}` : `${BASE_URL}/images/og-sysbilt.png`;
   const article = {
     '@context': 'https://schema.org',
     '@type': 'Article',
