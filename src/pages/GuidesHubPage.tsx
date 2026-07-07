@@ -85,6 +85,67 @@ const FEATURED_CODE_GUIDES = [
 
 const CODE_GUIDE_SLUGS = new Set(['built-to-work', 'built-to-sell', 'built-to-close', 'built-to-run', 'built-to-think', 'built-to-multiply', 'built-to-teach', 'built-to-see']);
 
+const FEATURED_INITIAL_VISIBLE = 2;
+const GRID_INITIAL_VISIBLE = 4;
+const LOAD_MORE_STEP = 4;
+
+function ShowMoreButton({
+  expanded,
+  hiddenCount,
+  onClick,
+  variant,
+  canCollapse = false,
+}: {
+  expanded: boolean;
+  hiddenCount: number;
+  onClick: () => void;
+  variant: 'featured' | 'card';
+  canCollapse?: boolean;
+}) {
+  const showLess = expanded && hiddenCount <= 0 && canCollapse;
+  if (hiddenCount <= 0 && !showLess) return null;
+
+  const label = showLess ? 'Show less' : `Show ${hiddenCount} more`;
+  const Icon = showLess ? ChevronUp : ChevronDown;
+
+  if (variant === 'featured') {
+    return (
+      <div className="mt-6 md:mt-8">
+        <button
+          type="button"
+          onClick={onClick}
+          aria-expanded={expanded}
+          className="group w-full flex items-center justify-center gap-3 rounded-[28px] bg-cream px-8 py-6 shadow-neu border border-white/40 transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(17,17,17,0.08)]"
+        >
+          <span className="font-serif text-lg md:text-xl text-dark group-hover:text-red-text transition-colors">
+            {label}
+          </span>
+          <Icon className="w-4 h-4 text-gold-on-cream group-hover:text-red-text transition-colors" />
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-10 md:mt-12 col-span-1 md:col-span-2">
+      <button
+        type="button"
+        onClick={onClick}
+        aria-expanded={expanded}
+        className="group w-full flex flex-col items-center justify-center gap-3 rounded-[28px] bg-cream px-8 py-10 shadow-neu border border-white/40 transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(17,17,17,0.08)]"
+      >
+        <span className="font-serif text-xl md:text-2xl text-dark group-hover:text-red-text transition-colors">
+          {label}
+        </span>
+        <span className="flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-dark/45 group-hover:text-gold-on-cream transition-colors">
+          {showLess ? 'Back to the first two' : 'Load the next guides'}
+          <Icon className="w-3.5 h-3.5" />
+        </span>
+      </button>
+    </div>
+  );
+}
+
 const guidesHubCollectionJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'CollectionPage',
@@ -152,6 +213,8 @@ export default function GuidesHubPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState('All Guides');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [featuredExpanded, setFeaturedExpanded] = useState(false);
+  const [visibleGuideCount, setVisibleGuideCount] = useState(GRID_INITIAL_VISIBLE);
 
   useEffect(() => {
     const query = `*[_type == "guide"] | order(publishedAt desc) {
@@ -167,6 +230,10 @@ export default function GuidesHubPage() {
     });
   }, []);
 
+  useEffect(() => {
+    setVisibleGuideCount(GRID_INITIAL_VISIBLE);
+  }, [activeFilter]);
+
   const filterRows = [
     ['Website & E-commerce', 'CRM & Lead Tracking', 'Automation', 'Get Clients'],
     ['AI Assistants', 'Content Systems', 'Team Training', 'Scale Faster'],
@@ -174,14 +241,21 @@ export default function GuidesHubPage() {
   ];
 
   const filteredGuides = useMemo(() => {
-    return guides
-      .filter((guide) => {
-        const slug = guide.slug?.current ?? '';
-        if (CODE_GUIDE_SLUGS.has(slug)) return false;
-        return matchesFilter(guide.servicePillar, activeFilter);
-      })
-      .slice(0, 10);
+    return guides.filter((guide) => {
+      const slug = guide.slug?.current ?? '';
+      if (CODE_GUIDE_SLUGS.has(slug)) return false;
+      return matchesFilter(guide.servicePillar, activeFilter);
+    });
   }, [guides, activeFilter]);
+
+  const visibleFeaturedGuides = featuredExpanded
+    ? FEATURED_CODE_GUIDES
+    : FEATURED_CODE_GUIDES.slice(0, FEATURED_INITIAL_VISIBLE);
+  const hiddenFeaturedCount = FEATURED_CODE_GUIDES.length - FEATURED_INITIAL_VISIBLE;
+
+  const visibleSanityGuides = filteredGuides.slice(0, visibleGuideCount);
+  const remainingSanityCount = Math.max(0, filteredGuides.length - visibleGuideCount);
+  const sanityAllVisible = visibleGuideCount >= filteredGuides.length;
 
   const cardVariants = {
     hidden: { opacity: 0, y: 15 },
@@ -226,35 +300,50 @@ export default function GuidesHubPage() {
           <div className="mb-5 border-b border-black/10 pb-3">
             <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark">/ Featured</span>
           </div>
-          <div className="flex flex-col gap-4 md:gap-5">
-            {FEATURED_CODE_GUIDES.map((guide) => (
+          <div className="flex flex-col gap-6 md:gap-8">
+            {visibleFeaturedGuides.map((guide) => (
               <Link
                 key={guide.path}
                 to={guide.path}
-                className="group flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5 rounded-2xl border border-[#C5A059]/25 bg-[#1a1816] px-6 py-5 md:px-8 md:py-6 shadow-[0_6px_28px_rgba(17,17,17,0.14),0_2px_8px_rgba(17,17,17,0.08)] hover:border-[#C5A059]/50 hover:bg-[#1e1b18] hover:shadow-[0_10px_36px_rgba(17,17,17,0.18),0_4px_16px_rgba(197,160,89,0.12)] hover:-translate-y-px transition-all duration-300"
+                className="group flex flex-col sm:flex-row sm:items-stretch gap-6 sm:gap-8 rounded-[28px] bg-cream p-8 md:p-10 shadow-neu border border-white/40 border-l-[3px] border-l-gold-on-cream/50 transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(17,17,17,0.08)]"
               >
-                <div className="flex-1 min-w-0">
-                  <span className="font-mono text-[10px] font-bold uppercase tracking-[0.25em] text-[#D4A84B] mb-2.5 block">
+                <div className="flex-1 min-w-0 flex flex-col">
+                  <span className="mb-4 inline-flex w-fit border border-gold-on-cream/25 px-3 py-1.5 rounded-sm font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-gold-on-cream bg-cream shadow-neu-inner">
                     {guide.badge}
                   </span>
-                  <h2 className="font-serif text-2xl md:text-[1.75rem] text-[#FFF2EC] mb-2 group-hover:text-[#D4A84B] transition-colors leading-tight">
+                  <h2 className="font-serif text-2xl md:text-[1.75rem] text-dark mb-3 group-hover:text-red-text transition-colors leading-tight">
                     {guide.title}
                   </h2>
-                  <p className="font-serif text-sm md:text-base italic text-[#FFF2EC]/65 leading-relaxed">
+                  <p className="font-sans text-sm md:text-base font-light text-on-cream-secondary leading-relaxed italic">
                     {guide.subtitle}
                   </p>
                 </div>
-                <div className="shrink-0 flex items-center gap-2 border border-[#FFF2EC]/30 px-4 py-2.5 font-mono text-[10px] font-bold uppercase tracking-widest text-[#FFF2EC] shadow-[inset_0_1px_0_rgba(255,242,236,0.06)] group-hover:border-[#D4A84B] group-hover:text-[#D4A84B] group-hover:shadow-[0_2px_12px_rgba(197,160,89,0.15)] transition-all duration-300 sm:self-end">
-                  Read the guide
-                  <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+                <div className="shrink-0 flex sm:flex-col sm:justify-end sm:items-end border-t sm:border-t-0 sm:border-l border-black/5 pt-5 sm:pt-0 sm:pl-8">
+                  <span className="inline-flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-dark/55 group-hover:text-red-text transition-colors">
+                    Read the guide
+                    <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+                  </span>
                 </div>
               </Link>
             ))}
           </div>
+          <ShowMoreButton
+            variant="featured"
+            expanded={featuredExpanded}
+            hiddenCount={featuredExpanded ? 0 : hiddenFeaturedCount}
+            canCollapse
+            onClick={() => setFeaturedExpanded((v) => !v)}
+          />
         </section>
 
+        {/* MORE GUIDES — Sanity CMS + filters */}
+        <section className="px-6 md:px-12 max-w-5xl mx-auto mb-10 md:mb-12 relative z-10 pt-4 md:pt-6">
+          <div className="mb-6 md:mb-8 border-b border-black/10 pb-3">
+            <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark">/ More guides</span>
+          </div>
+
         {/* FILTER SYSTEM */}
-        <section className="max-w-[1000px] mx-auto mb-12 relative z-20 px-6">
+        <div className="max-w-[1000px] mx-auto mb-12 relative z-20">
           <div className="md:hidden">
             <button 
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -305,44 +394,64 @@ export default function GuidesHubPage() {
               </div>
             ))}
           </div>
+        </div>
         </section>
 
         {/* GUIDES GRID */}
-        <section className="px-6 md:px-12 max-w-5xl mx-auto relative z-10 min-h-[400px]">
+        <section className="px-6 md:px-12 max-w-5xl mx-auto relative z-10 min-h-[200px]">
           {isLoading ? (
             <div className="py-20 flex justify-center"><div className="w-10 h-10 rounded-full border-2 border-t-red-text animate-spin"></div></div>
+          ) : filteredGuides.length === 0 ? (
+            <p className="text-center font-sans text-on-cream-secondary py-16">No guides match this filter yet.</p>
           ) : (
-            <m.div layout className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
-              <AnimatePresence mode="popLayout">
-                {filteredGuides.map((guide) => {
-                  const slug = guide.slug?.current ?? '';
-                  const guidePath = `/guides/${slug}`;
-                  const shareUrl = `${SITE_ORIGIN}${guidePath}`;
-                  return (
-                  <m.div key={guide.slug?.current} variants={cardVariants} layout initial="hidden" animate="show" exit="exit" className="relative group">
-                    <Link to={guidePath} className="absolute inset-0 z-[1] rounded-[28px]" aria-label={`Open guide: ${guide.title}`} />
-                    <div className="relative z-[2] flex flex-col h-full bg-cream rounded-[28px] p-8 shadow-neu border border-white/40 transition-all duration-500 hover:-translate-y-1 pointer-events-none">
-                      <div className="absolute top-6 right-6 z-[3] pointer-events-auto">
-                        <ShareButton url={shareUrl} title={guide.title} mode="card" variant="neumorphic" />
+            <>
+              <m.div layout className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+                <AnimatePresence mode="popLayout">
+                  {visibleSanityGuides.map((guide) => {
+                    const slug = guide.slug?.current ?? '';
+                    const guidePath = `/guides/${slug}`;
+                    const shareUrl = `${SITE_ORIGIN}${guidePath}`;
+                    return (
+                    <m.div key={guide.slug?.current} variants={cardVariants} layout initial="hidden" animate="show" exit="exit" className="relative group">
+                      <Link to={guidePath} className="absolute inset-0 z-[1] rounded-[28px]" aria-label={`Open guide: ${guide.title}`} />
+                      <div className="relative z-[2] flex flex-col h-full bg-cream rounded-[28px] p-8 shadow-neu border border-white/40 transition-all duration-500 hover:-translate-y-1 pointer-events-none">
+                        <div className="absolute top-6 right-6 z-[3] pointer-events-auto">
+                          <ShareButton url={shareUrl} title={guide.title} mode="card" variant="neumorphic" />
+                        </div>
+                        <div className="mb-6 inline-flex border border-gold-on-cream/20 px-3 py-1.5 rounded-sm text-[10px] font-bold uppercase tracking-widest text-gold-on-cream bg-cream shadow-neu-inner w-fit">
+                          {getPrimaryBadge(guide.servicePillar)}
+                        </div>
+                        <h2 className="font-serif text-2xl text-dark mb-4 group-hover:text-red-text transition-colors leading-tight pr-12">
+                          {guide.title}
+                        </h2>
+                        <p className="text-on-cream-secondary font-light text-sm mb-10 line-clamp-3 flex-grow">
+                          {guide.subtitle}
+                        </p>
+                        <div className="flex items-center text-[11px] font-bold uppercase tracking-widest text-dark group-hover:text-red-text pt-4 border-t border-black/5">
+                          Open Guide <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
+                        </div>
                       </div>
-                      <div className="mb-6 inline-flex border border-gold-on-cream/20 px-3 py-1.5 rounded-sm text-[10px] font-bold uppercase tracking-widest text-gold-on-cream bg-cream shadow-neu-inner w-fit">
-                        {getPrimaryBadge(guide.servicePillar)}
-                      </div>
-                      <h2 className="font-serif text-2xl text-dark mb-4 group-hover:text-red-text transition-colors leading-tight pr-12">
-                        {guide.title}
-                      </h2>
-                      <p className="text-on-cream-secondary font-light text-sm mb-10 line-clamp-3 flex-grow">
-                        {guide.subtitle}
-                      </p>
-                      <div className="flex items-center text-[11px] font-bold uppercase tracking-widest text-dark group-hover:text-red-text pt-4 border-t border-black/5">
-                        Open Guide <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
-                      </div>
-                    </div>
-                  </m.div>
-                  );
-                })}
-              </AnimatePresence>
-            </m.div>
+                    </m.div>
+                    );
+                  })}
+                </AnimatePresence>
+                {(remainingSanityCount > 0 || (sanityAllVisible && filteredGuides.length > GRID_INITIAL_VISIBLE)) ? (
+                  <ShowMoreButton
+                    variant="card"
+                    expanded={sanityAllVisible}
+                    hiddenCount={remainingSanityCount > 0 ? Math.min(LOAD_MORE_STEP, remainingSanityCount) : 0}
+                    canCollapse={filteredGuides.length > GRID_INITIAL_VISIBLE}
+                    onClick={() => {
+                      if (remainingSanityCount > 0) {
+                        setVisibleGuideCount((n) => Math.min(n + LOAD_MORE_STEP, filteredGuides.length));
+                      } else {
+                        setVisibleGuideCount(GRID_INITIAL_VISIBLE);
+                      }
+                    }}
+                  />
+                ) : null}
+              </m.div>
+            </>
           )}
         </section>
 

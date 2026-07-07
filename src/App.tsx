@@ -184,23 +184,9 @@ const App: React.FC = () => {
               onNavigate={handleGlobalNavigate}
               scrolled={scrolled}
               solidBackground={
+                location.pathname === '/guides' ||
+                location.pathname.startsWith('/guides/') ||
                 location.pathname === '/toolkit' ||
-                location.pathname === '/guides/built-to-work' ||
-                location.pathname.startsWith('/guides/built-to-work/') ||
-                location.pathname === '/guides/built-to-sell' ||
-                location.pathname.startsWith('/guides/built-to-sell/') ||
-                location.pathname === '/guides/built-to-close' ||
-                location.pathname.startsWith('/guides/built-to-close/') ||
-                location.pathname === '/guides/built-to-run' ||
-                location.pathname.startsWith('/guides/built-to-run/') ||
-                location.pathname === '/guides/built-to-think' ||
-                location.pathname.startsWith('/guides/built-to-think/') ||
-                location.pathname === '/guides/built-to-multiply' ||
-                location.pathname.startsWith('/guides/built-to-multiply/') ||
-                location.pathname === '/guides/built-to-teach' ||
-                location.pathname.startsWith('/guides/built-to-teach/') ||
-                location.pathname === '/guides/built-to-see' ||
-                location.pathname.startsWith('/guides/built-to-see/') ||
                 /^\/(blog|toolkit)\/[^/]+$/.test(location.pathname)
               }
             />
