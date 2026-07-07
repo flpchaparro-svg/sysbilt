@@ -22,7 +22,7 @@ export default function BuiltToWorkBookPage() {
   const bookUrl = `${SITE_ORIGIN}${BTW_BOOK_PATH}`
 
   return (
-    <div className="btw-root min-h-screen bg-[#1A1A1A] selection:bg-[#C5A059] selection:text-[#1A1A1A] pt-[100px] md:pt-[140px] pb-16 md:pb-24 print:pt-0 print:pb-0">
+    <div className="btw-root btw-book-shell min-h-screen bg-[#1A1A1A] selection:bg-[#C5A059] selection:text-[#1A1A1A] pt-[100px] md:pt-[140px] pb-16 md:pb-24 print:pt-0 print:pb-0">
       <style>{BTW_STYLES}</style>
       <PageMeta
         title={`${BTW_META.title} — Full edition | SYSBILT`}
@@ -40,13 +40,13 @@ export default function BuiltToWorkBookPage() {
           <div className="flex flex-wrap items-center gap-x-8 gap-y-2">
             <Link
               to={BTW_HUB_PATH}
-              className="inline-flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-[0.2em] text-[#FFF2EC]/50 transition-colors hover:text-[#FFF2EC]"
+              className="btw-book-nav-link inline-flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-[0.2em] transition-colors"
             >
               <ArrowLeft className="h-4 w-4" /> Chapter list
             </Link>
             <Link
               to="/guides"
-              className="inline-flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-[0.2em] text-[#FFF2EC]/35 transition-colors hover:text-[#FFF2EC]/85"
+              className="btw-book-nav-link-muted inline-flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-[0.2em] transition-colors"
             >
               <ArrowLeft className="h-4 w-4" /> All Guides
             </Link>

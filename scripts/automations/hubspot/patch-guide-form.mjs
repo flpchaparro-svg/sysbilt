@@ -42,6 +42,10 @@ const GUIDE_OPTIONS = [
   { label: 'Built to Sell', value: 'built_to_sell', description: '', displayOrder: 11 },
   { label: 'Built to Close', value: 'built_to_close', description: '', displayOrder: 12 },
   { label: 'Built to Run', value: 'built_to_run', description: '', displayOrder: 13 },
+  { label: 'Built to Think', value: 'built_to_think', description: '', displayOrder: 14 },
+  { label: 'Built to Multiply', value: 'built_to_multiply', description: '', displayOrder: 15 },
+  { label: 'Built to Teach', value: 'built_to_teach', description: '', displayOrder: 16 },
+  { label: 'Built to See', value: 'built_to_see', description: '', displayOrder: 17 },
 ];
 
 function loadToken() {

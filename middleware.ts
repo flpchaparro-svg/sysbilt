@@ -15,6 +15,14 @@ import {
   BTC_HUB_ROUTE,
   BTR_CHAPTER_SLUGS as BTR_CHAPTER_SLUG_LIST,
   BTR_HUB_ROUTE,
+  BTT_CHAPTER_SLUGS as BTT_CHAPTER_SLUG_LIST,
+  BTT_HUB_ROUTE,
+  BTM_CHAPTER_SLUGS as BTM_CHAPTER_SLUG_LIST,
+  BTM_HUB_ROUTE,
+  BTE_CHAPTER_SLUGS as BTE_CHAPTER_SLUG_LIST,
+  BTE_HUB_ROUTE,
+  BSE_CHAPTER_SLUGS as BSE_CHAPTER_SLUG_LIST,
+  BSE_HUB_ROUTE,
 } from './src/generated/contentManifest.generated';
 
 /** Vite dev-server URLs (same origin as `vercel dev`). Production builds never hit these paths. */
@@ -34,6 +42,10 @@ const BTW_CHAPTER_SLUGS = new Set(BTW_CHAPTER_SLUG_LIST);
 const BTS_CHAPTER_SLUGS = new Set(BTS_CHAPTER_SLUG_LIST);
 const BTC_CHAPTER_SLUGS = new Set(BTC_CHAPTER_SLUG_LIST);
 const BTR_CHAPTER_SLUGS = new Set(BTR_CHAPTER_SLUG_LIST);
+const BTT_CHAPTER_SLUGS = new Set(BTT_CHAPTER_SLUG_LIST);
+const BTM_CHAPTER_SLUGS = new Set(BTM_CHAPTER_SLUG_LIST);
+const BTE_CHAPTER_SLUGS = new Set(BTE_CHAPTER_SLUG_LIST);
+const BSE_CHAPTER_SLUGS = new Set(BSE_CHAPTER_SLUG_LIST);
 
 /** Decode a single path segment; malformed encodings are treated as invalid. */
 function decodeSegment(segment: string): string | null {
@@ -134,6 +146,38 @@ function isSpaRoute(normalizedPathname: string): boolean {
   if (builtToRunChapter) {
     const slug = decodeSegment(builtToRunChapter[1]);
     return slug != null && BTR_CHAPTER_SLUGS.has(slug);
+  }
+
+  // Built to Think hub + code-defined chapters (not Sanity guides).
+  if (normalizedPathname === BTT_HUB_ROUTE) return true;
+  const builtToThinkChapter = normalizedPathname.match(/^\/guides\/built-to-think\/([^/]+)$/i);
+  if (builtToThinkChapter) {
+    const slug = decodeSegment(builtToThinkChapter[1]);
+    return slug != null && BTT_CHAPTER_SLUGS.has(slug);
+  }
+
+  // Built to Multiply hub + code-defined chapters (not Sanity guides).
+  if (normalizedPathname === BTM_HUB_ROUTE) return true;
+  const builtToMultiplyChapter = normalizedPathname.match(/^\/guides\/built-to-multiply\/([^/]+)$/i);
+  if (builtToMultiplyChapter) {
+    const slug = decodeSegment(builtToMultiplyChapter[1]);
+    return slug != null && BTM_CHAPTER_SLUGS.has(slug);
+  }
+
+  // Built to Teach hub + code-defined chapters (not Sanity guides).
+  if (normalizedPathname === BTE_HUB_ROUTE) return true;
+  const builtToTeachChapter = normalizedPathname.match(/^\/guides\/built-to-teach\/([^/]+)$/i);
+  if (builtToTeachChapter) {
+    const slug = decodeSegment(builtToTeachChapter[1]);
+    return slug != null && BTE_CHAPTER_SLUGS.has(slug);
+  }
+
+  // Built to See hub + code-defined chapters (not Sanity guides).
+  if (normalizedPathname === BSE_HUB_ROUTE) return true;
+  const builtToSeeChapter = normalizedPathname.match(/^\/guides\/built-to-see\/([^/]+)$/i);
+  if (builtToSeeChapter) {
+    const slug = decodeSegment(builtToSeeChapter[1]);
+    return slug != null && BSE_CHAPTER_SLUGS.has(slug);
   }
 
   const guide = normalizedPathname.match(/^\/guides\/([^/]+)$/i);

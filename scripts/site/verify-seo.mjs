@@ -37,10 +37,34 @@ import {
   BTR_HUB_ROUTE,
   BTR_CHAPTER_META_BY_SLUG,
 } from './btr-seo-routes.mjs';
+import {
+  BTT_CHAPTER_SLUGS,
+  BTT_HUB_ROUTE,
+  BTT_CHAPTER_META_BY_SLUG,
+} from './btt-seo-routes.mjs';
+import {
+  BTM_CHAPTER_SLUGS,
+  BTM_HUB_ROUTE,
+  BTM_CHAPTER_META_BY_SLUG,
+} from './btm-seo-routes.mjs';
+import {
+  BTE_CHAPTER_SLUGS,
+  BTE_HUB_ROUTE,
+  BTE_CHAPTER_META_BY_SLUG,
+} from './bte-seo-routes.mjs';
+import {
+  BSE_CHAPTER_SLUGS,
+  BSE_HUB_ROUTE,
+  BSE_CHAPTER_META_BY_SLUG,
+} from './bse-seo-routes.mjs';
 import { BTW_CHAPTERS } from '../../src/built-to-work/chapter-seo.ts';
 import { BTS_CHAPTERS } from '../../src/built-to-sell/chapter-seo.ts';
 import { BTC_CHAPTERS } from '../../src/built-to-close/chapter-seo.ts';
 import { BTR_CHAPTERS } from '../../src/built-to-run/chapter-seo.ts';
+import { BTT_CHAPTERS } from '../../src/built-to-think/chapter-seo.ts';
+import { BTM_CHAPTERS } from '../../src/built-to-multiply/chapter-seo.ts';
+import { BTE_CHAPTERS } from '../../src/built-to-teach/chapter-seo.ts';
+import { BSE_CHAPTERS } from '../../src/built-to-see/chapter-seo.ts';
 import {
   STATIC_ROUTES,
   canonicalUrl,
@@ -264,6 +288,154 @@ async function checkBtrAntiDrift() {
   }
 }
 
+async function checkBttAntiDrift() {
+  const contentSlugs = BTT_CHAPTERS.map((c) => c.slug);
+  const sharedSlugs = [...BTT_CHAPTER_SLUGS];
+
+  if (JSON.stringify(sharedSlugs) !== JSON.stringify(contentSlugs)) {
+    addViolation(
+      `anti-drift — btt-seo-routes.mjs BTT_CHAPTER_SLUGS != chapter-seo.ts BTT_CHAPTERS slugs ` +
+        `(shared: ${sharedSlugs.length}, content: ${contentSlugs.length}). ` +
+        `shared=${JSON.stringify(sharedSlugs)} content=${JSON.stringify(contentSlugs)}`
+    );
+  }
+
+  for (const slug of sharedSlugs) {
+    if (!BTT_CHAPTER_META_BY_SLUG[slug]) {
+      addViolation(`anti-drift — btt-seo-routes.mjs missing BTT_CHAPTER_META_BY_SLUG entry for "${slug}"`);
+    }
+  }
+
+  const consumers = ['middleware.ts', 'api/sitemap.ts'];
+  for (const rel of consumers) {
+    let src;
+    try {
+      src = await readFile(path.join(ROOT, rel), 'utf8');
+    } catch {
+      addViolation(`anti-drift — could not read ${rel} to check for a hardcoded slug copy`);
+      continue;
+    }
+    const hardcoded = sharedSlugs.filter((slug) => src.includes(`'${slug}'`) || src.includes(`"${slug}"`));
+    if (hardcoded.length > 0) {
+      addViolation(
+        `anti-drift — ${rel} contains ${hardcoded.length} hardcoded BTT chapter slug literal(s); ` +
+          `it must import from the shared module instead (e.g. ${hardcoded[0]})`
+      );
+    }
+  }
+}
+
+async function checkBtmAntiDrift() {
+  const contentSlugs = BTM_CHAPTERS.map((c) => c.slug);
+  const sharedSlugs = [...BTM_CHAPTER_SLUGS];
+
+  if (JSON.stringify(sharedSlugs) !== JSON.stringify(contentSlugs)) {
+    addViolation(
+      `anti-drift — btm-seo-routes.mjs BTM_CHAPTER_SLUGS != chapter-seo.ts BTM_CHAPTERS slugs ` +
+        `(shared: ${sharedSlugs.length}, content: ${contentSlugs.length}). ` +
+        `shared=${JSON.stringify(sharedSlugs)} content=${JSON.stringify(contentSlugs)}`
+    );
+  }
+
+  for (const slug of sharedSlugs) {
+    if (!BTM_CHAPTER_META_BY_SLUG[slug]) {
+      addViolation(`anti-drift — btm-seo-routes.mjs missing BTM_CHAPTER_META_BY_SLUG entry for "${slug}"`);
+    }
+  }
+
+  const consumers = ['middleware.ts', 'api/sitemap.ts'];
+  for (const rel of consumers) {
+    let src;
+    try {
+      src = await readFile(path.join(ROOT, rel), 'utf8');
+    } catch {
+      addViolation(`anti-drift — could not read ${rel} to check for a hardcoded slug copy`);
+      continue;
+    }
+    const hardcoded = sharedSlugs.filter((slug) => src.includes(`'${slug}'`) || src.includes(`"${slug}"`));
+    if (hardcoded.length > 0) {
+      addViolation(
+        `anti-drift — ${rel} contains ${hardcoded.length} hardcoded BTM chapter slug literal(s); ` +
+          `it must import from the shared module instead (e.g. ${hardcoded[0]})`
+      );
+    }
+  }
+}
+
+async function checkBteAntiDrift() {
+  const contentSlugs = BTE_CHAPTERS.map((c) => c.slug);
+  const sharedSlugs = [...BTE_CHAPTER_SLUGS];
+
+  if (JSON.stringify(sharedSlugs) !== JSON.stringify(contentSlugs)) {
+    addViolation(
+      `anti-drift — bte-seo-routes.mjs BTE_CHAPTER_SLUGS != chapter-seo.ts BTE_CHAPTERS slugs ` +
+        `(shared: ${sharedSlugs.length}, content: ${contentSlugs.length}). ` +
+        `shared=${JSON.stringify(sharedSlugs)} content=${JSON.stringify(contentSlugs)}`
+    );
+  }
+
+  for (const slug of sharedSlugs) {
+    if (!BTE_CHAPTER_META_BY_SLUG[slug]) {
+      addViolation(`anti-drift — bte-seo-routes.mjs missing BTE_CHAPTER_META_BY_SLUG entry for "${slug}"`);
+    }
+  }
+
+  const consumers = ['middleware.ts', 'api/sitemap.ts'];
+  for (const rel of consumers) {
+    let src;
+    try {
+      src = await readFile(path.join(ROOT, rel), 'utf8');
+    } catch {
+      addViolation(`anti-drift — could not read ${rel} to check for a hardcoded slug copy`);
+      continue;
+    }
+    const hardcoded = sharedSlugs.filter((slug) => src.includes(`'${slug}'`) || src.includes(`"${slug}"`));
+    if (hardcoded.length > 0) {
+      addViolation(
+        `anti-drift — ${rel} contains ${hardcoded.length} hardcoded BTE chapter slug literal(s); ` +
+          `it must import from the shared module instead (e.g. ${hardcoded[0]})`
+      );
+    }
+  }
+}
+
+async function checkBseAntiDrift() {
+  const contentSlugs = BSE_CHAPTERS.map((c) => c.slug);
+  const sharedSlugs = [...BSE_CHAPTER_SLUGS];
+
+  if (JSON.stringify(sharedSlugs) !== JSON.stringify(contentSlugs)) {
+    addViolation(
+      `anti-drift — bse-seo-routes.mjs BSE_CHAPTER_SLUGS != chapter-seo.ts BSE_CHAPTERS slugs ` +
+        `(shared: ${sharedSlugs.length}, content: ${contentSlugs.length}). ` +
+        `shared=${JSON.stringify(sharedSlugs)} content=${JSON.stringify(contentSlugs)}`
+    );
+  }
+
+  for (const slug of sharedSlugs) {
+    if (!BSE_CHAPTER_META_BY_SLUG[slug]) {
+      addViolation(`anti-drift — bse-seo-routes.mjs missing BSE_CHAPTER_META_BY_SLUG entry for "${slug}"`);
+    }
+  }
+
+  const consumers = ['middleware.ts', 'api/sitemap.ts'];
+  for (const rel of consumers) {
+    let src;
+    try {
+      src = await readFile(path.join(ROOT, rel), 'utf8');
+    } catch {
+      addViolation(`anti-drift — could not read ${rel} to check for a hardcoded slug copy`);
+      continue;
+    }
+    const hardcoded = sharedSlugs.filter((slug) => src.includes(`'${slug}'`) || src.includes(`"${slug}"`));
+    if (hardcoded.length > 0) {
+      addViolation(
+        `anti-drift — ${rel} contains ${hardcoded.length} hardcoded BSE chapter slug literal(s); ` +
+          `it must import from the shared module instead (e.g. ${hardcoded[0]})`
+      );
+    }
+  }
+}
+
 /** Sitemap URL set derived from the same source data the API route uses. */
 function buildSitemapPathSet(content) {
   const set = new Set();
@@ -271,7 +443,7 @@ function buildSitemapPathSet(content) {
     if (!INDEXABLE_EXCLUDE.has(r.path)) set.add(r.path);
   }
   for (const g of content.guides) {
-    if (g.slug && g.slug !== 'built-to-work' && g.slug !== 'built-to-sell' && g.slug !== 'built-to-close' && g.slug !== 'built-to-run') set.add(`/guides/${g.slug}`);
+    if (g.slug && g.slug !== 'built-to-work' && g.slug !== 'built-to-sell' && g.slug !== 'built-to-close' && g.slug !== 'built-to-run' && g.slug !== 'built-to-think' && g.slug !== 'built-to-multiply' && g.slug !== 'built-to-teach' && g.slug !== 'built-to-see') set.add(`/guides/${g.slug}`);
   }
   set.add(BTW_HUB_ROUTE);
   for (const slug of BTW_CHAPTER_SLUGS) set.add(`${BTW_HUB_ROUTE}/${slug}`);
@@ -281,6 +453,14 @@ function buildSitemapPathSet(content) {
   for (const slug of BTC_CHAPTER_SLUGS) set.add(`${BTC_HUB_ROUTE}/${slug}`);
   set.add(BTR_HUB_ROUTE);
   for (const slug of BTR_CHAPTER_SLUGS) set.add(`${BTR_HUB_ROUTE}/${slug}`);
+  set.add(BTT_HUB_ROUTE);
+  for (const slug of BTT_CHAPTER_SLUGS) set.add(`${BTT_HUB_ROUTE}/${slug}`);
+  set.add(BTM_HUB_ROUTE);
+  for (const slug of BTM_CHAPTER_SLUGS) set.add(`${BTM_HUB_ROUTE}/${slug}`);
+  set.add(BTE_HUB_ROUTE);
+  for (const slug of BTE_CHAPTER_SLUGS) set.add(`${BTE_HUB_ROUTE}/${slug}`);
+  set.add(BSE_HUB_ROUTE);
+  for (const slug of BSE_CHAPTER_SLUGS) set.add(`${BSE_HUB_ROUTE}/${slug}`);
   for (const post of content.posts) {
     if (post.slug) set.add(`/blog/${post.slug}`);
   }
@@ -311,6 +491,10 @@ async function main() {
   await checkBtsAntiDrift();
   await checkBtcAntiDrift();
   await checkBtrAntiDrift();
+  await checkBttAntiDrift();
+  await checkBtmAntiDrift();
+  await checkBteAntiDrift();
+  await checkBseAntiDrift();
 
   const sitemapSet = buildSitemapPathSet(content);
   const indexableSet = new Set(routes.map((r) => r.path).filter((p) => !INDEXABLE_EXCLUDE.has(p)));

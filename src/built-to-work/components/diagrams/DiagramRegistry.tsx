@@ -5,6 +5,10 @@ import { HubSpokeDiagram } from './HubSpokeDiagram'
 import { BTS_DIAGRAMS } from '../../../built-to-sell/components/diagrams'
 import { BTC_DIAGRAMS } from '../../../built-to-close/components/diagrams'
 import { BTR_DIAGRAMS } from '../../../built-to-run/components/diagrams'
+import { BTT_DIAGRAMS } from '../../../built-to-think/components/diagrams'
+import { BTM_DIAGRAMS } from '../../../built-to-multiply/components/diagrams'
+import { BTE_DIAGRAMS } from '../../../built-to-teach/components/diagrams'
+import { BSE_DIAGRAMS } from '../../../built-to-see/components/diagrams'
 
 function MonoBox({
   x,
@@ -563,6 +567,10 @@ const DIAGRAMS: Record<string, React.FC<{ caption: string }>> = {
   ...BTS_DIAGRAMS,
   ...BTC_DIAGRAMS,
   ...BTR_DIAGRAMS,
+  ...BTT_DIAGRAMS,
+  ...BTM_DIAGRAMS,
+  ...BTE_DIAGRAMS,
+  ...BSE_DIAGRAMS,
 }
 
 export function BtwDiagramById({ id, caption }: { id: string; caption: string }) {

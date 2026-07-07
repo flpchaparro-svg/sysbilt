@@ -103,16 +103,6 @@ const provider = (p) =>
   p.integration?.providerIdentifier || p.integration?.identifier || p.integration?.platform || '';
 const isLinkedInPersonal = (p) => provider(p) === 'linkedin';
 
-if (!staticData.bootstrapComplete) {
-  for (const p of posts) {
-    if (isLinkedInPersonal(p) && !p.parentPostId && (p.content || '').length >= 400) {
-      mirrored[p.id] = { skipped: 'bootstrap-existing', at: new Date().toISOString() };
-    }
-  }
-  staticData.mirroredSourceIds = mirrored;
-  staticData.bootstrapComplete = true;
-}
-
 const igSlots = new Set(
   posts
     .filter((p) => provider(p) === 'instagram-standalone')
@@ -135,6 +125,35 @@ function hasMatchingInstagram(post, allPosts) {
     return diff < 14 * 24 * 60 * 60 * 1000;
   });
 }
+
+function alreadyMirroredInPostiz(post) {
+  const slot = new Date(post.publishDate).toISOString();
+  return igSlots.has(slot) || hasMatchingInstagram(post, posts);
+}
+
+// First run: only skip LinkedIn posts that already have a matching Instagram slot.
+if (!staticData.bootstrapComplete) {
+  for (const p of posts) {
+    if (isLinkedInPersonal(p) && !p.parentPostId && (p.content || '').length >= 400 && alreadyMirroredInPostiz(p)) {
+      mirrored[p.id] = { skipped: 'bootstrap-already-has-ig', at: new Date().toISOString() };
+    }
+  }
+  staticData.bootstrapComplete = true;
+}
+
+// Unblock mistaken bootstrap-existing marks and allow retry if the IG post was deleted.
+for (const [id, meta] of Object.entries({ ...mirrored })) {
+  if (meta?.instagramPostId && !posts.some((p) => p.id === meta.instagramPostId)) {
+    delete mirrored[id];
+    continue;
+  }
+  if (meta?.skipped === 'bootstrap-existing') {
+    const post = posts.find((p) => p.id === id);
+    if (post && !alreadyMirroredInPostiz(post)) delete mirrored[id];
+  }
+}
+
+staticData.mirroredSourceIds = mirrored;
 
 const now = Date.now();
 const candidates = posts.filter((p) => {
@@ -271,7 +290,7 @@ const body = {
   posts: [{
     integration: { id: targets.instagramId },
     value: [{ content: instagramHtml, image: images }],
-    settings: { __type: IG_PROVIDER },
+    settings: { __type: IG_PROVIDER, post_type: 'post' },
   }],
 };
 
@@ -348,7 +367,7 @@ function buildWorkflow(postizCredId) {
     {
       parameters: {
         jsCode: `const start = DateTime.now().minus({ days: 1 }).toISODate();
-const end = DateTime.now().plus({ days: 45 }).toISODate();
+const end = DateTime.now().plus({ days: 120 }).toISODate();
 return [{ json: { startDate: start, endDate: end } }];`,
       },
       type: 'n8n-nodes-base.code',

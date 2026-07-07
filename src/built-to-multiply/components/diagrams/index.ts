@@ -1,0 +1,76 @@
+import type { FC } from 'react'
+import {
+  BtmCh01WallFell,
+  BtmCh01FireEmptyRoom,
+  BtmCh01FloodOrSystem,
+  BtmCh02ThreeJobs,
+  BtmCh02InvestmentJob,
+  BtmCh02FewRooms,
+  BtmCh03HookValueAction,
+  BtmCh03OneIdea,
+  BtmCh03VariationsUnit,
+} from './btmCh01-03'
+import {
+  BtmCh04RepurposingTree,
+  BtmCh04LibraryCompounds,
+  BtmCh04OneRuleTemplate,
+  BtmCh05ToolkitMap,
+  BtmCh05ImageLine,
+  BtmCh05CapturePipe,
+  BtmCh06FiveMinutes,
+  BtmCh06BatchSchedule,
+  BtmCh06ThreeLevels,
+  BtmCh07ClaimsProvable,
+  BtmCh07NeverFakeProof,
+  BtmCh07LookingCheap,
+  BtmCh08NumberMatchesJob,
+  BtmCh08PatternsNotVerdicts,
+  BtmCh08VanityOrPays,
+} from './btmCh04-08'
+import {
+  BtmCh09ContentPointsHome,
+  BtmCh09CommentToLead,
+  BtmCh09RentedPermissions,
+  BtmCh10ToolsWithoutTraining,
+  BtmCh10TeamWrittenDown,
+  BtmCh10OneChannelNext,
+  BtmCh11FourChecks,
+} from './btmCh09-11'
+
+type DiagramProps = { caption: string }
+
+export const BTM_DIAGRAMS: Record<string, FC<DiagramProps>> = {
+  'btm-ch01-wall-fell': BtmCh01WallFell,
+  'btm-ch01-fire-empty-room': BtmCh01FireEmptyRoom,
+  'btm-ch01-flood-or-system': BtmCh01FloodOrSystem,
+  'btm-ch02-three-jobs': BtmCh02ThreeJobs,
+  'btm-ch02-investment-job': BtmCh02InvestmentJob,
+  'btm-ch02-few-rooms': BtmCh02FewRooms,
+  'btm-ch03-hook-value-action': BtmCh03HookValueAction,
+  'btm-ch03-one-idea': BtmCh03OneIdea,
+  'btm-ch03-variations-unit': BtmCh03VariationsUnit,
+  'btm-ch04-repurposing-tree': BtmCh04RepurposingTree,
+  'btm-ch04-library-compounds': BtmCh04LibraryCompounds,
+  'btm-ch04-one-rule-template': BtmCh04OneRuleTemplate,
+  'btm-ch05-toolkit-map': BtmCh05ToolkitMap,
+  'btm-ch05-image-line': BtmCh05ImageLine,
+  'btm-ch05-capture-pipe': BtmCh05CapturePipe,
+  'btm-ch06-five-minutes': BtmCh06FiveMinutes,
+  'btm-ch06-batch-schedule': BtmCh06BatchSchedule,
+  'btm-ch06-three-levels': BtmCh06ThreeLevels,
+  'btm-ch07-claims-provable': BtmCh07ClaimsProvable,
+  'btm-ch07-never-fake-proof': BtmCh07NeverFakeProof,
+  'btm-ch07-looking-cheap': BtmCh07LookingCheap,
+  'btm-ch08-number-matches-job': BtmCh08NumberMatchesJob,
+  'btm-ch08-patterns-not-verdicts': BtmCh08PatternsNotVerdicts,
+  'btm-ch08-vanity-or-pays': BtmCh08VanityOrPays,
+  'btm-ch09-content-points-home': BtmCh09ContentPointsHome,
+  'btm-ch09-comment-to-lead': BtmCh09CommentToLead,
+  'btm-ch09-rented-permissions': BtmCh09RentedPermissions,
+  'btm-ch10-tools-without-training': BtmCh10ToolsWithoutTraining,
+  'btm-ch10-team-written-down': BtmCh10TeamWrittenDown,
+  'btm-ch10-one-channel-next': BtmCh10OneChannelNext,
+  'btm-ch11-four-checks': BtmCh11FourChecks,
+}
+
+export const BTM_DIAGRAM_IDS = Object.keys(BTM_DIAGRAMS)

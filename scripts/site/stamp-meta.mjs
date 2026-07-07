@@ -34,6 +34,30 @@ import {
   BTR_CHAPTER_META_BY_SLUG,
   BTR_HUB_META,
 } from './btr-seo-routes.mjs';
+import {
+  BTT_CHAPTER_SLUGS,
+  BTT_HUB_ROUTE,
+  BTT_CHAPTER_META_BY_SLUG,
+  BTT_HUB_META,
+} from './btt-seo-routes.mjs';
+import {
+  BTM_CHAPTER_SLUGS,
+  BTM_HUB_ROUTE,
+  BTM_CHAPTER_META_BY_SLUG,
+  BTM_HUB_META,
+} from './btm-seo-routes.mjs';
+import {
+  BTE_CHAPTER_SLUGS,
+  BTE_HUB_ROUTE,
+  BTE_CHAPTER_META_BY_SLUG,
+  BTE_HUB_META,
+} from './bte-seo-routes.mjs';
+import {
+  BSE_CHAPTER_SLUGS,
+  BSE_HUB_ROUTE,
+  BSE_CHAPTER_META_BY_SLUG,
+  BSE_HUB_META,
+} from './bse-seo-routes.mjs';
 import { buildBlogPostingJsonLd } from '../../src/utils/blogSeoJsonLd';
 import { buildToolkitArticleJsonLd } from '../../src/utils/toolkitSeoJsonLd';
 import { generateFAQSchema, getPillarFAQs, getSystemPageFAQs } from '../../src/constants/faqData';
@@ -66,6 +90,34 @@ import {
 } from '../../src/built-to-run/chapter-seo';
 import { BTR_CHAPTER_COVERS, BTR_HUB_OG } from '../../src/built-to-run/chapter-covers';
 import { BTR_META } from '../../src/built-to-run/types';
+import {
+  BTT_CHAPTERS,
+  bttChapterPath,
+  extractGlossaryFaqs as extractBttGlossaryFaqs,
+} from '../../src/built-to-think/chapter-seo';
+import { BTT_CHAPTER_COVERS, BTT_HUB_OG } from '../../src/built-to-think/chapter-covers';
+import { BTT_META } from '../../src/built-to-think/types';
+import {
+  BTM_CHAPTERS,
+  btmChapterPath,
+  extractGlossaryFaqs as extractBtmGlossaryFaqs,
+} from '../../src/built-to-multiply/chapter-seo';
+import { BTM_CHAPTER_COVERS, BTM_HUB_OG } from '../../src/built-to-multiply/chapter-covers';
+import { BTM_META } from '../../src/built-to-multiply/types';
+import {
+  BTE_CHAPTERS,
+  bteChapterPath,
+  extractGlossaryFaqs as extractBteGlossaryFaqs,
+} from '../../src/built-to-teach/chapter-seo';
+import { BTE_CHAPTER_COVERS, BTE_HUB_OG } from '../../src/built-to-teach/chapter-covers';
+import { BTE_META } from '../../src/built-to-teach/types';
+import {
+  BSE_CHAPTERS,
+  bseChapterPath,
+  extractGlossaryFaqs as extractBseGlossaryFaqs,
+} from '../../src/built-to-see/chapter-seo';
+import { BSE_CHAPTER_COVERS, BSE_HUB_OG } from '../../src/built-to-see/chapter-covers';
+import { BSE_META } from '../../src/built-to-see/types';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '../..');
@@ -270,6 +322,82 @@ const BTR_ROUTES = [
       path: `${BTR_HUB_ROUTE}/${slug}`,
       ...meta,
       jsonLd: btrChapterJsonLd(slug),
+    };
+  }),
+];
+
+const BTT_HUB_ROUTE_DEF = {
+  path: BTT_HUB_ROUTE,
+  title: BTT_HUB_META.title,
+  description: BTT_HUB_META.description,
+};
+
+const BTT_ROUTES = [
+  { ...BTT_HUB_ROUTE_DEF, jsonLd: bttHubJsonLd(BTT_HUB_ROUTE_DEF) },
+  ...BTT_CHAPTER_SLUGS.map((slug) => {
+    const meta = BTT_CHAPTER_META_BY_SLUG[slug];
+    if (!meta) throw new Error(`[stamp-meta] Missing Built to Think metadata for ${slug}`);
+    return {
+      path: `${BTT_HUB_ROUTE}/${slug}`,
+      ...meta,
+      jsonLd: bttChapterJsonLd(slug),
+    };
+  }),
+];
+
+const BTM_HUB_ROUTE_DEF = {
+  path: BTM_HUB_ROUTE,
+  title: BTM_HUB_META.title,
+  description: BTM_HUB_META.description,
+};
+
+const BTM_ROUTES = [
+  { ...BTM_HUB_ROUTE_DEF, jsonLd: btmHubJsonLd(BTM_HUB_ROUTE_DEF) },
+  ...BTM_CHAPTER_SLUGS.map((slug) => {
+    const meta = BTM_CHAPTER_META_BY_SLUG[slug];
+    if (!meta) throw new Error(`[stamp-meta] Missing Built to Multiply metadata for ${slug}`);
+    return {
+      path: `${BTM_HUB_ROUTE}/${slug}`,
+      ...meta,
+      jsonLd: btmChapterJsonLd(slug),
+    };
+  }),
+];
+
+const BTE_HUB_ROUTE_DEF = {
+  path: BTE_HUB_ROUTE,
+  title: BTE_HUB_META.title,
+  description: BTE_HUB_META.description,
+};
+
+const BTE_ROUTES = [
+  { ...BTE_HUB_ROUTE_DEF, jsonLd: bteHubJsonLd(BTE_HUB_ROUTE_DEF) },
+  ...BTE_CHAPTER_SLUGS.map((slug) => {
+    const meta = BTE_CHAPTER_META_BY_SLUG[slug];
+    if (!meta) throw new Error(`[stamp-meta] Missing Built to Teach metadata for ${slug}`);
+    return {
+      path: `${BTE_HUB_ROUTE}/${slug}`,
+      ...meta,
+      jsonLd: bteChapterJsonLd(slug),
+    };
+  }),
+];
+
+const BSE_HUB_ROUTE_DEF = {
+  path: BSE_HUB_ROUTE,
+  title: BSE_HUB_META.title,
+  description: BSE_HUB_META.description,
+};
+
+const BSE_ROUTES = [
+  { ...BSE_HUB_ROUTE_DEF, jsonLd: bseHubJsonLd(BSE_HUB_ROUTE_DEF) },
+  ...BSE_CHAPTER_SLUGS.map((slug) => {
+    const meta = BSE_CHAPTER_META_BY_SLUG[slug];
+    if (!meta) throw new Error(`[stamp-meta] Missing Built to See metadata for ${slug}`);
+    return {
+      path: `${BSE_HUB_ROUTE}/${slug}`,
+      ...meta,
+      jsonLd: bseChapterJsonLd(slug),
     };
   }),
 ];
@@ -609,6 +737,226 @@ function btrChapterJsonLd(slug) {
   return out;
 }
 
+function bttHubJsonLd(hubRoute) {
+  const canonical = canonicalUrl(hubRoute.path);
+  const collection = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: hubRoute.title,
+    description: hubRoute.description,
+    url: canonical,
+    image: `${BASE_URL}${BTT_HUB_OG}`,
+    inLanguage: 'en-AU',
+  };
+  const crumb = breadcrumbJsonLd([
+    { name: 'Home', item: `${BASE_URL}/` },
+    { name: 'Guides', item: `${BASE_URL}/guides` },
+    { name: BTT_META.title, item: canonical },
+  ]);
+  return [collection, crumb];
+}
+
+function bttChapterJsonLd(slug) {
+  const chapter = BTT_CHAPTERS.find((c) => c.slug === slug);
+  if (!chapter) return [];
+  const canonical = `${BASE_URL}${bttChapterPath(chapter.slug)}`;
+  const cover = BTT_CHAPTER_COVERS[chapter.num];
+  const image = cover ? `${BASE_URL}${cover.src}` : `${BASE_URL}/images/og-sysbilt.png`;
+  const article = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: chapter.h1,
+    description: chapter.seoDescription,
+    author: { '@type': 'Organization', name: 'SYSBILT', url: `${BASE_URL}/` },
+    publisher: {
+      '@type': 'Organization',
+      name: 'SYSBILT',
+      url: `${BASE_URL}/`,
+      logo: { '@type': 'ImageObject', url: `${BASE_URL}/images/og-sysbilt.png` },
+    },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
+    image,
+    isPartOf: { '@type': 'Book', name: BTT_META.title, url: `${BASE_URL}${BTT_HUB_ROUTE}` },
+    inLanguage: 'en-AU',
+  };
+  const crumb = breadcrumbJsonLd([
+    { name: 'Home', item: `${BASE_URL}/` },
+    { name: 'Guides', item: `${BASE_URL}/guides` },
+    { name: BTT_META.title, item: `${BASE_URL}${BTT_HUB_ROUTE}` },
+    { name: chapter.h1, item: canonical },
+  ]);
+  const out = [article, crumb];
+  const glossary =
+    chapter.num === 12 ? extractBttGlossaryFaqs(extractChapterBlocks(chapter.pages)) : [];
+  if (glossary.length > 0) out.push(generateFAQSchema(glossary));
+  return out;
+}
+
+function btmHubJsonLd(hubRoute) {
+  const canonical = canonicalUrl(hubRoute.path);
+  const collection = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: hubRoute.title,
+    description: hubRoute.description,
+    url: canonical,
+    image: `${BASE_URL}${BTM_HUB_OG}`,
+    inLanguage: 'en-AU',
+  };
+  const crumb = breadcrumbJsonLd([
+    { name: 'Home', item: `${BASE_URL}/` },
+    { name: 'Guides', item: `${BASE_URL}/guides` },
+    { name: BTM_META.title, item: canonical },
+  ]);
+  return [collection, crumb];
+}
+
+function btmChapterJsonLd(slug) {
+  const chapter = BTM_CHAPTERS.find((c) => c.slug === slug);
+  if (!chapter) return [];
+  const canonical = `${BASE_URL}${btmChapterPath(chapter.slug)}`;
+  const cover = BTM_CHAPTER_COVERS[chapter.num];
+  const image = cover ? `${BASE_URL}${cover.src}` : `${BASE_URL}/images/og-sysbilt.png`;
+  const article = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: chapter.h1,
+    description: chapter.seoDescription,
+    author: { '@type': 'Organization', name: 'SYSBILT', url: `${BASE_URL}/` },
+    publisher: {
+      '@type': 'Organization',
+      name: 'SYSBILT',
+      url: `${BASE_URL}/`,
+      logo: { '@type': 'ImageObject', url: `${BASE_URL}/images/og-sysbilt.png` },
+    },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
+    image,
+    isPartOf: { '@type': 'Book', name: BTM_META.title, url: `${BASE_URL}${BTM_HUB_ROUTE}` },
+    inLanguage: 'en-AU',
+  };
+  const crumb = breadcrumbJsonLd([
+    { name: 'Home', item: `${BASE_URL}/` },
+    { name: 'Guides', item: `${BASE_URL}/guides` },
+    { name: BTM_META.title, item: `${BASE_URL}${BTM_HUB_ROUTE}` },
+    { name: chapter.h1, item: canonical },
+  ]);
+  const out = [article, crumb];
+  const glossary =
+    chapter.num === 12 ? extractBtmGlossaryFaqs(extractChapterBlocks(chapter.pages)) : [];
+  if (glossary.length > 0) out.push(generateFAQSchema(glossary));
+  return out;
+}
+
+function bteHubJsonLd(hubRoute) {
+  const canonical = canonicalUrl(hubRoute.path);
+  const collection = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: hubRoute.title,
+    description: hubRoute.description,
+    url: canonical,
+    image: `${BASE_URL}${BTE_HUB_OG}`,
+    inLanguage: 'en-AU',
+  };
+  const crumb = breadcrumbJsonLd([
+    { name: 'Home', item: `${BASE_URL}/` },
+    { name: 'Guides', item: `${BASE_URL}/guides` },
+    { name: BTE_META.title, item: canonical },
+  ]);
+  return [collection, crumb];
+}
+
+function bteChapterJsonLd(slug) {
+  const chapter = BTE_CHAPTERS.find((c) => c.slug === slug);
+  if (!chapter) return [];
+  const canonical = `${BASE_URL}${bteChapterPath(chapter.slug)}`;
+  const cover = BTE_CHAPTER_COVERS[chapter.num];
+  const image = cover ? `${BASE_URL}${cover.src}` : `${BASE_URL}/images/og-sysbilt.png`;
+  const article = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: chapter.h1,
+    description: chapter.seoDescription,
+    author: { '@type': 'Organization', name: 'SYSBILT', url: `${BASE_URL}/` },
+    publisher: {
+      '@type': 'Organization',
+      name: 'SYSBILT',
+      url: `${BASE_URL}/`,
+      logo: { '@type': 'ImageObject', url: `${BASE_URL}/images/og-sysbilt.png` },
+    },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
+    image,
+    isPartOf: { '@type': 'Book', name: BTE_META.title, url: `${BASE_URL}${BTE_HUB_ROUTE}` },
+    inLanguage: 'en-AU',
+  };
+  const crumb = breadcrumbJsonLd([
+    { name: 'Home', item: `${BASE_URL}/` },
+    { name: 'Guides', item: `${BASE_URL}/guides` },
+    { name: BTE_META.title, item: `${BASE_URL}${BTE_HUB_ROUTE}` },
+    { name: chapter.h1, item: canonical },
+  ]);
+  const out = [article, crumb];
+  const glossary =
+    chapter.num === 12 ? extractBteGlossaryFaqs(extractChapterBlocks(chapter.pages)) : [];
+  if (glossary.length > 0) out.push(generateFAQSchema(glossary));
+  return out;
+}
+
+function bseHubJsonLd(hubRoute) {
+  const canonical = canonicalUrl(hubRoute.path);
+  const collection = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: hubRoute.title,
+    description: hubRoute.description,
+    url: canonical,
+    image: `${BASE_URL}${BSE_HUB_OG}`,
+    inLanguage: 'en-AU',
+  };
+  const crumb = breadcrumbJsonLd([
+    { name: 'Home', item: `${BASE_URL}/` },
+    { name: 'Guides', item: `${BASE_URL}/guides` },
+    { name: BSE_META.title, item: canonical },
+  ]);
+  return [collection, crumb];
+}
+
+function bseChapterJsonLd(slug) {
+  const chapter = BSE_CHAPTERS.find((c) => c.slug === slug);
+  if (!chapter) return [];
+  const canonical = `${BASE_URL}${bseChapterPath(chapter.slug)}`;
+  const cover = BSE_CHAPTER_COVERS[chapter.num];
+  const image = cover ? `${BASE_URL}${cover.src}` : `${BASE_URL}/images/og-sysbilt.png`;
+  const article = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: chapter.h1,
+    description: chapter.seoDescription,
+    author: { '@type': 'Organization', name: 'SYSBILT', url: `${BASE_URL}/` },
+    publisher: {
+      '@type': 'Organization',
+      name: 'SYSBILT',
+      url: `${BASE_URL}/`,
+      logo: { '@type': 'ImageObject', url: `${BASE_URL}/images/og-sysbilt.png` },
+    },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
+    image,
+    isPartOf: { '@type': 'Book', name: BSE_META.title, url: `${BASE_URL}${BSE_HUB_ROUTE}` },
+    inLanguage: 'en-AU',
+  };
+  const crumb = breadcrumbJsonLd([
+    { name: 'Home', item: `${BASE_URL}/` },
+    { name: 'Guides', item: `${BASE_URL}/guides` },
+    { name: BSE_META.title, item: `${BASE_URL}${BSE_HUB_ROUTE}` },
+    { name: chapter.h1, item: canonical },
+  ]);
+  const out = [article, crumb];
+  const glossary =
+    chapter.num === 12 ? extractBseGlossaryFaqs(extractChapterBlocks(chapter.pages)) : [];
+  if (glossary.length > 0) out.push(generateFAQSchema(glossary));
+  return out;
+}
+
 /** JSON-LD for static routes (homepage Organization/WebSite, pillar/system FAQ). */
 function staticJsonLd(routePath) {
   if (routePath === '/') return [organizationJsonLd(), webSiteJsonLd()];
@@ -793,6 +1141,22 @@ function buildAllRoutes({ posts, guides, toolkitItems }) {
       skipped.push('guide:built-to-run — handled by static Built to Run routes');
       continue;
     }
+    if (guide.slug === 'built-to-think') {
+      skipped.push('guide:built-to-think — handled by static Built to Think routes');
+      continue;
+    }
+    if (guide.slug === 'built-to-multiply') {
+      skipped.push('guide:built-to-multiply — handled by static Built to Multiply routes');
+      continue;
+    }
+    if (guide.slug === 'built-to-teach') {
+      skipped.push('guide:built-to-teach — handled by static Built to Teach routes');
+      continue;
+    }
+    if (guide.slug === 'built-to-see') {
+      skipped.push('guide:built-to-see — handled by static Built to See routes');
+      continue;
+    }
     const rawTitle = (guide.seoTitle?.trim() || guide.title).trim();
     const title = `${rawTitle} | SYSBILT`;
     const description = (guide.seoDescription?.trim() || guide.subtitle?.trim() || '').trim();
@@ -845,7 +1209,7 @@ function buildAllRoutes({ posts, guides, toolkitItems }) {
 
   const staticRoutes = STATIC_ROUTES.map((r) => ({ ...r, jsonLd: staticJsonLd(r.path) }));
 
-  return { routes: [...staticRoutes, ...BTW_ROUTES, ...BTS_ROUTES, ...BTC_ROUTES, ...BTR_ROUTES, ...dynamic], skipped };
+  return { routes: [...staticRoutes, ...BTW_ROUTES, ...BTS_ROUTES, ...BTC_ROUTES, ...BTR_ROUTES, ...BTT_ROUTES, ...BTM_ROUTES, ...BTE_ROUTES, ...BSE_ROUTES, ...dynamic], skipped };
 }
 
 async function collectAllRoutes() {
@@ -881,10 +1245,10 @@ async function main() {
     await writeFile(outPath, html, 'utf8');
   }
 
-  const codeDefinedCount = BTW_ROUTES.length + BTS_ROUTES.length + BTC_ROUTES.length + BTR_ROUTES.length;
+  const codeDefinedCount = BTW_ROUTES.length + BTS_ROUTES.length + BTC_ROUTES.length + BTR_ROUTES.length + BTT_ROUTES.length + BTM_ROUTES.length + BTE_ROUTES.length + BSE_ROUTES.length;
   const sanityCount = allRoutes.length - STATIC_ROUTES.length - codeDefinedCount;
   console.log(
-    `[stamp-meta] Stamped ${allRoutes.length} routes (${STATIC_ROUTES.length} static, ${sanityCount} from Sanity, ${BTW_ROUTES.length} BTW, ${BTS_ROUTES.length} BTS, ${BTC_ROUTES.length} BTC, ${BTR_ROUTES.length} BTR).`
+    `[stamp-meta] Stamped ${allRoutes.length} routes (${STATIC_ROUTES.length} static, ${sanityCount} from Sanity, ${BTW_ROUTES.length} BTW, ${BTS_ROUTES.length} BTS, ${BTC_ROUTES.length} BTC, ${BTR_ROUTES.length} BTR, ${BTT_ROUTES.length} BTT, ${BTM_ROUTES.length} BTM, ${BTE_ROUTES.length} BTE, ${BSE_ROUTES.length} BSE).`
   );
   if (skipped.length > 0) {
     console.log('[stamp-meta] Skipped Sanity entries:');
@@ -911,6 +1275,10 @@ export {
   BTS_ROUTES,
   BTC_ROUTES,
   BTR_ROUTES,
+  BTT_ROUTES,
+  BTM_ROUTES,
+  BTE_ROUTES,
+  BSE_ROUTES,
   canonicalUrl,
   distPathForRoute,
   fetchSanityContent,

@@ -39,7 +39,7 @@ export function BtwPdfCta({ variant = 'card', className = '' }: Props) {
       </p>
       <Link
         to={BTW_BOOK_PATH}
-        className="inline-flex font-mono text-[11px] font-bold uppercase tracking-[0.18em] border-2 border-dark bg-dark text-cream px-5 py-3 hover:bg-gold-on-dark hover:text-dark hover:border-gold-on-dark transition-colors"
+        className="btw-guide-cta-btn inline-flex font-mono text-[11px] font-bold uppercase tracking-[0.18em] border-2 border-dark bg-dark text-cream px-5 py-3 hover:bg-gold-on-dark hover:text-dark hover:border-gold-on-dark transition-colors"
       >
         Get the PDF edition
       </Link>

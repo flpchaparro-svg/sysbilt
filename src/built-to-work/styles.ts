@@ -23,6 +23,34 @@ ${BTW_TOKEN_CSS}
   color: inherit;
 }
 
+.btw-root a.btw-guide-cta-btn,
+.btw-root a.btw-guide-cta-btn:visited {
+  color: var(--btw-cream);
+}
+
+.btw-root a.btw-guide-cta-btn:hover {
+  color: var(--btw-ink);
+}
+
+/* Gated /read book chrome sits on dark — nav links must not inherit page ink. */
+.btw-root.btw-book-shell a.btw-book-nav-link,
+.btw-root.btw-book-shell a.btw-book-nav-link:visited {
+  color: rgba(255, 242, 236, 0.58);
+}
+
+.btw-root.btw-book-shell a.btw-book-nav-link:hover {
+  color: var(--btw-cream);
+}
+
+.btw-root.btw-book-shell a.btw-book-nav-link-muted,
+.btw-root.btw-book-shell a.btw-book-nav-link-muted:visited {
+  color: rgba(255, 242, 236, 0.4);
+}
+
+.btw-root.btw-book-shell a.btw-book-nav-link-muted:hover {
+  color: rgba(255, 242, 236, 0.88);
+}
+
 /* Lifts every A4 sheet off the ink background — same halo on cream and dark pages. */
 .btw-sheet {
   box-shadow:

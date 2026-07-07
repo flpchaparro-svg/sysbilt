@@ -4,6 +4,10 @@ import { BTW_CHAPTER_SLUGS, BTW_HUB_ROUTE as BTW_HUB_PATH } from '../scripts/sit
 import { BTS_CHAPTER_SLUGS, BTS_HUB_ROUTE as BTS_HUB_PATH } from '../scripts/site/bts-seo-routes.mjs';
 import { BTC_CHAPTER_SLUGS, BTC_HUB_ROUTE as BTC_HUB_PATH } from '../scripts/site/btc-seo-routes.mjs';
 import { BTR_CHAPTER_SLUGS, BTR_HUB_ROUTE as BTR_HUB_PATH } from '../scripts/site/btr-seo-routes.mjs';
+import { BTT_CHAPTER_SLUGS, BTT_HUB_ROUTE as BTT_HUB_PATH } from '../scripts/site/btt-seo-routes.mjs';
+import { BTM_CHAPTER_SLUGS, BTM_HUB_ROUTE as BTM_HUB_PATH } from '../scripts/site/btm-seo-routes.mjs';
+import { BTE_CHAPTER_SLUGS, BTE_HUB_ROUTE as BTE_HUB_PATH } from '../scripts/site/bte-seo-routes.mjs';
+import { BSE_CHAPTER_SLUGS, BSE_HUB_ROUTE as BSE_HUB_PATH } from '../scripts/site/bse-seo-routes.mjs';
 
 const BASE_URL = 'https://sysbilt.com';
 
@@ -181,6 +185,62 @@ export default async function handler(_req: VercelRequest, res: VercelResponse):
       priority: '0.75',
     }));
 
+    const bttHubEntry: UrlEntry = {
+      loc: `${BASE_URL}${BTT_HUB_PATH}`,
+      lastmod: today,
+      changefreq: 'monthly',
+      priority: '0.8',
+    };
+
+    const bttChapterEntries: UrlEntry[] = BTT_CHAPTER_SLUGS.map((slug) => ({
+      loc: `${BASE_URL}${BTT_HUB_PATH}/${encodeURIComponent(slug)}`,
+      lastmod: today,
+      changefreq: 'monthly',
+      priority: '0.75',
+    }));
+
+    const btmHubEntry: UrlEntry = {
+      loc: `${BASE_URL}${BTM_HUB_PATH}`,
+      lastmod: today,
+      changefreq: 'monthly',
+      priority: '0.8',
+    };
+
+    const btmChapterEntries: UrlEntry[] = BTM_CHAPTER_SLUGS.map((slug) => ({
+      loc: `${BASE_URL}${BTM_HUB_PATH}/${encodeURIComponent(slug)}`,
+      lastmod: today,
+      changefreq: 'monthly',
+      priority: '0.75',
+    }));
+
+    const bteHubEntry: UrlEntry = {
+      loc: `${BASE_URL}${BTE_HUB_PATH}`,
+      lastmod: today,
+      changefreq: 'monthly',
+      priority: '0.8',
+    };
+
+    const bteChapterEntries: UrlEntry[] = BTE_CHAPTER_SLUGS.map((slug) => ({
+      loc: `${BASE_URL}${BTE_HUB_PATH}/${encodeURIComponent(slug)}`,
+      lastmod: today,
+      changefreq: 'monthly',
+      priority: '0.75',
+    }));
+
+    const bseHubEntry: UrlEntry = {
+      loc: `${BASE_URL}${BSE_HUB_PATH}`,
+      lastmod: today,
+      changefreq: 'monthly',
+      priority: '0.8',
+    };
+
+    const bseChapterEntries: UrlEntry[] = BSE_CHAPTER_SLUGS.map((slug) => ({
+      loc: `${BASE_URL}${BSE_HUB_PATH}/${encodeURIComponent(slug)}`,
+      lastmod: today,
+      changefreq: 'monthly',
+      priority: '0.75',
+    }));
+
     const blogUrls: UrlEntry[] = posts
       .filter((p): p is { slug: string; publishedAt: string | null } => typeof p.slug === 'string' && p.slug.length > 0)
       .map((p) => ({
@@ -200,7 +260,7 @@ export default async function handler(_req: VercelRequest, res: VercelResponse):
       }));
 
     const seen = new Set<string>();
-    const entries = [...staticEntries, ...guideDocEntries, btwHubEntry, ...btwChapterEntries, btsHubEntry, ...btsChapterEntries, btcHubEntry, ...btcChapterEntries, btrHubEntry, ...btrChapterEntries, ...blogUrls, ...toolkitUrls].filter((entry) => {
+    const entries = [...staticEntries, ...guideDocEntries, btwHubEntry, ...btwChapterEntries, btsHubEntry, ...btsChapterEntries, btcHubEntry, ...btcChapterEntries, btrHubEntry, ...btrChapterEntries, bttHubEntry, ...bttChapterEntries, btmHubEntry, ...btmChapterEntries, bteHubEntry, ...bteChapterEntries, bseHubEntry, ...bseChapterEntries, ...blogUrls, ...toolkitUrls].filter((entry) => {
       if (seen.has(entry.loc)) return false;
       seen.add(entry.loc);
       return true;

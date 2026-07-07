@@ -12,6 +12,10 @@ import { BTW_META } from '../built-to-work/types';
 import { BTS_META } from '../built-to-sell/types';
 import { BTC_META } from '../built-to-close/types';
 import { BTR_META } from '../built-to-run/types';
+import { BTT_META } from '../built-to-think/types';
+import { BTM_META } from '../built-to-multiply/types';
+import { BTE_META } from '../built-to-teach/types';
+import { BSE_META } from '../built-to-see/types';
 
 type HubGuide = {
   title: string;
@@ -53,9 +57,33 @@ const FEATURED_CODE_GUIDES = [
     title: BTR_META.title,
     subtitle: BTR_META.subtitle,
   },
+  {
+    path: '/guides/built-to-think',
+    badge: 'Premium guide · 12 chapters · AI',
+    title: BTT_META.title,
+    subtitle: BTT_META.subtitle,
+  },
+  {
+    path: '/guides/built-to-multiply',
+    badge: 'Premium guide · 12 chapters · Content',
+    title: BTM_META.title,
+    subtitle: BTM_META.subtitle,
+  },
+  {
+    path: '/guides/built-to-teach',
+    badge: 'Premium guide · 12 chapters · Training',
+    title: BTE_META.title,
+    subtitle: BTE_META.subtitle,
+  },
+  {
+    path: '/guides/built-to-see',
+    badge: 'Premium guide · 12 chapters · Dashboards',
+    title: BSE_META.title,
+    subtitle: BSE_META.subtitle,
+  },
 ] as const;
 
-const CODE_GUIDE_SLUGS = new Set(['built-to-work', 'built-to-sell', 'built-to-close', 'built-to-run']);
+const CODE_GUIDE_SLUGS = new Set(['built-to-work', 'built-to-sell', 'built-to-close', 'built-to-run', 'built-to-think', 'built-to-multiply', 'built-to-teach', 'built-to-see']);
 
 const guidesHubCollectionJsonLd = {
   '@context': 'https://schema.org',

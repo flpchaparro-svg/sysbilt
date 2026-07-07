@@ -36,6 +36,18 @@ const BtcChapterArticlePage = lazy(() => import('./pages/BtcChapterArticlePage')
 const BuiltToRunHubPage = lazy(() => import('./pages/BuiltToRunHubPage'));
 const BuiltToRunBookPage = lazy(() => import('./pages/BuiltToRunBookPage'));
 const BtrChapterArticlePage = lazy(() => import('./pages/BtrChapterArticlePage'));
+const BuiltToThinkHubPage = lazy(() => import('./pages/BuiltToThinkHubPage'));
+const BuiltToThinkBookPage = lazy(() => import('./pages/BuiltToThinkBookPage'));
+const BttChapterArticlePage = lazy(() => import('./pages/BttChapterArticlePage'));
+const BuiltToMultiplyHubPage = lazy(() => import('./pages/BuiltToMultiplyHubPage'));
+const BuiltToMultiplyBookPage = lazy(() => import('./pages/BuiltToMultiplyBookPage'));
+const BtmChapterArticlePage = lazy(() => import('./pages/BtmChapterArticlePage'));
+const BuiltToTeachHubPage = lazy(() => import('./pages/BuiltToTeachHubPage'));
+const BuiltToTeachBookPage = lazy(() => import('./pages/BuiltToTeachBookPage'));
+const BteChapterArticlePage = lazy(() => import('./pages/BteChapterArticlePage'));
+const BuiltToSeeHubPage = lazy(() => import('./pages/BuiltToSeeHubPage'));
+const BuiltToSeeBookPage = lazy(() => import('./pages/BuiltToSeeBookPage'));
+const BseChapterArticlePage = lazy(() => import('./pages/BseChapterArticlePage'));
 const ToolkitPage = lazy(() => import('./pages/ToolkitPage'));
 const ToolkitItemPage = lazy(() => import('./pages/ToolkitItemPage'));
 const ProposalPage = lazy(() => import('./pages/proposal/ProposalPage'));
@@ -181,6 +193,14 @@ const App: React.FC = () => {
                 location.pathname.startsWith('/guides/built-to-close/') ||
                 location.pathname === '/guides/built-to-run' ||
                 location.pathname.startsWith('/guides/built-to-run/') ||
+                location.pathname === '/guides/built-to-think' ||
+                location.pathname.startsWith('/guides/built-to-think/') ||
+                location.pathname === '/guides/built-to-multiply' ||
+                location.pathname.startsWith('/guides/built-to-multiply/') ||
+                location.pathname === '/guides/built-to-teach' ||
+                location.pathname.startsWith('/guides/built-to-teach/') ||
+                location.pathname === '/guides/built-to-see' ||
+                location.pathname.startsWith('/guides/built-to-see/') ||
                 /^\/(blog|toolkit)\/[^/]+$/.test(location.pathname)
               }
             />
@@ -214,6 +234,18 @@ const App: React.FC = () => {
                     <Route path="/guides/built-to-run/read" element={<BuiltToRunBookPage />} />
                     <Route path="/guides/built-to-run/:chapterSlug" element={<BtrChapterArticlePage />} />
                     <Route path="/guides/built-to-run" element={<BuiltToRunHubPage />} />
+                    <Route path="/guides/built-to-think/read" element={<BuiltToThinkBookPage />} />
+                    <Route path="/guides/built-to-think/:chapterSlug" element={<BttChapterArticlePage />} />
+                    <Route path="/guides/built-to-think" element={<BuiltToThinkHubPage />} />
+                    <Route path="/guides/built-to-multiply/read" element={<BuiltToMultiplyBookPage />} />
+                    <Route path="/guides/built-to-multiply/:chapterSlug" element={<BtmChapterArticlePage />} />
+                    <Route path="/guides/built-to-multiply" element={<BuiltToMultiplyHubPage />} />
+                    <Route path="/guides/built-to-teach/read" element={<BuiltToTeachBookPage />} />
+                    <Route path="/guides/built-to-teach/:chapterSlug" element={<BteChapterArticlePage />} />
+                    <Route path="/guides/built-to-teach" element={<BuiltToTeachHubPage />} />
+                    <Route path="/guides/built-to-see/read" element={<BuiltToSeeBookPage />} />
+                    <Route path="/guides/built-to-see/:chapterSlug" element={<BseChapterArticlePage />} />
+                    <Route path="/guides/built-to-see" element={<BuiltToSeeHubPage />} />
                     <Route path="/guides/:slug" element={<GuideDocumentPage />} />
                     <Route path="/guides" element={<GuidesPage />} />
                     <Route path="/toolkit/:slug" element={<ToolkitItemPage />} />

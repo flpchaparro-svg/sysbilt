@@ -1,0 +1,81 @@
+import type { FC } from 'react'
+import {
+  BseCh01RearviewWindscreen,
+  BseCh01TwoBlindnesses,
+  BseCh01FlyingOrClear,
+  BseCh02AssetSystemsBuilding,
+  BseCh02ReachableOrHostage,
+  BseCh02OneWordOneMeaning,
+  BseCh03OneQuestion,
+  BseCh03FiveNotForty,
+  BseCh03NumberInContext,
+  BseCh03FiveSecondTest,
+} from './bseCh01-03'
+import {
+  BseCh04LeadingLagging,
+  BseCh04CoreNumbers,
+  BseCh04NumbersFollowGoal,
+  BseCh05DashboardLibrary,
+  BseCh05DailyGlance,
+  BseCh05StartWithGlance,
+  BseCh06Rhythms,
+  BseCh06ActOnOnly,
+  BseCh06OneScreen,
+} from './bseCh04-08'
+import {
+  BseCh07GarbageGospel,
+  BseCh07DashboardFroze,
+  BseCh07WhoSeesWhat,
+  BseCh08ToldNotWatching,
+  BseCh08ThresholdsAnomalies,
+  BseCh08AskQuestion,
+  BseCh08ForecastWeather,
+  BseCh09WholeMachineVisible,
+  BseCh09EnquiryLoopVisible,
+  BseCh09PipesBehindScreen,
+  BseCh10ThreeStages,
+  BseCh10BuildWhenDecision,
+  BseCh10GrowOneView,
+  BseCh11FourChecks,
+} from './bseCh09-11'
+
+type DiagramProps = { caption: string }
+
+/** All Built to See diagram IDs → components. */
+export const BSE_DIAGRAMS: Record<string, FC<DiagramProps>> = {
+  'bse-ch01-rearview-windscreen': BseCh01RearviewWindscreen,
+  'bse-ch01-two-blindnesses': BseCh01TwoBlindnesses,
+  'bse-ch01-flying-or-clear': BseCh01FlyingOrClear,
+  'bse-ch02-asset-systems-building': BseCh02AssetSystemsBuilding,
+  'bse-ch02-reachable-or-hostage': BseCh02ReachableOrHostage,
+  'bse-ch02-one-word-one-meaning': BseCh02OneWordOneMeaning,
+  'bse-ch03-one-question': BseCh03OneQuestion,
+  'bse-ch03-five-not-forty': BseCh03FiveNotForty,
+  'bse-ch03-number-in-context': BseCh03NumberInContext,
+  'bse-ch03-five-second-test': BseCh03FiveSecondTest,
+  'bse-ch04-leading-lagging': BseCh04LeadingLagging,
+  'bse-ch04-core-numbers': BseCh04CoreNumbers,
+  'bse-ch04-numbers-follow-goal': BseCh04NumbersFollowGoal,
+  'bse-ch05-dashboard-library': BseCh05DashboardLibrary,
+  'bse-ch05-daily-glance': BseCh05DailyGlance,
+  'bse-ch05-start-with-glance': BseCh05StartWithGlance,
+  'bse-ch06-rhythms': BseCh06Rhythms,
+  'bse-ch06-act-on-only': BseCh06ActOnOnly,
+  'bse-ch06-one-screen': BseCh06OneScreen,
+  'bse-ch07-garbage-gospel': BseCh07GarbageGospel,
+  'bse-ch07-dashboard-froze': BseCh07DashboardFroze,
+  'bse-ch07-who-sees-what': BseCh07WhoSeesWhat,
+  'bse-ch08-told-not-watching': BseCh08ToldNotWatching,
+  'bse-ch08-thresholds-anomalies': BseCh08ThresholdsAnomalies,
+  'bse-ch08-ask-question': BseCh08AskQuestion,
+  'bse-ch08-forecast-weather': BseCh08ForecastWeather,
+  'bse-ch09-whole-machine-visible': BseCh09WholeMachineVisible,
+  'bse-ch09-enquiry-loop-visible': BseCh09EnquiryLoopVisible,
+  'bse-ch09-pipes-behind-screen': BseCh09PipesBehindScreen,
+  'bse-ch10-three-stages': BseCh10ThreeStages,
+  'bse-ch10-build-when-decision': BseCh10BuildWhenDecision,
+  'bse-ch10-grow-one-view': BseCh10GrowOneView,
+  'bse-ch11-four-checks': BseCh11FourChecks,
+}
+
+export const BSE_DIAGRAM_IDS = Object.keys(BSE_DIAGRAMS)
