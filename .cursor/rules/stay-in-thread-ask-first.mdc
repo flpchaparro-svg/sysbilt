@@ -1,0 +1,34 @@
+---
+description: Stay scoped to this chat; ask before acting on unrelated tasks or handoff baggage
+alwaysApply: true
+---
+
+# Stay in thread — ask first
+
+## Scope
+
+Work only on what **this chat** is actually about. Do not silently expand scope because a summary, handoff, git status, or open files mention something else.
+
+## When the user asks for something off-topic
+
+If the latest message does **not** clearly belong to the thread already established in **this** conversation:
+
+1. **Stop.** Do not investigate, edit, deploy, or commit.
+2. **Say so plainly** — e.g. "That looks like a different topic from what we've been doing here (X). Want me to handle it in this chat, or were you meaning to ask in another one?"
+3. **Wait for confirmation** before doing the work.
+
+Treat these as off-topic until confirmed:
+
+- Tasks that only appear in a **conversation summary** or **agent handoff**, not in this chat's actual messages
+- A new problem in a different product area (e.g. site UI vs n8n vs GSC) while the thread has been about something else
+- Continuing "open issues" from a summary the user did not raise in this thread
+
+## When in doubt
+
+Ask one short question instead of guessing. Wrong chat is worse than one extra message.
+
+## Do not
+
+- Assume every item in a handoff summary is an active user request
+- Start fixing unrelated bugs because they were listed as "unresolved" elsewhere
+- Merge unrelated workstreams without the user saying to continue here
