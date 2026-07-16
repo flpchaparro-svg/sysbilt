@@ -11,6 +11,7 @@ import persona from './persona'
 import guideBlockContent from './guideBlockContent'
 import guide from './guide'
 import toolkitItem from './toolkitItem'
+import funnelPage from './funnelPage'
 
 export const schemaTypes = [
   post,
@@ -26,4 +27,5 @@ export const schemaTypes = [
   guideBlockContent,
   guide,
   toolkitItem,
+  funnelPage,
 ]

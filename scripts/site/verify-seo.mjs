@@ -70,7 +70,8 @@ import {
   canonicalUrl,
   distPathForRoute,
   GENERIC_TITLE,
-  INDEXABLE_EXCLUDE,
+  isGoFunnelPath,
+  isIndexableExcluded,
   fetchSanityContent,
   buildAllRoutes,
 } from './stamp-meta.mjs';
@@ -117,10 +118,17 @@ function checkRouteHtml(route, html) {
     }
   }
 
-  if (!INDEXABLE_EXCLUDE.has(p)) {
-    if (/<meta[^>]+name="robots"[^>]*content="[^"]*noindex/i.test(html)) {
-      addViolation(`${p} — unexpected noindex robots meta on an indexable route`);
+  if (isIndexableExcluded(p)) {
+    if (isGoFunnelPath(p)) {
+      if (!/<meta[^>]+name="robots"[^>]*content="[^"]*noindex/i.test(html)) {
+        addViolation(`${p} — /go/ route missing noindex robots meta`);
+      }
+      if (!/<meta[^>]+name="robots"[^>]*content="[^"]*nofollow/i.test(html)) {
+        addViolation(`${p} — /go/ route missing nofollow robots meta`);
+      }
     }
+  } else if (/<meta[^>]+name="robots"[^>]*content="[^"]*noindex/i.test(html)) {
+    addViolation(`${p} — unexpected noindex robots meta on an indexable route`);
   }
 
   const expectedTypes = Array.isArray(route.jsonLd)
@@ -440,7 +448,7 @@ async function checkBseAntiDrift() {
 function buildSitemapPathSet(content) {
   const set = new Set();
   for (const r of STATIC_ROUTES) {
-    if (!INDEXABLE_EXCLUDE.has(r.path)) set.add(r.path);
+    if (!isIndexableExcluded(r.path)) set.add(r.path);
   }
   for (const g of content.guides) {
     if (g.slug && g.slug !== 'built-to-work' && g.slug !== 'built-to-sell' && g.slug !== 'built-to-close' && g.slug !== 'built-to-run' && g.slug !== 'built-to-think' && g.slug !== 'built-to-multiply' && g.slug !== 'built-to-teach' && g.slug !== 'built-to-see') set.add(`/guides/${g.slug}`);
@@ -497,7 +505,7 @@ async function main() {
   await checkBseAntiDrift();
 
   const sitemapSet = buildSitemapPathSet(content);
-  const indexableSet = new Set(routes.map((r) => r.path).filter((p) => !INDEXABLE_EXCLUDE.has(p)));
+  const indexableSet = new Set(routes.map((r) => r.path).filter((p) => !isIndexableExcluded(p)));
 
   for (const p of indexableSet) {
     if (!sitemapSet.has(p)) addViolation(`sitemap — indexable route ${p} would be missing from the sitemap`);

@@ -103,12 +103,16 @@ function isSpaRoute(normalizedPathname: string): boolean {
     '/evidence-vault',
     '/contact',
     '/privacy',
+    '/terms',
     '/blog',
     '/news',
     '/guides',
     '/toolkit',
+    '/go/thanks',
   ]);
   if (exact.has(normalizedPathname)) return true;
+
+  if (normalizedPathname.startsWith('/go/')) return true;
 
   const blog = normalizedPathname.match(/^\/blog\/([^/]+)$/i);
   if (blog) {

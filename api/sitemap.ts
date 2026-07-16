@@ -23,6 +23,7 @@ const STATIC_PAGES: readonly StaticPage[] = [
   { path: '/evidence-vault', priority: '0.9' },
   { path: '/contact', priority: '0.7' },
   { path: '/privacy', priority: '0.6' },
+  { path: '/terms', priority: '0.6' },
   { path: '/pillar1', priority: '0.8' },
   { path: '/pillar2', priority: '0.8' },
   { path: '/pillar3', priority: '0.8' },

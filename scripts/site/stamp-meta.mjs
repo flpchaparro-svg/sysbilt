@@ -131,6 +131,15 @@ const GENERIC_TITLE = 'SYSBILT | Business Systems';
 /** Routes that are intentionally noindex and therefore excluded from the sitemap. */
 const INDEXABLE_EXCLUDE = new Set(['/news']);
 
+/** Private funnel routes: stamped with noindex, never in the sitemap. */
+function isGoFunnelPath(routePath) {
+  return routePath === '/go/thanks' || routePath.startsWith('/go/');
+}
+
+function isIndexableExcluded(routePath) {
+  return INDEXABLE_EXCLUDE.has(routePath) || isGoFunnelPath(routePath);
+}
+
 const BLOG_FALLBACK_DESCRIPTION =
   'We build the systems that help Australian businesses stop doing everything manually';
 
@@ -181,6 +190,19 @@ const STATIC_ROUTES = [
     path: '/privacy',
     title: 'Privacy Policy | SYSBILT',
     description: 'How SYSBILT collects, uses, and protects your information.',
+  },
+  {
+    path: '/terms',
+    title: 'Terms of Service | SYSBILT',
+    description:
+      "The plain-English terms for SYSBILT's fixed-scope services: what's included, how delivery works, and where you stand.",
+  },
+  {
+    path: '/go/thanks',
+    title: 'Paid, confirmed | SYSBILT',
+    description:
+      'Your payment is confirmed. Complete the access form so we can start delivery.',
+    robots: 'noindex, nofollow',
   },
   {
     path: '/blog',
@@ -435,6 +457,12 @@ const TOOLKIT_QUERY = `*[_type == "toolkitItem" && !(_id in path("drafts.**"))]{
   _updatedAt,
   "authorName": author->name,
   "imageUrl": coalesce(ogImage.asset->url, mainImage.asset->url)
+}`;
+
+const FUNNEL_QUERY = `*[_type == "funnelPage" && !(_id in path("drafts.**"))]{
+  "slug": slug.current,
+  title,
+  sub
 }`;
 
 function escapeAttr(value) {
@@ -985,6 +1013,9 @@ function stampHtml(template, route) {
   const safeOgTitle = escapeAttr(ogTitle ?? title);
   const safeOgUrl = escapeAttr(ogUrl(routePath));
   const safeCanonical = escapeAttr(canonicalUrl(routePath));
+  const robots =
+    route.robots ||
+    (isGoFunnelPath(routePath) ? 'noindex, nofollow' : null);
 
   let html = template;
 
@@ -999,12 +1030,19 @@ function stampHtml(template, route) {
   const stampedDescMeta = `<meta name="description" content="${safeDescription}" />`;
   html = replaceOrFail(html, descMetaPattern, stampedDescMeta, 'meta name="description"');
 
-  if (!html.includes('rel="canonical"')) {
-    html = html.replace(
-      stampedDescMeta,
-      `${stampedDescMeta}\n    <link rel="canonical" href="${safeCanonical}" />`
-    );
-  } else {
+  const robotsMeta = robots
+    ? `\n    <meta name="robots" content="${escapeAttr(robots)}" />`
+    : '';
+  const needsCanonical = !html.includes('rel="canonical"');
+  const canonicalMeta = needsCanonical
+    ? `\n    <link rel="canonical" href="${safeCanonical}" />`
+    : '';
+
+  if (robotsMeta || canonicalMeta) {
+    html = html.replace(stampedDescMeta, `${stampedDescMeta}${robotsMeta}${canonicalMeta}`);
+  }
+
+  if (!needsCanonical) {
     html = replaceOrFail(
       html,
       /<link rel="canonical" href="[^"]*" \/>/,
@@ -1073,17 +1111,18 @@ async function fetchSanityContent() {
     apiVersion: '2024-02-20',
   });
 
-  const [posts, guides, toolkitItems] = await Promise.all([
+  const [posts, guides, toolkitItems, funnelPages] = await Promise.all([
     client.fetch(POSTS_QUERY),
     client.fetch(GUIDES_QUERY),
     client.fetch(TOOLKIT_QUERY),
+    client.fetch(FUNNEL_QUERY),
   ]);
 
-  return { posts, guides, toolkitItems };
+  return { posts, guides, toolkitItems, funnelPages };
 }
 
 /** Pure transform: content rows -> full stamped route list (static + BTW + dynamic). */
-function buildAllRoutes({ posts, guides, toolkitItems }) {
+function buildAllRoutes({ posts, guides, toolkitItems, funnelPages = [] }) {
   const skipped = [];
   const dynamic = [];
 
@@ -1207,6 +1246,23 @@ function buildAllRoutes({ posts, guides, toolkitItems }) {
     dynamic.push({ path: `/toolkit/${item.slug}`, title, description, ogTitle: title, jsonLd });
   }
 
+  for (const page of funnelPages) {
+    if (!page.slug || !page.title) {
+      skipped.push(`funnelPage:${page.slug ?? '(no slug)'} — missing slug or title`);
+      continue;
+    }
+    const title = `${String(page.title).trim()} | SYSBILT`;
+    const description = (page.sub || 'Fixed-scope service from SYSBILT.').trim();
+    dynamic.push({
+      path: `/go/${page.slug}`,
+      title,
+      description,
+      ogTitle: title,
+      robots: 'noindex, nofollow',
+      jsonLd: [],
+    });
+  }
+
   const staticRoutes = STATIC_ROUTES.map((r) => ({ ...r, jsonLd: staticJsonLd(r.path) }));
 
   return { routes: [...staticRoutes, ...BTW_ROUTES, ...BTS_ROUTES, ...BTC_ROUTES, ...BTR_ROUTES, ...BTT_ROUTES, ...BTM_ROUTES, ...BTE_ROUTES, ...BSE_ROUTES, ...dynamic], skipped };
@@ -1270,6 +1326,8 @@ export {
   BASE_URL,
   GENERIC_TITLE,
   INDEXABLE_EXCLUDE,
+  isGoFunnelPath,
+  isIndexableExcluded,
   STATIC_ROUTES,
   BTW_ROUTES,
   BTS_ROUTES,

@@ -67,6 +67,12 @@ export const SEO_META = {
     description: 'How SYSBILT collects, uses, and protects your information.',
     canonical: `${SITE_ORIGIN}/privacy`,
   },
+  terms: {
+    title: 'Terms of Service | SYSBILT',
+    description:
+      "The plain-English terms for SYSBILT's fixed-scope services: what's included, how delivery works, and where you stand.",
+    canonical: `${SITE_ORIGIN}/terms`,
+  },
   notFound: {
     title: 'Page not found | SYSBILT',
     description: 'The page you are looking for does not exist.',

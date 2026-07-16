@@ -8,8 +8,9 @@ export default defineCliConfig({
   deployment: {
     /**
      * Enable auto-updates for studios.
-     * Learn more at https://www.sanity.io/docs/studio/latest-version-of-sanity#k47faf43faf56
+     * Learn more at https://sanity.io/docs/studio/latest-version-of-sanity#k47faf43faf56
      */
     autoUpdates: true,
+    appId: 'tjstft9299cg2s4bynu1zdff',
   }
 })

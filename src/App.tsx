@@ -19,6 +19,9 @@ const ProofPage = lazy(() => import('./pages/ProofPage'));
 const EvidenceVaultPage = lazy(() => import('./pages/EvidenceVaultPage'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
 const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage'));
+const TermsOfServicePage = lazy(() => import('./pages/TermsOfServicePage'));
+const FunnelPage = lazy(() => import('./pages/funnel/FunnelPage'));
+const FunnelThanksPage = lazy(() => import('./pages/funnel/FunnelThanksPage'));
 const BlogPage = lazy(() => import('./pages/BlogPage'));
 const BlogPostPage = lazy(() => import('./pages/BlogPostPage'));
 const NewsPage = lazy(() => import('./pages/NewsPage'));
@@ -170,15 +173,21 @@ const App: React.FC = () => {
     }
   };
 
+  const isFunnelRoute =
+    location.pathname === '/go/thanks' || location.pathname.startsWith('/go/');
+  const hideChrome =
+    location.pathname === '/contact' ||
+    location.pathname.startsWith('/proposal/') ||
+    location.pathname.startsWith('/agreement/') ||
+    location.pathname.startsWith('/reports/') ||
+    isFunnelRoute;
+
   return (
     <HelmetProvider>
       <LazyMotion features={domAnimation}>
         <div className="bg-cream font-sans selection:bg-dark selection:text-cream min-h-screen flex flex-col relative">
           
-          {location.pathname !== '/contact' &&
-            !location.pathname.startsWith('/proposal/') &&
-            !location.pathname.startsWith('/agreement/') &&
-            !location.pathname.startsWith('/reports/') && (
+          {!hideChrome && (
             <GlobalHeader
               currentView={getCurrentView()}
               onNavigate={handleGlobalNavigate}
@@ -205,6 +214,7 @@ const App: React.FC = () => {
                     <Route path="/evidence-vault" element={<EvidenceVaultPage onBack={() => handleGlobalNavigate('homepage')} />} />
                     <Route path="/contact" element={<ContactPage onBack={() => handleGlobalNavigate('homepage')} />} />
                     <Route path="/privacy" element={<PrivacyPolicyPage onBack={() => handleGlobalNavigate('homepage')} onNavigate={handleGlobalNavigate} />} />
+                    <Route path="/terms" element={<TermsOfServicePage onBack={() => handleGlobalNavigate('homepage')} onNavigate={handleGlobalNavigate} />} />
                     <Route path="/blog" element={<BlogPage onNavigate={handleGlobalNavigate} />} />
                     <Route path="/blog/:slug" element={<BlogPostPage onNavigate={handleGlobalNavigate} />} />
                     <Route path="/news" element={<NewsPage />} />
@@ -247,6 +257,8 @@ const App: React.FC = () => {
                     <Route path="/proposal/:token" element={<ProposalPage />} />
                     <Route path="/agreement/:token" element={<AgreementPage />} />
                     <Route path="/reports/:token" element={<DeepAuditReportPage />} />
+                    <Route path="/go/thanks" element={<FunnelThanksPage />} />
+                    <Route path="/go/:slug" element={<FunnelPage />} />
 
                     <Route path="*" element={<NotFoundPage onNavigate={handleGlobalNavigate} />} />
                   </Routes>
@@ -255,14 +267,12 @@ const App: React.FC = () => {
             </Suspense>
           </main>
 
-          {location.pathname !== '/system' &&
-            location.pathname !== '/contact' &&
-            !location.pathname.startsWith('/proposal/') &&
-            !location.pathname.startsWith('/agreement/') &&
-            !location.pathname.startsWith('/reports/') && <GlobalFooter onNavigate={handleGlobalNavigate} />}
+          {location.pathname !== '/system' && !hideChrome && (
+            <GlobalFooter onNavigate={handleGlobalNavigate} />
+          )}
           <Modal service={selectedService} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onViewPillar={(id) => handleGlobalNavigate(id)} />
           <CookieBanner />
-          <HelpDock />
+          {!isFunnelRoute && <HelpDock />}
         </div>
       </LazyMotion>
     </HelmetProvider>
