@@ -172,9 +172,10 @@ const FunnelPage: React.FC = () => {
   const rawLabel = doc?.ctaLabel || COPY.ctaLabel
   const ctaFields: FunnelCtaFields = {
     ctaMode: doc?.ctaMode || 'buy',
-    ctaLabel: rawLabel.replace(/,\s*(?=\$)/, ' · ').replace(/\s+\$/, ' · $'),
+    // Authored labels already include price text. Only normalise a comma before $ into one middle dot.
+    ctaLabel: rawLabel.replace(/,\s*(?=\$)/, ' · ').replace(/\s*·\s*·\s*(?=\$)/, ' · '),
     stripeUrl: doc?.stripeUrl,
-    schedulerUrl: doc?.schedulerUrl,
+    schedulerUrl: undefined,
     secondaryCtaLabel: doc?.secondaryCtaLabel,
     secondaryUrl: doc?.secondaryUrl,
     priceOptions: doc?.priceOptions,

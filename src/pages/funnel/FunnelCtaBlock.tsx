@@ -106,22 +106,19 @@ export type FunnelCtaFields = {
   }> | null
 }
 
-/** Single source of truth for hero / price / final CTA blocks. */
+/** Single source of truth for hero / price / final CTA blocks. Buy mode is pay only — no scheduler escape hatch. */
 export function FunnelCtaBlock({
   fields,
-  quietLabel = 'Prefer to talk first? Book 15 minutes.',
   theme = 'light',
   size = 'md',
   align = 'start',
 }: {
   fields: FunnelCtaFields
-  quietLabel?: string
   theme?: 'light' | 'dark'
   size?: FunnelCtaSize
   align?: 'start' | 'center'
 }) {
   const mode = fields.ctaMode || 'buy'
-  const large = size === 'lg' || size === 'xl' || size === 'final'
   const alignClass = align === 'center' ? 'items-center text-center' : 'items-start text-left'
 
   const buttonOrFallback = (href: string | null | undefined, label: string | null | undefined) => {
@@ -168,13 +165,6 @@ export function FunnelCtaBlock({
             </div>
           ))}
         </div>
-        {fields.schedulerUrl ? (
-          <p className={large ? 'text-[15px]' : undefined}>
-            <FunnelQuietLink href={fields.schedulerUrl} theme={theme}>
-              {quietLabel}
-            </FunnelQuietLink>
-          </p>
-        ) : null}
       </div>
     )
   }
@@ -201,15 +191,8 @@ export function FunnelCtaBlock({
   }
 
   return (
-    <div className={`flex flex-col space-y-4 ${alignClass}`}>
+    <div className={`flex flex-col ${alignClass}`}>
       {buttonOrFallback(fields.stripeUrl, fields.ctaLabel)}
-      {fields.schedulerUrl ? (
-        <p className={size === 'final' ? 'text-sm md:text-base [&_a]:opacity-70' : large ? '[&_a]:text-[15px]' : undefined}>
-          <FunnelQuietLink href={fields.schedulerUrl} theme={theme}>
-            {quietLabel}
-          </FunnelQuietLink>
-        </p>
-      ) : null}
     </div>
   )
 }
