@@ -195,18 +195,18 @@ export const MISSED_CALL_COPY: FunnelProductCopy = {
   sub: 'When the phone rings out, they move on. We wire an automatic text-back so the lead stays yours, and we prove it on a live missed call before we hand it over.',
   ctaLabel: 'Fix my missed calls · $990',
   proofLabel: 'The leak',
-  proofHeadingLive: 'This is what happens when you miss one',
-  proofHeadingGeneric: 'This is what happens when you miss one',
+  proofHeadingLive: 'They called looking for a yes. Silence sends them elsewhere.',
+  proofHeadingGeneric: 'They called looking for a yes. Silence sends them elsewhere.',
   proofLead: (b: string | null) =>
     b
-      ? `Someone rings ${b}, you cannot answer, and they hang up. Without a text-back, that lead is gone.`
-      : 'Someone rings, you cannot answer, and they hang up. Without a text-back, that lead is gone.',
+      ? `Someone rings ${b} because they need something now. You cannot answer. There is no message, no callback promise, nothing to hold them. Their mind is already looking for the next option.`
+      : 'Someone rings because they need something now. You cannot answer. There is no message, no callback promise, nothing to hold them. Their mind is already looking for the next option.',
   proofLeadGeneric:
-    'Someone rings, you cannot answer, and they hang up. Without a text-back, that lead is gone. Here is the moment, in plain view.',
+    'Someone rings because they need something now. You cannot answer. There is no message, no callback promise, nothing to hold them. Their mind is already looking for the next option.',
   proofAfter:
-    'With the fix in place, they get a calm SMS within seconds: you saw the call, and you will follow up. The next business never gets the chance.',
+    'People call with intent. If you give them nothing, they give the job to whoever answers. That is the leak: not the missed ring, the empty seconds after it.',
   proofAfterGeneric:
-    'With the fix in place, they get a calm SMS within seconds: you saw the call, and you will follow up. The next business never gets the chance.',
+    'People call with intent. If you give them nothing, they give the job to whoever answers. That is the leak: not the missed ring, the empty seconds after it.',
   painLabel: 'What this is costing you',
   painHeading: 'You are losing jobs you will never know existed',
   painLines: [

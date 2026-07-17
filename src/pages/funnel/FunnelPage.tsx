@@ -7,7 +7,7 @@ import {client} from '../../sanityClient'
 import {SITE_ORIGIN} from '../../constants/seoMeta'
 import {FunnelCtaBlock, FunnelLegalFooter, type FunnelCtaFields} from './FunnelCtaBlock'
 import {ScoreMoment} from './ScoreMoment'
-import {CallMissedMoment} from './CallMissedMoment'
+import {CallMissedMoment, MissedCallLeakPair} from './CallMissedMoment'
 import {PainCostCards} from './PainCostCards'
 import {MissedCallPainCards} from './MissedCallPainCards'
 import {LostClientCalculator} from './LostClientCalculator'
@@ -273,7 +273,11 @@ const FunnelPage: React.FC = () => {
             </Reveal>
           </header>
 
-          <section className="max-w-3xl mx-auto px-6 md:px-10 pb-16 md:pb-24">
+          <section
+            className={`mx-auto px-6 md:px-10 pb-16 md:pb-24 ${
+              isMissedCall ? 'max-w-5xl' : 'max-w-3xl'
+            }`}
+          >
             <SectionRule />
             <Reveal y={10}>
               <SectionLabel>{COPY.proofLabel}</SectionLabel>
@@ -292,7 +296,7 @@ const FunnelPage: React.FC = () => {
             </Reveal>
             <Reveal delay={0.12} y={12}>
               <p
-                className="font-sans text-base md:text-lg leading-relaxed max-w-2xl mb-2"
+                className="font-sans text-base md:text-lg leading-relaxed max-w-2xl"
                 style={{color: FUNNEL_COLOURS.muted}}
               >
                 {isMissedCall
@@ -305,26 +309,34 @@ const FunnelPage: React.FC = () => {
               </p>
             </Reveal>
             {isMissedCall ? (
-              <CallMissedMoment businessName={business} mode="before" />
+              <>
+                <Reveal delay={0.08} y={12}>
+                  <p
+                    className="mt-6 font-sans text-base md:text-lg leading-relaxed max-w-2xl"
+                    style={{color: FUNNEL_COLOURS.muted}}
+                  >
+                    {COPY.proofAfterGeneric}
+                  </p>
+                </Reveal>
+                <MissedCallLeakPair businessName={business} />
+              </>
             ) : (
-              <ScoreMoment
-                businessName={business}
-                score={score ?? 34}
-                mode={score != null ? 'live' : 'example'}
-              />
+              <>
+                <ScoreMoment
+                  businessName={business}
+                  score={score ?? 34}
+                  mode={score != null ? 'live' : 'example'}
+                />
+                <Reveal delay={0.08} y={12}>
+                  <p
+                    className="mt-8 font-sans text-base md:text-lg leading-relaxed max-w-2xl"
+                    style={{color: FUNNEL_COLOURS.muted}}
+                  >
+                    {score != null ? COPY.proofAfter : COPY.proofAfterGeneric}
+                  </p>
+                </Reveal>
+              </>
             )}
-            <Reveal delay={0.08} y={12}>
-              <p
-                className="mt-8 font-sans text-base md:text-lg leading-relaxed max-w-2xl"
-                style={{color: FUNNEL_COLOURS.muted}}
-              >
-                {isMissedCall
-                  ? COPY.proofAfterGeneric
-                  : score != null
-                    ? COPY.proofAfter
-                    : COPY.proofAfterGeneric}
-              </p>
-            </Reveal>
           </section>
 
           <section
