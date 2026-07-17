@@ -1,7 +1,19 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { addContactNote, upsertContactByEmail } from '../_lib/hubspot.js';
+import {
+  addContactNote,
+  createFunnelAccessDeal,
+  upsertContactByEmail,
+} from '../_lib/hubspot.js';
 
 const PRODUCT_CODES = new Set(['speed-fix', 'missed-call', 'google-profile']);
+const PRODUCT_LABELS: Record<string, string> = {
+  'speed-fix': 'Website Speed Fix',
+  'missed-call': 'Missed-Call Text-Back',
+  'google-profile': 'Google Profile Fix',
+};
+const PRODUCT_AMOUNTS: Record<string, string> = {
+  'speed-fix': '1200',
+};
 const PLATFORMS = new Set([
   'wordpress',
   'wordpress-com',
@@ -118,6 +130,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   };
 
   let hubspotContactId: string | null = null;
+  let hubspotDealId: string | null = null;
   let hubspotError: string | null = null;
 
   if (process.env.HUBSPOT_PRIVATE_APP_TOKEN) {
@@ -130,6 +143,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       });
       hubspotContactId = id;
       await addContactNote(id, noteBody);
+
+      try {
+        const productLabel = PRODUCT_LABELS[product] || product;
+        const { id: dealId } = await createFunnelAccessDeal({
+          contactId: id,
+          dealname: `${productLabel} — ${business}`,
+          amount: PRODUCT_AMOUNTS[product],
+          noteBody,
+        });
+        hubspotDealId = dealId;
+      } catch (dealErr) {
+        console.error(
+          '[funnel/access] HubSpot deal',
+          dealErr instanceof Error ? dealErr.message : dealErr,
+        );
+      }
     } catch (err) {
       hubspotError = err instanceof Error ? err.message : 'HubSpot failed';
       console.error('[funnel/access] HubSpot', hubspotError);
@@ -143,7 +172,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       const wh = await fetch(webhookUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...payload, hubspotContactId }),
+        body: JSON.stringify({ ...payload, hubspotContactId, hubspotDealId }),
       });
       webhookOk = wh.ok;
       if (!wh.ok) {
@@ -159,7 +188,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   let slackOk = false;
   if (slackUrl && hubspotContactId) {
     try {
-      const hubspotLink = `https://app-ap1.hubspot.com/contacts/442914926/record/0-1/${hubspotContactId}`;
+      const contactLink = `https://app-ap1.hubspot.com/contacts/442914926/record/0-1/${hubspotContactId}`;
+      const dealLink = hubspotDealId
+        ? `https://app-ap1.hubspot.com/contacts/442914926/record/0-3/${hubspotDealId}`
+        : null;
       const lines = [
         `*New access form* · ${product}`,
         `*${name}* · ${business}`,
@@ -170,7 +202,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           ? `Domain/hosting same: ${sameProvider}${domainProvider ? ` · Domain: ${domainProvider}` : ''}${hostingProvider ? ` · Host: ${hostingProvider}` : ''}`
           : null,
         accessDetail ? `Access notes: ${accessDetail.slice(0, 280)}` : null,
-        `<${hubspotLink}|Open in HubSpot>`,
+        dealLink ? `<${dealLink}|Open deal>` : null,
+        `<${contactLink}|Open contact>`,
       ].filter(Boolean);
 
       const slackRes = await fetch(slackUrl, {
@@ -205,6 +238,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   res.status(200).json({
     ok: true,
     hubspotContactId,
+    hubspotDealId,
     webhookOk,
     slackOk,
   });

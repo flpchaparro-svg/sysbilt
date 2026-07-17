@@ -244,6 +244,55 @@ export async function addContactNote(contactId: string, body: string): Promise<v
   });
 }
 
+/**
+ * Create a deal for a paid funnel job and associate it to the contact.
+ * associationTypeId 3 = Deal → Contact.
+ * Stage defaults to closedwon (paid + access received). Override with HUBSPOT_FUNNEL_ACCESS_DEAL_STAGE.
+ */
+export async function createFunnelAccessDeal(input: {
+  contactId: string;
+  dealname: string;
+  amount?: string;
+  noteBody?: string;
+}): Promise<{ id: string }> {
+  const dealstage =
+    process.env.HUBSPOT_FUNNEL_ACCESS_DEAL_STAGE?.trim() || 'closedwon';
+  const pipeline = process.env.HUBSPOT_FUNNEL_PIPELINE?.trim() || 'default';
+
+  const properties: Record<string, string> = {
+    dealname: input.dealname,
+    dealstage,
+    pipeline,
+    closedate: String(Date.now()),
+  };
+  if (input.amount) properties.amount = input.amount;
+
+  const created: any = await hubspotPost('/crm/v3/objects/deals', {
+    properties,
+    associations: [
+      {
+        to: { id: input.contactId },
+        types: [
+          {
+            associationCategory: 'HUBSPOT_DEFINED',
+            associationTypeId: 3,
+          },
+        ],
+      },
+    ],
+  });
+
+  const dealId = String(created.id);
+  if (input.noteBody) {
+    try {
+      await addDealNote(dealId, input.noteBody);
+    } catch (err) {
+      console.error('[hubspot] deal note failed', err);
+    }
+  }
+  return { id: dealId };
+}
+
 // Pipeline order. Lower index = earlier in the pipeline. closedlost is special and never auto-progresses.
 const STAGE_ORDER: Record<string, number> = {
   qualifiedtobuy: 1, // Discovery Booked
