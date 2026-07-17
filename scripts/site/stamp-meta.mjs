@@ -133,7 +133,7 @@ const INDEXABLE_EXCLUDE = new Set(['/news']);
 
 /** Private funnel routes: stamped with noindex, never in the sitemap. */
 function isGoFunnelPath(routePath) {
-  return routePath === '/go/thanks' || routePath.startsWith('/go/');
+  return routePath === '/go' || routePath === '/go/thanks' || routePath.startsWith('/go/');
 }
 
 function isIndexableExcluded(routePath) {
@@ -198,10 +198,23 @@ const STATIC_ROUTES = [
       "The plain-English terms for SYSBILT's fixed-scope services: what's included, how delivery works, and where you stand.",
   },
   {
+    path: '/go',
+    title: 'Fixed-price fixes | SYSBILT',
+    description:
+      'Private catalogue of fixed-price SYSBILT productised offers. Not listed on the public site.',
+    robots: 'noindex, nofollow',
+  },
+  {
     path: '/go/thanks',
     title: 'Paid, confirmed | SYSBILT',
     description:
       'Your payment is confirmed. Complete the access form so we can start delivery.',
+    robots: 'noindex, nofollow',
+  },
+  {
+    path: '/go/access',
+    title: 'Access form | SYSBILT',
+    description: 'Tell us how to reach your site so we can start delivery.',
     robots: 'noindex, nofollow',
   },
   {

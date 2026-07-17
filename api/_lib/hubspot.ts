@@ -174,6 +174,76 @@ export async function addDealNote(dealId: string, body: string): Promise<void> {
   });
 }
 
+/** Search contact by email; create or update with standard properties only (Free-tier friendly). */
+export async function upsertContactByEmail(input: {
+  email: string;
+  firstname?: string;
+  lastname?: string;
+  phone?: string;
+  company?: string;
+  website?: string;
+}): Promise<{ id: string; created: boolean }> {
+  const email = input.email.trim().toLowerCase();
+  if (!email) throw new Error('email required');
+
+  const search: any = await hubspotPost('/crm/v3/objects/contacts/search', {
+    filterGroups: [
+      {
+        filters: [{ propertyName: 'email', operator: 'EQ', value: email }],
+      },
+    ],
+    properties: ['email', 'firstname', 'lastname'],
+    limit: 1,
+  });
+
+  const existingId = search.results?.[0]?.id as string | undefined;
+  const nameParts = (input.firstname || '').trim().split(/\s+/).filter(Boolean);
+  const firstname = nameParts[0] || input.firstname || '';
+  const lastname =
+    input.lastname ||
+    (nameParts.length > 1 ? nameParts.slice(1).join(' ') : '');
+
+  const properties: Record<string, string> = {
+    email,
+  };
+  if (firstname) properties.firstname = firstname;
+  if (lastname) properties.lastname = lastname;
+  if (input.phone) properties.phone = input.phone;
+  if (input.company) properties.company = input.company;
+  if (input.website) properties.website = input.website;
+
+  if (existingId) {
+    await hubspotPatch(`/crm/v3/objects/contacts/${encodeURIComponent(existingId)}`, {
+      properties,
+    });
+    return { id: existingId, created: false };
+  }
+
+  const created: any = await hubspotPost('/crm/v3/objects/contacts', { properties });
+  return { id: String(created.id), created: true };
+}
+
+/** Note on a contact. associationTypeId 202 = Note to Contact. */
+export async function addContactNote(contactId: string, body: string): Promise<void> {
+  await hubspotPost('/crm/v3/objects/notes', {
+    properties: {
+      hs_note_body: body,
+      hs_timestamp: new Date().toISOString(),
+    },
+    associations: [
+      {
+        to: { id: contactId },
+        types: [
+          {
+            associationCategory: 'HUBSPOT_DEFINED',
+            associationTypeId: 202,
+          },
+        ],
+      },
+    ],
+  });
+}
+
 // Pipeline order. Lower index = earlier in the pipeline. closedlost is special and never auto-progresses.
 const STAGE_ORDER: Record<string, number> = {
   qualifiedtobuy: 1, // Discovery Booked

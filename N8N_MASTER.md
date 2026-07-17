@@ -44,6 +44,9 @@ Deploy and guide scripts load the API key from `.env.local` (`cursor-mcp=` or `N
 | `0S0aaGP5VVHg3aZU` | SYSBILT - Outbound Contact Scrape (A2) | Inactive† | Manual | Backfill emails for existing sheet rows |
 | `zOZh6wE70PikOCqI` | SYSBILT - Outbound Audit Runner (B) | Inactive† (deploy default) | Schedule (~5 min) when active | Sheet `Status=Audit` → clone of inbound audit → Vercel report → `Audited` |
 | `WD3s1eD9aUQNUWY6` | SYSBILT - Outbound HubSpot Engage (C) | Inactive† (deploy default) | Schedule (~5 min) when active | Sheet `Status=Engage` → HubSpot upsert → sheet notes |
+| `fag1E0JKa8JSIUhp` | SYSBILT - Outbound Speed Fix Scorer | Active† | Schedule (~5 min) + Manual | Sheet1 empty `LH Mobile` → PageSpeed mobile → write score; if &lt; 65 append **Speed Fix** tab (`Status=Ready`) |
+| `qDydgiC09UoV4MRO` | SYSBILT - Outbound Speed Fix Send | Active† | Schedule (~5 min) + Manual | Speed Fix `Status=Ready` → Gmail **draft** Email A + `/go/speed-fix?b=&s=` → `Emailed` (does not send) |
+| `5QwCiKvZz4A9T4eF` | SYSBILT - Outbound Speed Fix Tab Setup | Inactive† | Webhook | Create **Speed Fix** tab + `LH Mobile` header on Sheet1 (`--setup-tab`) |
 | `WP2tZjhH27vJbOaV` | SYSBILT - Outbound Sheet Setup | UNVERIFIED | Webhook | Create outbound Google Sheet with headers (deploy `--setup-sheet`) |
 | `5h6SvE2hScz6KHh3` | SYSBILT - Outbound Sheet Headers | UNVERIFIED | Webhook | Repair headers after Google Tables conflicts (`--fix-sheet`) |
 | *(UNVERIFIED ID)* | SYSBILT - DM Lead Intake | UNVERIFIED | Webhook `sysbilt-dm-lead-intake` | ManyChat/DM leads → HubSpot → Slack → optional sheet log |
@@ -121,9 +124,9 @@ Keep new SYSBILT workflows under the `SYSBILT -` prefix and separate experimenta
 
 ---
 
-## 6. Outbound engine (A → B → C)
+## 6. Outbound engine (A → Speed Fix / B → C)
 
-Google Sheet is the **source of truth** between workflows. Column range **A1:N5000** (headers in row 1). Status values include: `New`, `Audit`, `Auditing`, `Audited`, `Engage`, `Emailed`, `Replied`, `Dead`.
+Google Sheet is the **source of truth** between workflows. Sheet1 columns **A1:O5000** (row 1 headers; **LH Mobile** in column O). Status values include: `New`, `Audit`, `Auditing`, `Audited`, `Engage`, `Emailed`, `Replied`, `Dead`. **Speed Fix** tab columns: Business Name, Suburb, Website, Email, Phone, LH Mobile, Status (`Ready` / `Emailed` / `Replied` / `Dead`), Maps ID, Notes. Gate: **LH Mobile &lt; 65**.
 
 ```
 ┌─────────────────────────┐
@@ -133,7 +136,19 @@ Google Sheet is the **source of truth** between workflows. Column range **A1:N50
 ┌───────────▼─────────────┐
 │ A2: Contact Scrape       │  Backfill Email for existing rows
 └───────────┬─────────────┘
-            │ manual: set Status=Audit
+            │ schedule: empty LH Mobile
+┌───────────▼─────────────┐
+│ Speed Fix Scorer         │  PageSpeed mobile → Sheet1!LH Mobile;
+│                          │  if score < 65 → Speed Fix tab (Ready)
+└───────────┬─────────────┘
+            │ schedule: Status=Ready + Email
+┌───────────▼─────────────┐
+│ Speed Fix Send           │  Gmail draft Email A + /go?b=&s= → Emailed
+│                          │  (you Send from Drafts — not auto-send)
+└───────────┬─────────────┘
+            │ you send Email A + /go/speed-fix from Speed Fix tab
+            │
+            │ manual: set Status=Audit (full report — later / different draft)
 ┌───────────▼─────────────┐
 │ B: Outbound Audit Runner │  Clone of TvkvfhrMWWHAEQFd chain; DeepSeek;
 │                          │  POST api/reports/ingest (N8N_WEBHOOK_SECRET) → Audit Link
@@ -151,10 +166,13 @@ Google Sheet is the **source of truth** between workflows. Column range **A1:N50
 | A2 — Contact Scrape | `0S0aaGP5VVHg3aZU` | same script (secondary workflow) |
 | Sheet setup | `WP2tZjhH27vJbOaV` | `--setup-sheet` |
 | Sheet headers repair | `5h6SvE2hScz6KHh3` | `--fix-sheet` |
+| Speed Fix Scorer | `fag1E0JKa8JSIUhp` | `deploy-outbound-speed-fix-scorer.sh` |
+| Speed Fix Send | `qDydgiC09UoV4MRO` | `deploy-outbound-speed-fix-send.sh` |
+| Speed Fix tab setup | `5QwCiKvZz4A9T4eF` | `--setup-tab` |
 | B — Audit Runner | `zOZh6wE70PikOCqI` | `deploy-outbound-audit-runner.sh` |
 | C — HubSpot Engage | `WD3s1eD9aUQNUWY6` | `deploy-outbound-hubspot-engage.sh` |
 
-**Sheet ID:** `OUTBOUND_LEADS_SHEET_ID` in gitignored `.deploy-state.env` (created by setup webhook).
+**Sheet ID:** `OUTBOUND_LEADS_SHEET_ID` in gitignored `.deploy-state.env`. Live sheet: `1aGz6kruGwSpt55rwlcknxVDXp9dgL_M-OnVJrDIbTlE` (Sheet1 + **Speed Fix**).
 
 **Audit ingest (Vercel):** Workflow B posts to `https://sysbilt.com/api/reports/ingest` with header `x-n8n-webhook-secret` or `Authorization: Bearer <N8N_WEBHOOK_SECRET>` (see `api/_lib/auth.ts`).
 
@@ -183,8 +201,11 @@ Google Sheet is the **source of truth** between workflows. Column range **A1:N50
 # Social / NEWS
 ./scripts/automations/n8n/deploy-social-pipeline.sh
 
-# Outbound A → B → C
+# Outbound A → Speed Fix scorer → B → C
 ./scripts/automations/n8n/deploy-outbound-list-builder.sh
+./scripts/automations/n8n/deploy-outbound-speed-fix-scorer.sh --setup-tab   # once
+./scripts/automations/n8n/deploy-outbound-speed-fix-scorer.sh --activate
+./scripts/automations/n8n/deploy-outbound-speed-fix-send.sh --activate
 ./scripts/automations/n8n/deploy-outbound-audit-runner.sh
 ./scripts/automations/n8n/deploy-outbound-hubspot-engage.sh
 

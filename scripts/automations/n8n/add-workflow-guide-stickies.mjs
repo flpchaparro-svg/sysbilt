@@ -55,6 +55,25 @@ Manual trigger. Sheet is the source of truth — no HubSpot writes.
 **Note**
 Add Jina wait nodes if you hit rate limits on large batches.`,
   },
+  fag1E0JKa8JSIUhp: {
+    color: 5,
+    width: 520,
+    height: 440,
+    content: `## Outbound Speed Fix Scorer
+
+**What it does**
+Every 5 min (or Manual): picks one Sheet1 row with Website + empty **LH Mobile**, runs PageSpeed mobile performance, writes the score to Sheet1. If score **&lt; 65**, appends the lead to the **Speed Fix** tab with Status = Ready.
+
+**How to run**
+1. List Builder fills Sheet1 (Status = New)
+2. Activate this workflow (or Execute once)
+3. Work the **Speed Fix** tab for Email A + /go/speed-fix
+
+**Related**
+← **Outbound List Builder** — scrape
+→ full audit still via Status = Audit on Sheet1 (different draft later)
+Deploy: \`deploy-outbound-speed-fix-scorer.sh\` (\`--setup-tab\` once)`,
+  },
   zOZh6wE70PikOCqI: {
     color: 4,
     width: 540,

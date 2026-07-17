@@ -108,6 +108,7 @@ function isSpaRoute(normalizedPathname: string): boolean {
     '/news',
     '/guides',
     '/toolkit',
+    '/go',
     '/go/thanks',
   ]);
   if (exact.has(normalizedPathname)) return true;

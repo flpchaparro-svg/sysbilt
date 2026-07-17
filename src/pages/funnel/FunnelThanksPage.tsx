@@ -3,13 +3,13 @@ import {useSearchParams} from 'react-router-dom'
 import {SysbiltLogo} from '../../components/SysbiltLogo'
 import {PageMeta} from '../../components/PageMeta'
 import {SITE_ORIGIN} from '../../constants/seoMeta'
-import {tallyAccessFormUrlForProduct} from '../../constants/funnel'
+import {accessFormPathForProduct} from '../../constants/funnel'
 import {FunnelPrimaryLink, FunnelLegalFooter} from './FunnelCtaBlock'
 
 const FunnelThanksPage: React.FC = () => {
   const [params] = useSearchParams()
   const product = params.get('p')
-  const formUrl = tallyAccessFormUrlForProduct(product)
+  const formUrl = accessFormPathForProduct(product)
 
   return (
     <div className="min-h-screen bg-cream text-dark font-sans selection:bg-dark selection:text-cream">

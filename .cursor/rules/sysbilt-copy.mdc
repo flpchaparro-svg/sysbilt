@@ -1,0 +1,34 @@
+---
+description: SYSBILT reader-facing copy voice. Hard bans (em dashes, exclamation marks, hype words, US spelling). Apply whenever writing or editing website, funnel, email, form, or marketing copy.
+alwaysApply: true
+---
+
+# SYSBILT copy voice (non-negotiable)
+
+Before any reader-facing string ships (UI, funnel, email, form, meta, FAQ):
+
+## Hard bans
+- **No em dashes** (`—` or `--` as a dash). Use a comma, a colon, or a new sentence.
+- **No exclamation marks.**
+- **No periods on headlines** or short display titles.
+- **No emojis** in SYSBILT team copy.
+- **No US spelling.** Use analyse, organise, optimise, behaviour, colour, centre, licence (noun).
+- **No "I"** for the company. **"We"** for SYSBILT, **"you"** for the reader. Contractions on (`we're`, `you'll`).
+- **No "small business/es".** Say growing business, growing companies, Australian businesses.
+- **No pillar numbers** in reader copy (use service names).
+- **No prices** on public pages except approved `/go/` funnel exceptions.
+
+## Banned hype (and anything like them)
+leverage, streamline, seamless, robust, harness, unlock, transform, empower, comprehensive, synergy, holistic, cutting-edge, game-changing, revolutionise, supercharge, world-class, deep dive, unleash, facilitate, ecosystem, learnings, actionable insights, delve, elevate, best-in-class, turnkey, frictionless, next-level.
+
+## Tone
+Warm, confident, premium, plain pub-test language. Direct. Not startup hype. Explain jargon in one short plain line when you must use it (e.g. CMS).
+
+## Sources of truth
+- `docs/internal/BRAND_FACTS.md`
+- `docs/internal/CHANNEL_PLAYBOOK.md`
+- `docs/internal/TOOLKIT_POST_AGENT_INSTRUCTION.md` (Step 5 voice)
+- Skill: `sysbilt-copy` for the full checklist
+
+## Final scan
+Search the draft for `—`, `!`, analyze/organize/color/behavior, and banned words. Fix before handoff.

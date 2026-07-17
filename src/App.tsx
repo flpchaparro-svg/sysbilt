@@ -21,7 +21,9 @@ const ContactPage = lazy(() => import('./pages/ContactPage'));
 const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage'));
 const TermsOfServicePage = lazy(() => import('./pages/TermsOfServicePage'));
 const FunnelPage = lazy(() => import('./pages/funnel/FunnelPage'));
+const FunnelHomePage = lazy(() => import('./pages/funnel/FunnelHomePage'));
 const FunnelThanksPage = lazy(() => import('./pages/funnel/FunnelThanksPage'));
+const FunnelAccessPage = lazy(() => import('./pages/funnel/FunnelAccessPage'));
 const BlogPage = lazy(() => import('./pages/BlogPage'));
 const BlogPostPage = lazy(() => import('./pages/BlogPostPage'));
 const NewsPage = lazy(() => import('./pages/NewsPage'));
@@ -174,7 +176,9 @@ const App: React.FC = () => {
   };
 
   const isFunnelRoute =
-    location.pathname === '/go/thanks' || location.pathname.startsWith('/go/');
+    location.pathname === '/go' ||
+    location.pathname === '/go/thanks' ||
+    location.pathname.startsWith('/go/');
   const hideChrome =
     location.pathname === '/contact' ||
     location.pathname.startsWith('/proposal/') ||
@@ -258,6 +262,8 @@ const App: React.FC = () => {
                     <Route path="/agreement/:token" element={<AgreementPage />} />
                     <Route path="/reports/:token" element={<DeepAuditReportPage />} />
                     <Route path="/go/thanks" element={<FunnelThanksPage />} />
+                    <Route path="/go/access" element={<FunnelAccessPage />} />
+                    <Route path="/go" element={<FunnelHomePage />} />
                     <Route path="/go/:slug" element={<FunnelPage />} />
 
                     <Route path="*" element={<NotFoundPage onNavigate={handleGlobalNavigate} />} />
