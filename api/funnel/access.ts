@@ -13,7 +13,10 @@ const PRODUCT_LABELS: Record<string, string> = {
 };
 const PRODUCT_AMOUNTS: Record<string, string> = {
   'speed-fix': '1200',
+  'missed-call': '990',
 };
+const MISSED_CALL_SETUPS = new Set(['mobile', 'landline', 'voip', 'mixed', 'unsure']);
+const MISSED_CALL_ACCESS = new Set(['forward', 'provider', 'crm', 'call']);
 const PLATFORMS = new Set([
   'wordpress',
   'wordpress-com',
@@ -46,6 +49,8 @@ type Body = {
   accessPath?: unknown;
   accessDetail?: unknown;
   notes?: unknown;
+  phone?: unknown;
+  phoneSetup?: unknown;
 };
 
 function str(v: unknown, max = 500): string {
@@ -83,35 +88,69 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const accessPath = str(body.accessPath, 40);
   const accessDetail = str(body.accessDetail, 4000);
   const notes = str(body.notes, 4000);
+  const phone = str(body.phone, 40);
+  const phoneSetup = str(body.phoneSetup, 40);
 
   if (!PRODUCT_CODES.has(product)) {
     res.status(400).json({ error: 'Invalid product' });
     return;
   }
-  if (!name || !email.includes('@') || !business || website.length < 4) {
-    res.status(400).json({ error: 'Missing name, email, business, or website' });
-    return;
-  }
-  if (!PLATFORMS.has(platform) || !SAME.has(sameProvider) || !ACCESS.has(accessPath)) {
-    res.status(400).json({ error: 'Invalid platform, provider, or access path' });
+  if (!name || !email.includes('@') || !business) {
+    res.status(400).json({ error: 'Missing name, email, or business' });
     return;
   }
 
-  const noteBody = [
-    `Funnel access form — ${product}`,
-    `Business: ${business}`,
-    `Website: ${website}`,
-    `Platform: ${platform}`,
-    `Domain + hosting same provider: ${sameProvider}`,
-    domainProvider ? `Domain provider: ${domainProvider}` : null,
-    hostingProvider ? `Hosting provider: ${hostingProvider}` : null,
-    `Access path: ${accessPath}`,
-    accessDetail ? `Access notes:\n${accessDetail}` : null,
-    notes ? `Other notes:\n${notes}` : null,
-    `Submitted: ${new Date().toISOString()}`,
-  ]
-    .filter(Boolean)
-    .join('\n');
+  const isMissedCall = product === 'missed-call';
+
+  if (isMissedCall) {
+    const cleanPhone = phone.replace(/\s+/g, '');
+    if (!/^(0[23478])\d{8}$/.test(cleanPhone)) {
+      res.status(400).json({ error: 'Please enter a valid Australian business number.' });
+      return;
+    }
+    if (!MISSED_CALL_SETUPS.has(phoneSetup) || !MISSED_CALL_ACCESS.has(accessPath)) {
+      res.status(400).json({ error: 'Invalid phone setup or access path' });
+      return;
+    }
+  } else {
+    if (website.length < 4) {
+      res.status(400).json({ error: 'Missing website' });
+      return;
+    }
+    if (!PLATFORMS.has(platform) || !SAME.has(sameProvider) || !ACCESS.has(accessPath)) {
+      res.status(400).json({ error: 'Invalid platform, provider, or access path' });
+      return;
+    }
+  }
+
+  const noteBody = isMissedCall
+    ? [
+        `Funnel access form — ${product}`,
+        `Business: ${business}`,
+        `Phone: ${phone}`,
+        `Phone setup: ${phoneSetup}`,
+        `Access path: ${accessPath}`,
+        accessDetail ? `Access notes:\n${accessDetail}` : null,
+        notes ? `Other notes:\n${notes}` : null,
+        `Submitted: ${new Date().toISOString()}`,
+      ]
+        .filter(Boolean)
+        .join('\n')
+    : [
+        `Funnel access form — ${product}`,
+        `Business: ${business}`,
+        `Website: ${website}`,
+        `Platform: ${platform}`,
+        `Domain + hosting same provider: ${sameProvider}`,
+        domainProvider ? `Domain provider: ${domainProvider}` : null,
+        hostingProvider ? `Hosting provider: ${hostingProvider}` : null,
+        `Access path: ${accessPath}`,
+        accessDetail ? `Access notes:\n${accessDetail}` : null,
+        notes ? `Other notes:\n${notes}` : null,
+        `Submitted: ${new Date().toISOString()}`,
+      ]
+        .filter(Boolean)
+        .join('\n');
 
   const payload = {
     product,
@@ -126,6 +165,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     accessPath,
     accessDetail,
     notes,
+    phone,
+    phoneSetup,
     submittedAt: new Date().toISOString(),
   };
 
@@ -139,7 +180,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         email,
         firstname: name,
         company: business,
-        website,
+        website: website || undefined,
+        phone: phone || undefined,
       });
       hubspotContactId = id;
       await addContactNote(id, noteBody);
@@ -196,9 +238,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         `*New access form* · ${product}`,
         `*${name}* · ${business}`,
         email,
-        website,
-        `Platform: ${platform} · Access: ${accessPath}`,
-        sameProvider !== 'yes'
+        isMissedCall ? `Phone: ${phone} · Setup: ${phoneSetup}` : website,
+        isMissedCall
+          ? `Access: ${accessPath}`
+          : `Platform: ${platform} · Access: ${accessPath}`,
+        !isMissedCall && sameProvider !== 'yes'
           ? `Domain/hosting same: ${sameProvider}${domainProvider ? ` · Domain: ${domainProvider}` : ''}${hostingProvider ? ` · Host: ${hostingProvider}` : ''}`
           : null,
         accessDetail ? `Access notes: ${accessDetail.slice(0, 280)}` : null,

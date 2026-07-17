@@ -7,15 +7,19 @@ import {client} from '../../sanityClient'
 import {SITE_ORIGIN} from '../../constants/seoMeta'
 import {FunnelCtaBlock, FunnelLegalFooter, type FunnelCtaFields} from './FunnelCtaBlock'
 import {ScoreMoment} from './ScoreMoment'
+import {CallMissedMoment} from './CallMissedMoment'
 import {PainCostCards} from './PainCostCards'
+import {MissedCallPainCards} from './MissedCallPainCards'
 import {LostClientCalculator} from './LostClientCalculator'
 import {BenefitMotionRows} from './BenefitMotionRows'
 import {StackMotionRows} from './StackMotionRows'
 import {FunnelObjections} from './FunnelObjections'
 import {ReportDeliverableMock} from './ReportDeliverableMock'
+import {TextBackDeliverableMock} from './TextBackDeliverableMock'
 import {parseSpeedScore, sanitiseBusinessName} from './funnelPersonalise'
 import {FUNNEL_COLOURS, FUNNEL_CSS_VARS} from './funnelTheme'
 import {Reveal, RevealList} from './funnelReveal'
+import {funnelCopyForSlug} from './funnelCopy'
 
 type FunnelPageDoc = FunnelCtaFields & {
   title?: string
@@ -35,136 +39,6 @@ const QUERY = `*[_type == "funnelPage" && slug.current == $slug && !(_id in path
   priceOptions[]{ label, ctaLabel, stripeUrl },
   faqs[]{ question, answer }
 }`
-
-/** Clear 9-block narrative for Speed Fix — structure first, CMS polish later. */
-const COPY = {
-  eyebrow: 'Fixed price · Three days · Measured result',
-  h1Generic: "Three days from now your site is fast, and Google's own score proves it",
-  h1Personal: (b: string) =>
-    `${b}, three days from now your site is fast, and Google's own score proves it`,
-  sub: "Slow pages lose people before they even appear, and Google ranks them lower for it. We fix it, then run the same public test again so you can watch the number change.",
-  ctaLabel: 'Fix my website · $1,200',
-  proofLabel: 'Your score',
-  proofHeadingLive: 'This is you, right now',
-  proofHeadingGeneric: 'We measure before we touch anything',
-  proofLead: (b: string | null) =>
-    b
-      ? `We already ran ${b} through Google's speed test. This is your mobile score today.`
-      : "We already ran your site through Google's speed test. This is your mobile score today.",
-  proofAfter:
-    "That number isn't our opinion, it's Google's. When we're done, we run the same test again and you watch what changed.",
-  painLabel: 'What this is costing you',
-  painHeading: "You're paying for traffic that never becomes a lead",
-  painLines: [
-    "Someone finds you, taps the link, waits, and leaves. They don't complain. They just call the next business.",
-    "You feel it as quiet weeks and ads that don't work, when the real leak is a page that loads too late.",
-    'Google prefers faster sites. While yours lags, competitors with the same offer sit above you.',
-    "And every day you wait, you buy the same problem again: visitors who never see what you sell.",
-  ],
-  bridgeLabel: 'The fix',
-  bridgeHeading: 'One job, fixed scope, a number you can verify',
-  bridgeBody:
-    "This isn't a redesign, a retainer, or a twelve month agency relationship. It's a three day speed overhaul on the site you already have, measured before and after with Google's public tools. No meetings about meetings, no discovery workshops, no surprise invoice in month four.",
-  bridgeGaugeCaption:
-    "Three days later, the same test. Google calls 90 and up good. That's the band we tune toward, and we keep working until the improvement is real.",
-  benefitsLabel: 'What changes for you',
-  benefitsHeading: 'Outcomes, not jargon',
-  benefits: [
-    {
-      title: 'People stay long enough to act',
-      text: 'Pages that open fast stop the bounce. More of the traffic you already pay for gets a chance to enquire.',
-    },
-    {
-      title: 'Google stops punishing the delay',
-      text: 'Speed is a ranking signal. Closing the gap gives you a fairer fight against faster competitors.',
-    },
-    {
-      title: 'You get proof, not a vibe',
-      text: 'Before and after scores from the same public test. A number you can forward to anyone.',
-    },
-    {
-      title: 'Done in three business days',
-      text: "From the moment we have access. Most jobs finish faster, and you're never waiting on a slot.",
-    },
-  ],
-  processLabel: 'How it runs',
-  processHeading: 'Three days, then the proof lands',
-  processSteps: [
-    {
-      label: 'Day 1',
-      text: "Access, backup, and a full audit of what's actually slowing you down.",
-    },
-    {
-      label: 'Day 2',
-      text: 'The overhaul: images, scripts, caching, mobile-first tuning.',
-    },
-    {
-      label: 'Day 3',
-      text: 'Re-test, tune again, and send the before and after report.',
-    },
-  ],
-  stackLabel: 'Everything included',
-  stackHeading: 'One price, the full job, nothing extra to buy',
-  stackItems: [
-    {
-      title: 'Full speed overhaul',
-      text: 'Images, scripts, caching and mobile performance, delivered within three business days of access.',
-    },
-    {
-      title: 'Before and after Google reports',
-      text: 'Side by side, from the same public tools we used to score you.',
-    },
-    {
-      title: 'Plain-English summary',
-      text: 'What changed, why it mattered, and what to leave alone.',
-    },
-    {
-      title: 'Systems Snapshot',
-      text: "A one-page read on your website, lead handling, follow-up, reviews and automation, plus the one thing we'd fix next.",
-    },
-    {
-      title: '14 days of aftercare',
-      text: 'If anything we touched misbehaves, we sort it, no charge.',
-    },
-  ],
-  scopeLine:
-    'Works on WordPress, Shopify, Squarespace, Wix and custom builds. One site, up to 30 pages. Bigger builds get a same-day quote so the fixed price stays honest.',
-  priceLabel: 'Investment',
-  price: '$1,200',
-  priceLead: 'Paid once, and we start. No quotes, no meetings, no scope creep.',
-  guarantee:
-    "Our promise: we measure before and after. If the improvement isn't real, we keep working at no extra cost until it is.",
-  priceAnchor:
-    "That's about one client you'd otherwise lose. The leak charges you every month. This charges you once.",
-  faqLabel: 'Objections',
-  faqHeading: 'Straight answers before you buy',
-  faqs: [
-    {
-      q: 'Is this refundable?',
-      a: "There is no change-of-mind refund, because we start straight away. What you have instead is stronger: if the measured improvement isn't real, we keep working at no extra cost until it is.",
-    },
-    {
-      q: 'Will anything break?',
-      a: 'We back everything up before we start and test as we go. Anything we touched that misbehaves inside 14 days gets fixed free.',
-    },
-    {
-      q: 'How long does it take?',
-      a: 'Three business days from the moment we have access. Most jobs finish faster.',
-    },
-    {
-      q: 'What do you need from me?',
-      a: 'A short access form after payment — how your site is built and how we should get in. About five minutes, plain English.',
-    },
-    {
-      q: 'Why is this cheaper than an agency retainer?',
-      a: 'Because it is one job with a fixed scope, not a relationship. We made it repeatable. You get the benefit of that.',
-    },
-  ],
-  finalLabel: 'Last step',
-  finalHeading: 'Three days from now, your site is fast and you have the proof',
-  finalLine:
-    'Same Google test, new number. The before and after land in your inbox, and the score speaks for itself.',
-}
 
 function SectionLabel({
   children,
@@ -262,8 +136,10 @@ const FunnelPage: React.FC = () => {
   const [doc, setDoc] = useState<FunnelPageDoc | null>(null)
   const [status, setStatus] = useState<'loading' | 'ready' | 'missing' | 'error'>('loading')
 
+  const COPY = useMemo(() => funnelCopyForSlug(slug), [slug])
   const business = useMemo(() => sanitiseBusinessName(params.get('b')), [params])
   const score = useMemo(() => parseSpeedScore(params.get('s')), [params])
+  const isMissedCall = COPY.proofKind === 'missed-call'
 
   useEffect(() => {
     if (!slug) {
@@ -304,7 +180,7 @@ const FunnelPage: React.FC = () => {
     priceOptions: doc?.priceOptions,
   }
 
-  const pageTitle = doc?.title ? `${doc.title} | SYSBILT` : 'Website Speed Fix | SYSBILT'
+  const pageTitle = doc?.title ? `${doc.title} | SYSBILT` : 'Fixed-price fix | SYSBILT'
   const h1 = business ? COPY.h1Personal(business) : COPY.h1Generic
   const faqs =
     doc?.faqs && doc.faqs.length > 0
@@ -318,7 +194,6 @@ const FunnelPage: React.FC = () => {
         ...FUNNEL_CSS_VARS,
         backgroundColor: FUNNEL_COLOURS.ground,
         color: FUNNEL_COLOURS.ink,
-        // Selection: navy on cream-ink
       }}
     >
       <PageMeta
@@ -360,7 +235,6 @@ const FunnelPage: React.FC = () => {
 
       {status === 'ready' && doc && (
         <>
-          {/* 1. HERO — cool trust ground */}
           <header className="max-w-3xl mx-auto px-6 md:px-10 pt-8 pb-16 md:pb-20">
             <SysbiltLogo className="w-[110px] md:w-[130px]" />
 
@@ -398,7 +272,6 @@ const FunnelPage: React.FC = () => {
             </Reveal>
           </header>
 
-          {/* 2. PROOF */}
           <section className="max-w-3xl mx-auto px-6 md:px-10 pb-16 md:pb-24">
             <SectionRule />
             <Reveal y={10}>
@@ -409,7 +282,11 @@ const FunnelPage: React.FC = () => {
                 className="font-serif font-bold text-3xl md:text-4xl tracking-tight mb-6 md:mb-8 max-w-2xl"
                 style={{color: FUNNEL_COLOURS.ink}}
               >
-                {score != null ? COPY.proofHeadingLive : COPY.proofHeadingGeneric}
+                {isMissedCall
+                  ? COPY.proofHeadingGeneric
+                  : score != null
+                    ? COPY.proofHeadingLive
+                    : COPY.proofHeadingGeneric}
               </h2>
             </Reveal>
             <Reveal delay={0.12} y={12}>
@@ -417,29 +294,38 @@ const FunnelPage: React.FC = () => {
                 className="font-sans text-base md:text-lg leading-relaxed max-w-2xl mb-2"
                 style={{color: FUNNEL_COLOURS.muted}}
               >
-                {score != null
-                  ? COPY.proofLead(business)
-                  : "Google scores every site out of 100 on mobile. We use that number before and after so the result is public, not our spin. Here's what a typical slow score looks like."}
+                {isMissedCall
+                  ? business
+                    ? COPY.proofLead(business)
+                    : COPY.proofLeadGeneric
+                  : score != null
+                    ? COPY.proofLead(business)
+                    : COPY.proofLeadGeneric}
               </p>
             </Reveal>
-            <ScoreMoment
-              businessName={business}
-              score={score ?? 34}
-              mode={score != null ? 'live' : 'example'}
-            />
+            {isMissedCall ? (
+              <CallMissedMoment businessName={business} mode="before" />
+            ) : (
+              <ScoreMoment
+                businessName={business}
+                score={score ?? 34}
+                mode={score != null ? 'live' : 'example'}
+              />
+            )}
             <Reveal delay={0.08} y={12}>
               <p
                 className="mt-8 font-sans text-base md:text-lg leading-relaxed max-w-2xl"
                 style={{color: FUNNEL_COLOURS.muted}}
               >
-                {score != null
-                  ? COPY.proofAfter
-                  : "That number isn't our opinion, it's Google's. When we run your site, this dial shows your real score — and after the fix, we run the same test again."}
+                {isMissedCall
+                  ? COPY.proofAfterGeneric
+                  : score != null
+                    ? COPY.proofAfter
+                    : COPY.proofAfterGeneric}
               </p>
             </Reveal>
           </section>
 
-          {/* 3. PAIN — dark band + copy kept; cream motion cards added below */}
           <section
             className="w-full py-16 md:py-24 mb-0"
             style={{backgroundColor: FUNNEL_COLOURS.ink, color: FUNNEL_COLOURS.onInk}}
@@ -468,12 +354,11 @@ const FunnelPage: React.FC = () => {
                   </li>
                 ))}
               </RevealList>
-              <PainCostCards />
+              {isMissedCall ? <MissedCallPainCards /> : <PainCostCards />}
               <LostClientCalculator />
             </div>
           </section>
 
-          {/* 4. SOLUTION BRIDGE + after score (design mock: 95 green) */}
           <section className="max-w-3xl mx-auto px-6 md:px-10 pt-16 md:pt-24 pb-16 md:pb-24">
             <SectionRule />
             <Reveal y={10}>
@@ -504,10 +389,13 @@ const FunnelPage: React.FC = () => {
                 {COPY.bridgeGaugeCaption}
               </p>
             </Reveal>
-            <ScoreMoment score={90} mode="benchmark" />
+            {isMissedCall ? (
+              <CallMissedMoment businessName={business} mode="after" />
+            ) : (
+              <ScoreMoment score={90} mode="benchmark" />
+            )}
           </section>
 
-          {/* 5. BENEFIT STACK — copy kept; small motion panels beside on desktop */}
           <section
             className="w-full py-16 md:py-24"
             style={{backgroundColor: FUNNEL_COLOURS.surfaceGold}}
@@ -534,7 +422,6 @@ const FunnelPage: React.FC = () => {
             </div>
           </section>
 
-          {/* 6. PROCESS */}
           <section className="max-w-3xl mx-auto px-6 md:px-10 pt-16 md:pt-24 pb-16 md:pb-24">
             <SectionRule />
             <Reveal y={10}>
@@ -564,7 +451,6 @@ const FunnelPage: React.FC = () => {
             </Reveal>
           </section>
 
-          {/* 7. VALUE STACK — copy kept; motion strips added */}
           <section className="max-w-5xl mx-auto px-6 md:px-10 pb-16 md:pb-24">
             <SectionRule />
             <Reveal y={10}>
@@ -585,7 +471,6 @@ const FunnelPage: React.FC = () => {
             />
           </section>
 
-          {/* 8. PRICE — bigger CTA + promise portrait */}
           <section
             className="w-full py-16 md:py-24 mb-16 md:mb-24 overflow-hidden"
             style={{backgroundColor: FUNNEL_COLOURS.inkSoft, color: FUNNEL_COLOURS.onInk}}
@@ -638,19 +523,17 @@ const FunnelPage: React.FC = () => {
                   </Reveal>
                 </div>
 
-                <ReportDeliverableMock />
+                {isMissedCall ? <TextBackDeliverableMock /> : <ReportDeliverableMock />}
               </div>
             </div>
           </section>
 
-          {/* 9. OBJECTIONS */}
           <FunnelObjections
             label={COPY.faqLabel}
             heading={COPY.faqHeading}
             faqs={faqs}
           />
 
-          {/* 10. FINAL CLOSE — the kill shot */}
           <section
             className="w-full relative overflow-hidden"
             style={{backgroundColor: FUNNEL_COLOURS.ink, color: FUNNEL_COLOURS.onInk}}

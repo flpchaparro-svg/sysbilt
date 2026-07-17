@@ -16,21 +16,24 @@ export type PlatformId =
   | 'other'
 
 export type SameProviderId = 'yes' | 'no' | 'unsure'
-export type AccessPathId = 'wp-admin' | 'hosting' | 'agency' | 'call'
+export type AccessPathId = 'wp-admin' | 'hosting' | 'agency' | 'call' | 'forward' | 'provider' | 'crm'
+export type PhoneSetupId = 'mobile' | 'landline' | 'voip' | 'mixed' | 'unsure'
 
 export type FunnelAccessPayload = {
   product: FunnelProductCode
   name: string
   email: string
   business: string
-  website: string
-  platform: PlatformId
-  sameProvider: SameProviderId
-  domainProvider: string
-  hostingProvider: string
+  website?: string
+  platform?: PlatformId | ''
+  sameProvider?: SameProviderId | ''
+  domainProvider?: string
+  hostingProvider?: string
   accessPath: AccessPathId
   accessDetail: string
   notes: string
+  phone?: string
+  phoneSetup?: PhoneSetupId | ''
 }
 
 export const DOMAIN_REGISTRARS = [

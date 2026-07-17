@@ -31,6 +31,7 @@ import {
   HOSTING_PROVIDERS,
   type AccessPathId,
   type FunnelAccessPayload,
+  type PhoneSetupId,
   type PlatformId,
   type SameProviderId,
 } from './funnelAccessTypes'
@@ -41,7 +42,8 @@ const HELP_EMAIL = 'mailto:hello@sysbilt.com?subject=Access%20form%20help'
 const RED = FUNNEL_COLOURS.accent
 const INK = FUNNEL_COLOURS.ink
 const CREAM = FUNNEL_COLOURS.onInk
-const GROUND = '#F4F1EE'
+/** Brand cream — same as theme.ts / FUNNEL_COLOURS.ground (#FFF2EC), not a grey off-cream */
+const GROUND = FUNNEL_COLOURS.ground
 
 type StepId =
   | 'product'
@@ -49,6 +51,8 @@ type StepId =
   | 'email'
   | 'business'
   | 'website'
+  | 'phone'
+  | 'phoneSetup'
   | 'platform'
   | 'provider'
   | 'domainProvider'
@@ -60,28 +64,39 @@ type StepId =
 
 type PhaseId = 'about' | 'site' | 'access' | 'done'
 
-const PHASES: {id: PhaseId; n: number; label: string}[] = [
+const PHASES_SPEED: {id: PhaseId; n: number; label: string}[] = [
   {id: 'about', n: 1, label: 'About you'},
   {id: 'site', n: 2, label: 'Your site'},
   {id: 'access', n: 3, label: 'Access'},
   {id: 'done', n: 4, label: 'Done'},
 ]
 
-function phaseIndex(phase: PhaseId): number {
-  return PHASES.findIndex((p) => p.id === phase)
+const PHASES_MISSED: {id: PhaseId; n: number; label: string}[] = [
+  {id: 'about', n: 1, label: 'About you'},
+  {id: 'site', n: 2, label: 'Your phone'},
+  {id: 'access', n: 3, label: 'Access'},
+  {id: 'done', n: 4, label: 'Done'},
+]
+
+function phaseIndex(phase: PhaseId, phases: typeof PHASES_SPEED): number {
+  return phases.findIndex((p) => p.id === phase)
 }
 
-function phaseForStep(step: StepId): PhaseId {
+function phaseForStep(step: StepId, missedCall: boolean): PhaseId {
   if (step === 'done') return 'done'
   if (
     step === 'product' ||
     step === 'name' ||
     step === 'email' ||
-    step === 'business' ||
-    step === 'website'
+    step === 'business'
   ) {
     return 'about'
   }
+  if (missedCall) {
+    if (step === 'phone' || step === 'phoneSetup') return 'site'
+    return 'access'
+  }
+  if (step === 'website') return 'about'
   if (
     step === 'platform' ||
     step === 'provider' ||
@@ -237,6 +252,78 @@ const ACCESS_OPTIONS: {
   },
 ]
 
+const PHONE_SETUP_OPTIONS: {
+  id: PhoneSetupId
+  label: string
+  blurb: string
+  icon: React.ReactNode
+  unsure?: boolean
+}[] = [
+  {
+    id: 'mobile',
+    label: 'Mobile',
+    blurb: 'A handset or mobile number for the business.',
+    icon: <Phone className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'landline',
+    label: 'Landline',
+    blurb: 'Office phone that rings on desks or a handset.',
+    icon: <Building2 className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'voip',
+    label: 'VoIP / app',
+    blurb: 'Aircall, RingCentral, 3CX, Microsoft Teams, and similar.',
+    icon: <Server className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'mixed',
+    label: 'Mixed',
+    blurb: 'Calls go to more than one place depending on the day.',
+    icon: <Box className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'unsure',
+    label: 'Not sure',
+    blurb: 'Fine. We will work it out on a short call if needed.',
+    icon: null,
+    unsure: true,
+  },
+]
+
+const MISSED_CALL_ACCESS_OPTIONS: {
+  id: AccessPathId
+  label: string
+  blurb: string
+  icon: React.ReactNode
+}[] = [
+  {
+    id: 'forward',
+    label: 'Call forward',
+    blurb: 'You can change divert / unanswered forwarding on the number.',
+    icon: <Phone className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'provider',
+    label: 'Phone / SMS login',
+    blurb: 'Carrier portal, VoIP admin, or SMS provider we can use.',
+    icon: <Server className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'crm',
+    label: 'CRM already linked',
+    blurb: 'HubSpot or similar already sees your calls. Tell us how.',
+    icon: <Building2 className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'call',
+    label: 'Quick call',
+    blurb: 'We walk through access together. About five minutes.',
+    icon: <Phone className="w-full h-full" strokeWidth={1.25} />,
+  },
+]
+
 function isValidName(value: string): boolean {
   const t = value.trim()
   if (t.length < 2) return false
@@ -258,6 +345,11 @@ function isValidWebsite(value: string): boolean {
 
 function isValidBusiness(value: string): boolean {
   return value.trim().length >= 2
+}
+
+function isValidPhone(value: string): boolean {
+  const clean = value.replace(/\s+/g, '')
+  return /^(0[23478])\d{8}$/.test(clean)
 }
 
 type HelpBlock = {
@@ -293,6 +385,20 @@ function helpForStep(step: StepId): HelpBlock {
       return {
         title: 'Business name',
         body: 'The name on the website, the one customers know. Legal company name is fine too if that is what you use day to day.',
+      }
+    case 'phone':
+      return {
+        title: 'Which number we watch',
+        body: 'The Australian business number customers dial. Ten digits, mobile or landline.',
+        steps: [
+          'Use the main enquiry number, not a private mobile unless that is the public line',
+          'Include the leading 0',
+        ],
+      }
+    case 'phoneSetup':
+      return {
+        title: 'How the phone is set up',
+        body: 'This tells us how missed calls show up today. Hover a card, then Select. Not sure is fine.',
       }
     case 'website':
       return {
@@ -446,16 +552,18 @@ function SelectCard({
  */
 function StageJourney({
   phase,
+  phases,
   canGoBack,
   onBack,
   onHelp,
 }: {
   phase: PhaseId
+  phases: typeof PHASES_SPEED
   canGoBack: boolean
   onBack: () => void
   onHelp: () => void
 }) {
-  const active = phaseIndex(phase)
+  const active = phaseIndex(phase, phases)
   const trackRef = useRef<HTMLDivElement>(null)
   const endRef = useRef<HTMLDivElement>(null)
   const [fillWidth, setFillWidth] = useState(120)
@@ -485,7 +593,7 @@ function StageJourney({
       window.removeEventListener('resize', onResize)
       ro?.disconnect()
     }
-  }, [measure, active, canGoBack])
+  }, [measure, active, canGoBack, phases])
 
   return (
     <div
@@ -495,7 +603,7 @@ function StageJourney({
     >
       <div
         className="pointer-events-none absolute inset-y-0 left-0 rounded-full transition-[width] duration-500 ease-out"
-        style={{width: fillWidth, backgroundColor: '#FFF7F2'}}
+        style={{width: fillWidth, backgroundColor: CREAM}}
         aria-hidden
       />
 
@@ -532,7 +640,7 @@ function StageJourney({
           className="flex min-w-0 flex-1 items-center gap-0 overflow-x-auto"
           aria-label="Progress"
         >
-          {PHASES.map((p, i) => {
+          {phases.map((p, i) => {
             const done = i < active
             const current = i === active
             const filled = i <= active
@@ -581,6 +689,8 @@ const FunnelAccessPage: React.FC = () => {
   const [email, setEmail] = useState('')
   const [business, setBusiness] = useState('')
   const [website, setWebsite] = useState('')
+  const [phone, setPhone] = useState('')
+  const [phoneSetup, setPhoneSetup] = useState<PhoneSetupId | null>(null)
   const [platform, setPlatform] = useState<PlatformId | null>(null)
   const [sameProvider, setSameProvider] = useState<SameProviderId | null>(null)
   const [domainProvider, setDomainProvider] = useState('')
@@ -592,7 +702,17 @@ const FunnelAccessPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null)
   const [helpOpen, setHelpOpen] = useState(false)
 
+  const isMissedCall = product === 'missed-call'
+  const phases = isMissedCall ? PHASES_MISSED : PHASES_SPEED
+
   const stepOrder = useMemo((): StepId[] => {
+    if (isMissedCall) {
+      const base: StepId[] = initialProduct
+        ? ['name', 'email', 'business', 'phone', 'phoneSetup']
+        : ['product', 'name', 'email', 'business', 'phone', 'phoneSetup']
+      base.push('access', 'accessDetail', 'notes', 'done')
+      return base
+    }
     const base: StepId[] = initialProduct
       ? ['name', 'email', 'business', 'website', 'platform', 'provider']
       : ['product', 'name', 'email', 'business', 'website', 'platform', 'provider']
@@ -601,7 +721,7 @@ const FunnelAccessPage: React.FC = () => {
     }
     base.push('access', 'accessDetail', 'notes', 'done')
     return base
-  }, [initialProduct, sameProvider])
+  }, [initialProduct, sameProvider, isMissedCall])
 
   const stepIndex = Math.max(0, stepOrder.indexOf(step))
   const lineProgress =
@@ -609,12 +729,13 @@ const FunnelAccessPage: React.FC = () => {
       ? 100
       : Math.round(((stepIndex + 1) / Math.max(stepOrder.length, 1)) * 100)
 
-  const activePhase = phaseForStep(step)
+  const activePhase = phaseForStep(step, isMissedCall)
 
   const firstStep = initialProduct ? 'name' : 'product'
   const help = helpForStep(step)
   const liveProducts = FUNNEL_PRODUCT_CATALOGUE.filter((p) => p.status === 'live')
   const canGoBack = step !== 'done' && step !== firstStep
+  const accessOptions = isMissedCall ? MISSED_CALL_ACCESS_OPTIONS : ACCESS_OPTIONS
 
   function goNext(from: StepId) {
     setError(null)
@@ -630,26 +751,47 @@ const FunnelAccessPage: React.FC = () => {
   }
 
   async function submit() {
-    if (!product || !platform || !sameProvider || !accessPath) {
+    if (!product || !accessPath) {
+      setError('Something is missing. Use Back to check your answers.')
+      return
+    }
+    if (isMissedCall) {
+      if (!phoneSetup) {
+        setError('Something is missing. Use Back to check your answers.')
+        return
+      }
+    } else if (!platform || !sameProvider) {
       setError('Something is missing. Use Back to check your answers.')
       return
     }
     setSubmitting(true)
     setError(null)
-    const payload: FunnelAccessPayload = {
-      product,
-      name: name.trim(),
-      email: email.trim(),
-      business: business.trim(),
-      website: website.trim(),
-      platform,
-      sameProvider,
-      domainProvider: domainProvider.trim(),
-      hostingProvider: hostingProvider.trim(),
-      accessPath,
-      accessDetail: accessDetail.trim(),
-      notes: notes.trim(),
-    }
+    const payload: FunnelAccessPayload = isMissedCall
+      ? {
+          product,
+          name: name.trim(),
+          email: email.trim(),
+          business: business.trim(),
+          phone: phone.trim(),
+          phoneSetup: phoneSetup!,
+          accessPath,
+          accessDetail: accessDetail.trim(),
+          notes: notes.trim(),
+        }
+      : {
+          product,
+          name: name.trim(),
+          email: email.trim(),
+          business: business.trim(),
+          website: website.trim(),
+          platform: platform!,
+          sameProvider: sameProvider!,
+          domainProvider: domainProvider.trim(),
+          hostingProvider: hostingProvider.trim(),
+          accessPath,
+          accessDetail: accessDetail.trim(),
+          notes: notes.trim(),
+        }
     try {
       const res = await fetch('/api/funnel/access', {
         method: 'POST',
@@ -667,6 +809,11 @@ const FunnelAccessPage: React.FC = () => {
     } finally {
       setSubmitting(false)
     }
+  }
+
+  function selectPhoneSetup(id: PhoneSetupId) {
+    setPhoneSetup(id)
+    window.setTimeout(() => goNext('phoneSetup'), 200)
   }
 
   function selectPlatform(id: PlatformId) {
@@ -715,6 +862,7 @@ const FunnelAccessPage: React.FC = () => {
         <div className="mx-auto max-w-5xl px-3 md:px-6">
           <StageJourney
             phase={activePhase}
+            phases={phases}
             canGoBack={canGoBack}
             onBack={goBack}
             onHelp={() => setHelpOpen(true)}
@@ -789,7 +937,7 @@ const FunnelAccessPage: React.FC = () => {
                   </ul>
                 ) : null}
               </div>
-              <div className="space-y-3 border-t border-dark/10 bg-[#FAFAF8] px-5 py-5">
+              <div className="space-y-3 border-t border-dark/10 px-5 py-5" style={{backgroundColor: FUNNEL_COLOURS.surface}}>
                 <p className="font-sans text-sm leading-relaxed text-dark/70">
                   Still stuck? Email us or book a short call. A human answers.
                 </p>
@@ -883,7 +1031,7 @@ const FunnelAccessPage: React.FC = () => {
             {step === 'business' ? (
               <OneField
                 title="What is the business name?"
-                hint="The trading name on the site."
+                hint="The trading name customers know."
                 value={business}
                 onChange={setBusiness}
                 placeholder="Trading name"
@@ -891,6 +1039,45 @@ const FunnelAccessPage: React.FC = () => {
                 disabled={!isValidBusiness(business)}
                 onNext={() => goNext('business')}
               />
+            ) : null}
+
+            {step === 'phone' ? (
+              <OneField
+                title="Which number should we watch?"
+                hint="The Australian business line customers dial. Ten digits."
+                value={phone}
+                onChange={setPhone}
+                placeholder="02 1234 5678 or 0412 345 678"
+                type="tel"
+                autoComplete="tel"
+                disabled={!isValidPhone(phone)}
+                onNext={() => goNext('phone')}
+              />
+            ) : null}
+
+            {step === 'phoneSetup' ? (
+              <>
+                <QuestionTitle>
+                  How is the <span style={{color: RED}}>phone</span> set up?
+                </QuestionTitle>
+                <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
+                  Hover a card, then Select. Not sure is fine.
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+                  {PHONE_SETUP_OPTIONS.map((opt) => (
+                    <div key={opt.id}>
+                      <SelectCard
+                        selected={phoneSetup === opt.id}
+                        onSelect={() => selectPhoneSetup(opt.id)}
+                        title={opt.label}
+                        blurb={opt.blurb}
+                        icon={opt.icon}
+                        unsure={opt.unsure}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </>
             ) : null}
 
             {step === 'website' ? (
@@ -989,7 +1176,7 @@ const FunnelAccessPage: React.FC = () => {
                   Hover, then Select. Pick whatever is easiest for you.
                 </p>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-                  {ACCESS_OPTIONS.map((opt) => (
+                  {accessOptions.map((opt) => (
                     <div key={opt.id}>
                       <SelectCard
                         selected={accessPath === opt.id}
@@ -1008,13 +1195,21 @@ const FunnelAccessPage: React.FC = () => {
               <OneField
                 title="Anything we should know about access?"
                 hint={
-                  accessPath === 'wp-admin'
-                    ? 'Login URL, or say you will email credentials separately.'
-                    : accessPath === 'hosting'
-                      ? 'Hosting panel name, or how you usually log in.'
-                      : accessPath === 'agency'
-                        ? 'Who manages the site? Name or email is enough.'
-                        : 'Best times to call, or anything that usually trips people up.'
+                  isMissedCall
+                    ? accessPath === 'forward'
+                      ? 'Carrier name, or how you change divert today.'
+                      : accessPath === 'provider'
+                        ? 'VoIP or SMS login URL, or say you will email credentials separately.'
+                        : accessPath === 'crm'
+                          ? 'Which CRM, and whether calls already log there.'
+                          : 'Best times to call, or anything that usually trips people up.'
+                    : accessPath === 'wp-admin'
+                      ? 'Login URL, or say you will email credentials separately.'
+                      : accessPath === 'hosting'
+                        ? 'Hosting panel name, or how you usually log in.'
+                        : accessPath === 'agency'
+                          ? 'Who manages the site? Name or email is enough.'
+                          : 'Best times to call, or anything that usually trips people up.'
                 }
                 value={accessDetail}
                 onChange={setAccessDetail}
