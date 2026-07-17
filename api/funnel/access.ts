@@ -154,6 +154,39 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     }
   }
 
+  // Slack Incoming Webhook (optional). Never blocks a successful HubSpot save.
+  const slackUrl = process.env.SLACK_ACCESS_WEBHOOK_URL?.trim();
+  let slackOk = false;
+  if (slackUrl && hubspotContactId) {
+    try {
+      const hubspotLink = `https://app-ap1.hubspot.com/contacts/442914926/record/0-1/${hubspotContactId}`;
+      const lines = [
+        `*New access form* · ${product}`,
+        `*${name}* · ${business}`,
+        email,
+        website,
+        `Platform: ${platform} · Access: ${accessPath}`,
+        sameProvider !== 'yes'
+          ? `Domain/hosting same: ${sameProvider}${domainProvider ? ` · Domain: ${domainProvider}` : ''}${hostingProvider ? ` · Host: ${hostingProvider}` : ''}`
+          : null,
+        accessDetail ? `Access notes: ${accessDetail.slice(0, 280)}` : null,
+        `<${hubspotLink}|Open in HubSpot>`,
+      ].filter(Boolean);
+
+      const slackRes = await fetch(slackUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: lines.join('\n') }),
+      });
+      slackOk = slackRes.ok;
+      if (!slackRes.ok) {
+        console.error('[funnel/access] slack', slackRes.status, await slackRes.text());
+      }
+    } catch (err) {
+      console.error('[funnel/access] slack', err);
+    }
+  }
+
   if (!hubspotContactId && !webhookOk && !webhookUrl && !process.env.HUBSPOT_PRIVATE_APP_TOKEN) {
     res.status(503).json({
       error: 'Access intake is not configured (need HubSpot token or FUNNEL_ACCESS_WEBHOOK_URL).',
@@ -173,5 +206,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     ok: true,
     hubspotContactId,
     webhookOk,
+    slackOk,
   });
 }
