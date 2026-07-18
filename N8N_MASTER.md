@@ -40,13 +40,13 @@ Deploy and guide scripts load the API key from `.env.local` (`cursor-mcp=` or `N
 | `Lph4ik3Y6VMhuYHV` | Newsletter Welcome | UNVERIFIED | Schedule | New HubSpot newsletter subscribers → welcome email (patched for guide/DM sources) |
 | `5i6sz7pSUvVFiNql` | Deal Stage Automations | Active† | Schedule | HubSpot deal stages → stage-appropriate Gmail |
 | `20NfO5zmf4sHTUJJ` | Sybil Chat Logger | UNVERIFIED | Webhook | Sybil chat events → Google Sheet |
-| `QV7KWPAjqFWme0Cu` | SYSBILT - Outbound List Builder (A) | Inactive† (deploy default) | Manual (+ test webhook `sysbilt-outbound-list-test`) | SerpAPI Maps → sheet rows → Jina email scrape |
+| `QV7KWPAjqFWme0Cu` | SYSBILT - Outbound List Builder (A) | Inactive† (deploy default) | Schedule 10 min + Manual (+ test webhook) | Run Queue (Niche+Suburb+Queued) → SerpAPI Maps → Master Leads → Jina email scrape |
 | `0S0aaGP5VVHg3aZU` | SYSBILT - Outbound Contact Scrape (A2) | Inactive† | Manual | Backfill emails for existing sheet rows |
 | `zOZh6wE70PikOCqI` | SYSBILT - Outbound Audit Runner (B) | Inactive† (deploy default) | Schedule (~5 min) when active | Sheet `Status=Audit` → clone of inbound audit → Vercel report → `Audited` |
 | `WD3s1eD9aUQNUWY6` | SYSBILT - Outbound HubSpot Engage (C) | Inactive† (deploy default) | Schedule (~5 min) when active | Sheet `Status=Engage` → HubSpot upsert → sheet notes |
-| `fag1E0JKa8JSIUhp` | SYSBILT - Outbound Speed Fix Scorer | Active† | Schedule (~5 min) + Manual | Sheet1 empty `LH Mobile` → PageSpeed mobile → write score; if &lt; 65 append **Speed Fix** tab (`Status=Ready`) |
+| `fag1E0JKa8JSIUhp` | SYSBILT - Outbound Speed Fix Scorer | Active† | Schedule (~5 min) + Manual | Master Leads empty `LH Mobile` → PageSpeed mobile → write score; if &lt; 65 append **Speed Fix** tab (`Status=Ready`) |
 | `qDydgiC09UoV4MRO` | SYSBILT - Outbound Speed Fix Send | Active† | Schedule (~5 min) + Manual | Speed Fix `Status=Ready` → Gmail **draft** Email A + `/go/speed-fix?b=&s=` → `Emailed` (does not send) |
-| `5QwCiKvZz4A9T4eF` | SYSBILT - Outbound Speed Fix Tab Setup | Inactive† | Webhook | Create **Speed Fix** tab + `LH Mobile` header on Sheet1 (`--setup-tab`) |
+| `5QwCiKvZz4A9T4eF` | SYSBILT - Outbound Speed Fix Tab Setup | Inactive† | Webhook | Create **Speed Fix** tab + `LH Mobile` header on Master Leads (`--setup-tab`) |
 | `WP2tZjhH27vJbOaV` | SYSBILT - Outbound Sheet Setup | UNVERIFIED | Webhook | Create outbound Google Sheet with headers (deploy `--setup-sheet`) |
 | `5h6SvE2hScz6KHh3` | SYSBILT - Outbound Sheet Headers | UNVERIFIED | Webhook | Repair headers after Google Tables conflicts (`--fix-sheet`) |
 | *(UNVERIFIED ID)* | SYSBILT - DM Lead Intake | UNVERIFIED | Webhook `sysbilt-dm-lead-intake` | ManyChat/DM leads → HubSpot → Slack → optional sheet log |
@@ -126,19 +126,23 @@ Keep new SYSBILT workflows under the `SYSBILT -` prefix and separate experimenta
 
 ## 6. Outbound engine (A → Speed Fix / B → C)
 
-Google Sheet is the **source of truth** between workflows. Sheet1 columns **A1:O5000** (row 1 headers; **LH Mobile** in column O). Status values include: `New`, `Audit`, `Auditing`, `Audited`, `Engage`, `Emailed`, `Replied`, `Dead`. **Speed Fix** tab columns: Business Name, Suburb, Website, Email, Phone, LH Mobile, Status (`Ready` / `Emailed` / `Replied` / `Dead`), Maps ID, Notes. Gate: **LH Mobile &lt; 65**.
+Google Sheet is the **source of truth** between workflows. **Master Leads** columns **A1:O5000** (row 1 headers; **LH Mobile** in column O). Status values include: `New`, `Audit`, `Auditing`, `Audited`, `Engage`, `Emailed`, `Replied`, `Dead`. **Run Queue** tab drives List Builder (Niche, Suburb, Status=`Queued`/`Running`/`Done`/`Failed`). **Speed Fix** tab columns: Business Name, Suburb, Website, Email, Phone, LH Mobile, Status (`Ready` / `Emailed` / `Replied` / `Dead`), Maps ID, Notes. Gate: **LH Mobile &lt; 65**.
 
 ```
 ┌─────────────────────────┐
-│ A: Outbound List Builder │  SerpAPI Maps + Jina scrape → append rows (Status=New)
+│ Run Queue tab            │  Niche + Suburb + Status=Queued
+└───────────┬─────────────┘
+            │
+┌───────────▼─────────────┐
+│ A: Outbound List Builder │  one Queued job → SerpAPI + Jina → Master Leads (New)
 └───────────┬─────────────┘
             │ optional
 ┌───────────▼─────────────┐
-│ A2: Contact Scrape       │  Backfill Email for existing rows
+│ A2: Contact Scrape       │  Backfill Email for existing Master Leads rows
 └───────────┬─────────────┘
             │ schedule: empty LH Mobile
 ┌───────────▼─────────────┐
-│ Speed Fix Scorer         │  PageSpeed mobile → Sheet1!LH Mobile;
+│ Speed Fix Scorer         │  PageSpeed mobile → Master Leads!LH Mobile;
 │                          │  if score < 65 → Speed Fix tab (Ready)
 └───────────┬─────────────┘
             │ schedule: Status=Ready + Email
@@ -162,7 +166,7 @@ Google Sheet is the **source of truth** between workflows. Sheet1 columns **A1:O
 
 | Workflow | ID | Deploy script |
 |----------|-----|---------------|
-| A — List Builder | `QV7KWPAjqFWme0Cu` | `deploy-outbound-list-builder.sh` |
+| A — List Builder | `QV7KWPAjqFWme0Cu` | `deploy-outbound-list-builder.sh` (`--setup-master`) |
 | A2 — Contact Scrape | `0S0aaGP5VVHg3aZU` | same script (secondary workflow) |
 | Sheet setup | `WP2tZjhH27vJbOaV` | `--setup-sheet` |
 | Sheet headers repair | `5h6SvE2hScz6KHh3` | `--fix-sheet` |
@@ -172,7 +176,17 @@ Google Sheet is the **source of truth** between workflows. Sheet1 columns **A1:O
 | B — Audit Runner | `zOZh6wE70PikOCqI` | `deploy-outbound-audit-runner.sh` |
 | C — HubSpot Engage | `WD3s1eD9aUQNUWY6` | `deploy-outbound-hubspot-engage.sh` |
 
-**Sheet ID:** `OUTBOUND_LEADS_SHEET_ID` in gitignored `.deploy-state.env`. Live sheet: `1aGz6kruGwSpt55rwlcknxVDXp9dgL_M-OnVJrDIbTlE` (Sheet1 + **Speed Fix**).
+**Sheet ID:** `OUTBOUND_LEADS_SHEET_ID` in gitignored `.deploy-state.env`. Live sheet: `1aGz6kruGwSpt55rwlcknxVDXp9dgL_M-OnVJrDIbTlE` (**Master Leads** + **Run Queue** + **Speed Fix** + **Google Profile** + **Missed-Call**).
+
+**Product tabs (Status):** `Ready` · `Wait` · `Emailed` · `Replied` · `Dead`. Flip **Wait → Ready** when product 1 went quiet and you want the next offer. Add the same data-validation list on each product Status column (G).
+
+| Product lane | Gate | Deploy |
+|--------------|------|--------|
+| Speed Fix | LH Mobile &lt; 65 | `deploy-outbound-speed-fix-scorer.sh` / `-send.sh` |
+| Google Profile | Reviews empty or &lt; 10 (cheap filter, no scrape) | `deploy-outbound-google-profile-scorer.sh --setup-tab` / `-send.sh` |
+| Missed-Call | Phone + real Email | `deploy-outbound-missed-call-router.sh --setup-tab` / `-send.sh` |
+
+If another product tab already has **Ready** or **Emailed** for the same Maps ID, new rows land as **Wait**. **Replied** anywhere skips append.
 
 **Audit ingest (Vercel):** Workflow B posts to `https://sysbilt.com/api/reports/ingest` with header `x-n8n-webhook-secret` or `Authorization: Bearer <N8N_WEBHOOK_SECRET>` (see `api/_lib/auth.ts`).
 
