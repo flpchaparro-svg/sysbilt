@@ -45,15 +45,15 @@ function MissCard({play, businessLabel}: {play: boolean; businessLabel: string})
       animate={
         play
           ? {
-              x: [0, -7, 8, -8, 7, -5, 5, -3, 3, 0],
-              y: [0, 4, -3, 5, -4, 3, -2, 2, 0],
-              rotate: [0, -1.8, 2, -2.2, 1.6, -1.2, 0.8, 0],
+              x: [0, -4, 4, -4, 3, -2, 2, 0],
+              y: [0, 2, -2, 2, -1, 1, 0],
+              rotate: [0, -0.9, 1, -0.8, 0.6, 0],
             }
           : {x: 0, y: 0, rotate: 0}
       }
       transition={
         play
-          ? {duration: 0.55, repeat: Infinity, repeatDelay: 0.35, ease: 'easeInOut'}
+          ? {duration: 0.7, repeat: Infinity, repeatDelay: 0.55, ease: 'easeInOut'}
           : {duration: 0.2}
       }
     >
@@ -96,15 +96,15 @@ function MissCard({play, businessLabel}: {play: boolean; businessLabel: string})
           animate={
             play
               ? {
-                  x: [0, -5, 6, -6, 5, -3, 0],
-                  rotate: [0, -8, 9, -7, 6, -3, 0],
-                  scale: [1, 1.04, 0.98, 1.05, 1],
+                  x: [0, -3, 3, -3, 2, 0],
+                  rotate: [0, -4, 5, -3, 2, 0],
+                  scale: [1, 1.02, 0.99, 1.02, 1],
                 }
               : {x: 0, rotate: 0, scale: 1}
           }
           transition={
             play
-              ? {duration: 0.45, repeat: Infinity, repeatDelay: 0.35, ease: 'easeInOut'}
+              ? {duration: 0.65, repeat: Infinity, repeatDelay: 0.55, ease: 'easeInOut'}
               : {duration: 0.2}
           }
         >
