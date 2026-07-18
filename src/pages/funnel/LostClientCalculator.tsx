@@ -200,7 +200,7 @@ function StepperField({
 export function LostClientCalculator({
   variant = 'speed',
 }: {
-  variant?: 'speed' | 'missed-call'
+  variant?: 'speed' | 'missed-call' | 'google-profile'
 }) {
   const rootRef = useRef<HTMLDivElement>(null)
   const inView = useInView(rootRef, {once: true, amount: 0.35})
@@ -292,7 +292,13 @@ export function LostClientCalculator({
           />
 
           <StepperField
-            label={variant === 'missed-call' ? 'Missed calls a month' : 'Lost to a slow site'}
+            label={
+              variant === 'missed-call'
+                ? 'Missed calls a month'
+                : variant === 'google-profile'
+                  ? 'Lost to a thin profile'
+                  : 'Lost to a slow site'
+            }
             suffix="/ month"
             value={lost}
             step={1}
@@ -302,7 +308,9 @@ export function LostClientCalculator({
             ariaLabel={
               variant === 'missed-call'
                 ? 'Missed calls per month'
-                : 'Enquiries lost per month'
+                : variant === 'google-profile'
+                  ? 'Customers lost to a thin profile per month'
+                  : 'Enquiries lost per month'
             }
             pulseArrows={inView && !reduce}
           />

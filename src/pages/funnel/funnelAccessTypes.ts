@@ -16,8 +16,22 @@ export type PlatformId =
   | 'other'
 
 export type SameProviderId = 'yes' | 'no' | 'unsure'
-export type AccessPathId = 'wp-admin' | 'hosting' | 'agency' | 'call' | 'forward' | 'provider' | 'crm'
+export type AccessPathId =
+  | 'wp-admin'
+  | 'hosting'
+  | 'agency'
+  | 'call'
+  | 'forward'
+  | 'provider'
+  | 'crm'
+  | 'invite'
 export type PhoneSetupId = 'mobile' | 'landline' | 'voip' | 'mixed' | 'unsure'
+export type ProfileStatusId =
+  | 'unclaimed'
+  | 'claimed-me'
+  | 'claimed-other'
+  | 'suspended'
+  | 'unsure'
 
 export type FunnelAccessPayload = {
   product: FunnelProductCode
@@ -34,6 +48,8 @@ export type FunnelAccessPayload = {
   notes: string
   phone?: string
   phoneSetup?: PhoneSetupId | ''
+  profileUrl?: string
+  profileStatus?: ProfileStatusId | ''
 }
 
 export const DOMAIN_REGISTRARS = [

@@ -33,6 +33,7 @@ import {
   type FunnelAccessPayload,
   type PhoneSetupId,
   type PlatformId,
+  type ProfileStatusId,
   type SameProviderId,
 } from './funnelAccessTypes'
 
@@ -53,6 +54,8 @@ type StepId =
   | 'website'
   | 'phone'
   | 'phoneSetup'
+  | 'profileUrl'
+  | 'profileStatus'
   | 'platform'
   | 'provider'
   | 'domainProvider'
@@ -78,11 +81,21 @@ const PHASES_MISSED: {id: PhaseId; n: number; label: string}[] = [
   {id: 'done', n: 4, label: 'Done'},
 ]
 
+const PHASES_GOOGLE: {id: PhaseId; n: number; label: string}[] = [
+  {id: 'about', n: 1, label: 'About you'},
+  {id: 'site', n: 2, label: 'Your profile'},
+  {id: 'access', n: 3, label: 'Access'},
+  {id: 'done', n: 4, label: 'Done'},
+]
+
 function phaseIndex(phase: PhaseId, phases: typeof PHASES_SPEED): number {
   return phases.findIndex((p) => p.id === phase)
 }
 
-function phaseForStep(step: StepId, missedCall: boolean): PhaseId {
+function phaseForStep(
+  step: StepId,
+  kind: 'speed' | 'missed-call' | 'google-profile',
+): PhaseId {
   if (step === 'done') return 'done'
   if (
     step === 'product' ||
@@ -92,8 +105,12 @@ function phaseForStep(step: StepId, missedCall: boolean): PhaseId {
   ) {
     return 'about'
   }
-  if (missedCall) {
+  if (kind === 'missed-call') {
     if (step === 'phone' || step === 'phoneSetup') return 'site'
+    return 'access'
+  }
+  if (kind === 'google-profile') {
+    if (step === 'profileUrl' || step === 'profileStatus') return 'site'
     return 'access'
   }
   if (step === 'website') return 'about'
@@ -320,6 +337,66 @@ const MISSED_CALL_ACCESS_OPTIONS: {
     id: 'call',
     label: 'Quick call',
     blurb: 'We walk through access together. About five minutes.',
+    icon: <Phone className="w-full h-full" strokeWidth={1.25} />,
+  },
+]
+
+const GOOGLE_PROFILE_STATUS_OPTIONS: {
+  id: ProfileStatusId
+  label: string
+  blurb: string
+  icon: React.ReactNode
+  unsure?: boolean
+}[] = [
+  {
+    id: 'claimed-me',
+    label: 'I manage it',
+    blurb: 'You can already open the profile in Google Business Profile.',
+    icon: <Check className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'unclaimed',
+    label: 'Unclaimed',
+    blurb: 'The listing exists or should exist, but nobody owns it yet.',
+    icon: <Globe2 className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'claimed-other',
+    label: 'Someone else claimed it',
+    blurb: 'Ex-staff, old agency, or another number. Recovery is part of the job.',
+    icon: <Building2 className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'suspended',
+    label: 'Suspended',
+    blurb: 'Google locked or restricted the listing. We will assess recovery.',
+    icon: <X className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'unsure',
+    label: 'Not sure',
+    blurb: 'Fine. We will work it out once we can see the listing.',
+    icon: null,
+    unsure: true,
+  },
+]
+
+const GOOGLE_PROFILE_ACCESS_OPTIONS: {
+  id: AccessPathId
+  label: string
+  blurb: string
+  icon: React.ReactNode
+}[] = [
+  {
+    id: 'invite',
+    label: 'Manager invite',
+    blurb: 'You add us as a manager in Google. No password sharing.',
+    icon: <Check className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'call',
+    label: 'Quick call',
+    blurb: 'We walk through the invite together. About five minutes.',
     icon: <Phone className="w-full h-full" strokeWidth={1.25} />,
   },
 ]
@@ -691,6 +768,8 @@ const FunnelAccessPage: React.FC = () => {
   const [website, setWebsite] = useState('')
   const [phone, setPhone] = useState('')
   const [phoneSetup, setPhoneSetup] = useState<PhoneSetupId | null>(null)
+  const [profileUrl, setProfileUrl] = useState('')
+  const [profileStatus, setProfileStatus] = useState<ProfileStatusId | null>(null)
   const [platform, setPlatform] = useState<PlatformId | null>(null)
   const [sameProvider, setSameProvider] = useState<SameProviderId | null>(null)
   const [domainProvider, setDomainProvider] = useState('')
@@ -703,13 +782,30 @@ const FunnelAccessPage: React.FC = () => {
   const [helpOpen, setHelpOpen] = useState(false)
 
   const isMissedCall = product === 'missed-call'
-  const phases = isMissedCall ? PHASES_MISSED : PHASES_SPEED
+  const isGoogleProfile = product === 'google-profile'
+  const productKind: 'speed' | 'missed-call' | 'google-profile' = isMissedCall
+    ? 'missed-call'
+    : isGoogleProfile
+      ? 'google-profile'
+      : 'speed'
+  const phases = isMissedCall
+    ? PHASES_MISSED
+    : isGoogleProfile
+      ? PHASES_GOOGLE
+      : PHASES_SPEED
 
   const stepOrder = useMemo((): StepId[] => {
     if (isMissedCall) {
       const base: StepId[] = initialProduct
         ? ['name', 'email', 'business', 'phone', 'phoneSetup']
         : ['product', 'name', 'email', 'business', 'phone', 'phoneSetup']
+      base.push('access', 'accessDetail', 'notes', 'done')
+      return base
+    }
+    if (isGoogleProfile) {
+      const base: StepId[] = initialProduct
+        ? ['name', 'email', 'business', 'profileUrl', 'profileStatus']
+        : ['product', 'name', 'email', 'business', 'profileUrl', 'profileStatus']
       base.push('access', 'accessDetail', 'notes', 'done')
       return base
     }
@@ -721,7 +817,7 @@ const FunnelAccessPage: React.FC = () => {
     }
     base.push('access', 'accessDetail', 'notes', 'done')
     return base
-  }, [initialProduct, sameProvider, isMissedCall])
+  }, [initialProduct, sameProvider, isMissedCall, isGoogleProfile])
 
   const stepIndex = Math.max(0, stepOrder.indexOf(step))
   const lineProgress =
@@ -729,13 +825,17 @@ const FunnelAccessPage: React.FC = () => {
       ? 100
       : Math.round(((stepIndex + 1) / Math.max(stepOrder.length, 1)) * 100)
 
-  const activePhase = phaseForStep(step, isMissedCall)
+  const activePhase = phaseForStep(step, productKind)
 
   const firstStep = initialProduct ? 'name' : 'product'
   const help = helpForStep(step)
   const liveProducts = FUNNEL_PRODUCT_CATALOGUE.filter((p) => p.status === 'live')
   const canGoBack = step !== 'done' && step !== firstStep
-  const accessOptions = isMissedCall ? MISSED_CALL_ACCESS_OPTIONS : ACCESS_OPTIONS
+  const accessOptions = isMissedCall
+    ? MISSED_CALL_ACCESS_OPTIONS
+    : isGoogleProfile
+      ? GOOGLE_PROFILE_ACCESS_OPTIONS
+      : ACCESS_OPTIONS
 
   function goNext(from: StepId) {
     setError(null)
@@ -760,6 +860,11 @@ const FunnelAccessPage: React.FC = () => {
         setError('Something is missing. Use Back to check your answers.')
         return
       }
+    } else if (isGoogleProfile) {
+      if (!profileStatus) {
+        setError('Something is missing. Use Back to check your answers.')
+        return
+      }
     } else if (!platform || !sameProvider) {
       setError('Something is missing. Use Back to check your answers.')
       return
@@ -778,20 +883,32 @@ const FunnelAccessPage: React.FC = () => {
           accessDetail: accessDetail.trim(),
           notes: notes.trim(),
         }
-      : {
-          product,
-          name: name.trim(),
-          email: email.trim(),
-          business: business.trim(),
-          website: website.trim(),
-          platform: platform!,
-          sameProvider: sameProvider!,
-          domainProvider: domainProvider.trim(),
-          hostingProvider: hostingProvider.trim(),
-          accessPath,
-          accessDetail: accessDetail.trim(),
-          notes: notes.trim(),
-        }
+      : isGoogleProfile
+        ? {
+            product,
+            name: name.trim(),
+            email: email.trim(),
+            business: business.trim(),
+            profileUrl: profileUrl.trim(),
+            profileStatus: profileStatus!,
+            accessPath,
+            accessDetail: accessDetail.trim(),
+            notes: notes.trim(),
+          }
+        : {
+            product,
+            name: name.trim(),
+            email: email.trim(),
+            business: business.trim(),
+            website: website.trim(),
+            platform: platform!,
+            sameProvider: sameProvider!,
+            domainProvider: domainProvider.trim(),
+            hostingProvider: hostingProvider.trim(),
+            accessPath,
+            accessDetail: accessDetail.trim(),
+            notes: notes.trim(),
+          }
     try {
       const res = await fetch('/api/funnel/access', {
         method: 'POST',
@@ -814,6 +931,11 @@ const FunnelAccessPage: React.FC = () => {
   function selectPhoneSetup(id: PhoneSetupId) {
     setPhoneSetup(id)
     window.setTimeout(() => goNext('phoneSetup'), 200)
+  }
+
+  function selectProfileStatus(id: ProfileStatusId) {
+    setProfileStatus(id)
+    window.setTimeout(() => goNext('profileStatus'), 200)
   }
 
   function selectPlatform(id: PlatformId) {
@@ -1080,6 +1202,43 @@ const FunnelAccessPage: React.FC = () => {
               </>
             ) : null}
 
+            {step === 'profileUrl' ? (
+              <OneField
+                title="Where is the Google listing?"
+                hint="Paste the Google Maps or Business Profile link, or type the exact name customers search."
+                value={profileUrl}
+                onChange={setProfileUrl}
+                placeholder="maps.google.com/... or Your Business Sydney"
+                disabled={profileUrl.trim().length < 3}
+                onNext={() => goNext('profileUrl')}
+              />
+            ) : null}
+
+            {step === 'profileStatus' ? (
+              <>
+                <QuestionTitle>
+                  What is the <span style={{color: RED}}>profile</span> status?
+                </QuestionTitle>
+                <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
+                  Hover a card, then Select. Not sure is fine.
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+                  {GOOGLE_PROFILE_STATUS_OPTIONS.map((opt) => (
+                    <div key={opt.id}>
+                      <SelectCard
+                        selected={profileStatus === opt.id}
+                        onSelect={() => selectProfileStatus(opt.id)}
+                        title={opt.label}
+                        blurb={opt.blurb}
+                        icon={opt.icon}
+                        unsure={opt.unsure}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : null}
+
             {step === 'website' ? (
               <OneField
                 title="Which website are we fixing?"
@@ -1203,13 +1362,17 @@ const FunnelAccessPage: React.FC = () => {
                         : accessPath === 'crm'
                           ? 'Which CRM, and whether calls already log there.'
                           : 'Best times to call, or anything that usually trips people up.'
-                    : accessPath === 'wp-admin'
-                      ? 'Login URL, or say you will email credentials separately.'
-                      : accessPath === 'hosting'
-                        ? 'Hosting panel name, or how you usually log in.'
-                        : accessPath === 'agency'
-                          ? 'Who manages the site? Name or email is enough.'
-                          : 'Best times to call, or anything that usually trips people up.'
+                    : isGoogleProfile
+                      ? accessPath === 'invite'
+                        ? 'The Google account email that can add managers, or say you will send the invite shortly.'
+                        : 'Best times to call, or anything that usually trips people up.'
+                      : accessPath === 'wp-admin'
+                        ? 'Login URL, or say you will email credentials separately.'
+                        : accessPath === 'hosting'
+                          ? 'Hosting panel name, or how you usually log in.'
+                          : accessPath === 'agency'
+                            ? 'Who manages the site? Name or email is enough.'
+                            : 'Best times to call, or anything that usually trips people up.'
                 }
                 value={accessDetail}
                 onChange={setAccessDetail}

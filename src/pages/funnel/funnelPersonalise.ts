@@ -64,6 +64,11 @@ export function parseSpeedScore(raw: string | null | undefined): number | null {
   return n
 }
 
+/** Competitor name for Google Profile evidence (?c=). Same rules as business. */
+export function sanitiseCompetitorName(raw: string | null | undefined): string | null {
+  return sanitiseBusinessName(raw)
+}
+
 export function personaliseH1(template: string | null | undefined, business: string): string {
   if (!template) return `${business}'s website is losing people before it loads.`
   return template.replace(/\{b\}/gi, business)

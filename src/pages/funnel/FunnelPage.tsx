@@ -10,21 +10,29 @@ import {ScoreMoment} from './ScoreMoment'
 import {CallMissedMoment, MissedCallLeakPair} from './CallMissedMoment'
 import {PainCostCards} from './PainCostCards'
 import {MissedCallPainCards} from './MissedCallPainCards'
+import {GoogleProfilePainCards} from './GoogleProfilePainCards'
 import {LostClientCalculator} from './LostClientCalculator'
 import {BenefitMotionRows} from './BenefitMotionRows'
 import {StackMotionRows} from './StackMotionRows'
 import {FunnelObjections} from './FunnelObjections'
 import {ReportDeliverableMock} from './ReportDeliverableMock'
 import {TextBackDeliverableMock} from './TextBackDeliverableMock'
+import {ProfileDeliverableMock} from './ProfileDeliverableMock'
+import {ProfileAfterMoment} from './ProfileAfterMoment'
 import {
   MissedCallEvidenceCard,
   type MissedCallEvidence,
 } from './MissedCallEvidenceCard'
 import {
+  GoogleProfileEvidenceCard,
+  type GoogleProfileEvidence,
+} from './GoogleProfileEvidenceCard'
+import {
   parseSpeedScore,
   sanitiseBusinessName,
   sanitiseCallDay,
   sanitiseCallTime,
+  sanitiseCompetitorName,
 } from './funnelPersonalise'
 import {FUNNEL_COLOURS, FUNNEL_CSS_VARS} from './funnelTheme'
 import {Reveal, RevealList} from './funnelReveal'
@@ -92,7 +100,11 @@ function ProcessDayCards({
   const reduce = useReducedMotion()
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-5">
+    <div
+      className={`grid grid-cols-1 gap-4 md:gap-5 ${
+        steps.length === 2 ? 'sm:grid-cols-2 max-w-2xl' : 'sm:grid-cols-3'
+      }`}
+    >
       {steps.map((step, i) => (
         <motion.div
           key={i}
@@ -147,16 +159,31 @@ const FunnelPage: React.FC = () => {
 
   const COPY = useMemo(() => funnelCopyForSlug(slug), [slug])
   const business = useMemo(() => sanitiseBusinessName(params.get('b')), [params])
+  const competitor = useMemo(() => sanitiseCompetitorName(params.get('c')), [params])
   const score = useMemo(() => parseSpeedScore(params.get('s')), [params])
   const callDay = useMemo(() => sanitiseCallDay(params.get('d')), [params])
   const callTime = useMemo(() => sanitiseCallTime(params.get('t')), [params])
-  const isMissedCall = COPY.proofKind === 'missed-call'
+  const proofKind = COPY.proofKind
+  const isMissedCall = proofKind === 'missed-call'
+  const isGoogleProfile = proofKind === 'google-profile'
+  const isSpeed = proofKind === 'speed'
+  const motionVariant = isMissedCall
+    ? 'missed-call'
+    : isGoogleProfile
+      ? 'google-profile'
+      : 'speed'
+  const calculatorVariant = isSpeed ? 'speed' : isMissedCall ? 'missed-call' : 'google-profile'
   const missedEvidence: MissedCallEvidence = useMemo(() => {
     if (business && callDay && callTime) {
       return {mode: 'tested', business, day: callDay, time: callTime}
     }
     return {mode: 'try'}
   }, [business, callDay, callTime])
+  const profileEvidence: GoogleProfileEvidence = useMemo(() => {
+    if (business && competitor) return {mode: 'compared', business, competitor}
+    if (business) return {mode: 'named', business}
+    return {mode: 'try'}
+  }, [business, competitor])
 
   useEffect(() => {
     if (!slug) {
@@ -292,7 +319,7 @@ const FunnelPage: React.FC = () => {
 
           <section
             className={`mx-auto px-6 md:px-10 pb-16 md:pb-24 ${
-              isMissedCall ? 'max-w-5xl' : 'max-w-3xl'
+              isSpeed ? 'max-w-3xl' : 'max-w-5xl'
             }`}
           >
             <SectionRule />
@@ -304,26 +331,25 @@ const FunnelPage: React.FC = () => {
                 className="font-serif font-bold text-3xl md:text-4xl tracking-tight mb-6 md:mb-8 max-w-2xl"
                 style={{color: FUNNEL_COLOURS.ink}}
               >
-                {isMissedCall
-                  ? COPY.proofHeadingGeneric
-                  : score != null
-                    ? COPY.proofHeadingLive
-                    : COPY.proofHeadingGeneric}
+                {isSpeed && score != null
+                  ? COPY.proofHeadingLive
+                  : COPY.proofHeadingGeneric}
               </h2>
             </Reveal>
             {isMissedCall ? <MissedCallEvidenceCard evidence={missedEvidence} /> : null}
+            {isGoogleProfile ? <GoogleProfileEvidenceCard evidence={profileEvidence} /> : null}
             <Reveal delay={0.12} y={12}>
               <p
                 className={`font-sans text-base md:text-lg leading-relaxed max-w-2xl ${
-                  isMissedCall ? 'mt-8' : ''
+                  isMissedCall || isGoogleProfile ? 'mt-8' : ''
                 }`}
                 style={{color: FUNNEL_COLOURS.muted}}
               >
-                {isMissedCall
-                  ? business
+                {isSpeed
+                  ? score != null
                     ? COPY.proofLead(business)
                     : COPY.proofLeadGeneric
-                  : score != null
+                  : business
                     ? COPY.proofLead(business)
                     : COPY.proofLeadGeneric}
               </p>
@@ -340,6 +366,15 @@ const FunnelPage: React.FC = () => {
                 </Reveal>
                 <MissedCallLeakPair businessName={business} />
               </>
+            ) : isGoogleProfile ? (
+              <Reveal delay={0.08} y={12}>
+                <p
+                  className="mt-6 font-sans text-base md:text-lg leading-relaxed max-w-2xl"
+                  style={{color: FUNNEL_COLOURS.muted}}
+                >
+                  {COPY.proofAfterGeneric}
+                </p>
+              </Reveal>
             ) : (
               <>
                 <ScoreMoment
@@ -387,8 +422,14 @@ const FunnelPage: React.FC = () => {
                   </li>
                 ))}
               </RevealList>
-              {isMissedCall ? <MissedCallPainCards /> : <PainCostCards />}
-              <LostClientCalculator variant={isMissedCall ? 'missed-call' : 'speed'} />
+              {isMissedCall ? (
+                <MissedCallPainCards />
+              ) : isGoogleProfile ? (
+                <GoogleProfilePainCards />
+              ) : (
+                <PainCostCards />
+              )}
+              <LostClientCalculator variant={calculatorVariant} />
             </div>
           </section>
 
@@ -424,6 +465,8 @@ const FunnelPage: React.FC = () => {
             </Reveal>
             {isMissedCall ? (
               <CallMissedMoment businessName={business} mode="after" />
+            ) : isGoogleProfile ? (
+              <ProfileAfterMoment businessName={business} />
             ) : (
               <ScoreMoment score={90} mode="benchmark" />
             )}
@@ -451,7 +494,7 @@ const FunnelPage: React.FC = () => {
                 ink={FUNNEL_COLOURS.ink}
                 muted={FUNNEL_COLOURS.muted}
                 gold={FUNNEL_COLOURS.goldDeep}
-                variant={isMissedCall ? 'missed-call' : 'speed'}
+                variant={motionVariant}
               />
             </div>
           </section>
@@ -502,7 +545,7 @@ const FunnelPage: React.FC = () => {
               items={COPY.stackItems}
               ink={FUNNEL_COLOURS.ink}
               muted={FUNNEL_COLOURS.muted}
-              variant={isMissedCall ? 'missed-call' : 'speed'}
+              variant={motionVariant}
             />
           </section>
 
@@ -558,7 +601,13 @@ const FunnelPage: React.FC = () => {
                   </Reveal>
                 </div>
 
-                {isMissedCall ? <TextBackDeliverableMock /> : <ReportDeliverableMock />}
+                {isMissedCall ? (
+                  <TextBackDeliverableMock />
+                ) : isGoogleProfile ? (
+                  <ProfileDeliverableMock />
+                ) : (
+                  <ReportDeliverableMock />
+                )}
               </div>
             </div>
           </section>

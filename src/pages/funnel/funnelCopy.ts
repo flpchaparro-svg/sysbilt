@@ -49,8 +49,8 @@ export type FunnelProductCopy = {
   finalLabel: string
   finalHeading: string
   finalLine: string
-  /** Proof UI: pagespeed dial vs missed-call moment */
-  proofKind: 'speed' | 'missed-call'
+  /** Proof UI: pagespeed dial vs missed-call moment vs Google profile */
+  proofKind: 'speed' | 'missed-call' | 'google-profile'
 }
 
 export const SPEED_FIX_COPY: FunnelProductCopy = {
@@ -329,7 +329,146 @@ export const MISSED_CALL_COPY: FunnelProductCopy = {
   proofKind: 'missed-call',
 }
 
+export const GOOGLE_PROFILE_COPY: FunnelProductCopy = {
+  eyebrow: 'Fixed price · Two business days · You keep the keys',
+  h1Generic: "Your Google profile is the first thing customers see. Right now it's working against you.",
+  h1Personal: (b: string) =>
+    `${b}, your Google profile is the first thing customers see. Right now it's working against you.`,
+  sub: "Before anyone visits your website, they see your Google Business Profile: the map listing, the photos, the reviews, the hours. When it's thin or half-claimed, people quietly pick the business next to you that looks alive.",
+  ctaLabel: 'Fix my profile · $800',
+  proofLabel: 'The front door',
+  proofHeadingLive: 'Search your name, then your best competitor. That gap is the job.',
+  proofHeadingGeneric: 'Search your name, then your best competitor. That gap is the job.',
+  proofLead: (b: string | null) =>
+    b
+      ? `Before anyone opens ${b}'s website, they see the Google panel: map, photos, reviews, hours. When that panel looks unfinished, they call the listing that looks looked after.`
+      : 'Before anyone opens your website, they see the Google panel: map, photos, reviews, hours. When that panel looks unfinished, they call the listing that looks looked after.',
+  proofLeadGeneric:
+    'Before anyone opens your website, they see the Google panel: map, photos, reviews, hours. When that panel looks unfinished, they call the listing that looks looked after.',
+  proofAfter:
+    "That panel is often the highest-traffic page you own, and the one nobody looks after. This fix is two business days of proper attention, not a retainer.",
+  proofAfterGeneric:
+    "That panel is often the highest-traffic page you own, and the one nobody looks after. This fix is two business days of proper attention, not a retainer.",
+  painLabel: 'What this is costing you',
+  painHeading: "Google is already showing customers a version of your business. Nobody's managing it.",
+  painLines: [
+    'Most profiles were claimed once, years ago, and never touched again. Missing services, old hours, three phone photos, categories Google guessed.',
+    'Doing it yourself someday costs you every day it waits, because the profile is deciding calls right now.',
+    'Cheap listing gigs stuff fake signals into profiles. That is how listings get suspended, and a suspended profile is worse than a thin one.',
+    'A full SEO retainer gets there eventually, over months and a monthly bill, when the front door needs two days of proper work.',
+  ],
+  bridgeLabel: 'The fix',
+  bridgeHeading: 'What we actually do',
+  bridgeBody:
+    "This isn't Google Ads, website SEO, or a monthly posting retainer. It's a complete Google Business Profile overhaul on one location: claim or recover, categories and services filled, description that sells, photos sorted, review link ready, messaging and Q and A switched on. Ownership stays on your account. Two business days from access.",
+  bridgeGaugeCaption:
+    'When we hand it over, the panel looks alive: complete categories, clear hours, a description that sells, a review path your customers can use, and the keys still in your name.',
+  benefitsLabel: 'What changes for you',
+  benefitsHeading: 'Outcomes, not jargon',
+  benefits: [
+    {
+      title: 'You look open for business',
+      text: 'Categories, services, hours and attributes filled properly, so Google can show you for the searches you actually want.',
+    },
+    {
+      title: 'The description sells',
+      text: 'Plain language, with the terms customers search, not a blank box or a keyword dump.',
+    },
+    {
+      title: 'Reviews become a habit',
+      text: 'Your review link plus ready wording, so asking happy customers is a five-minute routine, not a mystery.',
+    },
+    {
+      title: 'Done in two business days',
+      text: 'From the moment we have manager access. If access is delayed on your side, we say so. The two days start when we can work.',
+    },
+  ],
+  processLabel: 'How it runs',
+  processHeading: 'Two business days, then you own a profile that works',
+  processSteps: [
+    {
+      label: 'Day 1',
+      text: 'Manager access, claim or recovery check, and a full read of what is missing or wrong.',
+    },
+    {
+      label: 'Day 2',
+      text: 'Overhaul, review link, Q and A, hand over the guide and Systems Snapshot.',
+    },
+  ],
+  stackLabel: 'Everything included',
+  stackHeading: 'One price, the full job, nothing extra to buy',
+  stackItems: [
+    {
+      title: 'Complete profile overhaul',
+      text: 'Claim or recover, categories, services, attributes, description, photos, messaging and Q and A, within two business days of access.',
+    },
+    {
+      title: 'Ownership locked to you',
+      text: 'You keep the keys. We work as a manager. We never need your Google password.',
+    },
+    {
+      title: 'Review link and ask wording',
+      text: 'A simple, honest way to ask happy customers, ready to send.',
+    },
+    {
+      title: 'Monthly habit guide + Systems Snapshot',
+      text: 'The five-minute routine that keeps the profile winning, plus a one-page read on what we would fix next.',
+    },
+    {
+      title: '14 days of aftercare',
+      text: 'If anything we touched misbehaves, we sort it, no charge.',
+    },
+  ],
+  scopeLine:
+    'One Australian business location with a real address Google will accept. Service-area-only or no-address cases get a same-day straight answer. Ads, website SEO, and ongoing posting are out of scope.',
+  priceLabel: 'Investment',
+  price: '$800',
+  priceLead: 'Paid once, and we start. No quotes, no meetings, no scope creep.',
+  guarantee:
+    "Our promise: if the profile isn't set up the way we described, we keep working at no extra cost until it is. If Google blocks the listing (for example no address), we tell you early and refund what we could not do.",
+  priceAnchor:
+    "That's less than most owners spend guessing at DIY while the panel keeps losing calls. The leak is daily. This is once.",
+  faqLabel: 'Objections',
+  faqHeading: 'Straight answers before you buy',
+  faqs: [
+    {
+      q: 'Do you need my Google login?',
+      a: 'No. Google lets you add us as a manager without sharing your password, and we walk you through it in two minutes. Ownership stays with you.',
+    },
+    {
+      q: 'My profile is suspended or someone else claimed it. Can you fix that?',
+      a: 'Usually yes. Recovery is part of the job. Genuinely stuck cases get a straight answer and a refund for anything we could not do.',
+    },
+    {
+      q: 'Will this get me more reviews?',
+      a: 'We set up the link, the wording and the habit. The reviews come from your customers. We never post fake ones, and we walk away from anyone who asks.',
+    },
+    {
+      q: 'Is this refundable?',
+      a: "There's no change-of-mind refund, because we start straight away. If the profile isn't set up the way we described, we keep working at no extra cost until it is. The exception is a listing Google will not allow us to finish: you get a straight answer and your money back for what we could not do.",
+    },
+    {
+      q: 'Is this the same as SEO?',
+      a: "It's the local piece of it, and usually the fastest-moving piece. Your profile often decides the call before your website loads.",
+    },
+    {
+      q: 'What happens after I pay?',
+      a: 'Access form immediately. We start as soon as we have manager access, and the finished profile plus your guide and Systems Snapshot land within two business days of that access.',
+    },
+    {
+      q: 'What if I have more than one location?',
+      a: 'This price is one location. Extra locations are a separate job or a same-day quote so the fixed price stays honest.',
+    },
+  ],
+  finalLabel: 'Last step',
+  finalHeading: 'Two days from now, the first thing customers see finally works for you',
+  finalLine:
+    'Pay once, complete the short access form, add us as manager, and we hand back a profile you own.',
+  proofKind: 'google-profile',
+}
+
 export function funnelCopyForSlug(slug: string | undefined): FunnelProductCopy {
   if (slug === 'missed-call') return MISSED_CALL_COPY
+  if (slug === 'google-profile') return GOOGLE_PROFILE_COPY
   return SPEED_FIX_COPY
 }

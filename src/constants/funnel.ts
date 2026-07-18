@@ -56,9 +56,9 @@ export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
   {
     code: 'google-profile',
     title: 'Google Profile Fix',
-    price: 'Fixed price',
+    price: '$800',
     blurb: 'Your Business Profile cleaned up so the right people find you first.',
-    status: 'soon',
+    status: 'live',
     href: '/go/google-profile',
   },
 ]

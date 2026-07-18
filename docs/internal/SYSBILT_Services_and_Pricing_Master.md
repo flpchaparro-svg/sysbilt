@@ -136,6 +136,7 @@ Each pillar lists its main services (Tier 3) and its subtasks (Tier 4). Retainer
 | **Website Speed Fix** | A slow site made fast: Core Web Vitals, image compression, render-blocking scripts | 1–3 days | $900 – $1,800 | Lighthouse + WP Rocket |
 | **Payment Gateway Setup** | Checkout, Apple Pay, and subscription rebilling working cleanly | 1–2 days | $600 – $1,400 | Stripe / PayPal |
 | **Local SEO & Schema Setup** | Correct indexing and a spot in the local map pack | 1–2 days | $600 – $1,200 | RankMath + Search Console |
+| **Google Profile Fix** | Google Business Profile overhaul: claim/recover, categories, description, photos, reviews, Q&A | 2 business days | **$800 locked** (band $600 – $1,200) | Google Business Profile |
 | **Content Migration** | Old content moved cleanly onto a new CMS | 2–4 days | $1,500 – $3,500 | Sanity / their target CMS |
 | **Booking Calendar Embed** | Online booking live on the site, synced to a calendar | 1 day | $500 – $1,200 | HubSpot Meetings / Calendly |
 | **Contact Form to CRM Wiring** | Every form submission lands in the CRM, tagged by source | 1 day | $500 – $1,000 | HubSpot forms |

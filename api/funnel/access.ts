@@ -14,9 +14,18 @@ const PRODUCT_LABELS: Record<string, string> = {
 const PRODUCT_AMOUNTS: Record<string, string> = {
   'speed-fix': '1200',
   'missed-call': '790',
+  'google-profile': '800',
 };
 const MISSED_CALL_SETUPS = new Set(['mobile', 'landline', 'voip', 'mixed', 'unsure']);
 const MISSED_CALL_ACCESS = new Set(['forward', 'provider', 'crm', 'call']);
+const GOOGLE_PROFILE_STATUS = new Set([
+  'unclaimed',
+  'claimed-me',
+  'claimed-other',
+  'suspended',
+  'unsure',
+]);
+const GOOGLE_PROFILE_ACCESS = new Set(['invite', 'call']);
 const PLATFORMS = new Set([
   'wordpress',
   'wordpress-com',
@@ -51,6 +60,8 @@ type Body = {
   notes?: unknown;
   phone?: unknown;
   phoneSetup?: unknown;
+  profileUrl?: unknown;
+  profileStatus?: unknown;
 };
 
 function str(v: unknown, max = 500): string {
@@ -90,6 +101,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const notes = str(body.notes, 4000);
   const phone = str(body.phone, 40);
   const phoneSetup = str(body.phoneSetup, 40);
+  const profileUrl = str(body.profileUrl, 500);
+  const profileStatus = str(body.profileStatus, 40);
 
   if (!PRODUCT_CODES.has(product)) {
     res.status(400).json({ error: 'Invalid product' });
@@ -101,6 +114,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   }
 
   const isMissedCall = product === 'missed-call';
+  const isGoogleProfile = product === 'google-profile';
 
   if (isMissedCall) {
     const cleanPhone = phone.replace(/\s+/g, '');
@@ -110,6 +124,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     }
     if (!MISSED_CALL_SETUPS.has(phoneSetup) || !MISSED_CALL_ACCESS.has(accessPath)) {
       res.status(400).json({ error: 'Invalid phone setup or access path' });
+      return;
+    }
+  } else if (isGoogleProfile) {
+    if (profileUrl.length < 3) {
+      res.status(400).json({ error: 'Please enter your Google profile link or exact listing name.' });
+      return;
+    }
+    if (!GOOGLE_PROFILE_STATUS.has(profileStatus) || !GOOGLE_PROFILE_ACCESS.has(accessPath)) {
+      res.status(400).json({ error: 'Invalid profile status or access path' });
       return;
     }
   } else {
@@ -136,21 +159,34 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       ]
         .filter(Boolean)
         .join('\n')
-    : [
-        `Funnel access form — ${product}`,
-        `Business: ${business}`,
-        `Website: ${website}`,
-        `Platform: ${platform}`,
-        `Domain + hosting same provider: ${sameProvider}`,
-        domainProvider ? `Domain provider: ${domainProvider}` : null,
-        hostingProvider ? `Hosting provider: ${hostingProvider}` : null,
-        `Access path: ${accessPath}`,
-        accessDetail ? `Access notes:\n${accessDetail}` : null,
-        notes ? `Other notes:\n${notes}` : null,
-        `Submitted: ${new Date().toISOString()}`,
-      ]
-        .filter(Boolean)
-        .join('\n');
+    : isGoogleProfile
+      ? [
+          `Funnel access form — ${product}`,
+          `Business: ${business}`,
+          `Profile: ${profileUrl}`,
+          `Profile status: ${profileStatus}`,
+          `Access path: ${accessPath}`,
+          accessDetail ? `Access notes:\n${accessDetail}` : null,
+          notes ? `Other notes:\n${notes}` : null,
+          `Submitted: ${new Date().toISOString()}`,
+        ]
+          .filter(Boolean)
+          .join('\n')
+      : [
+          `Funnel access form — ${product}`,
+          `Business: ${business}`,
+          `Website: ${website}`,
+          `Platform: ${platform}`,
+          `Domain + hosting same provider: ${sameProvider}`,
+          domainProvider ? `Domain provider: ${domainProvider}` : null,
+          hostingProvider ? `Hosting provider: ${hostingProvider}` : null,
+          `Access path: ${accessPath}`,
+          accessDetail ? `Access notes:\n${accessDetail}` : null,
+          notes ? `Other notes:\n${notes}` : null,
+          `Submitted: ${new Date().toISOString()}`,
+        ]
+          .filter(Boolean)
+          .join('\n');
 
   const payload = {
     product,
@@ -167,6 +203,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     notes,
     phone,
     phoneSetup,
+    profileUrl,
+    profileStatus,
     submittedAt: new Date().toISOString(),
   };
 
@@ -242,11 +280,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         `*New access form* · ${product}`,
         `*${name}* · ${business}`,
         email,
-        isMissedCall ? `Phone: ${phone} · Setup: ${phoneSetup}` : website,
+        isMissedCall
+          ? `Phone: ${phone} · Setup: ${phoneSetup}`
+          : isGoogleProfile
+            ? `Profile: ${profileUrl.slice(0, 80)} · Status: ${profileStatus}`
+            : website,
         isMissedCall
           ? `Access: ${accessPath}`
-          : `Platform: ${platform} · Access: ${accessPath}`,
-        !isMissedCall && sameProvider !== 'yes'
+          : isGoogleProfile
+            ? `Access: ${accessPath}`
+            : `Platform: ${platform} · Access: ${accessPath}`,
+        !isMissedCall && !isGoogleProfile && sameProvider !== 'yes'
           ? `Domain/hosting same: ${sameProvider}${domainProvider ? ` · Domain: ${domainProvider}` : ''}${hostingProvider ? ` · Host: ${hostingProvider}` : ''}`
           : null,
         accessDetail ? `Access notes: ${accessDetail.slice(0, 280)}` : null,
