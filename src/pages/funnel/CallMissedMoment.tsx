@@ -392,8 +392,8 @@ function SmsCard({
             SMS · just now
           </p>
           <p className="font-sans text-sm leading-relaxed" style={{color: FUNNEL_COLOURS.ink}}>
-            Sorry we missed your call. We will ring you back shortly, or reply here and we will sort
-            a time.
+            Sorry we missed your call. We will ring you back shortly. Reply with what you need and we
+            will call prepared.
           </p>
         </motion.div>
       </div>

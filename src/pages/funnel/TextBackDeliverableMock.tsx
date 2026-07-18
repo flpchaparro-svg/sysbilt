@@ -56,8 +56,8 @@ export function TextBackDeliverableMock() {
             style={{backgroundColor: FUNNEL_COLOURS.ink, color: FUNNEL_COLOURS.onInk}}
           >
             <p className="font-sans text-sm leading-relaxed">
-              Sorry we missed your call. We will ring you back shortly, or reply here and we will
-              sort a time.
+              Sorry we missed your call. We will ring you back shortly. Reply with what you need and
+              we will call prepared.
             </p>
             <p
               className="mt-2 font-mono text-[9px] uppercase tracking-[0.14em] text-right"
@@ -68,19 +68,19 @@ export function TextBackDeliverableMock() {
           </div>
 
           <div
-            className="max-w-[80%] rounded-2xl rounded-bl-sm px-4 py-3 border"
+            className="max-w-[85%] rounded-2xl rounded-bl-sm px-4 py-3 border"
             style={{
               borderColor: `${FUNNEL_COLOURS.ink}14`,
               backgroundColor: FUNNEL_COLOURS.ground,
             }}
           >
             <p className="font-sans text-sm leading-relaxed" style={{color: FUNNEL_COLOURS.ink}}>
-              Can you call me this afternoon?
+              Need a quote for a bathroom reno. Best after 3pm.
             </p>
           </div>
 
           <p className="font-sans text-xs" style={{color: FUNNEL_COLOURS.muted}}>
-            Lead captured. You follow up. Job stays yours.
+            They waited. You call back with the brief already in hand.
           </p>
         </div>
       </motion.div>

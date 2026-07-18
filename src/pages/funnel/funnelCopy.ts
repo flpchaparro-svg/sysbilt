@@ -220,7 +220,7 @@ export const MISSED_CALL_COPY: FunnelProductCopy = {
   bridgeBody:
     'This is not a new phone system, a receptionist hire, or a twelve month retainer. It is a missed-call text-back on the number you already use, wired once, tested live with you, then left running. No discovery workshops, no surprise invoice in month four.',
   bridgeGaugeCaption:
-    'After setup, we miss a call on purpose with you watching. The text lands. That is the handoff: proof first, then it runs on its own.',
+    'After setup, we miss a call on purpose with you watching. The text lands with a clear next step: wait for the callback, or reply with what they need so you call prepared. That is the handoff.',
   benefitsLabel: 'What changes for you',
   benefitsHeading: 'Outcomes, not jargon',
   benefits: [
@@ -266,11 +266,11 @@ export const MISSED_CALL_COPY: FunnelProductCopy = {
     },
     {
       title: 'Your words, not a robot script',
-      text: 'Calm, on-brand reply that sounds like you, not a call centre.',
+      text: 'A calm reply that says you will call back, and invites them to write what they need so you ring prepared.',
     },
     {
       title: 'Lead capture',
-      text: 'Replies and alerts into email or the CRM you already use.',
+      text: 'Their reply lands with you, so the callback starts with a brief, not a blank slate.',
     },
     {
       title: 'Live proof',
