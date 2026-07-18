@@ -242,7 +242,7 @@ export const MISSED_CALL_COPY: FunnelProductCopy = {
     },
   ],
   processLabel: 'How it runs',
-  processHeading: 'Three days, then the proof fires',
+  processHeading: 'Often one day. Up to three, then the proof fires',
   processSteps: [
     {
       label: 'Day 1',
@@ -254,7 +254,7 @@ export const MISSED_CALL_COPY: FunnelProductCopy = {
     },
     {
       label: 'Day 3',
-      text: 'Live test with you watching, then hand over.',
+      text: 'Live test with you watching, then hand over. Many jobs never need this day.',
     },
   ],
   stackLabel: 'Everything included',

@@ -482,6 +482,7 @@ const FunnelPage: React.FC = () => {
               items={COPY.stackItems}
               ink={FUNNEL_COLOURS.ink}
               muted={FUNNEL_COLOURS.muted}
+              variant={isMissedCall ? 'missed-call' : 'speed'}
             />
           </section>
 
