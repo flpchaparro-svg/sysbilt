@@ -49,8 +49,8 @@ export type FunnelProductCopy = {
   finalLabel: string
   finalHeading: string
   finalLine: string
-  /** Proof UI: pagespeed dial vs missed-call moment vs Google profile vs index check */
-  proofKind: 'speed' | 'missed-call' | 'google-profile' | 'search-fix'
+  /** Proof UI: pagespeed dial vs missed-call vs Google profile vs index check vs ad landing */
+  proofKind: 'speed' | 'missed-call' | 'google-profile' | 'search-fix' | 'landing-page'
 }
 
 export const SPEED_FIX_COPY: FunnelProductCopy = {
@@ -610,9 +610,148 @@ export const SEARCH_FIX_COPY: FunnelProductCopy = {
   proofKind: 'search-fix',
 }
 
+export const LANDING_PAGE_COPY: FunnelProductCopy = {
+  eyebrow: 'Fixed price · Live in two days · Your domain',
+  h1Generic: "Your ads are working, the page they land on isn't",
+  h1Personal: (b: string) => `${b}, your ads are working, the page they land on isn't`,
+  sub: "You pay for every click, and right now those clicks land on a homepage built for everyone, which convinces almost no one. A dedicated page that repeats your ad's exact promise turns the same spend into more enquiries, live within two business days.",
+  ctaLabel: 'Build my page · $1,800',
+  proofLabel: 'This is you, right now',
+  proofHeadingLive: 'This is you, right now',
+  proofHeadingGeneric: 'Try it now',
+  proofLead: (b: string | null) =>
+    b
+      ? `${b}'s ads are running this week. The clicks land on your homepage.`
+      : "Your ads are running this week. The clicks land on your homepage.",
+  proofLeadGeneric:
+    'Open one of your own ads and tap it like a customer would. Now count the steps between where you land and the thing the ad promised.',
+  proofAfter: 'The Ad Library is public. So is where your clicks go.',
+  proofAfterGeneric:
+    'The Ad Library is public. So is where your clicks go. If the destination is your homepage, this is the gap.',
+  painLabel: 'What this is costing you',
+  painHeading: "You're paying twice for every click that leaks",
+  painLines: [
+    'Every click costs the same whether the page converts it or wastes it.',
+    'A visitor who clicked one promise gets shown twelve things, and chooses none.',
+    'The platform learns from conversions. A leaking page teaches it nothing, so your ads get more expensive, not smarter.',
+    "And next month's campaign starts from the same blind spot, because the data never improved.",
+  ],
+  bridgeLabel: 'The fix',
+  bridgeHeading: 'One page, one message, one action',
+  bridgeBody:
+    "This isn't an ads retainer and it isn't a website rebuild. It's one dedicated page for one campaign, written to repeat your ad's promise word for word, built on your own domain in your own brand, live within two business days, with conversion tracking wired in so the platform finally learns what's working.",
+  bridgeGaugeCaption:
+    'Running several campaigns? Each additional page is the same price, and a set gets a same-day quote.',
+  benefitsLabel: 'What changes for you',
+  benefitsHeading: 'Outcomes, not jargon',
+  benefits: [
+    {
+      title: 'The page finishes what the ad started',
+      text: 'Same promise, one action, no menus, no exits.',
+    },
+    {
+      title: 'Your ads get smarter',
+      text: 'Real conversion signals flow back to the platform, so optimisation runs on data instead of guesses.',
+    },
+    {
+      title: 'You own it outright',
+      text: 'Your domain, your brand, yours to keep and reuse for the next campaign.',
+    },
+    {
+      title: 'Live in two business days',
+      text: 'Draft in one, live in two, tracking verified with a test conversion before we call it done.',
+    },
+  ],
+  processLabel: 'How it runs',
+  processHeading: 'Two days from ad to door',
+  processSteps: [
+    {
+      label: 'Day 1',
+      text: 'You send the ad and the offer. We write and build the draft.',
+    },
+    {
+      label: 'Day 2',
+      text: 'Live on your domain, tracking verified with a test conversion.',
+    },
+    {
+      label: 'After',
+      text: '14 days of aftercare, including one round of copy tweaks after real traffic hits it.',
+    },
+  ],
+  stackLabel: 'Everything included',
+  stackHeading: 'One price, the full job, nothing extra to buy',
+  stackItems: [
+    {
+      title: 'One complete campaign landing page',
+      text: 'Copy written by us and matched word for word to your ad.',
+    },
+    {
+      title: 'Built on your domain',
+      text: 'In your brand, mobile-first and fast.',
+    },
+    {
+      title: 'Conversion tracking connected',
+      text: 'Wired to your ad account so the platform can learn.',
+    },
+    {
+      title: 'Campaign pointing note',
+      text: 'A plain note on pointing your campaign at it, two minutes of work.',
+    },
+    {
+      title: 'Systems Snapshot',
+      text: "The one-page read on your wider systems, plus the one thing we'd fix next.",
+    },
+    {
+      title: '14 days of aftercare',
+      text: 'Including one round of copy tweaks after real traffic hits it.',
+    },
+  ],
+  scopeLine: "You're already paying for the clicks. This is the difference between renting them and keeping them.",
+  priceLabel: 'Investment',
+  price: '$1,800',
+  priceLead: 'Paid once, and we start. No quotes, no meetings, no scope creep.',
+  guarantee:
+    "Our promise: if the page isn't converting the way a matched page should, we keep tuning it at no extra cost until it is.",
+  priceAnchor:
+    "You're already paying for the clicks. This is the difference between renting them and keeping them.",
+  faqLabel: 'Objections',
+  faqHeading: 'Straight answers before you buy',
+  faqs: [
+    {
+      q: 'Is this refundable?',
+      a: "No change-of-mind refund, because we start straight away. Instead: if the page isn't converting the way a matched page should, we keep tuning at no extra cost until it is.",
+    },
+    {
+      q: 'Does it go on my website or yours?',
+      a: 'Yours. Your domain, your brand, you own it outright.',
+    },
+    {
+      q: 'Do you write the copy?',
+      a: "Yes, that's most of the value. You send the ad and the offer, we do the rest.",
+    },
+    {
+      q: 'Do you manage the ads too?',
+      a: 'No. This makes the ads you already run work harder. Ad management is a different conversation if you ever want it.',
+    },
+    {
+      q: 'Why not just improve the homepage?',
+      a: 'The homepage has to serve everyone who arrives for any reason. A campaign page serves one promise to one visitor. That\'s exactly why it converts.',
+    },
+    {
+      q: 'What do you need from me?',
+      a: 'The ad copy, the offer details, your logo, and website access. Five minutes in the secure form.',
+    },
+  ],
+  finalLabel: 'Last step',
+  finalHeading: 'Two days from now, your clicks land somewhere built to convert them',
+  finalLine: 'Same ads, same spend, a destination that matches the promise. The next campaign starts from in front.',
+  proofKind: 'landing-page',
+}
+
 export function funnelCopyForSlug(slug: string | undefined): FunnelProductCopy {
   if (slug === 'missed-call') return MISSED_CALL_COPY
   if (slug === 'google-profile') return GOOGLE_PROFILE_COPY
   if (slug === 'search-fix') return SEARCH_FIX_COPY
+  if (slug === 'landing-page') return LANDING_PAGE_COPY
   return SPEED_FIX_COPY
 }

@@ -868,7 +868,7 @@ export function BenefitMotionRows({
   ink: string
   muted: string
   gold: string
-  variant?: 'speed' | 'missed-call' | 'google-profile' | 'search-fix'
+  variant?: 'speed' | 'missed-call' | 'google-profile' | 'search-fix' | 'landing-page'
 }) {
   const reduce = useReducedMotion()
   const visuals =

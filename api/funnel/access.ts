@@ -5,18 +5,26 @@ import {
   upsertContactByEmail,
 } from '../_lib/hubspot.js';
 
-const PRODUCT_CODES = new Set(['speed-fix', 'missed-call', 'google-profile', 'search-fix']);
+const PRODUCT_CODES = new Set([
+  'speed-fix',
+  'missed-call',
+  'google-profile',
+  'search-fix',
+  'landing-page',
+]);
 const PRODUCT_LABELS: Record<string, string> = {
   'speed-fix': 'Website Speed Fix',
   'missed-call': 'Missed-Call Text-Back',
   'google-profile': 'Google Profile Fix',
   'search-fix': 'Search Visibility Fix',
+  'landing-page': 'Campaign Landing Page',
 };
 const PRODUCT_AMOUNTS: Record<string, string> = {
   'speed-fix': '1200',
   'missed-call': '750',
   'google-profile': '600',
   'search-fix': '1400',
+  'landing-page': '1800',
 };
 const MISSED_CALL_SETUPS = new Set(['mobile', 'landline', 'voip', 'mixed', 'unsure']);
 const MISSED_CALL_ACCESS = new Set(['forward', 'provider', 'crm', 'call']);

@@ -770,7 +770,7 @@ export function StackMotionRows({
   items: StackItem[]
   ink: string
   muted: string
-  variant?: 'speed' | 'missed-call' | 'google-profile' | 'search-fix'
+  variant?: 'speed' | 'missed-call' | 'google-profile' | 'search-fix' | 'landing-page'
 }) {
   const reduce = useReducedMotion()
   const visuals =

@@ -12,6 +12,7 @@ import {PainCostCards} from './PainCostCards'
 import {MissedCallPainCards} from './MissedCallPainCards'
 import {GoogleProfilePainCards} from './GoogleProfilePainCards'
 import {SearchPainCards} from './SearchPainCards'
+import {LandingPainCards} from './LandingPainCards'
 import {LostClientCalculator} from './LostClientCalculator'
 import {BenefitMotionRows} from './BenefitMotionRows'
 import {StackMotionRows} from './StackMotionRows'
@@ -23,6 +24,9 @@ import {ProfileAfterMoment} from './ProfileAfterMoment'
 import {IndexCheckMoment, type IndexCheckEvidence} from './IndexCheckMoment'
 import {SearchVisibilityLeakPair} from './SearchVisibilityLeakPair'
 import {SearchRecoveryMock} from './SearchRecoveryMock'
+import {AdEvidenceMoment, type AdEvidence} from './AdEvidenceMoment'
+import {LandingLeakPair} from './LandingLeakPair'
+import {LandingDoorMock} from './LandingDoorMock'
 import {
   MissedCallEvidenceCard,
   type MissedCallEvidence,
@@ -174,6 +178,7 @@ const FunnelPage: React.FC = () => {
   const isMissedCall = proofKind === 'missed-call'
   const isGoogleProfile = proofKind === 'google-profile'
   const isSearchFix = proofKind === 'search-fix'
+  const isLandingPage = proofKind === 'landing-page'
   const isSpeed = proofKind === 'speed'
   const motionVariant = isMissedCall
     ? 'missed-call'
@@ -181,14 +186,18 @@ const FunnelPage: React.FC = () => {
       ? 'google-profile'
       : isSearchFix
         ? 'search-fix'
-        : 'speed'
+        : isLandingPage
+          ? 'landing-page'
+          : 'speed'
   const calculatorVariant = isSpeed
     ? 'speed'
     : isMissedCall
       ? 'missed-call'
       : isSearchFix
         ? 'search-fix'
-        : 'google-profile'
+        : isLandingPage
+          ? 'landing-page'
+          : 'google-profile'
   const missedEvidence: MissedCallEvidence = useMemo(() => {
     if (business && callDay && callTime) {
       return {mode: 'tested', business, day: callDay, time: callTime}
@@ -206,6 +215,10 @@ const FunnelPage: React.FC = () => {
     }
     return {mode: 'try'}
   }, [business, blockedPages])
+  const adEvidence: AdEvidence = useMemo(() => {
+    if (business) return {mode: 'live', business}
+    return {mode: 'try'}
+  }, [business])
 
   useEffect(() => {
     if (!slug) {
@@ -341,7 +354,7 @@ const FunnelPage: React.FC = () => {
 
           <section
             className={`mx-auto px-6 md:px-10 pb-16 md:pb-24 ${
-              isSpeed || isSearchFix ? 'max-w-3xl' : 'max-w-5xl'
+              isSpeed || isSearchFix || isLandingPage ? 'max-w-3xl' : 'max-w-5xl'
             }`}
           >
             <SectionRule />
@@ -357,17 +370,21 @@ const FunnelPage: React.FC = () => {
                   ? COPY.proofHeadingLive
                   : isSearchFix && searchEvidence.mode === 'live'
                     ? COPY.proofHeadingLive
-                    : COPY.proofHeadingGeneric}
+                    : isLandingPage && adEvidence.mode === 'live'
+                      ? COPY.proofHeadingLive
+                      : COPY.proofHeadingGeneric}
               </h2>
             </Reveal>
             {isMissedCall ? <MissedCallEvidenceCard evidence={missedEvidence} /> : null}
             {isGoogleProfile ? <GoogleProfileEvidenceCard evidence={profileEvidence} /> : null}
             {isSearchFix ? <IndexCheckMoment evidence={searchEvidence} /> : null}
-            {!(isSearchFix && searchEvidence.mode === 'try') ? (
+            {isLandingPage ? <AdEvidenceMoment evidence={adEvidence} /> : null}
+            {!(isSearchFix && searchEvidence.mode === 'try') &&
+            !(isLandingPage && adEvidence.mode === 'try') ? (
               <Reveal delay={0.12} y={12}>
                 <p
                   className={`font-sans text-base md:text-lg leading-relaxed max-w-2xl ${
-                    isMissedCall || isGoogleProfile || isSearchFix ? 'mt-8' : ''
+                    isMissedCall || isGoogleProfile || isSearchFix || isLandingPage ? 'mt-8' : ''
                   }`}
                   style={{color: FUNNEL_COLOURS.muted}}
                 >
@@ -377,9 +394,11 @@ const FunnelPage: React.FC = () => {
                       : COPY.proofLeadGeneric
                     : isSearchFix
                       ? COPY.proofLead(business)
-                      : business
+                      : isLandingPage
                         ? COPY.proofLead(business)
-                        : COPY.proofLeadGeneric}
+                        : business
+                          ? COPY.proofLead(business)
+                          : COPY.proofLeadGeneric}
                 </p>
               </Reveal>
             ) : null}
@@ -420,6 +439,44 @@ const FunnelPage: React.FC = () => {
                   </Reveal>
                 ) : null}
                 <SearchVisibilityLeakPair />
+              </>
+            ) : isLandingPage ? (
+              <>
+                {adEvidence.mode === 'live' ? (
+                  <Reveal delay={0.08} y={12}>
+                    <p
+                      className="mt-6 font-sans text-base md:text-lg leading-relaxed max-w-2xl"
+                      style={{color: FUNNEL_COLOURS.muted}}
+                    >
+                      {COPY.proofAfter}
+                    </p>
+                  </Reveal>
+                ) : null}
+                <section className="mt-12 md:mt-14">
+                  <Reveal y={10}>
+                    <SectionLabel>The leak</SectionLabel>
+                  </Reveal>
+                  <Reveal delay={0.06} y={14}>
+                    <h3
+                      className="font-serif font-bold text-2xl md:text-3xl tracking-tight mb-4 max-w-2xl"
+                      style={{color: FUNNEL_COLOURS.ink}}
+                    >
+                      The homepage is a lobby, and ads need a door
+                    </h3>
+                  </Reveal>
+                  <Reveal delay={0.1} y={10}>
+                    <p
+                      className="font-sans text-base md:text-lg leading-relaxed max-w-2xl mb-2"
+                      style={{color: FUNNEL_COLOURS.muted}}
+                    >
+                      Someone clicks an ad about one specific thing, and your homepage greets them
+                      with everything: the menu, the story, six services, a popup. They scan, they
+                      don&apos;t find the exact thing they clicked for, and they&apos;re gone, with
+                      your money. The ad did its job. The destination dropped it.
+                    </p>
+                  </Reveal>
+                  <LandingLeakPair />
+                </section>
               </>
             ) : (
               <>
@@ -474,6 +531,8 @@ const FunnelPage: React.FC = () => {
                 <GoogleProfilePainCards />
               ) : isSearchFix ? (
                 <SearchPainCards />
+              ) : isLandingPage ? (
+                <LandingPainCards />
               ) : (
                 <PainCostCards />
               )}
@@ -517,6 +576,10 @@ const FunnelPage: React.FC = () => {
               <ProfileAfterMoment businessName={business} />
             ) : isSearchFix ? (
               <SearchRecoveryMock />
+            ) : isLandingPage ? (
+              <div className="mt-10">
+                <LandingDoorMock />
+              </div>
             ) : (
               <ScoreMoment score={90} mode="benchmark" />
             )}
@@ -657,6 +720,8 @@ const FunnelPage: React.FC = () => {
                   <ProfileDeliverableMock />
                 ) : isSearchFix ? (
                   <SearchRecoveryMock compact onDark />
+                ) : isLandingPage ? (
+                  <LandingDoorMock />
                 ) : (
                   <ReportDeliverableMock />
                 )}

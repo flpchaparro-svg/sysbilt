@@ -15,6 +15,7 @@ export const FUNNEL_PRODUCT_CODES = [
   'missed-call',
   'google-profile',
   'search-fix',
+  'landing-page',
 ] as const
 
 export type FunnelProductCode = (typeof FUNNEL_PRODUCT_CODES)[number]
@@ -24,6 +25,7 @@ export const FUNNEL_PRODUCT_LABELS: Record<FunnelProductCode, string> = {
   'missed-call': 'Missed-Call Text-Back',
   'google-profile': 'Google Profile Fix',
   'search-fix': 'Search Visibility Fix',
+  'landing-page': 'Campaign Landing Page',
 }
 
 export type FunnelProductStatus = 'live' | 'soon'
@@ -70,6 +72,14 @@ export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
     blurb: "Three days. Google's own records show the pages coming back.",
     status: 'live',
     href: '/go/search-fix',
+  },
+  {
+    code: 'landing-page',
+    title: 'Campaign Landing Page',
+    price: '$1,800',
+    blurb: 'Two days. One page that matches the ad promise and keeps the click.',
+    status: 'live',
+    href: '/go/landing-page',
   },
 ]
 

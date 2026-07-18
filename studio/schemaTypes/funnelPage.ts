@@ -29,7 +29,8 @@ export default defineType({
       type: 'slug',
       group: 'core',
       options: {source: 'title', maxLength: 64},
-      description: 'Becomes /go/{slug}. Batch 1: speed-fix, missed-call, google-profile. Batch 2: search-fix.',
+      description:
+        'Becomes /go/{slug}. Batch 1: speed-fix, missed-call, google-profile. Batch 2: search-fix, landing-page.',
       validation: (Rule) => Rule.required(),
     }),
     defineField({

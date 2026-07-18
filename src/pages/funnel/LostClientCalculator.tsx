@@ -200,19 +200,22 @@ export function LostClientCalculator({
   variant = 'speed',
   theme = 'dark',
 }: {
-  variant?: 'speed' | 'missed-call' | 'google-profile' | 'search-fix'
+  variant?: 'speed' | 'missed-call' | 'google-profile' | 'search-fix' | 'landing-page'
   theme?: 'dark' | 'cream'
 }) {
   const rootRef = useRef<HTMLDivElement>(null)
   const inView = useInView(rootRef, {once: true, amount: 0.35})
   const reduce = useReducedMotion()
-  const [value, setValue] = useState(DEFAULT_VALUE)
+  const isLanding = variant === 'landing-page'
+  const [value, setValue] = useState(isLanding ? 2000 : DEFAULT_VALUE)
   const [lost, setLost] = useState(variant === 'search-fix' ? 4 : DEFAULT_LOST)
   const [valueDirty, setValueDirty] = useState(false)
   const [lostDirty, setLostDirty] = useState(false)
   const [display, setDisplay] = useState(0)
 
-  const yearly = Math.max(0, value) * Math.max(0, lost) * 12
+  const yearly = isLanding
+    ? Math.max(0, value) * 12
+    : Math.max(0, value) * Math.max(0, lost) * 12
   const fromRef = useRef(0)
   const cream = theme === 'cream'
   const ink = cream ? FUNNEL_COLOURS.ink : FUNNEL_COLOURS.onInk
@@ -273,59 +276,65 @@ export function LostClientCalculator({
           className="font-serif font-bold text-2xl md:text-3xl tracking-tight mb-8 md:mb-10 max-w-lg"
           style={{color: ink}}
         >
-          {variant === 'search-fix'
-            ? "What's being findable worth to you"
-            : "What's one lost client worth to you"}
+          {isLanding
+            ? "What's riding on where the click lands"
+            : variant === 'search-fix'
+              ? "What's being findable worth to you"
+              : "What's one lost client worth to you"}
         </h3>
 
         <div className="flex flex-col md:flex-row md:items-stretch gap-2 md:gap-0">
           <StepperField
-            label="Average client worth"
+            label={isLanding ? 'Monthly ad spend' : 'Average client worth'}
             prefix="$"
             value={value}
             step={100}
             dirty={valueDirty}
             onDirty={() => setValueDirty(true)}
             onChange={setValue}
-            ariaLabel="Average client value in dollars"
+            ariaLabel={isLanding ? 'Monthly ad spend in dollars' : 'Average client value in dollars'}
             pulseArrows={inView && !reduce}
             theme={theme}
           />
 
-          <div
-            className="hidden md:block w-px mx-8 shrink-0 self-stretch"
-            style={{backgroundColor: `${ink}14`}}
-            aria-hidden
-          />
+          {!isLanding ? (
+            <>
+              <div
+                className="hidden md:block w-px mx-8 shrink-0 self-stretch"
+                style={{backgroundColor: `${ink}14`}}
+                aria-hidden
+              />
 
-          <StepperField
-            label={
-              variant === 'missed-call'
-                ? 'Missed calls a month'
-                : variant === 'google-profile'
-                  ? 'Lost to a thin profile'
-                  : variant === 'search-fix'
-                    ? 'Clients a month via Google'
-                    : 'Lost to a slow site'
-            }
-            suffix="/ month"
-            value={lost}
-            step={1}
-            dirty={lostDirty}
-            onDirty={() => setLostDirty(true)}
-            onChange={setLost}
-            ariaLabel={
-              variant === 'missed-call'
-                ? 'Missed calls per month'
-                : variant === 'google-profile'
-                  ? 'Customers lost to a thin profile per month'
-                  : variant === 'search-fix'
-                    ? 'Clients a month who find you through Google'
-                    : 'Enquiries lost per month'
-            }
-            pulseArrows={inView && !reduce}
-            theme={theme}
-          />
+              <StepperField
+                label={
+                  variant === 'missed-call'
+                    ? 'Missed calls a month'
+                    : variant === 'google-profile'
+                      ? 'Lost to a thin profile'
+                      : variant === 'search-fix'
+                        ? 'Clients a month via Google'
+                        : 'Lost to a slow site'
+                }
+                suffix="/ month"
+                value={lost}
+                step={1}
+                dirty={lostDirty}
+                onDirty={() => setLostDirty(true)}
+                onChange={setLost}
+                ariaLabel={
+                  variant === 'missed-call'
+                    ? 'Missed calls per month'
+                    : variant === 'google-profile'
+                      ? 'Customers lost to a thin profile per month'
+                      : variant === 'search-fix'
+                        ? 'Clients a month who find you through Google'
+                        : 'Enquiries lost per month'
+                }
+                pulseArrows={inView && !reduce}
+                theme={theme}
+              />
+            </>
+          ) : null}
         </div>
 
         <div
@@ -340,13 +349,17 @@ export function LostClientCalculator({
             animate={{opacity: 1, y: 0}}
             transition={{duration: 0.3}}
           >
-            That&apos;s {formatMoney(display)} a year, walking next door.
+            {isLanding
+              ? `That's ${formatMoney(display)} a year riding on the first five seconds after the click.`
+              : `That's ${formatMoney(display)} a year, walking next door.`}
           </motion.p>
           <p
             className="mt-2 font-serif text-3xl md:text-4xl lg:text-[2.75rem] tracking-tight leading-tight"
             style={{color: goldLine}}
           >
-            The fix costs less than one of them.
+            {isLanding
+              ? 'The page that catches it costs less than one month of that.'
+              : 'The fix costs less than one of them.'}
           </p>
           <p
             className="mt-3 font-sans text-sm leading-relaxed max-w-xl"
