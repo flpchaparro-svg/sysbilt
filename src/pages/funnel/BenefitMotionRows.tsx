@@ -852,6 +852,284 @@ const SEARCH_VISUALS = [
   ThreeDayWatchVisual,
 ]
 
+/** Ad promise → matched page: cursor travels, CTA slams. */
+function AdPromiseMatchVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full overflow-hidden border border-dark/12 bg-white/70 p-2.5">
+      <div className="flex gap-2 h-full">
+        <div
+          className="flex-1 border px-2 py-2 flex flex-col justify-between"
+          style={{borderColor: `${FUNNEL_COLOURS.ink}14`, backgroundColor: FUNNEL_COLOURS.ground}}
+        >
+          <p className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/40">The ad</p>
+          <p className="font-serif text-[11px] font-bold leading-snug" style={{color: FUNNEL_COLOURS.ink}}>
+            Free consult this week
+          </p>
+          <motion.div
+            className="h-5 rounded flex items-center justify-center font-mono text-[7px] font-bold uppercase tracking-wider text-white"
+            style={{backgroundColor: FUNNEL_COLOURS.accent}}
+            animate={reduce ? undefined : {scale: [1, 0.92, 1.06, 1]}}
+            transition={reduce ? undefined : {duration: 2.8, repeat: Infinity, times: [0, 0.35, 0.45, 1]}}
+          >
+            Click
+          </motion.div>
+        </div>
+        <div className="flex items-center">
+          <motion.span
+            className="font-mono text-base font-bold"
+            style={{color: FUNNEL_COLOURS.accent}}
+            animate={reduce ? undefined : {x: [0, 6, 0], scale: [1, 1.2, 1]}}
+            transition={reduce ? undefined : {duration: 1.4, repeat: Infinity}}
+          >
+            →
+          </motion.span>
+        </div>
+        <div
+          className="flex-1 border px-2 py-2 flex flex-col justify-between"
+          style={{borderColor: `${FUNNEL_COLOURS.goldDeep}50`, backgroundColor: FUNNEL_COLOURS.surfaceGold}}
+        >
+          <p className="font-mono text-[7px] uppercase tracking-[0.16em]" style={{color: FUNNEL_COLOURS.goldDeep}}>
+            The door
+          </p>
+          <motion.p
+            className="font-serif text-[11px] font-bold leading-snug"
+            style={{color: FUNNEL_COLOURS.ink}}
+            animate={reduce ? undefined : {opacity: [0.35, 1, 1, 0.35]}}
+            transition={reduce ? undefined : {duration: 2.8, repeat: Infinity, times: [0, 0.4, 0.85, 1]}}
+          >
+            Free consult this week
+          </motion.p>
+          <motion.div
+            className="h-5 rounded flex items-center justify-center font-mono text-[7px] font-bold uppercase tracking-wider text-white"
+            style={{backgroundColor: FUNNEL_COLOURS.accent}}
+            animate={
+              reduce
+                ? undefined
+                : {
+                    scale: [1, 1, 1.1, 1],
+                    boxShadow: [
+                      '0 0 0 0 rgba(226,30,63,0)',
+                      '0 0 0 0 rgba(226,30,63,0)',
+                      '0 0 0 8px rgba(226,30,63,0.28)',
+                      '0 0 0 0 rgba(226,30,63,0)',
+                    ],
+                  }
+            }
+            transition={reduce ? undefined : {duration: 2.8, repeat: Infinity, times: [0, 0.5, 0.65, 1]}}
+          >
+            Book
+          </motion.div>
+        </div>
+      </div>
+      {/* Cursor path: ad CTA → door CTA */}
+      <motion.div
+        className="pointer-events-none absolute z-10 h-3.5 w-3.5 rounded-full border-2 bg-white/80"
+        style={{borderColor: FUNNEL_COLOURS.ink, top: 78, left: '18%'}}
+        animate={
+          reduce
+            ? undefined
+            : {
+                left: ['18%', '18%', '78%', '78%', '18%'],
+                top: [78, 78, 78, 78, 78],
+                scale: [1, 0.75, 1, 0.75, 1],
+              }
+        }
+        transition={reduce ? undefined : {duration: 2.8, repeat: Infinity, times: [0, 0.32, 0.55, 0.7, 1]}}
+        aria-hidden
+      />
+    </div>
+  )
+}
+
+/** Conversion signals stream up into ads — count ticks. */
+function AdsSmarterVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full overflow-hidden border border-dark/12 bg-white/70 p-2.5">
+      <div className="flex items-center justify-between mb-1.5">
+        <p className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/40">Ad platform</p>
+        <motion.span
+          className="font-mono text-[8px] font-bold uppercase tracking-widest px-1.5 py-0.5"
+          style={{backgroundColor: FUNNEL_COLOURS.gold, color: FUNNEL_COLOURS.ink}}
+          animate={reduce ? undefined : {scale: [1, 1.08, 1], opacity: [0.7, 1, 0.7]}}
+          transition={reduce ? undefined : {duration: 1.2, repeat: Infinity}}
+        >
+          Learning
+        </motion.span>
+      </div>
+      <div className="relative h-[78px]">
+        <div
+          className="absolute top-0 left-0 right-0 h-7 border flex items-center justify-between px-2 font-mono text-[8px] uppercase tracking-widest"
+          style={{
+            borderColor: `${FUNNEL_COLOURS.ink}14`,
+            backgroundColor: FUNNEL_COLOURS.ink,
+            color: FUNNEL_COLOURS.onInk,
+          }}
+        >
+          <span>Ads</span>
+          <motion.span
+            animate={reduce ? undefined : {opacity: [0.4, 1, 0.4]}}
+            transition={reduce ? undefined : {duration: 1.5, repeat: Infinity}}
+          >
+            + signals
+          </motion.span>
+        </div>
+        {[0, 1, 2, 3, 4].map((i) => (
+          <motion.div
+            key={i}
+            className="absolute h-2.5 w-2.5 rounded-full"
+            style={{
+              backgroundColor: i % 2 === 0 ? FUNNEL_COLOURS.accent : FUNNEL_COLOURS.gold,
+              left: `${18 + i * 14}%`,
+            }}
+            animate={
+              reduce
+                ? {top: 40, opacity: 0.45}
+                : {top: [62, 12], opacity: [0, 1, 0], scale: [0.6, 1.15, 0.7]}
+            }
+            transition={
+              reduce
+                ? undefined
+                : {duration: 1.6, repeat: Infinity, delay: i * 0.28, ease: 'easeOut'}
+            }
+          />
+        ))}
+        <div
+          className="absolute bottom-0 left-0 right-0 h-8 border flex items-center justify-center gap-2 font-mono text-[8px] uppercase tracking-widest"
+          style={{borderColor: `${FUNNEL_COLOURS.ink}14`, backgroundColor: FUNNEL_COLOURS.ground}}
+        >
+          <span>Conversion</span>
+          <motion.span
+            className="font-bold tabular-nums"
+            style={{color: FUNNEL_COLOURS.accent}}
+            animate={reduce ? undefined : {scale: [1, 1.25, 1]}}
+            transition={reduce ? undefined : {duration: 1.6, repeat: Infinity}}
+          >
+            +1
+          </motion.span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/** Domain types in, then lock stamp slams. */
+function OwnDomainVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full overflow-hidden border border-dark/12 bg-white/70 p-2.5 flex flex-col justify-center items-center gap-2.5">
+      <motion.div
+        className="w-full border px-3 py-3 text-center"
+        style={{borderColor: `${FUNNEL_COLOURS.ink}14`, backgroundColor: FUNNEL_COLOURS.ground}}
+        animate={reduce ? undefined : {y: [2, 0, 0, 2]}}
+        transition={reduce ? undefined : {duration: 3, repeat: Infinity, times: [0, 0.2, 0.85, 1]}}
+      >
+        <p className="font-mono text-[8px] uppercase tracking-[0.18em] text-dark/40 mb-1">Your domain</p>
+        <motion.p
+          className="font-serif text-sm font-bold mx-auto overflow-hidden whitespace-nowrap"
+          style={{color: FUNNEL_COLOURS.ink}}
+          animate={
+            reduce
+              ? undefined
+              : {clipPath: ['inset(0 100% 0 0)', 'inset(0 0% 0 0)', 'inset(0 0% 0 0)', 'inset(0 100% 0 0)']}
+          }
+          transition={reduce ? undefined : {duration: 3, repeat: Infinity, times: [0, 0.35, 0.8, 1], ease: 'easeInOut'}}
+        >
+          you.com.au/offer
+        </motion.p>
+      </motion.div>
+      <motion.span
+        className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] px-2.5 py-1.5"
+        style={{backgroundColor: FUNNEL_COLOURS.ink, color: FUNNEL_COLOURS.onInk}}
+        animate={
+          reduce
+            ? undefined
+            : {
+                scale: [0.6, 1.12, 1, 1, 0.6],
+                rotate: [-8, 4, 0, 0, -8],
+                opacity: [0, 1, 1, 1, 0],
+              }
+        }
+        transition={reduce ? undefined : {duration: 3, repeat: Infinity, times: [0, 0.4, 0.5, 0.85, 1]}}
+      >
+        Locked · yours
+      </motion.span>
+    </div>
+  )
+}
+
+/** Day 1 → Day 2 progress fill, then LIVE badge. */
+function TwoDayLiveVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full overflow-hidden border border-dark/12 bg-white/70 p-2.5 flex flex-col justify-center gap-2.5">
+      <div className="flex gap-1.5">
+        {[
+          {day: 'Day 1', text: 'Draft'},
+          {day: 'Day 2', text: 'Live'},
+        ].map((item, i) => (
+          <motion.div
+            key={item.day}
+            className="flex-1 border px-2 py-2 text-center relative overflow-hidden"
+            style={{
+              borderColor: i === 1 ? `${FUNNEL_COLOURS.accent}55` : `${FUNNEL_COLOURS.ink}14`,
+              backgroundColor: FUNNEL_COLOURS.ground,
+            }}
+          >
+            <motion.div
+              className="absolute inset-0 origin-left"
+              style={{backgroundColor: i === 1 ? `${FUNNEL_COLOURS.accent}18` : `${FUNNEL_COLOURS.gold}22`}}
+              animate={
+                reduce
+                  ? {scaleX: 1}
+                  : i === 0
+                    ? {scaleX: [0, 1, 1, 0]}
+                    : {scaleX: [0, 0, 1, 1, 0]}
+              }
+              transition={
+                reduce
+                  ? undefined
+                  : {
+                      duration: 3.2,
+                      repeat: Infinity,
+                      times: i === 0 ? [0, 0.35, 0.85, 1] : [0, 0.35, 0.55, 0.85, 1],
+                      ease: 'easeInOut',
+                    }
+              }
+            />
+            <p className="relative font-mono text-[8px] font-bold uppercase tracking-widest text-dark/45">
+              {item.day}
+            </p>
+            <p className="relative mt-1 font-serif text-sm font-bold" style={{color: FUNNEL_COLOURS.ink}}>
+              {item.text}
+            </p>
+          </motion.div>
+        ))}
+      </div>
+      <div className="h-1.5 w-full bg-dark/10 overflow-hidden rounded-full">
+        <motion.div
+          className="h-full rounded-full"
+          style={{backgroundColor: FUNNEL_COLOURS.accent}}
+          animate={reduce ? {width: '100%'} : {width: ['0%', '100%', '100%', '0%']}}
+          transition={reduce ? undefined : {duration: 3.2, repeat: Infinity, times: [0, 0.55, 0.85, 1], ease: 'easeInOut'}}
+        />
+      </div>
+      <motion.p
+        className="font-mono text-[8px] font-bold uppercase tracking-[0.16em] text-center"
+        style={{color: FUNNEL_COLOURS.goldDeep}}
+        animate={reduce ? undefined : {opacity: [0, 0, 1, 1, 0], scale: [0.9, 0.9, 1.05, 1, 0.9]}}
+        transition={reduce ? undefined : {duration: 3.2, repeat: Infinity, times: [0, 0.5, 0.6, 0.85, 1]}}
+      >
+        Tracking verified
+      </motion.p>
+    </div>
+  )
+}
+
+const LANDING_VISUALS = [
+  AdPromiseMatchVisual,
+  AdsSmarterVisual,
+  OwnDomainVisual,
+  TwoDayLiveVisual,
+]
+
 type Benefit = {title: string; text: string}
 
 /**
@@ -878,7 +1156,9 @@ export function BenefitMotionRows({
         ? PROFILE_VISUALS
         : variant === 'search-fix'
           ? SEARCH_VISUALS
-          : SPEED_VISUALS
+          : variant === 'landing-page'
+            ? LANDING_VISUALS
+            : SPEED_VISUALS
 
   return (
     <div className="space-y-10 md:space-y-12">

@@ -702,6 +702,246 @@ const SEARCH_STACK_VISUALS = [
   RecrawlWatchVisual,
 ]
 
+/** Ad line slides down and becomes the page headline. */
+function CopyMatchStackVisual({reduce, play}: VisualProps) {
+  const go = play && !reduce
+  return (
+    <div className="relative w-full h-[72px] border border-dark/12 bg-cream px-3 py-2 overflow-hidden">
+      <motion.div
+        className="absolute left-3 right-3 top-2 flex items-center gap-2"
+        animate={go ? {y: [0, 0, 22, 22, 0], opacity: [1, 1, 0.15, 0.15, 1]} : undefined}
+        transition={{duration: 2.6, repeat: Infinity, times: [0, 0.25, 0.45, 0.8, 1]}}
+      >
+        <span className="font-mono text-[7px] uppercase tracking-widest text-dark/40 w-8 shrink-0">Ad</span>
+        <span className="font-sans text-[10px] truncate" style={{color: FUNNEL_COLOURS.ink}}>
+          Free consult this week
+        </span>
+      </motion.div>
+      <motion.div
+        className="absolute left-3 right-3 bottom-2 flex items-center gap-2"
+        animate={go ? {y: [18, 18, 0, 0, 18], opacity: [0, 0, 1, 1, 0]} : {opacity: reduce ? 1 : 0}}
+        transition={{duration: 2.6, repeat: Infinity, times: [0, 0.25, 0.45, 0.8, 1]}}
+      >
+        <span className="font-mono text-[7px] uppercase tracking-widest text-dark/40 w-8 shrink-0">Page</span>
+        <span className="font-serif text-[11px] font-bold truncate" style={{color: FUNNEL_COLOURS.ink}}>
+          Free consult this week
+        </span>
+        <motion.span
+          className="ml-auto font-mono text-[9px] font-bold"
+          style={{color: FUNNEL_COLOURS.accent}}
+          animate={go ? {scale: [0, 0, 1.2, 1, 0]} : undefined}
+          transition={{duration: 2.6, repeat: Infinity, times: [0, 0.4, 0.55, 0.8, 1]}}
+        >
+          ✓
+        </motion.span>
+      </motion.div>
+    </div>
+  )
+}
+
+/** Domain types in, bar fills, lock flashes. */
+function DomainBrandStackVisual({reduce, play}: VisualProps) {
+  const go = play && !reduce
+  return (
+    <div className="w-full h-[72px] border border-dark/12 bg-cream px-3 py-2.5 flex flex-col justify-center">
+      <div className="flex items-center justify-between mb-1">
+        <p className="font-mono text-[7px] uppercase tracking-widest text-dark/40">Your domain</p>
+        <motion.span
+          className="font-mono text-[8px] font-bold uppercase tracking-widest px-1.5 py-0.5"
+          style={{backgroundColor: FUNNEL_COLOURS.ink, color: FUNNEL_COLOURS.onInk}}
+          animate={go ? {scale: [0.7, 1.1, 1, 1, 0.7], opacity: [0, 1, 1, 1, 0]} : {opacity: reduce ? 1 : 0}}
+          transition={{duration: 2.8, repeat: Infinity, times: [0, 0.35, 0.45, 0.85, 1]}}
+        >
+          Yours
+        </motion.span>
+      </div>
+      <motion.p
+        className="font-serif text-sm font-bold overflow-hidden whitespace-nowrap"
+        style={{color: FUNNEL_COLOURS.ink}}
+        animate={
+          go
+            ? {clipPath: ['inset(0 100% 0 0)', 'inset(0 0% 0 0)', 'inset(0 0% 0 0)', 'inset(0 100% 0 0)']}
+            : undefined
+        }
+        transition={{duration: 2.8, repeat: Infinity, times: [0, 0.4, 0.85, 1], ease: 'easeInOut'}}
+      >
+        you.com.au/offer
+      </motion.p>
+      <div className="mt-1.5 h-1.5 rounded-full overflow-hidden bg-dark/10">
+        <motion.div
+          className="h-full"
+          style={{backgroundColor: FUNNEL_COLOURS.gold}}
+          animate={go ? {width: ['0%', '100%', '100%', '0%']} : {width: '100%'}}
+          transition={{duration: 2.8, repeat: Infinity, times: [0, 0.4, 0.85, 1], ease: 'easeInOut'}}
+        />
+      </div>
+    </div>
+  )
+}
+
+/** Tracking fire — pixels cascade then FIRED stamp. */
+function TrackingWireStackVisual({reduce, play}: VisualProps) {
+  const go = play && !reduce
+  return (
+    <div className="relative w-full h-[72px] border border-dark/12 bg-cream px-3 py-2 flex items-center gap-3 overflow-hidden">
+      <div className="flex-1 min-w-0">
+        <p className="font-mono text-[7px] uppercase tracking-widest text-dark/40 mb-1.5">Pixel → ads</p>
+        <div className="flex gap-1.5">
+          {[0, 1, 2, 3, 4, 5].map((i) => (
+            <motion.span
+              key={i}
+              className="h-3 w-3 rounded-sm"
+              style={{backgroundColor: i % 2 === 0 ? FUNNEL_COLOURS.accent : FUNNEL_COLOURS.gold}}
+              animate={
+                go
+                  ? {opacity: [0.15, 1, 0.15], scale: [0.7, 1.2, 0.7], y: [4, -2, 4]}
+                  : {opacity: 0.5}
+              }
+              transition={{duration: 1, repeat: Infinity, delay: i * 0.12}}
+            />
+          ))}
+        </div>
+      </div>
+      <motion.span
+        className="font-mono text-[8px] font-bold uppercase tracking-widest px-2 py-1.5 shrink-0"
+        style={{backgroundColor: FUNNEL_COLOURS.ink, color: FUNNEL_COLOURS.onInk}}
+        animate={
+          go
+            ? {scale: [0.85, 1.12, 1], rotate: [-6, 3, 0], opacity: [0.4, 1, 1]}
+            : undefined
+        }
+        transition={{duration: 1.6, repeat: Infinity}}
+      >
+        Fired
+      </motion.span>
+    </div>
+  )
+}
+
+/** Campaign wipe: /homepage out, /offer in. */
+function PointCampaignStackVisual({reduce, play}: VisualProps) {
+  const go = play && !reduce
+  return (
+    <div className="w-full h-[72px] border border-dark/12 bg-cream px-3 py-2 flex flex-col justify-center gap-1.5">
+      <div className="flex items-center justify-between">
+        <span className="font-mono text-[8px] text-dark/40">Destination</span>
+        <motion.span
+          className="font-mono text-[8px] font-bold uppercase tracking-widest"
+          style={{color: FUNNEL_COLOURS.accent}}
+          animate={go ? {opacity: [0.2, 1, 0.2], x: [4, 0, 4]} : undefined}
+          transition={{duration: 2.4, repeat: Infinity}}
+        >
+          Switched
+        </motion.span>
+      </div>
+      <div className="relative h-8 overflow-hidden border" style={{borderColor: `${FUNNEL_COLOURS.ink}12`}}>
+        <motion.div
+          className="absolute inset-0 flex items-center px-2.5 font-mono text-[10px] line-through"
+          style={{color: FUNNEL_COLOURS.muted, backgroundColor: FUNNEL_COLOURS.ground}}
+          animate={go ? {x: ['0%', '-105%', '-105%', '0%']} : {x: reduce ? '-105%' : '0%'}}
+          transition={{duration: 2.8, repeat: Infinity, times: [0, 0.35, 0.85, 1], ease: 'easeInOut'}}
+        >
+          /homepage
+        </motion.div>
+        <motion.div
+          className="absolute inset-0 flex items-center px-2.5 font-mono text-[10px] font-bold"
+          style={{color: FUNNEL_COLOURS.ink, backgroundColor: FUNNEL_COLOURS.surfaceGold}}
+          animate={go ? {x: ['105%', '0%', '0%', '105%']} : {x: '0%'}}
+          transition={{duration: 2.8, repeat: Infinity, times: [0, 0.35, 0.85, 1], ease: 'easeInOut'}}
+        >
+          /offer · matched
+        </motion.div>
+      </div>
+    </div>
+  )
+}
+
+/** Systems Snapshot rows draw in sequence. */
+function SnapshotStackVisual({reduce, play}: VisualProps) {
+  const go = play && !reduce
+  const rows = [
+    {label: 'Website', w: '92%'},
+    {label: 'Leads', w: '70%'},
+    {label: 'Follow-up', w: '48%'},
+  ]
+  return (
+    <div className="w-full h-[72px] border border-dark/12 bg-cream px-3 py-2 flex flex-col justify-center gap-1">
+      <motion.p
+        className="font-mono text-[7px] uppercase tracking-widest mb-0.5"
+        style={{color: FUNNEL_COLOURS.goldDeep}}
+        animate={go ? {opacity: [0.4, 1, 0.4]} : undefined}
+        transition={{duration: 2, repeat: Infinity}}
+      >
+        Systems Snapshot
+      </motion.p>
+      {rows.map((row, i) => (
+        <div key={row.label} className="flex items-center gap-2">
+          <span className="font-mono text-[7px] text-dark/40 w-12 shrink-0">{row.label}</span>
+          <div className="flex-1 h-2 bg-dark/8 overflow-hidden">
+            <motion.div
+              className="h-full"
+              style={{backgroundColor: i === 2 ? FUNNEL_COLOURS.accent : FUNNEL_COLOURS.gold}}
+              animate={go ? {width: ['0%', row.w, row.w, '0%']} : {width: row.w}}
+              transition={{
+                duration: 2.6,
+                repeat: Infinity,
+                delay: i * 0.15,
+                times: [0, 0.35, 0.8, 1],
+                ease: 'easeOut',
+              }}
+            />
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+/** 14-day aftercare — counter ticks, bar fills. */
+function AftercareStackVisual({reduce, play}: VisualProps) {
+  const go = play && !reduce
+  return (
+    <div className="w-full h-[72px] border border-dark/12 bg-cream px-3 py-2.5 flex items-center gap-3">
+      <motion.div
+        className="font-serif text-2xl font-bold tabular-nums w-10 text-center"
+        style={{color: FUNNEL_COLOURS.accent}}
+        animate={go ? {scale: [1, 1.15, 1], rotate: [0, -4, 0]} : undefined}
+        transition={{duration: 1.4, repeat: Infinity}}
+      >
+        14
+      </motion.div>
+      <div className="min-w-0 flex-1">
+        <p className="font-mono text-[8px] uppercase tracking-widest text-dark/45">Days aftercare</p>
+        <div className="mt-1.5 h-2 w-full bg-dark/10 overflow-hidden">
+          <motion.div
+            className="h-full"
+            style={{backgroundColor: FUNNEL_COLOURS.gold}}
+            animate={go ? {width: ['0%', '100%', '100%', '0%']} : {width: '100%'}}
+            transition={{duration: 2.8, repeat: Infinity, times: [0, 0.5, 0.85, 1], ease: 'easeInOut'}}
+          />
+        </div>
+        <motion.p
+          className="mt-1 font-mono text-[7px] uppercase tracking-widest"
+          style={{color: FUNNEL_COLOURS.goldDeep}}
+          animate={go ? {opacity: [0, 1, 1, 0]} : undefined}
+          transition={{duration: 2.8, repeat: Infinity, times: [0, 0.45, 0.85, 1]}}
+        >
+          Copy tweak included
+        </motion.p>
+      </div>
+    </div>
+  )
+}
+
+const LANDING_STACK_VISUALS = [
+  CopyMatchStackVisual,
+  DomainBrandStackVisual,
+  TrackingWireStackVisual,
+  PointCampaignStackVisual,
+  SnapshotStackVisual,
+  AftercareStackVisual,
+]
+
 function StackRow({
   item,
   index,
@@ -780,7 +1020,9 @@ export function StackMotionRows({
         ? PROFILE_STACK_VISUALS
         : variant === 'search-fix'
           ? SEARCH_STACK_VISUALS
-          : SPEED_VISUALS
+          : variant === 'landing-page'
+            ? LANDING_STACK_VISUALS
+            : SPEED_VISUALS
 
   return (
     <ul className="space-y-10 md:space-y-12">

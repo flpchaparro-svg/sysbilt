@@ -209,7 +209,7 @@ function headerSchema() {
 function sheetRef(sheetId) {
   return {
     documentId: { __rl: true, value: sheetId, mode: 'id' },
-    sheetName: { __rl: true, value: 'Sheet1', mode: 'name', cachedResultName: 'Sheet1' },
+    sheetName: { __rl: true, value: 'Master Leads', mode: 'name', cachedResultName: 'Master Leads' },
   };
 }
 

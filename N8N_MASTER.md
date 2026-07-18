@@ -50,6 +50,9 @@ Deploy and guide scripts load the API key from `.env.local` (`cursor-mcp=` or `N
 | `lWGMLmiOtdUVRsDy` | SYSBILT - Outbound Search Visibility Scorer | Active† | Schedule (~5 min) + Manual | Master Leads empty `SV Indexed` → SerpAPI `site:host` + homepage noindex → write score; if indexed ≤ 5 or noindex → **Search Visibility** tab |
 | `3cOXTQcQRMO2aUyN` | SYSBILT - Outbound Search Visibility Send | Active† | Schedule (~5 min) + Manual | Search Visibility `Status=Ready` → Gmail **draft** + `/go/search-fix?b=&n=` → `Emailed` (does not send) |
 | `2lXUaONheS6TbZoq` | SYSBILT - Outbound Search Visibility Tab Setup | Inactive† | Webhook | Create **Search Visibility** tab + `SV Indexed` header on Master Leads (`--setup-tab`) |
+| `o1ZMLHbfVJqokrsz` | SYSBILT - Outbound Landing Page Router | Active† | Schedule (~5 min) + Manual | Master Leads `LP Ads` = meta/yes/active/homepage/fit/ads → **Landing Page** tab (Ready/Wait); marks `LP Ads=routed` |
+| `kxksPyjKC6d8Wppk` | SYSBILT - Outbound Landing Page Send | Active† | Schedule (~5 min) + Manual | Landing Page `Status=Ready` → Gmail **draft** + `/go/landing-page?b=` → `Emailed` (does not send) |
+| `0qKPobJgkZihKTYa` | SYSBILT - Outbound Landing Page Tab Setup | Inactive† | Webhook | Create **Landing Page** tab + `LP Ads` header on Master Leads (`--setup-tab`) |
 | `WP2tZjhH27vJbOaV` | SYSBILT - Outbound Sheet Setup | UNVERIFIED | Webhook | Create outbound Google Sheet with headers (deploy `--setup-sheet`) |
 | `5h6SvE2hScz6KHh3` | SYSBILT - Outbound Sheet Headers | UNVERIFIED | Webhook | Repair headers after Google Tables conflicts (`--fix-sheet`) |
 | *(UNVERIFIED ID)* | SYSBILT - DM Lead Intake | UNVERIFIED | Webhook `sysbilt-dm-lead-intake` | ManyChat/DM leads → HubSpot → Slack → optional sheet log |
@@ -181,7 +184,7 @@ Google Sheet is the **source of truth** between workflows. **Master Leads** colu
 | B — Audit Runner | `zOZh6wE70PikOCqI` | `deploy-outbound-audit-runner.sh` |
 | C — HubSpot Engage | `WD3s1eD9aUQNUWY6` | `deploy-outbound-hubspot-engage.sh` |
 
-**Sheet ID:** `OUTBOUND_LEADS_SHEET_ID` in gitignored `.deploy-state.env`. Live sheet: `1aGz6kruGwSpt55rwlcknxVDXp9dgL_M-OnVJrDIbTlE` (**Master Leads** + **Run Queue** + **Speed Fix** + **Google Profile** + **Missed-Call** + **Search Visibility**). Master Leads column **P** = **SV Indexed** (Google `site:` count).
+**Sheet ID:** `OUTBOUND_LEADS_SHEET_ID` in gitignored `.deploy-state.env`. Live sheet: `1aGz6kruGwSpt55rwlcknxVDXp9dgL_M-OnVJrDIbTlE` (**Master Leads** + **Run Queue** + **Speed Fix** + **Google Profile** + **Missed-Call** + **Search Visibility** + **Landing Page**). Master Leads column **P** = **SV Indexed** (Google `site:` count). Column **Q** = **LP Ads** (manual Meta Ad Library mark).
 
 **Product tabs (Status):** `Ready` · `Wait` · `Emailed` · `Replied` · `Dead`. Flip **Wait → Ready** when product 1 went quiet and you want the next offer. Add the same data-validation list on each product Status column (G).
 
@@ -191,6 +194,7 @@ Google Sheet is the **source of truth** between workflows. **Master Leads** colu
 | Google Profile | Reviews empty or &lt; 10 (cheap filter, no scrape) | `deploy-outbound-google-profile-scorer.sh --setup-tab` / `-send.sh` |
 | Missed-Call | Phone + real Email | `deploy-outbound-missed-call-router.sh --setup-tab` / `-send.sh` |
 | Search Visibility | SV Indexed ≤ 5 **or** homepage `noindex` | `deploy-outbound-search-fix-scorer.sh --setup-tab` / `-send.sh` |
+| Landing Page | Manual: Master Leads **LP Ads** = `meta` / `yes` / `active` / `homepage` / `fit` / `ads` (Meta Ad Library check; ads → homepage). `none` = no fit. Router sets `routed`. | `deploy-outbound-landing-page-router.sh --setup-tab` / `-send.sh` |
 
 If another product tab already has **Ready** or **Emailed** for the same Maps ID, new rows land as **Wait**. **Replied** anywhere skips append.
 
@@ -229,6 +233,9 @@ If another product tab already has **Ready** or **Emailed** for the same Maps ID
 ./scripts/automations/n8n/deploy-outbound-search-fix-scorer.sh --setup-tab   # once
 ./scripts/automations/n8n/deploy-outbound-search-fix-scorer.sh --activate
 ./scripts/automations/n8n/deploy-outbound-search-fix-send.sh --activate
+./scripts/automations/n8n/deploy-outbound-landing-page-router.sh --setup-tab   # once
+./scripts/automations/n8n/deploy-outbound-landing-page-router.sh --activate
+./scripts/automations/n8n/deploy-outbound-landing-page-send.sh --activate
 ./scripts/automations/n8n/deploy-outbound-audit-runner.sh
 ./scripts/automations/n8n/deploy-outbound-hubspot-engage.sh
 

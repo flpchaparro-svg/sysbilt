@@ -29,7 +29,7 @@ export function LandingDoorMock() {
         >
           Your domain · Campaign page
         </div>
-        <div className="p-5 md:p-6">
+        <div className="p-5 md:p-6 relative">
           <p
             className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] mb-3"
             style={{color: FUNNEL_COLOURS.goldDeep}}
@@ -43,23 +43,43 @@ export function LandingDoorMock() {
             Same promise. One form. No lobby.
           </p>
           <motion.div
-            className="mt-5 h-10 rounded-lg flex items-center justify-center font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-white"
+            className="relative mt-5 h-10 rounded-lg flex items-center justify-center font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-white"
             style={{backgroundColor: FUNNEL_COLOURS.accent}}
             animate={
               reduce || !inView
                 ? undefined
-                : {scale: [1, 1.03, 1], boxShadow: ['0 0 0 0 rgba(226,30,63,0)', '0 0 0 8px rgba(226,30,63,0.12)', '0 0 0 0 rgba(226,30,63,0)']}
+                : {
+                    scale: [1, 1.04, 1],
+                    boxShadow: [
+                      '0 0 0 0 rgba(226,30,63,0)',
+                      '0 0 0 10px rgba(226,30,63,0.16)',
+                      '0 0 0 0 rgba(226,30,63,0)',
+                    ],
+                  }
             }
-            transition={{duration: 2.2, repeat: Infinity, ease: 'easeInOut'}}
+            transition={{duration: 1.8, repeat: Infinity, ease: 'easeInOut'}}
           >
             Book now
+            <motion.span
+              className="pointer-events-none absolute h-3.5 w-3.5 rounded-full border-2 bg-white/80"
+              style={{borderColor: FUNNEL_COLOURS.ink, right: 18, bottom: -6}}
+              animate={
+                reduce || !inView
+                  ? undefined
+                  : {y: [-18, 0, 0, -18], scale: [1, 0.75, 1, 1], opacity: [0, 1, 1, 0]}
+              }
+              transition={{duration: 2.2, repeat: Infinity, times: [0, 0.4, 0.7, 1]}}
+              aria-hidden
+            />
           </motion.div>
-          <p
+          <motion.p
             className="mt-4 font-mono text-[9px] font-bold uppercase tracking-[0.18em]"
             style={{color: FUNNEL_COLOURS.goldDeep}}
+            animate={reduce || !inView ? undefined : {opacity: [0.4, 1, 0.4]}}
+            transition={{duration: 1.6, repeat: Infinity}}
           >
             Tracking verified
-          </p>
+          </motion.p>
         </div>
       </div>
     </motion.div>

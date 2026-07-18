@@ -641,7 +641,7 @@ export const LANDING_PAGE_COPY: FunnelProductCopy = {
   bridgeBody:
     "This isn't an ads retainer and it isn't a website rebuild. It's one dedicated page for one campaign, written to repeat your ad's promise word for word, built on your own domain in your own brand, live within two business days, with conversion tracking wired in so the platform finally learns what's working.",
   bridgeGaugeCaption:
-    'Running several campaigns? Each additional page is the same price, and a set gets a same-day quote.',
+    'One page. Paid once. Live in two business days, with tracking verified before we call it done.',
   benefitsLabel: 'What changes for you',
   benefitsHeading: 'Outcomes, not jargon',
   benefits: [
