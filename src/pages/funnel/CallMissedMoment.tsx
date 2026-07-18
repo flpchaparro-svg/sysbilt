@@ -22,7 +22,7 @@ export function CallMissedMoment({
   const label = businessName?.trim() || 'Your business'
 
   return (
-    <div ref={ref} className="mt-8 md:mt-10 max-w-sm mx-auto">
+    <div ref={ref} className="mt-8 md:mt-10 max-w-md mx-auto w-full">
       {mode === 'after' ? (
         <SmsCard play={play} reduce={reduce} businessLabel={label} />
       ) : (
@@ -320,6 +320,9 @@ function CompetitorCard({play}: {play: boolean}) {
   )
 }
 
+/**
+ * Fix-section animation kit: miss → your SMS with hook → their brief reply → you call prepared.
+ */
 function SmsCard({
   play,
   reduce,
@@ -352,49 +355,122 @@ function SmsCard({
           After the fix
         </p>
         <motion.span
-          className="font-mono text-[9px] uppercase tracking-[0.16em]"
+          className="font-mono text-[9px] font-bold uppercase tracking-[0.16em]"
           style={{color: FUNNEL_COLOURS.goldDeep}}
-          animate={play ? {opacity: [0.55, 1, 0.55]} : {opacity: 0.85}}
-          transition={play ? {duration: 1.6, repeat: Infinity} : {duration: 0.2}}
+          initial={reduce ? false : {opacity: 0}}
+          animate={play ? {opacity: [0.55, 1, 0.55]} : {opacity: 0.9}}
+          transition={
+            play
+              ? {duration: 1.6, repeat: Infinity, delay: reduce ? 0 : 1.8}
+              : {duration: 0.2}
+          }
         >
-          Text sent
+          Thread live
         </motion.span>
       </div>
-      <div className="px-5 py-7 flex flex-col items-center text-center">
-        <div
-          className="mb-5 flex h-16 w-16 items-center justify-center rounded-full border"
-          style={{borderColor: FUNNEL_COLOURS.gold, backgroundColor: FUNNEL_COLOURS.ground}}
-        >
-          <span className="font-serif text-2xl" style={{color: FUNNEL_COLOURS.ink}}>
-            ☎
-          </span>
-        </div>
-        <p className="font-sans text-sm mb-1" style={{color: FUNNEL_COLOURS.muted}}>
-          Caller dialled
-        </p>
-        <p className="font-serif text-xl mb-6" style={{color: FUNNEL_COLOURS.ink}}>
-          {businessLabel}
-        </p>
+
+      <div className="px-4 py-5 md:px-5 md:py-6 space-y-3">
+        {/* Step 1: miss */}
         <motion.div
-          className="w-full text-left border px-4 py-3"
+          className="flex items-center gap-2"
+          initial={reduce ? false : {opacity: 0, y: 8}}
+          whileInView={{opacity: 1, y: 0}}
+          viewport={{once: true, amount: 0.5}}
+          transition={{duration: 0.35}}
+        >
+          <motion.div
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
+            style={{backgroundColor: FUNNEL_COLOURS.accent}}
+            animate={
+              play
+                ? {rotate: [0, -4, 4, -3, 0], scale: [1, 1.04, 1]}
+                : {rotate: 0, scale: 1}
+            }
+            transition={
+              play
+                ? {duration: 0.7, repeat: 2, repeatDelay: 0.15, ease: 'easeInOut'}
+                : {duration: 0.2}
+            }
+          >
+            <span className="font-serif text-base" style={{color: FUNNEL_COLOURS.onInk}}>
+              ☎
+            </span>
+          </motion.div>
+          <div>
+            <p className="font-mono text-[9px] uppercase tracking-[0.16em]" style={{color: FUNNEL_COLOURS.accentDeep}}>
+              Missed · {businessLabel}
+            </p>
+            <p className="font-sans text-xs" style={{color: FUNNEL_COLOURS.muted}}>
+              No answer
+            </p>
+          </div>
+        </motion.div>
+
+        {/* Step 2: your SMS with hook */}
+        <motion.div
+          className="ml-auto max-w-[92%] rounded-2xl rounded-br-sm px-3.5 py-3 text-left"
+          style={{backgroundColor: FUNNEL_COLOURS.ink, color: FUNNEL_COLOURS.onInk}}
+          initial={reduce ? false : {opacity: 0, y: 12, scale: 0.96}}
+          whileInView={{opacity: 1, y: 0, scale: 1}}
+          viewport={{once: true, amount: 0.4}}
+          transition={{duration: 0.45, delay: reduce ? 0 : 0.45, ease: [0.16, 1, 0.3, 1]}}
+        >
+          <p
+            className="font-mono text-[8px] uppercase tracking-[0.16em] mb-1.5"
+            style={{color: `${FUNNEL_COLOURS.onInk}70`}}
+          >
+            You · SMS
+          </p>
+          <p className="font-sans text-[13px] leading-relaxed">
+            Sorry we missed your call. We will ring you back shortly. Reply with what you need and we
+            will call prepared.
+          </p>
+        </motion.div>
+
+        {/* Step 3: they reply with the brief */}
+        <motion.div
+          className="max-w-[88%] rounded-2xl rounded-bl-sm border px-3.5 py-3 text-left"
           style={{
             borderColor: `${FUNNEL_COLOURS.gold}55`,
             backgroundColor: FUNNEL_COLOURS.ground,
           }}
-          initial={reduce ? false : {opacity: 0, y: 10}}
-          animate={{opacity: 1, y: 0}}
-          transition={{duration: 0.45, ease: [0.16, 1, 0.3, 1]}}
+          initial={reduce ? false : {opacity: 0, y: 12, scale: 0.96}}
+          whileInView={{opacity: 1, y: 0, scale: 1}}
+          viewport={{once: true, amount: 0.4}}
+          transition={{duration: 0.45, delay: reduce ? 0 : 1.05, ease: [0.16, 1, 0.3, 1]}}
         >
           <p
-            className="font-mono text-[9px] uppercase tracking-[0.18em] mb-2"
+            className="font-mono text-[8px] uppercase tracking-[0.16em] mb-1.5"
             style={{color: FUNNEL_COLOURS.goldDeep}}
           >
-            SMS · just now
+            Them · reply
           </p>
-          <p className="font-sans text-sm leading-relaxed" style={{color: FUNNEL_COLOURS.ink}}>
-            Sorry we missed your call. We will ring you back shortly. Reply with what you need and we
-            will call prepared.
+          <p className="font-sans text-[13px] leading-relaxed" style={{color: FUNNEL_COLOURS.ink}}>
+            Need a quote for a bathroom reno. Best after 3pm.
           </p>
+        </motion.div>
+
+        {/* Step 4: outcome */}
+        <motion.div
+          className="pt-1 flex items-center justify-between gap-3 border-t"
+          style={{borderColor: `${FUNNEL_COLOURS.ink}12`}}
+          initial={reduce ? false : {opacity: 0}}
+          whileInView={{opacity: 1}}
+          viewport={{once: true}}
+          transition={{delay: reduce ? 0 : 1.55, duration: 0.4}}
+        >
+          <p className="font-sans text-xs leading-snug" style={{color: FUNNEL_COLOURS.muted}}>
+            Brief in hand. Callback is one-to-one.
+          </p>
+          <span
+            className="shrink-0 font-mono text-[9px] font-bold uppercase tracking-[0.14em] px-2 py-1"
+            style={{
+              backgroundColor: FUNNEL_COLOURS.gold,
+              color: FUNNEL_COLOURS.ink,
+            }}
+          >
+            Prepared
+          </span>
         </motion.div>
       </div>
     </div>
