@@ -193,7 +193,7 @@ export const MISSED_CALL_COPY: FunnelProductCopy = {
   h1Personal: (b: string) =>
     `${b}, every missed call gets a reply before they dial the next business`,
   sub: 'When the phone rings out, they move on. We wire an automatic text-back so the lead stays yours, and we prove it on a live missed call before we hand it over.',
-  ctaLabel: 'Fix my missed calls · $790',
+  ctaLabel: 'Fix my missed calls · $750',
   proofLabel: 'The leak',
   proofHeadingLive: 'They called ready to say yes, and silence sent them elsewhere',
   proofHeadingGeneric: 'They called ready to say yes, and silence sent them elsewhere',
@@ -284,7 +284,7 @@ export const MISSED_CALL_COPY: FunnelProductCopy = {
   scopeLine:
     'One Australian business number. Works with mobile, landline, and most VoIP setups. Complex call-centre stacks get a same-day quote so the fixed price stays honest.',
   priceLabel: 'Investment',
-  price: '$790',
+  price: '$750',
   priceLead: 'Paid once, and we start. No quotes, no meetings, no scope creep.',
   guarantee:
     "Our promise: we prove the text-back works on a live missed call before we hand it over. If it doesn't fire, we keep working at no extra cost until it does.",
@@ -335,7 +335,7 @@ export const GOOGLE_PROFILE_COPY: FunnelProductCopy = {
   h1Personal: (b: string) =>
     `${b}, your Google profile is the first thing customers see. Right now it's working against you.`,
   sub: "Before anyone visits your website, they see your Google Business Profile: the map listing, the photos, the reviews, the hours. When it's thin or half-claimed, people quietly pick the business next to you that looks alive.",
-  ctaLabel: 'Fix my profile · $800',
+  ctaLabel: 'Fix my profile · $600',
   proofLabel: 'The front door',
   proofHeadingLive: 'Search your name, then your best competitor. That gap is the job.',
   proofHeadingGeneric: 'Search your name, then your best competitor. That gap is the job.',
@@ -422,7 +422,7 @@ export const GOOGLE_PROFILE_COPY: FunnelProductCopy = {
   scopeLine:
     'One Australian business location with a real address Google will accept. Service-area-only or no-address cases get a same-day straight answer. Ads, website SEO, and ongoing posting are out of scope.',
   priceLabel: 'Investment',
-  price: '$800',
+  price: '$600',
   priceLead: 'Paid once, and we start. No quotes, no meetings, no scope creep.',
   guarantee:
     "Our promise: if the profile isn't set up the way we described, we keep working at no extra cost until it is. If Google blocks the listing (for example no address), we tell you early and refund what we could not do.",

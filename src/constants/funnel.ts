@@ -48,7 +48,7 @@ export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
   {
     code: 'missed-call',
     title: 'Missed-Call Text-Back',
-    price: '$790',
+    price: '$750',
     blurb: 'Every missed call gets a reply before they dial the next business.',
     status: 'live',
     href: '/go/missed-call',
@@ -56,7 +56,7 @@ export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
   {
     code: 'google-profile',
     title: 'Google Profile Fix',
-    price: '$800',
+    price: '$600',
     blurb: 'Your Business Profile cleaned up so the right people find you first.',
     status: 'live',
     href: '/go/google-profile',
