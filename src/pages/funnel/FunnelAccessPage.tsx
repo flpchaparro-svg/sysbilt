@@ -6,13 +6,18 @@ import {
   Box,
   Building2,
   Check,
+  ChevronDown,
+  ChevronUp,
   Code2,
+  FileText,
   Globe2,
   LayoutTemplate,
+  Mail,
   Phone,
   Server,
   ShoppingBag,
   Sparkles,
+  Users,
   X,
 } from 'lucide-react'
 import {SysbiltLogo} from '../../components/SysbiltLogo'
@@ -30,6 +35,9 @@ import {
   DOMAIN_REGISTRARS,
   HOSTING_PROVIDERS,
   type AccessPathId,
+  type CrmGoalId,
+  type CrmLeadSourceId,
+  type CrmSystemId,
   type FunnelAccessPayload,
   type PhoneSetupId,
   type PlatformId,
@@ -52,10 +60,20 @@ type StepId =
   | 'email'
   | 'business'
   | 'website'
+  | 'websiteUrl'
   | 'phone'
   | 'phoneSetup'
   | 'profileUrl'
   | 'profileStatus'
+  | 'crmSystem'
+  | 'leadSource'
+  | 'crmGoal'
+  | 'sessionFormat'
+  | 'teamSize'
+  | 'teamTools'
+  | 'timeEaters'
+  | 'sensitiveData'
+  | 'dateWindow'
   | 'platform'
   | 'provider'
   | 'domainProvider'
@@ -88,13 +106,27 @@ const PHASES_GOOGLE: {id: PhaseId; n: number; label: string}[] = [
   {id: 'done', n: 4, label: 'Done'},
 ]
 
+const PHASES_CRM: {id: PhaseId; n: number; label: string}[] = [
+  {id: 'about', n: 1, label: 'About you'},
+  {id: 'site', n: 2, label: 'Your system'},
+  {id: 'access', n: 3, label: 'Access'},
+  {id: 'done', n: 4, label: 'Done'},
+]
+
+const PHASES_TEAM: {id: PhaseId; n: number; label: string}[] = [
+  {id: 'about', n: 1, label: 'About you'},
+  {id: 'site', n: 2, label: 'Your work'},
+  {id: 'access', n: 3, label: 'Date window'},
+  {id: 'done', n: 4, label: 'Done'},
+]
+
 function phaseIndex(phase: PhaseId, phases: typeof PHASES_SPEED): number {
   return phases.findIndex((p) => p.id === phase)
 }
 
 function phaseForStep(
   step: StepId,
-  kind: 'speed' | 'missed-call' | 'google-profile',
+  kind: 'speed' | 'missed-call' | 'google-profile' | 'crm-rescue' | 'team-ai',
 ): PhaseId {
   if (step === 'done') return 'done'
   if (
@@ -111,6 +143,29 @@ function phaseForStep(
   }
   if (kind === 'google-profile') {
     if (step === 'profileUrl' || step === 'profileStatus') return 'site'
+    return 'access'
+  }
+  if (kind === 'crm-rescue') {
+    if (
+      step === 'websiteUrl' ||
+      step === 'crmSystem' ||
+      step === 'leadSource' ||
+      step === 'crmGoal'
+    ) {
+      return 'site'
+    }
+    return 'access'
+  }
+  if (kind === 'team-ai') {
+    if (
+      step === 'sessionFormat' ||
+      step === 'teamSize' ||
+      step === 'teamTools' ||
+      step === 'timeEaters' ||
+      step === 'sensitiveData'
+    ) {
+      return 'site'
+    }
     return 'access'
   }
   if (step === 'website') return 'about'
@@ -401,6 +456,269 @@ const GOOGLE_PROFILE_ACCESS_OPTIONS: {
   },
 ]
 
+const CRM_SYSTEM_OPTIONS: {
+  id: CrmSystemId
+  label: string
+  blurb: string
+  icon: React.ReactNode
+  unsure?: boolean
+}[] = [
+  {
+    id: 'hubspot',
+    label: 'HubSpot',
+    blurb: 'Free or paid. We rescue the setup you already have.',
+    icon: <Building2 className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'pipedrive',
+    label: 'Pipedrive',
+    blurb: 'Pipeline CRM. We wire alerts and follow-up into it.',
+    icon: <LayoutTemplate className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'salesforce',
+    label: 'Salesforce',
+    blurb: 'Larger CRM. We keep scope tight on lead handling.',
+    icon: <Server className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'zoho',
+    label: 'Zoho',
+    blurb: 'Zoho CRM or similar. We work with what you pay for.',
+    icon: <Box className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'monday',
+    label: 'Monday / other board',
+    blurb: 'Boards and lists counting as your CRM today.',
+    icon: <Sparkles className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'sheets',
+    label: 'Spreadsheet',
+    blurb: 'Google Sheets or Excel is the current system of record.',
+    icon: <LayoutTemplate className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'inbox',
+    label: 'Just email / inbox',
+    blurb: 'Leads land in a shared or personal inbox. Common and fixable.',
+    icon: <Globe2 className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'other',
+    label: 'Something else',
+    blurb: 'Tell us the name in the notes. We will work with it.',
+    icon: <Code2 className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'none',
+    label: 'Nothing yet',
+    blurb: 'We stand up HubSpot free tier as part of the rescue.',
+    icon: null,
+    unsure: true,
+  },
+]
+
+const CRM_LEAD_SOURCE_OPTIONS: {
+  id: CrmLeadSourceId
+  label: string
+  blurb: string
+  icon: React.ReactNode
+  unsure?: boolean
+}[] = [
+  {
+    id: 'form',
+    label: 'Website form',
+    blurb: 'Contact or quote forms are the main path.',
+    icon: <LayoutTemplate className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'phone',
+    label: 'Phone calls',
+    blurb: 'Most work starts on the phone.',
+    icon: <Phone className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'ads',
+    label: 'Paid ads',
+    blurb: 'Ad clicks become form fills or calls.',
+    icon: <Sparkles className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'social',
+    label: 'Social / DMs',
+    blurb: 'Instagram, Facebook, or LinkedIn messages.',
+    icon: <Globe2 className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'walk-in',
+    label: 'Walk-ins / referrals',
+    blurb: 'In person or word of mouth still needs a system.',
+    icon: <Building2 className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'mixed',
+    label: 'A mix',
+    blurb: 'More than one channel. We map them all.',
+    icon: <Box className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'unsure',
+    label: 'Not sure',
+    blurb: 'Fine. We will sort channels during the audit.',
+    icon: null,
+    unsure: true,
+  },
+]
+
+const CRM_GOAL_OPTIONS: {
+  id: CrmGoalId
+  label: string
+  blurb: string
+  icon: React.ReactNode
+}[] = [
+  {
+    id: 'speed',
+    label: 'Reply in seconds',
+    blurb: 'Instant first reply while the customer is still on the site.',
+    icon: <Sparkles className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'alerts',
+    label: 'Phone alerts',
+    blurb: 'The right phone buzzes the moment a lead arrives.',
+    icon: <Phone className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'follow-up',
+    label: 'Follow-up that runs itself',
+    blurb: 'Sequences that chase leads without someone remembering.',
+    icon: <Server className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'quotes',
+    label: 'Quotes chased',
+    blurb: 'Sent quotes get followed up until they win or die cleanly.',
+    icon: <Check className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'missed-call',
+    label: 'Missed-call text-back',
+    blurb: 'Included in the rescue. Flag if that is the biggest gap.',
+    icon: <Phone className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'full',
+    label: 'The full rescue',
+    blurb: 'Alerts, replies, follow-up, quotes, missed calls. All of it.',
+    icon: <Building2 className="w-full h-full" strokeWidth={1.25} />,
+  },
+]
+
+const CRM_ACCESS_OPTIONS: {
+  id: AccessPathId
+  label: string
+  blurb: string
+  icon: React.ReactNode
+}[] = [
+  {
+    id: 'invite',
+    label: 'CRM invite',
+    blurb: 'You invite us as a user or admin. No password sharing.',
+    icon: <Check className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'admin',
+    label: 'Admin login details',
+    blurb: 'You share a temporary admin path we can use for the build.',
+    icon: <Server className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'form-provider',
+    label: 'Form / email provider',
+    blurb: 'Typeform, Gravity Forms, Gmail, or the tool that catches leads today.',
+    icon: <Globe2 className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'call',
+    label: 'We will call you',
+    blurb: 'After we audit the form, we call to finish access. You do not book a sales chat.',
+    icon: <Phone className="w-full h-full" strokeWidth={1.25} />,
+  },
+]
+
+const TEAM_FORMAT_OPTIONS = [
+  {
+    id: 'remote' as const,
+    label: 'Remote',
+    blurb: 'Half-day on video. Everyone on their own laptop.',
+  },
+  {
+    id: 'onsite' as const,
+    label: 'Face-to-face · Sydney',
+    blurb: 'Same session, in person. We come to you in Sydney.',
+  },
+] as const
+
+const TEAM_SIZE_OPTIONS = [
+  {id: '2-4', label: '2 to 4 people', blurb: 'Small team. Plenty of hands-on time.'},
+  {id: '5-8', label: '5 to 8 people', blurb: 'Sweet spot for one remote session.'},
+  {id: '9-12', label: '9 to 12 people', blurb: 'Full room. Still one session.'},
+  {id: '13+', label: '13 or more', blurb: 'We will split into two sessions. Tell us in notes.'},
+] as const
+
+const TEAM_TOOL_OPTIONS = [
+  {id: 'chatgpt-personal', label: 'ChatGPT (personal)'},
+  {id: 'chatgpt-team', label: 'ChatGPT Team / Business'},
+  {id: 'copilot', label: 'Microsoft Copilot'},
+  {id: 'gemini', label: 'Google Gemini'},
+  {id: 'claude', label: 'Claude'},
+  {id: 'perplexity', label: 'Perplexity'},
+  {id: 'notion', label: 'Notion AI'},
+  {id: 'grammarly', label: 'Grammarly'},
+  {id: 'canva', label: 'Canva Magic Studio'},
+  {id: 'm365', label: 'Microsoft 365'},
+  {id: 'google-workspace', label: 'Google Workspace'},
+  {id: 'slack', label: 'Slack / Teams chat'},
+  {id: 'crm-ai', label: 'CRM with AI features'},
+  {id: 'image-ai', label: 'Image AI (Midjourney, etc.)'},
+  {id: 'all-of-these', label: 'A bit of everything'},
+  {id: 'none', label: 'Almost nothing yet'},
+] as const
+
+const TEAM_TOOL_PICK_IDS = TEAM_TOOL_OPTIONS.map((o) => o.id).filter(
+  (id) => id !== 'none' && id !== 'all-of-these',
+)
+
+const TEAM_TASK_OPTIONS = [
+  {id: 'quotes', label: 'Quotes and proposals'},
+  {id: 'follow-up', label: 'Client follow-up'},
+  {id: 'email', label: 'Email drafting'},
+  {id: 'reporting', label: 'Reporting and admin'},
+  {id: 'research', label: 'Research'},
+  {id: 'scheduling', label: 'Scheduling'},
+  {id: 'content', label: 'Content / posts'},
+  {id: 'support', label: 'Customer replies'},
+] as const
+
+const TEAM_SENSITIVE_OPTIONS = [
+  {id: 'client-names', label: 'Client names'},
+  {id: 'client-files', label: 'Client files / contracts'},
+  {id: 'medical', label: 'Medical or health info'},
+  {id: 'legal', label: 'Legal matters'},
+  {id: 'payroll', label: 'Payroll / HR'},
+  {id: 'financial', label: 'Financials / bank'},
+  {id: 'passwords', label: 'Passwords / logins'},
+  {id: 'unsure', label: 'Not sure yet · cover it all'},
+] as const
+
+const TEAM_TIMING_OPTIONS = [
+  {id: 'mornings', label: 'Weekday mornings', blurb: 'Roughly 9am to 12pm AEST.'},
+  {id: 'afternoons', label: 'Weekday afternoons', blurb: 'Roughly 1pm to 5pm AEST.'},
+  {id: 'flexible', label: 'Flexible', blurb: 'We will find a half-day that works.'},
+] as const
+
 function isValidName(value: string): boolean {
   const t = value.trim()
   if (t.length < 2) return false
@@ -476,6 +794,56 @@ function helpForStep(step: StepId): HelpBlock {
       return {
         title: 'How the phone is set up',
         body: 'This tells us how missed calls show up today. Hover a card, then Select. Not sure is fine.',
+      }
+    case 'websiteUrl':
+      return {
+        title: 'Website URL',
+        body: 'The live site people use to enquire. Skip if you do not have it handy. We can collect it after we audit what you send.',
+      }
+    case 'crmSystem':
+      return {
+        title: 'What catches leads today',
+        body: 'CRM, spreadsheet, shared inbox, or nothing. We rescue what you have before we suggest replacing it.',
+      }
+    case 'leadSource':
+      return {
+        title: 'How leads arrive',
+        body: 'Website form, phone, ads, social, or a mix. Pick the main path so we know where to wire alerts first.',
+      }
+    case 'crmGoal':
+      return {
+        title: 'What to fix first',
+        body: 'Speed of reply, phone alerts, follow-up, quote chasing, missed calls, or the full rescue. This steers the build.',
+      }
+    case 'sessionFormat':
+      return {
+        title: 'Remote or face-to-face',
+        body: 'Usually this is already set from what you paid. Confirm remote or Sydney face-to-face. The rest of the form is the same.',
+      }
+    case 'teamSize':
+      return {
+        title: 'How many people',
+        body: 'Pick a band. Up to 12 works best in one session. Bigger teams split into two.',
+      }
+    case 'teamTools':
+      return {
+        title: 'Tools and AI today',
+        body: 'Tap every option that fits, including unofficial personal accounts. Use “A bit of everything” if they bounce around tools. Almost nothing yet is fine. Type anything missing in the box below.',
+      }
+    case 'timeEaters':
+      return {
+        title: 'Time-hungry work',
+        body: 'Tap the tasks that eat the most hours. We build the session around those.',
+      }
+    case 'sensitiveData':
+      return {
+        title: 'What never goes in a prompt',
+        body: 'Tap anything that must stay out. This becomes part of the usage policy.',
+      }
+    case 'dateWindow':
+      return {
+        title: 'When can you run it',
+        body: 'Scroll how many days out you need (minimum 14). Then pick mornings, afternoons, or flexible. We confirm a tentative day after we review.',
       }
     case 'website':
       return {
@@ -558,7 +926,7 @@ function helpForStep(step: StepId): HelpBlock {
     case 'notes':
       return {
         title: 'Anything else',
-        body: 'Optional. Staging sites, plugins to leave alone, or people we should copy on updates. If nothing comes to mind, leave it blank and continue.',
+        body: 'Optional comment only. Staging quirks, part-time people, or a preference we should know. If the taps already cover it, leave blank and submit.',
       }
     default:
       return {
@@ -759,6 +1127,9 @@ const FunnelAccessPage: React.FC = () => {
   const [params] = useSearchParams()
   const prefilled = params.get('p')
   const initialProduct = isFunnelProductCode(prefilled) ? prefilled : null
+  const modeParam = params.get('m')?.trim().toLowerCase()
+  const initialSessionFormat: 'remote' | 'onsite' | null =
+    modeParam === 'remote' || modeParam === 'onsite' ? modeParam : null
 
   const [step, setStep] = useState<StepId>('product')
   const [product, setProduct] = useState<FunnelProductCode | null>(initialProduct)
@@ -770,6 +1141,22 @@ const FunnelAccessPage: React.FC = () => {
   const [phoneSetup, setPhoneSetup] = useState<PhoneSetupId | null>(null)
   const [profileUrl, setProfileUrl] = useState('')
   const [profileStatus, setProfileStatus] = useState<ProfileStatusId | null>(null)
+  const [websiteUrl, setWebsiteUrl] = useState('')
+  const [crmSystem, setCrmSystem] = useState<CrmSystemId | null>(null)
+  const [leadSource, setLeadSource] = useState<CrmLeadSourceId | null>(null)
+  const [crmGoal, setCrmGoal] = useState<CrmGoalId | null>(null)
+  const [sessionFormat, setSessionFormat] = useState<'remote' | 'onsite' | null>(
+    initialSessionFormat,
+  )
+  const [teamSize, setTeamSize] = useState('')
+  const [teamTools, setTeamTools] = useState<string[]>([])
+  const [teamToolsOther, setTeamToolsOther] = useState('')
+  const [timeEaters, setTimeEaters] = useState<string[]>([])
+  const [timeEatersOther, setTimeEatersOther] = useState('')
+  const [sensitiveData, setSensitiveData] = useState<string[]>([])
+  const [sensitiveOther, setSensitiveOther] = useState('')
+  const [sessionDaysOut, setSessionDaysOut] = useState(21)
+  const [sessionTiming, setSessionTiming] = useState<string | null>(null)
   const [platform, setPlatform] = useState<PlatformId | null>(null)
   const [sameProvider, setSameProvider] = useState<SameProviderId | null>(null)
   const [domainProvider, setDomainProvider] = useState('')
@@ -783,16 +1170,27 @@ const FunnelAccessPage: React.FC = () => {
 
   const isMissedCall = product === 'missed-call'
   const isGoogleProfile = product === 'google-profile'
-  const productKind: 'speed' | 'missed-call' | 'google-profile' = isMissedCall
-    ? 'missed-call'
-    : isGoogleProfile
-      ? 'google-profile'
-      : 'speed'
+  const isCrmRescue = product === 'crm-rescue'
+  const isTeamAi = product === 'team-ai'
+  const productKind: 'speed' | 'missed-call' | 'google-profile' | 'crm-rescue' | 'team-ai' =
+    isMissedCall
+      ? 'missed-call'
+      : isGoogleProfile
+        ? 'google-profile'
+        : isCrmRescue
+          ? 'crm-rescue'
+          : isTeamAi
+            ? 'team-ai'
+            : 'speed'
   const phases = isMissedCall
     ? PHASES_MISSED
     : isGoogleProfile
       ? PHASES_GOOGLE
-      : PHASES_SPEED
+      : isCrmRescue
+        ? PHASES_CRM
+        : isTeamAi
+          ? PHASES_TEAM
+          : PHASES_SPEED
 
   const stepOrder = useMemo((): StepId[] => {
     // Always show the product picker first so buyers see their purchase highlighted
@@ -825,6 +1223,41 @@ const FunnelAccessPage: React.FC = () => {
         'done',
       ]
     }
+    if (isCrmRescue) {
+      return [
+        'product',
+        'name',
+        'email',
+        'business',
+        'websiteUrl',
+        'crmSystem',
+        'leadSource',
+        'crmGoal',
+        'access',
+        'accessDetail',
+        'notes',
+        'done',
+      ]
+    }
+    if (isTeamAi) {
+      const teamSteps: StepId[] = [
+        'product',
+        'name',
+        'email',
+        'business',
+      ]
+      if (!initialSessionFormat) teamSteps.push('sessionFormat')
+      teamSteps.push(
+        'teamSize',
+        'teamTools',
+        'timeEaters',
+        'sensitiveData',
+        'dateWindow',
+        'notes',
+        'done',
+      )
+      return teamSteps
+    }
     const base: StepId[] = [
       'product',
       'name',
@@ -839,7 +1272,7 @@ const FunnelAccessPage: React.FC = () => {
     }
     base.push('access', 'accessDetail', 'notes', 'done')
     return base
-  }, [sameProvider, isMissedCall, isGoogleProfile])
+  }, [sameProvider, isMissedCall, isGoogleProfile, isCrmRescue, isTeamAi, initialSessionFormat])
 
   const stepIndex = Math.max(0, stepOrder.indexOf(step))
   const lineProgress =
@@ -857,7 +1290,9 @@ const FunnelAccessPage: React.FC = () => {
     ? MISSED_CALL_ACCESS_OPTIONS
     : isGoogleProfile
       ? GOOGLE_PROFILE_ACCESS_OPTIONS
-      : ACCESS_OPTIONS
+      : isCrmRescue
+        ? CRM_ACCESS_OPTIONS
+        : ACCESS_OPTIONS
 
   function goNext(from: StepId) {
     setError(null)
@@ -873,7 +1308,11 @@ const FunnelAccessPage: React.FC = () => {
   }
 
   async function submit() {
-    if (!product || !accessPath) {
+    if (!product) {
+      setError('Something is missing. Use Back to check your answers.')
+      return
+    }
+    if (!isTeamAi && !accessPath) {
       setError('Something is missing. Use Back to check your answers.')
       return
     }
@@ -884,6 +1323,28 @@ const FunnelAccessPage: React.FC = () => {
       }
     } else if (isGoogleProfile) {
       if (!profileStatus) {
+        setError('Something is missing. Use Back to check your answers.')
+        return
+      }
+    } else if (isCrmRescue) {
+      if (!crmSystem || !leadSource || !crmGoal) {
+        setError('Something is missing. Use Back to check your answers.')
+        return
+      }
+    } else if (isTeamAi) {
+      const toolsOk = teamTools.length >= 1 || teamToolsOther.trim().length >= 2
+      const tasksOk = timeEaters.length >= 1 || timeEatersOther.trim().length >= 2
+      const sensitiveOk =
+        sensitiveData.length >= 1 || sensitiveOther.trim().length >= 2
+      if (
+        !sessionFormat ||
+        !teamSize ||
+        !toolsOk ||
+        !tasksOk ||
+        !sensitiveOk ||
+        !sessionTiming ||
+        sessionDaysOut < 14
+      ) {
         setError('Something is missing. Use Back to check your answers.')
         return
       }
@@ -917,20 +1378,86 @@ const FunnelAccessPage: React.FC = () => {
             accessDetail: accessDetail.trim(),
             notes: notes.trim(),
           }
-        : {
-            product,
-            name: name.trim(),
-            email: email.trim(),
-            business: business.trim(),
-            website: website.trim(),
-            platform: platform!,
-            sameProvider: sameProvider!,
-            domainProvider: domainProvider.trim(),
-            hostingProvider: hostingProvider.trim(),
-            accessPath,
-            accessDetail: accessDetail.trim(),
-            notes: notes.trim(),
-          }
+        : isCrmRescue
+          ? {
+              product,
+              name: name.trim(),
+              email: email.trim(),
+              business: business.trim(),
+              websiteUrl: websiteUrl.trim(),
+              crmSystem: crmSystem!,
+              leadSource: leadSource!,
+              crmGoal: crmGoal!,
+              accessPath,
+              accessDetail: accessDetail.trim(),
+              notes: notes.trim(),
+            }
+          : isTeamAi
+            ? {
+                product,
+                name: name.trim(),
+                email: email.trim(),
+                business: business.trim(),
+                accessPath: 'call',
+                accessDetail: '',
+                notes: notes.trim(),
+                sessionFormat: sessionFormat!,
+                teamSize:
+                  TEAM_SIZE_OPTIONS.find((o) => o.id === teamSize)?.label || teamSize,
+                teamTools: (() => {
+                  const labels = teamTools
+                    .filter((id) => id !== 'all-of-these')
+                    .map((id) => TEAM_TOOL_OPTIONS.find((o) => o.id === id)?.label || id)
+                  if (teamTools.includes('all-of-these') && labels.length === 0) {
+                    labels.push('A bit of everything')
+                  }
+                  if (teamToolsOther.trim()) labels.push(teamToolsOther.trim())
+                  return labels.join(', ')
+                })(),
+                timeEaters: (() => {
+                  const labels = timeEaters.map(
+                    (id) => TEAM_TASK_OPTIONS.find((o) => o.id === id)?.label || id,
+                  )
+                  if (timeEatersOther.trim()) labels.push(timeEatersOther.trim())
+                  return labels.join(', ')
+                })(),
+                sensitiveData: (() => {
+                  const labels = sensitiveData.map(
+                    (id) => TEAM_SENSITIVE_OPTIONS.find((o) => o.id === id)?.label || id,
+                  )
+                  if (sensitiveOther.trim()) labels.push(sensitiveOther.trim())
+                  return labels.join(', ')
+                })(),
+                dateWindow: (() => {
+                  const start = new Date()
+                  start.setDate(start.getDate() + sessionDaysOut)
+                  const dateLabel = start.toLocaleDateString('en-AU', {
+                    weekday: 'short',
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric',
+                  })
+                  const timing =
+                    TEAM_TIMING_OPTIONS.find((o) => o.id === sessionTiming)?.label ||
+                    sessionTiming ||
+                    'Flexible'
+                  return `Earliest in ${sessionDaysOut} days (from ${dateLabel}). Prefer: ${timing}.`
+                })(),
+              }
+            : {
+                product,
+                name: name.trim(),
+                email: email.trim(),
+                business: business.trim(),
+                website: website.trim(),
+                platform: platform!,
+                sameProvider: sameProvider!,
+                domainProvider: domainProvider.trim(),
+                hostingProvider: hostingProvider.trim(),
+                accessPath,
+                accessDetail: accessDetail.trim(),
+                notes: notes.trim(),
+              }
     try {
       const res = await fetch('/api/funnel/access', {
         method: 'POST',
@@ -1278,6 +1805,282 @@ const FunnelAccessPage: React.FC = () => {
               </>
             ) : null}
 
+            {step === 'websiteUrl' ? (
+              <OneField
+                title="What is the website URL?"
+                hint="Optional but helpful. The site people use to enquire with you."
+                value={websiteUrl}
+                onChange={setWebsiteUrl}
+                placeholder="https://yourbusiness.com.au"
+                inputMode="url"
+                disabled={false}
+                onNext={() => goNext('websiteUrl')}
+                nextLabel={websiteUrl.trim() ? 'Continue' : 'Skip for now'}
+              />
+            ) : null}
+
+            {step === 'crmSystem' ? (
+              <>
+                <QuestionTitle>
+                  What catches leads <span style={{color: RED}}>today</span>?
+                </QuestionTitle>
+                <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
+                  CRM, inbox, spreadsheet, or nothing. Hover a card, then Select.
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+                  {CRM_SYSTEM_OPTIONS.map((opt) => (
+                    <div key={opt.id}>
+                      <SelectCard
+                        selected={crmSystem === opt.id}
+                        onSelect={() => {
+                          setCrmSystem(opt.id)
+                          setAccessPath(null)
+                          goNext('crmSystem')
+                        }}
+                        title={opt.label}
+                        blurb={opt.blurb}
+                        icon={opt.icon}
+                        unsure={opt.unsure}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : null}
+
+            {step === 'leadSource' ? (
+              <>
+                <QuestionTitle>
+                  How do leads <span style={{color: RED}}>usually</span> arrive?
+                </QuestionTitle>
+                <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
+                  Pick the main path. Mixed is fine.
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+                  {CRM_LEAD_SOURCE_OPTIONS.map((opt) => (
+                    <div key={opt.id}>
+                      <SelectCard
+                        selected={leadSource === opt.id}
+                        onSelect={() => {
+                          setLeadSource(opt.id)
+                          goNext('leadSource')
+                        }}
+                        title={opt.label}
+                        blurb={opt.blurb}
+                        icon={opt.icon}
+                        unsure={opt.unsure}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : null}
+
+            {step === 'crmGoal' ? (
+              <>
+                <QuestionTitle>
+                  What should this rescue <span style={{color: RED}}>fix</span> first?
+                </QuestionTitle>
+                <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
+                  Pick the outcome that matters most. Full rescue covers the lot.
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+                  {CRM_GOAL_OPTIONS.map((opt) => (
+                    <div key={opt.id}>
+                      <SelectCard
+                        selected={crmGoal === opt.id}
+                        onSelect={() => {
+                          setCrmGoal(opt.id)
+                          goNext('crmGoal')
+                        }}
+                        title={opt.label}
+                        blurb={opt.blurb}
+                        icon={opt.icon}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : null}
+
+            {step === 'sessionFormat' ? (
+              <>
+                <QuestionTitle>
+                  Remote or <span style={{color: RED}}>face-to-face</span>?
+                </QuestionTitle>
+                <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
+                  Same half-day either way. Face-to-face is Sydney only.
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 max-w-2xl">
+                  {TEAM_FORMAT_OPTIONS.map((opt) => (
+                    <div key={opt.id}>
+                      <SelectCard
+                        selected={sessionFormat === opt.id}
+                        onSelect={() => {
+                          setSessionFormat(opt.id)
+                          goNext('sessionFormat')
+                        }}
+                        title={opt.label}
+                        blurb={opt.blurb}
+                        icon={<Users className="w-full h-full" strokeWidth={1.25} />}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : null}
+
+            {step === 'teamSize' ? (
+              <>
+                <QuestionTitle>
+                  How many people will <span style={{color: RED}}>join</span>?
+                </QuestionTitle>
+                <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
+                  Tap a band. Up to 12 works best in one remote session.
+                </p>
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+                  {TEAM_SIZE_OPTIONS.map((opt) => (
+                    <div key={opt.id}>
+                      <SelectCard
+                        selected={teamSize === opt.id}
+                        onSelect={() => {
+                          setTeamSize(opt.id)
+                          goNext('teamSize')
+                        }}
+                        title={opt.label}
+                        blurb={opt.blurb}
+                        icon={<Users className="w-full h-full" strokeWidth={1.25} />}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : null}
+
+            {step === 'teamTools' ? (
+              <ChipPickStep
+                title={
+                  <>
+                    Tools and AI you use <span style={{color: RED}}>today</span>
+                  </>
+                }
+                hint="Tap every option that fits, including unofficial personal accounts. Missing one? Type it below. Then Continue."
+                options={TEAM_TOOL_OPTIONS}
+                selected={teamTools}
+                onToggle={(id) => {
+                  if (id === 'all-of-these') {
+                    setTeamTools((prev) =>
+                      prev.includes('all-of-these')
+                        ? []
+                        : ['all-of-these', ...TEAM_TOOL_PICK_IDS],
+                    )
+                    return
+                  }
+                  setTeamTools((prev) => {
+                    const next = toggleExclusiveChip(prev, id, 'none')
+                    return next.filter((x) => x !== 'all-of-these')
+                  })
+                }}
+                otherValue={teamToolsOther}
+                onOtherChange={setTeamToolsOther}
+                otherPlaceholder="e.g. Jasper, fireflies.ai, a custom GPT…"
+                otherHint="Something else, or almost nothing but a tool we missed"
+                disabled={teamTools.length < 1 && teamToolsOther.trim().length < 2}
+                onNext={() => goNext('teamTools')}
+              />
+            ) : null}
+
+            {step === 'timeEaters' ? (
+              <ChipPickStep
+                title={
+                  <>
+                    What work eats the most <span style={{color: RED}}>hours</span>?
+                  </>
+                }
+                hint="Tap the tasks that burn the most time. Missing one? Type it below."
+                options={TEAM_TASK_OPTIONS}
+                selected={timeEaters}
+                onToggle={(id) => setTimeEaters((prev) => toggleChip(prev, id))}
+                otherValue={timeEatersOther}
+                onOtherChange={setTimeEatersOther}
+                otherPlaceholder="e.g. job sheets, site visits write-ups…"
+                otherHint="Another time sink we did not list"
+                disabled={timeEaters.length < 1 && timeEatersOther.trim().length < 2}
+                onNext={() => goNext('timeEaters')}
+              />
+            ) : null}
+
+            {step === 'sensitiveData' ? (
+              <ChipPickStep
+                title={
+                  <>
+                    What must never go in a <span style={{color: RED}}>prompt</span>?
+                  </>
+                }
+                hint="Tap anything that stays out. Unsure is fine. Or type something specific below."
+                options={TEAM_SENSITIVE_OPTIONS}
+                selected={sensitiveData}
+                onToggle={(id) =>
+                  setSensitiveData((prev) => toggleExclusiveChip(prev, id, 'unsure'))
+                }
+                otherValue={sensitiveOther}
+                onOtherChange={setSensitiveOther}
+                otherPlaceholder="e.g. student records, supplier pricing…"
+                otherHint="Anything else that must stay out"
+                disabled={sensitiveData.length < 1 && sensitiveOther.trim().length < 2}
+                onNext={() => goNext('sensitiveData')}
+              />
+            ) : null}
+
+            {step === 'dateWindow' ? (
+              <div className="max-w-2xl mx-auto text-center py-4">
+                <QuestionTitle>
+                  When can you run the <span style={{color: RED}}>session</span>?
+                </QuestionTitle>
+                <p className="font-sans text-dark/55 mb-8 leading-relaxed">
+                  Scroll how many days out you need (minimum 14). Then pick mornings,
+                  afternoons, or flexible. We confirm a tentative day after we review.
+                </p>
+
+                <DaysOutStepper
+                  value={sessionDaysOut}
+                  onChange={setSessionDaysOut}
+                  min={14}
+                  max={90}
+                />
+
+                <p className="mt-8 mb-4 font-sans text-sm font-semibold text-dark/70">
+                  Prefer which part of the day?
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 text-left">
+                  {TEAM_TIMING_OPTIONS.map((opt) => (
+                    <div key={opt.id}>
+                      <SelectCard
+                        selected={sessionTiming === opt.id}
+                        onSelect={() => setSessionTiming(opt.id)}
+                        title={opt.label}
+                        blurb={opt.blurb}
+                        icon={<Sparkles className="w-full h-full" strokeWidth={1.25} />}
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-8 flex justify-center">
+                  <button
+                    type="button"
+                    disabled={!sessionTiming || sessionDaysOut < 14}
+                    onClick={() => goNext('dateWindow')}
+                    className="inline-flex items-center gap-2 font-mono font-bold uppercase tracking-[0.16em] text-xs px-10 py-4 text-white disabled:opacity-40 transition-opacity"
+                    style={{backgroundColor: INK}}
+                  >
+                    Continue
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            ) : null}
+
             {step === 'website' ? (
               <OneField
                 title="Which website are we fixing?"
@@ -1426,16 +2229,30 @@ const FunnelAccessPage: React.FC = () => {
             {step === 'notes' ? (
               <>
                 <OneField
-                  title="Anything else?"
-                  hint="Optional. Skip if you are done."
+                  title={isTeamAi ? 'Anything to add?' : 'Anything else?'}
+                  hint={
+                    isTeamAi
+                      ? 'Optional comment only. Skip if the taps above already cover it.'
+                      : 'Optional. Skip if you are done.'
+                  }
                   value={notes}
                   onChange={setNotes}
-                  placeholder="Optional"
+                  placeholder={
+                    isTeamAi
+                      ? 'e.g. two people are part-time, or we prefer Tuesdays…'
+                      : 'Optional'
+                  }
                   multiline
                   disabled={false}
                   onNext={() => void submit()}
                   allowEmpty
-                  nextLabel={submitting ? 'Sending…' : 'Submit and start the clock'}
+                  nextLabel={
+                    submitting
+                      ? 'Sending…'
+                      : isTeamAi
+                        ? 'Submit prep'
+                        : 'Submit and start the clock'
+                  }
                   nextDisabled={submitting}
                 />
                 {error ? (
@@ -1453,11 +2270,12 @@ const FunnelAccessPage: React.FC = () => {
                   <Check className="w-6 h-6" strokeWidth={2.5} />
                 </div>
                 <h1 className="font-serif text-3xl md:text-4xl tracking-tight text-dark mb-3">
-                  Access received. We are on it
+                  {isTeamAi ? 'Prep received. We are on it' : 'Access received. We are on it'}
                 </h1>
                 <p className="font-sans text-dark/65 leading-relaxed mb-8">
-                  Your delivery clock starts from this submission. If we need anything else, we will
-                  email {email || 'you'}, usually the same day.
+                  {isTeamAi
+                    ? `We will review what you sent, then call you to lock a tentative day inside your window. If we need anything else, we will email ${email || 'you'}.`
+                    : `Your delivery clock starts from this submission. If we need anything else, we will email ${email || 'you'}, usually the same day.`}
                 </p>
                 <Link
                   to={product ? `/go/${product}` : '/go'}
@@ -1481,6 +2299,193 @@ function QuestionTitle({children}: {children: React.ReactNode}) {
     <h1 className="font-serif text-3xl md:text-[2.4rem] tracking-tight text-dark mb-3 leading-[1.15] text-center md:text-left">
       {children}
     </h1>
+  )
+}
+
+function toggleChip(list: string[], id: string): string[] {
+  return list.includes(id) ? list.filter((x) => x !== id) : [...list, id]
+}
+
+/** When exclusiveId is selected, clear others. Selecting anything else clears exclusiveId. */
+function toggleExclusiveChip(list: string[], id: string, exclusiveId: string): string[] {
+  if (id === exclusiveId) {
+    return list.includes(exclusiveId) ? [] : [exclusiveId]
+  }
+  const withoutExclusive = list.filter((x) => x !== exclusiveId)
+  return withoutExclusive.includes(id)
+    ? withoutExclusive.filter((x) => x !== id)
+    : [...withoutExclusive, id]
+}
+
+function ChipPickStep({
+  title,
+  hint,
+  options,
+  selected,
+  onToggle,
+  disabled,
+  onNext,
+  nextLabel = 'Continue',
+  otherValue,
+  onOtherChange,
+  otherPlaceholder,
+  otherHint,
+}: {
+  title: React.ReactNode
+  hint: string
+  options: readonly {id: string; label: string}[]
+  selected: string[]
+  onToggle: (id: string) => void
+  disabled: boolean
+  onNext: () => void
+  nextLabel?: string
+  otherValue?: string
+  onOtherChange?: (v: string) => void
+  otherPlaceholder?: string
+  otherHint?: string
+}) {
+  return (
+    <div className="max-w-2xl mx-auto text-center py-4">
+      <QuestionTitle>{title}</QuestionTitle>
+      <p className="font-sans text-dark/55 mb-8 leading-relaxed">{hint}</p>
+      <div className="flex flex-wrap justify-center gap-2.5">
+        {options.map((opt) => {
+          const on = selected.includes(opt.id)
+          return (
+            <button
+              key={opt.id}
+              type="button"
+              onClick={() => onToggle(opt.id)}
+              className="inline-flex items-center gap-2 rounded-xl border px-4 py-3 font-sans text-sm font-semibold transition-[border-color,background-color,color] duration-200"
+              style={{
+                borderColor: on ? RED : 'rgba(26,26,26,0.14)',
+                backgroundColor: on ? 'rgba(226,30,63,0.08)' : '#fff',
+                color: on ? RED : INK,
+              }}
+            >
+              {on ? <Check className="w-3.5 h-3.5 shrink-0" strokeWidth={2.5} /> : null}
+              {opt.label}
+            </button>
+          )
+        })}
+      </div>
+      {onOtherChange ? (
+        <div className="mt-8 max-w-lg mx-auto text-left">
+          {otherHint ? (
+            <p className="font-sans text-sm text-dark/50 mb-2 text-center">{otherHint}</p>
+          ) : null}
+          <input
+            className={inputClass}
+            type="text"
+            value={otherValue || ''}
+            onChange={(e) => onOtherChange(e.target.value)}
+            placeholder={otherPlaceholder || 'Type anything else…'}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !disabled) onNext()
+            }}
+          />
+        </div>
+      ) : null}
+      <div className="mt-8 flex justify-center">
+        <button
+          type="button"
+          disabled={disabled}
+          onClick={onNext}
+          className="inline-flex items-center gap-2 font-mono font-bold uppercase tracking-[0.16em] text-xs px-10 py-4 text-white disabled:opacity-40 transition-opacity"
+          style={{backgroundColor: INK}}
+        >
+          {nextLabel}
+          <ArrowRight className="w-4 h-4" />
+        </button>
+      </div>
+    </div>
+  )
+}
+
+function DaysOutStepper({
+  value,
+  onChange,
+  min,
+  max,
+}: {
+  value: number
+  onChange: (n: number) => void
+  min: number
+  max: number
+}) {
+  const date = useMemo(() => {
+    const d = new Date()
+    d.setDate(d.getDate() + value)
+    return d.toLocaleDateString('en-AU', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    })
+  }, [value])
+
+  function bump(delta: number) {
+    onChange(Math.min(max, Math.max(min, value + delta)))
+  }
+
+  return (
+    <div
+      className="mx-auto max-w-sm rounded-2xl border border-dark/12 bg-white px-6 py-8 shadow-[0_8px_24px_-18px_rgba(26,26,26,0.28)]"
+      onWheel={(e) => {
+        e.preventDefault()
+        bump(e.deltaY > 0 ? 1 : -1)
+      }}
+    >
+      <p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-dark/45 mb-4">
+        Earliest in
+      </p>
+      <div className="flex items-center justify-center gap-5">
+        <button
+          type="button"
+          aria-label="Fewer days"
+          disabled={value <= min}
+          onClick={() => bump(-1)}
+          className="flex h-12 w-12 items-center justify-center rounded-full border border-dark/15 text-dark disabled:opacity-30 transition-opacity hover:border-[#E21E3F] hover:text-[#E21E3F]"
+        >
+          <ChevronDown className="w-5 h-5" strokeWidth={2} />
+        </button>
+        <div className="min-w-[7.5rem] text-center">
+          <div className="font-serif text-5xl tracking-tight text-dark tabular-nums leading-none">
+            {value}
+          </div>
+          <div className="mt-2 font-sans text-sm text-dark/55">days</div>
+        </div>
+        <button
+          type="button"
+          aria-label="More days"
+          disabled={value >= max}
+          onClick={() => bump(1)}
+          className="flex h-12 w-12 items-center justify-center rounded-full border border-dark/15 text-dark disabled:opacity-30 transition-opacity hover:border-[#E21E3F] hover:text-[#E21E3F]"
+        >
+          <ChevronUp className="w-5 h-5" strokeWidth={2} />
+        </button>
+      </div>
+      <p className="mt-6 font-sans text-sm text-dark/60 leading-relaxed">
+        Roughly from <span className="font-semibold text-dark">{date}</span>
+      </p>
+      <div className="mt-5 flex justify-center gap-2">
+        {[14, 21, 28, 42].map((n) => (
+          <button
+            key={n}
+            type="button"
+            onClick={() => onChange(n)}
+            className="rounded-lg px-3 py-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.14em] transition-colors"
+            style={{
+              backgroundColor: value === n ? INK : 'transparent',
+              color: value === n ? '#fff' : 'rgba(26,26,26,0.45)',
+              border: value === n ? 'none' : '1px solid rgba(26,26,26,0.12)',
+            }}
+          >
+            {n}d
+          </button>
+        ))}
+      </div>
+    </div>
   )
 }
 

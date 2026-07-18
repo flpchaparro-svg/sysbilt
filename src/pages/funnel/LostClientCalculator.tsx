@@ -200,22 +200,37 @@ export function LostClientCalculator({
   variant = 'speed',
   theme = 'dark',
 }: {
-  variant?: 'speed' | 'missed-call' | 'google-profile' | 'search-fix' | 'landing-page'
+  variant?:
+    | 'speed'
+    | 'missed-call'
+    | 'google-profile'
+    | 'search-fix'
+    | 'landing-page'
+    | 'crm-rescue'
+    | 'team-ai'
   theme?: 'dark' | 'cream'
 }) {
   const rootRef = useRef<HTMLDivElement>(null)
   const inView = useInView(rootRef, {once: true, amount: 0.35})
   const reduce = useReducedMotion()
   const isLanding = variant === 'landing-page'
-  const [value, setValue] = useState(isLanding ? 2000 : DEFAULT_VALUE)
-  const [lost, setLost] = useState(variant === 'search-fix' ? 4 : DEFAULT_LOST)
+  const isTeam = variant === 'team-ai'
+  const [value, setValue] = useState(isLanding ? 2000 : isTeam ? 8 : DEFAULT_VALUE)
+  const [lost, setLost] = useState(
+    isTeam ? 3 : variant === 'search-fix' ? 4 : variant === 'crm-rescue' ? 3 : DEFAULT_LOST,
+  )
+  const [hourlyRate, setHourlyRate] = useState(75)
   const [valueDirty, setValueDirty] = useState(false)
   const [lostDirty, setLostDirty] = useState(false)
+  const [rateDirty, setRateDirty] = useState(false)
   const [display, setDisplay] = useState(0)
 
+  const teamHours = Math.max(0, value) * Math.max(0, lost) * 52
   const yearly = isLanding
     ? Math.max(0, value) * 12
-    : Math.max(0, value) * Math.max(0, lost) * 12
+    : isTeam
+      ? teamHours * Math.max(0, hourlyRate)
+      : Math.max(0, value) * Math.max(0, lost) * 12
   const fromRef = useRef(0)
   const cream = theme === 'cream'
   const ink = cream ? FUNNEL_COLOURS.ink : FUNNEL_COLOURS.onInk
@@ -278,21 +293,40 @@ export function LostClientCalculator({
         >
           {isLanding
             ? "What's riding on where the click lands"
-            : variant === 'search-fix'
-              ? "What's being findable worth to you"
-              : "What's one lost client worth to you"}
+            : isTeam
+              ? "What's on the table across the whole team"
+              : variant === 'search-fix'
+                ? "What's being findable worth to you"
+                : variant === 'crm-rescue'
+                  ? "What's one quiet enquiry worth to you"
+                  : "What's one lost client worth to you"}
         </h3>
 
-        <div className="flex flex-col md:flex-row md:items-stretch gap-2 md:gap-0">
+        <div
+          className={
+            isTeam
+              ? 'flex flex-col lg:flex-row lg:items-stretch gap-2 lg:gap-0'
+              : 'flex flex-col md:flex-row md:items-stretch gap-2 md:gap-0'
+          }
+        >
           <StepperField
-            label={isLanding ? 'Monthly ad spend' : 'Average client worth'}
-            prefix="$"
+            label={
+              isLanding ? 'Monthly ad spend' : isTeam ? 'People on the team' : 'Average client worth'
+            }
+            prefix={isTeam ? undefined : '$'}
             value={value}
-            step={100}
+            step={isTeam ? 1 : 100}
+            min={isTeam ? 1 : 0}
             dirty={valueDirty}
             onDirty={() => setValueDirty(true)}
             onChange={setValue}
-            ariaLabel={isLanding ? 'Monthly ad spend in dollars' : 'Average client value in dollars'}
+            ariaLabel={
+              isLanding
+                ? 'Monthly ad spend in dollars'
+                : isTeam
+                  ? 'People on the team'
+                  : 'Average client value in dollars'
+            }
             pulseArrows={inView && !reduce}
             theme={theme}
           />
@@ -300,36 +334,68 @@ export function LostClientCalculator({
           {!isLanding ? (
             <>
               <div
-                className="hidden md:block w-px mx-8 shrink-0 self-stretch"
+                className={`hidden ${isTeam ? 'lg' : 'md'}:block w-px mx-6 xl:mx-8 shrink-0 self-stretch`}
                 style={{backgroundColor: `${ink}14`}}
                 aria-hidden
               />
 
               <StepperField
                 label={
-                  variant === 'missed-call'
-                    ? 'Missed calls a month'
-                    : variant === 'google-profile'
-                      ? 'Lost to a thin profile'
-                      : variant === 'search-fix'
-                        ? 'Clients a month via Google'
-                        : 'Lost to a slow site'
+                  isTeam
+                    ? 'Hours a week each could hand to AI'
+                    : variant === 'missed-call'
+                      ? 'Missed calls a month'
+                      : variant === 'crm-rescue'
+                        ? 'Enquiries a month that go quiet'
+                        : variant === 'google-profile'
+                          ? 'Lost to a thin profile'
+                          : variant === 'search-fix'
+                            ? 'Clients a month via Google'
+                            : 'Lost to a slow site'
                 }
-                suffix="/ month"
+                suffix={isTeam ? '/ week' : '/ month'}
                 value={lost}
                 step={1}
                 dirty={lostDirty}
                 onDirty={() => setLostDirty(true)}
                 onChange={setLost}
                 ariaLabel={
-                  variant === 'missed-call'
-                    ? 'Missed calls per month'
-                    : variant === 'google-profile'
-                      ? 'Customers lost to a thin profile per month'
-                      : variant === 'search-fix'
-                        ? 'Clients a month who find you through Google'
-                        : 'Enquiries lost per month'
+                  isTeam
+                    ? 'Hours a week each person could hand to AI'
+                    : variant === 'missed-call'
+                      ? 'Missed calls per month'
+                      : variant === 'crm-rescue'
+                        ? 'Enquiries a month that go quiet'
+                        : variant === 'google-profile'
+                          ? 'Customers lost to a thin profile per month'
+                          : variant === 'search-fix'
+                            ? 'Clients a month who find you through Google'
+                            : 'Enquiries lost per month'
                 }
+                pulseArrows={inView && !reduce}
+                theme={theme}
+              />
+            </>
+          ) : null}
+
+          {isTeam ? (
+            <>
+              <div
+                className="hidden lg:block w-px mx-6 xl:mx-8 shrink-0 self-stretch"
+                style={{backgroundColor: `${ink}14`}}
+                aria-hidden
+              />
+              <StepperField
+                label="Average cost of one hour"
+                prefix="$"
+                suffix="/ hr"
+                value={hourlyRate}
+                step={5}
+                min={10}
+                dirty={rateDirty}
+                onDirty={() => setRateDirty(true)}
+                onChange={setHourlyRate}
+                ariaLabel="Average cost of one staff hour in dollars"
                 pulseArrows={inView && !reduce}
                 theme={theme}
               />
@@ -351,15 +417,27 @@ export function LostClientCalculator({
           >
             {isLanding
               ? `That's ${formatMoney(display)} a year riding on the first five seconds after the click.`
-              : `That's ${formatMoney(display)} a year, walking next door.`}
+              : isTeam
+                ? `That's ${formatMoney(display)} a year across the team.`
+                : `That's ${formatMoney(display)} a year, walking next door.`}
           </motion.p>
+          {isTeam ? (
+            <p
+              className="mt-2 font-sans text-base md:text-lg leading-relaxed"
+              style={{color: cream ? FUNNEL_COLOURS.muted : `${FUNNEL_COLOURS.onInk}70`}}
+            >
+              {formatGrouped(teamHours)} hours × {formatMoney(hourlyRate)} an hour.
+            </p>
+          ) : null}
           <p
             className="mt-2 font-serif text-3xl md:text-4xl lg:text-[2.75rem] tracking-tight leading-tight"
             style={{color: goldLine}}
           >
             {isLanding
               ? 'The page that catches it costs less than one month of that.'
-              : 'The fix costs less than one of them.'}
+              : isTeam
+                ? 'The afternoon that unlocks them costs less than one week of one salary.'
+                : 'The fix costs less than one of them.'}
           </p>
           <p
             className="mt-3 font-sans text-sm leading-relaxed max-w-xl"

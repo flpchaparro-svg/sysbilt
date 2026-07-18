@@ -490,12 +490,388 @@ function ThreeDayCalendarVisual({reduce}: VisualProps) {
   )
 }
 
+/** CRM Rescue: every enquiry answered in seconds. */
+function CrmInstantReplyVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+          New form enquiry
+        </span>
+        <span className="font-mono text-[7px] font-bold uppercase tracking-wide text-gold-on-cream">
+          Auto-reply
+        </span>
+      </div>
+      <div className="flex-1 p-2.5 space-y-1.5">
+        <motion.div
+          className="rounded-sm border border-dark/10 bg-cream px-2 py-1.5"
+          initial={{opacity: 0, x: -8}}
+          whileInView={{opacity: 1, x: 0}}
+          viewport={{once: true}}
+          transition={{delay: reduce ? 0 : 0.15}}
+        >
+          <p className="font-mono text-[7px] text-dark/40">Lead</p>
+          <p className="font-sans text-[10px] text-dark/70">Website form · just now</p>
+        </motion.div>
+        <motion.div
+          className="rounded-sm border px-2 py-1.5"
+          style={{borderColor: `${colors.teal}55`, backgroundColor: `${colors.teal}12`}}
+          initial={{opacity: 0, x: 8}}
+          whileInView={{opacity: 1, x: 0}}
+          viewport={{once: true}}
+          transition={{delay: reduce ? 0 : 0.45}}
+        >
+          <p className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
+            Instant reply sent · 4s
+          </p>
+          <p className="font-sans text-[10px] text-dark/65">Thanks — we got it. Someone will follow up.</p>
+        </motion.div>
+      </div>
+    </div>
+  )
+}
+
+/** CRM Rescue: right phone buzzes. */
+function CrmRightPhoneVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white p-2.5">
+      <p className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/40 mb-2">Route to</p>
+      <div className="space-y-1.5">
+        {[
+          {who: 'Sales · Jordan', ok: true},
+          {who: 'Ops inbox', ok: false},
+          {who: 'Owner CC', ok: false},
+        ].map((row, i) => (
+          <motion.div
+            key={row.who}
+            className="flex items-center justify-between rounded-sm border px-2 py-1.5"
+            initial={{
+              opacity: 0.35,
+              borderColor: 'rgba(26,26,26,0.12)',
+              backgroundColor: colors.cream,
+            }}
+            whileInView={
+              row.ok
+                ? {
+                    opacity: 1,
+                    borderColor: colors.teal,
+                    backgroundColor: `${colors.teal}14`,
+                  }
+                : {opacity: 0.45}
+            }
+            viewport={{once: true}}
+            transition={{delay: reduce ? 0 : 0.2 + i * 0.2}}
+          >
+            <span className="font-sans text-[11px] text-dark/75">{row.who}</span>
+            {row.ok ? (
+              <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
+                Buzzing
+              </span>
+            ) : (
+              <span className="font-mono text-[7px] uppercase tracking-wide text-dark/30">Skip</span>
+            )}
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** CRM Rescue: quotes chased. */
+function CrmQuoteChaseVisual({reduce}: VisualProps) {
+  const steps = [
+    {label: 'Quote sent', done: true},
+    {label: 'Day 2 nudge', done: true},
+    {label: 'Day 5 chase', done: false},
+  ]
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+          Open quote · kitchen reno
+        </span>
+      </div>
+      <div className="flex-1 flex items-center gap-1.5 p-2.5">
+        {steps.map((s, i) => (
+          <motion.div
+            key={s.label}
+            className="flex-1 rounded-sm border px-1.5 py-2 text-center"
+            initial={{opacity: 0.4, y: 6}}
+            whileInView={{
+              opacity: 1,
+              y: 0,
+              borderColor: s.done ? colors.teal : 'rgba(26,26,26,0.15)',
+              backgroundColor: s.done ? `${colors.teal}14` : colors.cream,
+            }}
+            viewport={{once: true}}
+            transition={{delay: reduce ? 0 : 0.2 + i * 0.25}}
+          >
+            <p className="font-mono text-[7px] uppercase tracking-wide text-dark/50 leading-tight">
+              {s.label}
+            </p>
+            <motion.span
+              className="mt-1.5 inline-block h-1.5 w-1.5 rounded-full"
+              style={{backgroundColor: s.done ? colors.teal : 'rgba(26,26,26,0.2)'}}
+              initial={{scale: 0}}
+              whileInView={{scale: 1}}
+              viewport={{once: true}}
+              transition={{delay: reduce ? 0 : 0.35 + i * 0.25}}
+            />
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** CRM Rescue: five business days — not Missed-Call’s three. */
+function CrmFiveDayVisual({reduce}: VisualProps) {
+  const cells = [
+    {label: 'D1–3', sub: 'Build'},
+    {label: 'D4–5', sub: 'Walkthrough'},
+  ]
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-7 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+          Delivery window
+        </span>
+        <span className="font-mono text-[8px] font-bold uppercase tracking-[0.12em] text-gold-on-cream">
+          Within 5 days
+        </span>
+      </div>
+      <div className="flex-1 grid grid-cols-2 gap-1.5 p-2">
+        {cells.map((c, i) => (
+          <motion.div
+            key={c.label}
+            className="border flex flex-col items-center justify-center"
+            initial={{
+              backgroundColor: colors.cream,
+              borderColor: 'rgba(26,26,26,0.15)',
+            }}
+            whileInView={{
+              backgroundColor: `${colors.teal}18`,
+              borderColor: colors.teal,
+            }}
+            viewport={{once: true, amount: 0.7}}
+            transition={{duration: 0.35, delay: reduce ? 0 : 0.25 + i * 0.35}}
+          >
+            <span className="font-serif text-lg text-dark leading-none">{c.label}</span>
+            <span className="mt-0.5 font-mono text-[6px] uppercase tracking-wide text-dark/45">
+              {c.sub}
+            </span>
+          </motion.div>
+        ))}
+      </div>
+      <motion.p
+        className="pb-2 text-center font-mono text-[7px] uppercase tracking-[0.14em]"
+        style={{color: colors.teal}}
+        initial={{opacity: 0}}
+        whileInView={{opacity: 1}}
+        viewport={{once: true}}
+        transition={{delay: reduce ? 0 : 0.95}}
+      >
+        Then 14 days watching · we call if it slips
+      </motion.p>
+    </div>
+  )
+}
+
 const SPEED_VISUALS = [FastBrowseVisual, RankRaceVisual, ProofEmailVisual, ThreeDayCalendarVisual]
 const MISSED_VISUALS = [
   StayWarmVisual,
   LoggedLeadVisual,
   TestSmsReceivedVisual,
   WithinThreeDaysVisual,
+]
+const CRM_VISUALS = [
+  CrmInstantReplyVisual,
+  CrmRightPhoneVisual,
+  CrmQuoteChaseVisual,
+  CrmFiveDayVisual,
+]
+
+/** Team AI: whole team shares the same setup. */
+function TeamSharedSetupVisual({reduce}: VisualProps) {
+  const seats = ['You', 'Sales', 'Ops', 'Admin']
+  return (
+    <div className="relative w-full rounded-sm border border-dark/12 bg-white flex flex-col">
+      <div className="h-7 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+          Shared workspace
+        </span>
+        <span className="font-mono text-[7px] font-bold uppercase tracking-wide text-gold-on-cream">
+          Same tools
+        </span>
+      </div>
+      <div className="grid grid-cols-4 gap-1.5 p-2.5 min-h-[88px]">
+        {seats.map((s, i) => (
+          <motion.div
+            key={s}
+            className="border flex flex-col items-center justify-center min-h-[72px]"
+            initial={{
+              backgroundColor: colors.cream,
+              borderColor: 'rgba(26,26,26,0.12)',
+            }}
+            whileInView={{
+              backgroundColor: `${colors.teal}16`,
+              borderColor: colors.teal,
+            }}
+            viewport={{once: true}}
+            transition={{delay: reduce ? 0 : 0.15 + i * 0.12}}
+          >
+            <span className="font-mono text-[8px] uppercase tracking-wide text-dark/55">{s}</span>
+            <motion.span
+              className="mt-1.5 h-1.5 w-1.5 rounded-full"
+              style={{backgroundColor: colors.teal}}
+              initial={{opacity: 0}}
+              whileInView={{opacity: 1}}
+              viewport={{once: true}}
+              transition={{delay: reduce ? 0 : 0.35 + i * 0.12}}
+            />
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** Team AI: client data stays out of prompts. */
+function TeamSafeDataVisual({reduce}: VisualProps) {
+  const rows = [
+    {label: 'Client names', ok: false},
+    {label: 'Payroll files', ok: false},
+    {label: 'Approved templates', ok: true},
+  ]
+  return (
+    <div className="relative w-full rounded-sm border border-dark/12 bg-white p-3">
+      <p className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/40 mb-2.5">
+        Usage policy
+      </p>
+      <div className="space-y-2">
+        {rows.map((row, i) => (
+          <motion.div
+            key={row.label}
+            className="flex items-center justify-between rounded-sm border px-2.5 py-2"
+            initial={{opacity: 0.4}}
+            whileInView={{
+              opacity: 1,
+              borderColor: row.ok ? colors.teal : 'rgba(26,26,26,0.12)',
+              backgroundColor: row.ok ? `${colors.teal}14` : colors.cream,
+            }}
+            viewport={{once: true}}
+            transition={{delay: reduce ? 0 : 0.15 + i * 0.18}}
+          >
+            <span className="font-sans text-[12px] text-dark/75">{row.label}</span>
+            <span
+              className="font-mono text-[8px] font-bold uppercase tracking-wide"
+              style={{color: row.ok ? colors.teal : 'rgba(26,26,26,0.35)'}}
+            >
+              {row.ok ? 'Allowed' : 'Never'}
+            </span>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** Team AI: prompt library compounds — one head → shared library. */
+function TeamPromptLibraryVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative w-full rounded-sm border border-dark/12 bg-white flex min-h-[128px]">
+      <div className="w-[38%] border-r border-dark/10 bg-cream p-2.5 flex flex-col justify-center">
+        <p className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/40 mb-2">
+          One person
+        </p>
+        <motion.div
+          className="rounded-sm border px-2 py-2.5 text-center"
+          style={{borderColor: 'rgba(26,26,26,0.12)', backgroundColor: '#fff'}}
+          initial={{opacity: 1}}
+          whileInView={reduce ? undefined : {opacity: [1, 1, 0.35]}}
+          viewport={{once: true}}
+          transition={{duration: 1.4, times: [0, 0.45, 1]}}
+        >
+          <p className="font-sans text-[11px] text-dark/70 leading-tight">Tricks in one head</p>
+          <p className="mt-1 font-mono text-[7px] uppercase tracking-wide text-dark/35">Private</p>
+        </motion.div>
+      </div>
+      <div className="flex-1 p-2.5 flex flex-col">
+        <p className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/40 mb-2">
+          Shared library
+        </p>
+        <div className="space-y-1.5">
+          {['Quote opener', 'Follow-up', 'Job brief'].map((p, i) => (
+            <motion.div
+              key={p}
+              className="rounded-sm border px-2 py-1.5 flex items-center justify-between"
+              initial={{opacity: 0, y: 6, scaleX: 0.85}}
+              whileInView={{opacity: 1, y: 0, scaleX: 1}}
+              viewport={{once: true}}
+              transition={{delay: reduce ? 0 : 0.35 + i * 0.22, duration: 0.3}}
+              style={{
+                borderColor: `${colors.teal}55`,
+                backgroundColor: `${colors.teal}12`,
+                transformOrigin: 'left',
+              }}
+            >
+              <span className="font-sans text-[11px] text-dark/75">{p}</span>
+              <span className="font-mono text-[7px] uppercase tracking-wide" style={{color: colors.teal}}>
+                +{i + 1}
+              </span>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/** Team AI: 30-day check-in sticks. */
+function TeamSticksVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative w-full rounded-sm border border-dark/12 bg-white flex flex-col">
+      <div className="h-7 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+          After the day
+        </span>
+        <span className="font-mono text-[8px] font-bold uppercase tracking-[0.12em] text-gold-on-cream">
+          Day 30
+        </span>
+      </div>
+      <div className="flex items-center gap-3 p-3.5 min-h-[96px]">
+        <motion.div
+          className="font-serif text-4xl font-bold tabular-nums leading-none"
+          style={{color: colors.teal}}
+          initial={{opacity: 0.4, scale: 0.9}}
+          whileInView={{opacity: 1, scale: 1}}
+          viewport={{once: true}}
+          transition={{delay: reduce ? 0 : 0.2}}
+        >
+          30
+        </motion.div>
+        <div className="min-w-0">
+          <p className="font-mono text-[8px] uppercase tracking-widest text-dark/45">Day check-in</p>
+          <motion.p
+            className="font-sans text-[13px] text-dark/70 mt-1 leading-snug"
+            initial={{opacity: 0}}
+            whileInView={{opacity: 1}}
+            viewport={{once: true}}
+            transition={{delay: reduce ? 0 : 0.45}}
+          >
+            Tighten what works · fix what does not
+          </motion.p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const TEAM_AI_VISUALS = [
+  TeamSharedSetupVisual,
+  TeamSafeDataVisual,
+  TeamPromptLibraryVisual,
+  TeamSticksVisual,
 ]
 
 /** Categories / hours / services fill in. */
@@ -1146,7 +1522,14 @@ export function BenefitMotionRows({
   ink: string
   muted: string
   gold: string
-  variant?: 'speed' | 'missed-call' | 'google-profile' | 'search-fix' | 'landing-page'
+  variant?:
+    | 'speed'
+    | 'missed-call'
+    | 'google-profile'
+    | 'search-fix'
+    | 'landing-page'
+    | 'crm-rescue'
+    | 'team-ai'
 }) {
   const reduce = useReducedMotion()
   const visuals =
@@ -1158,7 +1541,11 @@ export function BenefitMotionRows({
           ? SEARCH_VISUALS
           : variant === 'landing-page'
             ? LANDING_VISUALS
-            : SPEED_VISUALS
+            : variant === 'crm-rescue'
+              ? CRM_VISUALS
+              : variant === 'team-ai'
+                ? TEAM_AI_VISUALS
+                : SPEED_VISUALS
 
   return (
     <div className="space-y-10 md:space-y-12">
@@ -1173,7 +1560,7 @@ export function BenefitMotionRows({
             viewport={{once: true, margin: '-60px'}}
             transition={{duration: 0.5, delay: i * 0.05, ease: [0.16, 1, 0.3, 1]}}
           >
-            <div>
+            <div className="flex flex-col justify-center">
               <p
                 className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] mb-2"
                 style={{color: gold}}
@@ -1187,8 +1574,10 @@ export function BenefitMotionRows({
                 {item.text}
               </p>
             </div>
-            <div className="border border-dark/10 bg-cream p-2 md:p-2.5 max-w-sm md:max-w-none md:ml-auto w-full">
-              <Visual reduce={reduce} />
+            <div className="flex items-center justify-center md:justify-end w-full self-center">
+              <div className="border border-dark/10 bg-cream p-2 md:p-2.5 w-full max-w-sm">
+                <Visual reduce={reduce} />
+              </div>
             </div>
           </motion.div>
         )

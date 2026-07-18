@@ -49,8 +49,15 @@ export type FunnelProductCopy = {
   finalLabel: string
   finalHeading: string
   finalLine: string
-  /** Proof UI: pagespeed dial vs missed-call vs Google profile vs index check vs ad landing */
-  proofKind: 'speed' | 'missed-call' | 'google-profile' | 'search-fix' | 'landing-page'
+  /** Proof UI: pagespeed dial vs missed-call vs Google profile vs index check vs ad landing vs CRM vs team recognition */
+  proofKind:
+    | 'speed'
+    | 'missed-call'
+    | 'google-profile'
+    | 'search-fix'
+    | 'landing-page'
+    | 'crm-rescue'
+    | 'team-ai'
 }
 
 export const SPEED_FIX_COPY: FunnelProductCopy = {
@@ -748,10 +755,288 @@ export const LANDING_PAGE_COPY: FunnelProductCopy = {
   proofKind: 'landing-page',
 }
 
+export const CRM_RESCUE_COPY: FunnelProductCopy = {
+  eyebrow: 'Fixed price · Working in five days · Your own system',
+  h1Generic: 'The enquiry that came through your website this week is still waiting',
+  h1Personal: (b: string) => `${b}, we enquired through your website, and no one replied`,
+  sub: "That's not an insult, it's the evidence that brought you here, and it's exactly how a real customer experienced your business. Enquiries are arriving. The system catching them is what's broken, and it's fixable in five days.",
+  ctaLabel: 'Rescue my leads · $2,800',
+  proofLabel: 'This is you, right now',
+  proofHeadingLive: 'This is you, right now',
+  proofHeadingGeneric: 'Try it now',
+  proofLead: (b: string | null) =>
+    b
+      ? `We sent a genuine enquiry through ${b}'s form. As of this morning, no reply has come back.`
+      : 'We sent a genuine enquiry through the form. As of this morning, no reply has come back.',
+  proofLeadGeneric:
+    'Fill in your own contact form from a personal email and start a timer. However long it takes anyone to reply, that is your real response time, and your customers already know it.',
+  proofAfter:
+    "We do this politely, one enquiry, withdrawn once you've seen this. Your customers don't withdraw theirs. They just buy elsewhere.",
+  proofAfterGeneric:
+    "Your customers don't start a timer. They open another tab. Whatever your reply time is, that is the race you're already in.",
+  painLabel: 'What this is costing you',
+  painHeading: 'Speed decides who wins the job, and silence is a speed',
+  painLines: [
+    "The first business to reply usually takes the work, while the customer's still sitting at the screen.",
+    "Your quotes don't die because of price. They die unfollowed, while someone else's follow-up lands.",
+    'Every enquiry you paid to attract is an appointment somebody on the team meant to make.',
+    "And to the customer, silence isn't neutral. It's an answer.",
+  ],
+  bridgeLabel: 'The fix',
+  bridgeHeading: 'One rescue, your existing system, working in five days',
+  bridgeBody:
+    "This isn't new software to learn or another subscription. We rescue the CRM or lead system you already have, so every enquiry lands somewhere owned, alerts the right phone in seconds, replies to the customer instantly, and chases every quote you send. The missed-call text-back is folded in, the same system we sell on its own. If you truly have nothing, we stand up a free starter CRM as part of the rescue.",
+  bridgeGaugeCaption:
+    'Enquiry in, alert on the phone, instant reply to the customer, quote follow-up queued. Working within five business days of access.',
+  benefitsLabel: 'What changes for you',
+  benefitsHeading: 'Outcomes, not jargon',
+  benefits: [
+    {
+      title: 'Every enquiry answered in seconds',
+      text: "The automatic first reply lands while the customer's still on your site, even when the whole team's with clients.",
+    },
+    {
+      title: 'The right phone buzzes instantly',
+      text: 'Alerts arrive like text messages. No dashboard to remember to check.',
+    },
+    {
+      title: 'Sent quotes get chased',
+      text: 'The follow-up sequence runs itself, because the quote that gets followed up is the quote that gets accepted.',
+    },
+    {
+      title: 'Your team actually uses it',
+      text: "Built phone-first and handed over in a 30-minute walkthrough on their own screens. If it needs a manual, we built it wrong.",
+    },
+  ],
+  processLabel: 'How it runs',
+  processHeading: 'Five days from silence to seconds',
+  processSteps: [
+    {
+      label: 'Days 1 to 3',
+      text: 'The build: pipeline, alerts, instant replies, quote follow-up, missed-call text-back.',
+    },
+    {
+      label: 'Days 4 to 5',
+      text: 'Live testing, the 30-minute team walkthrough, and the one-page cheat sheet.',
+    },
+    {
+      label: 'Then',
+      text: '14 days of us watching it run. We call you once we have what we need from the access form.',
+    },
+  ],
+  stackLabel: 'Everything included',
+  stackHeading: 'One price, the full rescue, nothing extra to buy',
+  stackItems: [
+    {
+      title: 'The complete lead-handling rescue',
+      text: 'On whatever CRM or lead system you already use. Brand does not matter. Setup does.',
+    },
+    {
+      title: 'Missed-Call Text-Back included',
+      text: 'The same product we sell on its own.',
+    },
+    {
+      title: 'Instant alerts, instant first replies, quote follow-up',
+      text: 'Automation that runs while the team is busy.',
+    },
+    {
+      title: 'The 30-minute team walkthrough',
+      text: 'Plus a one-page cheat sheet.',
+    },
+    {
+      title: 'Systems Snapshot',
+      text: "The one-page read on your wider systems, plus the one thing we'd fix next.",
+    },
+    {
+      title: '14 days of aftercare',
+      text: 'While it beds in.',
+    },
+  ],
+  scopeLine: "That's about two of the clients silence is already costing you, paid once.",
+  priceLabel: 'Investment',
+  price: '$2,800',
+  priceLead: 'Paid once, and we start. Fill the access form, we audit what you have, then we call you when we have what we need.',
+  guarantee:
+    "Our promise: if enquiries aren't being caught and chased the way we've described, we keep working at no extra cost until they are.",
+  priceAnchor: "That's about two of the clients silence is already costing you, paid once.",
+  faqLabel: 'Objections',
+  faqHeading: 'Straight answers before you buy',
+  faqs: [
+    {
+      q: 'We already have a CRM.',
+      a: "Most of our rescues do. The system isn't the problem, the setup is. We rescue what you have before we'd ever suggest replacing it.",
+    },
+    {
+      q: 'Is this refundable?',
+      a: "No change-of-mind refund, because we start straight away. Instead: if enquiries aren't caught and chased as described, we keep working free until they are.",
+    },
+    {
+      q: 'Are there ongoing costs?',
+      a: "Our fee is once. If you already pay for a CRM, that stays yours. If we stand a free starter CRM up for you because you had nothing, there is no monthly fee from us for the tools.",
+    },
+    {
+      q: 'Will my team actually use it?',
+      a: "It's phone-first, the alerts arrive like texts, and the handover happens on their screens. If it needs a manual, we built it wrong.",
+    },
+    {
+      q: 'How long does it take?',
+      a: 'Working within five business days of access. Most of that is us, not you.',
+    },
+    {
+      q: 'What happens after I pay?',
+      a: 'You fill a short access form about your system and goals. We audit what you sent, then we call you to confirm the start and any missing access. Build days one to three, walkthrough day four or five, then 14 days of us watching it run.',
+    },
+  ],
+  finalLabel: 'Last step',
+  finalHeading: 'Next week, the enquiry that went unanswered gets answered in seconds',
+  finalLine: "Every lead caught, every customer replied to, every quote chased, while you're busy doing the actual work.",
+  proofKind: 'crm-rescue',
+}
+
+export const TEAM_AI_COPY: FunnelProductCopy = {
+  eyebrow: 'Half a day · Your real work · Up to 12 people',
+  h1Generic: "Your team's already using AI, just badly, separately, and in secret",
+  h1Personal: (b: string) =>
+    `${b}, your team's already using AI, just badly, separately, and in secret`,
+  sub: 'One person has a trick for quotes. Another pastes client details into a tool nobody approved. Most are watching from the side. Half a day fixes that: shared setup, your actual tasks, working prompts, and rules everyone understands.',
+  ctaLabel: 'Book the remote session · $1,950',
+  proofLabel: 'Sound familiar',
+  proofHeadingLive: 'Three roles in almost every team',
+  proofHeadingGeneric: 'Three roles in almost every team',
+  proofLead: () =>
+    "That's not a talent problem. It's a setup problem, and setup takes an afternoon.",
+  proofLeadGeneric:
+    "That's not a talent problem. It's a setup problem, and setup takes an afternoon.",
+  proofAfter:
+    'The gains from AI show up when a whole team works the same way with the same guardrails.',
+  proofAfterGeneric:
+    'The gains from AI show up when a whole team works the same way with the same guardrails.',
+  painLabel: 'What this is costing you',
+  painHeading: 'The hours are being saved once, by one person',
+  painLines: [
+    "Your best experimenter's shortcuts save one salary's worth of time, not eight.",
+    'The tools your team already uses in private are exactly the ones nobody checked for client data.',
+    'Teams that set this up together this year pull ahead of teams that never make it official.',
+    'And the longer it stays unofficial, the harder the habits set around the wrong tools.',
+  ],
+  bridgeLabel: 'The fix',
+  bridgeHeading: 'Half a day, four blocks, no slideware',
+  bridgeBody:
+    "This isn't a webinar and it isn't a tool demo. It's a working session run on your business's real tasks, collected in a short form before the day, inside a workspace your business owns when we leave. Remote or face-to-face in Sydney, fixed price, paid once.",
+  bridgeGaugeCaption:
+    'Shared workspace, working prompts for real tasks, one-page usage policy, 30-day check-in.',
+  benefitsLabel: 'What changes for you',
+  benefitsHeading: 'Outcomes, not jargon',
+  benefits: [
+    {
+      title: 'The whole team works like your best experimenter',
+      text: 'Shared tools, shared prompts, same guardrails.',
+    },
+    {
+      title: 'Client data stays where it should',
+      text: 'The policy spells out what never goes into a prompt, and the workspace makes the safe path the easy path.',
+    },
+    {
+      title: 'The wins compound',
+      text: "Prompts live in a shared library your business owns, not in one person's head.",
+    },
+    {
+      title: 'It sticks',
+      text: "A 30-day check-in call to tighten what's working and fix what isn't.",
+    },
+  ],
+  processLabel: 'How it runs',
+  processHeading: 'Before the day, then four blocks',
+  processSteps: [
+    {
+      label: 'Before',
+      text: 'A short form on your tools, time-eaters, sensitive data, and a date range at least two weeks out.',
+    },
+    {
+      label: 'Blocks 1 and 2',
+      text: 'Foundation and safety rules, then working solutions for three of your most time-hungry tasks.',
+    },
+    {
+      label: 'Blocks 3 and 4',
+      text: 'Role prompts saved in a shared library, then the one-page policy and who owns what. 30-day check-in after.',
+    },
+  ],
+  stackLabel: 'Everything included',
+  stackHeading: 'One afternoon, everything included',
+  stackItems: [
+    {
+      title: 'The half-day session',
+      text: 'Up to 12 people, on your real work. Remote or face-to-face in Sydney.',
+    },
+    {
+      title: 'The configured AI workspace',
+      text: 'Owned by your business when we leave.',
+    },
+    {
+      title: 'Prompt library, recording, usage policy',
+      text: 'So the wins do not walk out with one person.',
+    },
+    {
+      title: '30-day check-in call',
+      text: 'Tighten what works. Fix what does not.',
+    },
+    {
+      title: 'Systems Snapshot',
+      text: "The one-page read on your wider systems, plus the one thing we'd fix next.",
+    },
+  ],
+  scopeLine: 'One afternoon, priced under a week of one salary, for hours back across the whole team.',
+  priceLabel: 'Investment',
+  price: 'From $1,950',
+  priceLead:
+    'Remote $1,950 or face-to-face in Sydney $2,400. Paid once. Fill the prep form with a date range at least two weeks out. We confirm a tentative day once we understand your work.',
+  guarantee:
+    "Our promise: if the team doesn't leave with working prompts and a setup they'll actually use, we come back and run it again at no extra cost.",
+  priceAnchor: 'One afternoon, priced under a week of one salary, for hours back across the whole team.',
+  faqLabel: 'Objections',
+  faqHeading: 'Straight answers before you buy',
+  faqs: [
+    {
+      q: 'Is this refundable?',
+      a: "No change-of-mind refund. Instead: if the team doesn't leave with working prompts and a setup they'll use, we run it again free.",
+    },
+    {
+      q: 'Remote or face-to-face?',
+      a: 'Same session either way. Remote is $1,950. Face-to-face in Sydney is $2,400. Pick the button that matches how you want to run it.',
+    },
+    {
+      q: 'How many people can join?',
+      a: 'Up to 12 works best, everyone gets hands on keyboards. Bigger teams split into two sessions, quoted fairly.',
+    },
+    {
+      q: 'Which AI tools do you set up?',
+      a: "The ones that fit your work and your budget, decided from your prep form. We're not resellers, so there's no commission steering the advice.",
+    },
+    {
+      q: 'What about client data and privacy?',
+      a: "That's block one. The usage policy spells out what never goes into a prompt, and the workspace is configured so the safe path is the easy path.",
+    },
+    {
+      q: 'Do people need to be technical?',
+      a: 'No. If they can write an email, they can do everything in this session.',
+    },
+    {
+      q: 'What happens after I pay?',
+      a: 'You fill a short prep form: team size, tools, time-eaters, sensitive data, and a date range at least two weeks out. We review it, then call you to lock a tentative day.',
+    },
+  ],
+  finalLabel: 'Last step',
+  finalHeading: 'One afternoon from now, the whole team works like your best experimenter',
+  finalLine: 'Shared setup. Real tasks. Prompts you own. Rules everyone understands.',
+  proofKind: 'team-ai',
+}
+
 export function funnelCopyForSlug(slug: string | undefined): FunnelProductCopy {
   if (slug === 'missed-call') return MISSED_CALL_COPY
   if (slug === 'google-profile') return GOOGLE_PROFILE_COPY
   if (slug === 'search-fix') return SEARCH_FIX_COPY
   if (slug === 'landing-page') return LANDING_PAGE_COPY
+  if (slug === 'crm-rescue') return CRM_RESCUE_COPY
+  if (slug === 'team-ai') return TEAM_AI_COPY
   return SPEED_FIX_COPY
 }

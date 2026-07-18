@@ -16,6 +16,8 @@ export const FUNNEL_PRODUCT_CODES = [
   'google-profile',
   'search-fix',
   'landing-page',
+  'crm-rescue',
+  'team-ai',
 ] as const
 
 export type FunnelProductCode = (typeof FUNNEL_PRODUCT_CODES)[number]
@@ -26,6 +28,8 @@ export const FUNNEL_PRODUCT_LABELS: Record<FunnelProductCode, string> = {
   'google-profile': 'Google Profile Fix',
   'search-fix': 'Search Visibility Fix',
   'landing-page': 'Campaign Landing Page',
+  'crm-rescue': 'CRM Rescue',
+  'team-ai': 'Team AI',
 }
 
 export type FunnelProductStatus = 'live' | 'soon'
@@ -81,6 +85,22 @@ export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
     status: 'live',
     href: '/go/landing-page',
   },
+  {
+    code: 'crm-rescue',
+    title: 'CRM Rescue',
+    price: '$2,800',
+    blurb: 'Five days. Every enquiry caught, answered in seconds, and chased.',
+    status: 'live',
+    href: '/go/crm-rescue',
+  },
+  {
+    code: 'team-ai',
+    title: 'Team AI',
+    price: 'From $1,950',
+    blurb: 'Half a day. Shared setup, real tasks, prompts the whole team owns.',
+    status: 'live',
+    href: '/go/team-ai',
+  },
 ]
 
 export function isFunnelProductCode(value: string | null | undefined): value is FunnelProductCode {
@@ -99,7 +119,14 @@ export function tallyAccessFormUrlForProduct(product: string | null | undefined)
 }
 
 /** Branded on-site access wizard path (preferred over Tally). Always keeps ?p= when present. */
-export function accessFormPathForProduct(product: string | null | undefined): string {
+export function accessFormPathForProduct(
+  product: string | null | undefined,
+  mode?: string | null,
+): string {
   if (!product || !String(product).trim()) return '/go/access'
-  return `/go/access?p=${encodeURIComponent(String(product).trim())}`
+  const params = new URLSearchParams()
+  params.set('p', String(product).trim())
+  const m = mode?.trim().toLowerCase()
+  if (m === 'remote' || m === 'onsite') params.set('m', m)
+  return `/go/access?${params.toString()}`
 }

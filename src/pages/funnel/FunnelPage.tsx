@@ -13,6 +13,8 @@ import {MissedCallPainCards} from './MissedCallPainCards'
 import {GoogleProfilePainCards} from './GoogleProfilePainCards'
 import {SearchPainCards} from './SearchPainCards'
 import {LandingPainCards} from './LandingPainCards'
+import {CrmPainCards} from './CrmPainCards'
+import {TeamRecognitionCards, TeamPainCards} from './TeamRecognitionCards'
 import {LostClientCalculator} from './LostClientCalculator'
 import {BenefitMotionRows} from './BenefitMotionRows'
 import {StackMotionRows} from './StackMotionRows'
@@ -27,6 +29,13 @@ import {SearchRecoveryMock} from './SearchRecoveryMock'
 import {AdEvidenceMoment, type AdEvidence} from './AdEvidenceMoment'
 import {LandingLeakPair} from './LandingLeakPair'
 import {LandingDoorMock} from './LandingDoorMock'
+import {CrmLeakPair} from './CrmLeakPair'
+import {CrmFixedThreadMock} from './CrmFixedThreadMock'
+import {
+  CrmEnquiryEvidenceCard,
+  type CrmEnquiryEvidence,
+} from './CrmEnquiryEvidenceCard'
+import {TeamSessionDeliverableMock} from './TeamSessionDeliverableMock'
 import {
   MissedCallEvidenceCard,
   type MissedCallEvidence,
@@ -179,6 +188,8 @@ const FunnelPage: React.FC = () => {
   const isGoogleProfile = proofKind === 'google-profile'
   const isSearchFix = proofKind === 'search-fix'
   const isLandingPage = proofKind === 'landing-page'
+  const isCrmRescue = proofKind === 'crm-rescue'
+  const isTeamAi = proofKind === 'team-ai'
   const isSpeed = proofKind === 'speed'
   const motionVariant = isMissedCall
     ? 'missed-call'
@@ -188,16 +199,24 @@ const FunnelPage: React.FC = () => {
         ? 'search-fix'
         : isLandingPage
           ? 'landing-page'
-          : 'speed'
+          : isCrmRescue
+            ? 'crm-rescue'
+            : isTeamAi
+              ? 'team-ai'
+              : 'speed'
   const calculatorVariant = isSpeed
     ? 'speed'
     : isMissedCall
       ? 'missed-call'
-      : isSearchFix
-        ? 'search-fix'
-        : isLandingPage
-          ? 'landing-page'
-          : 'google-profile'
+      : isCrmRescue
+        ? 'crm-rescue'
+        : isTeamAi
+          ? 'team-ai'
+          : isSearchFix
+            ? 'search-fix'
+            : isLandingPage
+              ? 'landing-page'
+              : 'google-profile'
   const missedEvidence: MissedCallEvidence = useMemo(() => {
     if (business && callDay && callTime) {
       return {mode: 'tested', business, day: callDay, time: callTime}
@@ -219,6 +238,12 @@ const FunnelPage: React.FC = () => {
     if (business) return {mode: 'live', business}
     return {mode: 'try'}
   }, [business])
+  const crmEvidence: CrmEnquiryEvidence = useMemo(() => {
+    if (business && callDay && callTime) {
+      return {mode: 'tested', business, day: callDay, time: callTime}
+    }
+    return {mode: 'try'}
+  }, [business, callDay, callTime])
 
   useEffect(() => {
     if (!slug) {
@@ -354,7 +379,9 @@ const FunnelPage: React.FC = () => {
 
           <section
             className={`mx-auto px-6 md:px-10 pb-16 md:pb-24 ${
-              isSpeed || isSearchFix || isLandingPage ? 'max-w-3xl' : 'max-w-5xl'
+              isSpeed || isSearchFix || isLandingPage || isCrmRescue || isTeamAi
+                ? 'max-w-3xl'
+                : 'max-w-5xl'
             }`}
           >
             <SectionRule />
@@ -372,19 +399,31 @@ const FunnelPage: React.FC = () => {
                     ? COPY.proofHeadingLive
                     : isLandingPage && adEvidence.mode === 'live'
                       ? COPY.proofHeadingLive
-                      : COPY.proofHeadingGeneric}
+                      : isCrmRescue && crmEvidence.mode === 'tested'
+                        ? COPY.proofHeadingLive
+                        : COPY.proofHeadingGeneric}
               </h2>
             </Reveal>
             {isMissedCall ? <MissedCallEvidenceCard evidence={missedEvidence} /> : null}
             {isGoogleProfile ? <GoogleProfileEvidenceCard evidence={profileEvidence} /> : null}
             {isSearchFix ? <IndexCheckMoment evidence={searchEvidence} /> : null}
             {isLandingPage ? <AdEvidenceMoment evidence={adEvidence} /> : null}
+            {isCrmRescue ? <CrmEnquiryEvidenceCard evidence={crmEvidence} /> : null}
+            {isTeamAi ? <TeamRecognitionCards /> : null}
             {!(isSearchFix && searchEvidence.mode === 'try') &&
-            !(isLandingPage && adEvidence.mode === 'try') ? (
+            !(isLandingPage && adEvidence.mode === 'try') &&
+            !(isCrmRescue && crmEvidence.mode === 'try') ? (
               <Reveal delay={0.12} y={12}>
                 <p
                   className={`font-sans text-base md:text-lg leading-relaxed max-w-2xl ${
-                    isMissedCall || isGoogleProfile || isSearchFix || isLandingPage ? 'mt-8' : ''
+                    isMissedCall ||
+                    isGoogleProfile ||
+                    isSearchFix ||
+                    isLandingPage ||
+                    isCrmRescue ||
+                    isTeamAi
+                      ? 'mt-8'
+                      : ''
                   }`}
                   style={{color: FUNNEL_COLOURS.muted}}
                 >
@@ -396,9 +435,13 @@ const FunnelPage: React.FC = () => {
                       ? COPY.proofLead(business)
                       : isLandingPage
                         ? COPY.proofLead(business)
-                        : business
+                        : isCrmRescue
                           ? COPY.proofLead(business)
-                          : COPY.proofLeadGeneric}
+                          : isTeamAi
+                            ? COPY.proofLeadGeneric
+                            : business
+                              ? COPY.proofLead(business)
+                              : COPY.proofLeadGeneric}
                 </p>
               </Reveal>
             ) : null}
@@ -478,6 +521,78 @@ const FunnelPage: React.FC = () => {
                   <LandingLeakPair />
                 </section>
               </>
+            ) : isCrmRescue ? (
+              <>
+                {crmEvidence.mode === 'tested' ? (
+                  <Reveal delay={0.08} y={12}>
+                    <p
+                      className="mt-6 font-sans text-base md:text-lg leading-relaxed max-w-2xl"
+                      style={{color: FUNNEL_COLOURS.muted}}
+                    >
+                      {COPY.proofAfter}
+                    </p>
+                  </Reveal>
+                ) : (
+                  <Reveal delay={0.08} y={12}>
+                    <p
+                      className="mt-6 font-sans text-base md:text-lg leading-relaxed max-w-2xl"
+                      style={{color: FUNNEL_COLOURS.muted}}
+                    >
+                      {COPY.proofAfterGeneric}
+                    </p>
+                  </Reveal>
+                )}
+                <section className="mt-12 md:mt-14">
+                  <Reveal y={10}>
+                    <SectionLabel>The leak</SectionLabel>
+                  </Reveal>
+                  <Reveal delay={0.06} y={14}>
+                    <h3
+                      className="font-serif font-bold text-2xl md:text-3xl tracking-tight mb-4 max-w-2xl"
+                      style={{color: FUNNEL_COLOURS.ink}}
+                    >
+                      Your leads land in an inbox nobody owns
+                    </h3>
+                  </Reveal>
+                  <Reveal delay={0.1} y={10}>
+                    <p
+                      className="font-sans text-base md:text-lg leading-relaxed max-w-2xl mb-2"
+                      style={{color: FUNNEL_COLOURS.muted}}
+                    >
+                      The form sends an email. The email sits between invoices and spam. Whoever
+                      notices it means well, but they&apos;re with a client, so it waits until
+                      tonight, and tonight becomes Thursday. Meanwhile the customer enquired with
+                      two other businesses, and one of them called back in ten minutes. You never
+                      lost the lead on price. You lost it on silence.
+                    </p>
+                  </Reveal>
+                  <CrmLeakPair />
+                </section>
+              </>
+            ) : isTeamAi ? (
+              <section className="mt-12 md:mt-14">
+                <Reveal y={10}>
+                  <SectionLabel>The leak</SectionLabel>
+                </Reveal>
+                <Reveal delay={0.06} y={14}>
+                  <h3
+                    className="font-serif font-bold text-2xl md:text-3xl tracking-tight mb-4 max-w-2xl"
+                    style={{color: FUNNEL_COLOURS.ink}}
+                  >
+                    Everyone experimenting alone means nobody compounding
+                  </h3>
+                </Reveal>
+                <Reveal delay={0.1} y={10}>
+                  <p
+                    className="font-sans text-base md:text-lg leading-relaxed max-w-2xl"
+                    style={{color: FUNNEL_COLOURS.muted}}
+                  >
+                    The gains from AI show up when a whole team works the same way with the same
+                    guardrails. Right now the wins live in one person&apos;s head, the risks live
+                    in personal accounts, and the sceptics are waiting for permission to care.
+                  </p>
+                </Reveal>
+              </section>
             ) : (
               <>
                 <ScoreMoment
@@ -533,6 +648,10 @@ const FunnelPage: React.FC = () => {
                 <SearchPainCards />
               ) : isLandingPage ? (
                 <LandingPainCards />
+              ) : isCrmRescue ? (
+                <CrmPainCards />
+              ) : isTeamAi ? (
+                <TeamPainCards />
               ) : (
                 <PainCostCards />
               )}
@@ -580,7 +699,11 @@ const FunnelPage: React.FC = () => {
               <div className="mt-10">
                 <LandingDoorMock />
               </div>
-            ) : (
+            ) : isCrmRescue ? (
+              <div className="mt-10">
+                <CrmFixedThreadMock />
+              </div>
+            ) : isTeamAi ? null : (
               <ScoreMoment score={90} mode="benchmark" />
             )}
           </section>
@@ -667,7 +790,7 @@ const FunnelPage: React.FC = () => {
             style={{backgroundColor: FUNNEL_COLOURS.inkSoft, color: FUNNEL_COLOURS.onInk}}
           >
             <div className="max-w-5xl mx-auto px-6 md:px-10">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-12 md:items-stretch">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-12 md:items-center">
                 <div className="flex flex-col justify-center">
                   <Reveal y={10}>
                     <p
@@ -722,6 +845,10 @@ const FunnelPage: React.FC = () => {
                   <SearchRecoveryMock compact onDark />
                 ) : isLandingPage ? (
                   <LandingDoorMock />
+                ) : isCrmRescue ? (
+                  <CrmFixedThreadMock />
+                ) : isTeamAi ? (
+                  <TeamSessionDeliverableMock />
                 ) : (
                   <ReportDeliverableMock />
                 )}

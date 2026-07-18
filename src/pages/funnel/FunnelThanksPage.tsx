@@ -9,7 +9,8 @@ import {FunnelPrimaryLink, FunnelLegalFooter} from './FunnelCtaBlock'
 const FunnelThanksPage: React.FC = () => {
   const [params] = useSearchParams()
   const product = params.get('p')
-  const formUrl = accessFormPathForProduct(product)
+  const mode = params.get('m')
+  const formUrl = accessFormPathForProduct(product, mode)
 
   return (
     <div className="min-h-screen bg-cream text-dark font-sans selection:bg-dark selection:text-cream">

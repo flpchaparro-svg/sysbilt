@@ -53,6 +53,9 @@ Deploy and guide scripts load the API key from `.env.local` (`cursor-mcp=` or `N
 | `o1ZMLHbfVJqokrsz` | SYSBILT - Outbound Landing Page Router | Active† | Schedule (~5 min) + Manual | Master Leads `LP Ads` = meta/yes/active/homepage/fit/ads → **Landing Page** tab (Ready/Wait); marks `LP Ads=routed` |
 | `kxksPyjKC6d8Wppk` | SYSBILT - Outbound Landing Page Send | Active† | Schedule (~5 min) + Manual | Landing Page `Status=Ready` → Gmail **draft** + `/go/landing-page?b=` → `Emailed` (does not send) |
 | `0qKPobJgkZihKTYa` | SYSBILT - Outbound Landing Page Tab Setup | Inactive† | Webhook | Create **Landing Page** tab + `LP Ads` header on Master Leads (`--setup-tab`) |
+| `CmezHVYgBUEpxCS4` | SYSBILT - Outbound CRM Rescue Router | Active† | Schedule (~5 min) + Manual | Master Leads `CRM Form` = silent/yes/48h/fit/noreply → **CRM Rescue** tab (Ready/Wait); marks `CRM Form=routed` |
+| `8DdXchq3UW9hFEjL` | SYSBILT - Outbound CRM Rescue Send | Active† | Schedule (~5 min) + Manual | CRM Rescue `Status=Ready` → Gmail **draft** + `/go/crm-rescue?b=&d=&t=` → `Emailed` (does not send) |
+| `T53jnilfscxPAfFG` | SYSBILT - Outbound CRM Rescue Tab Setup | Inactive† | Webhook | Create **CRM Rescue** tab + `CRM Form` header on Master Leads (`--setup-tab`) |
 | `WP2tZjhH27vJbOaV` | SYSBILT - Outbound Sheet Setup | UNVERIFIED | Webhook | Create outbound Google Sheet with headers (deploy `--setup-sheet`) |
 | `5h6SvE2hScz6KHh3` | SYSBILT - Outbound Sheet Headers | UNVERIFIED | Webhook | Repair headers after Google Tables conflicts (`--fix-sheet`) |
 | *(UNVERIFIED ID)* | SYSBILT - DM Lead Intake | UNVERIFIED | Webhook `sysbilt-dm-lead-intake` | ManyChat/DM leads → HubSpot → Slack → optional sheet log |
@@ -184,7 +187,7 @@ Google Sheet is the **source of truth** between workflows. **Master Leads** colu
 | B — Audit Runner | `zOZh6wE70PikOCqI` | `deploy-outbound-audit-runner.sh` |
 | C — HubSpot Engage | `WD3s1eD9aUQNUWY6` | `deploy-outbound-hubspot-engage.sh` |
 
-**Sheet ID:** `OUTBOUND_LEADS_SHEET_ID` in gitignored `.deploy-state.env`. Live sheet: `1aGz6kruGwSpt55rwlcknxVDXp9dgL_M-OnVJrDIbTlE` (**Master Leads** + **Run Queue** + **Speed Fix** + **Google Profile** + **Missed-Call** + **Search Visibility** + **Landing Page**). Master Leads column **P** = **SV Indexed** (Google `site:` count). Column **Q** = **LP Ads** (manual Meta Ad Library mark).
+**Sheet ID:** `OUTBOUND_LEADS_SHEET_ID` in gitignored `.deploy-state.env`. Live sheet: `1aGz6kruGwSpt55rwlcknxVDXp9dgL_M-OnVJrDIbTlE` (**Master Leads** + **Run Queue** + **Speed Fix** + **Google Profile** + **Missed-Call** + **Search Visibility** + **Landing Page** + **CRM Rescue**). Master Leads column **P** = **SV Indexed** (Google `site:` count). Column **Q** = **LP Ads** (manual Meta Ad Library mark). Column **R** = **CRM Form** (manual website form-silence mark).
 
 **Product tabs (Status):** `Ready` · `Wait` · `Emailed` · `Replied` · `Dead`. Flip **Wait → Ready** when product 1 went quiet and you want the next offer. Add the same data-validation list on each product Status column (G).
 
@@ -195,6 +198,7 @@ Google Sheet is the **source of truth** between workflows. **Master Leads** colu
 | Missed-Call | Phone + real Email | `deploy-outbound-missed-call-router.sh --setup-tab` / `-send.sh` |
 | Search Visibility | SV Indexed ≤ 5 **or** homepage `noindex` | `deploy-outbound-search-fix-scorer.sh --setup-tab` / `-send.sh` |
 | Landing Page | Manual: Master Leads **LP Ads** = `meta` / `yes` / `active` / `homepage` / `fit` / `ads` (Meta Ad Library check; ads → homepage). `none` = no fit. Router sets `routed`. | `deploy-outbound-landing-page-router.sh --setup-tab` / `-send.sh` |
+| CRM Rescue | Manual: Master Leads **CRM Form** = `silent` / `yes` / `48h` / `fit` / `noreply` (website form test → no reply). `replied` / `none` = no fit. Router sets `routed`. Optional Notes `d:Tuesday \| t:2:14pm` → Form Day / Form Time. | `deploy-outbound-crm-rescue-router.sh --setup-tab` / `-send.sh` |
 
 If another product tab already has **Ready** or **Emailed** for the same Maps ID, new rows land as **Wait**. **Replied** anywhere skips append.
 

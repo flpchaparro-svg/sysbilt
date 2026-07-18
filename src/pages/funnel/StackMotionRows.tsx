@@ -136,7 +136,7 @@ function SnapshotChartVisual({reduce, play}: VisualProps) {
 /** Circular promise stamp — rubber-stamp slam on scroll. */
 function AftercareStampVisual({reduce, play}: VisualProps) {
   return (
-    <div className="relative w-full h-[72px] border border-dark/12 bg-cream flex items-center justify-center">
+    <div className="relative w-full h-[72px] border border-dark/20 bg-white flex items-center justify-center">
       <motion.div
         className="pointer-events-none absolute inset-0 bg-red-solid/15"
         initial={{opacity: 0}}
@@ -185,7 +185,7 @@ function AftercareStampVisual({reduce, play}: VisualProps) {
 /** Miss → automatic SMS. */
 function TextBackTriggerVisual({reduce, play}: VisualProps) {
   return (
-    <div className="w-full h-[72px] border border-dark/12 bg-cream px-3 flex items-center gap-3">
+    <div className="w-full h-[72px] border border-dark/20 bg-white px-3 flex items-center gap-3">
       <motion.div
         className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
         style={{backgroundColor: FUNNEL_COLOURS.accent}}
@@ -212,15 +212,15 @@ function TextBackTriggerVisual({reduce, play}: VisualProps) {
       <motion.div
         className="flex-1 rounded-md border px-2.5 py-1.5"
         style={{
-          borderColor: `${FUNNEL_COLOURS.ink}18`,
-          backgroundColor: FUNNEL_COLOURS.ground,
+          borderColor: `${FUNNEL_COLOURS.ink}22`,
+          backgroundColor: FUNNEL_COLOURS.surfaceGold,
         }}
         initial={{opacity: 0, x: 8}}
         animate={{opacity: play || reduce ? 1 : 0, x: play || reduce ? 0 : 8}}
         transition={{delay: play ? 0.45 : 0, duration: 0.4}}
       >
-        <p className="font-mono text-[7px] uppercase tracking-widest text-dark/40">Auto SMS</p>
-        <p className="font-sans text-[10px] text-dark/75 truncate">We'll call you back…</p>
+        <p className="font-mono text-[7px] uppercase tracking-widest text-dark/45">Auto SMS</p>
+        <p className="font-sans text-[10px] text-dark/80 truncate">We'll call you back…</p>
       </motion.div>
     </div>
   )
@@ -229,7 +229,7 @@ function TextBackTriggerVisual({reduce, play}: VisualProps) {
 /** On-brand wording, not a robot script. */
 function YourWordsVisual({reduce, play}: VisualProps) {
   return (
-    <div className="w-full h-[72px] border border-dark/12 bg-cream px-3 flex items-center justify-center">
+    <div className="w-full h-[72px] border border-dark/20 bg-white px-3 flex items-center justify-center">
       <motion.div
         className="max-w-[90%] rounded-2xl rounded-br-sm px-3 py-2"
         style={{backgroundColor: FUNNEL_COLOURS.ink, color: FUNNEL_COLOURS.onInk}}
@@ -251,16 +251,16 @@ function YourWordsVisual({reduce, play}: VisualProps) {
 /** Optional reply → logged. */
 function LeadCaptureVisual({reduce, play}: VisualProps) {
   return (
-    <div className="w-full h-[72px] border border-dark/12 bg-cream px-3 flex items-center gap-2">
+    <div className="w-full h-[72px] border border-dark/20 bg-white px-3 flex items-center gap-2">
       <motion.div
         className="flex-1 rounded-md border px-2 py-1.5"
-        style={{borderColor: `${FUNNEL_COLOURS.ink}14`, backgroundColor: FUNNEL_COLOURS.ground}}
+        style={{borderColor: `${FUNNEL_COLOURS.ink}22`, backgroundColor: FUNNEL_COLOURS.surfaceGold}}
         initial={{opacity: 0}}
         animate={{opacity: play || reduce ? 1 : 0}}
         transition={{duration: 0.35}}
       >
-        <p className="font-mono text-[7px] text-dark/40 uppercase tracking-widest">Reply</p>
-        <p className="font-sans text-[10px] text-dark/70 truncate">
+        <p className="font-mono text-[7px] text-dark/45 uppercase tracking-widest">Reply</p>
+        <p className="font-sans text-[10px] text-dark/75 truncate">
           Do you cover Bondi, and what's the soonest…
         </p>
       </motion.div>
@@ -275,7 +275,7 @@ function LeadCaptureVisual({reduce, play}: VisualProps) {
       </motion.span>
       <motion.div
         className="w-[38%] rounded-md border px-2 py-1.5"
-        style={{borderColor: `${colors.teal}55`, backgroundColor: `${colors.teal}15`}}
+        style={{borderColor: `${colors.teal}66`, backgroundColor: `${colors.teal}22`}}
         initial={{opacity: 0, x: 6}}
         animate={{opacity: play || reduce ? 1 : 0, x: play || reduce ? 0 : 6}}
         transition={{delay: play ? 0.5 : 0, duration: 0.35}}
@@ -283,7 +283,7 @@ function LeadCaptureVisual({reduce, play}: VisualProps) {
         <p className="font-mono text-[7px] uppercase tracking-widest" style={{color: colors.teal}}>
           Logged
         </p>
-        <p className="font-sans text-[9px] text-dark/60">Lead + note</p>
+        <p className="font-sans text-[9px] text-dark/70">Lead + note</p>
       </motion.div>
     </div>
   )
@@ -292,9 +292,9 @@ function LeadCaptureVisual({reduce, play}: VisualProps) {
 /** Live miss test → received. */
 function LiveProofVisual({reduce, play}: VisualProps) {
   return (
-    <div className="w-full h-[72px] border border-dark/12 bg-cream px-3 flex items-center gap-2">
+    <div className="w-full h-[72px] border border-dark/20 bg-white px-3 flex items-center gap-2">
       <div className="flex-1 text-center">
-        <p className="font-mono text-[7px] uppercase tracking-widest text-dark/40 mb-1">Test miss</p>
+        <p className="font-mono text-[7px] uppercase tracking-widest text-dark/45 mb-1">Test miss</p>
         <motion.div
           className="mx-auto h-8 w-8 rounded-full flex items-center justify-center"
           style={{backgroundColor: FUNNEL_COLOURS.accent}}
@@ -317,7 +317,7 @@ function LiveProofVisual({reduce, play}: VisualProps) {
       </motion.span>
       <motion.div
         className="flex-1 rounded-md border px-2 py-2 text-center"
-        style={{borderColor: `${colors.teal}55`, backgroundColor: `${colors.teal}12`}}
+        style={{borderColor: `${colors.teal}66`, backgroundColor: `${colors.teal}22`}}
         initial={{opacity: 0, scale: 0.92}}
         animate={{
           opacity: play || reduce ? 1 : 0,
@@ -328,7 +328,7 @@ function LiveProofVisual({reduce, play}: VisualProps) {
         <p className="font-mono text-[8px] font-bold uppercase tracking-widest" style={{color: colors.teal}}>
           Received
         </p>
-        <p className="font-sans text-[9px] text-dark/60 mt-0.5">You watching</p>
+        <p className="font-sans text-[9px] text-dark/70 mt-0.5">You watching</p>
       </motion.div>
     </div>
   )
@@ -942,6 +942,261 @@ const LANDING_STACK_VISUALS = [
   AftercareStackVisual,
 ]
 
+/** CRM: full lead-handling rescue — enquiry path lights up. */
+function CrmRescuePathVisual({reduce, play}: VisualProps) {
+  const go = play && !reduce
+  const steps = ['In', 'Alert', 'Reply', 'Chase']
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex flex-col justify-center">
+      <p className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/40 mb-2 text-center">
+        Lead path
+      </p>
+      <div className="flex items-center justify-center gap-1">
+        {steps.map((s, i) => (
+          <React.Fragment key={s}>
+            <motion.span
+              className="font-mono text-[8px] uppercase tracking-wider px-2 py-1 border"
+              initial={{opacity: 0.4, borderColor: 'rgba(26,26,26,0.15)', backgroundColor: '#fff'}}
+              animate={
+                go
+                  ? {
+                      opacity: 1,
+                      borderColor: FUNNEL_COLOURS.accent,
+                      backgroundColor: `${FUNNEL_COLOURS.accent}18`,
+                    }
+                  : undefined
+              }
+              transition={{delay: i * 0.22, duration: 0.3}}
+            >
+              {s}
+            </motion.span>
+            {i < steps.length - 1 && (
+              <motion.span
+                className="font-mono text-[9px] text-dark/25"
+                animate={go ? {opacity: [0.2, 1, 0.2]} : undefined}
+                transition={{delay: 0.15 + i * 0.22, duration: 1.2, repeat: Infinity}}
+              >
+                →
+              </motion.span>
+            )}
+          </React.Fragment>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** CRM: missed-call included badge. */
+function CrmMissedCallIncludedVisual({reduce, play}: VisualProps) {
+  const go = play && !reduce
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex items-center justify-center gap-3">
+      <motion.div
+        className="h-10 w-10 rounded-sm border flex items-center justify-center"
+        style={{borderColor: FUNNEL_COLOURS.accent, color: FUNNEL_COLOURS.accent}}
+        animate={go ? {scale: [1, 1.06, 1]} : undefined}
+        transition={{duration: 1.6, repeat: Infinity}}
+      >
+        <span className="font-mono text-[9px] font-bold uppercase tracking-wide">MC</span>
+      </motion.div>
+      <div>
+        <p className="font-mono text-[8px] uppercase tracking-widest text-dark/45">Included</p>
+        <motion.p
+          className="font-sans text-[12px] text-dark/80"
+          initial={{opacity: 0}}
+          animate={go ? {opacity: 1} : {opacity: 1}}
+          transition={{delay: reduce ? 0 : 0.25}}
+        >
+          Missed-call text-back
+        </motion.p>
+      </div>
+    </div>
+  )
+}
+
+/** CRM: alerts + reply + quote follow-up. */
+function CrmTripleWireVisual({reduce, play}: VisualProps) {
+  const go = play && !reduce
+  const rows = ['Phone alert', 'Instant reply', 'Quote chase']
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-2.5 space-y-1.5">
+      {rows.map((label, i) => (
+        <motion.div
+          key={label}
+          className="flex items-center justify-between border px-2 py-1"
+          initial={{opacity: 0.35, borderColor: 'rgba(26,26,26,0.12)'}}
+          animate={
+            go
+              ? {
+                  opacity: 1,
+                  borderColor: FUNNEL_COLOURS.accent,
+                  backgroundColor: `${FUNNEL_COLOURS.accent}12`,
+                }
+              : undefined
+          }
+          transition={{delay: i * 0.28, duration: 0.3}}
+        >
+          <span className="font-sans text-[11px] text-dark/75">{label}</span>
+          <span
+            className="font-mono text-[7px] font-bold uppercase tracking-wide"
+            style={{color: FUNNEL_COLOURS.accent}}
+          >
+            On
+          </span>
+        </motion.div>
+      ))}
+    </div>
+  )
+}
+
+/** CRM: 30-minute walkthrough. */
+function CrmWalkthroughVisual({reduce, play}: VisualProps) {
+  const go = play && !reduce
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex items-center gap-3">
+      <motion.div
+        className="font-serif text-3xl font-bold tabular-nums leading-none"
+        style={{color: FUNNEL_COLOURS.accent}}
+        animate={go ? {scale: [1, 1.08, 1]} : undefined}
+        transition={{duration: 1.5, repeat: Infinity}}
+      >
+        30
+      </motion.div>
+      <div className="min-w-0">
+        <p className="font-mono text-[8px] uppercase tracking-widest text-dark/45">Minute walkthrough</p>
+        <p className="font-sans text-[11px] text-dark/70 mt-0.5">On their own screens · no manual</p>
+      </div>
+    </div>
+  )
+}
+
+const CRM_STACK_VISUALS = [
+  CrmRescuePathVisual,
+  CrmMissedCallIncludedVisual,
+  CrmTripleWireVisual,
+  CrmWalkthroughVisual,
+  SnapshotStackVisual,
+  AftercareStampVisual,
+]
+
+/** Team AI: half-day remote session. */
+function TeamHalfDayStackVisual({reduce, play}: VisualProps) {
+  const go = play && !reduce
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex items-center gap-3">
+      <motion.div
+        className="font-serif text-3xl font-bold tabular-nums leading-none"
+        style={{color: FUNNEL_COLOURS.accent}}
+        animate={go ? {scale: [1, 1.06, 1]} : undefined}
+        transition={{duration: 1.6, repeat: Infinity}}
+      >
+        ½
+      </motion.div>
+      <div className="min-w-0">
+        <p className="font-mono text-[8px] uppercase tracking-widest text-dark/45">Day · session</p>
+        <p className="font-sans text-[12px] text-dark/75 mt-0.5">Up to 12 people · your real work</p>
+      </div>
+    </div>
+  )
+}
+
+/** Team AI: company-owned workspace. */
+function TeamWorkspaceStackVisual({reduce, play}: VisualProps) {
+  const go = play && !reduce
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex flex-col justify-center">
+      <p className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/40 mb-2">
+        Workspace owner
+      </p>
+      <motion.div
+        className="border px-2.5 py-2 flex items-center justify-between"
+        initial={{borderColor: 'rgba(26,26,26,0.12)', backgroundColor: '#fff'}}
+        animate={
+          go
+            ? {
+                borderColor: FUNNEL_COLOURS.accent,
+                backgroundColor: `${FUNNEL_COLOURS.accent}12`,
+              }
+            : undefined
+        }
+        transition={{duration: 0.35}}
+      >
+        <span className="font-sans text-[12px] text-dark/80">Your business account</span>
+        <span
+          className="font-mono text-[7px] font-bold uppercase tracking-wide"
+          style={{color: FUNNEL_COLOURS.accent}}
+        >
+          Owned
+        </span>
+      </motion.div>
+    </div>
+  )
+}
+
+/** Team AI: library + recording + policy. */
+function TeamDeliverablesStackVisual({reduce, play}: VisualProps) {
+  const go = play && !reduce
+  const items = ['Prompt library', 'Session recording', 'Usage policy']
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-2.5 space-y-1.5">
+      {items.map((label, i) => (
+        <motion.div
+          key={label}
+          className="flex items-center justify-between border px-2 py-1"
+          initial={{opacity: 0.35, borderColor: 'rgba(26,26,26,0.12)'}}
+          animate={
+            go
+              ? {
+                  opacity: 1,
+                  borderColor: FUNNEL_COLOURS.accent,
+                  backgroundColor: `${FUNNEL_COLOURS.accent}10`,
+                }
+              : undefined
+          }
+          transition={{delay: i * 0.22, duration: 0.3}}
+        >
+          <span className="font-sans text-[11px] text-dark/75">{label}</span>
+          <span
+            className="font-mono text-[7px] font-bold uppercase tracking-wide"
+            style={{color: FUNNEL_COLOURS.accent}}
+          >
+            In
+          </span>
+        </motion.div>
+      ))}
+    </div>
+  )
+}
+
+/** Team AI: 30-day check-in. */
+function TeamCheckInStackVisual({reduce, play}: VisualProps) {
+  const go = play && !reduce
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex items-center gap-3">
+      <motion.div
+        className="font-serif text-3xl font-bold tabular-nums leading-none"
+        style={{color: FUNNEL_COLOURS.accent}}
+        animate={go ? {scale: [1, 1.08, 1]} : undefined}
+        transition={{duration: 1.5, repeat: Infinity}}
+      >
+        30
+      </motion.div>
+      <div className="min-w-0">
+        <p className="font-mono text-[8px] uppercase tracking-widest text-dark/45">Day check-in</p>
+        <p className="font-sans text-[11px] text-dark/70 mt-0.5">Tighten · fix · keep going</p>
+      </div>
+    </div>
+  )
+}
+
+const TEAM_AI_STACK_VISUALS = [
+  TeamHalfDayStackVisual,
+  TeamWorkspaceStackVisual,
+  TeamDeliverablesStackVisual,
+  TeamCheckInStackVisual,
+  SnapshotStackVisual,
+]
+
 function StackRow({
   item,
   index,
@@ -1010,7 +1265,14 @@ export function StackMotionRows({
   items: StackItem[]
   ink: string
   muted: string
-  variant?: 'speed' | 'missed-call' | 'google-profile' | 'search-fix' | 'landing-page'
+  variant?:
+    | 'speed'
+    | 'missed-call'
+    | 'google-profile'
+    | 'search-fix'
+    | 'landing-page'
+    | 'crm-rescue'
+    | 'team-ai'
 }) {
   const reduce = useReducedMotion()
   const visuals =
@@ -1022,7 +1284,11 @@ export function StackMotionRows({
           ? SEARCH_STACK_VISUALS
           : variant === 'landing-page'
             ? LANDING_STACK_VISUALS
-            : SPEED_VISUALS
+            : variant === 'crm-rescue'
+              ? CRM_STACK_VISUALS
+              : variant === 'team-ai'
+                ? TEAM_AI_STACK_VISUALS
+                : SPEED_VISUALS
 
   return (
     <ul className="space-y-10 md:space-y-12">

@@ -11,6 +11,8 @@ const PRODUCT_CODES = new Set([
   'google-profile',
   'search-fix',
   'landing-page',
+  'crm-rescue',
+  'team-ai',
 ]);
 const PRODUCT_LABELS: Record<string, string> = {
   'speed-fix': 'Website Speed Fix',
@@ -18,6 +20,8 @@ const PRODUCT_LABELS: Record<string, string> = {
   'google-profile': 'Google Profile Fix',
   'search-fix': 'Search Visibility Fix',
   'landing-page': 'Campaign Landing Page',
+  'crm-rescue': 'CRM Rescue',
+  'team-ai': 'Team AI',
 };
 const PRODUCT_AMOUNTS: Record<string, string> = {
   'speed-fix': '1200',
@@ -25,7 +29,39 @@ const PRODUCT_AMOUNTS: Record<string, string> = {
   'google-profile': '600',
   'search-fix': '1400',
   'landing-page': '1800',
+  'crm-rescue': '2800',
+  'team-ai': '1950',
+  'team-ai-onsite': '2400',
 };
+const CRM_SYSTEMS = new Set([
+  'hubspot',
+  'pipedrive',
+  'salesforce',
+  'zoho',
+  'monday',
+  'sheets',
+  'inbox',
+  'other',
+  'none',
+]);
+const CRM_LEAD_SOURCES = new Set([
+  'form',
+  'phone',
+  'ads',
+  'social',
+  'walk-in',
+  'mixed',
+  'unsure',
+]);
+const CRM_GOALS = new Set([
+  'speed',
+  'alerts',
+  'follow-up',
+  'quotes',
+  'missed-call',
+  'full',
+]);
+const CRM_ACCESS = new Set(['invite', 'admin', 'form-provider', 'call']);
 const MISSED_CALL_SETUPS = new Set(['mobile', 'landline', 'voip', 'mixed', 'unsure']);
 const MISSED_CALL_ACCESS = new Set(['forward', 'provider', 'crm', 'call']);
 const GOOGLE_PROFILE_STATUS = new Set([
@@ -72,6 +108,15 @@ type Body = {
   phoneSetup?: unknown;
   profileUrl?: unknown;
   profileStatus?: unknown;
+  crmSystem?: unknown;
+  leadSource?: unknown;
+  crmGoal?: unknown;
+  websiteUrl?: unknown;
+  teamSize?: unknown;
+  teamTools?: unknown;
+  timeEaters?: unknown;
+  sensitiveData?: unknown;
+  dateWindow?: unknown;
 };
 
 function str(v: unknown, max = 500): string {
@@ -113,6 +158,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const phoneSetup = str(body.phoneSetup, 40);
   const profileUrl = str(body.profileUrl, 500);
   const profileStatus = str(body.profileStatus, 40);
+  const crmSystem = str(body.crmSystem, 40);
+  const leadSource = str(body.leadSource, 40);
+  const crmGoal = str(body.crmGoal, 40);
+  const websiteUrl = str(body.websiteUrl, 400);
+  const teamSize = str(body.teamSize, 40);
+  const teamTools = str(body.teamTools, 2000);
+  const timeEaters = str(body.timeEaters, 2000);
+  const sensitiveData = str(body.sensitiveData, 2000);
+  const dateWindow = str(body.dateWindow, 500);
+  const sessionFormatRaw = str(body.sessionFormat, 20).toLowerCase();
+  const sessionFormat =
+    sessionFormatRaw === 'onsite' || sessionFormatRaw === 'remote'
+      ? sessionFormatRaw
+      : '';
 
   if (!PRODUCT_CODES.has(product)) {
     res.status(400).json({ error: 'Invalid product' });
@@ -125,6 +184,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
 
   const isMissedCall = product === 'missed-call';
   const isGoogleProfile = product === 'google-profile';
+  const isCrmRescue = product === 'crm-rescue';
+  const isTeamAi = product === 'team-ai';
 
   if (isMissedCall) {
     const cleanPhone = phone.replace(/\s+/g, '');
@@ -143,6 +204,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     }
     if (!GOOGLE_PROFILE_STATUS.has(profileStatus) || !GOOGLE_PROFILE_ACCESS.has(accessPath)) {
       res.status(400).json({ error: 'Invalid profile status or access path' });
+      return;
+    }
+  } else if (isCrmRescue) {
+    if (!CRM_SYSTEMS.has(crmSystem) || !CRM_LEAD_SOURCES.has(leadSource) || !CRM_GOALS.has(crmGoal)) {
+      res.status(400).json({ error: 'Invalid CRM system, lead source, or goal' });
+      return;
+    }
+    if (!CRM_ACCESS.has(accessPath)) {
+      res.status(400).json({ error: 'Invalid access path' });
+      return;
+    }
+  } else if (isTeamAi) {
+    if (!teamSize || !teamTools || !timeEaters || !sensitiveData || !dateWindow) {
+      res.status(400).json({ error: 'Missing team prep details or date window' });
+      return;
+    }
+    if (sessionFormat !== 'remote' && sessionFormat !== 'onsite') {
+      res.status(400).json({ error: 'Missing session format (remote or onsite)' });
+      return;
+    }
+    if (accessPath !== 'call') {
+      res.status(400).json({ error: 'Invalid access path' });
       return;
     }
   } else {
@@ -182,28 +265,58 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         ]
           .filter(Boolean)
           .join('\n')
-      : [
-          `Funnel access form — ${product}`,
-          `Business: ${business}`,
-          `Website: ${website}`,
-          `Platform: ${platform}`,
-          `Domain + hosting same provider: ${sameProvider}`,
-          domainProvider ? `Domain provider: ${domainProvider}` : null,
-          hostingProvider ? `Hosting provider: ${hostingProvider}` : null,
-          `Access path: ${accessPath}`,
-          accessDetail ? `Access notes:\n${accessDetail}` : null,
-          notes ? `Other notes:\n${notes}` : null,
-          `Submitted: ${new Date().toISOString()}`,
-        ]
-          .filter(Boolean)
-          .join('\n');
+      : isCrmRescue
+        ? [
+            `Funnel access form — ${product}`,
+            `Business: ${business}`,
+            websiteUrl ? `Website: ${websiteUrl}` : null,
+            `CRM / system: ${crmSystem}`,
+            `How leads arrive: ${leadSource}`,
+            `Primary goal: ${crmGoal}`,
+            `Access path: ${accessPath}`,
+            accessDetail ? `Access notes:\n${accessDetail}` : null,
+            notes ? `Other notes:\n${notes}` : null,
+            `Submitted: ${new Date().toISOString()}`,
+          ]
+            .filter(Boolean)
+            .join('\n')
+        : isTeamAi
+          ? [
+              `Funnel access form — ${product}`,
+              `Business: ${business}`,
+              `Format: ${sessionFormat === 'onsite' ? 'Face-to-face · Sydney' : 'Remote'}`,
+              `Team size: ${teamSize}`,
+              `Tools / AI today:\n${teamTools}`,
+              `Time-eaters:\n${timeEaters}`,
+              `Sensitive data rules:\n${sensitiveData}`,
+              `Date window (2+ weeks):\n${dateWindow}`,
+              notes ? `Other notes:\n${notes}` : null,
+              `Submitted: ${new Date().toISOString()}`,
+            ]
+              .filter(Boolean)
+              .join('\n')
+          : [
+              `Funnel access form — ${product}`,
+              `Business: ${business}`,
+              `Website: ${website}`,
+              `Platform: ${platform}`,
+              `Domain + hosting same provider: ${sameProvider}`,
+              domainProvider ? `Domain provider: ${domainProvider}` : null,
+              hostingProvider ? `Hosting provider: ${hostingProvider}` : null,
+              `Access path: ${accessPath}`,
+              accessDetail ? `Access notes:\n${accessDetail}` : null,
+              notes ? `Other notes:\n${notes}` : null,
+              `Submitted: ${new Date().toISOString()}`,
+            ]
+              .filter(Boolean)
+              .join('\n');
 
   const payload = {
     product,
     name,
     email,
     business,
-    website,
+    website: isCrmRescue ? websiteUrl : website,
     platform,
     sameProvider,
     domainProvider,
@@ -215,8 +328,27 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     phoneSetup,
     profileUrl,
     profileStatus,
+    crmSystem,
+    leadSource,
+    crmGoal,
+    websiteUrl,
+    teamSize,
+    teamTools,
+    timeEaters,
+    sensitiveData,
+    dateWindow,
+    sessionFormat: sessionFormat || undefined,
     submittedAt: new Date().toISOString(),
   };
+
+  const dealAmount =
+    isTeamAi && sessionFormat === 'onsite'
+      ? PRODUCT_AMOUNTS['team-ai-onsite']
+      : PRODUCT_AMOUNTS[product];
+  const dealLabel =
+    isTeamAi && sessionFormat === 'onsite'
+      ? 'Team AI · Face-to-face'
+      : PRODUCT_LABELS[product] || product;
 
   let hubspotContactId: string | null = null;
   let hubspotDealId: string | null = null;
@@ -228,7 +360,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         email,
         firstname: name,
         company: business,
-        website: website || undefined,
+        website: (isCrmRescue ? websiteUrl : website) || undefined,
         phone: phone || undefined,
         // Paid /go product — Customer column, not Subscriber (newsletter default).
         lifecyclestage: 'customer',
@@ -238,11 +370,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       await addContactNote(id, noteBody);
 
       try {
-        const productLabel = PRODUCT_LABELS[product] || product;
         const { id: dealId } = await createFunnelAccessDeal({
           contactId: id,
-          dealname: `${productLabel} — ${business}`,
-          amount: PRODUCT_AMOUNTS[product],
+          dealname: `${dealLabel} — ${business}`,
+          amount: dealAmount,
           productCode: product,
           noteBody,
         });
@@ -294,15 +425,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           ? `Phone: ${phone} · Setup: ${phoneSetup}`
           : isGoogleProfile
             ? `Profile: ${profileUrl.slice(0, 80)} · Status: ${profileStatus}`
-            : website,
-        isMissedCall
+            : isCrmRescue
+              ? `CRM: ${crmSystem} · Leads: ${leadSource} · Goal: ${crmGoal}`
+              : website,
+        isMissedCall || isGoogleProfile || isCrmRescue
           ? `Access: ${accessPath}`
-          : isGoogleProfile
-            ? `Access: ${accessPath}`
-            : `Platform: ${platform} · Access: ${accessPath}`,
-        !isMissedCall && !isGoogleProfile && sameProvider !== 'yes'
+          : `Platform: ${platform} · Access: ${accessPath}`,
+        !isMissedCall && !isGoogleProfile && !isCrmRescue && sameProvider !== 'yes'
           ? `Domain/hosting same: ${sameProvider}${domainProvider ? ` · Domain: ${domainProvider}` : ''}${hostingProvider ? ` · Host: ${hostingProvider}` : ''}`
           : null,
+        isCrmRescue && websiteUrl ? `Website: ${websiteUrl}` : null,
         accessDetail ? `Access notes: ${accessDetail.slice(0, 280)}` : null,
         dealLink ? `<${dealLink}|Open deal>` : null,
         `<${contactLink}|Open contact>`,

@@ -25,6 +25,8 @@ export type AccessPathId =
   | 'provider'
   | 'crm'
   | 'invite'
+  | 'admin'
+  | 'form-provider'
 export type PhoneSetupId = 'mobile' | 'landline' | 'voip' | 'mixed' | 'unsure'
 export type ProfileStatusId =
   | 'unclaimed'
@@ -32,6 +34,25 @@ export type ProfileStatusId =
   | 'claimed-other'
   | 'suspended'
   | 'unsure'
+export type CrmSystemId =
+  | 'hubspot'
+  | 'pipedrive'
+  | 'salesforce'
+  | 'zoho'
+  | 'monday'
+  | 'sheets'
+  | 'inbox'
+  | 'other'
+  | 'none'
+export type CrmLeadSourceId =
+  | 'form'
+  | 'phone'
+  | 'ads'
+  | 'social'
+  | 'walk-in'
+  | 'mixed'
+  | 'unsure'
+export type CrmGoalId = 'speed' | 'alerts' | 'follow-up' | 'quotes' | 'missed-call' | 'full'
 
 export type FunnelAccessPayload = {
   product: FunnelProductCode
@@ -50,6 +71,16 @@ export type FunnelAccessPayload = {
   phoneSetup?: PhoneSetupId | ''
   profileUrl?: string
   profileStatus?: ProfileStatusId | ''
+  crmSystem?: CrmSystemId | ''
+  leadSource?: CrmLeadSourceId | ''
+  crmGoal?: CrmGoalId | ''
+  websiteUrl?: string
+  teamSize?: string
+  teamTools?: string
+  timeEaters?: string
+  sensitiveData?: string
+  dateWindow?: string
+  sessionFormat?: 'remote' | 'onsite'
 }
 
 export const DOMAIN_REGISTRARS = [
