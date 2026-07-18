@@ -182,6 +182,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         company: business,
         website: website || undefined,
         phone: phone || undefined,
+        // Paid /go product — Customer column, not Subscriber (newsletter default).
+        lifecyclestage: 'customer',
+        leadSourceDetail: `go/${product}`,
       });
       hubspotContactId = id;
       await addContactNote(id, noteBody);

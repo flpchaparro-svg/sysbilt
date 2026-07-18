@@ -182,6 +182,10 @@ export async function upsertContactByEmail(input: {
   phone?: string;
   company?: string;
   website?: string;
+  /** HubSpot lifecycle: subscriber | lead | opportunity | customer | evangelist | … */
+  lifecyclestage?: string;
+  /** Free-text source, e.g. go/missed-call */
+  leadSourceDetail?: string;
 }): Promise<{ id: string; created: boolean }> {
   const email = input.email.trim().toLowerCase();
   if (!email) throw new Error('email required');
@@ -211,6 +215,8 @@ export async function upsertContactByEmail(input: {
   if (input.phone) properties.phone = input.phone;
   if (input.company) properties.company = input.company;
   if (input.website) properties.website = input.website;
+  if (input.lifecyclestage) properties.lifecyclestage = input.lifecyclestage;
+  if (input.leadSourceDetail) properties.lead_source_detail = input.leadSourceDetail;
 
   if (existingId) {
     await hubspotPatch(`/crm/v3/objects/contacts/${encodeURIComponent(existingId)}`, {
