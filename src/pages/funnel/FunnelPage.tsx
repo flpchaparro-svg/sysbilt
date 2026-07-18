@@ -27,6 +27,7 @@ import {
   GoogleProfileEvidenceCard,
   type GoogleProfileEvidence,
 } from './GoogleProfileEvidenceCard'
+import {GoogleFrontDoorPanel} from './GoogleFrontDoorPanel'
 import {
   parseSpeedScore,
   sanitiseBusinessName,
@@ -367,14 +368,17 @@ const FunnelPage: React.FC = () => {
                 <MissedCallLeakPair businessName={business} />
               </>
             ) : isGoogleProfile ? (
-              <Reveal delay={0.08} y={12}>
-                <p
-                  className="mt-6 font-sans text-base md:text-lg leading-relaxed max-w-2xl"
-                  style={{color: FUNNEL_COLOURS.muted}}
-                >
-                  {COPY.proofAfterGeneric}
-                </p>
-              </Reveal>
+              <>
+                <Reveal delay={0.08} y={12}>
+                  <p
+                    className="mt-6 font-sans text-base md:text-lg leading-relaxed max-w-2xl"
+                    style={{color: FUNNEL_COLOURS.muted}}
+                  >
+                    {COPY.proofAfterGeneric}
+                  </p>
+                </Reveal>
+                <GoogleFrontDoorPanel businessName={business} competitorName={competitor} />
+              </>
             ) : (
               <>
                 <ScoreMoment
