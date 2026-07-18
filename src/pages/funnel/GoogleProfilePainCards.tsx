@@ -23,23 +23,37 @@ type VisualProps = {reduce: boolean | null}
 
 function ThinPanelVisual({reduce}: VisualProps) {
   const ref = useRef<HTMLDivElement>(null)
-  const inView = useInView(ref, {amount: 0.35})
+  const inView = useInView(ref, {amount: 0.4, once: true})
   const play = inView && !reduce
 
   return (
     <div
       ref={ref}
-      className="relative h-[140px] md:h-[160px] rounded-sm overflow-hidden border border-dark/15 bg-white/60 p-3"
+      className="relative h-[140px] md:h-[160px] rounded-sm overflow-hidden border p-3"
+      style={{
+        borderColor: `${FUNNEL_COLOURS.onInk}22`,
+        backgroundColor: 'rgba(255,242,236,0.06)',
+      }}
     >
-      <p className="font-mono text-[8px] uppercase tracking-[0.2em] text-dark/40 mb-2">Your panel</p>
+      <p
+        className="font-mono text-[8px] uppercase tracking-[0.2em] mb-2"
+        style={{color: `${FUNNEL_COLOURS.onInk}55`}}
+      >
+        Your panel
+      </p>
       <div className="space-y-2">
         {['Hours · outdated', 'Photos · 3', 'Services · empty'].map((row, i) => (
           <motion.div
             key={row}
-            className="border border-dark/10 px-2 py-1.5 bg-cream/80 font-sans text-[11px] text-dark/55"
-            initial={reduce ? false : {opacity: 0, x: -6}}
-            animate={play || reduce ? {opacity: 1, x: 0} : {opacity: 0, x: -6}}
-            transition={{delay: reduce ? 0 : i * 0.12}}
+            className="border px-2 py-1.5 font-sans text-[11px]"
+            style={{
+              borderColor: `${FUNNEL_COLOURS.accent}55`,
+              backgroundColor: `${FUNNEL_COLOURS.accent}14`,
+              color: FUNNEL_COLOURS.onInk,
+            }}
+            initial={reduce ? false : {opacity: 0, x: -8}}
+            animate={play || reduce ? {opacity: 1, x: 0} : {opacity: 0, x: -8}}
+            transition={{delay: reduce ? 0 : i * 0.15, duration: 0.35}}
           >
             {row}
           </motion.div>
@@ -51,29 +65,48 @@ function ThinPanelVisual({reduce}: VisualProps) {
 
 function CompetitorAliveVisual({reduce}: VisualProps) {
   const ref = useRef<HTMLDivElement>(null)
-  const inView = useInView(ref, {amount: 0.35})
+  const inView = useInView(ref, {amount: 0.4, once: true})
   const play = inView && !reduce
 
   return (
     <div
       ref={ref}
-      className="relative h-[140px] md:h-[160px] rounded-sm overflow-hidden border border-dark/15 bg-white/60 p-3"
+      className="relative h-[140px] md:h-[160px] rounded-sm overflow-hidden border p-3"
+      style={{
+        borderColor: `${FUNNEL_COLOURS.onInk}22`,
+        backgroundColor: 'rgba(255,242,236,0.06)',
+      }}
     >
-      <p className="font-mono text-[8px] uppercase tracking-[0.2em] text-dark/40 mb-2">Next door</p>
+      <p
+        className="font-mono text-[8px] uppercase tracking-[0.2em] mb-2"
+        style={{color: `${FUNNEL_COLOURS.onInk}55`}}
+      >
+        Next door
+      </p>
       <motion.div
         className="border px-2 py-2 space-y-1.5"
         style={{
-          borderColor: `${FUNNEL_COLOURS.gold}66`,
-          backgroundColor: `${FUNNEL_COLOURS.gold}14`,
+          borderColor: `${FUNNEL_COLOURS.goldLight}88`,
+          backgroundColor: `${FUNNEL_COLOURS.gold}22`,
         }}
-        animate={play ? {scale: [1, 1.02, 1]} : {scale: 1}}
-        transition={play ? {duration: 2, repeat: Infinity} : {duration: 0}}
+        initial={reduce ? false : {opacity: 0, scale: 0.94}}
+        animate={play || reduce ? {opacity: 1, scale: 1} : {opacity: 0, scale: 0.94}}
+        transition={{duration: 0.4}}
       >
-        <p className="font-serif text-sm text-dark">Looks finished</p>
-        <p className="font-mono text-[8px] uppercase tracking-widest" style={{color: FUNNEL_COLOURS.goldDeep}}>
-          Photos · Reviews · Hours
+        <p className="font-serif text-sm" style={{color: FUNNEL_COLOURS.onInk}}>
+          Looks finished
         </p>
-        <p className="font-sans text-[10px] text-dark/60">Customer picks this one</p>
+        <motion.p
+          className="font-mono text-[8px] uppercase tracking-widest"
+          style={{color: FUNNEL_COLOURS.goldLight}}
+          animate={play ? {opacity: [0.55, 1, 0.55]} : {opacity: 1}}
+          transition={play ? {duration: 1.8, repeat: Infinity} : {duration: 0}}
+        >
+          Photos · Reviews · Hours
+        </motion.p>
+        <p className="font-sans text-[10px]" style={{color: `${FUNNEL_COLOURS.onInk}99`}}>
+          Customer picks this one
+        </p>
       </motion.div>
     </div>
   )
@@ -81,24 +114,35 @@ function CompetitorAliveVisual({reduce}: VisualProps) {
 
 function SomedayVisual({reduce}: VisualProps) {
   const ref = useRef<HTMLDivElement>(null)
-  const inView = useInView(ref, {amount: 0.35})
+  const inView = useInView(ref, {amount: 0.4, once: true})
   const play = inView && !reduce
 
   return (
     <div
       ref={ref}
-      className="relative h-[140px] md:h-[160px] rounded-sm overflow-hidden border border-dark/15 bg-white/60 flex flex-col items-center justify-center px-4"
+      className="relative h-[140px] md:h-[160px] rounded-sm overflow-hidden border flex flex-col items-center justify-center px-4"
+      style={{
+        borderColor: `${FUNNEL_COLOURS.onInk}22`,
+        backgroundColor: 'rgba(255,242,236,0.06)',
+      }}
     >
       <motion.p
-        className="font-serif text-2xl text-dark/30"
-        animate={play ? {opacity: [0.35, 0.7, 0.35]} : {opacity: 0.45}}
-        transition={play ? {duration: 2.4, repeat: Infinity} : {duration: 0}}
+        className="font-serif text-2xl"
+        style={{color: `${FUNNEL_COLOURS.onInk}40`}}
+        animate={play ? {opacity: [0.35, 0.75, 0.35]} : {opacity: 0.5}}
+        transition={play ? {duration: 2.2, repeat: Infinity} : {duration: 0}}
       >
         Someday
       </motion.p>
-      <p className="mt-2 font-mono text-[9px] uppercase tracking-[0.18em] text-red-text text-center">
+      <motion.p
+        className="mt-2 font-mono text-[9px] uppercase tracking-[0.18em] text-center"
+        style={{color: FUNNEL_COLOURS.accent}}
+        initial={reduce ? false : {opacity: 0, y: 6}}
+        animate={play || reduce ? {opacity: 1, y: 0} : {opacity: 0, y: 6}}
+        transition={{delay: reduce ? 0 : 0.3}}
+      >
         Costs you every day it waits
-      </p>
+      </motion.p>
     </div>
   )
 }
@@ -136,11 +180,22 @@ export function GoogleProfilePainCards() {
         <motion.li
           key={title}
           variants={card}
-          className="border border-white/10 bg-white/[0.04] p-4 md:p-5"
+          className="border p-4 md:p-5"
+          style={{
+            borderColor: `${FUNNEL_COLOURS.onInk}18`,
+            backgroundColor: 'rgba(255,242,236,0.04)',
+          }}
         >
           <Visual reduce={reduce} />
-          <p className="mt-4 font-serif text-lg text-cream">{title}</p>
-          <p className="mt-2 font-sans text-sm leading-relaxed text-cream/70">{text}</p>
+          <p className="mt-4 font-serif text-lg" style={{color: FUNNEL_COLOURS.onInk}}>
+            {title}
+          </p>
+          <p
+            className="mt-2 font-sans text-sm leading-relaxed"
+            style={{color: `${FUNNEL_COLOURS.onInk}B3`}}
+          >
+            {text}
+          </p>
         </motion.li>
       ))}
     </motion.ul>

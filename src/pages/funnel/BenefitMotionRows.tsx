@@ -498,6 +498,184 @@ const MISSED_VISUALS = [
   WithinThreeDaysVisual,
 ]
 
+/** Categories / hours / services fill in. */
+function CategoriesFillVisual({reduce}: VisualProps) {
+  const items = ['Primary category', 'Services', 'Hours', 'Attributes']
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white/70 p-2.5">
+      <p className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/40 mb-1.5">
+        Profile fields
+      </p>
+      <div className="space-y-1">
+        {items.map((label, i) => (
+          <motion.div
+            key={label}
+            className="flex items-center justify-between border px-2 py-1"
+            style={{
+              borderColor: `${FUNNEL_COLOURS.ink}12`,
+              backgroundColor: FUNNEL_COLOURS.ground,
+            }}
+            initial={reduce ? false : {opacity: 0, x: -8}}
+            whileInView={{opacity: 1, x: 0}}
+            viewport={{once: true}}
+            transition={{delay: reduce ? 0 : i * 0.14, duration: 0.35}}
+          >
+            <span className="font-sans text-[10px]" style={{color: FUNNEL_COLOURS.ink}}>
+              {label}
+            </span>
+            <motion.span
+              className="font-mono text-[8px] font-bold uppercase tracking-widest"
+              style={{color: FUNNEL_COLOURS.goldDeep}}
+              initial={{opacity: 0, scale: 0.8}}
+              whileInView={{opacity: 1, scale: 1}}
+              viewport={{once: true}}
+              transition={{delay: reduce ? 0 : 0.35 + i * 0.14}}
+            >
+              Set
+            </motion.span>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** Empty description → selling copy appears. */
+function DescriptionSellsVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white/70 p-2.5 flex flex-col">
+      <p className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/40 mb-1.5">
+        Business description
+      </p>
+      <motion.div
+        className="flex-1 border px-2 py-1.5 overflow-hidden"
+        style={{
+          borderColor: `${FUNNEL_COLOURS.ink}14`,
+          backgroundColor: FUNNEL_COLOURS.ground,
+        }}
+        initial={reduce ? false : {opacity: 0.4}}
+        whileInView={{opacity: 1}}
+        viewport={{once: true}}
+      >
+        <motion.p
+          className="font-sans text-[11px] leading-snug"
+          style={{color: FUNNEL_COLOURS.ink}}
+          initial={reduce ? false : {opacity: 0}}
+          whileInView={{opacity: 1}}
+          viewport={{once: true}}
+          transition={{delay: reduce ? 0 : 0.35, duration: 0.5}}
+        >
+          Local plumbers for Bondi and surrounds. Same-day call-outs, honest quotes, work you can
+          see.
+        </motion.p>
+      </motion.div>
+      <motion.p
+        className="mt-1.5 font-mono text-[7px] uppercase tracking-widest"
+        style={{color: FUNNEL_COLOURS.goldDeep}}
+        initial={{opacity: 0}}
+        whileInView={{opacity: 1}}
+        viewport={{once: true}}
+        transition={{delay: reduce ? 0 : 0.7}}
+      >
+        Terms customers search
+      </motion.p>
+    </div>
+  )
+}
+
+/** Review link + honest ask. */
+function ReviewHabitVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white/70 p-2.5 flex flex-col justify-between">
+      <motion.div
+        className="border px-2 py-1.5"
+        style={{
+          borderColor: `${FUNNEL_COLOURS.gold}55`,
+          backgroundColor: `${FUNNEL_COLOURS.gold}14`,
+        }}
+        initial={reduce ? false : {opacity: 0, y: 6}}
+        whileInView={{opacity: 1, y: 0}}
+        viewport={{once: true}}
+        transition={{duration: 0.35}}
+      >
+        <p
+          className="font-mono text-[7px] uppercase tracking-widest"
+          style={{color: FUNNEL_COLOURS.goldDeep}}
+        >
+          Review link
+        </p>
+        <p className="font-sans text-[10px] truncate" style={{color: FUNNEL_COLOURS.ink}}>
+          g.page/r/your-business/review
+        </p>
+      </motion.div>
+      <motion.div
+        className="rounded-2xl rounded-bl-sm border px-2.5 py-1.5 self-start max-w-[92%]"
+        style={{
+          borderColor: `${FUNNEL_COLOURS.ink}14`,
+          backgroundColor: FUNNEL_COLOURS.ground,
+        }}
+        initial={reduce ? false : {opacity: 0, y: 8}}
+        whileInView={{opacity: 1, y: 0}}
+        viewport={{once: true}}
+        transition={{delay: reduce ? 0 : 0.45, duration: 0.35}}
+      >
+        <p className="font-sans text-[10px] leading-snug" style={{color: FUNNEL_COLOURS.ink}}>
+          If we did a good job, leave a quick Google review here.
+        </p>
+      </motion.div>
+    </div>
+  )
+}
+
+/** Day 1 audit → Day 2 done. */
+function TwoDayProfileVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white/70 p-2.5 flex items-center gap-2">
+      {[
+        {day: 'Day 1', text: 'Audit'},
+        {day: 'Day 2', text: 'Overhaul'},
+      ].map((item, i) => (
+        <motion.div
+          key={item.day}
+          className="flex-1 border px-2 py-3 text-center"
+          style={{
+            borderColor: i === 1 ? `${FUNNEL_COLOURS.gold}66` : `${FUNNEL_COLOURS.ink}14`,
+            backgroundColor: i === 1 ? `${FUNNEL_COLOURS.gold}18` : FUNNEL_COLOURS.ground,
+          }}
+          initial={reduce ? false : {opacity: 0, y: 10}}
+          whileInView={{opacity: 1, y: 0}}
+          viewport={{once: true}}
+          transition={{delay: reduce ? 0 : i * 0.35, duration: 0.4}}
+        >
+          <p className="font-mono text-[8px] uppercase tracking-widest text-dark/40">{item.day}</p>
+          <p className="font-serif text-sm mt-1" style={{color: FUNNEL_COLOURS.ink}}>
+            {item.text}
+          </p>
+          {i === 1 ? (
+            <motion.p
+              className="font-mono text-[8px] font-bold uppercase tracking-widest mt-1"
+              style={{color: FUNNEL_COLOURS.goldDeep}}
+              initial={{opacity: 0}}
+              whileInView={{opacity: 1}}
+              viewport={{once: true}}
+              transition={{delay: reduce ? 0 : 0.7}}
+            >
+              Done
+            </motion.p>
+          ) : null}
+        </motion.div>
+      ))}
+    </div>
+  )
+}
+
+const PROFILE_VISUALS = [
+  CategoriesFillVisual,
+  DescriptionSellsVisual,
+  ReviewHabitVisual,
+  TwoDayProfileVisual,
+]
+
 type Benefit = {title: string; text: string}
 
 /**
@@ -517,7 +695,12 @@ export function BenefitMotionRows({
   variant?: 'speed' | 'missed-call' | 'google-profile'
 }) {
   const reduce = useReducedMotion()
-  const visuals = variant === 'missed-call' ? MISSED_VISUALS : SPEED_VISUALS
+  const visuals =
+    variant === 'missed-call'
+      ? MISSED_VISUALS
+      : variant === 'google-profile'
+        ? PROFILE_VISUALS
+        : SPEED_VISUALS
 
   return (
     <div className="space-y-10 md:space-y-12">

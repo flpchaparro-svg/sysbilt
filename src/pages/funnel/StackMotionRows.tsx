@@ -334,6 +334,172 @@ function LiveProofVisual({reduce, play}: VisualProps) {
   )
 }
 
+/** Profile audit checklist ticking through. */
+function ProfileOverhaulBarVisual({reduce, play}: VisualProps) {
+  const rows = ['Claim', 'Categories', 'Photos', 'Q and A']
+  return (
+    <div className="w-full h-[72px] border border-dark/12 bg-cream px-3 py-2 flex flex-col justify-center gap-1">
+      <div className="flex gap-1.5">
+        {rows.map((label, i) => (
+          <motion.div
+            key={label}
+            className="flex-1 border px-1 py-1 text-center"
+            style={{
+              borderColor: `${FUNNEL_COLOURS.ink}14`,
+              backgroundColor: FUNNEL_COLOURS.ground,
+            }}
+            initial={{opacity: 0.35}}
+            animate={{
+              opacity: play || reduce ? 1 : 0.35,
+              borderColor:
+                play || reduce ? `${FUNNEL_COLOURS.gold}66` : `${FUNNEL_COLOURS.ink}14`,
+            }}
+            transition={
+              reduce ? {duration: 0} : {delay: play ? i * 0.18 : 0, duration: 0.3}
+            }
+          >
+            <p className="font-mono text-[7px] uppercase tracking-wider text-dark/50">{label}</p>
+            <motion.p
+              className="font-mono text-[8px] font-bold"
+              style={{color: FUNNEL_COLOURS.goldDeep}}
+              initial={{opacity: 0}}
+              animate={{opacity: play || reduce ? 1 : 0}}
+              transition={{delay: play ? 0.2 + i * 0.18 : 0}}
+            >
+              ✓
+            </motion.p>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** Keys stay with the owner. */
+function OwnershipKeysVisual({reduce, play}: VisualProps) {
+  return (
+    <div className="w-full h-[72px] border border-dark/12 bg-cream px-3 flex items-center justify-center gap-3">
+      <motion.div
+        className="border px-3 py-2 text-center"
+        style={{
+          borderColor: `${FUNNEL_COLOURS.gold}66`,
+          backgroundColor: `${FUNNEL_COLOURS.gold}14`,
+        }}
+        initial={{opacity: 0, scale: 0.92}}
+        animate={{
+          opacity: play || reduce ? 1 : 0,
+          scale: play || reduce ? 1 : 0.92,
+        }}
+        transition={{duration: 0.4}}
+      >
+        <p className="font-mono text-[7px] uppercase tracking-widest" style={{color: FUNNEL_COLOURS.goldDeep}}>
+          Owner
+        </p>
+        <p className="font-sans text-[11px]" style={{color: FUNNEL_COLOURS.ink}}>
+          You
+        </p>
+      </motion.div>
+      <motion.span
+        className="font-mono text-[10px]"
+        style={{color: FUNNEL_COLOURS.goldDeep}}
+        initial={{opacity: 0}}
+        animate={{opacity: play || reduce ? 1 : 0}}
+        transition={{delay: play ? 0.25 : 0}}
+      >
+        ←
+      </motion.span>
+      <motion.div
+        className="border px-3 py-2 text-center"
+        style={{borderColor: `${FUNNEL_COLOURS.ink}14`, backgroundColor: FUNNEL_COLOURS.ground}}
+        initial={{opacity: 0, x: 8}}
+        animate={{opacity: play || reduce ? 1 : 0, x: play || reduce ? 0 : 8}}
+        transition={{delay: play ? 0.35 : 0, duration: 0.35}}
+      >
+        <p className="font-mono text-[7px] uppercase tracking-widest text-dark/40">Us</p>
+        <p className="font-sans text-[11px] text-dark/70">Manager only</p>
+      </motion.div>
+    </div>
+  )
+}
+
+/** Review link ready to copy. */
+function ReviewLinkStackVisual({reduce, play}: VisualProps) {
+  return (
+    <div className="w-full h-[72px] border border-dark/12 bg-cream px-3 flex items-center gap-2">
+      <motion.div
+        className="flex-1 border px-2.5 py-2"
+        style={{
+          borderColor: `${FUNNEL_COLOURS.gold}55`,
+          backgroundColor: `${FUNNEL_COLOURS.gold}12`,
+        }}
+        initial={{opacity: 0, y: 6}}
+        animate={{opacity: play || reduce ? 1 : 0, y: play || reduce ? 0 : 6}}
+        transition={{duration: 0.35}}
+      >
+        <p className="font-mono text-[7px] uppercase tracking-widest" style={{color: FUNNEL_COLOURS.goldDeep}}>
+          Ask wording + link
+        </p>
+        <p className="font-sans text-[10px] truncate" style={{color: FUNNEL_COLOURS.ink}}>
+          Ready to send after a good job
+        </p>
+      </motion.div>
+      <motion.span
+        className="font-mono text-[9px] font-bold uppercase tracking-widest"
+        style={{color: FUNNEL_COLOURS.goldDeep}}
+        initial={{opacity: 0}}
+        animate={{opacity: play || reduce ? 1 : 0}}
+        transition={{delay: play ? 0.4 : 0}}
+      >
+        Copy
+      </motion.span>
+    </div>
+  )
+}
+
+/** Monthly habit + snapshot. */
+function HabitSnapshotVisual({reduce, play}: VisualProps) {
+  return (
+    <div className="w-full h-[72px] border border-dark/12 bg-cream px-3 flex items-center gap-2">
+      <motion.div
+        className="w-[42%] border px-2 py-1.5 text-center"
+        style={{borderColor: `${FUNNEL_COLOURS.ink}14`, backgroundColor: FUNNEL_COLOURS.ground}}
+        initial={{opacity: 0}}
+        animate={{opacity: play || reduce ? 1 : 0}}
+        transition={{duration: 0.3}}
+      >
+        <p className="font-mono text-[7px] uppercase tracking-widest text-dark/40">5 min</p>
+        <p className="font-sans text-[10px]" style={{color: FUNNEL_COLOURS.ink}}>
+          Monthly habit
+        </p>
+      </motion.div>
+      <motion.span
+        className="font-mono text-[10px]"
+        style={{color: FUNNEL_COLOURS.goldDeep}}
+        initial={{opacity: 0}}
+        animate={{opacity: play || reduce ? 1 : 0}}
+        transition={{delay: play ? 0.25 : 0}}
+      >
+        +
+      </motion.span>
+      <motion.div
+        className="flex-1 border px-2 py-1.5"
+        style={{
+          borderColor: `${FUNNEL_COLOURS.gold}55`,
+          backgroundColor: `${FUNNEL_COLOURS.gold}12`,
+        }}
+        initial={{opacity: 0, x: 6}}
+        animate={{opacity: play || reduce ? 1 : 0, x: play || reduce ? 0 : 6}}
+        transition={{delay: play ? 0.4 : 0, duration: 0.35}}
+      >
+        <p className="font-mono text-[7px] uppercase tracking-widest" style={{color: FUNNEL_COLOURS.goldDeep}}>
+          Snapshot
+        </p>
+        <p className="font-sans text-[9px] text-dark/65">What to fix next</p>
+      </motion.div>
+    </div>
+  )
+}
+
 const SPEED_VISUALS = [
   OverhaulBarVisual,
   BeforeAfterBarVisual,
@@ -347,6 +513,14 @@ const MISSED_VISUALS = [
   YourWordsVisual,
   LeadCaptureVisual,
   LiveProofVisual,
+  AftercareStampVisual,
+]
+
+const PROFILE_STACK_VISUALS = [
+  ProfileOverhaulBarVisual,
+  OwnershipKeysVisual,
+  ReviewLinkStackVisual,
+  HabitSnapshotVisual,
   AftercareStampVisual,
 ]
 
@@ -421,7 +595,12 @@ export function StackMotionRows({
   variant?: 'speed' | 'missed-call' | 'google-profile'
 }) {
   const reduce = useReducedMotion()
-  const visuals = variant === 'missed-call' ? MISSED_VISUALS : SPEED_VISUALS
+  const visuals =
+    variant === 'missed-call'
+      ? MISSED_VISUALS
+      : variant === 'google-profile'
+        ? PROFILE_STACK_VISUALS
+        : SPEED_VISUALS
 
   return (
     <ul className="space-y-10 md:space-y-12">
