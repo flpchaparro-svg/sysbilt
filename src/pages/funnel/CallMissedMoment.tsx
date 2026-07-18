@@ -422,8 +422,8 @@ function SmsCard({
             You · SMS
           </p>
           <p className="font-sans text-[13px] leading-relaxed">
-            Sorry we missed your call. We will ring you back shortly. Meanwhile, if you want, reply
-            with any questions you have.
+            Sorry we missed your call, we'll ring you back shortly. If you want, reply with any
+            questions meanwhile.
           </p>
         </motion.div>
 
@@ -446,7 +446,7 @@ function SmsCard({
             Them · optional
           </p>
           <p className="font-sans text-[13px] leading-relaxed" style={{color: FUNNEL_COLOURS.ink}}>
-            Do you cover Bondi, and what is the soonest you can start?
+            Do you cover Bondi, and what's the soonest you can start?
           </p>
         </motion.div>
 

@@ -1,30 +1,57 @@
 /**
- * Runtime personalisation for /go/ pages via ?b= and ?s= URL params.
+ * Runtime personalisation for /go/ pages via ?b=, ?s=, ?d=, ?t= URL params.
  * Never persisted. Fail closed to the generic page variant.
  */
 
 const MAX_BUSINESS_NAME = 40
+const MAX_DAY = 20
+const MAX_TIME = 12
 
-/** Decode, strip HTML-ish content, reject URLs, cap length. */
-export function sanitiseBusinessName(raw: string | null | undefined): string | null {
-  if (raw == null || raw === '') return null
+function decodeParam(raw: string): string | null {
   let value = raw
   try {
     value = decodeURIComponent(value.replace(/\+/g, ' '))
   } catch {
     return null
   }
-  // Any HTML-ish markup fails closed (do not strip-and-keep residual text).
   if (/[<>]/.test(value) || /&\w+;/.test(value)) return null
   value = value.replace(/[\u0000-\u001F\u007F]/g, '')
   value = value.trim().replace(/\s+/g, ' ')
   if (!value) return null
   if (/https?:\/\//i.test(value) || /www\./i.test(value)) return null
-  if (value.length > MAX_BUSINESS_NAME) {
-    value = value.slice(0, MAX_BUSINESS_NAME).trim()
-  }
-  if (!value) return null
   return value
+}
+
+/** Decode, strip HTML-ish content, reject URLs, cap length. */
+export function sanitiseBusinessName(raw: string | null | undefined): string | null {
+  if (raw == null || raw === '') return null
+  const value = decodeParam(raw)
+  if (!value) return null
+  if (value.length > MAX_BUSINESS_NAME) {
+    const sliced = value.slice(0, MAX_BUSINESS_NAME).trim()
+    return sliced || null
+  }
+  return value
+}
+
+/** Weekday / short day label for Missed-Call evidence (?d=). */
+export function sanitiseCallDay(raw: string | null | undefined): string | null {
+  if (raw == null || raw === '') return null
+  const value = decodeParam(raw)
+  if (!value) return null
+  if (!/^[A-Za-z][A-Za-z .'-]{0,18}$/.test(value)) return null
+  if (value.length > MAX_DAY) return null
+  return value
+}
+
+/** Clock time for Missed-Call evidence (?t=), e.g. 4:40pm. */
+export function sanitiseCallTime(raw: string | null | undefined): string | null {
+  if (raw == null || raw === '') return null
+  const value = decodeParam(raw)
+  if (!value) return null
+  if (value.length > MAX_TIME) return null
+  if (!/^\d{1,2}[:.]\d{2}\s*(am|pm|AM|PM)?$/.test(value)) return null
+  return value.replace(/\./g, ':').replace(/\s+/g, '')
 }
 
 /** Integer 0–100 only. */

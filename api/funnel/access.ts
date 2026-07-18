@@ -13,7 +13,7 @@ const PRODUCT_LABELS: Record<string, string> = {
 };
 const PRODUCT_AMOUNTS: Record<string, string> = {
   'speed-fix': '1200',
-  'missed-call': '990',
+  'missed-call': '790',
 };
 const MISSED_CALL_SETUPS = new Set(['mobile', 'landline', 'voip', 'mixed', 'unsure']);
 const MISSED_CALL_ACCESS = new Set(['forward', 'provider', 'crm', 'call']);
@@ -192,6 +192,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           contactId: id,
           dealname: `${productLabel} — ${business}`,
           amount: PRODUCT_AMOUNTS[product],
+          productCode: product,
           noteBody,
         });
         hubspotDealId = dealId;

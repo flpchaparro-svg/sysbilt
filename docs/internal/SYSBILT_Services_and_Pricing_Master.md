@@ -196,7 +196,7 @@ Each pillar lists its main services (Tier 3) and its subtasks (Tier 4). Retainer
 |---|---|---|---|---|
 | **CRM Data Clean-up** | Legacy contacts scrubbed, deduplicated, and imported | 2–4 days | $1,000 – $2,500 | Scripts + CRM import |
 | **Lead Scoring Setup** | Leads ranked automatically by behaviour | 2–3 days | $1,000 – $2,000 | HubSpot / ActiveCampaign |
-| **Missed-Call SMS Setup** | An instant text reply to every missed inbound call | 1 day | $500 – $1,000 | Twilio / LeadConnector |
+| **Missed-Call SMS Setup** | An instant text reply to every missed inbound call | 1–3 days | **$790 locked** (band $500 – $1,000) | Twilio / LeadConnector |
 | **Sales Template & Snippet Pack** | A set of ready-to-send sales emails and replies | 1–2 days | $600 – $1,500 | CRM templates |
 | **Meeting / Booking Link Setup** | A booking link clients use to self-schedule | 1 day | $400 – $900 | HubSpot Meetings |
 | **Quote / Proposal Template** | A reusable branded quote or proposal that fills itself | 1–2 days | $700 – $1,800 | CRM / PandaDoc |

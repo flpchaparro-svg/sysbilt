@@ -48,7 +48,7 @@ export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
   {
     code: 'missed-call',
     title: 'Missed-Call Text-Back',
-    price: '$990',
+    price: '$790',
     blurb: 'Every missed call gets a reply before they dial the next business.',
     status: 'live',
     href: '/go/missed-call',

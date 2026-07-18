@@ -16,7 +16,16 @@ import {StackMotionRows} from './StackMotionRows'
 import {FunnelObjections} from './FunnelObjections'
 import {ReportDeliverableMock} from './ReportDeliverableMock'
 import {TextBackDeliverableMock} from './TextBackDeliverableMock'
-import {parseSpeedScore, sanitiseBusinessName} from './funnelPersonalise'
+import {
+  MissedCallEvidenceCard,
+  type MissedCallEvidence,
+} from './MissedCallEvidenceCard'
+import {
+  parseSpeedScore,
+  sanitiseBusinessName,
+  sanitiseCallDay,
+  sanitiseCallTime,
+} from './funnelPersonalise'
 import {FUNNEL_COLOURS, FUNNEL_CSS_VARS} from './funnelTheme'
 import {Reveal, RevealList} from './funnelReveal'
 import {funnelCopyForSlug} from './funnelCopy'
@@ -139,7 +148,15 @@ const FunnelPage: React.FC = () => {
   const COPY = useMemo(() => funnelCopyForSlug(slug), [slug])
   const business = useMemo(() => sanitiseBusinessName(params.get('b')), [params])
   const score = useMemo(() => parseSpeedScore(params.get('s')), [params])
+  const callDay = useMemo(() => sanitiseCallDay(params.get('d')), [params])
+  const callTime = useMemo(() => sanitiseCallTime(params.get('t')), [params])
   const isMissedCall = COPY.proofKind === 'missed-call'
+  const missedEvidence: MissedCallEvidence = useMemo(() => {
+    if (business && callDay && callTime) {
+      return {mode: 'tested', business, day: callDay, time: callTime}
+    }
+    return {mode: 'try'}
+  }, [business, callDay, callTime])
 
   useEffect(() => {
     if (!slug) {
@@ -294,9 +311,12 @@ const FunnelPage: React.FC = () => {
                     : COPY.proofHeadingGeneric}
               </h2>
             </Reveal>
+            {isMissedCall ? <MissedCallEvidenceCard evidence={missedEvidence} /> : null}
             <Reveal delay={0.12} y={12}>
               <p
-                className="font-sans text-base md:text-lg leading-relaxed max-w-2xl"
+                className={`font-sans text-base md:text-lg leading-relaxed max-w-2xl ${
+                  isMissedCall ? 'mt-8' : ''
+                }`}
                 style={{color: FUNNEL_COLOURS.muted}}
               >
                 {isMissedCall
@@ -368,7 +388,7 @@ const FunnelPage: React.FC = () => {
                 ))}
               </RevealList>
               {isMissedCall ? <MissedCallPainCards /> : <PainCostCards />}
-              <LostClientCalculator />
+              <LostClientCalculator variant={isMissedCall ? 'missed-call' : 'speed'} />
             </div>
           </section>
 

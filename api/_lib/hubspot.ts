@@ -245,18 +245,24 @@ export async function addContactNote(contactId: string, body: string): Promise<v
 }
 
 /**
- * Create a deal for a paid funnel job and associate it to the contact.
+ * Create a deal for a paid funnel (/go) product job and associate it to the contact.
  * associationTypeId 3 = Deal → Contact.
- * Stage defaults to closedwon (paid + access received). Override with HUBSPOT_FUNNEL_ACCESS_DEAL_STAGE.
+ *
+ * Lands in Product · Paid (not Won) and tags sybilt_deal_kind=fixed_product so
+ * relationship automations (proposal, 50% deposit) can exclude these deals.
+ * Override stage with HUBSPOT_FUNNEL_ACCESS_DEAL_STAGE if needed.
  */
 export async function createFunnelAccessDeal(input: {
   contactId: string;
   dealname: string;
   amount?: string;
+  productCode?: string;
   noteBody?: string;
 }): Promise<{ id: string }> {
+  /** Product · Paid on the SYSBILT Sales pipeline (added for /go fixed products). */
+  const PRODUCT_PAID_STAGE = '3461637581';
   const dealstage =
-    process.env.HUBSPOT_FUNNEL_ACCESS_DEAL_STAGE?.trim() || 'closedwon';
+    process.env.HUBSPOT_FUNNEL_ACCESS_DEAL_STAGE?.trim() || PRODUCT_PAID_STAGE;
   const pipeline = process.env.HUBSPOT_FUNNEL_PIPELINE?.trim() || 'default';
 
   const properties: Record<string, string> = {
@@ -264,8 +270,10 @@ export async function createFunnelAccessDeal(input: {
     dealstage,
     pipeline,
     closedate: String(Date.now()),
+    sybilt_deal_kind: 'fixed_product',
   };
   if (input.amount) properties.amount = input.amount;
+  if (input.productCode) properties.sybilt_product_code = input.productCode;
 
   const created: any = await hubspotPost('/crm/v3/objects/deals', {
     properties,

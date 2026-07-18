@@ -56,8 +56,8 @@ export function TextBackDeliverableMock() {
             style={{backgroundColor: FUNNEL_COLOURS.ink, color: FUNNEL_COLOURS.onInk}}
           >
             <p className="font-sans text-sm leading-relaxed">
-              Sorry we missed your call. We will ring you back shortly. Meanwhile, if you want, reply
-              with any questions you have.
+              Sorry we missed your call, we'll ring you back shortly. If you want, reply with any
+              questions meanwhile.
             </p>
             <p
               className="mt-2 font-mono text-[9px] uppercase tracking-[0.14em] text-right"
@@ -75,7 +75,7 @@ export function TextBackDeliverableMock() {
             }}
           >
             <p className="font-sans text-sm leading-relaxed" style={{color: FUNNEL_COLOURS.ink}}>
-              Do you cover Bondi, and what is the soonest you can start?
+              Do you cover Bondi, and what's the soonest you can start?
             </p>
           </div>
 

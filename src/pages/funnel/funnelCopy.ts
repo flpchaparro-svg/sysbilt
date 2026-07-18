@@ -193,34 +193,34 @@ export const MISSED_CALL_COPY: FunnelProductCopy = {
   h1Personal: (b: string) =>
     `${b}, every missed call gets a reply before they dial the next business`,
   sub: 'When the phone rings out, they move on. We wire an automatic text-back so the lead stays yours, and we prove it on a live missed call before we hand it over.',
-  ctaLabel: 'Fix my missed calls · $990',
+  ctaLabel: 'Fix my missed calls · $790',
   proofLabel: 'The leak',
-  proofHeadingLive: 'They called looking for a yes. Silence sends them elsewhere.',
-  proofHeadingGeneric: 'They called looking for a yes. Silence sends them elsewhere.',
+  proofHeadingLive: 'They called ready to say yes, and silence sent them elsewhere',
+  proofHeadingGeneric: 'They called ready to say yes, and silence sent them elsewhere',
   proofLead: (b: string | null) =>
     b
-      ? `Someone rings ${b} because they need something now. You cannot answer. There is no message, no callback promise, nothing to hold them. Their mind is already looking for the next option.`
-      : 'Someone rings because they need something now. You cannot answer. There is no message, no callback promise, nothing to hold them. Their mind is already looking for the next option.',
+      ? `Someone rings ${b} because they need something now. You can't answer. There is no message, no callback promise, nothing to hold them. Their mind is already looking for the next option.`
+      : "Someone rings because they need something now. You can't answer. There is no message, no callback promise, nothing to hold them. Their mind is already looking for the next option.",
   proofLeadGeneric:
-    'Someone rings because they need something now. You cannot answer. There is no message, no callback promise, nothing to hold them. Their mind is already looking for the next option.',
+    "Someone rings because they need something now. You can't answer. There is no message, no callback promise, nothing to hold them. Their mind is already looking for the next option.",
   proofAfter:
-    'People call with intent. If you give them nothing, they give the job to whoever answers. That is the leak: not the missed ring, the empty seconds after it.',
+    "People call with intent. If you give them nothing, they give the job to whoever answers. That's the leak: not the missed ring, the empty seconds after it.",
   proofAfterGeneric:
-    'People call with intent. If you give them nothing, they give the job to whoever answers. That is the leak: not the missed ring, the empty seconds after it.',
+    "People call with intent. If you give them nothing, they give the job to whoever answers. That's the leak: not the missed ring, the empty seconds after it.",
   painLabel: 'What this is costing you',
-  painHeading: 'You are losing jobs you will never know existed',
+  painHeading: "You're losing jobs you'll never know existed",
   painLines: [
     'Someone calls at lunch, after hours, or while your team is with a client. The phone rings out.',
-    'They do not leave a voicemail. They call the next business on Google.',
+    "They don't leave a voicemail. They call the next business on Google.",
     'You feel it as quiet weeks. You never see the lead that walked away.',
     'Every missed call is a job you paid to attract, then handed to someone else.',
   ],
   bridgeLabel: 'The fix',
   bridgeHeading: 'One job, fixed scope, a reply you can watch fire',
   bridgeBody:
-    'This is not a new phone system, a receptionist hire, or a twelve month retainer. It is a missed-call text-back on the number you already use, wired once, tested live with you, then left running. No discovery workshops, no surprise invoice in month four.',
+    "This isn't a new phone system, a receptionist hire, or a twelve month retainer. It's a missed-call text-back on the number you already use, wired once, tested live with you, then left running. No discovery workshops, no surprise invoice in month four.",
   bridgeGaugeCaption:
-    'After setup, we miss a call on purpose with you watching. The text lands: we will call back, and if they want, they can leave questions meanwhile. That is the handoff.',
+    "After setup, we miss a call on purpose with you watching. The text lands: we'll call back, and if they want, they can leave questions meanwhile. That's the handoff.",
   benefitsLabel: 'What changes for you',
   benefitsHeading: 'Outcomes, not jargon',
   benefits: [
@@ -242,7 +242,7 @@ export const MISSED_CALL_COPY: FunnelProductCopy = {
     },
   ],
   processLabel: 'How it runs',
-  processHeading: 'Often one day. Up to three, then the proof fires',
+  processHeading: 'Often one day, never more than three, then the proof fires',
   processSteps: [
     {
       label: 'Day 1',
@@ -266,7 +266,7 @@ export const MISSED_CALL_COPY: FunnelProductCopy = {
     },
     {
       title: 'Your words, not a robot script',
-      text: 'A calm reply that says you will call back, and optionally invites them to leave questions while they wait.',
+      text: "A calm reply that says you'll call back, and optionally invites them to leave questions while they wait.",
     },
     {
       title: 'Lead capture',
@@ -284,34 +284,42 @@ export const MISSED_CALL_COPY: FunnelProductCopy = {
   scopeLine:
     'One Australian business number. Works with mobile, landline, and most VoIP setups. Complex call-centre stacks get a same-day quote so the fixed price stays honest.',
   priceLabel: 'Investment',
-  price: '$990',
+  price: '$790',
   priceLead: 'Paid once, and we start. No quotes, no meetings, no scope creep.',
   guarantee:
-    'Our promise: we prove the text-back works on a live missed call before we hand it over. If it does not fire, we keep working at no extra cost until it does.',
+    "Our promise: we prove the text-back works on a live missed call before we hand it over. If it doesn't fire, we keep working at no extra cost until it does.",
   priceAnchor:
-    'That is about one job you would otherwise lose without knowing. The leak charges you every week. This charges you once.',
+    "That's about one job you'd otherwise lose without knowing. The leak charges you every week. This charges you once.",
   faqLabel: 'Objections',
   faqHeading: 'Straight answers before you buy',
   faqs: [
     {
       q: 'Is this refundable?',
-      a: 'There is no change-of-mind refund, because we start straight away. What you have instead is stronger: we prove the text-back works on a live missed call before we hand it over. If it does not fire, we keep working at no extra cost until it does.',
+      a: "There is no change-of-mind refund, because we start straight away. What you have instead is stronger: we prove the text-back works on a live missed call before we hand it over. If it doesn't fire, we keep working at no extra cost until it does.",
     },
     {
-      q: 'Will this replace my receptionist?',
-      a: 'No. It only fires when a call is missed. When you answer, nothing changes.',
+      q: 'What if I already answer most calls?',
+      a: "Then this catches the ones you can't. It only fires on missed calls, and it never touches the ones you answer.",
+    },
+    {
+      q: 'Are there ongoing costs?',
+      a: 'Our fee is once. The texts themselves cost a few cents each through your messaging account, less per month than one coffee for most businesses.',
     },
     {
       q: 'How long does it take?',
       a: 'Usually within three business days of access. Many setups finish in one afternoon once we can reach the number.',
     },
     {
+      q: 'Why not an answering service?',
+      a: "An answering service is a stranger with a script and a monthly bill. This is your own number and your own words, wired once. Most missed calls only need the first sixty seconds held, and that's the sixty seconds this owns.",
+    },
+    {
       q: 'What do you need from me?',
       a: 'Your business number, how the phone is set up, and the easiest way for us to connect. The access form after payment takes a few minutes.',
     },
     {
-      q: 'Why is this cheaper than an agency retainer?',
-      a: 'Because it is one job with a fixed scope, not a relationship. We made it repeatable. You get the benefit of that.',
+      q: 'Will this replace my receptionist?',
+      a: 'No. It only fires when a call is missed. When you answer, nothing changes.',
     },
   ],
   finalLabel: 'Last step',

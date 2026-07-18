@@ -1,6 +1,7 @@
 import React from 'react'
 import {motion, useInView, useReducedMotion} from 'framer-motion'
 import {colors} from '../../constants/theme'
+import {FUNNEL_COLOURS} from './funnelTheme'
 
 type VisualProps = {reduce: boolean | null; play: boolean}
 
@@ -93,11 +94,9 @@ function PlainEnglishVisual({reduce, play}: VisualProps) {
         }}
         transition={{delay: play ? 0.25 : 0, duration: 0.45}}
       >
-        <motion.span
-          className="font-mono text-[8px] md:text-[9px] font-bold uppercase tracking-[0.12em] text-gold-on-cream whitespace-nowrap"
-        >
+        <span className="font-mono text-[8px] md:text-[9px] font-bold uppercase tracking-[0.12em] text-gold-on-cream whitespace-nowrap">
           Easy to understand
-        </motion.span>
+        </span>
       </motion.div>
     </div>
   )
@@ -183,11 +182,171 @@ function AftercareStampVisual({reduce, play}: VisualProps) {
   )
 }
 
-const VISUALS = [
+/** Miss → automatic SMS. */
+function TextBackTriggerVisual({reduce, play}: VisualProps) {
+  return (
+    <div className="w-full h-[72px] border border-dark/12 bg-cream px-3 flex items-center gap-3">
+      <motion.div
+        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
+        style={{backgroundColor: FUNNEL_COLOURS.accent}}
+        animate={
+          play && !reduce
+            ? {rotate: [0, -6, 6, 0], scale: [1, 1.05, 1]}
+            : {rotate: 0, scale: 1}
+        }
+        transition={play && !reduce ? {duration: 0.7, repeat: 1} : {duration: 0}}
+      >
+        <span className="font-serif text-lg" style={{color: FUNNEL_COLOURS.onInk}}>
+          ☎
+        </span>
+      </motion.div>
+      <motion.span
+        className="font-mono text-[10px]"
+        style={{color: FUNNEL_COLOURS.goldDeep}}
+        initial={{opacity: 0}}
+        animate={{opacity: play || reduce ? 1 : 0}}
+        transition={{delay: play ? 0.35 : 0}}
+      >
+        →
+      </motion.span>
+      <motion.div
+        className="flex-1 rounded-md border px-2.5 py-1.5"
+        style={{
+          borderColor: `${FUNNEL_COLOURS.ink}18`,
+          backgroundColor: FUNNEL_COLOURS.ground,
+        }}
+        initial={{opacity: 0, x: 8}}
+        animate={{opacity: play || reduce ? 1 : 0, x: play || reduce ? 0 : 8}}
+        transition={{delay: play ? 0.45 : 0, duration: 0.4}}
+      >
+        <p className="font-mono text-[7px] uppercase tracking-widest text-dark/40">Auto SMS</p>
+        <p className="font-sans text-[10px] text-dark/75 truncate">We'll call you back…</p>
+      </motion.div>
+    </div>
+  )
+}
+
+/** On-brand wording, not a robot script. */
+function YourWordsVisual({reduce, play}: VisualProps) {
+  return (
+    <div className="w-full h-[72px] border border-dark/12 bg-cream px-3 flex items-center justify-center">
+      <motion.div
+        className="max-w-[90%] rounded-2xl rounded-br-sm px-3 py-2"
+        style={{backgroundColor: FUNNEL_COLOURS.ink, color: FUNNEL_COLOURS.onInk}}
+        initial={{opacity: 0, y: 8}}
+        animate={{opacity: play || reduce ? 1 : 0, y: play || reduce ? 0 : 8}}
+        transition={{duration: 0.4}}
+      >
+        <p className="font-mono text-[7px] uppercase tracking-widest mb-0.5 opacity-60">
+          Your words
+        </p>
+        <p className="font-sans text-[11px] leading-snug">
+          Sorry we missed your call, we'll ring you back shortly…
+        </p>
+      </motion.div>
+    </div>
+  )
+}
+
+/** Optional reply → logged. */
+function LeadCaptureVisual({reduce, play}: VisualProps) {
+  return (
+    <div className="w-full h-[72px] border border-dark/12 bg-cream px-3 flex items-center gap-2">
+      <motion.div
+        className="flex-1 rounded-md border px-2 py-1.5"
+        style={{borderColor: `${FUNNEL_COLOURS.ink}14`, backgroundColor: FUNNEL_COLOURS.ground}}
+        initial={{opacity: 0}}
+        animate={{opacity: play || reduce ? 1 : 0}}
+        transition={{duration: 0.35}}
+      >
+        <p className="font-mono text-[7px] text-dark/40 uppercase tracking-widest">Reply</p>
+        <p className="font-sans text-[10px] text-dark/70 truncate">
+          Do you cover Bondi, and what's the soonest…
+        </p>
+      </motion.div>
+      <motion.span
+        className="font-mono text-[10px]"
+        style={{color: FUNNEL_COLOURS.goldDeep}}
+        initial={{opacity: 0}}
+        animate={{opacity: play || reduce ? 1 : 0}}
+        transition={{delay: play ? 0.35 : 0}}
+      >
+        →
+      </motion.span>
+      <motion.div
+        className="w-[38%] rounded-md border px-2 py-1.5"
+        style={{borderColor: `${colors.teal}55`, backgroundColor: `${colors.teal}15`}}
+        initial={{opacity: 0, x: 6}}
+        animate={{opacity: play || reduce ? 1 : 0, x: play || reduce ? 0 : 6}}
+        transition={{delay: play ? 0.5 : 0, duration: 0.35}}
+      >
+        <p className="font-mono text-[7px] uppercase tracking-widest" style={{color: colors.teal}}>
+          Logged
+        </p>
+        <p className="font-sans text-[9px] text-dark/60">Lead + note</p>
+      </motion.div>
+    </div>
+  )
+}
+
+/** Live miss test → received. */
+function LiveProofVisual({reduce, play}: VisualProps) {
+  return (
+    <div className="w-full h-[72px] border border-dark/12 bg-cream px-3 flex items-center gap-2">
+      <div className="flex-1 text-center">
+        <p className="font-mono text-[7px] uppercase tracking-widest text-dark/40 mb-1">Test miss</p>
+        <motion.div
+          className="mx-auto h-8 w-8 rounded-full flex items-center justify-center"
+          style={{backgroundColor: FUNNEL_COLOURS.accent}}
+          animate={play && !reduce ? {scale: [1, 1.08, 1]} : {scale: 1}}
+          transition={play && !reduce ? {duration: 0.6, repeat: 1} : {duration: 0}}
+        >
+          <span className="font-serif text-sm" style={{color: FUNNEL_COLOURS.onInk}}>
+            ☎
+          </span>
+        </motion.div>
+      </div>
+      <motion.span
+        className="font-mono text-[10px]"
+        style={{color: FUNNEL_COLOURS.goldDeep}}
+        initial={{opacity: 0}}
+        animate={{opacity: play || reduce ? 1 : 0}}
+        transition={{delay: play ? 0.4 : 0}}
+      >
+        →
+      </motion.span>
+      <motion.div
+        className="flex-1 rounded-md border px-2 py-2 text-center"
+        style={{borderColor: `${colors.teal}55`, backgroundColor: `${colors.teal}12`}}
+        initial={{opacity: 0, scale: 0.92}}
+        animate={{
+          opacity: play || reduce ? 1 : 0,
+          scale: play || reduce ? 1 : 0.92,
+        }}
+        transition={{delay: play ? 0.55 : 0, duration: 0.35}}
+      >
+        <p className="font-mono text-[8px] font-bold uppercase tracking-widest" style={{color: colors.teal}}>
+          Received
+        </p>
+        <p className="font-sans text-[9px] text-dark/60 mt-0.5">You watching</p>
+      </motion.div>
+    </div>
+  )
+}
+
+const SPEED_VISUALS = [
   OverhaulBarVisual,
   BeforeAfterBarVisual,
   PlainEnglishVisual,
   SnapshotChartVisual,
+  AftercareStampVisual,
+]
+
+const MISSED_VISUALS = [
+  TextBackTriggerVisual,
+  YourWordsVisual,
+  LeadCaptureVisual,
+  LiveProofVisual,
   AftercareStampVisual,
 ]
 
@@ -197,17 +356,19 @@ function StackRow({
   ink,
   muted,
   reduce,
+  visuals,
 }: {
   item: {title: string; text: string}
   index: number
   ink: string
   muted: string
   reduce: boolean | null
+  visuals: Array<(p: VisualProps) => React.ReactElement>
 }) {
   const ref = React.useRef<HTMLLIElement>(null)
   const inView = useInView(ref, {once: true, amount: 0.35, margin: '0px 0px -40px 0px'})
   const [play, setPlay] = React.useState(false)
-  const Visual = VISUALS[index] || OverhaulBarVisual
+  const Visual = visuals[index] || visuals[0]
 
   React.useEffect(() => {
     if (reduce) {
@@ -246,23 +407,34 @@ function StackRow({
 type StackItem = {title: string; text: string}
 
 /**
- * Stack rows: copy left, motion strip right. Copy unchanged.
+ * Stack rows: copy left, motion strip right.
  */
 export function StackMotionRows({
   items,
   ink,
   muted,
+  variant = 'speed',
 }: {
   items: StackItem[]
   ink: string
   muted: string
+  variant?: 'speed' | 'missed-call'
 }) {
   const reduce = useReducedMotion()
+  const visuals = variant === 'missed-call' ? MISSED_VISUALS : SPEED_VISUALS
 
   return (
     <ul className="space-y-10 md:space-y-12">
       {items.map((item, i) => (
-        <StackRow key={i} item={item} index={i} ink={ink} muted={muted} reduce={reduce} />
+        <StackRow
+          key={i}
+          item={item}
+          index={i}
+          ink={ink}
+          muted={muted}
+          reduce={reduce}
+          visuals={visuals}
+        />
       ))}
     </ul>
   )

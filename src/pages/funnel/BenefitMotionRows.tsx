@@ -53,7 +53,7 @@ function StayWarmVisual({reduce}: VisualProps) {
           transition={{duration: 0.35, delay: reduce ? 0 : 0.4}}
         >
           <p className="font-mono text-[6px] uppercase tracking-widest text-dark/40">SMS</p>
-          <p className="font-sans text-[9px] leading-snug text-dark/75">We will call you back…</p>
+          <p className="font-sans text-[9px] leading-snug text-dark/75">We'll call you back…</p>
         </motion.div>
       </div>
 
@@ -83,7 +83,7 @@ function StayWarmVisual({reduce}: VisualProps) {
             Thinking
           </p>
           <p className="font-sans text-[11px] leading-snug italic" style={{color: FUNNEL_COLOURS.ink}}>
-            They must be busy. They said they will call me back.
+            They must be busy, they said they'll call me back.
           </p>
         </div>
       </motion.div>

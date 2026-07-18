@@ -197,7 +197,11 @@ function StepperField({
 /**
  * Cost-of-doing-nothing calculator — landscape, example-grey until touched.
  */
-export function LostClientCalculator() {
+export function LostClientCalculator({
+  variant = 'speed',
+}: {
+  variant?: 'speed' | 'missed-call'
+}) {
   const rootRef = useRef<HTMLDivElement>(null)
   const inView = useInView(rootRef, {once: true, amount: 0.35})
   const reduce = useReducedMotion()
@@ -288,14 +292,18 @@ export function LostClientCalculator() {
           />
 
           <StepperField
-            label="Lost to a slow site"
+            label={variant === 'missed-call' ? 'Missed calls a month' : 'Lost to a slow site'}
             suffix="/ month"
             value={lost}
             step={1}
             dirty={lostDirty}
             onDirty={() => setLostDirty(true)}
             onChange={setLost}
-            ariaLabel="Enquiries lost per month"
+            ariaLabel={
+              variant === 'missed-call'
+                ? 'Missed calls per month'
+                : 'Enquiries lost per month'
+            }
             pulseArrows={inView && !reduce}
           />
         </div>
