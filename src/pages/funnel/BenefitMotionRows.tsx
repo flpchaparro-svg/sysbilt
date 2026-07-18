@@ -5,47 +5,87 @@ import {FUNNEL_COLOURS} from './funnelTheme'
 
 type VisualProps = {reduce: boolean | null}
 
-/** Caller thinks: busy with a client, but they will call me back. */
+/** Caller: no answer → SMS arrives → thinking (not a chat reply). */
 function StayWarmVisual({reduce}: VisualProps) {
   return (
-    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white/70 p-2.5 flex flex-col justify-center gap-2">
-      <div className="flex items-start gap-2">
-        <div
-          className="mt-0.5 h-7 w-7 shrink-0 rounded-full flex items-center justify-center"
-          style={{backgroundColor: FUNNEL_COLOURS.ink}}
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white/70 p-2.5 flex flex-col justify-between">
+      <div className="flex items-center gap-2">
+        <motion.div
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
+          style={{backgroundColor: FUNNEL_COLOURS.accent}}
+          animate={reduce ? undefined : {rotate: [0, -5, 5, 0]}}
+          transition={reduce ? undefined : {duration: 0.6, repeat: 1}}
         >
           <span className="font-serif text-sm" style={{color: FUNNEL_COLOURS.onInk}}>
             ☎
           </span>
+        </motion.div>
+        <div className="min-w-0">
+          <p
+            className="font-mono text-[8px] uppercase tracking-[0.16em]"
+            style={{color: FUNNEL_COLOURS.accentDeep}}
+          >
+            No answer
+          </p>
+          <p className="font-sans text-[10px] truncate" style={{color: FUNNEL_COLOURS.muted}}>
+            Call rings out
+          </p>
         </div>
+        <motion.span
+          className="ml-auto font-mono text-[9px]"
+          style={{color: FUNNEL_COLOURS.goldDeep}}
+          initial={{opacity: 0}}
+          whileInView={{opacity: 1}}
+          viewport={{once: true}}
+          transition={{delay: reduce ? 0 : 0.35}}
+        >
+          →
+        </motion.span>
         <motion.div
-          className="flex-1 rounded-2xl rounded-tl-sm border px-2.5 py-2"
+          className="shrink-0 rounded-md border px-1.5 py-1 max-w-[42%]"
           style={{
-            borderColor: `${FUNNEL_COLOURS.ink}14`,
+            borderColor: `${FUNNEL_COLOURS.ink}18`,
             backgroundColor: FUNNEL_COLOURS.ground,
           }}
-          initial={reduce ? false : {opacity: 0, y: 6}}
-          whileInView={{opacity: 1, y: 0}}
-          viewport={{once: true, amount: 0.6}}
-          transition={{duration: 0.4}}
+          initial={reduce ? false : {opacity: 0, x: 6}}
+          whileInView={{opacity: 1, x: 0}}
+          viewport={{once: true}}
+          transition={{duration: 0.35, delay: reduce ? 0 : 0.4}}
         >
-          <p className="font-sans text-[11px] leading-snug" style={{color: FUNNEL_COLOURS.ink}}>
-            Missed call · SMS just now
-          </p>
+          <p className="font-mono text-[6px] uppercase tracking-widest text-dark/40">SMS</p>
+          <p className="font-sans text-[9px] leading-snug text-dark/75">We will call you back…</p>
         </motion.div>
       </div>
 
+      {/* Thought cloud — clearly thinking, not a text bubble */}
       <motion.div
-        className="ml-9 rounded-2xl rounded-tr-sm px-2.5 py-2 self-end max-w-[92%]"
-        style={{backgroundColor: FUNNEL_COLOURS.ink, color: FUNNEL_COLOURS.onInk}}
-        initial={reduce ? false : {opacity: 0, y: 8}}
-        whileInView={{opacity: 1, y: 0}}
-        viewport={{once: true, amount: 0.6}}
-        transition={{duration: 0.4, delay: reduce ? 0 : 0.35}}
+        className="relative self-center mt-1"
+        initial={reduce ? false : {opacity: 0, y: 6, scale: 0.92}}
+        whileInView={{opacity: 1, y: 0, scale: 1}}
+        viewport={{once: true}}
+        transition={{duration: 0.4, delay: reduce ? 0 : 0.75}}
       >
-        <p className="font-sans text-[11px] leading-snug">
-          They must be with a client. Fine, they said they will call me back.
-        </p>
+        <div className="absolute -top-2 left-6 flex gap-1" aria-hidden>
+          <span className="h-1 w-1 rounded-full bg-dark/25" />
+          <span className="h-1.5 w-1.5 rounded-full bg-dark/30" />
+        </div>
+        <div
+          className="rounded-[18px] border px-3 py-2 max-w-[240px]"
+          style={{
+            borderColor: `${FUNNEL_COLOURS.ink}20`,
+            backgroundColor: `${FUNNEL_COLOURS.gold}22`,
+          }}
+        >
+          <p
+            className="font-mono text-[6px] uppercase tracking-[0.18em] mb-0.5"
+            style={{color: FUNNEL_COLOURS.goldDeep}}
+          >
+            Thinking
+          </p>
+          <p className="font-sans text-[11px] leading-snug italic" style={{color: FUNNEL_COLOURS.ink}}>
+            They must be busy. They said they will call me back.
+          </p>
+        </div>
       </motion.div>
     </div>
   )

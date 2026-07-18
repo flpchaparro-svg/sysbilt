@@ -321,7 +321,7 @@ function CompetitorCard({play}: {play: boolean}) {
 }
 
 /**
- * Fix-section animation kit: miss → your SMS with hook → their brief reply → you call prepared.
+ * Fix-section animation kit: miss → your SMS → optional questions reply → still warm.
  */
 function SmsCard({
   play,
@@ -422,12 +422,12 @@ function SmsCard({
             You · SMS
           </p>
           <p className="font-sans text-[13px] leading-relaxed">
-            Sorry we missed your call. We will ring you back shortly. Reply with what you need and we
-            will call prepared.
+            Sorry we missed your call. We will ring you back shortly. Meanwhile, if you want, reply
+            with any questions you have.
           </p>
         </motion.div>
 
-        {/* Step 3: they reply with the brief */}
+        {/* Step 3: optional reply */}
         <motion.div
           className="max-w-[88%] rounded-2xl rounded-bl-sm border px-3.5 py-3 text-left"
           style={{
@@ -443,10 +443,10 @@ function SmsCard({
             className="font-mono text-[8px] uppercase tracking-[0.16em] mb-1.5"
             style={{color: FUNNEL_COLOURS.goldDeep}}
           >
-            Them · reply
+            Them · optional
           </p>
           <p className="font-sans text-[13px] leading-relaxed" style={{color: FUNNEL_COLOURS.ink}}>
-            Need a quote for a bathroom reno. Best after 3pm.
+            Do you cover Bondi, and what is the soonest you can start?
           </p>
         </motion.div>
 
@@ -460,7 +460,7 @@ function SmsCard({
           transition={{delay: reduce ? 0 : 1.55, duration: 0.4}}
         >
           <p className="font-sans text-xs leading-snug" style={{color: FUNNEL_COLOURS.muted}}>
-            Brief in hand. Callback is one-to-one.
+            They can wait, or leave a note while they wait.
           </p>
           <span
             className="shrink-0 font-mono text-[9px] font-bold uppercase tracking-[0.14em] px-2 py-1"
@@ -469,7 +469,7 @@ function SmsCard({
               color: FUNNEL_COLOURS.ink,
             }}
           >
-            Prepared
+            Warm
           </span>
         </motion.div>
       </div>
