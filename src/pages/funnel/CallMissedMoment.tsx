@@ -96,15 +96,15 @@ function MissCard({play, businessLabel}: {play: boolean; businessLabel: string})
           animate={
             play
               ? {
-                  x: [0, -3, 3, -3, 2, 0],
-                  rotate: [0, -4, 5, -3, 2, 0],
-                  scale: [1, 1.02, 0.99, 1.02, 1],
+                  x: [0, -1.5, 1.5, -1, 1, 0],
+                  rotate: [0, -1.5, 1.5, -1, 0.8, 0],
+                  scale: [1, 1.01, 1, 1.01, 1],
                 }
               : {x: 0, rotate: 0, scale: 1}
           }
           transition={
             play
-              ? {duration: 0.65, repeat: Infinity, repeatDelay: 0.55, ease: 'easeInOut'}
+              ? {duration: 1.1, repeat: Infinity, repeatDelay: 0.7, ease: 'easeInOut'}
               : {duration: 0.2}
           }
         >
