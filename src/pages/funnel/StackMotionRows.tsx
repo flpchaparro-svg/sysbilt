@@ -338,30 +338,28 @@ function LiveProofVisual({reduce, play}: VisualProps) {
 function ProfileOverhaulBarVisual({reduce, play}: VisualProps) {
   const rows = ['Claim', 'Categories', 'Photos', 'Q and A']
   return (
-    <div className="w-full h-[72px] border border-dark/12 bg-cream px-3 py-2 flex flex-col justify-center gap-1">
+    <div className="w-full h-[72px] border border-dark/20 bg-white px-3 py-2 flex flex-col justify-center gap-1">
       <div className="flex gap-1.5">
         {rows.map((label, i) => (
           <motion.div
             key={label}
-            className="flex-1 border px-1 py-1 text-center"
-            style={{
-              borderColor: `${FUNNEL_COLOURS.ink}14`,
-              backgroundColor: FUNNEL_COLOURS.ground,
-            }}
+            className="flex-1 border px-1 py-1 text-center bg-cream"
+            style={{borderColor: 'rgba(26,26,26,0.18)'}}
             initial={{opacity: 0.35}}
             animate={{
               opacity: play || reduce ? 1 : 0.35,
               borderColor:
-                play || reduce ? `${FUNNEL_COLOURS.gold}66` : `${FUNNEL_COLOURS.ink}14`,
+                play || reduce ? 'rgba(168,132,63,0.85)' : 'rgba(26,26,26,0.18)',
+              backgroundColor:
+                play || reduce ? 'rgba(197,160,89,0.22)' : '#FFF2EC',
             }}
             transition={
               reduce ? {duration: 0} : {delay: play ? i * 0.18 : 0, duration: 0.3}
             }
           >
-            <p className="font-mono text-[7px] uppercase tracking-wider text-dark/50">{label}</p>
+            <p className="font-mono text-[7px] uppercase tracking-wider text-dark/60">{label}</p>
             <motion.p
-              className="font-mono text-[8px] font-bold"
-              style={{color: FUNNEL_COLOURS.goldDeep}}
+              className="font-mono text-[9px] font-bold text-gold-on-cream"
               initial={{opacity: 0}}
               animate={{opacity: play || reduce ? 1 : 0}}
               transition={{delay: play ? 0.2 + i * 0.18 : 0}}
@@ -378,12 +376,12 @@ function ProfileOverhaulBarVisual({reduce, play}: VisualProps) {
 /** Keys stay with the owner. */
 function OwnershipKeysVisual({reduce, play}: VisualProps) {
   return (
-    <div className="w-full h-[72px] border border-dark/12 bg-cream px-3 flex items-center justify-center gap-3">
+    <div className="w-full h-[72px] border border-dark/20 bg-white px-3 flex items-center justify-center gap-3">
       <motion.div
         className="border px-3 py-2 text-center"
         style={{
-          borderColor: `${FUNNEL_COLOURS.gold}66`,
-          backgroundColor: `${FUNNEL_COLOURS.gold}14`,
+          borderColor: 'rgba(168,132,63,0.85)',
+          backgroundColor: 'rgba(197,160,89,0.28)',
         }}
         initial={{opacity: 0, scale: 0.92}}
         animate={{
@@ -392,16 +390,11 @@ function OwnershipKeysVisual({reduce, play}: VisualProps) {
         }}
         transition={{duration: 0.4}}
       >
-        <p className="font-mono text-[7px] uppercase tracking-widest" style={{color: FUNNEL_COLOURS.goldDeep}}>
-          Owner
-        </p>
-        <p className="font-sans text-[11px]" style={{color: FUNNEL_COLOURS.ink}}>
-          You
-        </p>
+        <p className="font-mono text-[7px] uppercase tracking-widest text-gold-on-cream">Owner</p>
+        <p className="font-sans text-[11px] font-medium text-dark">You</p>
       </motion.div>
       <motion.span
-        className="font-mono text-[10px]"
-        style={{color: FUNNEL_COLOURS.goldDeep}}
+        className="font-mono text-[10px] text-gold-on-cream"
         initial={{opacity: 0}}
         animate={{opacity: play || reduce ? 1 : 0}}
         transition={{delay: play ? 0.25 : 0}}
@@ -409,14 +402,13 @@ function OwnershipKeysVisual({reduce, play}: VisualProps) {
         ←
       </motion.span>
       <motion.div
-        className="border px-3 py-2 text-center"
-        style={{borderColor: `${FUNNEL_COLOURS.ink}14`, backgroundColor: FUNNEL_COLOURS.ground}}
+        className="border border-dark/20 bg-cream px-3 py-2 text-center"
         initial={{opacity: 0, x: 8}}
         animate={{opacity: play || reduce ? 1 : 0, x: play || reduce ? 0 : 8}}
         transition={{delay: play ? 0.35 : 0, duration: 0.35}}
       >
-        <p className="font-mono text-[7px] uppercase tracking-widest text-dark/40">Us</p>
-        <p className="font-sans text-[11px] text-dark/70">Manager only</p>
+        <p className="font-mono text-[7px] uppercase tracking-widest text-dark/50">Us</p>
+        <p className="font-sans text-[11px] text-dark/80">Manager only</p>
       </motion.div>
     </div>
   )
@@ -425,27 +417,24 @@ function OwnershipKeysVisual({reduce, play}: VisualProps) {
 /** Review link ready to copy. */
 function ReviewLinkStackVisual({reduce, play}: VisualProps) {
   return (
-    <div className="w-full h-[72px] border border-dark/12 bg-cream px-3 flex items-center gap-2">
+    <div className="w-full h-[72px] border border-dark/20 bg-white px-3 flex items-center gap-2">
       <motion.div
         className="flex-1 border px-2.5 py-2"
         style={{
-          borderColor: `${FUNNEL_COLOURS.gold}55`,
-          backgroundColor: `${FUNNEL_COLOURS.gold}12`,
+          borderColor: 'rgba(168,132,63,0.85)',
+          backgroundColor: 'rgba(197,160,89,0.22)',
         }}
         initial={{opacity: 0, y: 6}}
         animate={{opacity: play || reduce ? 1 : 0, y: play || reduce ? 0 : 6}}
         transition={{duration: 0.35}}
       >
-        <p className="font-mono text-[7px] uppercase tracking-widest" style={{color: FUNNEL_COLOURS.goldDeep}}>
+        <p className="font-mono text-[7px] uppercase tracking-widest text-gold-on-cream">
           Ask wording + link
         </p>
-        <p className="font-sans text-[10px] truncate" style={{color: FUNNEL_COLOURS.ink}}>
-          Ready to send after a good job
-        </p>
+        <p className="font-sans text-[10px] truncate text-dark">Ready to send after a good job</p>
       </motion.div>
       <motion.span
-        className="font-mono text-[9px] font-bold uppercase tracking-widest"
-        style={{color: FUNNEL_COLOURS.goldDeep}}
+        className="font-mono text-[9px] font-bold uppercase tracking-widest text-gold-on-cream"
         initial={{opacity: 0}}
         animate={{opacity: play || reduce ? 1 : 0}}
         transition={{delay: play ? 0.4 : 0}}
@@ -459,22 +448,18 @@ function ReviewLinkStackVisual({reduce, play}: VisualProps) {
 /** Monthly habit + snapshot. */
 function HabitSnapshotVisual({reduce, play}: VisualProps) {
   return (
-    <div className="w-full h-[72px] border border-dark/12 bg-cream px-3 flex items-center gap-2">
+    <div className="w-full h-[72px] border border-dark/20 bg-white px-3 flex items-center gap-2">
       <motion.div
-        className="w-[42%] border px-2 py-1.5 text-center"
-        style={{borderColor: `${FUNNEL_COLOURS.ink}14`, backgroundColor: FUNNEL_COLOURS.ground}}
+        className="w-[42%] border border-dark/20 bg-cream px-2 py-1.5 text-center"
         initial={{opacity: 0}}
         animate={{opacity: play || reduce ? 1 : 0}}
         transition={{duration: 0.3}}
       >
-        <p className="font-mono text-[7px] uppercase tracking-widest text-dark/40">5 min</p>
-        <p className="font-sans text-[10px]" style={{color: FUNNEL_COLOURS.ink}}>
-          Monthly habit
-        </p>
+        <p className="font-mono text-[7px] uppercase tracking-widest text-gold-on-cream">5 min</p>
+        <p className="font-sans text-[10px] text-dark">Monthly habit</p>
       </motion.div>
       <motion.span
-        className="font-mono text-[10px]"
-        style={{color: FUNNEL_COLOURS.goldDeep}}
+        className="font-mono text-[10px] text-gold-on-cream"
         initial={{opacity: 0}}
         animate={{opacity: play || reduce ? 1 : 0}}
         transition={{delay: play ? 0.25 : 0}}
@@ -484,17 +469,15 @@ function HabitSnapshotVisual({reduce, play}: VisualProps) {
       <motion.div
         className="flex-1 border px-2 py-1.5"
         style={{
-          borderColor: `${FUNNEL_COLOURS.gold}55`,
-          backgroundColor: `${FUNNEL_COLOURS.gold}12`,
+          borderColor: 'rgba(168,132,63,0.85)',
+          backgroundColor: 'rgba(197,160,89,0.22)',
         }}
         initial={{opacity: 0, x: 6}}
         animate={{opacity: play || reduce ? 1 : 0, x: play || reduce ? 0 : 6}}
         transition={{delay: play ? 0.4 : 0, duration: 0.35}}
       >
-        <p className="font-mono text-[7px] uppercase tracking-widest" style={{color: FUNNEL_COLOURS.goldDeep}}>
-          Snapshot
-        </p>
-        <p className="font-sans text-[9px] text-dark/65">What to fix next</p>
+        <p className="font-mono text-[7px] uppercase tracking-widest text-gold-on-cream">Snapshot</p>
+        <p className="font-sans text-[9px] text-dark/80">What to fix next</p>
       </motion.div>
     </div>
   )
