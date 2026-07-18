@@ -14,6 +14,7 @@ export const FUNNEL_PRODUCT_CODES = [
   'speed-fix',
   'missed-call',
   'google-profile',
+  'search-fix',
 ] as const
 
 export type FunnelProductCode = (typeof FUNNEL_PRODUCT_CODES)[number]
@@ -22,6 +23,7 @@ export const FUNNEL_PRODUCT_LABELS: Record<FunnelProductCode, string> = {
   'speed-fix': 'Website Speed Fix',
   'missed-call': 'Missed-Call Text-Back',
   'google-profile': 'Google Profile Fix',
+  'search-fix': 'Search Visibility Fix',
 }
 
 export type FunnelProductStatus = 'live' | 'soon'
@@ -61,6 +63,14 @@ export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
     status: 'live',
     href: '/go/google-profile',
   },
+  {
+    code: 'search-fix',
+    title: 'Search Visibility Fix',
+    price: '$1,400',
+    blurb: "Three days. Google's own records show the pages coming back.",
+    status: 'live',
+    href: '/go/search-fix',
+  },
 ]
 
 export function isFunnelProductCode(value: string | null | undefined): value is FunnelProductCode {
@@ -78,8 +88,8 @@ export function tallyAccessFormUrlForProduct(product: string | null | undefined)
   return url.toString()
 }
 
-/** Branded on-site access wizard path (preferred over Tally). */
+/** Branded on-site access wizard path (preferred over Tally). Always keeps ?p= when present. */
 export function accessFormPathForProduct(product: string | null | undefined): string {
-  if (!isFunnelProductCode(product)) return '/go/access'
-  return `/go/access?p=${encodeURIComponent(product)}`
+  if (!product || !String(product).trim()) return '/go/access'
+  return `/go/access?p=${encodeURIComponent(String(product).trim())}`
 }

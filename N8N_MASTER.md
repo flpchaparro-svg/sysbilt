@@ -47,6 +47,9 @@ Deploy and guide scripts load the API key from `.env.local` (`cursor-mcp=` or `N
 | `fag1E0JKa8JSIUhp` | SYSBILT - Outbound Speed Fix Scorer | Active† | Schedule (~5 min) + Manual | Master Leads empty `LH Mobile` → PageSpeed mobile → write score; if &lt; 65 append **Speed Fix** tab (`Status=Ready`) |
 | `qDydgiC09UoV4MRO` | SYSBILT - Outbound Speed Fix Send | Active† | Schedule (~5 min) + Manual | Speed Fix `Status=Ready` → Gmail **draft** Email A + `/go/speed-fix?b=&s=` → `Emailed` (does not send) |
 | `5QwCiKvZz4A9T4eF` | SYSBILT - Outbound Speed Fix Tab Setup | Inactive† | Webhook | Create **Speed Fix** tab + `LH Mobile` header on Master Leads (`--setup-tab`) |
+| `lWGMLmiOtdUVRsDy` | SYSBILT - Outbound Search Visibility Scorer | Active† | Schedule (~5 min) + Manual | Master Leads empty `SV Indexed` → SerpAPI `site:host` + homepage noindex → write score; if indexed ≤ 5 or noindex → **Search Visibility** tab |
+| `3cOXTQcQRMO2aUyN` | SYSBILT - Outbound Search Visibility Send | Active† | Schedule (~5 min) + Manual | Search Visibility `Status=Ready` → Gmail **draft** + `/go/search-fix?b=&n=` → `Emailed` (does not send) |
+| `2lXUaONheS6TbZoq` | SYSBILT - Outbound Search Visibility Tab Setup | Inactive† | Webhook | Create **Search Visibility** tab + `SV Indexed` header on Master Leads (`--setup-tab`) |
 | `WP2tZjhH27vJbOaV` | SYSBILT - Outbound Sheet Setup | UNVERIFIED | Webhook | Create outbound Google Sheet with headers (deploy `--setup-sheet`) |
 | `5h6SvE2hScz6KHh3` | SYSBILT - Outbound Sheet Headers | UNVERIFIED | Webhook | Repair headers after Google Tables conflicts (`--fix-sheet`) |
 | *(UNVERIFIED ID)* | SYSBILT - DM Lead Intake | UNVERIFIED | Webhook `sysbilt-dm-lead-intake` | ManyChat/DM leads → HubSpot → Slack → optional sheet log |
@@ -128,6 +131,8 @@ Keep new SYSBILT workflows under the `SYSBILT -` prefix and separate experimenta
 
 Google Sheet is the **source of truth** between workflows. **Master Leads** columns **A1:O5000** (row 1 headers; **LH Mobile** in column O). Status values include: `New`, `Audit`, `Auditing`, `Audited`, `Engage`, `Emailed`, `Replied`, `Dead`. **Run Queue** tab drives List Builder (Niche, Suburb, Status=`Queued`/`Running`/`Done`/`Failed`). **Speed Fix** tab columns: Business Name, Suburb, Website, Email, Phone, LH Mobile, Status (`Ready` / `Emailed` / `Replied` / `Dead`), Maps ID, Notes. Gate: **LH Mobile &lt; 65**.
 
+**API quota (PageSpeed + SerpAPI):** workflows pause silently for **24 hours** on quota/rate-limit errors (schedule keeps running but exits early). Leads are not written as `err` on PageSpeed quota; Run Queue jobs stay **Queued**. Email to `felipe@sysbilt.com` only if the same workflow hits quota again after a cooldown. Success resets the streak.
+
 ```
 ┌─────────────────────────┐
 │ Run Queue tab            │  Niche + Suburb + Status=Queued
@@ -176,7 +181,7 @@ Google Sheet is the **source of truth** between workflows. **Master Leads** colu
 | B — Audit Runner | `zOZh6wE70PikOCqI` | `deploy-outbound-audit-runner.sh` |
 | C — HubSpot Engage | `WD3s1eD9aUQNUWY6` | `deploy-outbound-hubspot-engage.sh` |
 
-**Sheet ID:** `OUTBOUND_LEADS_SHEET_ID` in gitignored `.deploy-state.env`. Live sheet: `1aGz6kruGwSpt55rwlcknxVDXp9dgL_M-OnVJrDIbTlE` (**Master Leads** + **Run Queue** + **Speed Fix** + **Google Profile** + **Missed-Call**).
+**Sheet ID:** `OUTBOUND_LEADS_SHEET_ID` in gitignored `.deploy-state.env`. Live sheet: `1aGz6kruGwSpt55rwlcknxVDXp9dgL_M-OnVJrDIbTlE` (**Master Leads** + **Run Queue** + **Speed Fix** + **Google Profile** + **Missed-Call** + **Search Visibility**). Master Leads column **P** = **SV Indexed** (Google `site:` count).
 
 **Product tabs (Status):** `Ready` · `Wait` · `Emailed` · `Replied` · `Dead`. Flip **Wait → Ready** when product 1 went quiet and you want the next offer. Add the same data-validation list on each product Status column (G).
 
@@ -185,6 +190,7 @@ Google Sheet is the **source of truth** between workflows. **Master Leads** colu
 | Speed Fix | LH Mobile &lt; 65 | `deploy-outbound-speed-fix-scorer.sh` / `-send.sh` |
 | Google Profile | Reviews empty or &lt; 10 (cheap filter, no scrape) | `deploy-outbound-google-profile-scorer.sh --setup-tab` / `-send.sh` |
 | Missed-Call | Phone + real Email | `deploy-outbound-missed-call-router.sh --setup-tab` / `-send.sh` |
+| Search Visibility | SV Indexed ≤ 5 **or** homepage `noindex` | `deploy-outbound-search-fix-scorer.sh --setup-tab` / `-send.sh` |
 
 If another product tab already has **Ready** or **Emailed** for the same Maps ID, new rows land as **Wait**. **Replied** anywhere skips append.
 
@@ -220,6 +226,9 @@ If another product tab already has **Ready** or **Emailed** for the same Maps ID
 ./scripts/automations/n8n/deploy-outbound-speed-fix-scorer.sh --setup-tab   # once
 ./scripts/automations/n8n/deploy-outbound-speed-fix-scorer.sh --activate
 ./scripts/automations/n8n/deploy-outbound-speed-fix-send.sh --activate
+./scripts/automations/n8n/deploy-outbound-search-fix-scorer.sh --setup-tab   # once
+./scripts/automations/n8n/deploy-outbound-search-fix-scorer.sh --activate
+./scripts/automations/n8n/deploy-outbound-search-fix-send.sh --activate
 ./scripts/automations/n8n/deploy-outbound-audit-runner.sh
 ./scripts/automations/n8n/deploy-outbound-hubspot-engage.sh
 

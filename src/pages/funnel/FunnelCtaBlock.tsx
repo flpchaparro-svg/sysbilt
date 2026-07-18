@@ -9,7 +9,8 @@ export type FunnelCtaSize = 'md' | 'lg' | 'xl' | 'final'
 function ctaSizeClass(size: FunnelCtaSize): string {
   switch (size) {
     case 'final':
-      return 'w-full max-w-2xl px-10 py-7 md:px-14 md:py-8 text-base md:text-lg tracking-[0.18em] md:tracking-[0.22em] min-h-[5.25rem] md:min-h-[5.75rem] justify-center shadow-[0_18px_50px_-12px_rgba(226,30,63,0.55)]'
+      // Slightly tighter tracking on small screens so label + arrow stay one line.
+      return 'w-full max-w-2xl px-8 py-7 sm:px-10 md:px-14 md:py-8 text-[15px] sm:text-base md:text-lg tracking-[0.12em] sm:tracking-[0.18em] md:tracking-[0.22em] min-h-[5.25rem] md:min-h-[5.75rem] justify-center shadow-[0_18px_50px_-12px_rgba(226,30,63,0.55)]'
     case 'xl':
       return 'px-11 py-5 text-[15px] tracking-[0.22em] min-h-[4rem]'
     case 'lg':
@@ -51,13 +52,13 @@ export function FunnelPrimaryLink({
         style={{backgroundColor: FUNNEL_COLOURS.accentDeep}}
       />
       <span
-        className={`relative z-10 flex items-center justify-center flex-wrap text-center ${
-          size === 'final' ? 'gap-4 md:gap-5' : 'gap-3'
+        className={`relative z-10 inline-flex items-center justify-center flex-nowrap whitespace-nowrap ${
+          size === 'final' ? 'gap-3 sm:gap-4 md:gap-5' : 'gap-3'
         }`}
         style={{color: FUNNEL_COLOURS.onInk}}
       >
-        <span className="whitespace-normal leading-relaxed">{children}</span>
-        <ArrowRight className={iconClass} />
+        <span className="leading-none">{children}</span>
+        <ArrowRight className={iconClass} aria-hidden />
       </span>
     </a>
   )

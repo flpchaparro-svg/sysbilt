@@ -2,9 +2,12 @@
 /**
  * Deploy SYSBILT - Outbound Speed Fix Scorer.
  *
- * Reads Sheet1 rows with Website + empty LH Mobile, runs PageSpeed (mobile
- * performance), writes the score back to Sheet1, and if score < 65 appends
+ * Reads Master Leads rows with Website + empty LH Mobile, runs PageSpeed (mobile
+ * performance), writes the score back to Master Leads, and if score < 65 appends
  * the lead to the "Speed Fix" tab for outreach.
+ *
+ * PageSpeed quota: silent 24h cooldown (no sheet write). Second consecutive
+ * quota after a cooldown emails felipe@sysbilt.com once.
  *
  * Env:
  *   N8N_API_KEY / cursor-mcp
@@ -29,7 +32,7 @@ const GOOGLE_SHEETS_CRED_NAME = 'Google Sheets account';
 
 const SHEET_ID_DEFAULT = '1aGz6kruGwSpt55rwlcknxVDXp9dgL_M-OnVJrDIbTlE';
 const LH_THRESHOLD = 65;
-const LEADS_SHEET = 'Sheet1';
+const LEADS_SHEET = 'Master Leads';
 const SPEED_FIX_SHEET = 'Speed Fix';
 const LEADS_RANGE = 'A1:O5000';
 const SPEED_FIX_RANGE = 'A1:I5000';
@@ -200,12 +203,23 @@ async function fetchPageSpeedKey() {
   return pageSpeedKey;
 }
 
+const COOLDOWN_MS = 24 * 60 * 60 * 1000;
+const NOTIFY_EMAIL = 'felipe@sysbilt.com';
+const GMAIL_CRED_ID = 'pR8GnMBXmukPyA2V';
+const GMAIL_CRED_NAME = 'Gmail account';
+
 const PICK_SCORE_ROW_JS = `const staticData = $getWorkflowStaticData('global');
 const STALE_MS = 8 * 60 * 1000;
+const now = Date.now();
+
+// Silent PageSpeed quota cooldown — schedule keeps firing, this run exits empty.
+if (staticData.quotaCooldownUntil && now < staticData.quotaCooldownUntil) {
+  return [];
+}
 
 if (staticData.lhInProgress) {
   const started = staticData.lhStartedAt || 0;
-  if (Date.now() - started < STALE_MS) {
+  if (now - started < STALE_MS) {
     return [];
   }
   staticData.lhInProgress = false;
@@ -233,17 +247,58 @@ const candidates = rows.filter((row) => {
 if (!candidates.length) return [];
 
 staticData.lhInProgress = true;
-staticData.lhStartedAt = Date.now();
+staticData.lhStartedAt = now;
 
 return [{ json: candidates[0] }];`;
 
-const EXTRACT_SCORE_JS = `const row = $('Pick Score Row').first().json;
+const EXTRACT_SCORE_JS = `const staticData = $getWorkflowStaticData('global');
+const row = $('Pick Score Row').first().json;
 const ps = $input.first().json || {};
+const COOLDOWN_MS = ${COOLDOWN_MS};
+
+function isQuotaError(body) {
+  const msg = String(
+    body?.error?.message || body?.error || body?.message || body?.description || '',
+  ).toLowerCase();
+  const status = String(body?.error?.status || '').toUpperCase();
+  const code = Number(body?.error?.code || body?.statusCode || body?.status || 0);
+  if (code === 429 || status === 'RESOURCE_EXHAUSTED') return true;
+  if (msg.includes('quota') || msg.includes('rate limit') || msg.includes('rate_limit')) return true;
+  if (msg.includes('daily limit') || msg.includes('user rate limit')) return true;
+  if (msg.includes('resource_exhausted')) return true;
+  return false;
+}
+
+if (isQuotaError(ps)) {
+  const streak = Number(staticData.quotaFailStreak || 0) + 1;
+  staticData.quotaFailStreak = streak;
+  staticData.quotaCooldownUntil = Date.now() + COOLDOWN_MS;
+  staticData.lhInProgress = false;
+  staticData.lhStartedAt = 0;
+  const alert = streak >= 2 && !staticData.quotaAlertSent;
+  if (alert) staticData.quotaAlertSent = true;
+  const untilIso = new Date(staticData.quotaCooldownUntil).toISOString();
+  return [{
+    json: {
+      ...row,
+      _quotaHit: true,
+      _alert: alert,
+      _quotaStreak: streak,
+      _cooldownUntil: untilIso,
+      _quotaReason: String(ps?.error?.message || ps?.error || 'PageSpeed quota'),
+    },
+  }];
+}
+
 const cats = ps.lighthouseResult?.categories || {};
 const perf = cats.performance?.score;
 let score = '';
 if (typeof perf === 'number' && Number.isFinite(perf)) {
   score = String(Math.round(perf * 100));
+  // Healthy response — reset quota streak so a later hit starts at 1 again.
+  staticData.quotaFailStreak = 0;
+  staticData.quotaAlertSent = false;
+  staticData.quotaCooldownUntil = 0;
 } else if (ps.error?.message) {
   score = 'err';
 } else {
@@ -259,6 +314,8 @@ return [{
     'LH Mobile': score,
     _qualifies: qualifies,
     _scoreNum: num,
+    _quotaHit: false,
+    _alert: false,
   },
 }];`;
 
@@ -304,6 +361,9 @@ function buildScorerWorkflow(sheetId, pageSpeedKey) {
   const waitId = uid();
   const pageSpeedId = uid();
   const extractId = uid();
+  const ifQuotaId = uid();
+  const ifAlertId = uid();
+  const notifyId = uid();
   const updateLeadsId = uid();
   const readSfId = uid();
   const dedupId = uid();
@@ -398,11 +458,77 @@ function buildScorerWorkflow(sheetId, pageSpeedKey) {
       parameters: { mode: 'runOnceForAllItems', jsCode: EXTRACT_SCORE_JS },
     },
     {
+      id: ifQuotaId,
+      name: 'Quota Hit',
+      type: 'n8n-nodes-base.if',
+      typeVersion: 2.3,
+      position: [700, 0],
+      parameters: {
+        conditions: {
+          options: { caseSensitive: true, leftValue: '', typeValidation: 'loose', version: 3 },
+          conditions: [
+            {
+              id: uid(),
+              leftValue: '={{ $json._quotaHit }}',
+              rightValue: true,
+              operator: { type: 'boolean', operation: 'equals' },
+            },
+          ],
+          combinator: 'and',
+        },
+        looseTypeValidation: true,
+        options: {},
+      },
+    },
+    {
+      id: ifAlertId,
+      name: 'Should Alert Quota',
+      type: 'n8n-nodes-base.if',
+      typeVersion: 2.3,
+      position: [920, 160],
+      parameters: {
+        conditions: {
+          options: { caseSensitive: true, leftValue: '', typeValidation: 'loose', version: 3 },
+          conditions: [
+            {
+              id: uid(),
+              leftValue: '={{ $json._alert }}',
+              rightValue: true,
+              operator: { type: 'boolean', operation: 'equals' },
+            },
+          ],
+          combinator: 'and',
+        },
+        looseTypeValidation: true,
+        options: {},
+      },
+    },
+    {
+      id: notifyId,
+      name: 'Quota Alert Email',
+      type: 'n8n-nodes-base.gmail',
+      typeVersion: 2.1,
+      position: [1140, 80],
+      credentials: {
+        gmailOAuth2: { id: GMAIL_CRED_ID, name: GMAIL_CRED_NAME },
+      },
+      parameters: {
+        sendTo: NOTIFY_EMAIL,
+        subject: '=Outbound Speed Fix Scorer: PageSpeed quota failed twice',
+        message: `=PageSpeed hit quota again after a 24h pause.<br><br>
+Streak: {{ $json._quotaStreak }}<br>
+Cooldown until: {{ $json._cooldownUntil }}<br>
+Reason: {{ $json._quotaReason }}<br><br>
+Workflow paused scoring for another 24 hours automatically. No sheet rows were burned.`,
+        options: {},
+      },
+    },
+    {
       id: updateLeadsId,
       name: 'Write LH Mobile',
       type: 'n8n-nodes-base.googleSheets',
       typeVersion: 4.7,
-      position: [720, 0],
+      position: [920, -80],
       credentials: {
         googleSheetsOAuth2Api: { id: GOOGLE_SHEETS_CRED_ID, name: GOOGLE_SHEETS_CRED_NAME },
       },
@@ -428,7 +554,7 @@ function buildScorerWorkflow(sheetId, pageSpeedKey) {
       name: 'Read Speed Fix Tab',
       type: 'n8n-nodes-base.googleSheets',
       typeVersion: 4.7,
-      position: [960, 0],
+      position: [1140, -80],
       alwaysOutputData: true,
       credentials: {
         googleSheetsOAuth2Api: { id: GOOGLE_SHEETS_CRED_ID, name: GOOGLE_SHEETS_CRED_NAME },
@@ -451,7 +577,7 @@ function buildScorerWorkflow(sheetId, pageSpeedKey) {
       name: 'Build Speed Fix Row',
       type: 'n8n-nodes-base.code',
       typeVersion: 2,
-      position: [1200, 0],
+      position: [1360, -80],
       parameters: { mode: 'runOnceForAllItems', jsCode: DEDUP_SPEED_FIX_JS },
     },
     {
@@ -459,7 +585,7 @@ function buildScorerWorkflow(sheetId, pageSpeedKey) {
       name: 'Should Append',
       type: 'n8n-nodes-base.if',
       typeVersion: 2.3,
-      position: [1440, 0],
+      position: [1580, -80],
       parameters: {
         conditions: {
           options: { caseSensitive: true, leftValue: '', typeValidation: 'loose', version: 3 },
@@ -482,7 +608,7 @@ function buildScorerWorkflow(sheetId, pageSpeedKey) {
       name: 'Append Speed Fix',
       type: 'n8n-nodes-base.googleSheets',
       typeVersion: 4.7,
-      position: [1680, -80],
+      position: [1800, -160],
       credentials: {
         googleSheetsOAuth2Api: { id: GOOGLE_SHEETS_CRED_ID, name: GOOGLE_SHEETS_CRED_NAME },
       },
@@ -515,7 +641,7 @@ function buildScorerWorkflow(sheetId, pageSpeedKey) {
       name: 'Clear LH Lock',
       type: 'n8n-nodes-base.code',
       typeVersion: 2,
-      position: [1920, 0],
+      position: [2020, 0],
       parameters: { mode: 'runOnceForAllItems', jsCode: CLEAR_LOCK_JS },
     },
   ];
@@ -527,7 +653,20 @@ function buildScorerWorkflow(sheetId, pageSpeedKey) {
     'Pick Score Row': { main: [[{ node: 'Wait Before PageSpeed', type: 'main', index: 0 }]] },
     'Wait Before PageSpeed': { main: [[{ node: 'PageSpeed Mobile', type: 'main', index: 0 }]] },
     'PageSpeed Mobile': { main: [[{ node: 'Extract Score', type: 'main', index: 0 }]] },
-    'Extract Score': { main: [[{ node: 'Write LH Mobile', type: 'main', index: 0 }]] },
+    'Extract Score': { main: [[{ node: 'Quota Hit', type: 'main', index: 0 }]] },
+    'Quota Hit': {
+      main: [
+        [{ node: 'Should Alert Quota', type: 'main', index: 0 }],
+        [{ node: 'Write LH Mobile', type: 'main', index: 0 }],
+      ],
+    },
+    'Should Alert Quota': {
+      main: [
+        [{ node: 'Quota Alert Email', type: 'main', index: 0 }],
+        [{ node: 'Clear LH Lock', type: 'main', index: 0 }],
+      ],
+    },
+    'Quota Alert Email': { main: [[{ node: 'Clear LH Lock', type: 'main', index: 0 }]] },
     'Write LH Mobile': { main: [[{ node: 'Read Speed Fix Tab', type: 'main', index: 0 }]] },
     'Read Speed Fix Tab': { main: [[{ node: 'Build Speed Fix Row', type: 'main', index: 0 }]] },
     'Build Speed Fix Row': { main: [[{ node: 'Should Append', type: 'main', index: 0 }]] },
@@ -650,13 +789,13 @@ return [{
         },
         parameters: {
           method: 'PUT',
-          url: `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodeURIComponent('Sheet1!O1')}?valueInputOption=USER_ENTERED`,
+          url: `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodeURIComponent('Master Leads!O1')}?valueInputOption=USER_ENTERED`,
           authentication: 'predefinedCredentialType',
           nodeCredentialType: 'googleSheetsOAuth2Api',
           sendBody: true,
           specifyBody: 'json',
           jsonBody: JSON.stringify({
-            range: 'Sheet1!O1',
+            range: 'Master Leads!O1',
             majorDimension: 'ROWS',
             values: [['LH Mobile']],
           }),
@@ -819,6 +958,7 @@ async function deployScorer(sheetId, { activate = false } = {}) {
   console.log(`\nScorer deployed${activate ? ' (active)' : ' (inactive)'}: ${N8N_BASE}/workflow/${wf.id}`);
   console.log(`Sheet: https://docs.google.com/spreadsheets/d/${sheetId}/edit`);
   console.log(`Gate: LH Mobile < ${LH_THRESHOLD} → Speed Fix tab (Status=Ready)`);
+  console.log('Quota: PageSpeed limit → silent 24h pause; email only on 2nd fail.');
   console.log('Test: open workflow → Execute (Manual Trigger). One row per run.');
   return wf;
 }

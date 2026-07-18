@@ -760,7 +760,7 @@ const FunnelAccessPage: React.FC = () => {
   const prefilled = params.get('p')
   const initialProduct = isFunnelProductCode(prefilled) ? prefilled : null
 
-  const [step, setStep] = useState<StepId>(initialProduct ? 'name' : 'product')
+  const [step, setStep] = useState<StepId>('product')
   const [product, setProduct] = useState<FunnelProductCode | null>(initialProduct)
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -795,29 +795,51 @@ const FunnelAccessPage: React.FC = () => {
       : PHASES_SPEED
 
   const stepOrder = useMemo((): StepId[] => {
+    // Always show the product picker first so buyers see their purchase highlighted
+    // and can still spot the other doors. ?p= only pre-selects.
     if (isMissedCall) {
-      const base: StepId[] = initialProduct
-        ? ['name', 'email', 'business', 'phone', 'phoneSetup']
-        : ['product', 'name', 'email', 'business', 'phone', 'phoneSetup']
-      base.push('access', 'accessDetail', 'notes', 'done')
-      return base
+      return [
+        'product',
+        'name',
+        'email',
+        'business',
+        'phone',
+        'phoneSetup',
+        'access',
+        'accessDetail',
+        'notes',
+        'done',
+      ]
     }
     if (isGoogleProfile) {
-      const base: StepId[] = initialProduct
-        ? ['name', 'email', 'business', 'profileUrl', 'profileStatus']
-        : ['product', 'name', 'email', 'business', 'profileUrl', 'profileStatus']
-      base.push('access', 'accessDetail', 'notes', 'done')
-      return base
+      return [
+        'product',
+        'name',
+        'email',
+        'business',
+        'profileUrl',
+        'profileStatus',
+        'access',
+        'accessDetail',
+        'notes',
+        'done',
+      ]
     }
-    const base: StepId[] = initialProduct
-      ? ['name', 'email', 'business', 'website', 'platform', 'provider']
-      : ['product', 'name', 'email', 'business', 'website', 'platform', 'provider']
+    const base: StepId[] = [
+      'product',
+      'name',
+      'email',
+      'business',
+      'website',
+      'platform',
+      'provider',
+    ]
     if (sameProvider === 'no') {
       base.push('domainProvider', 'hostingProvider')
     }
     base.push('access', 'accessDetail', 'notes', 'done')
     return base
-  }, [initialProduct, sameProvider, isMissedCall, isGoogleProfile])
+  }, [sameProvider, isMissedCall, isGoogleProfile])
 
   const stepIndex = Math.max(0, stepOrder.indexOf(step))
   const lineProgress =
@@ -827,7 +849,7 @@ const FunnelAccessPage: React.FC = () => {
 
   const activePhase = phaseForStep(step, productKind)
 
-  const firstStep = initialProduct ? 'name' : 'product'
+  const firstStep: StepId = 'product'
   const help = helpForStep(step)
   const liveProducts = FUNNEL_PRODUCT_CATALOGUE.filter((p) => p.status === 'live')
   const canGoBack = step !== 'done' && step !== firstStep
@@ -1105,6 +1127,12 @@ const FunnelAccessPage: React.FC = () => {
                 <QuestionTitle>
                   Which <span style={{color: RED}}>fix</span> did you buy?
                 </QuestionTitle>
+                {initialProduct ? (
+                  <p className="font-sans text-sm text-dark/55 text-center md:text-left mb-2">
+                    We&apos;ve highlighted what you paid for. Confirm it, or pick a different door if
+                    you meant another job.
+                  </p>
+                ) : null}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-4">
                   {liveProducts.map((p) => (
                     <div key={p.code}>
@@ -1120,6 +1148,17 @@ const FunnelAccessPage: React.FC = () => {
                     </div>
                   ))}
                 </div>
+                {product ? (
+                  <div className="mt-8 flex justify-center md:justify-start">
+                    <button
+                      type="button"
+                      onClick={() => goNext('product')}
+                      className="rounded-full bg-[#E21E3F] px-8 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.2em] text-cream shadow-[0_12px_28px_-12px_rgba(226,30,63,0.65)] transition hover:bg-[#c41935]"
+                    >
+                      Continue with {FUNNEL_PRODUCT_LABELS[product]}
+                    </button>
+                  </div>
+                ) : null}
               </>
             ) : null}
 

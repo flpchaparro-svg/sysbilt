@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 /**
- * Deploy SYSBILT - Outbound Speed Fix Send.
+ * Deploy SYSBILT - Outbound Search Visibility Send.
  *
- * Speed Fix tab Status=Ready + Email → Gmail draft (Email A + personalised
- * /go/speed-fix?b=&s= link) → Status=Emailed.
+ * Search Visibility Status=Ready + Email → Gmail draft (personalised
+ * /go/search-fix?b=&n=) → Status=Emailed.
  *
- * Does NOT send. Drafts only — review in Gmail before next week's sends.
+ * Does NOT send. Drafts only.
  *
  * Usage:
- *   node scripts/automations/n8n/deploy-outbound-speed-fix-send.mjs
- *   node scripts/automations/n8n/deploy-outbound-speed-fix-send.mjs --activate
+ *   node scripts/automations/n8n/deploy-outbound-search-fix-send.mjs
+ *   node scripts/automations/n8n/deploy-outbound-search-fix-send.mjs --activate
  */
 import { readFileSync, existsSync, writeFileSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
@@ -24,19 +24,19 @@ const GMAIL_CRED_ID = 'pR8GnMBXmukPyA2V';
 const GMAIL_CRED_NAME = 'Gmail account';
 
 const SHEET_ID_DEFAULT = '1aGz6kruGwSpt55rwlcknxVDXp9dgL_M-OnVJrDIbTlE';
-const SPEED_FIX_SHEET = 'Speed Fix';
+const SV_SHEET = 'Search Visibility';
 const LEADS_SHEET = 'Master Leads';
-const SPEED_FIX_RANGE = 'A1:I5000';
-const LEADS_RANGE = 'A1:O5000';
-const FUNNEL_BASE = 'https://sysbilt.com/go/speed-fix';
+const SV_RANGE = 'A1:I5000';
+const LEADS_RANGE = 'A1:P5000';
+const FUNNEL_BASE = 'https://sysbilt.com/go/search-fix';
 
-const SPEED_FIX_HEADERS = [
+const SV_HEADERS = [
   'Business Name',
   'Suburb',
   'Website',
   'Email',
   'Phone',
-  'LH Mobile',
+  'Blocked Pages',
   'Status',
   'Maps ID',
   'Notes',
@@ -168,7 +168,7 @@ async function upsertWorkflow(workflow, { activate = false } = {}) {
     try {
       await n8n('POST', `/workflows/${wf.id}/deactivate`, {});
     } catch {
-      // fine if already inactive
+      /* ok */
     }
   }
   return wf;
@@ -179,9 +179,7 @@ const STALE_MS = 8 * 60 * 1000;
 
 if (staticData.sendInProgress) {
   const started = staticData.sendStartedAt || 0;
-  if (Date.now() - started < STALE_MS) {
-    return [];
-  }
+  if (Date.now() - started < STALE_MS) return [];
   staticData.sendInProgress = false;
 }
 
@@ -196,9 +194,9 @@ const candidates = rows.filter((row) => {
   const status = String(row.Status || '').trim();
   const email = String(row.Email || '').trim().toLowerCase();
   const mapsId = String(row['Maps ID'] || '').trim();
-  const score = String(row['LH Mobile'] || '').trim();
+  const blocked = String(row['Blocked Pages'] || '').trim();
   if (status !== 'Ready') return false;
-  if (!mapsId || !score) return false;
+  if (!mapsId || !blocked) return false;
   if (!email || !email.includes('@')) return false;
   if (email.endsWith('@outbound.sysbilt.internal')) return false;
   if (email.startsWith('pending+')) return false;
@@ -209,7 +207,6 @@ if (!candidates.length) return [];
 
 staticData.sendInProgress = true;
 staticData.sendStartedAt = Date.now();
-
 return [{ json: candidates[0] }];`;
 
 const BUILD_EMAIL_JS = `const row = $('Pick Ready Row').first().json;
@@ -231,7 +228,6 @@ function esc(s) {
 function cleanSiteUrl(raw) {
   let s = String(raw || '').trim();
   if (!s) return '';
-  // Drop tracking junk before parse as well
   s = s.split('#')[0].split('?')[0];
   if (!/^https?:\\/\\//i.test(s)) s = 'https://' + s;
   try {
@@ -246,7 +242,8 @@ function cleanSiteUrl(raw) {
 
 const business = String(row['Business Name'] || '').trim();
 const email = String(row.Email || '').trim();
-const score = String(row['LH Mobile'] || '').trim();
+const blocked = String(row['Blocked Pages'] || '').trim();
+const indexed = String(lead['SV Indexed'] || '').trim();
 const websiteHref = cleanSiteUrl(row.Website);
 const websiteHost = (() => {
   try {
@@ -264,22 +261,24 @@ if (owner) {
 }
 
 const bParam = encodeURIComponent(business.slice(0, 40));
-const funnelUrl = '${FUNNEL_BASE}?b=' + bParam + '&s=' + encodeURIComponent(score);
+const funnelUrl = '${FUNNEL_BASE}?b=' + bParam + '&n=' + encodeURIComponent(blocked);
 
-const subject = business + "'s website scored " + score + " on mobile";
+const subject = business + ': Google is missing pages from your site';
 
-// Professional Gmail HTML: company name is the hyperlink (never paste raw UTM URLs as link text)
 const siteLink = websiteHref
   ? '<a href="' + esc(websiteHref) + '" style="color:#1a73e8;text-decoration:underline">' + esc(business) + '</a>'
   : esc(business);
 
+const indexedLine = indexed && indexed !== 'err'
+  ? ' Google\\'s own site:' + esc(websiteHost || 'your domain') + ' check only shows <strong>' + esc(indexed) + '</strong> indexed page' + (indexed === '1' ? '' : 's') + '.'
+  : '';
+
 const html = [
   '<div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.55;color:#222">',
   '<p style="margin:0 0 14px">Hi ' + esc(firstName) + ',</p>',
-  '<p style="margin:0 0 14px">We ran ' + siteLink + ' through the same speed test Google uses. It scored <strong>' + esc(score) + '</strong> on mobile. The practice ranking above you loads in under two seconds.</p>',
-  '<p style="margin:0 0 14px">Slow sites lose people before the page appears, and Google ranks them lower for it.</p>',
-  '<p style="margin:0 0 14px">We fix this as a fixed-scope job. Compression, scripts, caching, done in one to three days, measured before and after so you can see the difference. The full scope and the price are here: <a href="' + esc(funnelUrl) + '" style="color:#1a73e8;text-decoration:underline">Website Speed Fix</a>.</p>',
-  '<p style="margin:0 0 14px">Want the two-minute report we ran on your site? Reply and we\\'ll send it over, no obligation.</p>',
+  '<p style="margin:0 0 14px">We checked how Google reads ' + siteLink + '.' + indexedLine + ' That usually means a chunk of the site is blocked or set up in a way Google cannot crawl cleanly — roughly <strong>' + esc(blocked) + '</strong> pages it cannot see properly.</p>',
+  '<p style="margin:0 0 14px">We fix that as a fixed-scope job. Indexing and crawl setup cleaned up in a few days, then we watch Google\\'s recrawl for 30 days. Scope and price: <a href="' + esc(funnelUrl) + '" style="color:#1a73e8;text-decoration:underline">Search Visibility Fix</a>.</p>',
+  '<p style="margin:0 0 14px">Want the short index check we ran? Reply and we will send it over, no obligation.</p>',
   '<p style="margin:0 0 14px">Felipe<br>SYSBILT</p>',
   '<p style="margin:0;color:#666;font-size:12px;line-height:1.4">If you\\'d rather not hear from us again, reply &quot;no thanks&quot; and that\\'s the end of it.</p>',
   '</div>',
@@ -289,8 +288,6 @@ return [{
   json: {
     ...row,
     _firstName: firstName,
-    _websiteClean: websiteHref,
-    _websiteHost: websiteHost,
     _funnelUrl: funnelUrl,
     _subject: subject,
     _html: html,
@@ -311,9 +308,7 @@ function buildSendWorkflow(sheetId) {
       type: 'n8n-nodes-base.scheduleTrigger',
       typeVersion: 1.2,
       position: [-720, -80],
-      parameters: {
-        rule: { interval: [{ field: 'minutes', minutesInterval: 5 }] },
-      },
+      parameters: { rule: { interval: [{ field: 'minutes', minutesInterval: 5 }] } },
     },
     {
       id: uid(),
@@ -325,7 +320,7 @@ function buildSendWorkflow(sheetId) {
     },
     {
       id: uid(),
-      name: 'Read Speed Fix Tab',
+      name: 'Read Search Visibility Tab',
       type: 'n8n-nodes-base.googleSheets',
       typeVersion: 4.7,
       position: [-480, 0],
@@ -335,13 +330,10 @@ function buildSendWorkflow(sheetId) {
       },
       parameters: {
         operation: 'read',
-        ...sheetRef(sheetId, SPEED_FIX_SHEET),
+        ...sheetRef(sheetId, SV_SHEET),
         options: {
           dataLocationOnSheet: {
-            values: {
-              rangeDefinition: 'specifyRangeA1',
-              range: SPEED_FIX_RANGE,
-            },
+            values: { rangeDefinition: 'specifyRangeA1', range: SV_RANGE },
           },
         },
       },
@@ -369,10 +361,7 @@ function buildSendWorkflow(sheetId) {
         ...sheetRef(sheetId, LEADS_SHEET),
         options: {
           dataLocationOnSheet: {
-            values: {
-              rangeDefinition: 'specifyRangeA1',
-              range: LEADS_RANGE,
-            },
+            values: { rangeDefinition: 'specifyRangeA1', range: LEADS_RANGE },
           },
         },
       },
@@ -391,18 +380,14 @@ function buildSendWorkflow(sheetId) {
       type: 'n8n-nodes-base.gmail',
       typeVersion: 2.1,
       position: [480, 0],
-      credentials: {
-        gmailOAuth2: { id: GMAIL_CRED_ID, name: GMAIL_CRED_NAME },
-      },
+      credentials: { gmailOAuth2: { id: GMAIL_CRED_ID, name: GMAIL_CRED_NAME } },
       parameters: {
         resource: 'draft',
         operation: 'create',
         subject: '={{ $json._subject }}',
         emailType: 'html',
         message: '={{ $json._html }}',
-        options: {
-          sendTo: '={{ $json._to }}',
-        },
+        options: { sendTo: '={{ $json._to }}' },
       },
     },
     {
@@ -416,7 +401,7 @@ function buildSendWorkflow(sheetId) {
       },
       parameters: {
         operation: 'appendOrUpdate',
-        ...sheetRef(sheetId, SPEED_FIX_SHEET),
+        ...sheetRef(sheetId, SV_SHEET),
         columns: {
           mappingMode: 'defineBelow',
           value: {
@@ -426,7 +411,7 @@ function buildSendWorkflow(sheetId) {
               "={{ (() => { const prior = String($('Build Email A').item.json.Notes || '').trim(); const stamp = 'draft:' + new Date().toISOString().slice(0, 10); return prior ? prior + ' | ' + stamp : stamp; })() }}",
           },
           matchingColumns: ['Maps ID'],
-          schema: schemaFor(SPEED_FIX_HEADERS, 'Maps ID'),
+          schema: schemaFor(SV_HEADERS, 'Maps ID'),
           attemptToConvertTypes: false,
           convertFieldsToString: false,
         },
@@ -449,30 +434,25 @@ function buildSendWorkflow(sheetId) {
       position: [-980, -40],
       parameters: {
         width: 480,
-        height: 420,
+        height: 400,
         color: 5,
-        content: `## Outbound Speed Fix Send
+        content: `## Outbound Search Visibility Send
 
 **What it does**
-Every 5 min: one Speed Fix row with Status = **Ready** + real Email → Gmail **draft** (Email A + personalised /go/speed-fix?b=&s=) → Status = **Emailed**.
+Every 5 min: one Search Visibility row with Status = **Ready** + real Email → Gmail **draft** + personalised /go/search-fix?b=&n= → Status = **Emailed**.
 
-**Does not send.** Open Gmail Drafts, review, Send next week.
-
-**Later (not this workflow)**
-Speed Fix Status = Audit → same audit engine, different upsell email draft.
-Master Leads Status = Audit → main-services audit draft.
+**Does not send.** Open Gmail Drafts, review, Send.
 
 **Related**
-← Speed Fix Scorer (LH &lt; 65 → Ready)
-→ you hit Send in Gmail`,
+← Search Visibility Scorer (site: / noindex → Ready)`,
       },
     },
   ];
 
   const connections = {
-    'Every 5 Minutes': { main: [[{ node: 'Read Speed Fix Tab', type: 'main', index: 0 }]] },
-    'Manual Trigger': { main: [[{ node: 'Read Speed Fix Tab', type: 'main', index: 0 }]] },
-    'Read Speed Fix Tab': { main: [[{ node: 'Pick Ready Row', type: 'main', index: 0 }]] },
+    'Every 5 Minutes': { main: [[{ node: 'Read Search Visibility Tab', type: 'main', index: 0 }]] },
+    'Manual Trigger': { main: [[{ node: 'Read Search Visibility Tab', type: 'main', index: 0 }]] },
+    'Read Search Visibility Tab': { main: [[{ node: 'Pick Ready Row', type: 'main', index: 0 }]] },
     'Pick Ready Row': { main: [[{ node: 'Read Leads For Name', type: 'main', index: 0 }]] },
     'Read Leads For Name': { main: [[{ node: 'Build Email A', type: 'main', index: 0 }]] },
     'Build Email A': { main: [[{ node: 'Gmail Draft Email A', type: 'main', index: 0 }]] },
@@ -481,7 +461,7 @@ Master Leads Status = Audit → main-services audit draft.
   };
 
   return {
-    name: 'SYSBILT - Outbound Speed Fix Send',
+    name: 'SYSBILT - Outbound Search Visibility Send',
     nodes,
     connections,
     settings: { executionOrder: 'v1' },
@@ -498,13 +478,14 @@ async function main() {
   const wf = await upsertWorkflow(buildSendWorkflow(sheetId), { activate });
   saveDeployState({
     OUTBOUND_LEADS_SHEET_ID: sheetId,
-    OUTBOUND_SPEED_FIX_SEND_WORKFLOW_ID: wf.id,
+    OUTBOUND_SEARCH_FIX_SEND_WORKFLOW_ID: wf.id,
   });
 
-  console.log(`\nSpeed Fix Send${activate ? ' (active)' : ' (inactive)'}: ${N8N_BASE}/workflow/${wf.id}`);
-  console.log('Flow: Speed Fix Status=Ready → Gmail draft (Email A) → Status=Emailed');
-  console.log('Test: open workflow → Execute (Manual Trigger). Check Gmail Drafts.');
-  console.log('Does NOT auto-send. You Send from Drafts next week.');
+  console.log(
+    `\nSearch Visibility Send${activate ? ' (active)' : ' (inactive)'}: ${N8N_BASE}/workflow/${wf.id}`,
+  );
+  console.log('Flow: Search Visibility Status=Ready → Gmail draft → Status=Emailed');
+  console.log('Does NOT auto-send. You Send from Drafts.');
 }
 
 main().catch((err) => {

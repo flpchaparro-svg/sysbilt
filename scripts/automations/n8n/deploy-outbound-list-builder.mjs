@@ -8,8 +8,12 @@
  *   OUTBOUND_LEADS_SHEET_ID — spreadsheet ID (written by --setup-sheet)
  *
  * Usage:
+ *   node scripts/automations/n8n/deploy-outbound-list-builder.mjs --setup-master
  *   node scripts/automations/n8n/deploy-outbound-list-builder.mjs --setup-sheet
  *   node scripts/automations/n8n/deploy-outbound-list-builder.mjs
+ *   node scripts/automations/n8n/deploy-outbound-list-builder.mjs --activate
+ *
+ * --setup-master renames Sheet1 → Master Leads, creates Run Queue tab, deploys A + A2.
  */
 import { readFileSync, existsSync, writeFileSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
@@ -21,6 +25,10 @@ const ROOT = resolve(__dirname, '../../..');
 const INBOUND_AUDIT_WORKFLOW_ID = 'TvkvfhrMWWHAEQFd';
 const GOOGLE_SHEETS_CRED_ID = 'W8jOFatMKmraYw0F';
 const GOOGLE_SHEETS_CRED_NAME = 'Google Sheets account';
+const GMAIL_CRED_ID = 'pR8GnMBXmukPyA2V';
+const GMAIL_CRED_NAME = 'Gmail account';
+const QUOTA_COOLDOWN_MS = 24 * 60 * 60 * 1000;
+const NOTIFY_EMAIL = 'felipe@sysbilt.com';
 
 const SHEET_HEADERS = [
   'Business Name',
@@ -39,11 +47,130 @@ const SHEET_HEADERS = [
   'Notes',
 ];
 
+const LEADS_SHEET = 'Master Leads';
+const QUEUE_SHEET = 'Run Queue';
+const QUEUE_HEADERS = ['Queue Key', 'Niche', 'Suburb', 'Status', 'Rows Added', 'Last Run', 'Notes'];
+const QUEUE_STATUS_VALUES = ['Queued', 'Running', 'Done', 'Failed'];
+const QUEUE_DATA_RANGE = 'A1:G500';
 const SHEET_DATA_RANGE = 'A1:N5000';
 const GEMINI_CRED_ID = 'fYynkgKRlOyjBhLi';
 const GEMINI_CRED_NAME = 'Gemini News Free';
 
 const STATUS_VALUES = ['New', 'Audit', 'Auditing', 'Audited', 'Engage', 'Emailed', 'Replied', 'Dead'];
+
+/** Suggested niches for Run Queue data validation (set manually in Sheets). */
+const NICHE_SUGGESTIONS = [
+  'Dentists',
+  'Psychologists',
+  'Physiotherapists',
+  'Chiropractors',
+  'Optometrists',
+  'Hair clinics',
+  'Plastic surgery',
+  'Lawyers',
+  'Accountants',
+  'High-end builders',
+  'Interior designers',
+];
+
+/**
+ * Suburb → [lat, lng] for SerpAPI ll= (zoom 14). Unknown suburbs fall back to
+ * Sydney CBD at zoom 12 and rely on hard suburb filter after results.
+ */
+const SUBURB_COORDS = {
+  marrickville: [-33.9111, 151.1556],
+  stanmore: [-33.8992, 151.1644],
+  newtown: [-33.8983, 151.1795],
+  enmore: [-33.8995, 151.1708],
+  petersham: [-33.895, 151.155],
+  dulwich: [-33.9045, 151.138],
+  'dulwich hill': [-33.9045, 151.138],
+  leichhardt: [-33.8847, 151.1564],
+  balmain: [-33.8568, 151.179],
+  rozelle: [-33.864, 151.171],
+  annandale: [-33.881, 151.17],
+  glebe: [-33.879, 151.185],
+  forest: [-33.891, 151.132],
+  'forest lodge': [-33.891, 151.132],
+  camperdown: [-33.885, 151.178],
+  erskineville: [-33.901, 151.186],
+  alexandria: [-33.909, 151.196],
+  waterloo: [-33.9, 151.208],
+  surry: [-33.888, 151.21],
+  'surry hills': [-33.888, 151.21],
+  darlinghurst: [-33.879, 151.219],
+  paddington: [-33.885, 151.23],
+  bondi: [-33.8915, 151.2767],
+  'bondi junction': [-33.891, 151.247],
+  bronte: [-33.903, 151.263],
+  coogee: [-33.921, 151.255],
+  randwick: [-33.914, 151.241],
+  maroubra: [-33.95, 151.244],
+  double: [-33.877, 151.242],
+  'double bay': [-33.877, 151.242],
+  rose: [-33.87, 151.264],
+  'rose bay': [-33.87, 151.264],
+  mosman: [-33.829, 151.242],
+  neutral: [-33.838, 151.218],
+  'neutral bay': [-33.838, 151.218],
+  cremorne: [-33.828, 151.227],
+  northbridge: [-33.813, 151.217],
+  chatswood: [-33.7969, 151.183],
+  willoughby: [-33.806, 151.2],
+  lane: [-33.829, 151.17],
+  'lane cove': [-33.829, 151.17],
+  rye: [-33.814, 151.14],
+  ryde: [-33.814, 151.14],
+  parramatta: [-33.8151, 151.001],
+  strathfield: [-33.877, 151.094],
+  burwood: [-33.877, 151.104],
+  ashfield: [-33.889, 151.126],
+  summer: [-33.893, 151.133],
+  'summer hill': [-33.893, 151.133],
+  haberfield: [-33.881, 151.14],
+  drummoyne: [-33.852, 151.154],
+  five: [-33.873, 151.128],
+  'five dock': [-33.873, 151.128],
+  concord: [-33.856, 151.104],
+  homebush: [-33.865, 151.082],
+  manly: [-33.7969, 151.285],
+  dee: [-33.75, 151.29],
+  'dee why': [-33.75, 151.29],
+  brookvale: [-33.764, 151.271],
+  crotulla: [-34.028, 151.154],
+  cronulla: [-34.028, 151.154],
+  sutherland: [-34.029, 151.057],
+  hurstville: [-33.967, 151.102],
+  kogarah: [-33.968, 151.135],
+  rockdale: [-33.953, 151.139],
+  brighton: [-33.96, 151.155],
+  'brighton-le-sands': [-33.96, 151.155],
+  bankstown: [-33.917, 151.033],
+  liverpool: [-33.928, 150.924],
+  penrith: [-33.751, 150.694],
+  blacktown: [-33.771, 150.906],
+  hornsby: [-33.703, 151.099],
+  epping: [-33.773, 151.082],
+  eastwood: [-33.79, 151.082],
+  macquarie: [-33.777, 151.125],
+  'macquarie park': [-33.777, 151.125],
+  pyrmont: [-33.869, 151.195],
+  ultimo: [-33.881, 151.198],
+  chippendale: [-33.887, 151.2],
+  redfern: [-33.893, 151.205],
+  zetland: [-33.907, 151.208],
+  potts: [-33.867, 151.223],
+  'potts point': [-33.867, 151.223],
+  woolloomooloo: [-33.87, 151.22],
+  millers: [-33.86, 151.207],
+  'millers point': [-33.86, 151.207],
+  barangaroo: [-33.863, 151.202],
+  circular: [-33.861, 151.211],
+  'circular quay': [-33.861, 151.211],
+  'sydney cbd': [-33.8688, 151.2093],
+  sydney: [-33.8688, 151.2093],
+  cbd: [-33.8688, 151.2093],
+};
 
 const HEADER_ROW_JS = `return [{
   json: {
@@ -79,7 +206,7 @@ function buildHeaderRowNode(position) {
 }
 
 function buildSetHeaderRowHttpNode(sheetId, position) {
-  const encodedRange = encodeURIComponent('Sheet1!A1:N1');
+  const encodedRange = encodeURIComponent(`${LEADS_SHEET}!A1:N1`);
   return {
     id: uid(),
     name: 'Set Header Row',
@@ -97,7 +224,7 @@ function buildSetHeaderRowHttpNode(sheetId, position) {
       sendBody: true,
       specifyBody: 'json',
       jsonBody: JSON.stringify({
-        range: 'Sheet1!A1:N1',
+        range: `${LEADS_SHEET}!A1:N1`,
         majorDimension: 'ROWS',
         values: [SHEET_HEADERS],
       }),
@@ -176,9 +303,9 @@ function buildWriteHeadersNode(sheetIdExpr, position) {
       },
       sheetName: {
         __rl: true,
-        value: 'Sheet1',
+        value: LEADS_SHEET,
         mode: 'name',
-        cachedResultName: 'Sheet1',
+        cachedResultName: LEADS_SHEET,
       },
       columns: {
         mappingMode: 'autoMapInputData',
@@ -229,9 +356,9 @@ function buildClearEntireSheetNode(sheetIdExpr, position) {
       },
       sheetName: {
         __rl: true,
-        value: 'Sheet1',
+        value: LEADS_SHEET,
         mode: 'name',
-        cachedResultName: 'Sheet1',
+        cachedResultName: LEADS_SHEET,
       },
       clear: 'wholeSheet',
       options: {},
@@ -317,7 +444,7 @@ async function fetchSerpApiKey() {
   return m[1];
 }
 
-function sheetRef(sheetId, sheetName = 'Sheet1') {
+function sheetRef(sheetId, sheetName = LEADS_SHEET) {
   return {
     documentId: {
       __rl: true,
@@ -345,9 +472,50 @@ function headerSchema() {
   }));
 }
 
-const MAP_SERP_RESULTS_JS = `// Reads the SerpAPI google_maps response from the HTTP node above
-const response = $input.first().json;
+const MAP_SERP_RESULTS_JS = `// Reads the SerpAPI google_maps response; keeps rows matching the queued suburb.
+const staticData = $getWorkflowStaticData('global');
+const response = $input.first().json || {};
+const COOLDOWN_MS = ${QUOTA_COOLDOWN_MS};
+
+function isSerpQuota(body) {
+  const msg = String(body?.error || body?.message || body?.description || '').toLowerCase();
+  const code = Number(body?.statusCode || body?.status || body?.error?.code || 0);
+  if (code === 429) return true;
+  if (msg.includes('run out of searches') || msg.includes('out of searches')) return true;
+  if (msg.includes('quota') || msg.includes('rate limit') || msg.includes('rate_limit')) return true;
+  if (msg.includes('monthly searches') || msg.includes('account has run out')) return true;
+  return false;
+}
+
+if (isSerpQuota(response)) {
+  const streak = Number(staticData.quotaFailStreak || 0) + 1;
+  staticData.quotaFailStreak = streak;
+  staticData.quotaCooldownUntil = Date.now() + COOLDOWN_MS;
+  const alert = streak >= 2 && !staticData.quotaAlertSent;
+  if (alert) staticData.quotaAlertSent = true;
+  const untilIso = new Date(staticData.quotaCooldownUntil).toISOString();
+  return [{
+    json: {
+      _quotaHit: true,
+      _alert: alert,
+      _quotaStreak: streak,
+      _cooldownUntil: untilIso,
+      _quotaReason: String(response.error || response.message || 'SerpAPI quota'),
+      _skipped: true,
+      _noResults: true,
+    },
+  }];
+}
+
+// Healthy Serp response path — reset streak when we got a real payload shape.
+if (response.local_results || response.place_results || Array.isArray(response.local_results)) {
+  staticData.quotaFailStreak = 0;
+  staticData.quotaAlertSent = false;
+  staticData.quotaCooldownUntil = 0;
+}
+
 const results = response.local_results || (response.place_results ? [response.place_results] : []);
+const targetSuburb = String($('Pick Queued Job').first().json._targetSuburb || '').trim().toLowerCase();
 
 const MAX_ROWS = 20;
 
@@ -360,27 +528,164 @@ function parseSuburb(address) {
   return '';
 }
 
+function suburbMatch(parsed, target) {
+  if (!target) return true;
+  if (!parsed) return false;
+  const p = parsed.toLowerCase();
+  return p === target || p.includes(target) || target.includes(p);
+}
+
 const rows = results
-  .filter(r => r.website)
+  .filter((r) => r.website)
+  .filter((r) => suburbMatch(parseSuburb(r.address), targetSuburb))
   .slice(0, MAX_ROWS)
-  .map(r => ({
+  .map((r) => ({
     'Business Name': r.title || '',
-    'Suburb':        parseSuburb(r.address),
-    'Address':       r.address || '',
-    'Website':       r.website || '',
-    'Phone':         r.phone || '',
-    'Rating':        r.rating || '',
-    'Reviews':       r.reviews || '',
-    'Maps ID':       r.data_id || '',
-    'Owner Name':    '',
-    'Email':         '',
-    'Status':        'New',
-    'Audit Link':    '',
-    'Emailed':       '',
-    'Notes':         ''
+    Suburb: parseSuburb(r.address),
+    Address: r.address || '',
+    Website: r.website || '',
+    Phone: r.phone || '',
+    Rating: r.rating || '',
+    Reviews: r.reviews || '',
+    'Maps ID': r.data_id || '',
+    'Owner Name': '',
+    Email: '',
+    Status: 'New',
+    'Audit Link': '',
+    Emailed: '',
+    Notes: '',
+    _quotaHit: false,
+    _alert: false,
   }));
 
-return rows.map(row => ({ json: row }));`;
+if (!rows.length) {
+  return [{ json: { _noResults: true, reason: 'No Maps results for this niche/suburb', _quotaHit: false, _alert: false } }];
+}
+
+return rows.map((row) => ({ json: row }));`;
+
+const PICK_QUEUED_JOB_JS = `const staticData = $getWorkflowStaticData('global');
+const SUBURB_COORDS = ${JSON.stringify(SUBURB_COORDS)};
+const now = Date.now();
+
+// Silent SerpAPI quota cooldown — schedule keeps firing, this run exits empty.
+if (staticData.quotaCooldownUntil && now < staticData.quotaCooldownUntil) {
+  return [];
+}
+
+const rows = $input.all()
+  .map((item) => item.json)
+  .filter((row) => {
+    const niche = String(row.Niche || '').trim();
+    return niche && niche !== 'Niche';
+  });
+
+const queued = rows.filter((row) => String(row.Status || '').trim().toLowerCase() === 'queued');
+if (!queued.length) return [];
+
+const job = queued[0];
+const niche = String(job.Niche || '').trim();
+const suburb = String(job.Suburb || '').trim();
+if (!niche || !suburb) {
+  return [{
+    json: {
+      ...job,
+      _skip: true,
+      reason: 'Queued row needs both Niche and Suburb',
+    },
+  }];
+}
+
+const queueKey = String(job['Queue Key'] || '').trim() || (niche + '|' + suburb).toLowerCase();
+const coords = SUBURB_COORDS[suburb.toLowerCase()];
+const ll = coords
+  ? ('@' + coords[0] + ',' + coords[1] + ',14z')
+  : '@-33.8688,151.2093,12z';
+
+return [{
+  json: {
+    ...job,
+    'Queue Key': queueKey,
+    Status: 'Running',
+    _searchQuery: niche + ' ' + suburb + ' NSW',
+    _ll: ll,
+    _targetSuburb: suburb,
+    _skip: false,
+  },
+}];`;
+
+const FINISH_QUEUE_JOB_JS = `const job = $('Pick Queued Job').first().json;
+let added = 0;
+let quotaHit = false;
+let cooldownUntil = '';
+let quotaReason = '';
+try {
+  const mapItems = $('Map SerpAPI Results').all().map((item) => item.json);
+  quotaHit = mapItems.some((row) => row._quotaHit);
+  const q = mapItems.find((row) => row._quotaHit);
+  if (q) {
+    cooldownUntil = q._cooldownUntil || '';
+    quotaReason = q._quotaReason || 'SerpAPI quota';
+  }
+} catch (e) {
+  // Map node may not have run
+}
+try {
+  if (!quotaHit) {
+    added = $('Dedup New Rows').all()
+      .map((item) => item.json)
+      .filter((row) => !row._skipped).length;
+  }
+} catch (e) {
+  added = 0;
+}
+
+const failed = Boolean(job._skip);
+let status = 'Done';
+let notes = job.Notes || '';
+if (quotaHit) {
+  // Re-queue so the same niche/suburb retries after cooldown.
+  status = 'Queued';
+  notes = 'Quota cooldown until ' + cooldownUntil + (quotaReason ? (' — ' + quotaReason) : '');
+} else if (failed) {
+  status = 'Failed';
+  notes = job.reason || job.Notes || '';
+}
+
+return [{
+  json: {
+    row_number: job.row_number,
+    'Queue Key': job['Queue Key'] || '',
+    Niche: job.Niche || '',
+    Suburb: job.Suburb || '',
+    Status: status,
+    'Rows Added': String(added),
+    'Last Run': new Date().toISOString().slice(0, 19).replace('T', ' '),
+    Notes: notes,
+    _quotaHit: quotaHit,
+    _alert: false,
+  },
+}];`;
+
+const FINISH_QUOTA_JOB_JS = `const job = $('Pick Queued Job').first().json;
+const map = $('Map SerpAPI Results').first().json || {};
+return [{
+  json: {
+    row_number: job.row_number,
+    'Queue Key': job['Queue Key'] || '',
+    Niche: job.Niche || '',
+    Suburb: job.Suburb || '',
+    Status: 'Queued',
+    'Rows Added': '0',
+    'Last Run': new Date().toISOString().slice(0, 19).replace('T', ' '),
+    Notes: 'Quota cooldown until ' + (map._cooldownUntil || '') + (map._quotaReason ? (' — ' + map._quotaReason) : ''),
+    _quotaHit: true,
+    _alert: Boolean(map._alert),
+    _quotaStreak: map._quotaStreak || 0,
+    _cooldownUntil: map._cooldownUntil || '',
+    _quotaReason: map._quotaReason || 'SerpAPI quota',
+  },
+}];`;
 
 const EXTRACT_CONTACTS_HELPER = `function jinaText(j) {
   return String(j?.data || j?.content || j?.text || JSON.stringify(j || {}));
@@ -456,7 +761,12 @@ const FILTER_NEEDS_EMAIL_JS = `return $input.all()
   .filter((r) => (r.Website || '').trim() && !(r.Email || '').trim() && (r['Maps ID'] || '').trim())
   .map((row) => ({ json: row }));`;
 
-const DEDUP_ROWS_JS = `const newRows = $('Map SerpAPI Results').all().map((item) => item.json);
+const DEDUP_ROWS_JS = `const mapped = $('Map SerpAPI Results').all().map((item) => item.json);
+if (mapped.length === 1 && mapped[0]._noResults) {
+  return [{ json: { _skipped: true, reason: mapped[0].reason || 'No Maps results' } }];
+}
+
+const newRows = mapped.filter((row) => !row._noResults);
 const existingIds = new Set(
   $('Read Sheet For Dedup').all()
     .map((item) => item.json)
@@ -478,9 +788,6 @@ return fresh.map((row) => ({ json: row }));`;
 
 const TRIGGER_READ_ONCE_JS = `// Collapse mapped rows to a single item so the sheet read runs once.
 return [{ json: { _triggerRead: true } }];`;
-
-// Inner west Sydney anchor (Stanmore centre). q=dental clinic + ll returns nearby suburbs correctly.
-const INNER_WEST_LL = '@-33.8992,151.1644,13z';
 
 const PARSE_HOMEPAGE_BACKFILL_JS = PARSE_HOMEPAGE_JS.replaceAll(
   "$('Has Rows To Append')",
@@ -602,24 +909,60 @@ function buildWebsiteScrapeNodes({
   return { nodes, connections };
 }
 
+function queueHeaderSchema() {
+  return QUEUE_HEADERS.map((id) => ({
+    id,
+    displayName: id,
+    required: false,
+    defaultMatch: false,
+    display: true,
+    type: 'string',
+    canBeUsedToMatch: id === 'Queue Key' || id === 'row_number',
+  }));
+}
+
 function buildListBuilderWorkflow(serpApiKey, sheetId, { includeTestWebhook = false } = {}) {
+  const scheduleId = uid();
   const manualId = uid();
   const webhookId = uid();
+  const readQueueId = uid();
+  const pickId = uid();
+  const hasJobId = uid();
+  const markRunningId = uid();
   const serpId = uid();
   const mapId = uid();
+  const ifQuotaId = uid();
+  const finishQuotaId = uid();
+  const ifAlertId = uid();
+  const notifyId = uid();
   const triggerReadId = uid();
   const readId = uid();
   const dedupId = uid();
-  const appendId = uid();
   const skipIfId = uid();
+  const appendId = uid();
+  const finishId = uid();
+  const markDoneId = uid();
+  const guideId = uid();
 
   const nodes = [
+    {
+      id: scheduleId,
+      name: 'Every 10 Minutes',
+      type: 'n8n-nodes-base.scheduleTrigger',
+      typeVersion: 1.2,
+      position: [-1080, -80],
+      parameters: {
+        rule: {
+          interval: [{ field: 'minutes', minutesInterval: 10 }],
+        },
+      },
+    },
     {
       id: manualId,
       name: 'Manual Trigger',
       type: 'n8n-nodes-base.manualTrigger',
       typeVersion: 1,
-      position: [-720, -120],
+      position: [-1080, 120],
       parameters: {},
     },
     ...(includeTestWebhook
@@ -629,7 +972,7 @@ function buildListBuilderWorkflow(serpApiKey, sheetId, { includeTestWebhook = fa
             name: 'Test Webhook',
             type: 'n8n-nodes-base.webhook',
             typeVersion: 2.1,
-            position: [-720, 120],
+            position: [-1080, 280],
             parameters: {
               path: 'sysbilt-outbound-list-test',
               httpMethod: 'POST',
@@ -640,11 +983,118 @@ function buildListBuilderWorkflow(serpApiKey, sheetId, { includeTestWebhook = fa
         ]
       : []),
     {
+      id: readQueueId,
+      name: 'Read Run Queue',
+      type: 'n8n-nodes-base.googleSheets',
+      typeVersion: 4.7,
+      position: [-840, 0],
+      alwaysOutputData: true,
+      credentials: {
+        googleSheetsOAuth2Api: { id: GOOGLE_SHEETS_CRED_ID, name: GOOGLE_SHEETS_CRED_NAME },
+      },
+      parameters: {
+        operation: 'read',
+        ...sheetRef(sheetId, QUEUE_SHEET),
+        options: {
+          dataLocationOnSheet: {
+            values: {
+              rangeDefinition: 'specifyRangeA1',
+              range: QUEUE_DATA_RANGE,
+            },
+          },
+        },
+      },
+    },
+    {
+      id: pickId,
+      name: 'Pick Queued Job',
+      type: 'n8n-nodes-base.code',
+      typeVersion: 2,
+      position: [-600, 0],
+      parameters: {
+        mode: 'runOnceForAllItems',
+        jsCode: PICK_QUEUED_JOB_JS,
+      },
+    },
+    {
+      id: hasJobId,
+      name: 'Has Queued Job',
+      type: 'n8n-nodes-base.if',
+      typeVersion: 2.3,
+      position: [-360, 0],
+      parameters: {
+        conditions: {
+          options: { caseSensitive: true, leftValue: '', typeValidation: 'loose', version: 3 },
+          conditions: [
+            {
+              id: uid(),
+              leftValue: '={{ $json._skip }}',
+              rightValue: true,
+              operator: { type: 'boolean', operation: 'notEquals' },
+            },
+            {
+              id: uid(),
+              leftValue: '={{ $json._searchQuery }}',
+              rightValue: '',
+              operator: { type: 'string', operation: 'notEmpty' },
+            },
+          ],
+          combinator: 'and',
+        },
+        looseTypeValidation: true,
+        options: {},
+      },
+    },
+    {
+      id: markRunningId,
+      name: 'Mark Queue Running',
+      type: 'n8n-nodes-base.googleSheets',
+      typeVersion: 4.7,
+      position: [-120, 0],
+      credentials: {
+        googleSheetsOAuth2Api: { id: GOOGLE_SHEETS_CRED_ID, name: GOOGLE_SHEETS_CRED_NAME },
+      },
+      parameters: {
+        operation: 'update',
+        ...sheetRef(sheetId, QUEUE_SHEET),
+        columns: {
+          mappingMode: 'defineBelow',
+          value: {
+            row_number: '={{ $json.row_number }}',
+            'Queue Key': '={{ $json["Queue Key"] }}',
+            Niche: '={{ $json.Niche }}',
+            Suburb: '={{ $json.Suburb }}',
+            Status: 'Running',
+            'Rows Added': '={{ $json["Rows Added"] || "" }}',
+            'Last Run': '={{ $json["Last Run"] || "" }}',
+            Notes: '={{ $json.Notes || "" }}',
+          },
+          matchingColumns: ['row_number'],
+          schema: [
+            ...queueHeaderSchema(),
+            {
+              id: 'row_number',
+              displayName: 'row_number',
+              required: false,
+              defaultMatch: true,
+              display: true,
+              type: 'number',
+              canBeUsedToMatch: true,
+            },
+          ],
+          attemptToConvertTypes: false,
+          convertFieldsToString: false,
+        },
+        options: {},
+      },
+    },
+    {
       id: serpId,
       name: 'SerpAPI Maps Search',
       type: 'n8n-nodes-base.httpRequest',
       typeVersion: 4.4,
-      position: [-480, 0],
+      position: [120, 0],
+      onError: 'continueRegularOutput',
       parameters: {
         method: 'GET',
         url: 'https://serpapi.com/search.json',
@@ -652,8 +1102,14 @@ function buildListBuilderWorkflow(serpApiKey, sheetId, { includeTestWebhook = fa
         queryParameters: {
           parameters: [
             { name: 'engine', value: 'google_maps' },
-            { name: 'q', value: 'dental clinic' },
-            { name: 'll', value: INNER_WEST_LL },
+            {
+              name: 'q',
+              value: "={{ $('Pick Queued Job').item.json._searchQuery }}",
+            },
+            {
+              name: 'll',
+              value: "={{ $('Pick Queued Job').item.json._ll }}",
+            },
             { name: 'google_domain', value: 'google.com.au' },
             { name: 'gl', value: 'au' },
             { name: 'hl', value: 'en' },
@@ -669,10 +1125,88 @@ function buildListBuilderWorkflow(serpApiKey, sheetId, { includeTestWebhook = fa
       name: 'Map SerpAPI Results',
       type: 'n8n-nodes-base.code',
       typeVersion: 2,
-      position: [-240, 0],
+      position: [360, 0],
       parameters: {
         mode: 'runOnceForAllItems',
         jsCode: MAP_SERP_RESULTS_JS,
+      },
+    },
+    {
+      id: ifQuotaId,
+      name: 'Quota Hit',
+      type: 'n8n-nodes-base.if',
+      typeVersion: 2.3,
+      position: [560, 0],
+      parameters: {
+        conditions: {
+          options: { caseSensitive: true, leftValue: '', typeValidation: 'loose', version: 3 },
+          conditions: [
+            {
+              id: uid(),
+              leftValue: '={{ $json._quotaHit }}',
+              rightValue: true,
+              operator: { type: 'boolean', operation: 'equals' },
+            },
+          ],
+          combinator: 'and',
+        },
+        looseTypeValidation: true,
+        options: {},
+      },
+    },
+    {
+      id: finishQuotaId,
+      name: 'Finish Quota Job',
+      type: 'n8n-nodes-base.code',
+      typeVersion: 2,
+      position: [760, 160],
+      parameters: {
+        mode: 'runOnceForAllItems',
+        jsCode: FINISH_QUOTA_JOB_JS,
+      },
+    },
+    {
+      id: ifAlertId,
+      name: 'Should Alert Quota',
+      type: 'n8n-nodes-base.if',
+      typeVersion: 2.3,
+      position: [960, 160],
+      parameters: {
+        conditions: {
+          options: { caseSensitive: true, leftValue: '', typeValidation: 'loose', version: 3 },
+          conditions: [
+            {
+              id: uid(),
+              leftValue: '={{ $json._alert }}',
+              rightValue: true,
+              operator: { type: 'boolean', operation: 'equals' },
+            },
+          ],
+          combinator: 'and',
+        },
+        looseTypeValidation: true,
+        options: {},
+      },
+    },
+    {
+      id: notifyId,
+      name: 'Quota Alert Email',
+      type: 'n8n-nodes-base.gmail',
+      typeVersion: 2.1,
+      position: [1160, 80],
+      credentials: {
+        gmailOAuth2: { id: GMAIL_CRED_ID, name: GMAIL_CRED_NAME },
+      },
+      parameters: {
+        sendTo: NOTIFY_EMAIL,
+        subject: '=Outbound List Builder: SerpAPI quota failed twice',
+        message: `=SerpAPI hit quota again after a 24h pause.<br><br>
+Niche: {{ $json.Niche }} · Suburb: {{ $json.Suburb }}<br>
+Streak: {{ $json._quotaStreak }}<br>
+Cooldown until: {{ $json._cooldownUntil }}<br>
+Reason: {{ $json._quotaReason }}<br><br>
+Run Queue row was set back to Queued. Workflow will retry automatically after the pause.`,
+        options: {},
       },
     },
     {
@@ -680,7 +1214,7 @@ function buildListBuilderWorkflow(serpApiKey, sheetId, { includeTestWebhook = fa
       name: 'Trigger Read Once',
       type: 'n8n-nodes-base.code',
       typeVersion: 2,
-      position: [0, 0],
+      position: [760, -80],
       parameters: {
         mode: 'runOnceForAllItems',
         jsCode: TRIGGER_READ_ONCE_JS,
@@ -691,14 +1225,14 @@ function buildListBuilderWorkflow(serpApiKey, sheetId, { includeTestWebhook = fa
       name: 'Read Sheet For Dedup',
       type: 'n8n-nodes-base.googleSheets',
       typeVersion: 4.7,
-      position: [240, 0],
+      position: [840, 0],
       alwaysOutputData: true,
       credentials: {
         googleSheetsOAuth2Api: { id: GOOGLE_SHEETS_CRED_ID, name: GOOGLE_SHEETS_CRED_NAME },
       },
       parameters: {
         operation: 'read',
-        ...sheetRef(sheetId),
+        ...sheetRef(sheetId, LEADS_SHEET),
         options: {
           dataLocationOnSheet: {
             values: {
@@ -714,7 +1248,7 @@ function buildListBuilderWorkflow(serpApiKey, sheetId, { includeTestWebhook = fa
       name: 'Dedup New Rows',
       type: 'n8n-nodes-base.code',
       typeVersion: 2,
-      position: [480, 0],
+      position: [1080, 0],
       parameters: {
         mode: 'runOnceForAllItems',
         jsCode: DEDUP_ROWS_JS,
@@ -725,7 +1259,7 @@ function buildListBuilderWorkflow(serpApiKey, sheetId, { includeTestWebhook = fa
       name: 'Has Rows To Append',
       type: 'n8n-nodes-base.if',
       typeVersion: 2.3,
-      position: [720, 0],
+      position: [1320, 0],
       parameters: {
         conditions: {
           options: {
@@ -753,13 +1287,13 @@ function buildListBuilderWorkflow(serpApiKey, sheetId, { includeTestWebhook = fa
       name: 'Append To Sheet',
       type: 'n8n-nodes-base.googleSheets',
       typeVersion: 4.7,
-      position: [1920, 0],
+      position: [2520, 0],
       credentials: {
         googleSheetsOAuth2Api: { id: GOOGLE_SHEETS_CRED_ID, name: GOOGLE_SHEETS_CRED_NAME },
       },
       parameters: {
         operation: 'append',
-        ...sheetRef(sheetId),
+        ...sheetRef(sheetId, LEADS_SHEET),
         columns: {
           mappingMode: 'autoMapInputData',
           value: {},
@@ -773,33 +1307,145 @@ function buildListBuilderWorkflow(serpApiKey, sheetId, { includeTestWebhook = fa
         },
       },
     },
+    {
+      id: finishId,
+      name: 'Finish Queue Job',
+      type: 'n8n-nodes-base.code',
+      typeVersion: 2,
+      position: [2760, 80],
+      parameters: {
+        mode: 'runOnceForAllItems',
+        jsCode: FINISH_QUEUE_JOB_JS,
+      },
+    },
+    {
+      id: markDoneId,
+      name: 'Mark Queue Done',
+      type: 'n8n-nodes-base.googleSheets',
+      typeVersion: 4.7,
+      position: [3000, 80],
+      credentials: {
+        googleSheetsOAuth2Api: { id: GOOGLE_SHEETS_CRED_ID, name: GOOGLE_SHEETS_CRED_NAME },
+      },
+      parameters: {
+        operation: 'update',
+        ...sheetRef(sheetId, QUEUE_SHEET),
+        columns: {
+          mappingMode: 'defineBelow',
+          value: {
+            row_number: '={{ $json.row_number }}',
+            'Queue Key': '={{ $json["Queue Key"] }}',
+            Niche: '={{ $json.Niche }}',
+            Suburb: '={{ $json.Suburb }}',
+            Status: '={{ $json.Status }}',
+            'Rows Added': '={{ $json["Rows Added"] }}',
+            'Last Run': '={{ $json["Last Run"] }}',
+            Notes: '={{ $json.Notes }}',
+          },
+          matchingColumns: ['row_number'],
+          schema: [
+            ...queueHeaderSchema(),
+            {
+              id: 'row_number',
+              displayName: 'row_number',
+              required: false,
+              defaultMatch: true,
+              display: true,
+              type: 'number',
+              canBeUsedToMatch: true,
+            },
+          ],
+          attemptToConvertTypes: false,
+          convertFieldsToString: false,
+        },
+        options: {},
+      },
+    },
+    {
+      id: guideId,
+      name: 'Workflow Guide',
+      type: 'n8n-nodes-base.stickyNote',
+      typeVersion: 1,
+      position: [-1080, 400],
+      parameters: {
+        width: 520,
+        height: 360,
+        color: 4,
+        content: `## Outbound List Builder (A)
+
+**How to run a scrape**
+1. Open the **Run Queue** tab
+2. Add Niche + Suburb
+3. Set Status = **Queued**
+4. Wait up to 10 min (or Manual Trigger)
+
+One Queued job per run. Results append to **Master Leads**.
+
+**SerpAPI quota**
+Silent 24h pause, job stays Queued. Email only if it fails again after the pause.
+
+**Related**
+→ Contact Scrape (A2) backfills emails
+→ Speed Fix Scorer reads **Master Leads**`,
+      },
+    },
   ];
 
   const scrape = buildWebsiteScrapeNodes({
     rowSourceNode: 'Has Rows To Append',
     appendNode: 'Append To Sheet',
   });
+  // Shift scrape nodes right so they sit between Has Rows and Finish
+  for (const n of scrape.nodes) {
+    n.position = [n.position[0] + 720, n.position[1]];
+  }
   nodes.push(...scrape.nodes);
 
   const connections = {
-    'Manual Trigger': { main: [[{ node: 'SerpAPI Maps Search', type: 'main', index: 0 }]] },
+    'Every 10 Minutes': { main: [[{ node: 'Read Run Queue', type: 'main', index: 0 }]] },
+    'Manual Trigger': { main: [[{ node: 'Read Run Queue', type: 'main', index: 0 }]] },
     ...(includeTestWebhook
-      ? { 'Test Webhook': { main: [[{ node: 'SerpAPI Maps Search', type: 'main', index: 0 }]] } }
+      ? { 'Test Webhook': { main: [[{ node: 'Read Run Queue', type: 'main', index: 0 }]] } }
       : {}),
+    'Read Run Queue': { main: [[{ node: 'Pick Queued Job', type: 'main', index: 0 }]] },
+    'Pick Queued Job': { main: [[{ node: 'Has Queued Job', type: 'main', index: 0 }]] },
+    'Has Queued Job': {
+      main: [
+        [{ node: 'Mark Queue Running', type: 'main', index: 0 }],
+        [{ node: 'Finish Queue Job', type: 'main', index: 0 }],
+      ],
+    },
+    'Mark Queue Running': { main: [[{ node: 'SerpAPI Maps Search', type: 'main', index: 0 }]] },
     'SerpAPI Maps Search': { main: [[{ node: 'Map SerpAPI Results', type: 'main', index: 0 }]] },
-    'Map SerpAPI Results': { main: [[{ node: 'Trigger Read Once', type: 'main', index: 0 }]] },
+    'Map SerpAPI Results': { main: [[{ node: 'Quota Hit', type: 'main', index: 0 }]] },
+    'Quota Hit': {
+      main: [
+        [{ node: 'Finish Quota Job', type: 'main', index: 0 }],
+        [{ node: 'Trigger Read Once', type: 'main', index: 0 }],
+      ],
+    },
+    'Finish Quota Job': { main: [[{ node: 'Should Alert Quota', type: 'main', index: 0 }]] },
+    'Should Alert Quota': {
+      main: [
+        [{ node: 'Quota Alert Email', type: 'main', index: 0 }],
+        [{ node: 'Mark Queue Done', type: 'main', index: 0 }],
+      ],
+    },
+    'Quota Alert Email': { main: [[{ node: 'Mark Queue Done', type: 'main', index: 0 }]] },
     'Trigger Read Once': { main: [[{ node: 'Read Sheet For Dedup', type: 'main', index: 0 }]] },
     'Read Sheet For Dedup': { main: [[{ node: 'Dedup New Rows', type: 'main', index: 0 }]] },
     'Dedup New Rows': { main: [[{ node: 'Has Rows To Append', type: 'main', index: 0 }]] },
     'Has Rows To Append': {
       main: [
         scrape.connections['Has Rows To Append'].main[0],
-        [],
+        [{ node: 'Finish Queue Job', type: 'main', index: 0 }],
       ],
     },
     ...Object.fromEntries(
       Object.entries(scrape.connections).filter(([k]) => k !== 'Has Rows To Append'),
     ),
+    'Append To Sheet': { main: [[{ node: 'Finish Queue Job', type: 'main', index: 0 }]] },
+    'Finish Queue Job': { main: [[{ node: 'Mark Queue Done', type: 'main', index: 0 }]] },
   };
 
   return {
@@ -1133,6 +1779,8 @@ function buildHeadersOnlyWorkflow(sheetId) {
 async function runWebhookSetup(path, workflow) {
   const wf = await upsertWorkflow(workflow);
   await n8n('POST', `/workflows/${wf.id}/activate`, {});
+  // Brief wait so n8n registers the webhook
+  await new Promise((r) => setTimeout(r, 1500));
   const res = await fetch(`${N8N_BASE}/webhook/${path}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -1152,6 +1800,237 @@ async function runWebhookSetup(path, workflow) {
   }
   if (!res.ok) throw new Error(`Webhook ${path} failed: ${res.status} ${JSON.stringify(data)}`);
   return { data, workflowId: wf.id };
+}
+
+const ENSURE_MASTER_QUEUE_JS = `const meta = $input.first().json;
+const sheets = meta.sheets || [];
+const requests = [];
+
+const sheet1 = sheets.find((s) => s.properties?.title === 'Sheet1');
+const master = sheets.find((s) => s.properties?.title === 'Master Leads');
+if (sheet1 && !master) {
+  requests.push({
+    updateSheetProperties: {
+      properties: { sheetId: sheet1.properties.sheetId, title: 'Master Leads' },
+      fields: 'title',
+    },
+  });
+}
+
+const queue = sheets.find((s) => s.properties?.title === 'Run Queue');
+if (!queue) {
+  requests.push({
+    addSheet: { properties: { title: 'Run Queue', index: 0 } },
+  });
+}
+
+return [{ json: { requests, hasRequests: requests.length > 0 } }];`;
+
+function buildMasterMigrateWorkflow(sheetId) {
+  const webhookId = uid();
+  const getMetaId = uid();
+  const ensureId = uid();
+  const batchId = uid();
+  const setQueueHeadersId = uid();
+  const seedId = uid();
+  const respondId = uid();
+
+  return {
+    name: 'SYSBILT - Outbound Master + Queue Setup',
+    nodes: [
+      {
+        id: webhookId,
+        name: 'Setup Webhook',
+        type: 'n8n-nodes-base.webhook',
+        typeVersion: 2.1,
+        position: [-600, 0],
+        parameters: {
+          path: 'sysbilt-outbound-master-queue',
+          httpMethod: 'POST',
+          responseMode: 'responseNode',
+          options: {},
+        },
+        webhookId: 'sysbilt-outbound-master-queue',
+      },
+      {
+        id: getMetaId,
+        name: 'Get Spreadsheet Meta',
+        type: 'n8n-nodes-base.httpRequest',
+        typeVersion: 4.4,
+        position: [-360, 0],
+        credentials: {
+          googleSheetsOAuth2Api: { id: GOOGLE_SHEETS_CRED_ID, name: GOOGLE_SHEETS_CRED_NAME },
+        },
+        parameters: {
+          method: 'GET',
+          url: `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}?fields=spreadsheetId,sheets(properties(sheetId,title))`,
+          authentication: 'predefinedCredentialType',
+          nodeCredentialType: 'googleSheetsOAuth2Api',
+          options: {},
+        },
+      },
+      {
+        id: ensureId,
+        name: 'Ensure Master And Queue',
+        type: 'n8n-nodes-base.code',
+        typeVersion: 2,
+        position: [-120, 0],
+        parameters: { mode: 'runOnceForAllItems', jsCode: ENSURE_MASTER_QUEUE_JS },
+      },
+      {
+        id: uid(),
+        name: 'Has Sheet Changes',
+        type: 'n8n-nodes-base.if',
+        typeVersion: 2.3,
+        position: [0, 0],
+        parameters: {
+          conditions: {
+            options: { caseSensitive: true, leftValue: '', typeValidation: 'loose', version: 3 },
+            conditions: [
+              {
+                id: uid(),
+                leftValue: '={{ $json.hasRequests }}',
+                rightValue: true,
+                operator: { type: 'boolean', operation: 'equals' },
+              },
+            ],
+            combinator: 'and',
+          },
+          looseTypeValidation: true,
+          options: {},
+        },
+      },
+      {
+        id: batchId,
+        name: 'Apply Sheet Changes',
+        type: 'n8n-nodes-base.httpRequest',
+        typeVersion: 4.4,
+        position: [200, -80],
+        credentials: {
+          googleSheetsOAuth2Api: { id: GOOGLE_SHEETS_CRED_ID, name: GOOGLE_SHEETS_CRED_NAME },
+        },
+        parameters: {
+          method: 'POST',
+          url: `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}:batchUpdate`,
+          authentication: 'predefinedCredentialType',
+          nodeCredentialType: 'googleSheetsOAuth2Api',
+          sendBody: true,
+          specifyBody: 'json',
+          jsonBody: '={{ JSON.stringify({ requests: $json.requests || [] }) }}',
+          options: {},
+        },
+      },
+      {
+        id: setQueueHeadersId,
+        name: 'Set Run Queue Headers',
+        type: 'n8n-nodes-base.httpRequest',
+        typeVersion: 4.4,
+        position: [440, 0],
+        credentials: {
+          googleSheetsOAuth2Api: { id: GOOGLE_SHEETS_CRED_ID, name: GOOGLE_SHEETS_CRED_NAME },
+        },
+        parameters: {
+          method: 'PUT',
+          url: `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodeURIComponent('Run Queue!A1:G1')}?valueInputOption=USER_ENTERED`,
+          authentication: 'predefinedCredentialType',
+          nodeCredentialType: 'googleSheetsOAuth2Api',
+          sendBody: true,
+          specifyBody: 'json',
+          jsonBody: JSON.stringify({
+            range: 'Run Queue!A1:G1',
+            majorDimension: 'ROWS',
+            values: [QUEUE_HEADERS],
+          }),
+          options: {},
+        },
+      },
+      {
+        id: seedId,
+        name: 'Seed Run Queue Hint',
+        type: 'n8n-nodes-base.httpRequest',
+        typeVersion: 4.4,
+        position: [680, 0],
+        credentials: {
+          googleSheetsOAuth2Api: { id: GOOGLE_SHEETS_CRED_ID, name: GOOGLE_SHEETS_CRED_NAME },
+        },
+        parameters: {
+          method: 'PUT',
+          url: `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodeURIComponent('Run Queue!A2:G2')}?valueInputOption=USER_ENTERED`,
+          authentication: 'predefinedCredentialType',
+          nodeCredentialType: 'googleSheetsOAuth2Api',
+          sendBody: true,
+          specifyBody: 'json',
+          jsonBody: JSON.stringify({
+            range: 'Run Queue!A2:G2',
+            majorDimension: 'ROWS',
+            values: [
+              [
+                '',
+                'Dentists',
+                'Marrickville',
+                '',
+                '',
+                '',
+                'Example row: set Status to Queued to scrape. Leave Queue Key blank.',
+              ],
+            ],
+          }),
+          options: {},
+        },
+      },
+      {
+        id: respondId,
+        name: 'Respond OK',
+        type: 'n8n-nodes-base.respondToWebhook',
+        typeVersion: 1.1,
+        position: [920, 0],
+        parameters: {
+          respondWith: 'json',
+          responseBody: `={{ ({ ok: true, spreadsheetId: "${sheetId}", leadsSheet: "Master Leads", queueSheet: "Run Queue" }) }}`,
+          options: {},
+        },
+      },
+    ],
+    connections: {
+      'Setup Webhook': { main: [[{ node: 'Get Spreadsheet Meta', type: 'main', index: 0 }]] },
+      'Get Spreadsheet Meta': { main: [[{ node: 'Ensure Master And Queue', type: 'main', index: 0 }]] },
+      'Ensure Master And Queue': { main: [[{ node: 'Has Sheet Changes', type: 'main', index: 0 }]] },
+      'Has Sheet Changes': {
+        main: [
+          [{ node: 'Apply Sheet Changes', type: 'main', index: 0 }],
+          [{ node: 'Set Run Queue Headers', type: 'main', index: 0 }],
+        ],
+      },
+      'Apply Sheet Changes': { main: [[{ node: 'Set Run Queue Headers', type: 'main', index: 0 }]] },
+      'Set Run Queue Headers': { main: [[{ node: 'Seed Run Queue Hint', type: 'main', index: 0 }]] },
+      'Seed Run Queue Hint': { main: [[{ node: 'Respond OK', type: 'main', index: 0 }]] },
+    },
+    settings: { executionOrder: 'v1' },
+  };
+}
+
+async function setupMasterAndQueue() {
+  const sheetId = process.env.OUTBOUND_LEADS_SHEET_ID;
+  if (!sheetId) {
+    console.error('Missing OUTBOUND_LEADS_SHEET_ID.');
+    process.exit(1);
+  }
+  console.log(`Migrating sheet ${sheetId}: Sheet1 → Master Leads, ensure Run Queue...`);
+  const { data, workflowId } = await runWebhookSetup(
+    'sysbilt-outbound-master-queue',
+    buildMasterMigrateWorkflow(sheetId),
+  );
+  if (!data.ok) throw new Error(`Master/queue setup failed: ${JSON.stringify(data)}`);
+  saveDeployState({
+    OUTBOUND_MASTER_QUEUE_SETUP_WORKFLOW_ID: workflowId,
+    OUTBOUND_LEADS_SHEET_ID: sheetId,
+  });
+  console.log(`\nSheet ready: https://docs.google.com/spreadsheets/d/${sheetId}/edit`);
+  console.log(`Tabs: ${LEADS_SHEET} (companies) + ${QUEUE_SHEET} (jobs) + Speed Fix`);
+  console.log('\nAdd data validation on Run Queue:');
+  console.log(`  Status (column D): ${QUEUE_STATUS_VALUES.join(', ')}`);
+  console.log(`  Niche suggestions: ${NICHE_SUGGESTIONS.join(', ')}`);
+  return sheetId;
 }
 
 async function setupSheet() {
@@ -1200,12 +2079,12 @@ async function deployContactScrape() {
   return wf;
 }
 
-async function deployAll() {
-  await deployListBuilder();
+async function deployAll({ activate = false } = {}) {
+  await deployListBuilder({ activate });
   await deployContactScrape();
 }
 
-async function deployListBuilder({ includeTestWebhook = false } = {}) {
+async function deployListBuilder({ includeTestWebhook = false, activate = false } = {}) {
   const sheetId = process.env.OUTBOUND_LEADS_SHEET_ID;
   if (!sheetId) {
     console.error('Missing OUTBOUND_LEADS_SHEET_ID. Run with --setup-sheet first.');
@@ -1214,14 +2093,19 @@ async function deployListBuilder({ includeTestWebhook = false } = {}) {
 
   const serpApiKey = await fetchSerpApiKey();
   const workflow = buildListBuilderWorkflow(serpApiKey, sheetId, { includeTestWebhook });
-  const wf = await upsertWorkflow(workflow, { activate: includeTestWebhook });
+  const shouldActivate = activate || includeTestWebhook;
+  const wf = await upsertWorkflow(workflow, { activate: shouldActivate });
   saveDeployState({
     OUTBOUND_LIST_BUILDER_WORKFLOW_ID: wf.id,
     OUTBOUND_LEADS_SHEET_ID: sheetId,
   });
 
-  console.log(`\nWorkflow A deployed (inactive): ${N8N_BASE}/workflow/${wf.id}`);
-  console.log('Test: open the workflow in n8n → Execute workflow (Manual Trigger).');
+  console.log(
+    `\nWorkflow A deployed (${shouldActivate ? 'active' : 'inactive'}): ${N8N_BASE}/workflow/${wf.id}`,
+  );
+  console.log('Queue: set Niche + Suburb + Status=Queued on Run Queue tab.');
+  console.log('Schedule: every 10 minutes when active (or Manual Trigger).');
+  console.log('Quota: SerpAPI limit → silent 24h pause + re-queue; email only on 2nd fail.');
   console.log(`Sheet: https://docs.google.com/spreadsheets/d/${sheetId}/edit`);
   return wf;
 }
@@ -1258,14 +2142,43 @@ async function runListBuilderTest() {
 }
 
 const setupOnly = process.argv.includes('--setup-sheet');
+const setupMaster = process.argv.includes('--setup-master');
 const fixSheetOnly = process.argv.includes('--fix-sheet');
 const runTest = process.argv.includes('--run-test');
+const activate = process.argv.includes('--activate');
 
 if (runTest) {
   runListBuilderTest().catch((err) => {
     console.error(err.message || err);
     process.exit(1);
   });
+} else if (setupMaster) {
+  setupMasterAndQueue()
+    .then(() => deployAll({ activate: true }))
+    .then(async () => {
+      // Redeploy Speed Fix / Audit / Engage so they point at Master Leads
+      const { spawnSync } = await import('node:child_process');
+      const scripts = [
+        'deploy-outbound-speed-fix-scorer.mjs',
+        'deploy-outbound-speed-fix-send.mjs',
+        'deploy-outbound-audit-runner.mjs',
+        'deploy-outbound-hubspot-engage.mjs',
+      ];
+      for (const script of scripts) {
+        console.log(`\nRedeploying ${script} for Master Leads...`);
+        const r = spawnSync(process.execPath, [resolve(__dirname, script)], {
+          stdio: 'inherit',
+          env: process.env,
+        });
+        if (r.status !== 0) {
+          console.warn(`Warning: ${script} exited ${r.status}`);
+        }
+      }
+    })
+    .catch((err) => {
+      console.error(err.message || err);
+      process.exit(1);
+    });
 } else if (fixSheetOnly || setupOnly) {
   const run = async () => {
     const sheetId = process.env.OUTBOUND_LEADS_SHEET_ID;
@@ -1285,18 +2198,18 @@ if (runTest) {
         'If row 1 still shows "Column 1", "Column 2": click Table1 → Convert to range, then run --fix-sheet again.',
       );
       console.log('Re-run Workflow A in n8n to repopulate rows (Address + scraped email).');
-      await deployAll();
+      await deployAll({ activate });
       return;
     }
     const id = await setupSheet();
-    if (id) await deployAll();
+    if (id) await deployAll({ activate });
   };
   run().catch((err) => {
     console.error(err.message || err);
     process.exit(1);
   });
 } else {
-  deployAll().catch((err) => {
+  deployAll({ activate }).catch((err) => {
     console.error(err.message || err);
     process.exit(1);
   });

@@ -11,6 +11,7 @@ import {CallMissedMoment, MissedCallLeakPair} from './CallMissedMoment'
 import {PainCostCards} from './PainCostCards'
 import {MissedCallPainCards} from './MissedCallPainCards'
 import {GoogleProfilePainCards} from './GoogleProfilePainCards'
+import {SearchPainCards} from './SearchPainCards'
 import {LostClientCalculator} from './LostClientCalculator'
 import {BenefitMotionRows} from './BenefitMotionRows'
 import {StackMotionRows} from './StackMotionRows'
@@ -19,6 +20,9 @@ import {ReportDeliverableMock} from './ReportDeliverableMock'
 import {TextBackDeliverableMock} from './TextBackDeliverableMock'
 import {ProfileDeliverableMock} from './ProfileDeliverableMock'
 import {ProfileAfterMoment} from './ProfileAfterMoment'
+import {IndexCheckMoment, type IndexCheckEvidence} from './IndexCheckMoment'
+import {SearchVisibilityLeakPair} from './SearchVisibilityLeakPair'
+import {SearchRecoveryMock} from './SearchRecoveryMock'
 import {
   MissedCallEvidenceCard,
   type MissedCallEvidence,
@@ -29,6 +33,7 @@ import {
 } from './GoogleProfileEvidenceCard'
 import {GoogleFrontDoorPanel} from './GoogleFrontDoorPanel'
 import {
+  parseBlockedPages,
   parseSpeedScore,
   sanitiseBusinessName,
   sanitiseCallDay,
@@ -162,18 +167,28 @@ const FunnelPage: React.FC = () => {
   const business = useMemo(() => sanitiseBusinessName(params.get('b')), [params])
   const competitor = useMemo(() => sanitiseCompetitorName(params.get('c')), [params])
   const score = useMemo(() => parseSpeedScore(params.get('s')), [params])
+  const blockedPages = useMemo(() => parseBlockedPages(params.get('n')), [params])
   const callDay = useMemo(() => sanitiseCallDay(params.get('d')), [params])
   const callTime = useMemo(() => sanitiseCallTime(params.get('t')), [params])
   const proofKind = COPY.proofKind
   const isMissedCall = proofKind === 'missed-call'
   const isGoogleProfile = proofKind === 'google-profile'
+  const isSearchFix = proofKind === 'search-fix'
   const isSpeed = proofKind === 'speed'
   const motionVariant = isMissedCall
     ? 'missed-call'
     : isGoogleProfile
       ? 'google-profile'
-      : 'speed'
-  const calculatorVariant = isSpeed ? 'speed' : isMissedCall ? 'missed-call' : 'google-profile'
+      : isSearchFix
+        ? 'search-fix'
+        : 'speed'
+  const calculatorVariant = isSpeed
+    ? 'speed'
+    : isMissedCall
+      ? 'missed-call'
+      : isSearchFix
+        ? 'search-fix'
+        : 'google-profile'
   const missedEvidence: MissedCallEvidence = useMemo(() => {
     if (business && callDay && callTime) {
       return {mode: 'tested', business, day: callDay, time: callTime}
@@ -185,6 +200,12 @@ const FunnelPage: React.FC = () => {
     if (business) return {mode: 'named', business}
     return {mode: 'try'}
   }, [business, competitor])
+  const searchEvidence: IndexCheckEvidence = useMemo(() => {
+    if (business && blockedPages != null) {
+      return {mode: 'live', business, pages: blockedPages}
+    }
+    return {mode: 'try'}
+  }, [business, blockedPages])
 
   useEffect(() => {
     if (!slug) {
@@ -320,7 +341,7 @@ const FunnelPage: React.FC = () => {
 
           <section
             className={`mx-auto px-6 md:px-10 pb-16 md:pb-24 ${
-              isSpeed ? 'max-w-3xl' : 'max-w-5xl'
+              isSpeed || isSearchFix ? 'max-w-3xl' : 'max-w-5xl'
             }`}
           >
             <SectionRule />
@@ -334,27 +355,34 @@ const FunnelPage: React.FC = () => {
               >
                 {isSpeed && score != null
                   ? COPY.proofHeadingLive
-                  : COPY.proofHeadingGeneric}
+                  : isSearchFix && searchEvidence.mode === 'live'
+                    ? COPY.proofHeadingLive
+                    : COPY.proofHeadingGeneric}
               </h2>
             </Reveal>
             {isMissedCall ? <MissedCallEvidenceCard evidence={missedEvidence} /> : null}
             {isGoogleProfile ? <GoogleProfileEvidenceCard evidence={profileEvidence} /> : null}
-            <Reveal delay={0.12} y={12}>
-              <p
-                className={`font-sans text-base md:text-lg leading-relaxed max-w-2xl ${
-                  isMissedCall || isGoogleProfile ? 'mt-8' : ''
-                }`}
-                style={{color: FUNNEL_COLOURS.muted}}
-              >
-                {isSpeed
-                  ? score != null
-                    ? COPY.proofLead(business)
-                    : COPY.proofLeadGeneric
-                  : business
-                    ? COPY.proofLead(business)
-                    : COPY.proofLeadGeneric}
-              </p>
-            </Reveal>
+            {isSearchFix ? <IndexCheckMoment evidence={searchEvidence} /> : null}
+            {!(isSearchFix && searchEvidence.mode === 'try') ? (
+              <Reveal delay={0.12} y={12}>
+                <p
+                  className={`font-sans text-base md:text-lg leading-relaxed max-w-2xl ${
+                    isMissedCall || isGoogleProfile || isSearchFix ? 'mt-8' : ''
+                  }`}
+                  style={{color: FUNNEL_COLOURS.muted}}
+                >
+                  {isSpeed
+                    ? score != null
+                      ? COPY.proofLead(business)
+                      : COPY.proofLeadGeneric
+                    : isSearchFix
+                      ? COPY.proofLead(business)
+                      : business
+                        ? COPY.proofLead(business)
+                        : COPY.proofLeadGeneric}
+                </p>
+              </Reveal>
+            ) : null}
             {isMissedCall ? (
               <>
                 <Reveal delay={0.08} y={12}>
@@ -378,6 +406,20 @@ const FunnelPage: React.FC = () => {
                   </p>
                 </Reveal>
                 <GoogleFrontDoorPanel businessName={business} competitorName={competitor} />
+              </>
+            ) : isSearchFix ? (
+              <>
+                {searchEvidence.mode === 'live' ? (
+                  <Reveal delay={0.08} y={12}>
+                    <p
+                      className="mt-6 font-sans text-base md:text-lg leading-relaxed max-w-2xl"
+                      style={{color: FUNNEL_COLOURS.muted}}
+                    >
+                      {COPY.proofAfter}
+                    </p>
+                  </Reveal>
+                ) : null}
+                <SearchVisibilityLeakPair />
               </>
             ) : (
               <>
@@ -430,10 +472,12 @@ const FunnelPage: React.FC = () => {
                 <MissedCallPainCards />
               ) : isGoogleProfile ? (
                 <GoogleProfilePainCards />
+              ) : isSearchFix ? (
+                <SearchPainCards />
               ) : (
                 <PainCostCards />
               )}
-              <LostClientCalculator variant={calculatorVariant} />
+              <LostClientCalculator variant={calculatorVariant} theme="dark" />
             </div>
           </section>
 
@@ -471,6 +515,8 @@ const FunnelPage: React.FC = () => {
               <CallMissedMoment businessName={business} mode="after" />
             ) : isGoogleProfile ? (
               <ProfileAfterMoment businessName={business} />
+            ) : isSearchFix ? (
+              <SearchRecoveryMock />
             ) : (
               <ScoreMoment score={90} mode="benchmark" />
             )}
@@ -609,6 +655,8 @@ const FunnelPage: React.FC = () => {
                   <TextBackDeliverableMock />
                 ) : isGoogleProfile ? (
                   <ProfileDeliverableMock />
+                ) : isSearchFix ? (
+                  <SearchRecoveryMock compact onDark />
                 ) : (
                   <ReportDeliverableMock />
                 )}

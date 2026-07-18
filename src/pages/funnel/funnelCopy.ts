@@ -49,8 +49,8 @@ export type FunnelProductCopy = {
   finalLabel: string
   finalHeading: string
   finalLine: string
-  /** Proof UI: pagespeed dial vs missed-call moment vs Google profile */
-  proofKind: 'speed' | 'missed-call' | 'google-profile'
+  /** Proof UI: pagespeed dial vs missed-call moment vs Google profile vs index check */
+  proofKind: 'speed' | 'missed-call' | 'google-profile' | 'search-fix'
 }
 
 export const SPEED_FIX_COPY: FunnelProductCopy = {
@@ -467,8 +467,152 @@ export const GOOGLE_PROFILE_COPY: FunnelProductCopy = {
   proofKind: 'google-profile',
 }
 
+export const SEARCH_FIX_COPY: FunnelProductCopy = {
+  eyebrow: "Fixed price · Three days · Google's own records",
+  h1Generic:
+    "Three days from now, Google can see your whole site again, and its own records prove it",
+  h1Personal: (b: string) =>
+    `Three days from now, Google can see ${b} again, and its own records prove it`,
+  sub: "A page Google can't see doesn't exist to anyone searching for it. This is almost always one broken setting left behind by a redesign or a migration, and it's fixable fast, with the before and after in Google's own Search Console.",
+  ctaLabel: 'Fix my visibility · $1,400',
+  proofLabel: 'The evidence',
+  proofHeadingLive: 'This is you, right now',
+  proofHeadingGeneric: 'This is you, right now',
+  proofLead: (b: string | null) =>
+    b
+      ? `We ran ${b} through an indexation check this week. That's how many pages Google is currently skipping. Not our opinion, Google's own index.`
+      : "We ran your site through an indexation check this week. That's how many pages Google is currently skipping. Not our opinion, Google's own index.",
+  proofLeadGeneric:
+    'Open Google and search site:yourbusiness.com.au. Count the results, then count the pages your site actually has. The gap is what this fixes.',
+  proofAfter:
+    "That's not a ranking guess. It's pages Google isn't listing at all.",
+  proofAfterGeneric:
+    "If the counts don't match, customers searching for what you do can't find pages that should be there.",
+  painLabel: 'What this is costing you',
+  painHeading: "You're invisible at the exact moment they're choosing",
+  painLines: [
+    "Someone searches for exactly what you do. Google shows them everyone but you.",
+    "They don't know you're missing. They just choose from who's there.",
+    'Every enquiry your competitors take this month includes the ones that were looking for you.',
+    'And the longer pages stay dropped, the longer the recrawl takes when they finally come back.',
+  ],
+  bridgeLabel: 'The fix',
+  bridgeHeading: "One job, fixed scope, verified in Google's own records",
+  bridgeBody:
+    "This isn't an SEO retainer, a rebuild, or a six month content plan. It's a three day rescue: find every setting blocking Google, remove them, resubmit the site, and then watch the recrawl in Search Console until your pages come back.",
+  bridgeGaugeCaption:
+    "Google recrawls on its own schedule, usually days to a few weeks. That's why 30 days of monitoring is included, and why anyone promising overnight rankings is selling you something else.",
+  benefitsLabel: 'What changes for you',
+  benefitsHeading: 'Outcomes, not jargon',
+  benefits: [
+    {
+      title: 'Customers can find you again',
+      text: "Pages back in the index means showing up for the searches you'd already earned.",
+    },
+    {
+      title: "You watch it happen in Google's records",
+      text: 'Search Console, owned by your account, shows the pages returning. Check it any morning you like.',
+    },
+    {
+      title: 'It stays fixed',
+      text: 'A plain-English summary of what broke, plus the habit that stops a future redesign quietly undoing it.',
+    },
+    {
+      title: 'Fixes in three business days',
+      text: 'The blocks come off fast. Then we watch the recrawl with you for a full 30 days.',
+    },
+  ],
+  processLabel: 'How it runs',
+  processHeading: 'Three days of fixes, thirty days of watching',
+  processSteps: [
+    {
+      label: 'Day 1',
+      text: "Access and the full diagnosis, what Google sees, what it can't, and the exact settings blocking it.",
+    },
+    {
+      label: 'Day 2 to 3',
+      text: 'Blocks removed, sitemap rebuilt and resubmitted, Search Console configured under your ownership.',
+    },
+    {
+      label: 'The watch',
+      text: '30 days of recrawl monitoring, then your before and after report.',
+    },
+  ],
+  stackLabel: 'Everything included',
+  stackHeading: 'One price, the full rescue, nothing extra to buy',
+  stackItems: [
+    {
+      title: 'Full indexation diagnosis and fix',
+      text: 'Stray noindex tags, robots rules, broken canonicals, misfired redirects.',
+    },
+    {
+      title: 'Sitemap rebuilt and resubmitted',
+      text: 'So Google gets a clean map of the site.',
+    },
+    {
+      title: 'Search Console under your ownership',
+      text: 'Set up and locked to your account, not ours. You keep the keys.',
+    },
+    {
+      title: 'Plain-English summary',
+      text: 'What broke, why, and how to stop it happening again.',
+    },
+    {
+      title: 'Systems Snapshot',
+      text: "A one-page read on your website, lead handling, follow-up, reviews and automation, plus the one thing we'd fix next.",
+    },
+    {
+      title: '30 days of recrawl monitoring',
+      text: 'Plus 14 days of aftercare on everything we touched.',
+    },
+  ],
+  scopeLine:
+    'Getting seen again costs less than one of the clients invisibility is already costing you.',
+  priceLabel: 'Investment',
+  price: '$1,400',
+  priceLead: 'Paid once, and we start. No quotes, no meetings, no scope creep.',
+  guarantee:
+    "Our promise: we apply the fixes fast, then watch Google's recrawl for 30 days. If the blocked pages aren't returning, we keep working at no extra cost until they are.",
+  priceAnchor:
+    "That's less than one client who couldn't find you. Invisibility charges you every week. This charges you once.",
+  faqLabel: 'Objections',
+  faqHeading: 'Straight answers before you buy',
+  faqs: [
+    {
+      q: 'Is this refundable?',
+      a: "There's no change-of-mind refund, because we start straight away. What you have instead is stronger: if the blocked pages aren't returning through the 30-day watch, we keep working at no extra cost until they are.",
+    },
+    {
+      q: 'How fast do rankings come back?',
+      a: 'The fixes go in within three business days. Google then recrawls on its own schedule, usually days to a few weeks, which is exactly why the 30-day watch is included.',
+    },
+    {
+      q: 'Whose fault was this?',
+      a: "Usually nobody's. These settings hide behind redesigns and migrations. We fix it without the blame game and show you how to catch it next time.",
+    },
+    {
+      q: "What if it's something bigger than a blocked setting?",
+      a: "Then you'll know within the diagnosis. You get a straight answer and a fair path, not a surprise bill.",
+    },
+    {
+      q: 'What do you need from me?',
+      a: 'Website admin access and two minutes to approve us in Search Console. The secure form arrives straight after payment.',
+    },
+    {
+      q: 'Is this the same as SEO?',
+      a: "It's the floor under SEO. Nothing else you ever spend on marketing works while Google can't see the site.",
+    },
+  ],
+  finalLabel: 'Last step',
+  finalHeading: 'Three days from now, Google starts seeing you again',
+  finalLine:
+    "The blocks come off fast. Then you watch your pages walk back into the index, in Google's own records, not our word.",
+  proofKind: 'search-fix',
+}
+
 export function funnelCopyForSlug(slug: string | undefined): FunnelProductCopy {
   if (slug === 'missed-call') return MISSED_CALL_COPY
   if (slug === 'google-profile') return GOOGLE_PROFILE_COPY
+  if (slug === 'search-fix') return SEARCH_FIX_COPY
   return SPEED_FIX_COPY
 }

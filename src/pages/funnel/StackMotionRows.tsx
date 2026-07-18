@@ -507,6 +507,201 @@ const PROFILE_STACK_VISUALS = [
   AftercareStampVisual,
 ]
 
+/** Diagnosis checklist ticks on — white panel so it reads on cream page. */
+function IndexDiagnosisVisual({reduce, play}: VisualProps) {
+  const items = ['noindex', 'robots', 'canonicals', 'redirects']
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex flex-col justify-center">
+      <div className="flex flex-wrap gap-1.5 justify-center">
+        {items.map((label, i) => (
+          <motion.span
+            key={label}
+            className="font-mono text-[8px] uppercase tracking-wider px-2 py-1 border"
+            style={{
+              borderColor: play || reduce ? `${FUNNEL_COLOURS.gold}88` : `${FUNNEL_COLOURS.ink}20`,
+              backgroundColor: play || reduce ? `${FUNNEL_COLOURS.gold}22` : FUNNEL_COLOURS.ground,
+              color: FUNNEL_COLOURS.ink,
+            }}
+            initial={reduce ? false : {opacity: 0, y: 6}}
+            animate={{opacity: play || reduce ? 1 : 0.5, y: play || reduce ? 0 : 6}}
+            transition={{delay: play ? i * 0.12 : 0, duration: 0.3}}
+          >
+            {label}
+          </motion.span>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** Sitemap rebuilds. */
+function SitemapRebuildVisual({reduce, play}: VisualProps) {
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex items-center gap-2">
+      <span className="font-mono text-[8px] uppercase tracking-widest text-dark/55 shrink-0">
+        sitemap.xml
+      </span>
+      <div className="flex-1 h-2.5 bg-dark/10 overflow-hidden">
+        <motion.div
+          className="h-full"
+          style={{backgroundColor: FUNNEL_COLOURS.gold}}
+          initial={{width: '0%'}}
+          animate={{width: play || reduce ? '100%' : '0%'}}
+          transition={reduce ? {duration: 0} : {duration: 1.2, ease: [0.16, 1, 0.3, 1]}}
+        />
+      </div>
+      <motion.span
+        className="font-mono text-[8px] font-bold uppercase tracking-widest shrink-0"
+        style={{color: FUNNEL_COLOURS.goldDeep}}
+        initial={{opacity: 0}}
+        animate={{opacity: play || reduce ? 1 : 0}}
+        transition={{delay: play ? 0.9 : 0}}
+      >
+        Sent
+      </motion.span>
+    </div>
+  )
+}
+
+/** Keys hand to your account. */
+function ConsoleOwnershipVisual({reduce, play}: VisualProps) {
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex items-center justify-center gap-2">
+      <motion.div
+        className="border px-2.5 py-2"
+        style={{
+          borderColor: `${FUNNEL_COLOURS.ink}18`,
+          backgroundColor: FUNNEL_COLOURS.ground,
+        }}
+        animate={{opacity: play || reduce ? 0.55 : 1}}
+        transition={{duration: 0.4}}
+      >
+        <p className="font-mono text-[8px] uppercase tracking-widest text-dark/60">Our access</p>
+      </motion.div>
+      <motion.span
+        className="font-mono text-[12px] font-bold"
+        style={{color: FUNNEL_COLOURS.goldDeep}}
+        initial={{opacity: 0, x: -4}}
+        animate={{opacity: play || reduce ? 1 : 0, x: play || reduce ? 0 : -4}}
+        transition={{delay: play ? 0.15 : 0}}
+      >
+        →
+      </motion.span>
+      <motion.div
+        className="border px-2.5 py-2"
+        style={{
+          borderColor: `${FUNNEL_COLOURS.gold}88`,
+          backgroundColor: `${FUNNEL_COLOURS.gold}22`,
+        }}
+        initial={reduce ? false : {opacity: 0, x: 8}}
+        animate={{opacity: play || reduce ? 1 : 0, x: play || reduce ? 0 : 8}}
+        transition={{delay: play ? 0.25 : 0, duration: 0.4}}
+      >
+        <p
+          className="font-mono text-[8px] font-bold uppercase tracking-widest"
+          style={{color: FUNNEL_COLOURS.goldDeep}}
+        >
+          Your keys
+        </p>
+      </motion.div>
+    </div>
+  )
+}
+
+/** Plain English note card. */
+function PlainSummaryVisual({reduce, play}: VisualProps) {
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex flex-col justify-center">
+      <motion.div
+        className="border px-2.5 py-2"
+        style={{
+          borderColor: `${FUNNEL_COLOURS.ink}14`,
+          backgroundColor: FUNNEL_COLOURS.ground,
+        }}
+        initial={reduce ? false : {opacity: 0, y: 6}}
+        animate={{opacity: play || reduce ? 1 : 0, y: play || reduce ? 0 : 6}}
+        transition={{duration: 0.4}}
+      >
+        <p
+          className="font-mono text-[7px] uppercase tracking-widest mb-1"
+          style={{color: FUNNEL_COLOURS.goldDeep}}
+        >
+          Summary
+        </p>
+        <p className="font-sans text-[10px] leading-snug text-dark/75">
+          What broke · why · how to stop it
+        </p>
+      </motion.div>
+    </div>
+  )
+}
+
+/** Snapshot one-pager. */
+function SystemsSnapshotSearchVisual({reduce, play}: VisualProps) {
+  const labels = ['Site', 'Leads', 'Next']
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex items-center gap-2">
+      {labels.map((label, i) => (
+        <motion.div
+          key={label}
+          className="flex-1 h-12 border flex items-center justify-center"
+          style={{
+            borderColor: `${FUNNEL_COLOURS.ink}14`,
+            backgroundColor: FUNNEL_COLOURS.ground,
+          }}
+          initial={reduce ? false : {opacity: 0, y: 6}}
+          animate={{opacity: play || reduce ? 1 : 0, y: play || reduce ? 0 : 6}}
+          transition={{delay: play ? i * 0.12 : 0, duration: 0.3}}
+        >
+          <span className="font-mono text-[8px] uppercase tracking-widest text-dark/55">{label}</span>
+        </motion.div>
+      ))}
+      <motion.span
+        className="font-mono text-[8px] font-bold uppercase tracking-widest whitespace-nowrap"
+        style={{color: FUNNEL_COLOURS.goldDeep}}
+        initial={{opacity: 0}}
+        animate={{opacity: play || reduce ? 1 : 0}}
+        transition={{delay: play ? 0.4 : 0}}
+      >
+        Next fix
+      </motion.span>
+    </div>
+  )
+}
+
+/** 30-day watch progress. */
+function RecrawlWatchVisual({reduce, play}: VisualProps) {
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex flex-col justify-center">
+      <div className="flex justify-between mb-2 font-mono text-[8px] uppercase tracking-[0.14em]">
+        <span className="text-dark/50">Day 1</span>
+        <span style={{color: FUNNEL_COLOURS.goldDeep}}>Day 30</span>
+      </div>
+      <div className="h-2.5 w-full bg-dark/10 overflow-hidden">
+        <motion.div
+          className="h-full"
+          style={{backgroundColor: FUNNEL_COLOURS.gold}}
+          initial={{width: '0%'}}
+          animate={{width: play || reduce ? '100%' : '0%'}}
+          transition={reduce ? {duration: 0} : {duration: 1.6, ease: [0.16, 1, 0.3, 1]}}
+        />
+      </div>
+      <p className="mt-2 font-mono text-[8px] uppercase tracking-widest text-dark/45">
+        Monitoring and improving
+      </p>
+    </div>
+  )
+}
+
+const SEARCH_STACK_VISUALS = [
+  IndexDiagnosisVisual,
+  SitemapRebuildVisual,
+  ConsoleOwnershipVisual,
+  PlainSummaryVisual,
+  SystemsSnapshotSearchVisual,
+  RecrawlWatchVisual,
+]
+
 function StackRow({
   item,
   index,
@@ -575,7 +770,7 @@ export function StackMotionRows({
   items: StackItem[]
   ink: string
   muted: string
-  variant?: 'speed' | 'missed-call' | 'google-profile'
+  variant?: 'speed' | 'missed-call' | 'google-profile' | 'search-fix'
 }) {
   const reduce = useReducedMotion()
   const visuals =
@@ -583,7 +778,9 @@ export function StackMotionRows({
       ? MISSED_VISUALS
       : variant === 'google-profile'
         ? PROFILE_STACK_VISUALS
-        : SPEED_VISUALS
+        : variant === 'search-fix'
+          ? SEARCH_STACK_VISUALS
+          : SPEED_VISUALS
 
   return (
     <ul className="space-y-10 md:space-y-12">

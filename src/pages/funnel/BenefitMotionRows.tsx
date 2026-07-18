@@ -676,6 +676,182 @@ const PROFILE_VISUALS = [
   TwoDayProfileVisual,
 ]
 
+/** Empty SERP slot fills with your listing. */
+function FoundAgainVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full overflow-hidden border border-dark/12 bg-white/70 p-2.5 flex flex-col gap-1.5">
+      <p className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/40">Results</p>
+      {['Studio Hale', 'North Shore Atelier'].map((name) => (
+        <div
+          key={name}
+          className="h-5 px-2 flex items-center"
+          style={{backgroundColor: `${FUNNEL_COLOURS.ink}06`}}
+        >
+          <span className="font-sans text-[10px]" style={{color: FUNNEL_COLOURS.muted}}>
+            {name}
+          </span>
+        </div>
+      ))}
+      <motion.div
+        className="h-6 px-2 flex items-center border"
+        style={{
+          borderColor: FUNNEL_COLOURS.gold,
+          backgroundColor: `${FUNNEL_COLOURS.gold}18`,
+        }}
+        initial={reduce ? false : {opacity: 0, y: 8, scale: 0.96}}
+        whileInView={{opacity: 1, y: 0, scale: 1}}
+        viewport={{once: true}}
+        transition={{delay: reduce ? 0 : 0.35, duration: 0.45, ease: [0.16, 1, 0.3, 1]}}
+      >
+        <span className="font-sans text-[10px] font-semibold" style={{color: FUNNEL_COLOURS.ink}}>
+          You · back in results
+        </span>
+      </motion.div>
+    </div>
+  )
+}
+
+/** Search Console line climbs, badge flips to Indexed. */
+function ConsoleWatchVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full overflow-hidden border border-dark/12 bg-white/70 p-2.5 flex flex-col">
+      <div className="flex items-center justify-between mb-2">
+        <p className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/40">
+          Search Console
+        </p>
+        <motion.span
+          className="font-mono text-[8px] font-bold uppercase tracking-widest px-1.5 py-0.5"
+          style={{backgroundColor: FUNNEL_COLOURS.gold, color: FUNNEL_COLOURS.ink}}
+          initial={reduce ? false : {opacity: 0.5}}
+          whileInView={{backgroundColor: FUNNEL_COLOURS.gold}}
+          viewport={{once: true}}
+        >
+          Indexed
+        </motion.span>
+      </div>
+      <svg viewBox="0 0 220 56" className="w-full flex-1" aria-hidden>
+        <line
+          x1="8"
+          y1="48"
+          x2="212"
+          y2="48"
+          stroke={`${FUNNEL_COLOURS.ink}22`}
+          strokeWidth="1"
+        />
+        <motion.polyline
+          fill="none"
+          stroke={FUNNEL_COLOURS.goldDeep}
+          strokeWidth="2.5"
+          strokeLinecap="square"
+          points="8,44 40,42 80,36 120,26 160,16 212,10"
+          initial={reduce ? false : {pathLength: 0}}
+          whileInView={{pathLength: 1}}
+          viewport={{once: true}}
+          transition={{duration: 1.1, ease: [0.16, 1, 0.3, 1]}}
+        />
+      </svg>
+    </div>
+  )
+}
+
+/** Habit card: what broke + how to catch it. */
+function StaysFixedVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full overflow-hidden border border-dark/12 bg-white/70 p-2.5 flex flex-col justify-center gap-2">
+      {[
+        {label: 'What broke', delay: 0},
+        {label: 'How to catch it next time', delay: 0.25},
+      ].map((row) => (
+        <motion.div
+          key={row.label}
+          className="flex items-center justify-between border px-2 py-1.5"
+          style={{
+            borderColor: `${FUNNEL_COLOURS.ink}12`,
+            backgroundColor: FUNNEL_COLOURS.ground,
+          }}
+          initial={reduce ? false : {opacity: 0, x: -8}}
+          whileInView={{opacity: 1, x: 0}}
+          viewport={{once: true}}
+          transition={{delay: reduce ? 0 : row.delay, duration: 0.35}}
+        >
+          <span className="font-sans text-[10px]" style={{color: FUNNEL_COLOURS.ink}}>
+            {row.label}
+          </span>
+          <motion.span
+            className="font-mono text-[8px] font-bold uppercase tracking-widest"
+            style={{color: FUNNEL_COLOURS.goldDeep}}
+            initial={{opacity: 0}}
+            whileInView={{opacity: 1}}
+            viewport={{once: true}}
+            transition={{delay: reduce ? 0 : row.delay + 0.2}}
+          >
+            Written
+          </motion.span>
+        </motion.div>
+      ))}
+    </div>
+  )
+}
+
+/** Day 1 fix, Day 2–3 fix, then monitoring and improving. */
+function ThreeDayWatchVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full overflow-hidden border border-dark/12 bg-white/70 p-2.5 flex flex-col justify-center gap-2">
+      <div className="flex gap-1.5">
+        {[
+          {day: 'Day 1', text: 'Fix'},
+          {day: 'Day 2–3', text: 'Fix'},
+        ].map((item, i) => (
+          <motion.div
+            key={item.day}
+            className="flex-1 border px-2 py-2 text-center"
+            style={{
+              borderColor: `${FUNNEL_COLOURS.ink}14`,
+              backgroundColor: FUNNEL_COLOURS.ground,
+            }}
+            initial={reduce ? false : {opacity: 0, y: 8}}
+            whileInView={{opacity: 1, y: 0}}
+            viewport={{once: true}}
+            transition={{delay: reduce ? 0 : i * 0.2, duration: 0.35}}
+          >
+            <p className="font-mono text-[8px] font-bold uppercase tracking-widest text-dark/45">
+              {item.day}
+            </p>
+            <p className="font-sans text-[9px] mt-0.5" style={{color: FUNNEL_COLOURS.ink}}>
+              {item.text}
+            </p>
+          </motion.div>
+        ))}
+      </div>
+      <motion.div
+        className="border px-2 py-2 origin-left"
+        style={{
+          borderColor: `${FUNNEL_COLOURS.gold}66`,
+          backgroundColor: `${FUNNEL_COLOURS.gold}18`,
+        }}
+        initial={reduce ? false : {opacity: 0, scaleX: 0.6}}
+        whileInView={{opacity: 1, scaleX: 1}}
+        viewport={{once: true}}
+        transition={{delay: reduce ? 0 : 0.45, duration: 0.45, ease: [0.16, 1, 0.3, 1]}}
+      >
+        <p
+          className="font-mono text-[8px] font-bold uppercase tracking-[0.14em]"
+          style={{color: FUNNEL_COLOURS.goldDeep}}
+        >
+          Monitoring and improving · 30 days
+        </p>
+      </motion.div>
+    </div>
+  )
+}
+
+const SEARCH_VISUALS = [
+  FoundAgainVisual,
+  ConsoleWatchVisual,
+  StaysFixedVisual,
+  ThreeDayWatchVisual,
+]
+
 type Benefit = {title: string; text: string}
 
 /**
@@ -692,7 +868,7 @@ export function BenefitMotionRows({
   ink: string
   muted: string
   gold: string
-  variant?: 'speed' | 'missed-call' | 'google-profile'
+  variant?: 'speed' | 'missed-call' | 'google-profile' | 'search-fix'
 }) {
   const reduce = useReducedMotion()
   const visuals =
@@ -700,7 +876,9 @@ export function BenefitMotionRows({
       ? MISSED_VISUALS
       : variant === 'google-profile'
         ? PROFILE_VISUALS
-        : SPEED_VISUALS
+        : variant === 'search-fix'
+          ? SEARCH_VISUALS
+          : SPEED_VISUALS
 
   return (
     <div className="space-y-10 md:space-y-12">

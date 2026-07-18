@@ -1,5 +1,5 @@
 /**
- * Runtime personalisation for /go/ pages via ?b=, ?s=, ?d=, ?t= URL params.
+ * Runtime personalisation for /go/ pages via ?b=, ?s=, ?d=, ?t=, ?c=, ?n= URL params.
  * Never persisted. Fail closed to the generic page variant.
  */
 
@@ -61,6 +61,16 @@ export function parseSpeedScore(raw: string | null | undefined): number | null {
   if (!/^\d{1,3}$/.test(trimmed)) return null
   const n = Number(trimmed)
   if (!Number.isInteger(n) || n < 0 || n > 100) return null
+  return n
+}
+
+/** Pages Google can't see (?n=), integer 1–500. */
+export function parseBlockedPages(raw: string | null | undefined): number | null {
+  if (raw == null || raw === '') return null
+  const trimmed = raw.trim()
+  if (!/^\d{1,3}$/.test(trimmed)) return null
+  const n = Number(trimmed)
+  if (!Number.isInteger(n) || n < 1 || n > 500) return null
   return n
 }
 

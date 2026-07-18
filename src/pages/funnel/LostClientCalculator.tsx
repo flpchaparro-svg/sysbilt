@@ -31,6 +31,7 @@ type StepperFieldProps = {
   ariaLabel: string
   /** Pulse arrows twice when the calculator scrolls into view */
   pulseArrows?: boolean
+  theme?: 'dark' | 'cream'
 }
 
 /** Modern stepper: grey example until touched, gold money figures, no native spinners. */
@@ -46,21 +47,25 @@ function StepperField({
   onChange,
   ariaLabel,
   pulseArrows = false,
+  theme = 'dark',
 }: StepperFieldProps) {
   const id = useId()
   const inputRef = useRef<HTMLInputElement>(null)
   const [focused, setFocused] = useState(false)
   const isExample = !dirty && !focused
   const shown = formatGrouped(value)
-  // Money fields read gold; quantity fields stay cream (muted until edited)
+  const cream = theme === 'cream'
+  const ink = cream ? FUNNEL_COLOURS.ink : FUNNEL_COLOURS.onInk
+  const gold = cream ? FUNNEL_COLOURS.goldDeep : FUNNEL_COLOURS.goldLight
+  // Money fields read gold; quantity fields stay muted until edited
   const isMoney = Boolean(prefix)
   const textColor = isMoney
     ? isExample
-      ? `${FUNNEL_COLOURS.goldLight}99`
-      : FUNNEL_COLOURS.goldLight
+      ? `${gold}99`
+      : gold
     : isExample
-      ? `${FUNNEL_COLOURS.onInk}48`
-      : FUNNEL_COLOURS.onInk
+      ? `${ink}48`
+      : ink
 
   const bump = (dir: 1 | -1) => {
     onDirty()
@@ -79,7 +84,7 @@ function StepperField({
       <label
         htmlFor={id}
         className="font-mono text-[9px] md:text-[10px] font-bold uppercase tracking-[0.22em] block mb-3 cursor-pointer"
-        style={{color: `${FUNNEL_COLOURS.onInk}58`}}
+        style={{color: `${ink}58`}}
       >
         {label}
       </label>
@@ -87,11 +92,7 @@ function StepperField({
       <div
         className="relative flex items-end gap-3 border-b pb-2.5 transition-[border-color] duration-200 cursor-text"
         style={{
-          borderColor: focused
-            ? FUNNEL_COLOURS.goldLight
-            : isExample
-              ? `${FUNNEL_COLOURS.onInk}22`
-              : `${FUNNEL_COLOURS.onInk}45`,
+          borderColor: focused ? gold : isExample ? `${ink}22` : `${ink}45`,
         }}
       >
         <div className="flex items-baseline gap-1.5 min-w-0 flex-1">
@@ -99,9 +100,7 @@ function StepperField({
             <span
               className="font-serif text-2xl md:text-3xl leading-none select-none"
               style={{
-                color: isExample
-                  ? `${FUNNEL_COLOURS.goldLight}70`
-                  : FUNNEL_COLOURS.goldLight,
+                color: isExample ? `${gold}70` : gold,
               }}
             >
               {prefix}
@@ -127,7 +126,7 @@ function StepperField({
             className="bg-transparent font-serif text-3xl md:text-4xl tabular-nums outline-none max-w-full"
             style={{
               color: textColor,
-              caretColor: FUNNEL_COLOURS.goldLight,
+              caretColor: gold,
               width: `${Math.max(shown.length, 1) + 0.5}ch`,
             }}
           />
@@ -135,7 +134,7 @@ function StepperField({
           {suffix ? (
             <span
               className="font-sans text-sm md:text-base whitespace-nowrap pb-1"
-              style={{color: `${FUNNEL_COLOURS.onInk}55`}}
+              style={{color: `${ink}55`}}
             >
               {suffix}
             </span>
@@ -144,7 +143,7 @@ function StepperField({
 
         <motion.div
           className="flex flex-col shrink-0 border overflow-hidden"
-          style={{borderColor: `${FUNNEL_COLOURS.onInk}22`}}
+          style={{borderColor: `${ink}22`}}
           initial={false}
           animate={arrowMotion}
           transition={
@@ -160,12 +159,12 @@ function StepperField({
               e.stopPropagation()
               bump(1)
             }}
-            className="h-6 w-7 flex items-center justify-center transition-colors hover:bg-white/10"
-            style={{color: `${FUNNEL_COLOURS.onInk}90`}}
+            className="h-6 w-7 flex items-center justify-center transition-colors hover:bg-black/5"
+            style={{color: `${ink}90`}}
           >
             <ChevronUp className="w-3.5 h-3.5" strokeWidth={2.25} />
           </button>
-          <div className="h-px" style={{backgroundColor: `${FUNNEL_COLOURS.onInk}18`}} />
+          <div className="h-px" style={{backgroundColor: `${ink}18`}} />
           <button
             type="button"
             aria-label="Decrease"
@@ -173,8 +172,8 @@ function StepperField({
               e.stopPropagation()
               bump(-1)
             }}
-            className="h-6 w-7 flex items-center justify-center transition-colors hover:bg-white/10"
-            style={{color: `${FUNNEL_COLOURS.onInk}90`}}
+            className="h-6 w-7 flex items-center justify-center transition-colors hover:bg-black/5"
+            style={{color: `${ink}90`}}
           >
             <ChevronDown className="w-3.5 h-3.5" strokeWidth={2.25} />
           </button>
@@ -184,7 +183,7 @@ function StepperField({
       <p
         className="mt-2.5 font-mono text-[9px] uppercase tracking-[0.18em] transition-opacity duration-200"
         style={{
-          color: `${FUNNEL_COLOURS.onInk}32`,
+          color: `${ink}40`,
           opacity: isExample ? 1 : 0,
         }}
       >
@@ -199,20 +198,25 @@ function StepperField({
  */
 export function LostClientCalculator({
   variant = 'speed',
+  theme = 'dark',
 }: {
-  variant?: 'speed' | 'missed-call' | 'google-profile'
+  variant?: 'speed' | 'missed-call' | 'google-profile' | 'search-fix'
+  theme?: 'dark' | 'cream'
 }) {
   const rootRef = useRef<HTMLDivElement>(null)
   const inView = useInView(rootRef, {once: true, amount: 0.35})
   const reduce = useReducedMotion()
   const [value, setValue] = useState(DEFAULT_VALUE)
-  const [lost, setLost] = useState(DEFAULT_LOST)
+  const [lost, setLost] = useState(variant === 'search-fix' ? 4 : DEFAULT_LOST)
   const [valueDirty, setValueDirty] = useState(false)
   const [lostDirty, setLostDirty] = useState(false)
   const [display, setDisplay] = useState(0)
 
   const yearly = Math.max(0, value) * Math.max(0, lost) * 12
   const fromRef = useRef(0)
+  const cream = theme === 'cream'
+  const ink = cream ? FUNNEL_COLOURS.ink : FUNNEL_COLOURS.onInk
+  const goldLine = cream ? FUNNEL_COLOURS.goldDeep : FUNNEL_COLOURS.goldLight
 
   useEffect(() => {
     if (!inView) return
@@ -255,21 +259,23 @@ export function LostClientCalculator({
       <div
         className="px-5 py-6 md:px-8 md:py-8"
         style={{
-          border: `1px solid ${FUNNEL_COLOURS.onInk}18`,
-          backgroundColor: 'rgba(255,242,236,0.04)',
+          border: `1px solid ${ink}18`,
+          backgroundColor: cream ? FUNNEL_COLOURS.surface : 'rgba(255,242,236,0.04)',
         }}
       >
         <p
           className="font-mono text-[10px] md:text-xs font-bold uppercase tracking-[0.28em] mb-3"
-          style={{color: `${FUNNEL_COLOURS.onInk}60`}}
+          style={{color: cream ? FUNNEL_COLOURS.goldDeep : `${FUNNEL_COLOURS.onInk}60`}}
         >
           Do your own maths
         </p>
         <h3
           className="font-serif font-bold text-2xl md:text-3xl tracking-tight mb-8 md:mb-10 max-w-lg"
-          style={{color: FUNNEL_COLOURS.onInk}}
+          style={{color: ink}}
         >
-          What&apos;s one lost client worth to you
+          {variant === 'search-fix'
+            ? "What's being findable worth to you"
+            : "What's one lost client worth to you"}
         </h3>
 
         <div className="flex flex-col md:flex-row md:items-stretch gap-2 md:gap-0">
@@ -283,11 +289,12 @@ export function LostClientCalculator({
             onChange={setValue}
             ariaLabel="Average client value in dollars"
             pulseArrows={inView && !reduce}
+            theme={theme}
           />
 
           <div
             className="hidden md:block w-px mx-8 shrink-0 self-stretch"
-            style={{backgroundColor: `${FUNNEL_COLOURS.onInk}14`}}
+            style={{backgroundColor: `${ink}14`}}
             aria-hidden
           />
 
@@ -297,7 +304,9 @@ export function LostClientCalculator({
                 ? 'Missed calls a month'
                 : variant === 'google-profile'
                   ? 'Lost to a thin profile'
-                  : 'Lost to a slow site'
+                  : variant === 'search-fix'
+                    ? 'Clients a month via Google'
+                    : 'Lost to a slow site'
             }
             suffix="/ month"
             value={lost}
@@ -310,15 +319,18 @@ export function LostClientCalculator({
                 ? 'Missed calls per month'
                 : variant === 'google-profile'
                   ? 'Customers lost to a thin profile per month'
-                  : 'Enquiries lost per month'
+                  : variant === 'search-fix'
+                    ? 'Clients a month who find you through Google'
+                    : 'Enquiries lost per month'
             }
             pulseArrows={inView && !reduce}
+            theme={theme}
           />
         </div>
 
         <div
           className="mt-6 md:mt-8 pt-6 md:pt-8"
-          style={{borderTop: `1px solid ${FUNNEL_COLOURS.onInk}14`}}
+          style={{borderTop: `1px solid ${ink}14`}}
         >
           <motion.p
             className="font-serif text-3xl md:text-4xl lg:text-[2.75rem] tracking-tight tabular-nums leading-tight"
@@ -332,13 +344,13 @@ export function LostClientCalculator({
           </motion.p>
           <p
             className="mt-2 font-serif text-3xl md:text-4xl lg:text-[2.75rem] tracking-tight leading-tight"
-            style={{color: FUNNEL_COLOURS.goldLight}}
+            style={{color: goldLine}}
           >
             The fix costs less than one of them.
           </p>
           <p
             className="mt-3 font-sans text-sm leading-relaxed max-w-xl"
-            style={{color: `${FUNNEL_COLOURS.onInk}65`}}
+            style={{color: cream ? FUNNEL_COLOURS.muted : `${FUNNEL_COLOURS.onInk}65`}}
           >
             Your numbers, not ours. Change them and watch. The leak doesn&apos;t care either way.
           </p>
