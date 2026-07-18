@@ -1,10 +1,248 @@
 import React from 'react'
 import {motion, useReducedMotion} from 'framer-motion'
 import {colors} from '../../constants/theme'
+import {FUNNEL_COLOURS} from './funnelTheme'
 
 type VisualProps = {reduce: boolean | null}
 
-/** Fast browse → click BOOK → success (plays once on scroll). */
+/** Caller thinks: busy with a client, but they will call me back. */
+function StayWarmVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white/70 p-2.5 flex flex-col justify-center gap-2">
+      <div className="flex items-start gap-2">
+        <div
+          className="mt-0.5 h-7 w-7 shrink-0 rounded-full flex items-center justify-center"
+          style={{backgroundColor: FUNNEL_COLOURS.ink}}
+        >
+          <span className="font-serif text-sm" style={{color: FUNNEL_COLOURS.onInk}}>
+            ☎
+          </span>
+        </div>
+        <motion.div
+          className="flex-1 rounded-2xl rounded-tl-sm border px-2.5 py-2"
+          style={{
+            borderColor: `${FUNNEL_COLOURS.ink}14`,
+            backgroundColor: FUNNEL_COLOURS.ground,
+          }}
+          initial={reduce ? false : {opacity: 0, y: 6}}
+          whileInView={{opacity: 1, y: 0}}
+          viewport={{once: true, amount: 0.6}}
+          transition={{duration: 0.4}}
+        >
+          <p className="font-sans text-[11px] leading-snug" style={{color: FUNNEL_COLOURS.ink}}>
+            Missed call · SMS just now
+          </p>
+        </motion.div>
+      </div>
+
+      <motion.div
+        className="ml-9 rounded-2xl rounded-tr-sm px-2.5 py-2 self-end max-w-[92%]"
+        style={{backgroundColor: FUNNEL_COLOURS.ink, color: FUNNEL_COLOURS.onInk}}
+        initial={reduce ? false : {opacity: 0, y: 8}}
+        whileInView={{opacity: 1, y: 0}}
+        viewport={{once: true, amount: 0.6}}
+        transition={{duration: 0.4, delay: reduce ? 0 : 0.35}}
+      >
+        <p className="font-sans text-[11px] leading-snug">
+          They must be with a client. Fine, they said they will call me back.
+        </p>
+      </motion.div>
+    </div>
+  )
+}
+
+/** Missed call → logged lead on a CRM / dashboard. */
+function LoggedLeadVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white/70 flex">
+      <motion.div
+        className="w-[38%] border-r border-dark/10 p-2 flex flex-col justify-center gap-1.5"
+        initial={reduce ? false : {opacity: 0.5}}
+        whileInView={{opacity: 1}}
+        viewport={{once: true}}
+      >
+        <p className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/40">Call</p>
+        <motion.div
+          className="rounded-sm border px-1.5 py-1.5"
+          style={{borderColor: `${FUNNEL_COLOURS.accent}55`, backgroundColor: `${FUNNEL_COLOURS.accent}12`}}
+          initial={reduce ? false : {scale: 0.92, opacity: 0}}
+          whileInView={{scale: 1, opacity: 1}}
+          viewport={{once: true}}
+          transition={{duration: 0.35}}
+        >
+          <p className="font-mono text-[8px] font-bold" style={{color: FUNNEL_COLOURS.accentDeep}}>
+            Missed
+          </p>
+          <p className="font-sans text-[9px] text-dark/60 mt-0.5">0412 ··· ···</p>
+        </motion.div>
+        <motion.span
+          className="font-mono text-[8px] text-center"
+          style={{color: FUNNEL_COLOURS.goldDeep}}
+          initial={{opacity: 0}}
+          whileInView={{opacity: 1}}
+          viewport={{once: true}}
+          transition={{delay: reduce ? 0 : 0.45}}
+        >
+          →
+        </motion.span>
+      </motion.div>
+
+      <div className="flex-1 p-2 flex flex-col">
+        <div className="flex items-center justify-between mb-1.5">
+          <p className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/40">CRM</p>
+          <motion.span
+            className="font-mono text-[7px] uppercase tracking-widest px-1 py-0.5"
+            style={{backgroundColor: `${colors.teal}22`, color: colors.teal}}
+            initial={{opacity: 0}}
+            whileInView={{opacity: 1}}
+            viewport={{once: true}}
+            transition={{delay: reduce ? 0 : 0.7}}
+          >
+            New
+          </motion.span>
+        </div>
+        <motion.div
+          className="flex-1 border border-dark/10 bg-cream/80 p-1.5 space-y-1"
+          initial={reduce ? false : {opacity: 0, x: 8}}
+          whileInView={{opacity: 1, x: 0}}
+          viewport={{once: true}}
+          transition={{duration: 0.4, delay: reduce ? 0 : 0.55}}
+        >
+          <div className="h-1.5 w-2/3 rounded-sm bg-dark/15" />
+          <div className="h-1.5 w-full rounded-sm bg-dark/10" />
+          <div className="h-1.5 w-4/5 rounded-sm bg-dark/10" />
+          <p className="pt-1 font-mono text-[8px]" style={{color: colors.teal}}>
+            Lead · SMS thread
+          </p>
+        </motion.div>
+      </div>
+    </div>
+  )
+}
+
+/** Live proof: test SMS arrives on the other phone. */
+function TestSmsReceivedVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white/70 p-2.5 flex gap-2">
+      <div className="flex-1 border border-dark/10 rounded-sm bg-cream/70 p-1.5 flex flex-col">
+        <p className="font-mono text-[6px] uppercase tracking-[0.14em] text-dark/40 mb-1">
+          Your phone
+        </p>
+        <motion.div
+          className="mt-auto rounded-lg rounded-br-sm px-2 py-1.5"
+          style={{backgroundColor: FUNNEL_COLOURS.ink, color: FUNNEL_COLOURS.onInk}}
+          initial={reduce ? false : {opacity: 0, y: 6}}
+          whileInView={{opacity: 1, y: 0}}
+          viewport={{once: true}}
+          transition={{duration: 0.35}}
+        >
+          <p className="font-sans text-[9px] leading-snug">Test miss · send</p>
+        </motion.div>
+      </div>
+
+      <motion.span
+        className="self-center font-mono text-[10px]"
+        style={{color: FUNNEL_COLOURS.goldDeep}}
+        initial={{opacity: 0}}
+        whileInView={{opacity: 1}}
+        viewport={{once: true}}
+        transition={{delay: reduce ? 0 : 0.35}}
+      >
+        →
+      </motion.span>
+
+      <div className="flex-1 border border-dark/10 rounded-sm bg-cream/70 p-1.5 flex flex-col">
+        <p className="font-mono text-[6px] uppercase tracking-[0.14em] text-dark/40 mb-1">
+          Test handset
+        </p>
+        <motion.div
+          className="mt-auto rounded-lg rounded-bl-sm border px-2 py-1.5"
+          style={{
+            borderColor: `${colors.teal}55`,
+            backgroundColor: `${colors.teal}15`,
+          }}
+          initial={reduce ? false : {opacity: 0, scale: 0.9}}
+          whileInView={{opacity: 1, scale: 1}}
+          viewport={{once: true}}
+          transition={{duration: 0.4, delay: reduce ? 0 : 0.55}}
+        >
+          <p className="font-mono text-[7px] uppercase tracking-widest mb-0.5" style={{color: colors.teal}}>
+            Received
+          </p>
+          <p className="font-sans text-[9px] leading-snug text-dark/80">
+            Sorry we missed…
+          </p>
+        </motion.div>
+      </div>
+    </div>
+  )
+}
+
+/** Clear within-3-days delivery, often done earlier. */
+function WithinThreeDaysVisual({reduce}: VisualProps) {
+  const cells = [
+    {label: 'D1', sub: 'Access'},
+    {label: 'D2', sub: 'Wire'},
+    {label: 'D3', sub: 'Proof'},
+  ]
+
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white/70 flex flex-col">
+      <div className="h-7 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+          Delivery window
+        </span>
+        <span className="font-mono text-[8px] font-bold uppercase tracking-[0.12em] text-gold-on-cream">
+          Within 3 days
+        </span>
+      </div>
+
+      <div className="flex-1 grid grid-cols-3 gap-1.5 p-2">
+        {cells.map((c, i) => (
+          <motion.div
+            key={c.label}
+            className="border flex flex-col items-center justify-center"
+            initial={{
+              backgroundColor: colors.cream,
+              borderColor: 'rgba(26,26,26,0.15)',
+            }}
+            whileInView={{
+              backgroundColor: `${colors.teal}18`,
+              borderColor: colors.teal,
+            }}
+            viewport={{once: true, amount: 0.7}}
+            transition={{duration: 0.35, delay: reduce ? 0 : 0.2 + i * 0.28}}
+          >
+            <span className="font-serif text-lg text-dark leading-none">{c.label}</span>
+            <span className="mt-0.5 font-mono text-[6px] uppercase tracking-wide text-dark/45">
+              {c.sub}
+            </span>
+            <motion.span
+              className="mt-1 h-1 w-1 rounded-full bg-teal"
+              initial={{opacity: 0}}
+              whileInView={{opacity: 1}}
+              viewport={{once: true}}
+              transition={{delay: reduce ? 0 : 0.3 + i * 0.28}}
+            />
+          </motion.div>
+        ))}
+      </div>
+
+      <motion.p
+        className="pb-2 text-center font-mono text-[7px] uppercase tracking-[0.14em]"
+        style={{color: colors.teal}}
+        initial={{opacity: 0}}
+        whileInView={{opacity: 1}}
+        viewport={{once: true}}
+        transition={{delay: reduce ? 0 : 1.1}}
+      >
+        Often done day one · capped at three
+      </motion.p>
+    </div>
+  )
+}
+
+/** Speed Fix visuals (unchanged). */
 function FastBrowseVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[110px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white/70">
@@ -14,7 +252,6 @@ function FastBrowseVisual({reduce}: VisualProps) {
         <span className="h-1 w-1 rounded-full bg-dark/25" />
         <span className="ml-1.5 font-mono text-[7px] text-dark/45">yoursite.com</span>
       </div>
-
       <motion.div
         className="absolute inset-x-0 top-5 bottom-0 p-2"
         initial={{opacity: 1}}
@@ -29,7 +266,6 @@ function FastBrowseVisual({reduce}: VisualProps) {
           <span className="font-mono text-[7px] text-cream font-bold">BOOK</span>
         </div>
       </motion.div>
-
       <motion.div
         className="absolute inset-x-0 top-5 bottom-0 flex flex-col items-center justify-center bg-cream"
         initial={{opacity: 0}}
@@ -48,7 +284,6 @@ function FastBrowseVisual({reduce}: VisualProps) {
   )
 }
 
-/** Fast #1 vs slow page 6 — once on scroll. */
 function RankRaceVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[110px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white/70 p-2 flex gap-2">
@@ -106,19 +341,13 @@ function RankRaceVisual({reduce}: VisualProps) {
   )
 }
 
-/** Envelope → opens to score 90+. */
 function ProofEmailVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[110px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white/70 flex items-center justify-center">
-      {/* Closed envelope */}
       <motion.div
         className="absolute w-[88px] h-[56px]"
         initial={reduce ? false : {opacity: 1, scale: 1}}
-        whileInView={
-          reduce
-            ? undefined
-            : {opacity: [1, 1, 0], scale: [1, 1, 0.9]}
-        }
+        whileInView={reduce ? undefined : {opacity: [1, 1, 0], scale: [1, 1, 0.9]}}
         viewport={{once: true, amount: 0.6}}
         transition={{duration: 1.6, times: [0, 0.45, 0.7], ease: 'easeOut'}}
       >
@@ -129,8 +358,6 @@ function ProofEmailVisual({reduce}: VisualProps) {
         />
         <div className="absolute inset-x-2 bottom-2 top-7 border border-dark/10 bg-cream/80" />
       </motion.div>
-
-      {/* Opened: score */}
       <motion.div
         className="absolute inset-3 border border-teal/35 bg-cream flex flex-col items-center justify-center"
         initial={{opacity: reduce ? 1 : 0}}
@@ -147,10 +374,8 @@ function ProofEmailVisual({reduce}: VisualProps) {
   )
 }
 
-/** Mini calendar: Day 1 → 2 → 3 → ✓ once on scroll, then holds. */
 function ThreeDayCalendarVisual({reduce}: VisualProps) {
   const days = ['1', '2', '3']
-
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white/70 flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2">
@@ -159,7 +384,6 @@ function ThreeDayCalendarVisual({reduce}: VisualProps) {
         </span>
         <span className="font-mono text-[7px] text-gold-on-cream">3 days</span>
       </div>
-
       <div className="flex-1 flex flex-col px-2 pt-1.5 pb-1.5">
         <div className="grid grid-cols-4 gap-1 mb-1">
           {['D1', 'D2', 'D3', '—'].map((d) => (
@@ -171,7 +395,6 @@ function ThreeDayCalendarVisual({reduce}: VisualProps) {
             </span>
           ))}
         </div>
-
         <div className="grid grid-cols-4 gap-1 h-[44px]">
           {days.map((d, i) => (
             <motion.div
@@ -184,10 +407,7 @@ function ThreeDayCalendarVisual({reduce}: VisualProps) {
               whileInView={
                 reduce
                   ? {backgroundColor: `${colors.teal}22`, borderColor: colors.teal}
-                  : {
-                      backgroundColor: `${colors.teal}22`,
-                      borderColor: colors.teal,
-                    }
+                  : {backgroundColor: `${colors.teal}22`, borderColor: colors.teal}
               }
               viewport={{once: true, amount: 0.7}}
               transition={{duration: 0.35, delay: reduce ? 0 : 0.25 + i * 0.35}}
@@ -202,7 +422,6 @@ function ThreeDayCalendarVisual({reduce}: VisualProps) {
               />
             </motion.div>
           ))}
-
           <div className="relative border border-dark/15 bg-cream overflow-hidden">
             <motion.div
               className="absolute inset-0 flex flex-col items-center justify-center border border-teal bg-teal/15"
@@ -217,7 +436,6 @@ function ThreeDayCalendarVisual({reduce}: VisualProps) {
             </motion.div>
           </div>
         </div>
-
         <motion.p
           className="mt-2.5 text-center font-mono text-[7px] uppercase tracking-[0.16em] text-teal"
           initial={{opacity: 0}}
@@ -232,31 +450,39 @@ function ThreeDayCalendarVisual({reduce}: VisualProps) {
   )
 }
 
-const VISUALS = [FastBrowseVisual, RankRaceVisual, ProofEmailVisual, ThreeDayCalendarVisual]
+const SPEED_VISUALS = [FastBrowseVisual, RankRaceVisual, ProofEmailVisual, ThreeDayCalendarVisual]
+const MISSED_VISUALS = [
+  StayWarmVisual,
+  LoggedLeadVisual,
+  TestSmsReceivedVisual,
+  WithinThreeDaysVisual,
+]
 
 type Benefit = {title: string; text: string}
 
 /**
  * Benefit rows: copy left, small cream motion panel right (desktop).
- * Does not replace copy — only adds the visuals.
  */
 export function BenefitMotionRows({
   benefits,
   ink,
   muted,
   gold,
+  variant = 'speed',
 }: {
   benefits: Benefit[]
   ink: string
   muted: string
   gold: string
+  variant?: 'speed' | 'missed-call'
 }) {
   const reduce = useReducedMotion()
+  const visuals = variant === 'missed-call' ? MISSED_VISUALS : SPEED_VISUALS
 
   return (
     <div className="space-y-10 md:space-y-12">
       {benefits.map((item, i) => {
-        const Visual = VISUALS[i] || FastBrowseVisual
+        const Visual = visuals[i] || visuals[0]
         return (
           <motion.div
             key={i}

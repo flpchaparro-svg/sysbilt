@@ -431,6 +431,7 @@ const FunnelPage: React.FC = () => {
                 ink={FUNNEL_COLOURS.ink}
                 muted={FUNNEL_COLOURS.muted}
                 gold={FUNNEL_COLOURS.goldDeep}
+                variant={isMissedCall ? 'missed-call' : 'speed'}
               />
             </div>
           </section>

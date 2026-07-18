@@ -237,8 +237,8 @@ export const MISSED_CALL_COPY: FunnelProductCopy = {
       text: 'We fire a live missed call with you on the line before we hand it over. You watch the SMS arrive.',
     },
     {
-      title: 'Done in days, not months',
-      text: 'From the moment we have access. Most jobs finish in one afternoon once the number is reachable.',
+      title: 'Within three business days',
+      text: 'From the moment we have access. Many setups finish on day one once the number is reachable. Three days is the cap, not the wait.',
     },
   ],
   processLabel: 'How it runs',
