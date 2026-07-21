@@ -4,14 +4,44 @@ import {ArrowRight} from 'lucide-react'
 import {SysbiltLogo} from '../../components/SysbiltLogo'
 import {PageMeta} from '../../components/PageMeta'
 import {SITE_ORIGIN} from '../../constants/seoMeta'
-import {FUNNEL_PRODUCT_CATALOGUE} from '../../constants/funnel'
+import {FUNNEL_PRODUCT_CATALOGUE, type FunnelLane} from '../../constants/funnel'
 import {FunnelLegalFooter} from './FunnelCtaBlock'
 import {FUNNEL_COLOURS, FUNNEL_CSS_VARS} from './funnelTheme'
 import {Reveal} from './funnelReveal'
 
+function laneStyles(lane: FunnelLane): {
+  badge: string
+  badgeLabel: string
+  border: string
+  bar: string
+} {
+  switch (lane) {
+    case 'outbound':
+      return {
+        badge: FUNNEL_COLOURS.accent,
+        badgeLabel: 'Outbound',
+        border: `${FUNNEL_COLOURS.accent}55`,
+        bar: FUNNEL_COLOURS.accent,
+      }
+    case 'warm':
+      return {
+        badge: FUNNEL_COLOURS.goldDeep,
+        badgeLabel: 'Warm',
+        border: `${FUNNEL_COLOURS.goldDeep}55`,
+        bar: FUNNEL_COLOURS.goldDeep,
+      }
+    default:
+      return {
+        badge: FUNNEL_COLOURS.steel,
+        badgeLabel: 'Coming soon',
+        border: `${FUNNEL_COLOURS.ink}14`,
+        bar: FUNNEL_COLOURS.steel,
+      }
+  }
+}
+
 /**
- * Private /go index — product catalogue for SYSBILT wedge offers.
- * Not linked from public nav. Compact cards so several are visible at once.
+ * Private /go index. Outbound (cold email) vs warm vs coming-soon drafts.
  */
 const FunnelHomePage: React.FC = () => {
   return (
@@ -56,21 +86,27 @@ const FunnelHomePage: React.FC = () => {
             className="mt-2.5 font-sans text-sm md:text-base leading-relaxed max-w-lg"
             style={{color: FUNNEL_COLOURS.muted}}
           >
-            One job at a time. You pay once, we deliver, and the outcome is something you can verify.
+            Red edge: cold-email doors. Gold edge: warm / scoping. Grey: drafts to read, not for
+            sale yet.
           </p>
         </Reveal>
 
         <ul className="mt-8 md:mt-9 grid grid-cols-1 md:grid-cols-2 gap-2.5 md:gap-3">
           {FUNNEL_PRODUCT_CATALOGUE.map((product, i) => {
-            const live = product.status === 'live'
+            const lane = laneStyles(product.lane)
             const inner = (
               <>
+                <div
+                  className="absolute left-0 top-0 bottom-0 w-[3px]"
+                  style={{backgroundColor: lane.bar}}
+                  aria-hidden
+                />
                 <div className="flex items-start justify-between gap-3 mb-1.5">
                   <p
                     className="font-mono text-[9px] font-bold uppercase tracking-[0.2em]"
-                    style={{color: live ? FUNNEL_COLOURS.goldDeep : FUNNEL_COLOURS.steel}}
+                    style={{color: lane.badge}}
                   >
-                    {live ? 'Available' : 'Soon'}
+                    {lane.badgeLabel}
                   </p>
                   <p
                     className="font-mono text-xs font-bold tabular-nums shrink-0"
@@ -91,42 +127,32 @@ const FunnelHomePage: React.FC = () => {
                 >
                   {product.blurb}
                 </p>
-                {live ? (
-                  <span
-                    className="mt-3 inline-flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.16em]"
-                    style={{color: FUNNEL_COLOURS.accent}}
-                  >
-                    Open
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </span>
-                ) : null}
+                <span
+                  className="mt-3 inline-flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.16em]"
+                  style={{
+                    color:
+                      product.lane === 'soon' ? FUNNEL_COLOURS.steel : FUNNEL_COLOURS.accent,
+                  }}
+                >
+                  {product.lane === 'soon' ? 'Read draft' : 'Open'}
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </span>
               </>
             )
 
             return (
               <Reveal key={product.code} delay={Math.min(0.04 + i * 0.03, 0.35)} y={10}>
-                {live ? (
-                  <Link
-                    to={product.href}
-                    className="block h-full border px-4 py-3.5 md:px-4 md:py-4 transition-colors duration-200 hover:bg-white/40"
-                    style={{
-                      borderColor: `${FUNNEL_COLOURS.ink}18`,
-                      backgroundColor: FUNNEL_COLOURS.surface,
-                    }}
-                  >
-                    {inner}
-                  </Link>
-                ) : (
-                  <div
-                    className="block h-full border px-4 py-3.5 md:px-4 md:py-4 opacity-70"
-                    style={{
-                      borderColor: `${FUNNEL_COLOURS.ink}12`,
-                      backgroundColor: FUNNEL_COLOURS.surface,
-                    }}
-                  >
-                    {inner}
-                  </div>
-                )}
+                <Link
+                  to={product.href}
+                  className="relative block h-full border pl-5 pr-4 py-3.5 md:py-4 transition-colors duration-200 hover:bg-white/40"
+                  style={{
+                    borderColor: lane.border,
+                    backgroundColor: FUNNEL_COLOURS.surface,
+                    opacity: product.lane === 'soon' ? 0.92 : 1,
+                  }}
+                >
+                  {inner}
+                </Link>
               </Reveal>
             )
           })}

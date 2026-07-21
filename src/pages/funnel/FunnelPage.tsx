@@ -68,6 +68,7 @@ import {BookingEvidenceCard} from './BookingEvidenceCard'
 import {BookingLeakPair} from './BookingLeakPair'
 import {BookingPainCards} from './BookingPainCards'
 import {BookingDeliverableMock} from './BookingDeliverableMock'
+import {FunnelComingSoonCta} from './FunnelComingSoonCta'
 import {
   parseBlockedPages,
   parseReviewCount,
@@ -226,6 +227,8 @@ const FunnelPage: React.FC = () => {
   const isAiPhone = proofKind === 'ai-phone'
   const isBooking = proofKind === 'booking'
   const isSpeed = proofKind === 'speed'
+  const isDraftSoon =
+    proofKind === 'website' || proofKind === 'geo' || proofKind === 'client-finder'
   const lastPostMonth = useMemo(() => sanitiseLastPostMonth(params.get('m')), [params])
   const yourReviews = useMemo(() => parseReviewCount(params.get('n')), [params])
   const theirReviews = useMemo(() => parseReviewCount(params.get('r')), [params])
@@ -235,7 +238,7 @@ const FunnelPage: React.FC = () => {
       ? 'google-profile'
       : isSearchFix
         ? 'search-fix'
-        : isLandingPage
+        : isLandingPage || isDraftSoon
           ? 'landing-page'
           : isCrmRescue
             ? 'crm-rescue'
@@ -467,7 +470,11 @@ const FunnelPage: React.FC = () => {
 
             <Reveal delay={0.32} y={12}>
               <div className="mt-10">
-                <FunnelCtaBlock fields={ctaFields} size="final" />
+                {isDraftSoon ? (
+                  <FunnelComingSoonCta label={COPY.ctaLabel} size="final" />
+                ) : (
+                  <FunnelCtaBlock fields={ctaFields} size="final" />
+                )}
               </div>
             </Reveal>
           </header>
@@ -483,7 +490,8 @@ const FunnelPage: React.FC = () => {
               isContentSystem ||
               isReviews ||
               isAiPhone ||
-              isBooking
+              isBooking ||
+              isDraftSoon
                 ? 'max-w-3xl'
                 : 'max-w-5xl'
             }`}
@@ -528,10 +536,33 @@ const FunnelPage: React.FC = () => {
             ) : null}
             {isAiPhone ? <AiPhoneEvidenceCard evidence={aiPhoneEvidence} /> : null}
             {isBooking ? <BookingEvidenceCard business={business} /> : null}
+            {isDraftSoon ? (
+              <div
+                className="mt-2 rounded-sm border p-5 md:p-6 max-w-2xl"
+                style={{
+                  borderColor: `${FUNNEL_COLOURS.ink}14`,
+                  backgroundColor: FUNNEL_COLOURS.surface,
+                }}
+              >
+                <p
+                  className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] mb-3"
+                  style={{color: FUNNEL_COLOURS.steel}}
+                >
+                  Draft for review
+                </p>
+                <p
+                  className="font-sans text-base md:text-lg leading-relaxed"
+                  style={{color: FUNNEL_COLOURS.muted}}
+                >
+                  {COPY.proofLeadGeneric}
+                </p>
+              </div>
+            ) : null}
             {!(isSearchFix && searchEvidence.mode === 'try') &&
             !(isLandingPage && adEvidence.mode === 'try') &&
             !(isCrmRescue && crmEvidence.mode === 'try') &&
-            !(isContentSystem && !business) ? (
+            !(isContentSystem && !business) &&
+            !isDraftSoon ? (
               <Reveal delay={0.12} y={12}>
                 <p
                   className={`font-sans text-base md:text-lg leading-relaxed max-w-2xl ${
@@ -821,6 +852,28 @@ const FunnelPage: React.FC = () => {
                 </Reveal>
                 <BookingLeakPair />
               </section>
+            ) : isDraftSoon ? (
+              <section className="mt-12 md:mt-14">
+                <Reveal y={10}>
+                  <SectionLabel>The leak</SectionLabel>
+                </Reveal>
+                <Reveal delay={0.06} y={14}>
+                  <h3
+                    className="font-serif font-bold text-2xl md:text-3xl tracking-tight mb-4 max-w-2xl"
+                    style={{color: FUNNEL_COLOURS.ink}}
+                  >
+                    {COPY.proofHeadingGeneric}
+                  </h3>
+                </Reveal>
+                <Reveal delay={0.1} y={10}>
+                  <p
+                    className="font-sans text-base md:text-lg leading-relaxed max-w-2xl"
+                    style={{color: FUNNEL_COLOURS.muted}}
+                  >
+                    {COPY.proofAfterGeneric}
+                  </p>
+                </Reveal>
+              </section>
             ) : (
               <>
                 <ScoreMoment
@@ -890,10 +943,12 @@ const FunnelPage: React.FC = () => {
                 <AiPhonePainCards />
               ) : isBooking ? (
                 <BookingPainCards />
-              ) : (
+              ) : isDraftSoon ? null : (
                 <PainCostCards />
               )}
-              <LostClientCalculator variant={calculatorVariant} theme="dark" />
+              {!isDraftSoon ? (
+                <LostClientCalculator variant={calculatorVariant} theme="dark" />
+              ) : null}
             </div>
           </section>
 
@@ -946,7 +1001,8 @@ const FunnelPage: React.FC = () => {
               isContentSystem ||
               isReviews ||
               isAiPhone ||
-              isBooking ? null : (
+              isBooking ||
+              isDraftSoon ? null : (
               <ScoreMoment score={90} mode="benchmark" />
             )}
           </section>
@@ -1002,7 +1058,11 @@ const FunnelPage: React.FC = () => {
             </Reveal>
             <Reveal delay={0.16} y={10}>
               <div className="mt-10">
-                <FunnelCtaBlock fields={ctaFields} size="lg" />
+                {isDraftSoon ? (
+                  <FunnelComingSoonCta label={COPY.ctaLabel} size="lg" />
+                ) : (
+                  <FunnelCtaBlock fields={ctaFields} size="lg" />
+                )}
               </div>
             </Reveal>
           </section>
@@ -1076,7 +1136,11 @@ const FunnelPage: React.FC = () => {
                     </p>
                   </Reveal>
                   <Reveal delay={0.28} y={10}>
-                    <FunnelCtaBlock fields={ctaFields} theme="dark" size="xl" />
+                    {isDraftSoon ? (
+                      <FunnelComingSoonCta label={COPY.ctaLabel} theme="dark" size="xl" />
+                    ) : (
+                      <FunnelCtaBlock fields={ctaFields} theme="dark" size="xl" />
+                    )}
                   </Reveal>
                 </div>
 
@@ -1102,6 +1166,27 @@ const FunnelPage: React.FC = () => {
                   <AiPhoneDeliverableMock />
                 ) : isBooking ? (
                   <BookingDeliverableMock />
+                ) : isDraftSoon ? (
+                  <div
+                    className="rounded-sm border p-5 md:p-6"
+                    style={{
+                      borderColor: `${FUNNEL_COLOURS.onInk}22`,
+                      backgroundColor: 'rgba(255,242,236,0.06)',
+                    }}
+                  >
+                    <p
+                      className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] mb-3"
+                      style={{color: FUNNEL_COLOURS.goldLight}}
+                    >
+                      Coming soon
+                    </p>
+                    <p
+                      className="font-sans text-sm leading-relaxed"
+                      style={{color: `${FUNNEL_COLOURS.onInk}85`}}
+                    >
+                      {COPY.scopeLine}
+                    </p>
+                  </div>
                 ) : (
                   <ReportDeliverableMock />
                 )}
@@ -1153,12 +1238,16 @@ const FunnelPage: React.FC = () => {
                 </p>
               </Reveal>
               <Reveal delay={0.24} y={12}>
-                <FunnelCtaBlock
-                  fields={ctaFields}
-                  theme="dark"
-                  size="final"
-                  align="center"
-                />
+                {isDraftSoon ? (
+                  <FunnelComingSoonCta label={COPY.ctaLabel} theme="dark" size="final" />
+                ) : (
+                  <FunnelCtaBlock
+                    fields={ctaFields}
+                    theme="dark"
+                    size="final"
+                    align="center"
+                  />
+                )}
               </Reveal>
             </div>
             <div className="relative max-w-4xl mx-auto px-6 md:px-10 pb-10">

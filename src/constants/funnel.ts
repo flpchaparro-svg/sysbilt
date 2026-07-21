@@ -23,9 +23,15 @@ export const FUNNEL_PRODUCT_CODES = [
   'team-ai',
   'change-pack',
   'content-system',
+  'website',
+  'geo',
+  'client-finder',
 ] as const
 
 export type FunnelProductCode = (typeof FUNNEL_PRODUCT_CODES)[number]
+
+/** How the offer is sold / shown on the private catalogue. */
+export type FunnelLane = 'outbound' | 'warm' | 'soon'
 
 export const FUNNEL_PRODUCT_LABELS: Record<FunnelProductCode, string> = {
   'speed-fix': 'Website Speed Fix',
@@ -40,6 +46,9 @@ export const FUNNEL_PRODUCT_LABELS: Record<FunnelProductCode, string> = {
   'team-ai': 'Team AI',
   'change-pack': 'Change Pack',
   'content-system': 'Content System',
+  website: 'Website Packages',
+  geo: 'AI Search Visibility',
+  'client-finder': 'Client Finder Sprint',
 }
 
 export type FunnelProductStatus = 'live' | 'soon'
@@ -51,8 +60,23 @@ export type FunnelProductCard = {
   price: string
   blurb: string
   status: FunnelProductStatus
+  /** outbound = cold-email doors; warm = call/scoping; soon = readable draft, not for sale */
+  lane: FunnelLane
   href: string
 }
+
+/** Cold-email /go doors Felipe sends in outbound. */
+export const FUNNEL_OUTBOUND_CODES: ReadonlySet<string> = new Set([
+  'speed-fix',
+  'missed-call',
+  'google-profile',
+  'reviews',
+  'search-fix',
+  'booking',
+  'landing-page',
+  'ai-phone',
+  'crm-rescue',
+])
 
 export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
   {
@@ -61,6 +85,7 @@ export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
     price: '$1,200',
     blurb: "Three days. Measured before and after with Google's own score.",
     status: 'live',
+    lane: 'outbound',
     href: '/go/speed-fix',
   },
   {
@@ -69,6 +94,7 @@ export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
     price: '$750',
     blurb: 'Every missed call gets a reply before they dial the next business.',
     status: 'live',
+    lane: 'outbound',
     href: '/go/missed-call',
   },
   {
@@ -77,6 +103,7 @@ export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
     price: '$600',
     blurb: 'Your Business Profile cleaned up so the right people find you first.',
     status: 'live',
+    lane: 'outbound',
     href: '/go/google-profile',
   },
   {
@@ -85,6 +112,7 @@ export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
     price: '$1,100',
     blurb: 'Automatic ask after every job. Templates, QR, and response wording included.',
     status: 'live',
+    lane: 'outbound',
     href: '/go/reviews',
   },
   {
@@ -93,6 +121,7 @@ export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
     price: '$1,400',
     blurb: "Three days. Google's own records show the pages coming back.",
     status: 'live',
+    lane: 'outbound',
     href: '/go/search-fix',
   },
   {
@@ -101,6 +130,7 @@ export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
     price: '$1,500',
     blurb: 'Book now on your site and profile, with reminders that cut no-shows.',
     status: 'live',
+    lane: 'outbound',
     href: '/go/booking',
   },
   {
@@ -109,6 +139,7 @@ export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
     price: '$1,800',
     blurb: 'Two days. One page that matches the ad promise and keeps the click.',
     status: 'live',
+    lane: 'outbound',
     href: '/go/landing-page',
   },
   {
@@ -117,6 +148,7 @@ export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
     price: '$1,950',
     blurb: 'One-time setup. A voice agent on your account that answers and books.',
     status: 'live',
+    lane: 'outbound',
     href: '/go/ai-phone',
   },
   {
@@ -125,6 +157,7 @@ export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
     price: '$2,800',
     blurb: 'Five days. Every enquiry caught, answered in seconds, and chased.',
     status: 'live',
+    lane: 'outbound',
     href: '/go/crm-rescue',
   },
   {
@@ -133,6 +166,7 @@ export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
     price: 'From $1,950',
     blurb: 'Half a day. Shared setup, real tasks, prompts the whole team owns.',
     status: 'live',
+    lane: 'warm',
     href: '/go/team-ai',
   },
   {
@@ -141,6 +175,7 @@ export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
     price: 'From $6,000',
     blurb: 'Training for a new system or AI rollout, built before day one.',
     status: 'live',
+    lane: 'warm',
     href: '/go/change-pack',
   },
   {
@@ -149,7 +184,35 @@ export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
     price: '$3,400 + $1,900/mo',
     blurb: 'One hour of your month. A month of on-brand content comes out the other side.',
     status: 'live',
+    lane: 'warm',
     href: '/go/content-system',
+  },
+  {
+    code: 'website',
+    title: 'Website Packages',
+    price: 'From $4,500',
+    blurb: 'Brochure, seven-page, or full site. Right size for the job. Draft for review.',
+    status: 'soon',
+    lane: 'soon',
+    href: '/go/website',
+  },
+  {
+    code: 'geo',
+    title: 'AI Search Visibility',
+    price: 'From $2,200',
+    blurb: 'Show up when people ask AI tools, not only the old results list. Draft for review.',
+    status: 'soon',
+    lane: 'soon',
+    href: '/go/geo',
+  },
+  {
+    code: 'client-finder',
+    title: 'Client Finder Sprint',
+    price: 'From $2,800',
+    blurb: 'Curated prospects, approach scripts, and a plan. Not endless spam. Draft for review.',
+    status: 'soon',
+    lane: 'soon',
+    href: '/go/client-finder',
   },
 ]
 

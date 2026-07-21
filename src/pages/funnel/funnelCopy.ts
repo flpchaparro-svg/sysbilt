@@ -49,7 +49,7 @@ export type FunnelProductCopy = {
   finalLabel: string
   finalHeading: string
   finalLine: string
-  /** Proof UI: pagespeed dial vs missed-call vs Google profile vs index check vs ad landing vs CRM vs team recognition vs content vs reviews vs AI phone vs booking */
+  /** Proof UI: pagespeed dial vs missed-call vs Google profile vs index check vs ad landing vs CRM vs team recognition vs content vs reviews vs AI phone vs booking vs website vs geo vs client-finder */
   proofKind:
     | 'speed'
     | 'missed-call'
@@ -63,6 +63,9 @@ export type FunnelProductCopy = {
     | 'reviews'
     | 'ai-phone'
     | 'booking'
+    | 'website'
+    | 'geo'
+    | 'client-finder'
 }
 
 export const SPEED_FIX_COPY: FunnelProductCopy = {
@@ -1739,6 +1742,414 @@ export const BOOKING_COPY: FunnelProductCopy = {
   proofKind: 'booking',
 }
 
+export const WEBSITE_COPY: FunnelProductCopy = {
+  eyebrow: 'Three packages · Fixed once scoped · Coming soon',
+  h1Generic:
+    'A website that matches the size of the job, not a template someone picked in an afternoon',
+  h1Personal: (b: string) =>
+    `${b}, a website that matches the size of the job, not a template someone picked in an afternoon`,
+  sub: "Wrong-sized sites waste money either way: a brochure that can't sell, or a bloated build you never needed. We scope which of three packages fits, then build it. Brochure, seven-page, or full site. Fixed once scoped. This offer is coming soon.",
+  ctaLabel: 'Coming soon',
+  proofLabel: 'The fit',
+  proofHeadingLive: 'Three sizes. One honest scope',
+  proofHeadingGeneric: 'Three sizes. One honest scope',
+  proofLead: (b: string | null) =>
+    b
+      ? `Most ${b}-style sites fail because the brief was wrong, not because the fonts were ugly. Too thin to sell, or too heavy to finish.`
+      : 'Most sites fail because the brief was wrong, not because the fonts were ugly. Too thin to sell, or too heavy to finish.',
+  proofLeadGeneric:
+    'Most sites fail because the brief was wrong, not because the fonts were ugly. Too thin to sell, or too heavy to finish.',
+  proofAfter:
+    'We pick the package that matches the job, lock the price, then build. No template roulette, no agency that overbuilds for the invoice.',
+  proofAfterGeneric:
+    'We pick the package that matches the job, lock the price, then build. No template roulette, no agency that overbuilds for the invoice.',
+  painLabel: 'What this is costing you',
+  painHeading: "You're paying for the wrong size of site",
+  painLines: [
+    'A site that is too thin leaves people guessing. Clear offer, proof, and a form never quite land.',
+    'DIY that looks unfinished costs you trust the moment someone compares you to a competitor who looks ready.',
+    'An agency that overbuilds sells you pages, plugins, and meetings you did not need, then invoices for the weight.',
+    'Every month on the wrong size is another month of traffic that never becomes an enquiry.',
+  ],
+  bridgeLabel: 'The fix',
+  bridgeHeading: 'We scope which package fits, then we build',
+  bridgeBody:
+    "This isn't a one-size template and it isn't an open-ended agency rebuild. It's three clear packages: brochure, seven-page, or full site. We pick the one that matches how you sell, lock the price once scoped, and build it. Coming soon: you'll buy the right size first, not the loudest quote.",
+  bridgeGaugeCaption:
+    'Brochure for a clear offer. Seven-page when you need room to sell. Full site when the business needs more pages, a CMS blog if needed, and integrations that earn their keep.',
+  benefitsLabel: 'What changes for you',
+  benefitsHeading: 'Outcomes, not jargon',
+  benefits: [
+    {
+      title: 'The site matches the job',
+      text: 'Enough pages to sell. Not a skeleton, not a warehouse of unused sections.',
+    },
+    {
+      title: 'Fixed once scoped',
+      text: 'We agree the package and the price before build. No surprise invoice in month four.',
+    },
+    {
+      title: 'Built to enquire',
+      text: 'Clear offer, proof where it belongs, and a path to contact that does not hide behind menus.',
+    },
+    {
+      title: 'You own it',
+      text: 'Your domain, your hosting path, your CMS if you need one. We leave you something you can keep running.',
+    },
+  ],
+  processLabel: 'How it runs',
+  processHeading: 'Scope first, then build',
+  processSteps: [
+    {
+      label: 'Scope',
+      text: 'We map how you sell, what pages you need, and which of the three packages fits. Price locks there.',
+    },
+    {
+      label: 'Build',
+      text: 'Structure, copy path, design, and forms. Content rules agreed up front so the job does not stall.',
+    },
+    {
+      label: 'Launch',
+      text: 'Live on your domain, checked on mobile, with a short handoff so your team knows what to edit.',
+    },
+  ],
+  stackLabel: 'The three packages',
+  stackHeading: 'Pick the size that fits, then we lock it',
+  stackItems: [
+    {
+      title: 'Brochure · from $4,500',
+      text: 'A few pages, a clear offer, and a form. Enough for a focused business that needs to look ready and take enquiries, not host a magazine.',
+    },
+    {
+      title: 'Seven-page · $8,500',
+      text: 'Services, about, proof, contact, and the pages you need to sell without bloating. The middle that most growing companies actually need.',
+    },
+    {
+      title: 'Full site · from $14,000',
+      text: 'More pages when the business needs them, a CMS blog if content is part of the plan (CMS means you can edit pages without calling a developer for every line), and integrations that earn their place.',
+    },
+  ],
+  scopeLine:
+    'Three packages, fixed once scoped. Coming soon. Complex multi-brand or e-commerce builds get a same-day quote so the price stays honest.',
+  priceLabel: 'Investment',
+  price: 'From $4,500 · $8,500 · from $14,000',
+  priceLead:
+    'Three tiers. Price locks once we scope which package fits. This offer is coming soon, not for sale today.',
+  guarantee:
+    'When this goes live: we scope the package first, lock the price, then build. If the agreed pages and enquiry path are not delivered as scoped, we keep working at no extra cost until they are.',
+  priceAnchor:
+    'Wrong-sized builds cost more than the invoice. This is priced so the brief matches the job, not the agency wishlist.',
+  faqLabel: 'Objections',
+  faqHeading: 'Straight answers before you waitlist',
+  faqs: [
+    {
+      q: 'How long does a website take?',
+      a: 'It depends on the package and how fast content lands. Brochure jobs are shorter. Full sites take longer because there are more pages and integrations. We give a plain timeline at scope, before you pay.',
+    },
+    {
+      q: 'Do I need a CMS?',
+      a: 'Only if you will edit pages or run a blog yourselves. A CMS is the editing layer so you change text and posts without calling a developer for every line. Brochure and many seven-page builds can stay simple. Full sites often need one.',
+    },
+    {
+      q: 'Who writes the content?',
+      a: 'We agree that at scope. Some clients write. Some want us to draft. The job does not start until we know who owns each page, so it does not stall halfway.',
+    },
+    {
+      q: 'Do you host it?',
+      a: 'We help you pick a sensible hosting path and leave you with access. Hosting is usually a small monthly cost on your account, separate from the build fee.',
+    },
+    {
+      q: 'How is this different from the Landing Page at $1,800?',
+      a: 'Landing Page is one campaign door: one promise, one action, live in two days for ads you already run. These packages are the wider site people browse when they want to understand the business, not a single ad destination.',
+    },
+    {
+      q: 'Can I buy this today?',
+      a: 'Not yet. This page is the coming-soon brief. When it opens, you will scope a package, lock the price, and we build from there.',
+    },
+  ],
+  finalLabel: 'Last step',
+  finalHeading: 'Pick the right size first, then build',
+  finalLine:
+    'Brochure, seven-page, or full site. We scope which fits, lock the price, and build. Coming soon.',
+  proofKind: 'website',
+}
+
+export const GEO_COPY: FunnelProductCopy = {
+  eyebrow: 'AI answers · Citations · Coming soon',
+  h1Generic:
+    'Your competitors are starting to show up in AI answers. You are still only fighting for the old search page',
+  h1Personal: (b: string) =>
+    `${b}, your competitors are starting to show up in AI answers. You are still only fighting for the old search page`,
+  sub: "People ask ChatGPT, Perplexity, and Google's AI answers what to buy and who to call. If your pages are thin, messy, or hard to cite, those tools skip you. We structure facts, FAQs, and service pages so AI tools can name you. Not magic. Not fake reviews. Coming soon.",
+  ctaLabel: 'Coming soon',
+  proofLabel: 'The shift',
+  proofHeadingLive: 'Ten blue links are not the whole game anymore',
+  proofHeadingGeneric: 'Ten blue links are not the whole game anymore',
+  proofLead: (b: string | null) =>
+    b
+      ? `Someone asks an AI tool who to hire for what ${b} does. If your facts are buried or vague, the answer names someone else.`
+      : 'Someone asks an AI tool who to hire for what you do. If your facts are buried or vague, the answer names someone else.',
+  proofLeadGeneric:
+    'Someone asks an AI tool who to hire for what you do. If your facts are buried or vague, the answer names someone else.',
+  proofAfter:
+    'Clear service pages, FAQ schema, and facts written so machines can cite them. That is the work. Guarantees of "rank in ChatGPT" are not.',
+  proofAfterGeneric:
+    'Clear service pages, FAQ schema, and facts written so machines can cite them. That is the work. Guarantees of "rank in ChatGPT" are not.',
+  painLabel: 'What this is costing you',
+  painHeading: "You're invisible in the answers people trust next",
+  painLines: [
+    'Buyers still search, but more of them also ask an AI tool before they call.',
+    'If competitors have clearer pages and cleaner facts, those tools cite them, not you.',
+    'Classic search work still matters. Alone, it does not cover this new layer.',
+    'Every week you wait, someone else becomes the default name in the answer.',
+  ],
+  bridgeLabel: 'The fix',
+  bridgeHeading: 'Structure the site so AI tools can cite you',
+  bridgeBody:
+    "This isn't a promise that ChatGPT will pick you every time, and it isn't fake reviews or spam. It's practical work: clear service pages, FAQ schema (structured Q&A markup search and AI tools can read), and facts written so generative answers have something solid to quote. It sits beside Search Visibility Fix and Content System when you need those, and it can stand alone when your index and content are already fine. Coming soon.",
+  bridgeGaugeCaption:
+    'Facts machines can cite. Pages humans still read. No magic ranking guarantee, no review games.',
+  benefitsLabel: 'What changes for you',
+  benefitsHeading: 'Outcomes, not jargon',
+  benefits: [
+    {
+      title: 'You have a shot in AI answers',
+      text: 'Clear facts and service pages give ChatGPT, Perplexity, and Google AI something real to cite.',
+    },
+    {
+      title: 'FAQ schema that earns its place',
+      text: 'Structured Q&A markup so tools can read the questions you already answer for customers.',
+    },
+    {
+      title: 'Honest scope',
+      text: 'We say what we will change and what we will not promise. No fake citations, no review farms.',
+    },
+    {
+      title: 'Works with what you already bought',
+      text: 'Pairs with Search Visibility Fix and Content System when you need them. Does not require them if those jobs are already done.',
+    },
+  ],
+  processLabel: 'How it runs',
+  processHeading: 'Audit the citeable surface, then fix it',
+  processSteps: [
+    {
+      label: 'Map',
+      text: 'Which services, facts, and FAQs should AI tools be able to quote. Where the page is thin or conflicting.',
+    },
+    {
+      label: 'Structure',
+      text: 'Service pages, FAQ schema, and plain facts cleaned so humans and machines both get a straight answer.',
+    },
+    {
+      label: 'Check',
+      text: 'We re-read the pages the way a tool would: clear entities, clear offers, no buried essentials.',
+    },
+  ],
+  stackLabel: 'Everything included',
+  stackHeading: 'One scoped job, fixed once agreed',
+  stackItems: [
+    {
+      title: 'Citeable service pages',
+      text: 'Clear offers, who you serve, and what you do, written so AI tools have something solid to quote.',
+    },
+    {
+      title: 'FAQ schema where it helps',
+      text: 'Structured Q&A markup on the questions customers already ask, not keyword stuffing.',
+    },
+    {
+      title: 'Fact cleanup',
+      text: 'Hours, locations, services, and claims aligned so the site does not contradict itself.',
+    },
+    {
+      title: 'Plain handoff',
+      text: 'What we changed, why it matters for AI answers, and what to keep consistent when you edit later.',
+    },
+  ],
+  scopeLine:
+    'Coming soon. Fixed once scoped from $2,200. We do not sell fake reviews, bought citations, or guaranteed placement inside any AI product.',
+  priceLabel: 'Investment',
+  price: 'From $2,200',
+  priceLead:
+    'Placeholder band. Fixed once scoped. This offer is coming soon, not for sale today.',
+  guarantee:
+    'When this goes live: we deliver the scoped page and schema work. We do not guarantee that any AI product will cite you on a given day. If the agreed structural work is not delivered, we keep working at no extra cost until it is.',
+  priceAnchor:
+    'About the cost of staying invisible while competitors become the default name in AI answers.',
+  faqLabel: 'Objections',
+  faqHeading: 'Straight answers before you waitlist',
+  faqs: [
+    {
+      q: 'Is this SEO?',
+      a: 'It overlaps. Classic search still cares about clear pages and indexation. This job focuses on making your facts easy for generative tools to cite, not only ranking in ten blue links.',
+    },
+    {
+      q: 'Do I need Search Visibility Fix first?',
+      a: 'Only if Google cannot see your pages. Search Visibility Fix ($1,400) is the rescue when indexation is broken. GEO assumes the site can be found, then makes it citeable. We will tell you if the rescue should come first.',
+    },
+    {
+      q: 'Do I need the Content System?',
+      a: 'Not required. Content System helps you publish steady, useful pages over time. GEO can stand on the pages you already have, or sit beside a content plan if you want both.',
+    },
+    {
+      q: 'Can you guarantee ChatGPT will name us?',
+      a: 'No. Anyone who guarantees placement in an AI answer is selling you hope. We do the structural work that makes citation possible. The tools decide.',
+    },
+    {
+      q: 'Is this fake reviews or spam?',
+      a: 'No. We never post fake reviews, buy stars, or invent citations. Clear facts only.',
+    },
+    {
+      q: 'Can I buy this today?',
+      a: 'Not yet. This page is the coming-soon brief. When it opens, we scope the pages and schema work, lock the price from $2,200, and build from there.',
+    },
+  ],
+  finalLabel: 'Last step',
+  finalHeading: 'Show up in the answers, not only the old results list',
+  finalLine:
+    'Structure the facts. Add FAQ schema where it helps. Stay honest about what AI tools decide. Coming soon.',
+  proofKind: 'geo',
+}
+
+export const CLIENT_FINDER_COPY: FunnelProductCopy = {
+  eyebrow: 'Curated list · Scripts · Plan · Coming soon',
+  h1Generic:
+    'Knowing who to call is half the work. Most teams skip straight to hoping',
+  h1Personal: (b: string) =>
+    `${b}, knowing who to call is half the work. Most teams skip straight to hoping`,
+  sub: 'A one-time sprint: we lock who you should chase, hand you 50 to 100 named prospects that fit, write how to approach them, and leave a simple execution plan plus a short automation sketch. Not endless spam from us. Not a lead-gen retainer dressed up as a list. Coming soon.',
+  ctaLabel: 'Coming soon',
+  proofLabel: 'The gap',
+  proofHeadingLive: 'Hope is not a prospecting system',
+  proofHeadingGeneric: 'Hope is not a prospecting system',
+  proofLead: (b: string | null) =>
+    b
+      ? `${b}'s team knows the work is good. The open question is who to call this month, and what to say without sounding like a bot.`
+      : 'Your team knows the work is good. The open question is who to call this month, and what to say without sounding like a bot.',
+  proofLeadGeneric:
+    'Your team knows the work is good. The open question is who to call this month, and what to say without sounding like a bot.',
+  proofAfter:
+    'ICP locked. Named list. Scripts. Calendar or booking path. A sketch of automation you can run yourself or ask us to build later.',
+  proofAfterGeneric:
+    'ICP locked. Named list. Scripts. Calendar or booking path. A sketch of automation you can run yourself or ask us to build later.',
+  painLabel: 'What this is costing you',
+  painHeading: "You're busy, and the pipeline still depends on luck",
+  painLines: [
+    'Referrals are great until a quiet month arrives and nobody knows who to ring.',
+    'Bought lists and spray outreach burn trust and often break the rules.',
+    'Endless "lead gen" retainers sell activity. You still do not know who actually fits.',
+    'Without a short list and a script, the team defaults to hoping the phone rings.',
+  ],
+  bridgeLabel: 'The fix',
+  bridgeHeading: 'One sprint: list, scripts, and a plan you can run',
+  bridgeBody:
+    "This isn't SYSBILT sending cold spam on your behalf, and it isn't a promise of booked appointments. It's a one-time sprint: lock your ICP (ideal customer profile: who is worth chasing), curate 50 to 100 named prospects that fit, write approach scripts, map a calendar or booking path, and leave a short automation sketch you can run or ask us to build later. Coming soon.",
+  bridgeGaugeCaption:
+    'Named prospects. Honest scripts. A plan you own. No guaranteed meetings. No illegal scraping promises.',
+  benefitsLabel: 'What changes for you',
+  benefitsHeading: 'Outcomes, not jargon',
+  benefits: [
+    {
+      title: 'You know who to call',
+      text: '50 to 100 named prospects that match the ICP we locked with you, not a scraped dump.',
+    },
+    {
+      title: 'You know what to say',
+      text: 'Approach scripts your team can use without sounding like a bulk sequence.',
+    },
+    {
+      title: 'A path to a booking',
+      text: 'How the reply turns into a calendar slot or booking link, so warm interest does not die in the inbox.',
+    },
+    {
+      title: 'A sketch, not a trap',
+      text: 'A short automation outline you can run yourself or ask us to build later. The sprint stands alone.',
+    },
+  ],
+  processLabel: 'How it runs',
+  processHeading: 'One sprint, then the list is yours',
+  processSteps: [
+    {
+      label: 'ICP',
+      text: 'Lock who fits: industry, size, geography, and the pain you actually solve.',
+    },
+    {
+      label: 'List and scripts',
+      text: 'Curate 50 to 100 named prospects, plus approach wording your team can send or say.',
+    },
+    {
+      label: 'Plan',
+      text: 'Execution order, booking path, and a short automation sketch for later if you want it.',
+    },
+  ],
+  stackLabel: 'What you get',
+  stackHeading: 'One-time sprint, not a forever spam machine',
+  stackItems: [
+    {
+      title: 'ICP locked',
+      text: 'A plain definition of who is worth chasing, so the list stays honest.',
+    },
+    {
+      title: '50 to 100 named prospects',
+      text: 'People and companies that fit. Curated. Not a promise that every row will take a meeting.',
+    },
+    {
+      title: 'Approach scripts',
+      text: 'What to say in the first touch and the follow-up, in your voice.',
+    },
+    {
+      title: 'Execution plan and booking path',
+      text: 'Order of outreach, and how replies land on a calendar or booking link.',
+    },
+    {
+      title: 'Automation sketch',
+      text: 'A short outline you can run yourselves or ask us to build later. Not included as ongoing spam from SYSBILT.',
+    },
+  ],
+  scopeLine:
+    'Coming soon. One-time sprint from $2,800. We do not guarantee appointments, promise illegal scraping, or sell SYSBILT cold-spamming on your behalf as the product.',
+  priceLabel: 'Investment',
+  price: 'From $2,800',
+  priceLead:
+    'One-time sprint. Fixed once scoped. This offer is coming soon, not for sale today.',
+  guarantee:
+    'When this goes live: we deliver the scoped ICP, list, scripts, and plan. We do not guarantee meetings booked. If the agreed deliverables are not handed over as scoped, we keep working at no extra cost until they are.',
+  priceAnchor:
+    'About the cost of another quiet month spent hoping the right people call you first.',
+  faqLabel: 'Objections',
+  faqHeading: 'Straight answers before you waitlist',
+  faqs: [
+    {
+      q: 'Do you guarantee appointments?',
+      a: 'No. We hand you who to contact and how. Whether they book depends on your offer, timing, and follow-through. Anyone selling guaranteed meetings from a list is overselling.',
+    },
+    {
+      q: 'Will SYSBILT send the outreach for us?',
+      a: 'Not as this product. This sprint leaves you the list, scripts, and plan. If you later want us to build automation, that is a separate build, not cold spam sold as the core offer.',
+    },
+    {
+      q: 'Is this illegal scraping?',
+      a: 'No. We do not promise illegal scraping or shady data buys. Sources stay within ordinary, lawful research and the tools you already have a right to use.',
+    },
+    {
+      q: 'Is this an ongoing lead-gen retainer?',
+      a: 'No. One-time sprint. You leave with the list and the plan. Retainers and ongoing sending are a different conversation if you ever want that.',
+    },
+    {
+      q: 'How many prospects do we get?',
+      a: 'Typically 50 to 100 named rows that fit the ICP. Quality over dumping thousands of bad fits into a spreadsheet.',
+    },
+    {
+      q: 'Can I buy this today?',
+      a: 'Not yet. This page is the coming-soon brief. When it opens, we lock the ICP, curate the list, write the scripts, and hand over the plan from $2,800.',
+    },
+  ],
+  finalLabel: 'Last step',
+  finalHeading: 'Know who to call before you hope the phone rings',
+  finalLine:
+    'ICP, curated list, scripts, and a plan you can run. One sprint. Coming soon.',
+  proofKind: 'client-finder',
+}
+
 export function funnelCopyForSlug(slug: string | undefined): FunnelProductCopy {
   if (slug === 'missed-call') return MISSED_CALL_COPY
   if (slug === 'google-profile') return GOOGLE_PROFILE_COPY
@@ -1751,5 +2162,8 @@ export function funnelCopyForSlug(slug: string | undefined): FunnelProductCopy {
   if (slug === 'reviews') return REVIEWS_COPY
   if (slug === 'ai-phone') return AI_PHONE_COPY
   if (slug === 'booking') return BOOKING_COPY
+  if (slug === 'website') return WEBSITE_COPY
+  if (slug === 'geo') return GEO_COPY
+  if (slug === 'client-finder') return CLIENT_FINDER_COPY
   return SPEED_FIX_COPY
 }
