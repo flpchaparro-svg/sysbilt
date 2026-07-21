@@ -58,6 +58,7 @@ export type FunnelProductCopy = {
     | 'landing-page'
     | 'crm-rescue'
     | 'team-ai'
+    | 'change-pack'
 }
 
 export const SPEED_FIX_COPY: FunnelProductCopy = {
@@ -1031,6 +1032,146 @@ export const TEAM_AI_COPY: FunnelProductCopy = {
   proofKind: 'team-ai',
 }
 
+export const CHANGE_PACK_COPY: FunnelProductCopy = {
+  eyebrow: 'New system or AI rollout · Built before day one · Fixed once scoped',
+  h1Generic: 'The software is ready. The team is not, and a slide deck will not fix that',
+  h1Personal: (b: string) =>
+    `${b}, the software is ready. The team is not, and a slide deck will not fix that`,
+  sub: 'CRM, AI tools, rostering, accounts, anything people have to use differently on Monday. The project plan covers the build. Nobody owns the part where busy people learn the new way of working. That usually becomes one long session half the team misses. We build the training materials before go-live, then check in for 30 days after.',
+  ctaLabel: 'Start the scoping form',
+  proofLabel: 'Sound familiar',
+  proofHeadingLive: "Every rollout's risk register",
+  proofHeadingGeneric: "Every rollout's risk register",
+  proofLead: () =>
+    'Adoption sits on the risk register as High, owner TBC. That row is what this pack fills.',
+  proofLeadGeneric:
+    'Adoption sits on the risk register as High, owner TBC. That row is what this pack fills.',
+  proofAfter:
+    'Go-live is a date on a calendar. Getting people to actually use the new system is the work that usually gets skipped.',
+  proofAfterGeneric:
+    'Go-live is a date on a calendar. Getting people to actually use the new system is the work that usually gets skipped.',
+  painLabel: 'What this is costing you',
+  painHeading: 'The budget paid for the software. Week two pays for the confusion',
+  painLines: [
+    'One long training session the week before loses to real jobs. Half the team never sees it.',
+    'Week one does not show up as complaints. It shows up as tickets, workarounds, and the old spreadsheet coming back.',
+    'Once a workaround sticks, it becomes the real system, whether you bought the new one or not.',
+    'The money already spent on the rollout is betting on the one part nobody staffed: people changing how they work.',
+  ],
+  bridgeLabel: 'What we actually build',
+  bridgeHeading: 'A training pack for your system, ready before Monday',
+  bridgeBody:
+    'We sit with how your new CRM, AI tool, or process actually works, then we produce the materials your people need. Short audio they can play on the way to work, explaining what is changing and why. Short screen videos for each task that changes, so someone can replay how to log a job or raise an invoice. One-page desk sheets for the steps they use every day. One live session after they have tried the tools, for the questions that only appear once they have used them. Then a 30-day call with you: what is sticking, what is not, and what we fix. We are not monitoring your staff, and we are not running an AI chatbot over them. We make the training, hand it over, and follow up once.',
+  bridgeGaugeCaption:
+    'Audio explainers, screen how-tos, desk sheets, one live Q and A, one 30-day check-in.',
+  benefitsLabel: 'What you get',
+  benefitsHeading: 'Clear for the company',
+  benefits: [
+    {
+      title: 'Day one has a path, not a guess',
+      text: 'Each role gets the exact how-tos for the tasks that changed in your system.',
+    },
+    {
+      title: 'Fewer tickets in week two',
+      text: 'Common questions are already answered in a two-minute video or a one-pager.',
+    },
+    {
+      title: 'The pack stays yours',
+      text: 'New hires train on the same audio and videos months later. No re-buying a workshop.',
+    },
+    {
+      title: 'Someone owns the people side until day 30',
+      text: 'Us. Named. With a check-in after go-live, not a hand-wave at launch.',
+    },
+  ],
+  processLabel: 'How it runs',
+  processHeading: 'Form, scope, build, ship, check',
+  processSteps: [
+    {
+      label: 'Form and call',
+      text: 'You tell us what system is going live, how many people, and when. Fifteen minutes later you have a fixed price in writing.',
+    },
+    {
+      label: 'We build the materials',
+      text: 'Two to three weeks. We write and record the audio, screen how-tos, and desk sheets for your rollout. You review before we lock them.',
+    },
+    {
+      label: 'Ship, then check',
+      text: 'The pack goes to your team before go-live. After day one we run one live Q and A. Around day 30 we call you: what stuck, what needs a fix.',
+    },
+  ],
+  stackLabel: 'What is in the pack',
+  stackHeading: 'The pieces, in plain English',
+  stackItems: [
+    {
+      title: 'Audio explainers',
+      text: 'Commute-length recordings: what is changing, why, and what good looks like. Private to your team.',
+    },
+    {
+      title: 'Screen how-to videos',
+      text: 'Two to four minutes each. Click-by-click for every task that changes in the new system.',
+    },
+    {
+      title: 'Desk one-pagers',
+      text: 'Printable or PDF sheets for the daily steps. They stay on the desk when the video is forgotten.',
+    },
+    {
+      title: 'One live Q and A',
+      text: 'After people have used the tools, not before. We answer what only shows up in real use.',
+    },
+    {
+      title: 'One 30-day check-in',
+      text: 'A call with you: adoption, workarounds, and what we patch in the materials.',
+    },
+    {
+      title: 'Systems Snapshot',
+      text: 'A one-page read on your wider setup, included with the pack.',
+    },
+  ],
+  scopeLine:
+    'Best started two to three weeks before go-live. Later than that, start anyway. A partial pack beats a slide deck.',
+  priceLabel: 'Investment',
+  price: 'From $6,000',
+  priceLead:
+    'Fixed once scoped. The form and the call set the system, the headcount, the date, and which pieces you need. You get the number in writing the same day.',
+  guarantee:
+    'Our promise: the pack ships before your go-live date, complete, or we keep building at no extra cost until it is.',
+  priceAnchor: 'Priced against the project it protects, not the hours of recording.',
+  faqLabel: 'Objections',
+  faqHeading: 'Straight answers before you book',
+  faqs: [
+    {
+      q: 'What systems is this for?',
+      a: 'Any go-live where people must work differently: CRM, AI tools, rostering, accounts, ops software, or a merge of two ways of working. If it has a Monday and a confused team, it fits.',
+    },
+    {
+      q: 'Are you watching or scoring our staff?',
+      a: 'No. We build training materials and run one check-in with you. We do not monitor individuals or run agents over their day.',
+    },
+    {
+      q: 'When should we start?',
+      a: 'Two to three weeks before go-live is ideal. Later than that, start anyway. A partial pack beats a slide deck.',
+    },
+    {
+      q: 'What does the scoping call cost?',
+      a: 'Nothing, and you leave with the fixed price in writing whether you go ahead or not.',
+    },
+    {
+      q: 'Our processes are confidential',
+      a: "Everything stays access-controlled to your team. We will sign what your legal team needs before we see a document.",
+    },
+    {
+      q: "Does this replace our project team's training?",
+      a: 'It arms it. Your project team knows the system. We turn that into materials people finish, plus the follow-through after day one.',
+    },
+  ],
+  finalLabel: 'Last step',
+  finalHeading: 'Monday arrives, and the how-tos are already in their hands',
+  finalLine:
+    'Audio, screen videos, desk sheets, one live Q and A, one 30-day check. Built for your system, before go-live.',
+  proofKind: 'change-pack',
+}
+
 export function funnelCopyForSlug(slug: string | undefined): FunnelProductCopy {
   if (slug === 'missed-call') return MISSED_CALL_COPY
   if (slug === 'google-profile') return GOOGLE_PROFILE_COPY
@@ -1038,5 +1179,6 @@ export function funnelCopyForSlug(slug: string | undefined): FunnelProductCopy {
   if (slug === 'landing-page') return LANDING_PAGE_COPY
   if (slug === 'crm-rescue') return CRM_RESCUE_COPY
   if (slug === 'team-ai') return TEAM_AI_COPY
+  if (slug === 'change-pack') return CHANGE_PACK_COPY
   return SPEED_FIX_COPY
 }

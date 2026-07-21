@@ -45,6 +45,10 @@ import {
   type GoogleProfileEvidence,
 } from './GoogleProfileEvidenceCard'
 import {GoogleFrontDoorPanel} from './GoogleFrontDoorPanel'
+import {ChangeRiskRegisterCard} from './ChangeRiskRegisterCard'
+import {ChangeLeakPair} from './ChangeLeakPair'
+import {ChangePainCards} from './ChangePainCards'
+import {ChangePackDeliverableMock} from './ChangePackDeliverableMock'
 import {
   parseBlockedPages,
   parseSpeedScore,
@@ -56,6 +60,11 @@ import {
 import {FUNNEL_COLOURS, FUNNEL_CSS_VARS} from './funnelTheme'
 import {Reveal, RevealList} from './funnelReveal'
 import {funnelCopyForSlug} from './funnelCopy'
+import {
+  FUNNEL_PRODUCT_LABELS,
+  accessFormPathForProduct,
+  isFunnelProductCode,
+} from '../../constants/funnel'
 
 type FunnelPageDoc = FunnelCtaFields & {
   title?: string
@@ -190,6 +199,7 @@ const FunnelPage: React.FC = () => {
   const isLandingPage = proofKind === 'landing-page'
   const isCrmRescue = proofKind === 'crm-rescue'
   const isTeamAi = proofKind === 'team-ai'
+  const isChangePack = proofKind === 'change-pack'
   const isSpeed = proofKind === 'speed'
   const motionVariant = isMissedCall
     ? 'missed-call'
@@ -203,7 +213,9 @@ const FunnelPage: React.FC = () => {
             ? 'crm-rescue'
             : isTeamAi
               ? 'team-ai'
-              : 'speed'
+              : isChangePack
+                ? 'change-pack'
+                : 'speed'
   const calculatorVariant = isSpeed
     ? 'speed'
     : isMissedCall
@@ -212,11 +224,13 @@ const FunnelPage: React.FC = () => {
         ? 'crm-rescue'
         : isTeamAi
           ? 'team-ai'
-          : isSearchFix
-            ? 'search-fix'
-            : isLandingPage
-              ? 'landing-page'
-              : 'google-profile'
+          : isChangePack
+            ? 'change-pack'
+            : isSearchFix
+              ? 'search-fix'
+              : isLandingPage
+                ? 'landing-page'
+                : 'google-profile'
   const missedEvidence: MissedCallEvidence = useMemo(() => {
     if (business && callDay && callTime) {
       return {mode: 'tested', business, day: callDay, time: callTime}
@@ -257,6 +271,18 @@ const FunnelPage: React.FC = () => {
       .then((result: FunnelPageDoc | null) => {
         if (cancelled) return
         if (!result) {
+          if (isFunnelProductCode(slug)) {
+            const copy = funnelCopyForSlug(slug)
+            setDoc({
+              title: FUNNEL_PRODUCT_LABELS[slug],
+              ctaMode: slug === 'change-pack' ? 'call' : 'buy',
+              ctaLabel: copy.ctaLabel,
+              schedulerUrl:
+                slug === 'change-pack' ? accessFormPathForProduct('change-pack') : undefined,
+            })
+            setStatus('ready')
+            return
+          }
           setDoc(null)
           setStatus('missing')
           return
@@ -275,11 +301,12 @@ const FunnelPage: React.FC = () => {
 
   const rawLabel = doc?.ctaLabel || COPY.ctaLabel
   const ctaFields: FunnelCtaFields = {
-    ctaMode: doc?.ctaMode || 'buy',
+    ctaMode: doc?.ctaMode || (isChangePack ? 'call' : 'buy'),
     // Authored labels already include price text. Only normalise a comma before $ into one middle dot.
     ctaLabel: rawLabel.replace(/,\s*(?=\$)/, ' · ').replace(/\s*·\s*·\s*(?=\$)/, ' · '),
     stripeUrl: doc?.stripeUrl,
-    schedulerUrl: undefined,
+    schedulerUrl:
+      doc?.schedulerUrl || (isChangePack ? accessFormPathForProduct('change-pack') : undefined),
     secondaryCtaLabel: doc?.secondaryCtaLabel,
     secondaryUrl: doc?.secondaryUrl,
     priceOptions: doc?.priceOptions,
@@ -379,7 +406,7 @@ const FunnelPage: React.FC = () => {
 
           <section
             className={`mx-auto px-6 md:px-10 pb-16 md:pb-24 ${
-              isSpeed || isSearchFix || isLandingPage || isCrmRescue || isTeamAi
+              isSpeed || isSearchFix || isLandingPage || isCrmRescue || isTeamAi || isChangePack
                 ? 'max-w-3xl'
                 : 'max-w-5xl'
             }`}
@@ -410,6 +437,7 @@ const FunnelPage: React.FC = () => {
             {isLandingPage ? <AdEvidenceMoment evidence={adEvidence} /> : null}
             {isCrmRescue ? <CrmEnquiryEvidenceCard evidence={crmEvidence} /> : null}
             {isTeamAi ? <TeamRecognitionCards /> : null}
+            {isChangePack ? <ChangeRiskRegisterCard business={business} /> : null}
             {!(isSearchFix && searchEvidence.mode === 'try') &&
             !(isLandingPage && adEvidence.mode === 'try') &&
             !(isCrmRescue && crmEvidence.mode === 'try') ? (
@@ -421,7 +449,8 @@ const FunnelPage: React.FC = () => {
                     isSearchFix ||
                     isLandingPage ||
                     isCrmRescue ||
-                    isTeamAi
+                    isTeamAi ||
+                    isChangePack
                       ? 'mt-8'
                       : ''
                   }`}
@@ -439,9 +468,11 @@ const FunnelPage: React.FC = () => {
                           ? COPY.proofLead(business)
                           : isTeamAi
                             ? COPY.proofLeadGeneric
-                            : business
-                              ? COPY.proofLead(business)
-                              : COPY.proofLeadGeneric}
+                            : isChangePack
+                              ? COPY.proofLeadGeneric
+                              : business
+                                ? COPY.proofLead(business)
+                                : COPY.proofLeadGeneric}
                 </p>
               </Reveal>
             ) : null}
@@ -593,6 +624,34 @@ const FunnelPage: React.FC = () => {
                   </p>
                 </Reveal>
               </section>
+            ) : isChangePack ? (
+              <section className="mt-12 md:mt-14">
+                <Reveal y={10}>
+                  <SectionLabel>The leak</SectionLabel>
+                </Reveal>
+                <Reveal delay={0.06} y={14}>
+                  <h3
+                    className="font-serif font-bold text-2xl md:text-3xl tracking-tight mb-4 max-w-2xl"
+                    style={{color: FUNNEL_COLOURS.ink}}
+                  >
+                    The go-live is a date. Getting people to use the new system is the work that
+                    usually gets skipped
+                  </h3>
+                </Reveal>
+                <Reveal delay={0.1} y={10}>
+                  <p
+                    className="font-sans text-base md:text-lg leading-relaxed max-w-2xl mb-2"
+                    style={{color: FUNNEL_COLOURS.muted}}
+                  >
+                    CRM, AI tools, rostering, accounts: the build finishes, then training is one
+                    long session half the team misses. Monday arrives and people invent their own
+                    way through. Week one shows up as tickets, workarounds, and the old spreadsheet
+                    reopening. That is where the budget leaks: not in the software, in the gap
+                    between announcement and habit.
+                  </p>
+                </Reveal>
+                <ChangeLeakPair />
+              </section>
             ) : (
               <>
                 <ScoreMoment
@@ -652,6 +711,8 @@ const FunnelPage: React.FC = () => {
                 <CrmPainCards />
               ) : isTeamAi ? (
                 <TeamPainCards />
+              ) : isChangePack ? (
+                <ChangePainCards />
               ) : (
                 <PainCostCards />
               )}
@@ -703,7 +764,7 @@ const FunnelPage: React.FC = () => {
               <div className="mt-10">
                 <CrmFixedThreadMock />
               </div>
-            ) : isTeamAi ? null : (
+            ) : isTeamAi || isChangePack ? null : (
               <ScoreMoment score={90} mode="benchmark" />
             )}
           </section>
@@ -849,6 +910,8 @@ const FunnelPage: React.FC = () => {
                   <CrmFixedThreadMock />
                 ) : isTeamAi ? (
                   <TeamSessionDeliverableMock />
+                ) : isChangePack ? (
+                  <ChangePackDeliverableMock />
                 ) : (
                   <ReportDeliverableMock />
                 )}

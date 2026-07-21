@@ -13,6 +13,7 @@ const PRODUCT_CODES = new Set([
   'landing-page',
   'crm-rescue',
   'team-ai',
+  'change-pack',
 ]);
 const PRODUCT_LABELS: Record<string, string> = {
   'speed-fix': 'Website Speed Fix',
@@ -22,6 +23,7 @@ const PRODUCT_LABELS: Record<string, string> = {
   'landing-page': 'Campaign Landing Page',
   'crm-rescue': 'CRM Rescue',
   'team-ai': 'Team AI',
+  'change-pack': 'Change Pack',
 };
 const PRODUCT_AMOUNTS: Record<string, string> = {
   'speed-fix': '1200',
@@ -32,6 +34,7 @@ const PRODUCT_AMOUNTS: Record<string, string> = {
   'crm-rescue': '2800',
   'team-ai': '1950',
   'team-ai-onsite': '2400',
+  'change-pack': '6000',
 };
 const CRM_SYSTEMS = new Set([
   'hubspot',
@@ -117,6 +120,13 @@ type Body = {
   timeEaters?: unknown;
   sensitiveData?: unknown;
   dateWindow?: unknown;
+  sessionFormat?: unknown;
+  rolloutType?: unknown;
+  peopleAffected?: unknown;
+  goLiveWindow?: unknown;
+  changeAreas?: unknown;
+  trainingPlan?: unknown;
+  riskSignal?: unknown;
 };
 
 function str(v: unknown, max = 500): string {
@@ -172,6 +182,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     sessionFormatRaw === 'onsite' || sessionFormatRaw === 'remote'
       ? sessionFormatRaw
       : '';
+  const rolloutType = str(body.rolloutType, 80);
+  const peopleAffected = str(body.peopleAffected, 80);
+  const goLiveWindow = str(body.goLiveWindow, 80);
+  const changeAreas = str(body.changeAreas, 2000);
+  const trainingPlan = str(body.trainingPlan, 120);
+  const riskSignal = str(body.riskSignal, 200);
 
   if (!PRODUCT_CODES.has(product)) {
     res.status(400).json({ error: 'Invalid product' });
@@ -186,6 +202,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const isGoogleProfile = product === 'google-profile';
   const isCrmRescue = product === 'crm-rescue';
   const isTeamAi = product === 'team-ai';
+  const isChangePack = product === 'change-pack';
 
   if (isMissedCall) {
     const cleanPhone = phone.replace(/\s+/g, '');
@@ -222,6 +239,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     }
     if (sessionFormat !== 'remote' && sessionFormat !== 'onsite') {
       res.status(400).json({ error: 'Missing session format (remote or onsite)' });
+      return;
+    }
+    if (accessPath !== 'call') {
+      res.status(400).json({ error: 'Invalid access path' });
+      return;
+    }
+  } else if (isChangePack) {
+    if (
+      !rolloutType ||
+      !peopleAffected ||
+      !goLiveWindow ||
+      !changeAreas ||
+      !trainingPlan ||
+      !riskSignal
+    ) {
+      res.status(400).json({ error: 'Missing Change Pack scoping details' });
       return;
     }
     if (accessPath !== 'call') {
@@ -295,6 +328,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
             ]
               .filter(Boolean)
               .join('\n')
+          : isChangePack
+            ? [
+                `Funnel scoping form — ${product}`,
+                `Business: ${business}`,
+                `Rollout type: ${rolloutType}`,
+                `People affected: ${peopleAffected}`,
+                `Go-live window: ${goLiveWindow}`,
+                `What is changing:\n${changeAreas}`,
+                `Training today: ${trainingPlan}`,
+                `Biggest adoption risk: ${riskSignal}`,
+                notes ? `Other notes:\n${notes}` : null,
+                `Submitted: ${new Date().toISOString()}`,
+              ]
+                .filter(Boolean)
+                .join('\n')
           : [
               `Funnel access form — ${product}`,
               `Business: ${business}`,
@@ -338,6 +386,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     sensitiveData,
     dateWindow,
     sessionFormat: sessionFormat || undefined,
+    rolloutType: rolloutType || undefined,
+    peopleAffected: peopleAffected || undefined,
+    goLiveWindow: goLiveWindow || undefined,
+    changeAreas: changeAreas || undefined,
+    trainingPlan: trainingPlan || undefined,
+    riskSignal: riskSignal || undefined,
     submittedAt: new Date().toISOString(),
   };
 
@@ -348,7 +402,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const dealLabel =
     isTeamAi && sessionFormat === 'onsite'
       ? 'Team AI · Face-to-face'
-      : PRODUCT_LABELS[product] || product;
+      : isChangePack
+        ? 'Change Pack scoping'
+        : PRODUCT_LABELS[product] || product;
 
   let hubspotContactId: string | null = null;
   let hubspotDealId: string | null = null;
@@ -362,8 +418,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         company: business,
         website: (isCrmRescue ? websiteUrl : website) || undefined,
         phone: phone || undefined,
-        // Paid /go product — Customer column, not Subscriber (newsletter default).
-        lifecyclestage: 'customer',
+        lifecyclestage: isChangePack ? 'lead' : 'customer',
         leadSourceDetail: `go/${product}`,
       });
       hubspotContactId = id;

@@ -18,6 +18,7 @@ export const FUNNEL_PRODUCT_CODES = [
   'landing-page',
   'crm-rescue',
   'team-ai',
+  'change-pack',
 ] as const
 
 export type FunnelProductCode = (typeof FUNNEL_PRODUCT_CODES)[number]
@@ -30,6 +31,7 @@ export const FUNNEL_PRODUCT_LABELS: Record<FunnelProductCode, string> = {
   'landing-page': 'Campaign Landing Page',
   'crm-rescue': 'CRM Rescue',
   'team-ai': 'Team AI',
+  'change-pack': 'Change Pack',
 }
 
 export type FunnelProductStatus = 'live' | 'soon'
@@ -100,6 +102,14 @@ export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
     blurb: 'Half a day. Shared setup, real tasks, prompts the whole team owns.',
     status: 'live',
     href: '/go/team-ai',
+  },
+  {
+    code: 'change-pack',
+    title: 'Change Pack',
+    price: 'From $6,000',
+    blurb: 'Training for a new system or AI rollout, built before day one.',
+    status: 'live',
+    href: '/go/change-pack',
   },
 ]
 

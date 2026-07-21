@@ -80,6 +80,12 @@ export type FunnelAccessPayload = {
   timeEaters?: string
   sensitiveData?: string
   dateWindow?: string
+  rolloutType?: string
+  peopleAffected?: string
+  goLiveWindow?: string
+  changeAreas?: string
+  trainingPlan?: string
+  riskSignal?: string
   sessionFormat?: 'remote' | 'onsite'
 }
 

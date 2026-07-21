@@ -74,6 +74,12 @@ type StepId =
   | 'timeEaters'
   | 'sensitiveData'
   | 'dateWindow'
+  | 'rolloutType'
+  | 'peopleAffected'
+  | 'goLiveWindow'
+  | 'changeAreas'
+  | 'trainingPlan'
+  | 'riskSignal'
   | 'platform'
   | 'provider'
   | 'domainProvider'
@@ -120,13 +126,20 @@ const PHASES_TEAM: {id: PhaseId; n: number; label: string}[] = [
   {id: 'done', n: 4, label: 'Done'},
 ]
 
+const PHASES_CHANGE: {id: PhaseId; n: number; label: string}[] = [
+  {id: 'about', n: 1, label: 'About you'},
+  {id: 'site', n: 2, label: 'The rollout'},
+  {id: 'access', n: 3, label: 'Risk and plan'},
+  {id: 'done', n: 4, label: 'Book the call'},
+]
+
 function phaseIndex(phase: PhaseId, phases: typeof PHASES_SPEED): number {
   return phases.findIndex((p) => p.id === phase)
 }
 
 function phaseForStep(
   step: StepId,
-  kind: 'speed' | 'missed-call' | 'google-profile' | 'crm-rescue' | 'team-ai',
+  kind: 'speed' | 'missed-call' | 'google-profile' | 'crm-rescue' | 'team-ai' | 'change-pack',
 ): PhaseId {
   if (step === 'done') return 'done'
   if (
@@ -163,6 +176,17 @@ function phaseForStep(
       step === 'teamTools' ||
       step === 'timeEaters' ||
       step === 'sensitiveData'
+    ) {
+      return 'site'
+    }
+    return 'access'
+  }
+  if (kind === 'change-pack') {
+    if (
+      step === 'rolloutType' ||
+      step === 'peopleAffected' ||
+      step === 'goLiveWindow' ||
+      step === 'changeAreas'
     ) {
       return 'site'
     }
@@ -719,6 +743,71 @@ const TEAM_TIMING_OPTIONS = [
   {id: 'flexible', label: 'Flexible', blurb: 'We will find a half-day that works.'},
 ] as const
 
+const CHANGE_ROLLOUT_OPTIONS = [
+  {
+    id: 'new-system',
+    label: 'New system or AI tool',
+    blurb: 'CRM, AI, rostering, accounts, ops software going live.',
+  },
+  {
+    id: 'process',
+    label: 'Process change on existing tools',
+    blurb: 'Same stack, different way of working.',
+  },
+  {
+    id: 'merger',
+    label: 'Merger of two ways of working',
+    blurb: 'Two systems or two teams becoming one.',
+  },
+  {
+    id: 'restructure',
+    label: 'Restructure with new tools',
+    blurb: 'Roles shift and the software shifts with them.',
+  },
+  {id: 'other', label: 'Something else', blurb: 'Tell us in the notes at the end.'},
+] as const
+
+const CHANGE_PEOPLE_OPTIONS = [
+  {id: 'under-20', label: 'Under 20 people', blurb: 'Tight group. Full pack still helps.'},
+  {id: '20-50', label: '20 to 50 people', blurb: 'Sweet spot for a full pack.'},
+  {id: '50-100', label: '50 to 100 people', blurb: 'Often needs more pieces, scoped on the call.'},
+  {id: '100-plus', label: '100 or more', blurb: 'We scope waves. Tell us on the call.'},
+] as const
+
+const CHANGE_GOLIVE_OPTIONS = [
+  {id: 'under-2w', label: 'Under 2 weeks', blurb: 'Tight. Partial pack still beats a slide deck.'},
+  {id: '2-6w', label: '2 to 6 weeks', blurb: 'Ideal window. Build in parallel with final prep.'},
+  {id: '6w-plus', label: '6 weeks or more', blurb: 'Room to do this properly.'},
+  {id: 'past', label: 'Already live', blurb: 'We can still rescue adoption.'},
+  {id: 'unset', label: 'Date not set', blurb: 'We scope around the date when you have it.'},
+] as const
+
+const CHANGE_AREA_OPTIONS = [
+  {id: 'crm', label: 'CRM / sales'},
+  {id: 'accounts', label: 'Accounts / finance'},
+  {id: 'roster', label: 'Rostering / workforce'},
+  {id: 'ops', label: 'Ops software'},
+  {id: 'comms', label: 'Internal comms tools'},
+  {id: 'brand', label: 'Brand / customer-facing'},
+  {id: 'location', label: 'New site / location'},
+  {id: 'other', label: 'Other'},
+] as const
+
+const CHANGE_TRAINING_OPTIONS = [
+  {id: 'none', label: 'Nothing planned yet', blurb: 'Adoption is still a blank row.'},
+  {id: 'one-session', label: 'One long session', blurb: 'The usual all-hands the week before.'},
+  {id: 'some-docs', label: 'Some docs or videos', blurb: 'Pieces exist, not a full pack.'},
+  {id: 'full-plan', label: 'A full training plan', blurb: 'We can arm what you already have.'},
+] as const
+
+const CHANGE_RISK_OPTIONS = [
+  {id: 'half-miss', label: 'Half the team will miss the session', blurb: 'Jobs always win that week.'},
+  {id: 'helpdesk', label: 'Help desk will flood', blurb: 'You can already see the tickets coming.'},
+  {id: 'spreadsheet', label: 'Old spreadsheet will come back', blurb: 'Workarounds are already circling.'},
+  {id: 'all-three', label: 'All of the above', blurb: 'That is exactly who this pack is for.'},
+  {id: 'unsure', label: 'Not sure yet', blurb: 'We will pressure-test it on the call.'},
+] as const
+
 function isValidName(value: string): boolean {
   const t = value.trim()
   if (t.length < 2) return false
@@ -844,6 +933,36 @@ function helpForStep(step: StepId): HelpBlock {
       return {
         title: 'When can you run it',
         body: 'Scroll how many days out you need (minimum 14). Then pick mornings, afternoons, or flexible. We confirm a tentative day after we review.',
+      }
+    case 'rolloutType':
+      return {
+        title: 'What kind of rollout',
+        body: 'Pick the closest match. This steers which pieces of the pack matter most.',
+      }
+    case 'peopleAffected':
+      return {
+        title: 'How many people',
+        body: 'Rough band is enough. Bigger groups often need waves, scoped on the call.',
+      }
+    case 'goLiveWindow':
+      return {
+        title: 'When is go-live',
+        body: 'Two to six weeks out is ideal. Later or already live still works.',
+      }
+    case 'changeAreas':
+      return {
+        title: 'What is changing',
+        body: 'Tap every area that moves. Missing one? Type it below.',
+      }
+    case 'trainingPlan':
+      return {
+        title: 'Training today',
+        body: 'What exists for adoption right now. Honest answers make the fixed price accurate.',
+      }
+    case 'riskSignal':
+      return {
+        title: 'Biggest adoption risk',
+        body: 'Pick the risk you already feel. This is what the pack is built to prevent.',
       }
     case 'website':
       return {
@@ -1157,6 +1276,13 @@ const FunnelAccessPage: React.FC = () => {
   const [sensitiveOther, setSensitiveOther] = useState('')
   const [sessionDaysOut, setSessionDaysOut] = useState(21)
   const [sessionTiming, setSessionTiming] = useState<string | null>(null)
+  const [rolloutType, setRolloutType] = useState('')
+  const [peopleAffected, setPeopleAffected] = useState('')
+  const [goLiveWindow, setGoLiveWindow] = useState('')
+  const [changeAreas, setChangeAreas] = useState<string[]>([])
+  const [changeAreasOther, setChangeAreasOther] = useState('')
+  const [trainingPlan, setTrainingPlan] = useState('')
+  const [riskSignal, setRiskSignal] = useState('')
   const [platform, setPlatform] = useState<PlatformId | null>(null)
   const [sameProvider, setSameProvider] = useState<SameProviderId | null>(null)
   const [domainProvider, setDomainProvider] = useState('')
@@ -1172,7 +1298,8 @@ const FunnelAccessPage: React.FC = () => {
   const isGoogleProfile = product === 'google-profile'
   const isCrmRescue = product === 'crm-rescue'
   const isTeamAi = product === 'team-ai'
-  const productKind: 'speed' | 'missed-call' | 'google-profile' | 'crm-rescue' | 'team-ai' =
+  const isChangePack = product === 'change-pack'
+  const productKind: 'speed' | 'missed-call' | 'google-profile' | 'crm-rescue' | 'team-ai' | 'change-pack' =
     isMissedCall
       ? 'missed-call'
       : isGoogleProfile
@@ -1181,7 +1308,9 @@ const FunnelAccessPage: React.FC = () => {
           ? 'crm-rescue'
           : isTeamAi
             ? 'team-ai'
-            : 'speed'
+            : isChangePack
+              ? 'change-pack'
+              : 'speed'
   const phases = isMissedCall
     ? PHASES_MISSED
     : isGoogleProfile
@@ -1190,7 +1319,9 @@ const FunnelAccessPage: React.FC = () => {
         ? PHASES_CRM
         : isTeamAi
           ? PHASES_TEAM
-          : PHASES_SPEED
+          : isChangePack
+            ? PHASES_CHANGE
+            : PHASES_SPEED
 
   const stepOrder = useMemo((): StepId[] => {
     // Always show the product picker first so buyers see their purchase highlighted
@@ -1258,6 +1389,22 @@ const FunnelAccessPage: React.FC = () => {
       )
       return teamSteps
     }
+    if (isChangePack) {
+      return [
+        'product',
+        'name',
+        'email',
+        'business',
+        'rolloutType',
+        'peopleAffected',
+        'goLiveWindow',
+        'changeAreas',
+        'trainingPlan',
+        'riskSignal',
+        'notes',
+        'done',
+      ]
+    }
     const base: StepId[] = [
       'product',
       'name',
@@ -1272,7 +1419,7 @@ const FunnelAccessPage: React.FC = () => {
     }
     base.push('access', 'accessDetail', 'notes', 'done')
     return base
-  }, [sameProvider, isMissedCall, isGoogleProfile, isCrmRescue, isTeamAi, initialSessionFormat])
+  }, [sameProvider, isMissedCall, isGoogleProfile, isCrmRescue, isTeamAi, isChangePack, initialSessionFormat])
 
   const stepIndex = Math.max(0, stepOrder.indexOf(step))
   const lineProgress =
@@ -1284,7 +1431,13 @@ const FunnelAccessPage: React.FC = () => {
 
   const firstStep: StepId = 'product'
   const help = helpForStep(step)
-  const liveProducts = FUNNEL_PRODUCT_CATALOGUE.filter((p) => p.status === 'live')
+  const liveProducts = useMemo(() => {
+    const all = FUNNEL_PRODUCT_CATALOGUE.filter((p) => p.status === 'live')
+    if (!product) return all
+    const selected = all.find((p) => p.code === product)
+    if (!selected) return all
+    return [selected, ...all.filter((p) => p.code !== product)]
+  }, [product])
   const canGoBack = step !== 'done' && step !== firstStep
   const accessOptions = isMissedCall
     ? MISSED_CALL_ACCESS_OPTIONS
@@ -1312,7 +1465,7 @@ const FunnelAccessPage: React.FC = () => {
       setError('Something is missing. Use Back to check your answers.')
       return
     }
-    if (!isTeamAi && !accessPath) {
+    if (!isTeamAi && !isChangePack && !accessPath) {
       setError('Something is missing. Use Back to check your answers.')
       return
     }
@@ -1344,6 +1497,19 @@ const FunnelAccessPage: React.FC = () => {
         !sensitiveOk ||
         !sessionTiming ||
         sessionDaysOut < 14
+      ) {
+        setError('Something is missing. Use Back to check your answers.')
+        return
+      }
+    } else if (isChangePack) {
+      const areasOk = changeAreas.length >= 1 || changeAreasOther.trim().length >= 2
+      if (
+        !rolloutType ||
+        !peopleAffected ||
+        !goLiveWindow ||
+        !areasOk ||
+        !trainingPlan ||
+        !riskSignal
       ) {
         setError('Something is missing. Use Back to check your answers.')
         return
@@ -1444,6 +1610,35 @@ const FunnelAccessPage: React.FC = () => {
                   return `Earliest in ${sessionDaysOut} days (from ${dateLabel}). Prefer: ${timing}.`
                 })(),
               }
+            : isChangePack
+              ? {
+                  product,
+                  name: name.trim(),
+                  email: email.trim(),
+                  business: business.trim(),
+                  accessPath: 'call',
+                  accessDetail: '',
+                  notes: notes.trim(),
+                  rolloutType:
+                    CHANGE_ROLLOUT_OPTIONS.find((o) => o.id === rolloutType)?.label || rolloutType,
+                  peopleAffected:
+                    CHANGE_PEOPLE_OPTIONS.find((o) => o.id === peopleAffected)?.label ||
+                    peopleAffected,
+                  goLiveWindow:
+                    CHANGE_GOLIVE_OPTIONS.find((o) => o.id === goLiveWindow)?.label || goLiveWindow,
+                  changeAreas: (() => {
+                    const labels = changeAreas.map(
+                      (id) => CHANGE_AREA_OPTIONS.find((o) => o.id === id)?.label || id,
+                    )
+                    if (changeAreasOther.trim()) labels.push(changeAreasOther.trim())
+                    return labels.join(', ')
+                  })(),
+                  trainingPlan:
+                    CHANGE_TRAINING_OPTIONS.find((o) => o.id === trainingPlan)?.label ||
+                    trainingPlan,
+                  riskSignal:
+                    CHANGE_RISK_OPTIONS.find((o) => o.id === riskSignal)?.label || riskSignal,
+                }
             : {
                 product,
                 name: name.trim(),
@@ -2081,6 +2276,161 @@ const FunnelAccessPage: React.FC = () => {
               </div>
             ) : null}
 
+            {step === 'rolloutType' ? (
+              <>
+                <QuestionTitle>
+                  What kind of <span style={{color: RED}}>rollout</span>?
+                </QuestionTitle>
+                <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
+                  Pick the closest match. This steers which pieces of the pack matter most.
+                </p>
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+                  {CHANGE_ROLLOUT_OPTIONS.map((opt) => (
+                    <div key={opt.id}>
+                      <SelectCard
+                        selected={rolloutType === opt.id}
+                        onSelect={() => {
+                          setRolloutType(opt.id)
+                          goNext('rolloutType')
+                        }}
+                        title={opt.label}
+                        blurb={opt.blurb}
+                        icon={<Sparkles className="w-full h-full" strokeWidth={1.25} />}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : null}
+
+            {step === 'peopleAffected' ? (
+              <>
+                <QuestionTitle>
+                  How many people are <span style={{color: RED}}>affected</span>?
+                </QuestionTitle>
+                <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
+                  Rough band is enough. Bigger groups often need waves, scoped on the call.
+                </p>
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+                  {CHANGE_PEOPLE_OPTIONS.map((opt) => (
+                    <div key={opt.id}>
+                      <SelectCard
+                        selected={peopleAffected === opt.id}
+                        onSelect={() => {
+                          setPeopleAffected(opt.id)
+                          goNext('peopleAffected')
+                        }}
+                        title={opt.label}
+                        blurb={opt.blurb}
+                        icon={<Users className="w-full h-full" strokeWidth={1.25} />}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : null}
+
+            {step === 'goLiveWindow' ? (
+              <>
+                <QuestionTitle>
+                  When is <span style={{color: RED}}>go-live</span>?
+                </QuestionTitle>
+                <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
+                  Two to six weeks out is ideal. Later or already live still works.
+                </p>
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+                  {CHANGE_GOLIVE_OPTIONS.map((opt) => (
+                    <div key={opt.id}>
+                      <SelectCard
+                        selected={goLiveWindow === opt.id}
+                        onSelect={() => {
+                          setGoLiveWindow(opt.id)
+                          goNext('goLiveWindow')
+                        }}
+                        title={opt.label}
+                        blurb={opt.blurb}
+                        icon={<Sparkles className="w-full h-full" strokeWidth={1.25} />}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : null}
+
+            {step === 'changeAreas' ? (
+              <ChipPickStep
+                title={
+                  <>
+                    What is <span style={{color: RED}}>changing</span>?
+                  </>
+                }
+                hint="Tap every area that moves. Missing one? Type it below."
+                options={CHANGE_AREA_OPTIONS}
+                selected={changeAreas}
+                onToggle={(id) => setChangeAreas((prev) => toggleChip(prev, id))}
+                otherValue={changeAreasOther}
+                onOtherChange={setChangeAreasOther}
+                otherPlaceholder="e.g. warehouse scanners, customer portal…"
+                otherHint="Another area we did not list"
+                disabled={changeAreas.length < 1 && changeAreasOther.trim().length < 2}
+                onNext={() => goNext('changeAreas')}
+              />
+            ) : null}
+
+            {step === 'trainingPlan' ? (
+              <>
+                <QuestionTitle>
+                  What training exists <span style={{color: RED}}>today</span>?
+                </QuestionTitle>
+                <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
+                  Honest answers make the fixed price accurate.
+                </p>
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+                  {CHANGE_TRAINING_OPTIONS.map((opt) => (
+                    <div key={opt.id}>
+                      <SelectCard
+                        selected={trainingPlan === opt.id}
+                        onSelect={() => {
+                          setTrainingPlan(opt.id)
+                          goNext('trainingPlan')
+                        }}
+                        title={opt.label}
+                        blurb={opt.blurb}
+                        icon={<Users className="w-full h-full" strokeWidth={1.25} />}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : null}
+
+            {step === 'riskSignal' ? (
+              <>
+                <QuestionTitle>
+                  Biggest adoption <span style={{color: RED}}>risk</span>?
+                </QuestionTitle>
+                <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
+                  Pick the risk you already feel. This is what the pack is built to prevent.
+                </p>
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+                  {CHANGE_RISK_OPTIONS.map((opt) => (
+                    <div key={opt.id}>
+                      <SelectCard
+                        selected={riskSignal === opt.id}
+                        onSelect={() => {
+                          setRiskSignal(opt.id)
+                          goNext('riskSignal')
+                        }}
+                        title={opt.label}
+                        blurb={opt.blurb}
+                        icon={<Sparkles className="w-full h-full" strokeWidth={1.25} />}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : null}
+
             {step === 'website' ? (
               <OneField
                 title="Which website are we fixing?"
@@ -2229,18 +2579,22 @@ const FunnelAccessPage: React.FC = () => {
             {step === 'notes' ? (
               <>
                 <OneField
-                  title={isTeamAi ? 'Anything to add?' : 'Anything else?'}
+                  title={isChangePack || isTeamAi ? 'Anything to add?' : 'Anything else?'}
                   hint={
-                    isTeamAi
-                      ? 'Optional comment only. Skip if the taps above already cover it.'
-                      : 'Optional. Skip if you are done.'
+                    isChangePack
+                      ? 'Optional. Skip if you are done. Add rollout quirks, union rules, shift patterns, or anything that usually trips go-live.'
+                      : isTeamAi
+                        ? 'Optional comment only. Skip if the taps above already cover it.'
+                        : 'Optional. Skip if you are done.'
                   }
                   value={notes}
                   onChange={setNotes}
                   placeholder={
-                    isTeamAi
-                      ? 'e.g. two people are part-time, or we prefer Tuesdays…'
-                      : 'Optional'
+                    isChangePack
+                      ? 'e.g. night shift needs a different pack, or two sites go live a week apart…'
+                      : isTeamAi
+                        ? 'e.g. two people are part-time, or we prefer Tuesdays…'
+                        : 'Optional'
                   }
                   multiline
                   disabled={false}
@@ -2249,7 +2603,7 @@ const FunnelAccessPage: React.FC = () => {
                   nextLabel={
                     submitting
                       ? 'Sending…'
-                      : isTeamAi
+                      : isChangePack || isTeamAi
                         ? 'Submit prep'
                         : 'Submit and start the clock'
                   }
@@ -2270,19 +2624,39 @@ const FunnelAccessPage: React.FC = () => {
                   <Check className="w-6 h-6" strokeWidth={2.5} />
                 </div>
                 <h1 className="font-serif text-3xl md:text-4xl tracking-tight text-dark mb-3">
-                  {isTeamAi ? 'Prep received. We are on it' : 'Access received. We are on it'}
+                  {isChangePack
+                    ? 'Scoped prep received'
+                    : isTeamAi
+                      ? 'Prep received. We are on it'
+                      : 'Access received. We are on it'}
                 </h1>
                 <p className="font-sans text-dark/65 leading-relaxed mb-8">
-                  {isTeamAi
-                    ? `We will review what you sent, then call you to lock a tentative day inside your window. If we need anything else, we will email ${email || 'you'}.`
-                    : `Your delivery clock starts from this submission. If we need anything else, we will email ${email || 'you'}, usually the same day.`}
+                  {isChangePack
+                    ? 'We have what we need. Next, book the 15-minute scoping call. You get a fixed price in writing the same day.'
+                    : isTeamAi
+                      ? `We will review what you sent, then call you to lock a tentative day inside your window. If we need anything else, we will email ${email || 'you'}.`
+                      : `Your delivery clock starts from this submission. If we need anything else, we will email ${email || 'you'}, usually the same day.`}
                 </p>
-                <Link
-                  to={product ? `/go/${product}` : '/go'}
-                  className="font-sans text-sm underline underline-offset-4 text-dark/55 hover:text-dark"
-                >
-                  Back to the offer page
-                </Link>
+                {isChangePack ? (
+                  <a
+                    href={SCHEDULER_URL}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center justify-center gap-2 w-full sm:w-auto font-mono font-bold uppercase tracking-[0.16em] text-xs px-10 py-4 text-white mb-6"
+                    style={{backgroundColor: RED}}
+                  >
+                    Book the 15-minute scoping call
+                    <ArrowRight className="w-4 h-4" />
+                  </a>
+                ) : null}
+                <div>
+                  <Link
+                    to={product ? `/go/${product}` : '/go'}
+                    className="font-sans text-sm underline underline-offset-4 text-dark/55 hover:text-dark"
+                  >
+                    Back to the offer page
+                  </Link>
+                </div>
               </div>
             ) : null}
           </m.div>

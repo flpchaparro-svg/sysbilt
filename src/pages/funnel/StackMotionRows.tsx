@@ -1273,6 +1273,7 @@ export function StackMotionRows({
     | 'landing-page'
     | 'crm-rescue'
     | 'team-ai'
+    | 'change-pack'
 }) {
   const reduce = useReducedMotion()
   const visuals =
@@ -1286,7 +1287,7 @@ export function StackMotionRows({
             ? LANDING_STACK_VISUALS
             : variant === 'crm-rescue'
               ? CRM_STACK_VISUALS
-              : variant === 'team-ai'
+              : variant === 'team-ai' || variant === 'change-pack'
                 ? TEAM_AI_STACK_VISUALS
                 : SPEED_VISUALS
 

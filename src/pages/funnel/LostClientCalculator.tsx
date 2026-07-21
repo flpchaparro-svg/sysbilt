@@ -208,6 +208,7 @@ export function LostClientCalculator({
     | 'landing-page'
     | 'crm-rescue'
     | 'team-ai'
+    | 'change-pack'
   theme?: 'dark' | 'cream'
 }) {
   const rootRef = useRef<HTMLDivElement>(null)
@@ -215,9 +216,20 @@ export function LostClientCalculator({
   const reduce = useReducedMotion()
   const isLanding = variant === 'landing-page'
   const isTeam = variant === 'team-ai'
-  const [value, setValue] = useState(isLanding ? 2000 : isTeam ? 8 : DEFAULT_VALUE)
+  const isChange = variant === 'change-pack'
+  const [value, setValue] = useState(
+    isLanding ? 2000 : isTeam ? 8 : isChange ? 80 : DEFAULT_VALUE,
+  )
   const [lost, setLost] = useState(
-    isTeam ? 3 : variant === 'search-fix' ? 4 : variant === 'crm-rescue' ? 3 : DEFAULT_LOST,
+    isChange
+      ? 4
+      : isTeam
+        ? 3
+        : variant === 'search-fix'
+          ? 4
+          : variant === 'crm-rescue'
+            ? 3
+            : DEFAULT_LOST,
   )
   const [hourlyRate, setHourlyRate] = useState(75)
   const [valueDirty, setValueDirty] = useState(false)
@@ -226,11 +238,14 @@ export function LostClientCalculator({
   const [display, setDisplay] = useState(0)
 
   const teamHours = Math.max(0, value) * Math.max(0, lost) * 52
+  const changeHours = Math.max(0, value) * Math.max(0, lost)
   const yearly = isLanding
     ? Math.max(0, value) * 12
     : isTeam
       ? teamHours * Math.max(0, hourlyRate)
-      : Math.max(0, value) * Math.max(0, lost) * 12
+      : isChange
+        ? changeHours * Math.max(0, hourlyRate)
+        : Math.max(0, value) * Math.max(0, lost) * 12
   const fromRef = useRef(0)
   const cream = theme === 'cream'
   const ink = cream ? FUNNEL_COLOURS.ink : FUNNEL_COLOURS.onInk
@@ -295,28 +310,36 @@ export function LostClientCalculator({
             ? "What's riding on where the click lands"
             : isTeam
               ? "What's on the table across the whole team"
-              : variant === 'search-fix'
-                ? "What's being findable worth to you"
-                : variant === 'crm-rescue'
-                  ? "What's one quiet enquiry worth to you"
-                  : "What's one lost client worth to you"}
+              : isChange
+                ? 'What does month one of confusion cost'
+                : variant === 'search-fix'
+                  ? "What's being findable worth to you"
+                  : variant === 'crm-rescue'
+                    ? "What's one quiet enquiry worth to you"
+                    : "What's one lost client worth to you"}
         </h3>
 
         <div
           className={
-            isTeam
+            isTeam || isChange
               ? 'flex flex-col lg:flex-row lg:items-stretch gap-2 lg:gap-0'
               : 'flex flex-col md:flex-row md:items-stretch gap-2 md:gap-0'
           }
         >
           <StepperField
             label={
-              isLanding ? 'Monthly ad spend' : isTeam ? 'People on the team' : 'Average client worth'
+              isLanding
+                ? 'Monthly ad spend'
+                : isTeam
+                  ? 'People on the team'
+                  : isChange
+                    ? 'People affected by the change'
+                    : 'Average client worth'
             }
-            prefix={isTeam ? undefined : '$'}
+            prefix={isTeam || isChange ? undefined : '$'}
             value={value}
-            step={isTeam ? 1 : 100}
-            min={isTeam ? 1 : 0}
+            step={isTeam || isChange ? 1 : 100}
+            min={isTeam || isChange ? 1 : 0}
             dirty={valueDirty}
             onDirty={() => setValueDirty(true)}
             onChange={setValue}
@@ -325,7 +348,9 @@ export function LostClientCalculator({
                 ? 'Monthly ad spend in dollars'
                 : isTeam
                   ? 'People on the team'
-                  : 'Average client value in dollars'
+                  : isChange
+                    ? 'People affected by the change'
+                    : 'Average client value in dollars'
             }
             pulseArrows={inView && !reduce}
             theme={theme}
@@ -334,7 +359,7 @@ export function LostClientCalculator({
           {!isLanding ? (
             <>
               <div
-                className={`hidden ${isTeam ? 'lg' : 'md'}:block w-px mx-6 xl:mx-8 shrink-0 self-stretch`}
+                className={`hidden ${isTeam || isChange ? 'lg' : 'md'}:block w-px mx-6 xl:mx-8 shrink-0 self-stretch`}
                 style={{backgroundColor: `${ink}14`}}
                 aria-hidden
               />
@@ -343,17 +368,19 @@ export function LostClientCalculator({
                 label={
                   isTeam
                     ? 'Hours a week each could hand to AI'
-                    : variant === 'missed-call'
-                      ? 'Missed calls a month'
-                      : variant === 'crm-rescue'
-                        ? 'Enquiries a month that go quiet'
-                        : variant === 'google-profile'
-                          ? 'Lost to a thin profile'
-                          : variant === 'search-fix'
-                            ? 'Clients a month via Google'
-                            : 'Lost to a slow site'
+                    : isChange
+                      ? 'Hours each loses to confusion in month one'
+                      : variant === 'missed-call'
+                        ? 'Missed calls a month'
+                        : variant === 'crm-rescue'
+                          ? 'Enquiries a month that go quiet'
+                          : variant === 'google-profile'
+                            ? 'Lost to a thin profile'
+                            : variant === 'search-fix'
+                              ? 'Clients a month via Google'
+                              : 'Lost to a slow site'
                 }
-                suffix={isTeam ? '/ week' : '/ month'}
+                suffix={isTeam ? '/ week' : isChange ? undefined : '/ month'}
                 value={lost}
                 step={1}
                 dirty={lostDirty}
@@ -362,15 +389,17 @@ export function LostClientCalculator({
                 ariaLabel={
                   isTeam
                     ? 'Hours a week each person could hand to AI'
-                    : variant === 'missed-call'
-                      ? 'Missed calls per month'
-                      : variant === 'crm-rescue'
-                        ? 'Enquiries a month that go quiet'
-                        : variant === 'google-profile'
-                          ? 'Customers lost to a thin profile per month'
-                          : variant === 'search-fix'
-                            ? 'Clients a month who find you through Google'
-                            : 'Enquiries lost per month'
+                    : isChange
+                      ? 'Hours each person loses to confusion in month one'
+                      : variant === 'missed-call'
+                        ? 'Missed calls per month'
+                        : variant === 'crm-rescue'
+                          ? 'Enquiries a month that go quiet'
+                          : variant === 'google-profile'
+                            ? 'Customers lost to a thin profile per month'
+                            : variant === 'search-fix'
+                              ? 'Clients a month who find you through Google'
+                              : 'Enquiries lost per month'
                 }
                 pulseArrows={inView && !reduce}
                 theme={theme}
@@ -378,7 +407,7 @@ export function LostClientCalculator({
             </>
           ) : null}
 
-          {isTeam ? (
+          {isTeam || isChange ? (
             <>
               <div
                 className="hidden lg:block w-px mx-6 xl:mx-8 shrink-0 self-stretch"
@@ -419,7 +448,9 @@ export function LostClientCalculator({
               ? `That's ${formatMoney(display)} a year riding on the first five seconds after the click.`
               : isTeam
                 ? `That's ${formatMoney(display)} a year across the team.`
-                : `That's ${formatMoney(display)} a year, walking next door.`}
+                : isChange
+                  ? `That's ${formatMoney(display)} in month one.`
+                  : `That's ${formatMoney(display)} a year, walking next door.`}
           </motion.p>
           {isTeam ? (
             <p
@@ -427,6 +458,14 @@ export function LostClientCalculator({
               style={{color: cream ? FUNNEL_COLOURS.muted : `${FUNNEL_COLOURS.onInk}70`}}
             >
               {formatGrouped(teamHours)} hours × {formatMoney(hourlyRate)} an hour.
+            </p>
+          ) : null}
+          {isChange ? (
+            <p
+              className="mt-2 font-sans text-base md:text-lg leading-relaxed"
+              style={{color: cream ? FUNNEL_COLOURS.muted : `${FUNNEL_COLOURS.onInk}70`}}
+            >
+              {formatGrouped(changeHours)} hours × {formatMoney(hourlyRate)} an hour.
             </p>
           ) : null}
           <p
@@ -437,13 +476,17 @@ export function LostClientCalculator({
               ? 'The page that catches it costs less than one month of that.'
               : isTeam
                 ? 'The afternoon that unlocks them costs less than one week of one salary.'
-                : 'The fix costs less than one of them.'}
+                : isChange
+                  ? 'The pack costs less than one week of that bill.'
+                  : 'The fix costs less than one of them.'}
           </p>
           <p
             className="mt-3 font-sans text-sm leading-relaxed max-w-xl"
             style={{color: cream ? FUNNEL_COLOURS.muted : `${FUNNEL_COLOURS.onInk}65`}}
           >
-            Your numbers, not ours. Change them and watch. The leak doesn&apos;t care either way.
+            {isChange
+              ? 'Your numbers, not ours. Change the three fields above. The dollar figure updates.'
+              : "Your numbers, not ours. Change them and watch. The leak doesn't care either way."}
           </p>
         </div>
       </div>
