@@ -86,6 +86,10 @@ export type FunnelAccessPayload = {
   changeAreas?: string
   trainingPlan?: string
   riskSignal?: string
+  contentChannels?: string
+  lastPostWhen?: string
+  hourReady?: string
+  contentGoal?: string
   sessionFormat?: 'remote' | 'onsite'
 }
 

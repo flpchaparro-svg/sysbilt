@@ -79,6 +79,21 @@ export function sanitiseCompetitorName(raw: string | null | undefined): string |
   return sanitiseBusinessName(raw)
 }
 
+const MAX_LAST_POST_MONTH = 12
+
+/** Month word for Content System evidence (?m=), e.g. March. Letters only. */
+export function sanitiseLastPostMonth(raw: string | null | undefined): string | null {
+  if (raw == null || raw === '') return null
+  const value = decodeParam(raw)
+  if (!value) return null
+  if (value.length > MAX_LAST_POST_MONTH) return null
+  if (!/^[A-Za-z][A-Za-z .'-]{0,11}$/.test(value)) return null
+  // Reject team-ai mode tokens that share the ?m= key on other routes
+  const lower = value.toLowerCase()
+  if (lower === 'remote' || lower === 'onsite') return null
+  return value
+}
+
 export function personaliseH1(template: string | null | undefined, business: string): string {
   if (!template) return `${business}'s website is losing people before it loads.`
   return template.replace(/\{b\}/gi, business)

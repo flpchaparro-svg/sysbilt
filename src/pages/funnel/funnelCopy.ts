@@ -59,6 +59,7 @@ export type FunnelProductCopy = {
     | 'crm-rescue'
     | 'team-ai'
     | 'change-pack'
+    | 'content-system'
 }
 
 export const SPEED_FIX_COPY: FunnelProductCopy = {
@@ -1172,6 +1173,141 @@ export const CHANGE_PACK_COPY: FunnelProductCopy = {
   proofKind: 'change-pack',
 }
 
+export const CONTENT_SYSTEM_COPY: FunnelProductCopy = {
+  eyebrow: 'One hour of your month · Every channel alive · No lock-in',
+  h1Generic: "Your last post was months ago, and it's not because you're lazy",
+  h1Personal: (b: string) =>
+    `${b}, your last post was months ago, and it's not because you're lazy`,
+  sub: 'Posting always loses to real work. That is why it stops. You talk for an hour. We turn that into a month of on-brand posts, designed, approved by you, and scheduled. Done.',
+  ctaLabel: 'Start the scoping form',
+  proofLabel: 'Sound familiar',
+  proofHeadingLive: 'Last post',
+  proofHeadingGeneric: 'Last post',
+  proofLead: () =>
+    'To a customer comparing two businesses tonight, a quiet feed reads as a quiet business, fair or not.',
+  proofLeadGeneric:
+    'To a customer comparing two businesses tonight, a quiet feed reads as a quiet business, fair or not.',
+  proofAfter:
+    'Your work has not stopped. Your channels have. That gap is what this fixes.',
+  proofAfterGeneric:
+    'Open your own Instagram the way a stranger would. Check the date on the last post. Then check your busiest competitor.',
+  painLabel: 'What this is costing you',
+  painHeading: 'They compare feeds before they compare quotes',
+  painLines: [
+    'Every customer checks you out online before they call. A dead feed answers before you can.',
+    'The competitor posting weekly is not better at the work. They are just visible doing it.',
+    'DIY content dies the week real work gets busy, and every week real work gets busy.',
+    'Generic outsourced content is worse than silence, because it sounds like nobody, especially you.',
+  ],
+  bridgeLabel: 'What we actually build',
+  bridgeHeading: 'One recorded hour becomes a month that sounds like you',
+  bridgeBody:
+    'This is not a posting service and it is not a content mill. We set your brand and voice first: how you talk, how you look, what you never say. Then every month one recorded conversation becomes posts, carousels, and captions. A human reviews every piece. You approve one batch. We schedule it. You never touch a posting screen.',
+  bridgeGaugeCaption:
+    'Setup builds the machine. The monthly keeps it running. Pause any time. Leave with 30 days notice. The brand system stays yours.',
+  benefitsLabel: 'What you get',
+  benefitsHeading: 'Clear for the company',
+  benefits: [
+    {
+      title: 'You look as busy online as you are in real life',
+      text: 'Every channel you care about stays alive each week, without you thinking about it.',
+    },
+    {
+      title: 'It sounds like you on your best day',
+      text: 'Voice rules from how you actually talk. A human checks every piece before you approve the batch.',
+    },
+    {
+      title: 'One hour is the whole job',
+      text: 'You talk about jobs, customer questions, and opinions on your industry. Everything after that is ours.',
+    },
+    {
+      title: 'You see what worked',
+      text: 'A plain monthly report: what went out, what landed, what we are doing more of.',
+    },
+  ],
+  processLabel: 'How it runs',
+  processHeading: 'Setup builds the machine, the monthly keeps it running',
+  processSteps: [
+    {
+      label: 'Form and call',
+      text: 'You tell us your channels, when you last posted, and what you want content to do. Fifteen minutes later you know if it fits.',
+    },
+    {
+      label: 'Weeks 1 to 2, setup',
+      text: 'Brand and voice system, the pipeline, your channels connected, and your first month produced.',
+    },
+    {
+      label: 'Every month after',
+      text: 'Your recorded hour, then a full month written, designed, approved in one batch, and scheduled. Plus the report.',
+    },
+  ],
+  stackLabel: 'What is included',
+  stackHeading: 'The setup builds it, the monthly runs it',
+  stackItems: [
+    {
+      title: 'Setup, $3,400 once',
+      text: 'Brand and voice system, the content pipeline, channels connected, first month produced.',
+    },
+    {
+      title: 'Monthly, $1,900',
+      text: 'The recorded hour, a month of posts, carousels and captions, human-reviewed, approved by you, scheduled.',
+    },
+    {
+      title: 'Monthly report',
+      text: 'What went out, what landed, what we are doing more of. Plain English.',
+    },
+    {
+      title: 'No lock-in',
+      text: 'Pause any time. Leave with 30 days notice. The brand system stays yours.',
+    },
+    {
+      title: 'Systems Snapshot',
+      text: 'A one-page read on your wider setup, included with the pack.',
+    },
+  ],
+  scopeLine:
+    'Best when you can give one honest hour a month. If you cannot, this is not the product yet.',
+  priceLabel: 'Investment',
+  price: '$3,400 setup, then $1,900 a month',
+  priceLead:
+    'Most people take the scoping form and the 15-minute call first. If you already know, pay the setup and we book your kickoff recording.',
+  guarantee:
+    'Our promise: if a month of content does not sound like you, we redo it at no extra cost until it does.',
+  priceAnchor: 'One hour of your month, against every customer who checks you out before they call.',
+  faqLabel: 'Objections',
+  faqHeading: 'Straight answers before you book',
+  faqs: [
+    {
+      q: 'What do you need from me each month?',
+      a: 'One recorded hour, talking about jobs, questions customers ask, and opinions on your industry. We handle everything after that.',
+    },
+    {
+      q: 'Will it sound like me?',
+      a: 'That is the point of the setup. We build your voice rules from how you actually talk, and a human checks every piece against them before you approve the batch.',
+    },
+    {
+      q: 'Is this AI content?',
+      a: 'It is AI-assisted and human-made. The thinking comes from your recorded hour, the drafting is accelerated, the judgement is ours, and the approval is yours. Nothing ships that a machine wrote alone.',
+    },
+    {
+      q: 'Which platforms?',
+      a: 'The ones your customers actually use, decided at setup. More channels does not mean better. Consistency does.',
+    },
+    {
+      q: 'Can I pause or leave?',
+      a: 'Pause any time. Leave with 30 days notice. The brand system stays yours.',
+    },
+    {
+      q: 'Is the setup refundable?',
+      a: 'No change-of-mind refund. Instead: if the first month does not sound like you, we redo it at no extra cost until it does.',
+    },
+  ],
+  finalLabel: 'Last step',
+  finalHeading: 'Next month, your business looks as busy online as it is in real life',
+  finalLine: 'You talk for an hour. Everything else just happens.',
+  proofKind: 'content-system',
+}
+
 export function funnelCopyForSlug(slug: string | undefined): FunnelProductCopy {
   if (slug === 'missed-call') return MISSED_CALL_COPY
   if (slug === 'google-profile') return GOOGLE_PROFILE_COPY
@@ -1180,5 +1316,6 @@ export function funnelCopyForSlug(slug: string | undefined): FunnelProductCopy {
   if (slug === 'crm-rescue') return CRM_RESCUE_COPY
   if (slug === 'team-ai') return TEAM_AI_COPY
   if (slug === 'change-pack') return CHANGE_PACK_COPY
+  if (slug === 'content-system') return CONTENT_SYSTEM_COPY
   return SPEED_FIX_COPY
 }

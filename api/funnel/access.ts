@@ -14,6 +14,7 @@ const PRODUCT_CODES = new Set([
   'crm-rescue',
   'team-ai',
   'change-pack',
+  'content-system',
 ]);
 const PRODUCT_LABELS: Record<string, string> = {
   'speed-fix': 'Website Speed Fix',
@@ -24,6 +25,7 @@ const PRODUCT_LABELS: Record<string, string> = {
   'crm-rescue': 'CRM Rescue',
   'team-ai': 'Team AI',
   'change-pack': 'Change Pack',
+  'content-system': 'Content System',
 };
 const PRODUCT_AMOUNTS: Record<string, string> = {
   'speed-fix': '1200',
@@ -35,6 +37,7 @@ const PRODUCT_AMOUNTS: Record<string, string> = {
   'team-ai': '1950',
   'team-ai-onsite': '2400',
   'change-pack': '6000',
+  'content-system': '3400',
 };
 const CRM_SYSTEMS = new Set([
   'hubspot',
@@ -127,6 +130,10 @@ type Body = {
   changeAreas?: unknown;
   trainingPlan?: unknown;
   riskSignal?: unknown;
+  contentChannels?: unknown;
+  lastPostWhen?: unknown;
+  hourReady?: unknown;
+  contentGoal?: unknown;
 };
 
 function str(v: unknown, max = 500): string {
@@ -188,6 +195,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const changeAreas = str(body.changeAreas, 2000);
   const trainingPlan = str(body.trainingPlan, 120);
   const riskSignal = str(body.riskSignal, 200);
+  const contentChannels = str(body.contentChannels, 2000);
+  const lastPostWhen = str(body.lastPostWhen, 120);
+  const hourReady = str(body.hourReady, 120);
+  const contentGoal = str(body.contentGoal, 200);
 
   if (!PRODUCT_CODES.has(product)) {
     res.status(400).json({ error: 'Invalid product' });
@@ -203,6 +214,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const isCrmRescue = product === 'crm-rescue';
   const isTeamAi = product === 'team-ai';
   const isChangePack = product === 'change-pack';
+  const isContentSystem = product === 'content-system';
 
   if (isMissedCall) {
     const cleanPhone = phone.replace(/\s+/g, '');
@@ -255,6 +267,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       !riskSignal
     ) {
       res.status(400).json({ error: 'Missing Change Pack scoping details' });
+      return;
+    }
+    if (accessPath !== 'call') {
+      res.status(400).json({ error: 'Invalid access path' });
+      return;
+    }
+  } else if (isContentSystem) {
+    if (!contentChannels || !lastPostWhen || !hourReady || !contentGoal) {
+      res.status(400).json({ error: 'Missing Content System scoping details' });
       return;
     }
     if (accessPath !== 'call') {
@@ -343,6 +364,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
               ]
                 .filter(Boolean)
                 .join('\n')
+            : isContentSystem
+              ? [
+                  `Funnel scoping form — ${product}`,
+                  `Business: ${business}`,
+                  `Channels:\n${contentChannels}`,
+                  `Last posted: ${lastPostWhen}`,
+                  `Hour ready: ${hourReady}`,
+                  `Content goal: ${contentGoal}`,
+                  notes ? `Other notes:\n${notes}` : null,
+                  `Submitted: ${new Date().toISOString()}`,
+                ]
+                  .filter(Boolean)
+                  .join('\n')
           : [
               `Funnel access form — ${product}`,
               `Business: ${business}`,
@@ -392,6 +426,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     changeAreas: changeAreas || undefined,
     trainingPlan: trainingPlan || undefined,
     riskSignal: riskSignal || undefined,
+    contentChannels: contentChannels || undefined,
+    lastPostWhen: lastPostWhen || undefined,
+    hourReady: hourReady || undefined,
+    contentGoal: contentGoal || undefined,
     submittedAt: new Date().toISOString(),
   };
 
@@ -404,7 +442,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       ? 'Team AI · Face-to-face'
       : isChangePack
         ? 'Change Pack scoping'
-        : PRODUCT_LABELS[product] || product;
+        : isContentSystem
+          ? 'Content System scoping'
+          : PRODUCT_LABELS[product] || product;
 
   let hubspotContactId: string | null = null;
   let hubspotDealId: string | null = null;
@@ -418,7 +458,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         company: business,
         website: (isCrmRescue ? websiteUrl : website) || undefined,
         phone: phone || undefined,
-        lifecyclestage: isChangePack ? 'lead' : 'customer',
+        lifecyclestage: isChangePack || isContentSystem ? 'lead' : 'customer',
         leadSourceDetail: `go/${product}`,
       });
       hubspotContactId = id;

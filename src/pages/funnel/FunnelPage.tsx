@@ -49,6 +49,10 @@ import {ChangeRiskRegisterCard} from './ChangeRiskRegisterCard'
 import {ChangeLeakPair} from './ChangeLeakPair'
 import {ChangePainCards} from './ChangePainCards'
 import {ChangePackDeliverableMock} from './ChangePackDeliverableMock'
+import {ContentLastPostCard} from './ContentLastPostCard'
+import {ContentFeedLeakPair} from './ContentFeedLeakPair'
+import {ContentPainCards} from './ContentPainCards'
+import {ContentMonthDeliverableMock} from './ContentMonthDeliverableMock'
 import {
   parseBlockedPages,
   parseSpeedScore,
@@ -56,6 +60,7 @@ import {
   sanitiseCallDay,
   sanitiseCallTime,
   sanitiseCompetitorName,
+  sanitiseLastPostMonth,
 } from './funnelPersonalise'
 import {FUNNEL_COLOURS, FUNNEL_CSS_VARS} from './funnelTheme'
 import {Reveal, RevealList} from './funnelReveal'
@@ -200,7 +205,9 @@ const FunnelPage: React.FC = () => {
   const isCrmRescue = proofKind === 'crm-rescue'
   const isTeamAi = proofKind === 'team-ai'
   const isChangePack = proofKind === 'change-pack'
+  const isContentSystem = proofKind === 'content-system'
   const isSpeed = proofKind === 'speed'
+  const lastPostMonth = useMemo(() => sanitiseLastPostMonth(params.get('m')), [params])
   const motionVariant = isMissedCall
     ? 'missed-call'
     : isGoogleProfile
@@ -215,7 +222,9 @@ const FunnelPage: React.FC = () => {
               ? 'team-ai'
               : isChangePack
                 ? 'change-pack'
-                : 'speed'
+                : isContentSystem
+                  ? 'content-system'
+                  : 'speed'
   const calculatorVariant = isSpeed
     ? 'speed'
     : isMissedCall
@@ -226,11 +235,13 @@ const FunnelPage: React.FC = () => {
           ? 'team-ai'
           : isChangePack
             ? 'change-pack'
-            : isSearchFix
-              ? 'search-fix'
-              : isLandingPage
-                ? 'landing-page'
-                : 'google-profile'
+            : isContentSystem
+              ? 'content-system'
+              : isSearchFix
+                ? 'search-fix'
+                : isLandingPage
+                  ? 'landing-page'
+                  : 'google-profile'
   const missedEvidence: MissedCallEvidence = useMemo(() => {
     if (business && callDay && callTime) {
       return {mode: 'tested', business, day: callDay, time: callTime}
@@ -275,10 +286,13 @@ const FunnelPage: React.FC = () => {
             const copy = funnelCopyForSlug(slug)
             setDoc({
               title: FUNNEL_PRODUCT_LABELS[slug],
-              ctaMode: slug === 'change-pack' ? 'call' : 'buy',
+              ctaMode:
+                slug === 'change-pack' || slug === 'content-system' ? 'call' : 'buy',
               ctaLabel: copy.ctaLabel,
               schedulerUrl:
-                slug === 'change-pack' ? accessFormPathForProduct('change-pack') : undefined,
+                slug === 'change-pack' || slug === 'content-system'
+                  ? accessFormPathForProduct(slug)
+                  : undefined,
             })
             setStatus('ready')
             return
@@ -301,19 +315,27 @@ const FunnelPage: React.FC = () => {
 
   const rawLabel = doc?.ctaLabel || COPY.ctaLabel
   const ctaFields: FunnelCtaFields = {
-    ctaMode: doc?.ctaMode || (isChangePack ? 'call' : 'buy'),
+    ctaMode: doc?.ctaMode || (isChangePack || isContentSystem ? 'call' : 'buy'),
     // Authored labels already include price text. Only normalise a comma before $ into one middle dot.
     ctaLabel: rawLabel.replace(/,\s*(?=\$)/, ' · ').replace(/\s*·\s*·\s*(?=\$)/, ' · '),
     stripeUrl: doc?.stripeUrl,
     schedulerUrl:
-      doc?.schedulerUrl || (isChangePack ? accessFormPathForProduct('change-pack') : undefined),
+      doc?.schedulerUrl ||
+      (isChangePack || isContentSystem
+        ? accessFormPathForProduct(isContentSystem ? 'content-system' : 'change-pack')
+        : undefined),
     secondaryCtaLabel: doc?.secondaryCtaLabel,
     secondaryUrl: doc?.secondaryUrl,
     priceOptions: doc?.priceOptions,
   }
 
   const pageTitle = doc?.title ? `${doc.title} | SYSBILT` : 'Fixed-price fix | SYSBILT'
-  const h1 = business ? COPY.h1Personal(business) : COPY.h1Generic
+  const h1 =
+    isContentSystem && business && lastPostMonth
+      ? `${business}, your last post was ${lastPostMonth}, and it's not because you're lazy`
+      : business
+        ? COPY.h1Personal(business)
+        : COPY.h1Generic
   const faqs =
     doc?.faqs && doc.faqs.length > 0
       ? doc.faqs.map((f) => ({q: f.question || '', a: f.answer || ''}))
@@ -406,7 +428,13 @@ const FunnelPage: React.FC = () => {
 
           <section
             className={`mx-auto px-6 md:px-10 pb-16 md:pb-24 ${
-              isSpeed || isSearchFix || isLandingPage || isCrmRescue || isTeamAi || isChangePack
+              isSpeed ||
+              isSearchFix ||
+              isLandingPage ||
+              isCrmRescue ||
+              isTeamAi ||
+              isChangePack ||
+              isContentSystem
                 ? 'max-w-3xl'
                 : 'max-w-5xl'
             }`}
@@ -438,9 +466,13 @@ const FunnelPage: React.FC = () => {
             {isCrmRescue ? <CrmEnquiryEvidenceCard evidence={crmEvidence} /> : null}
             {isTeamAi ? <TeamRecognitionCards /> : null}
             {isChangePack ? <ChangeRiskRegisterCard business={business} /> : null}
+            {isContentSystem ? (
+              <ContentLastPostCard business={business} lastPostMonth={lastPostMonth} />
+            ) : null}
             {!(isSearchFix && searchEvidence.mode === 'try') &&
             !(isLandingPage && adEvidence.mode === 'try') &&
-            !(isCrmRescue && crmEvidence.mode === 'try') ? (
+            !(isCrmRescue && crmEvidence.mode === 'try') &&
+            !(isContentSystem && !business) ? (
               <Reveal delay={0.12} y={12}>
                 <p
                   className={`font-sans text-base md:text-lg leading-relaxed max-w-2xl ${
@@ -450,7 +482,8 @@ const FunnelPage: React.FC = () => {
                     isLandingPage ||
                     isCrmRescue ||
                     isTeamAi ||
-                    isChangePack
+                    isChangePack ||
+                    isContentSystem
                       ? 'mt-8'
                       : ''
                   }`}
@@ -470,9 +503,11 @@ const FunnelPage: React.FC = () => {
                             ? COPY.proofLeadGeneric
                             : isChangePack
                               ? COPY.proofLeadGeneric
-                              : business
-                                ? COPY.proofLead(business)
-                                : COPY.proofLeadGeneric}
+                              : isContentSystem
+                                ? COPY.proofLeadGeneric
+                                : business
+                                  ? COPY.proofLead(business)
+                                  : COPY.proofLeadGeneric}
                 </p>
               </Reveal>
             ) : null}
@@ -652,6 +687,33 @@ const FunnelPage: React.FC = () => {
                 </Reveal>
                 <ChangeLeakPair />
               </section>
+            ) : isContentSystem ? (
+              <section className="mt-12 md:mt-14">
+                <Reveal y={10}>
+                  <SectionLabel>The leak</SectionLabel>
+                </Reveal>
+                <Reveal delay={0.06} y={14}>
+                  <h3
+                    className="font-serif font-bold text-2xl md:text-3xl tracking-tight mb-4 max-w-2xl"
+                    style={{color: FUNNEL_COLOURS.ink}}
+                  >
+                    Consistency is the whole game, and it is exactly what a busy business cannot do
+                    by hand
+                  </h3>
+                </Reveal>
+                <Reveal delay={0.1} y={10}>
+                  <p
+                    className="font-sans text-base md:text-lg leading-relaxed max-w-2xl mb-2"
+                    style={{color: FUNNEL_COLOURS.muted}}
+                  >
+                    The usual fixes fail the same two ways. The owner burns out writing posts at
+                    10pm, or a cheap agency ships generic content that sounds like nobody. The fix
+                    is not more discipline. It is a system where your only job is the hour you are
+                    best at: talking about your work.
+                  </p>
+                </Reveal>
+                <ContentFeedLeakPair lastPostMonth={lastPostMonth} />
+              </section>
             ) : (
               <>
                 <ScoreMoment
@@ -713,6 +775,8 @@ const FunnelPage: React.FC = () => {
                 <TeamPainCards />
               ) : isChangePack ? (
                 <ChangePainCards />
+              ) : isContentSystem ? (
+                <ContentPainCards />
               ) : (
                 <PainCostCards />
               )}
@@ -764,7 +828,7 @@ const FunnelPage: React.FC = () => {
               <div className="mt-10">
                 <CrmFixedThreadMock />
               </div>
-            ) : isTeamAi || isChangePack ? null : (
+            ) : isTeamAi || isChangePack || isContentSystem ? null : (
               <ScoreMoment score={90} mode="benchmark" />
             )}
           </section>
@@ -912,6 +976,8 @@ const FunnelPage: React.FC = () => {
                   <TeamSessionDeliverableMock />
                 ) : isChangePack ? (
                   <ChangePackDeliverableMock />
+                ) : isContentSystem ? (
+                  <ContentMonthDeliverableMock />
                 ) : (
                   <ReportDeliverableMock />
                 )}

@@ -80,6 +80,10 @@ type StepId =
   | 'changeAreas'
   | 'trainingPlan'
   | 'riskSignal'
+  | 'contentChannels'
+  | 'lastPostWhen'
+  | 'hourReady'
+  | 'contentGoal'
   | 'platform'
   | 'provider'
   | 'domainProvider'
@@ -133,13 +137,27 @@ const PHASES_CHANGE: {id: PhaseId; n: number; label: string}[] = [
   {id: 'done', n: 4, label: 'Book the call'},
 ]
 
+const PHASES_CONTENT: {id: PhaseId; n: number; label: string}[] = [
+  {id: 'about', n: 1, label: 'About you'},
+  {id: 'site', n: 2, label: 'Your channels'},
+  {id: 'access', n: 3, label: 'Fit'},
+  {id: 'done', n: 4, label: 'Book the call'},
+]
+
 function phaseIndex(phase: PhaseId, phases: typeof PHASES_SPEED): number {
   return phases.findIndex((p) => p.id === phase)
 }
 
 function phaseForStep(
   step: StepId,
-  kind: 'speed' | 'missed-call' | 'google-profile' | 'crm-rescue' | 'team-ai' | 'change-pack',
+  kind:
+    | 'speed'
+    | 'missed-call'
+    | 'google-profile'
+    | 'crm-rescue'
+    | 'team-ai'
+    | 'change-pack'
+    | 'content-system',
 ): PhaseId {
   if (step === 'done') return 'done'
   if (
@@ -188,6 +206,12 @@ function phaseForStep(
       step === 'goLiveWindow' ||
       step === 'changeAreas'
     ) {
+      return 'site'
+    }
+    return 'access'
+  }
+  if (kind === 'content-system') {
+    if (step === 'contentChannels' || step === 'lastPostWhen') {
       return 'site'
     }
     return 'access'
@@ -808,6 +832,76 @@ const CHANGE_RISK_OPTIONS = [
   {id: 'unsure', label: 'Not sure yet', blurb: 'We will pressure-test it on the call.'},
 ] as const
 
+const CONTENT_CHANNEL_OPTIONS = [
+  {id: 'linkedin', label: 'LinkedIn'},
+  {id: 'instagram', label: 'Instagram'},
+  {id: 'facebook', label: 'Facebook'},
+  {id: 'youtube', label: 'YouTube'},
+  {id: 'tiktok', label: 'TikTok'},
+  {id: 'email', label: 'Email'},
+  {id: 'blog', label: 'Blog'},
+  {id: 'other', label: 'Other'},
+] as const
+
+const LAST_POST_OPTIONS = [
+  {id: 'this-week', label: 'This week', blurb: 'You are posting right now.'},
+  {id: 'this-month', label: 'This month', blurb: 'Something went out recently.'},
+  {id: '1-3-months', label: '1–3 months ago', blurb: 'Quiet for a bit, still in the habit.'},
+  {id: '3-6-months', label: '3–6 months ago', blurb: 'The feed has gone quiet.'},
+  {id: '6-plus', label: '6+ months ago', blurb: 'Long enough that restarting feels hard.'},
+  {
+    id: 'never-sure',
+    label: 'Not sure / never really posted',
+    blurb: 'No clear last date, or it never stuck.',
+  },
+] as const
+
+const HOUR_READY_OPTIONS = [
+  {
+    id: 'yes',
+    label: 'Yes, one hour a month',
+    blurb: 'You can protect that hour most months.',
+  },
+  {
+    id: 'mostly',
+    label: 'Mostly, some months are hard',
+    blurb: 'Usually yes. Busy months slip.',
+  },
+  {
+    id: 'not-yet',
+    label: 'Not yet',
+    blurb: 'The hour is the blocker. We talk through that on the call.',
+  },
+] as const
+
+const CONTENT_GOAL_OPTIONS = [
+  {
+    id: 'stay-visible',
+    label: 'Stay visibly alive online',
+    blurb: 'Show up consistently so you do not look dormant.',
+  },
+  {
+    id: 'leads',
+    label: 'More enquiries from social',
+    blurb: 'Content that pulls people toward a conversation.',
+  },
+  {
+    id: 'hire',
+    label: 'Attract hires',
+    blurb: 'Look like a place good people want to join.',
+  },
+  {
+    id: 'authority',
+    label: 'Sound like the expert',
+    blurb: 'Clear voice. People know what you stand for.',
+  },
+  {
+    id: 'mixed',
+    label: 'A mix of these',
+    blurb: 'Visibility, leads, hiring, and authority together.',
+  },
+] as const
+
 function isValidName(value: string): boolean {
   const t = value.trim()
   if (t.length < 2) return false
@@ -963,6 +1057,26 @@ function helpForStep(step: StepId): HelpBlock {
       return {
         title: 'Biggest adoption risk',
         body: 'Pick the risk you already feel. This is what the pack is built to prevent.',
+      }
+    case 'contentChannels':
+      return {
+        title: 'Which channels',
+        body: 'Tap every channel you want in the system. Missing one? Type it below.',
+      }
+    case 'lastPostWhen':
+      return {
+        title: 'When you last posted',
+        body: 'Rough is fine. This tells us how cold the feed is today.',
+      }
+    case 'hourReady':
+      return {
+        title: 'One hour a month',
+        body: 'The system needs about an hour of your time each month. Say how ready that feels.',
+      }
+    case 'contentGoal':
+      return {
+        title: 'What content should do',
+        body: 'Pick the main outcome. Mixed is fine if you want more than one.',
       }
     case 'website':
       return {
@@ -1283,6 +1397,11 @@ const FunnelAccessPage: React.FC = () => {
   const [changeAreasOther, setChangeAreasOther] = useState('')
   const [trainingPlan, setTrainingPlan] = useState('')
   const [riskSignal, setRiskSignal] = useState('')
+  const [contentChannels, setContentChannels] = useState<string[]>([])
+  const [contentChannelsOther, setContentChannelsOther] = useState('')
+  const [lastPostWhen, setLastPostWhen] = useState('')
+  const [hourReady, setHourReady] = useState('')
+  const [contentGoal, setContentGoal] = useState('')
   const [platform, setPlatform] = useState<PlatformId | null>(null)
   const [sameProvider, setSameProvider] = useState<SameProviderId | null>(null)
   const [domainProvider, setDomainProvider] = useState('')
@@ -1299,7 +1418,15 @@ const FunnelAccessPage: React.FC = () => {
   const isCrmRescue = product === 'crm-rescue'
   const isTeamAi = product === 'team-ai'
   const isChangePack = product === 'change-pack'
-  const productKind: 'speed' | 'missed-call' | 'google-profile' | 'crm-rescue' | 'team-ai' | 'change-pack' =
+  const isContentSystem = product === 'content-system'
+  const productKind:
+    | 'speed'
+    | 'missed-call'
+    | 'google-profile'
+    | 'crm-rescue'
+    | 'team-ai'
+    | 'change-pack'
+    | 'content-system' =
     isMissedCall
       ? 'missed-call'
       : isGoogleProfile
@@ -1310,7 +1437,9 @@ const FunnelAccessPage: React.FC = () => {
             ? 'team-ai'
             : isChangePack
               ? 'change-pack'
-              : 'speed'
+              : isContentSystem
+                ? 'content-system'
+                : 'speed'
   const phases = isMissedCall
     ? PHASES_MISSED
     : isGoogleProfile
@@ -1321,7 +1450,9 @@ const FunnelAccessPage: React.FC = () => {
           ? PHASES_TEAM
           : isChangePack
             ? PHASES_CHANGE
-            : PHASES_SPEED
+            : isContentSystem
+              ? PHASES_CONTENT
+              : PHASES_SPEED
 
   const stepOrder = useMemo((): StepId[] => {
     // Always show the product picker first so buyers see their purchase highlighted
@@ -1405,6 +1536,20 @@ const FunnelAccessPage: React.FC = () => {
         'done',
       ]
     }
+    if (isContentSystem) {
+      return [
+        'product',
+        'name',
+        'email',
+        'business',
+        'contentChannels',
+        'lastPostWhen',
+        'hourReady',
+        'contentGoal',
+        'notes',
+        'done',
+      ]
+    }
     const base: StepId[] = [
       'product',
       'name',
@@ -1419,7 +1564,16 @@ const FunnelAccessPage: React.FC = () => {
     }
     base.push('access', 'accessDetail', 'notes', 'done')
     return base
-  }, [sameProvider, isMissedCall, isGoogleProfile, isCrmRescue, isTeamAi, isChangePack, initialSessionFormat])
+  }, [
+    sameProvider,
+    isMissedCall,
+    isGoogleProfile,
+    isCrmRescue,
+    isTeamAi,
+    isChangePack,
+    isContentSystem,
+    initialSessionFormat,
+  ])
 
   const stepIndex = Math.max(0, stepOrder.indexOf(step))
   const lineProgress =
@@ -1465,7 +1619,7 @@ const FunnelAccessPage: React.FC = () => {
       setError('Something is missing. Use Back to check your answers.')
       return
     }
-    if (!isTeamAi && !isChangePack && !accessPath) {
+    if (!isTeamAi && !isChangePack && !isContentSystem && !accessPath) {
       setError('Something is missing. Use Back to check your answers.')
       return
     }
@@ -1511,6 +1665,13 @@ const FunnelAccessPage: React.FC = () => {
         !trainingPlan ||
         !riskSignal
       ) {
+        setError('Something is missing. Use Back to check your answers.')
+        return
+      }
+    } else if (isContentSystem) {
+      const channelsOk =
+        contentChannels.length >= 1 || contentChannelsOther.trim().length >= 2
+      if (!channelsOk || !lastPostWhen || !hourReady || !contentGoal) {
         setError('Something is missing. Use Back to check your answers.')
         return
       }
@@ -1639,6 +1800,29 @@ const FunnelAccessPage: React.FC = () => {
                   riskSignal:
                     CHANGE_RISK_OPTIONS.find((o) => o.id === riskSignal)?.label || riskSignal,
                 }
+              : isContentSystem
+                ? {
+                    product,
+                    name: name.trim(),
+                    email: email.trim(),
+                    business: business.trim(),
+                    accessPath: 'call',
+                    accessDetail: '',
+                    notes: notes.trim(),
+                    contentChannels: (() => {
+                      const labels = contentChannels.map(
+                        (id) => CONTENT_CHANNEL_OPTIONS.find((o) => o.id === id)?.label || id,
+                      )
+                      if (contentChannelsOther.trim()) labels.push(contentChannelsOther.trim())
+                      return labels.join(', ')
+                    })(),
+                    lastPostWhen:
+                      LAST_POST_OPTIONS.find((o) => o.id === lastPostWhen)?.label || lastPostWhen,
+                    hourReady:
+                      HOUR_READY_OPTIONS.find((o) => o.id === hourReady)?.label || hourReady,
+                    contentGoal:
+                      CONTENT_GOAL_OPTIONS.find((o) => o.id === contentGoal)?.label || contentGoal,
+                  }
             : {
                 product,
                 name: name.trim(),
@@ -2431,6 +2615,107 @@ const FunnelAccessPage: React.FC = () => {
               </>
             ) : null}
 
+            {step === 'contentChannels' ? (
+              <ChipPickStep
+                title={
+                  <>
+                    Which <span style={{color: RED}}>channels</span>?
+                  </>
+                }
+                hint="Tap every channel you want in the system. Missing one? Type it below."
+                options={CONTENT_CHANNEL_OPTIONS}
+                selected={contentChannels}
+                onToggle={(id) => setContentChannels((prev) => toggleChip(prev, id))}
+                otherValue={contentChannelsOther}
+                onOtherChange={setContentChannelsOther}
+                otherPlaceholder="e.g. Threads, newsletter elsewhere…"
+                otherHint="Another channel we did not list"
+                disabled={contentChannels.length < 1 && contentChannelsOther.trim().length < 2}
+                onNext={() => goNext('contentChannels')}
+              />
+            ) : null}
+
+            {step === 'lastPostWhen' ? (
+              <>
+                <QuestionTitle>
+                  When did you last <span style={{color: RED}}>post</span>?
+                </QuestionTitle>
+                <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
+                  Rough is fine. This tells us how cold the feed is today.
+                </p>
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+                  {LAST_POST_OPTIONS.map((opt) => (
+                    <div key={opt.id}>
+                      <SelectCard
+                        selected={lastPostWhen === opt.id}
+                        onSelect={() => {
+                          setLastPostWhen(opt.id)
+                          goNext('lastPostWhen')
+                        }}
+                        title={opt.label}
+                        blurb={opt.blurb}
+                        icon={<FileText className="w-full h-full" strokeWidth={1.25} />}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : null}
+
+            {step === 'hourReady' ? (
+              <>
+                <QuestionTitle>
+                  Can you give <span style={{color: RED}}>one hour</span> a month?
+                </QuestionTitle>
+                <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
+                  That hour is the input. The system does the rest.
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4">
+                  {HOUR_READY_OPTIONS.map((opt) => (
+                    <div key={opt.id}>
+                      <SelectCard
+                        selected={hourReady === opt.id}
+                        onSelect={() => {
+                          setHourReady(opt.id)
+                          goNext('hourReady')
+                        }}
+                        title={opt.label}
+                        blurb={opt.blurb}
+                        icon={<Users className="w-full h-full" strokeWidth={1.25} />}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : null}
+
+            {step === 'contentGoal' ? (
+              <>
+                <QuestionTitle>
+                  What should content <span style={{color: RED}}>do</span>?
+                </QuestionTitle>
+                <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
+                  Pick the main outcome. Mixed is fine if you want more than one.
+                </p>
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+                  {CONTENT_GOAL_OPTIONS.map((opt) => (
+                    <div key={opt.id}>
+                      <SelectCard
+                        selected={contentGoal === opt.id}
+                        onSelect={() => {
+                          setContentGoal(opt.id)
+                          goNext('contentGoal')
+                        }}
+                        title={opt.label}
+                        blurb={opt.blurb}
+                        icon={<Sparkles className="w-full h-full" strokeWidth={1.25} />}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : null}
+
             {step === 'website' ? (
               <OneField
                 title="Which website are we fixing?"
@@ -2579,22 +2864,30 @@ const FunnelAccessPage: React.FC = () => {
             {step === 'notes' ? (
               <>
                 <OneField
-                  title={isChangePack || isTeamAi ? 'Anything to add?' : 'Anything else?'}
+                  title={
+                    isChangePack || isTeamAi || isContentSystem
+                      ? 'Anything to add?'
+                      : 'Anything else?'
+                  }
                   hint={
                     isChangePack
                       ? 'Optional. Skip if you are done. Add rollout quirks, union rules, shift patterns, or anything that usually trips go-live.'
-                      : isTeamAi
-                        ? 'Optional comment only. Skip if the taps above already cover it.'
-                        : 'Optional. Skip if you are done.'
+                      : isContentSystem
+                        ? 'Optional. Skip if you are done. Brand quirks, channels we missed, or anything that usually trips content.'
+                        : isTeamAi
+                          ? 'Optional comment only. Skip if the taps above already cover it.'
+                          : 'Optional. Skip if you are done.'
                   }
                   value={notes}
                   onChange={setNotes}
                   placeholder={
                     isChangePack
                       ? 'e.g. night shift needs a different pack, or two sites go live a week apart…'
-                      : isTeamAi
-                        ? 'e.g. two people are part-time, or we prefer Tuesdays…'
-                        : 'Optional'
+                      : isContentSystem
+                        ? 'e.g. we avoid politics, or LinkedIn is the only channel that matters…'
+                        : isTeamAi
+                          ? 'e.g. two people are part-time, or we prefer Tuesdays…'
+                          : 'Optional'
                   }
                   multiline
                   disabled={false}
@@ -2603,7 +2896,7 @@ const FunnelAccessPage: React.FC = () => {
                   nextLabel={
                     submitting
                       ? 'Sending…'
-                      : isChangePack || isTeamAi
+                      : isChangePack || isTeamAi || isContentSystem
                         ? 'Submit prep'
                         : 'Submit and start the clock'
                   }
@@ -2624,20 +2917,20 @@ const FunnelAccessPage: React.FC = () => {
                   <Check className="w-6 h-6" strokeWidth={2.5} />
                 </div>
                 <h1 className="font-serif text-3xl md:text-4xl tracking-tight text-dark mb-3">
-                  {isChangePack
+                  {isChangePack || isContentSystem
                     ? 'Scoped prep received'
                     : isTeamAi
                       ? 'Prep received. We are on it'
                       : 'Access received. We are on it'}
                 </h1>
                 <p className="font-sans text-dark/65 leading-relaxed mb-8">
-                  {isChangePack
+                  {isChangePack || isContentSystem
                     ? 'We have what we need. Next, book the 15-minute scoping call. You get a fixed price in writing the same day.'
                     : isTeamAi
                       ? `We will review what you sent, then call you to lock a tentative day inside your window. If we need anything else, we will email ${email || 'you'}.`
                       : `Your delivery clock starts from this submission. If we need anything else, we will email ${email || 'you'}, usually the same day.`}
                 </p>
-                {isChangePack ? (
+                {isChangePack || isContentSystem ? (
                   <a
                     href={SCHEDULER_URL}
                     target="_blank"

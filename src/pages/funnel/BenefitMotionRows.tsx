@@ -1531,6 +1531,7 @@ export function BenefitMotionRows({
     | 'crm-rescue'
     | 'team-ai'
     | 'change-pack'
+    | 'content-system'
 }) {
   const reduce = useReducedMotion()
   const visuals =
@@ -1544,7 +1545,7 @@ export function BenefitMotionRows({
             ? LANDING_VISUALS
             : variant === 'crm-rescue'
               ? CRM_VISUALS
-              : variant === 'team-ai' || variant === 'change-pack'
+              : variant === 'team-ai' || variant === 'change-pack' || variant === 'content-system'
                 ? TEAM_AI_VISUALS
                 : SPEED_VISUALS
 

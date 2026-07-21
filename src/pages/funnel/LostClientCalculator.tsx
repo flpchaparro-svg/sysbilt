@@ -209,6 +209,7 @@ export function LostClientCalculator({
     | 'crm-rescue'
     | 'team-ai'
     | 'change-pack'
+    | 'content-system'
   theme?: 'dark' | 'cream'
 }) {
   const rootRef = useRef<HTMLDivElement>(null)
@@ -217,19 +218,22 @@ export function LostClientCalculator({
   const isLanding = variant === 'landing-page'
   const isTeam = variant === 'team-ai'
   const isChange = variant === 'change-pack'
+  const isContent = variant === 'content-system'
   const [value, setValue] = useState(
-    isLanding ? 2000 : isTeam ? 8 : isChange ? 80 : DEFAULT_VALUE,
+    isLanding ? 2000 : isTeam ? 8 : isChange ? 80 : isContent ? 8 : DEFAULT_VALUE,
   )
   const [lost, setLost] = useState(
     isChange
       ? 4
-      : isTeam
-        ? 3
-        : variant === 'search-fix'
-          ? 4
-          : variant === 'crm-rescue'
-            ? 3
-            : DEFAULT_LOST,
+      : isContent
+        ? 1500
+        : isTeam
+          ? 3
+          : variant === 'search-fix'
+            ? 4
+            : variant === 'crm-rescue'
+              ? 3
+              : DEFAULT_LOST,
   )
   const [hourlyRate, setHourlyRate] = useState(75)
   const [valueDirty, setValueDirty] = useState(false)
@@ -312,11 +316,13 @@ export function LostClientCalculator({
               ? "What's on the table across the whole team"
               : isChange
                 ? 'What does month one of confusion cost'
-                : variant === 'search-fix'
-                  ? "What's being findable worth to you"
-                  : variant === 'crm-rescue'
-                    ? "What's one quiet enquiry worth to you"
-                    : "What's one lost client worth to you"}
+                : isContent
+                  ? 'How many decisions get made while looking at your channels'
+                  : variant === 'search-fix'
+                    ? "What's being findable worth to you"
+                    : variant === 'crm-rescue'
+                      ? "What's one quiet enquiry worth to you"
+                      : "What's one lost client worth to you"}
         </h3>
 
         <div
@@ -334,12 +340,14 @@ export function LostClientCalculator({
                   ? 'People on the team'
                   : isChange
                     ? 'People affected by the change'
-                    : 'Average client worth'
+                    : isContent
+                      ? 'Customers a month who check you out online'
+                      : 'Average client worth'
             }
-            prefix={isTeam || isChange ? undefined : '$'}
+            prefix={isTeam || isChange || isContent ? undefined : '$'}
             value={value}
-            step={isTeam || isChange ? 1 : 100}
-            min={isTeam || isChange ? 1 : 0}
+            step={isTeam || isChange || isContent ? 1 : 100}
+            min={isTeam || isChange || isContent ? 1 : 0}
             dirty={valueDirty}
             onDirty={() => setValueDirty(true)}
             onChange={setValue}
@@ -350,7 +358,9 @@ export function LostClientCalculator({
                   ? 'People on the team'
                   : isChange
                     ? 'People affected by the change'
-                    : 'Average client value in dollars'
+                    : isContent
+                      ? 'Customers a month who check you out online'
+                      : 'Average client value in dollars'
             }
             pulseArrows={inView && !reduce}
             theme={theme}
@@ -370,19 +380,22 @@ export function LostClientCalculator({
                     ? 'Hours a week each could hand to AI'
                     : isChange
                       ? 'Hours each loses to confusion in month one'
-                      : variant === 'missed-call'
-                        ? 'Missed calls a month'
-                        : variant === 'crm-rescue'
-                          ? 'Enquiries a month that go quiet'
-                          : variant === 'google-profile'
-                            ? 'Lost to a thin profile'
-                            : variant === 'search-fix'
-                              ? 'Clients a month via Google'
-                              : 'Lost to a slow site'
+                      : isContent
+                        ? 'An average client is worth about'
+                        : variant === 'missed-call'
+                          ? 'Missed calls a month'
+                          : variant === 'crm-rescue'
+                            ? 'Enquiries a month that go quiet'
+                            : variant === 'google-profile'
+                              ? 'Lost to a thin profile'
+                              : variant === 'search-fix'
+                                ? 'Clients a month via Google'
+                                : 'Lost to a slow site'
                 }
-                suffix={isTeam ? '/ week' : isChange ? undefined : '/ month'}
+                prefix={isContent ? '$' : undefined}
+                suffix={isTeam ? '/ week' : isChange || isContent ? undefined : '/ month'}
                 value={lost}
-                step={1}
+                step={isContent ? 100 : 1}
                 dirty={lostDirty}
                 onDirty={() => setLostDirty(true)}
                 onChange={setLost}
@@ -391,15 +404,17 @@ export function LostClientCalculator({
                     ? 'Hours a week each person could hand to AI'
                     : isChange
                       ? 'Hours each person loses to confusion in month one'
-                      : variant === 'missed-call'
-                        ? 'Missed calls per month'
-                        : variant === 'crm-rescue'
-                          ? 'Enquiries a month that go quiet'
-                          : variant === 'google-profile'
-                            ? 'Customers lost to a thin profile per month'
-                            : variant === 'search-fix'
-                              ? 'Clients a month who find you through Google'
-                              : 'Enquiries lost per month'
+                      : isContent
+                        ? 'Average client value in dollars'
+                        : variant === 'missed-call'
+                          ? 'Missed calls per month'
+                          : variant === 'crm-rescue'
+                            ? 'Enquiries a month that go quiet'
+                            : variant === 'google-profile'
+                              ? 'Customers lost to a thin profile per month'
+                              : variant === 'search-fix'
+                                ? 'Clients a month who find you through Google'
+                                : 'Enquiries lost per month'
                 }
                 pulseArrows={inView && !reduce}
                 theme={theme}
@@ -450,7 +465,9 @@ export function LostClientCalculator({
                 ? `That's ${formatMoney(display)} a year across the team.`
                 : isChange
                   ? `That's ${formatMoney(display)} in month one.`
-                  : `That's ${formatMoney(display)} a year, walking next door.`}
+                  : isContent
+                    ? `That's ${formatMoney(display)} a year of decisions made while looking at your feed.`
+                    : `That's ${formatMoney(display)} a year, walking next door.`}
           </motion.p>
           {isTeam ? (
             <p
@@ -478,7 +495,9 @@ export function LostClientCalculator({
                 ? 'The afternoon that unlocks them costs less than one week of one salary.'
                 : isChange
                   ? 'The pack costs less than one week of that bill.'
-                  : 'The fix costs less than one of them.'}
+                  : isContent
+                    ? 'Keeping it alive costs one hour of your month. The system does the rest.'
+                    : 'The fix costs less than one of them.'}
           </p>
           <p
             className="mt-3 font-sans text-sm leading-relaxed max-w-xl"
@@ -486,7 +505,9 @@ export function LostClientCalculator({
           >
             {isChange
               ? 'Your numbers, not ours. Change the three fields above. The dollar figure updates.'
-              : "Your numbers, not ours. Change them and watch. The leak doesn't care either way."}
+              : isContent
+                ? 'Your numbers, not ours. Change the two fields above. The dollar figure updates.'
+                : "Your numbers, not ours. Change them and watch. The leak doesn't care either way."}
           </p>
         </div>
       </div>
