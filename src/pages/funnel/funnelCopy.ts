@@ -49,7 +49,7 @@ export type FunnelProductCopy = {
   finalLabel: string
   finalHeading: string
   finalLine: string
-  /** Proof UI: pagespeed dial vs missed-call vs Google profile vs index check vs ad landing vs CRM vs team recognition */
+  /** Proof UI: pagespeed dial vs missed-call vs Google profile vs index check vs ad landing vs CRM vs team recognition vs content vs reviews vs AI phone vs booking */
   proofKind:
     | 'speed'
     | 'missed-call'
@@ -60,6 +60,9 @@ export type FunnelProductCopy = {
     | 'team-ai'
     | 'change-pack'
     | 'content-system'
+    | 'reviews'
+    | 'ai-phone'
+    | 'booking'
 }
 
 export const SPEED_FIX_COPY: FunnelProductCopy = {
@@ -1308,6 +1311,434 @@ export const CONTENT_SYSTEM_COPY: FunnelProductCopy = {
   proofKind: 'content-system',
 }
 
+export const REVIEWS_COPY: FunnelProductCopy = {
+  eyebrow: 'Fixed price · Two to three days · Habit that asks',
+  h1Generic:
+    'You have fewer reviews than the business ranking above you, and no system closing the gap',
+  h1Personal: (b: string) =>
+    `${b}, you have fewer reviews than the business ranking above you`,
+  sub: 'Star count is the first trust signal before the site loads. We wire an automatic ask after every job, write the wording in your voice, hand over QR and short link, and load response templates for good and bad reviews.',
+  ctaLabel: 'Fix my reviews · $1,100',
+  proofLabel: 'Sound familiar',
+  proofHeadingLive: 'Your reviews vs theirs',
+  proofHeadingGeneric: 'Your reviews vs theirs',
+  proofLead: (b: string | null) =>
+    b
+      ? `${b} has the jobs. The listing above you has the review count. Customers pick on that gap before they open your site.`
+      : 'You have the jobs. The listing above you has the review count. Customers pick on that gap before they open your site.',
+  proofLeadGeneric:
+    'Open your Google listing next to the business ranking above you. Count the reviews. That gap is already deciding who gets the call.',
+  proofAfter:
+    'The work did not stop. The asks did. Happy customers leave quiet unless someone asks at the right moment.',
+  proofAfterGeneric:
+    'Happy customers leave quiet unless someone asks at the right moment. That moment is right after the job.',
+  painLabel: 'What this is costing you',
+  painHeading: 'They pick on stars before they pick you',
+  painLines: [
+    'Google shows review count before your website loads. Fewer stars reads as risk, fair or not.',
+    'The competitor above you is not better at the work. They asked more often after jobs.',
+    'You meant to ask. The invoice went out, the next job started, and the ask never left your head.',
+    'A thin review trail keeps you looking smaller than the jobs you already do.',
+  ],
+  bridgeLabel: 'What we actually build',
+  bridgeHeading: 'Reviews stop being an afterthought',
+  bridgeBody:
+    'This is not a review farm and it is not a monthly retainer. We wire an automatic ask that fires after every completed job, write the wording in your voice, hand you a QR code and short link for the van and the invoice, and load calm response templates for good and bad reviews. Real customers only. We never post fake reviews.',
+  bridgeGaugeCaption:
+    'Automatic ask, your wording, QR and short link, reply templates. Live in two to three business days of access.',
+  benefitsLabel: 'What changes for you',
+  benefitsHeading: 'Outcomes, not jargon',
+  benefits: [
+    {
+      title: 'Every job gets an ask',
+      text: 'The review request fires after the work is done, so happy customers are not left guessing how to leave one.',
+    },
+    {
+      title: 'It sounds like you',
+      text: 'We write the SMS or email in your voice. Short, plain, no corporate script.',
+    },
+    {
+      title: 'QR and short link ready',
+      text: 'Print it for the van, the desk, or the invoice. One tap to your Google review page.',
+    },
+    {
+      title: 'You know what to say back',
+      text: 'Templates for good reviews and for the ones that sting, so replies do not sit in drafts.',
+    },
+  ],
+  processLabel: 'How it runs',
+  processHeading: 'Two to three days, then the habit asks for you',
+  processSteps: [
+    {
+      label: 'Day 1',
+      text: 'Access, your Google listing, and how jobs get marked complete.',
+    },
+    {
+      label: 'Day 2',
+      text: 'Wire the ask, write the wording, build the QR and short link, load the reply templates.',
+    },
+    {
+      label: 'Day 3',
+      text: 'Test with you, hand over, and leave the habit running. Many setups finish on day two.',
+    },
+  ],
+  stackLabel: 'Everything included',
+  stackHeading: 'One price, the full job, nothing extra to buy',
+  stackItems: [
+    {
+      title: 'Automatic review ask',
+      text: 'Fires after every completed job on the path you already use.',
+    },
+    {
+      title: 'Wording in your voice',
+      text: 'SMS and email copy that sounds like you, not a template farm.',
+    },
+    {
+      title: 'QR code and short link',
+      text: 'For the van, the counter, and the invoice footer.',
+    },
+    {
+      title: 'Good and bad reply templates',
+      text: 'Calm responses you can send without staring at a blank box.',
+    },
+    {
+      title: 'Systems Snapshot',
+      text: 'A one-page read on your wider setup, included with the pack.',
+    },
+    {
+      title: '14 days of aftercare',
+      text: 'If anything we touched misbehaves, we sort it, no charge.',
+    },
+  ],
+  scopeLine:
+    'Real customers only. We never post fake reviews, buy stars, or game Google. The engine asks. Your customers decide.',
+  priceLabel: 'Investment',
+  price: '$1,100',
+  priceLead: 'Paid once, and we start. No quotes, no meetings, no scope creep.',
+  guarantee:
+    'Our promise: the ask, the wording, the QR, and the templates are live within three business days of access, or we keep working at no extra cost until they are. Real customers only. We never post fake reviews.',
+  priceAnchor:
+    'That is about one job a thin review trail costs you when someone picks the listing with more stars.',
+  faqLabel: 'Objections',
+  faqHeading: 'Straight answers before you buy',
+  faqs: [
+    {
+      q: 'Do you post reviews for us?',
+      a: 'No. We never post fake reviews, buy stars, or write reviews pretending to be customers. We build the ask. Real people leave real reviews.',
+    },
+    {
+      q: 'Is this refundable?',
+      a: 'There is no change-of-mind refund, because we start straight away. What you have instead: the ask, wording, QR, and templates go live within three business days of access, or we keep working at no extra cost until they do.',
+    },
+    {
+      q: 'What if I already ask sometimes?',
+      a: 'Sometimes is the problem. This makes the ask automatic after every job, so it does not depend on remembering at 6pm.',
+    },
+    {
+      q: 'Are there ongoing costs?',
+      a: 'Our fee is once. SMS or email costs sit on whatever account you already use, usually a few cents per ask.',
+    },
+    {
+      q: 'How long does it take?',
+      a: 'Two to three business days from access. Many setups finish on day two once we can reach your listing and job flow.',
+    },
+    {
+      q: 'What do you need from me?',
+      a: 'Access to your Google Business Profile, how you mark jobs complete, and a few minutes on the access form after payment.',
+    },
+  ],
+  finalLabel: 'Last step',
+  finalHeading: 'Next finished job, the ask goes out without you thinking about it',
+  finalLine:
+    'Pay once, complete the short access form, and we hand over the ask, the QR, and the reply templates in two to three days.',
+  proofKind: 'reviews',
+}
+
+export const AI_PHONE_COPY: FunnelProductCopy = {
+  eyebrow: 'Fixed price setup · Their account · Voice that books',
+  h1Generic: 'After hours and mid-job, the call still gets answered',
+  h1Personal: (b: string) =>
+    `${b}, after hours and mid-job, the call still gets answered`,
+  sub: "We do not sell you a monthly receptionist. We set up a voice agent on your own vendor account, load your knowledge, wire calendar and CRM, tune the voice, test live with you listening, and hand over the keys. You pay the vendor's monthly fee directly.",
+  ctaLabel: 'Set up my AI phone · $1,950',
+  proofLabel: 'The leak',
+  proofHeadingLive: 'They called after hours, and voicemail was the whole answer',
+  proofHeadingGeneric: 'They called after hours, and voicemail was the whole answer',
+  proofLead: (b: string | null) =>
+    b
+      ? `Someone rings ${b} ready to book. You're on a job, or it's after hours. The call hits voicemail or rings out. No answers, no booking, nothing to hold them.`
+      : "Someone rings ready to book. You're on a job, or it's after hours. The call hits voicemail or rings out. No answers, no booking, nothing to hold them.",
+  proofLeadGeneric:
+    "Someone rings ready to book. You're on a job, or it's after hours. The call hits voicemail or rings out. No answers, no booking, nothing to hold them.",
+  proofAfter:
+    "A text can hold the lead. A voice agent answers, books, and hands off. Voicemail does neither. That's the gap this setup closes.",
+  proofAfterGeneric:
+    "A text can hold the lead. A voice agent answers, books, and hands off. Voicemail does neither. That's the gap this setup closes.",
+  painLabel: 'What this is costing you',
+  painHeading: "You're losing callers who were ready to book",
+  painLines: [
+    'After hours and mid-job, the phone still rings. Voicemail or ring-out is what they get.',
+    "They don't leave a message. They call the next business that picks up.",
+    'Missed-Call Text-Back holds them with a reply. This goes further: it answers, books, and hands off cleanly.',
+    'Every silent miss is a job you paid to attract, then gave away.',
+  ],
+  bridgeLabel: 'The fix',
+  bridgeHeading: 'One setup on your account, live-tested, then yours',
+  bridgeBody:
+    "This isn't a monthly AI receptionist from us, and it isn't a twelve month retainer. It's a voice agent set up on your own vendor account (Synthflow, Vapi, or the same class), loaded with your knowledge, wired to calendar and CRM, tuned, tested live with you listening, then handed over. You pay the vendor's monthly fee directly. No surprise invoice from us in month four.",
+  bridgeGaugeCaption:
+    "When we're done, we place a live test call with you on the line. You hear it answer, book, and hand off. Then we leave you the runbook and the keys.",
+  benefitsLabel: 'What changes for you',
+  benefitsHeading: 'Outcomes, not jargon',
+  benefits: [
+    {
+      title: 'The call gets answered',
+      text: 'After hours and mid-job, a voice agent picks up in your name, so the caller is not left with silence or a dead voicemail.',
+    },
+    {
+      title: 'It books, then hands off',
+      text: 'Common questions get answered. Ready callers get a booking. Anything that needs a human gets a clean handoff, not a dead end.',
+    },
+    {
+      title: 'You own the account',
+      text: 'We set it up on your vendor login. You keep the agent, the knowledge, and the bill with them. We are not your middle-man subscription.',
+    },
+    {
+      title: 'A few business days',
+      text: 'From the moment we have access and your knowledge pack. We test live with you before we call it done.',
+    },
+  ],
+  processLabel: 'How it runs',
+  processHeading: 'A few business days, then you hear it live',
+  processSteps: [
+    {
+      label: 'Day 1',
+      text: 'Access, vendor account, and the knowledge we need: hours, services, FAQs, booking rules.',
+    },
+    {
+      label: 'Day 2',
+      text: 'Build the agent, wire calendar and CRM, tune the voice and the handoff paths.',
+    },
+    {
+      label: 'Day 3+',
+      text: 'Live test call with you listening, refine, then hand over the runbook and keys.',
+    },
+  ],
+  stackLabel: 'Everything included',
+  stackHeading: 'One price, the full setup, nothing extra from us',
+  stackItems: [
+    {
+      title: 'Voice agent setup on your account',
+      text: 'Built on your Synthflow, Vapi, or equivalent vendor login, not locked inside ours.',
+    },
+    {
+      title: 'Knowledge load',
+      text: 'Hours, services, FAQs, tone, and booking rules so it sounds like your business.',
+    },
+    {
+      title: 'Calendar and CRM wiring',
+      text: 'Bookings land where you already work. Handoffs reach the right phone or inbox.',
+    },
+    {
+      title: 'Live proof and runbook',
+      text: 'A test call with you listening, plus plain steps so your team can adjust later.',
+    },
+    {
+      title: '14 days of aftercare',
+      text: 'If anything we set up misbehaves, we sort it, no charge.',
+    },
+  ],
+  scopeLine:
+    'One Australian business number and one voice agent on your vendor account. Complex multi-site or call-centre stacks get a same-day quote so the fixed price stays honest.',
+  priceLabel: 'Investment',
+  price: '$1,950',
+  priceLead: 'Paid once for setup, and we start. No quotes, no meetings, no scope creep from us.',
+  guarantee:
+    "Our promise: we prove the agent on a live test call with you listening before we hand it over. If it doesn't answer and book as scoped, we keep working at no extra cost until it does.",
+  priceAnchor:
+    "One-time setup, not another endless SaaS bill from us. You pay the vendor about $50 to $200 a month directly for the voice platform, the same way Missed-Call Text-Back leaves SMS costs on your messaging account. This charges you once for the build.",
+  faqLabel: 'Objections',
+  faqHeading: 'Straight answers before you buy',
+  faqs: [
+    {
+      q: 'Is this a monthly receptionist from SYSBILT?',
+      a: 'No. We sell the setup. The voice agent lives on your vendor account. You own it. We are not billing you every month to be your AI receptionist.',
+    },
+    {
+      q: 'Are there ongoing costs?',
+      a: "Our fee is once. The vendor's voice platform usually runs about $50 to $200 a month, paid by you directly to them. Usage can sit on top of that, depending on call volume. Same idea as Missed-Call Text-Back: we wire it, you pay the carrier or messaging fees.",
+    },
+    {
+      q: 'How is this different from Missed-Call Text-Back?',
+      a: 'Missed-Call Text-Back ($750) sends a text when the call is missed, so the lead stays warm. AI Phone Setup answers the call, handles questions, books, and hands off. Text holds. Voice closes more of the loop.',
+    },
+    {
+      q: 'What do you load into the agent?',
+      a: 'Your hours, services, FAQs, tone, booking rules, and when to hand to a human. We work from what you already tell customers, not a generic script.',
+    },
+    {
+      q: 'How do you prove it works?',
+      a: 'We place a live test call with you listening before we hand it over. You hear it answer, book, and hand off. If it fails that test, we keep working at no extra cost until it passes.',
+    },
+    {
+      q: 'How long does it take?',
+      a: 'A few business days from access and a usable knowledge pack. Complex calendars or CRM wiring can add a day. We never leave you guessing where it sits.',
+    },
+    {
+      q: 'What do you need from me?',
+      a: 'A vendor account (or we help you open one), your business number, calendar access, CRM or lead inbox if you have one, and the FAQs and booking rules. The access form after payment lists it in plain English.',
+    },
+    {
+      q: 'Is this refundable?',
+      a: "There is no change-of-mind refund, because we start straight away. What you have instead is stronger: live proof with you listening before handover. If the scoped answer-and-book path doesn't work, we keep fixing it at no extra cost.",
+    },
+  ],
+  finalLabel: 'Last step',
+  finalHeading: 'Next after-hours call, someone answers in your name',
+  finalLine:
+    'Pay once for setup, complete the short access form, and we prove the agent on a live test call before we hand over the keys.',
+  proofKind: 'ai-phone',
+}
+
+
+export const BOOKING_COPY: FunnelProductCopy = {
+  eyebrow: 'Fixed price · Two to three days · Book now that sticks',
+  h1Generic: 'Customers who want you right now still have to call and hope',
+  h1Personal: (b: string) =>
+    `${b}, customers who want you right now still have to call and hope`,
+  sub: 'Phone tag, email chains, and DMs are how appointments still get made. No Book now on the site or Google panel. No-shows pile up because nothing reminds them. We wire online booking to your real calendar, with confirmations, reminders, and a no-show text sequence, then put Book now where people already look.',
+  ctaLabel: 'Fix my booking · $1,500',
+  proofLabel: 'This is you, right now',
+  proofHeadingLive: 'This is you, right now',
+  proofHeadingGeneric: 'Try it now',
+  proofLead: (b: string | null) =>
+    b
+      ? `We looked for Book now on ${b}'s site and Google panel. It isn't there, or it doesn't land on a real calendar.`
+      : 'Open your own site and your Google panel. Look for Book now. If you cannot tap it and pick a time, that is the leak.',
+  proofLeadGeneric:
+    'Open your own site and your Google panel. Look for Book now. If you cannot tap it and pick a time, that is the leak.',
+  proofAfter:
+    'Ready customers do not wait for a callback. They book the business that lets them finish in one tap.',
+  proofAfterGeneric:
+    'Ready customers do not wait for a callback. They book the business that lets them finish in one tap.',
+  painLabel: 'What this is costing you',
+  painHeading: 'Every no-show and every phone-tag loop is money you already paid to attract',
+  painLines: [
+    'A no-show is not just an empty slot. It is the ad, the enquiry, and the hour you held that never turned into work.',
+    'Phone tag and DM chase feel free until you count the hours and the warm leads who booked elsewhere while you were busy.',
+    'The competitor with Book now on the site and Google panel takes the person who was ready tonight.',
+    'Run the numbers below on one lost booking or one empty hour. That is the cost of leaving booking on hope.',
+  ],
+  bridgeLabel: 'The fix',
+  bridgeHeading: 'Online booking on the calendar you already use, live in two to three days',
+  bridgeBody:
+    'This is not a new software religion. We set up HubSpot Meetings, Calendly, or whatever booking tool you already have, wired to your real calendar. Confirmations go out. Reminders go out. A no-show text sequence follows empty slots. Book now lands on your site and your Google profile so the ready customer finishes without calling.',
+  bridgeGaugeCaption:
+    'Book now on site and Google. Slot chosen. Confirmation and reminder texts. Empty slots chased. Working within two to three business days of access.',
+  benefitsLabel: 'What changes for you',
+  benefitsHeading: 'Outcomes, not jargon',
+  benefits: [
+    {
+      title: 'They book while intent is hot',
+      text: 'One tap on the site or Google panel. Real availability. No waiting for you to reply.',
+    },
+    {
+      title: 'Your calendar stays the source of truth',
+      text: 'Bookings write into the calendar you already live in. No double-entry, no mystery spreadsheet.',
+    },
+    {
+      title: 'Fewer empty chairs',
+      text: 'Confirmations and reminders cut the quiet no-shows. An empty slot triggers a plain text sequence.',
+    },
+    {
+      title: 'Done in two to three business days',
+      text: 'From the moment we have access. You keep the tool. We leave the setup working.',
+    },
+  ],
+  processLabel: 'How it runs',
+  processHeading: 'Two to three days, then Book now is live',
+  processSteps: [
+    {
+      label: 'Day 1',
+      text: 'Access, calendar rules, and the booking tool you already have or the lightest fit we agree on.',
+    },
+    {
+      label: 'Day 2',
+      text: 'Confirmations, reminders, no-show texts, and Book now on the site plus Google profile.',
+    },
+    {
+      label: 'Day 3 if needed',
+      text: 'Live test a real booking with you, tune the copy, and hand over how to change hours.',
+    },
+  ],
+  stackLabel: 'Everything included',
+  stackHeading: 'One price, the full booking setup, nothing extra to buy',
+  stackItems: [
+    {
+      title: 'Booking tool wired to your calendar',
+      text: 'HubSpot Meetings, Calendly, or what you already pay for. Plain English setup, not a sales pitch for software.',
+    },
+    {
+      title: 'Confirmations, reminders, no-show sequence',
+      text: 'Texts and emails that fire when someone books, before they arrive, and when a slot goes empty.',
+    },
+    {
+      title: 'Book now on site and Google',
+      text: 'The button where ready customers already look.',
+    },
+    {
+      title: 'Systems Snapshot',
+      text: "A one-page read on your wider setup, plus the one thing we'd fix next.",
+    },
+    {
+      title: '14 days of aftercare',
+      text: 'If booking misbehaves after handoff, we sort it, no charge.',
+    },
+  ],
+  scopeLine:
+    'One business, one primary calendar, one booking flow. Extra locations or staff calendars get a same-day quote so the fixed price stays honest.',
+  priceLabel: 'Investment',
+  price: '$1,500',
+  priceLead: 'Paid once, and we start. No quotes, no meetings about meetings.',
+  guarantee:
+    "Our promise: if Book now is not live on the agreed surfaces and bookings are not landing on your calendar as described, we keep working at no extra cost until they are.",
+  priceAnchor:
+    "That's about one recovered booking or one empty hour you stop eating. The leak charges you every week. This charges you once.",
+  faqLabel: 'Objections',
+  faqHeading: 'Straight answers before you buy',
+  faqs: [
+    {
+      q: 'Which booking tool do you use?',
+      a: 'Whatever you already have, if it can sync a real calendar. HubSpot Meetings and Calendly are common. If you have nothing, we pick the lightest option that fits and explain the monthly cost in plain English before we lock it in.',
+    },
+    {
+      q: 'Will it sync with my calendar?',
+      a: 'Yes. Availability comes from your real calendar, and new bookings write back into it. That is the whole point.',
+    },
+    {
+      q: 'Do reminders actually go out?',
+      a: 'Confirmations when they book, reminders before the appointment, and a text sequence when a slot goes empty. You approve the wording before it goes live.',
+    },
+    {
+      q: 'Can Book now sit on my Google profile too?',
+      a: 'Yes. Site and Google Business Profile are both in scope when you have access to the listing.',
+    },
+    {
+      q: 'What do you need from me?',
+      a: 'A short access form after payment: calendar access, the booking tool if you have one, site and Google login paths, and your usual hours. About ten minutes. Most of the build is us.',
+    },
+    {
+      q: 'Is this refundable?',
+      a: 'No change-of-mind refund, because we start straight away. Instead: if Book now is not live and bookings are not landing as described, we keep working free until they are.',
+    },
+  ],
+  finalLabel: 'Last step',
+  finalHeading: 'Two to three days from now, ready customers book without calling',
+  finalLine:
+    'Book now on the site and Google. Confirmations and reminders on. Empty slots chased. Your calendar stays the truth.',
+  proofKind: 'booking',
+}
+
 export function funnelCopyForSlug(slug: string | undefined): FunnelProductCopy {
   if (slug === 'missed-call') return MISSED_CALL_COPY
   if (slug === 'google-profile') return GOOGLE_PROFILE_COPY
@@ -1317,5 +1748,8 @@ export function funnelCopyForSlug(slug: string | undefined): FunnelProductCopy {
   if (slug === 'team-ai') return TEAM_AI_COPY
   if (slug === 'change-pack') return CHANGE_PACK_COPY
   if (slug === 'content-system') return CONTENT_SYSTEM_COPY
+  if (slug === 'reviews') return REVIEWS_COPY
+  if (slug === 'ai-phone') return AI_PHONE_COPY
+  if (slug === 'booking') return BOOKING_COPY
   return SPEED_FIX_COPY
 }

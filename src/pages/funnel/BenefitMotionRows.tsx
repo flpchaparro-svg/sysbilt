@@ -1532,16 +1532,19 @@ export function BenefitMotionRows({
     | 'team-ai'
     | 'change-pack'
     | 'content-system'
+    | 'reviews'
+    | 'ai-phone'
+    | 'booking'
 }) {
   const reduce = useReducedMotion()
   const visuals =
-    variant === 'missed-call'
+    variant === 'missed-call' || variant === 'ai-phone'
       ? MISSED_VISUALS
-      : variant === 'google-profile'
+      : variant === 'google-profile' || variant === 'reviews'
         ? PROFILE_VISUALS
         : variant === 'search-fix'
           ? SEARCH_VISUALS
-          : variant === 'landing-page'
+          : variant === 'landing-page' || variant === 'booking'
             ? LANDING_VISUALS
             : variant === 'crm-rescue'
               ? CRM_VISUALS

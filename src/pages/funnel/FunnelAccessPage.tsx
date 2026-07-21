@@ -1414,11 +1414,15 @@ const FunnelAccessPage: React.FC = () => {
   const [helpOpen, setHelpOpen] = useState(false)
 
   const isMissedCall = product === 'missed-call'
+  const isAiPhone = product === 'ai-phone'
   const isGoogleProfile = product === 'google-profile'
+  const isReviews = product === 'reviews'
   const isCrmRescue = product === 'crm-rescue'
   const isTeamAi = product === 'team-ai'
   const isChangePack = product === 'change-pack'
   const isContentSystem = product === 'content-system'
+  const usesMissedWizard = isMissedCall || isAiPhone
+  const usesGoogleWizard = isGoogleProfile || isReviews
   const productKind:
     | 'speed'
     | 'missed-call'
@@ -1427,9 +1431,9 @@ const FunnelAccessPage: React.FC = () => {
     | 'team-ai'
     | 'change-pack'
     | 'content-system' =
-    isMissedCall
+    usesMissedWizard
       ? 'missed-call'
-      : isGoogleProfile
+      : usesGoogleWizard
         ? 'google-profile'
         : isCrmRescue
           ? 'crm-rescue'
@@ -1440,9 +1444,9 @@ const FunnelAccessPage: React.FC = () => {
               : isContentSystem
                 ? 'content-system'
                 : 'speed'
-  const phases = isMissedCall
+  const phases = usesMissedWizard
     ? PHASES_MISSED
-    : isGoogleProfile
+    : usesGoogleWizard
       ? PHASES_GOOGLE
       : isCrmRescue
         ? PHASES_CRM
@@ -1457,7 +1461,7 @@ const FunnelAccessPage: React.FC = () => {
   const stepOrder = useMemo((): StepId[] => {
     // Always show the product picker first so buyers see their purchase highlighted
     // and can still spot the other doors. ?p= only pre-selects.
-    if (isMissedCall) {
+    if (usesMissedWizard) {
       return [
         'product',
         'name',
@@ -1471,7 +1475,7 @@ const FunnelAccessPage: React.FC = () => {
         'done',
       ]
     }
-    if (isGoogleProfile) {
+    if (usesGoogleWizard) {
       return [
         'product',
         'name',
@@ -1567,7 +1571,9 @@ const FunnelAccessPage: React.FC = () => {
   }, [
     sameProvider,
     isMissedCall,
+    isAiPhone,
     isGoogleProfile,
+    isReviews,
     isCrmRescue,
     isTeamAi,
     isChangePack,
@@ -1593,9 +1599,9 @@ const FunnelAccessPage: React.FC = () => {
     return [selected, ...all.filter((p) => p.code !== product)]
   }, [product])
   const canGoBack = step !== 'done' && step !== firstStep
-  const accessOptions = isMissedCall
+  const accessOptions = usesMissedWizard
     ? MISSED_CALL_ACCESS_OPTIONS
-    : isGoogleProfile
+    : usesGoogleWizard
       ? GOOGLE_PROFILE_ACCESS_OPTIONS
       : isCrmRescue
         ? CRM_ACCESS_OPTIONS
@@ -1623,12 +1629,12 @@ const FunnelAccessPage: React.FC = () => {
       setError('Something is missing. Use Back to check your answers.')
       return
     }
-    if (isMissedCall) {
+    if (usesMissedWizard) {
       if (!phoneSetup) {
         setError('Something is missing. Use Back to check your answers.')
         return
       }
-    } else if (isGoogleProfile) {
+    } else if (usesGoogleWizard) {
       if (!profileStatus) {
         setError('Something is missing. Use Back to check your answers.')
         return
@@ -1681,7 +1687,7 @@ const FunnelAccessPage: React.FC = () => {
     }
     setSubmitting(true)
     setError(null)
-    const payload: FunnelAccessPayload = isMissedCall
+    const payload: FunnelAccessPayload = usesMissedWizard
       ? {
           product,
           name: name.trim(),
@@ -1693,7 +1699,7 @@ const FunnelAccessPage: React.FC = () => {
           accessDetail: accessDetail.trim(),
           notes: notes.trim(),
         }
-      : isGoogleProfile
+      : usesGoogleWizard
         ? {
             product,
             name: name.trim(),
@@ -2831,7 +2837,7 @@ const FunnelAccessPage: React.FC = () => {
               <OneField
                 title="Anything we should know about access?"
                 hint={
-                  isMissedCall
+                  usesMissedWizard
                     ? accessPath === 'forward'
                       ? 'Carrier name, or how you change divert today.'
                       : accessPath === 'provider'
@@ -2839,7 +2845,7 @@ const FunnelAccessPage: React.FC = () => {
                         : accessPath === 'crm'
                           ? 'Which CRM, and whether calls already log there.'
                           : 'Best times to call, or anything that usually trips people up.'
-                    : isGoogleProfile
+                    : usesGoogleWizard
                       ? accessPath === 'invite'
                         ? 'The Google account email that can add managers, or say you will send the invite shortly.'
                         : 'Best times to call, or anything that usually trips people up.'

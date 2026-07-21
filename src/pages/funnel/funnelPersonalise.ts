@@ -1,5 +1,6 @@
 /**
- * Runtime personalisation for /go/ pages via ?b=, ?s=, ?d=, ?t=, ?c=, ?n= URL params.
+ * Runtime personalisation for /go/ pages via ?b=, ?s=, ?d=, ?t=, ?c=, ?n=, ?r=, ?m= URL params.
+ * Review Engine: ?b= business, ?n= your review count, ?c= competitor, ?r= their count (optional).
  * Never persisted. Fail closed to the generic page variant.
  */
 
@@ -71,6 +72,16 @@ export function parseBlockedPages(raw: string | null | undefined): number | null
   if (!/^\d{1,3}$/.test(trimmed)) return null
   const n = Number(trimmed)
   if (!Number.isInteger(n) || n < 1 || n > 500) return null
+  return n
+}
+
+/** Review count for Review Engine evidence (?n= your, ?r= competitor), integer 0–9999. */
+export function parseReviewCount(raw: string | null | undefined): number | null {
+  if (raw == null || raw === '') return null
+  const trimmed = raw.trim()
+  if (!/^\d{1,4}$/.test(trimmed)) return null
+  const n = Number(trimmed)
+  if (!Number.isInteger(n) || n < 0 || n > 9999) return null
   return n
 }
 

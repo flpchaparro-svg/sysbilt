@@ -1275,16 +1275,19 @@ export function StackMotionRows({
     | 'team-ai'
     | 'change-pack'
     | 'content-system'
+    | 'reviews'
+    | 'ai-phone'
+    | 'booking'
 }) {
   const reduce = useReducedMotion()
   const visuals =
-    variant === 'missed-call'
+    variant === 'missed-call' || variant === 'ai-phone'
       ? MISSED_VISUALS
-      : variant === 'google-profile'
+      : variant === 'google-profile' || variant === 'reviews'
         ? PROFILE_STACK_VISUALS
         : variant === 'search-fix'
           ? SEARCH_STACK_VISUALS
-          : variant === 'landing-page'
+          : variant === 'landing-page' || variant === 'booking'
             ? LANDING_STACK_VISUALS
             : variant === 'crm-rescue'
               ? CRM_STACK_VISUALS

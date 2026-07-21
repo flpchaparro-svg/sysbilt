@@ -53,8 +53,24 @@ import {ContentLastPostCard} from './ContentLastPostCard'
 import {ContentFeedLeakPair} from './ContentFeedLeakPair'
 import {ContentPainCards} from './ContentPainCards'
 import {ContentMonthDeliverableMock} from './ContentMonthDeliverableMock'
+import {ReviewEvidenceCard} from './ReviewEvidenceCard'
+import {ReviewLeakPair} from './ReviewLeakPair'
+import {ReviewPainCards} from './ReviewPainCards'
+import {ReviewDeliverableMock} from './ReviewDeliverableMock'
+import {
+  AiPhoneEvidenceCard,
+  type AiPhoneEvidence,
+} from './AiPhoneEvidenceCard'
+import {AiPhoneLeakPair} from './AiPhoneLeakPair'
+import {AiPhonePainCards} from './AiPhonePainCards'
+import {AiPhoneDeliverableMock} from './AiPhoneDeliverableMock'
+import {BookingEvidenceCard} from './BookingEvidenceCard'
+import {BookingLeakPair} from './BookingLeakPair'
+import {BookingPainCards} from './BookingPainCards'
+import {BookingDeliverableMock} from './BookingDeliverableMock'
 import {
   parseBlockedPages,
+  parseReviewCount,
   parseSpeedScore,
   sanitiseBusinessName,
   sanitiseCallDay,
@@ -206,8 +222,13 @@ const FunnelPage: React.FC = () => {
   const isTeamAi = proofKind === 'team-ai'
   const isChangePack = proofKind === 'change-pack'
   const isContentSystem = proofKind === 'content-system'
+  const isReviews = proofKind === 'reviews'
+  const isAiPhone = proofKind === 'ai-phone'
+  const isBooking = proofKind === 'booking'
   const isSpeed = proofKind === 'speed'
   const lastPostMonth = useMemo(() => sanitiseLastPostMonth(params.get('m')), [params])
+  const yourReviews = useMemo(() => parseReviewCount(params.get('n')), [params])
+  const theirReviews = useMemo(() => parseReviewCount(params.get('r')), [params])
   const motionVariant = isMissedCall
     ? 'missed-call'
     : isGoogleProfile
@@ -224,7 +245,13 @@ const FunnelPage: React.FC = () => {
                 ? 'change-pack'
                 : isContentSystem
                   ? 'content-system'
-                  : 'speed'
+                  : isReviews
+                    ? 'reviews'
+                    : isAiPhone
+                      ? 'ai-phone'
+                      : isBooking
+                        ? 'booking'
+                        : 'speed'
   const calculatorVariant = isSpeed
     ? 'speed'
     : isMissedCall
@@ -237,12 +264,24 @@ const FunnelPage: React.FC = () => {
             ? 'change-pack'
             : isContentSystem
               ? 'content-system'
-              : isSearchFix
-                ? 'search-fix'
-                : isLandingPage
-                  ? 'landing-page'
-                  : 'google-profile'
+              : isReviews
+                ? 'reviews'
+                : isAiPhone
+                  ? 'ai-phone'
+                  : isBooking
+                    ? 'booking'
+                    : isSearchFix
+                      ? 'search-fix'
+                      : isLandingPage
+                        ? 'landing-page'
+                        : 'google-profile'
   const missedEvidence: MissedCallEvidence = useMemo(() => {
+    if (business && callDay && callTime) {
+      return {mode: 'tested', business, day: callDay, time: callTime}
+    }
+    return {mode: 'try'}
+  }, [business, callDay, callTime])
+  const aiPhoneEvidence: AiPhoneEvidence = useMemo(() => {
     if (business && callDay && callTime) {
       return {mode: 'tested', business, day: callDay, time: callTime}
     }
@@ -314,16 +353,23 @@ const FunnelPage: React.FC = () => {
   }, [slug])
 
   const rawLabel = doc?.ctaLabel || COPY.ctaLabel
+  const buyDoorNeedsAccess =
+    (isReviews || isAiPhone || isBooking) && !doc?.stripeUrl
   const ctaFields: FunnelCtaFields = {
-    ctaMode: doc?.ctaMode || (isChangePack || isContentSystem ? 'call' : 'buy'),
+    ctaMode: buyDoorNeedsAccess
+      ? 'call'
+      : doc?.ctaMode || (isChangePack || isContentSystem ? 'call' : 'buy'),
     // Authored labels already include price text. Only normalise a comma before $ into one middle dot.
     ctaLabel: rawLabel.replace(/,\s*(?=\$)/, ' · ').replace(/\s*·\s*·\s*(?=\$)/, ' · '),
     stripeUrl: doc?.stripeUrl,
-    schedulerUrl:
-      doc?.schedulerUrl ||
-      (isChangePack || isContentSystem
-        ? accessFormPathForProduct(isContentSystem ? 'content-system' : 'change-pack')
-        : undefined),
+    schedulerUrl: buyDoorNeedsAccess
+      ? accessFormPathForProduct(
+          isReviews ? 'reviews' : isAiPhone ? 'ai-phone' : 'booking',
+        )
+      : doc?.schedulerUrl ||
+        (isChangePack || isContentSystem
+          ? accessFormPathForProduct(isContentSystem ? 'content-system' : 'change-pack')
+          : undefined),
     secondaryCtaLabel: doc?.secondaryCtaLabel,
     secondaryUrl: doc?.secondaryUrl,
     priceOptions: doc?.priceOptions,
@@ -434,7 +480,10 @@ const FunnelPage: React.FC = () => {
               isCrmRescue ||
               isTeamAi ||
               isChangePack ||
-              isContentSystem
+              isContentSystem ||
+              isReviews ||
+              isAiPhone ||
+              isBooking
                 ? 'max-w-3xl'
                 : 'max-w-5xl'
             }`}
@@ -469,6 +518,16 @@ const FunnelPage: React.FC = () => {
             {isContentSystem ? (
               <ContentLastPostCard business={business} lastPostMonth={lastPostMonth} />
             ) : null}
+            {isReviews ? (
+              <ReviewEvidenceCard
+                business={business}
+                yourCount={yourReviews}
+                competitor={competitor}
+                theirCount={theirReviews}
+              />
+            ) : null}
+            {isAiPhone ? <AiPhoneEvidenceCard evidence={aiPhoneEvidence} /> : null}
+            {isBooking ? <BookingEvidenceCard business={business} /> : null}
             {!(isSearchFix && searchEvidence.mode === 'try') &&
             !(isLandingPage && adEvidence.mode === 'try') &&
             !(isCrmRescue && crmEvidence.mode === 'try') &&
@@ -483,7 +542,10 @@ const FunnelPage: React.FC = () => {
                     isCrmRescue ||
                     isTeamAi ||
                     isChangePack ||
-                    isContentSystem
+                    isContentSystem ||
+                    isReviews ||
+                    isAiPhone ||
+                    isBooking
                       ? 'mt-8'
                       : ''
                   }`}
@@ -714,6 +776,51 @@ const FunnelPage: React.FC = () => {
                 </Reveal>
                 <ContentFeedLeakPair lastPostMonth={lastPostMonth} />
               </section>
+            ) : isReviews ? (
+              <section className="mt-12 md:mt-14">
+                <Reveal y={10}>
+                  <SectionLabel>The leak</SectionLabel>
+                </Reveal>
+                <Reveal delay={0.06} y={14}>
+                  <h3
+                    className="font-serif font-bold text-2xl md:text-3xl tracking-tight mb-4 max-w-2xl"
+                    style={{color: FUNNEL_COLOURS.ink}}
+                  >
+                    Happy customers leave quiet unless someone asks
+                  </h3>
+                </Reveal>
+                <ReviewLeakPair />
+              </section>
+            ) : isAiPhone ? (
+              <section className="mt-12 md:mt-14">
+                <Reveal y={10}>
+                  <SectionLabel>The leak</SectionLabel>
+                </Reveal>
+                <Reveal delay={0.06} y={14}>
+                  <h3
+                    className="font-serif font-bold text-2xl md:text-3xl tracking-tight mb-4 max-w-2xl"
+                    style={{color: FUNNEL_COLOURS.ink}}
+                  >
+                    Voicemail holds nothing. A voice agent books
+                  </h3>
+                </Reveal>
+                <AiPhoneLeakPair businessName={business} />
+              </section>
+            ) : isBooking ? (
+              <section className="mt-12 md:mt-14">
+                <Reveal y={10}>
+                  <SectionLabel>The leak</SectionLabel>
+                </Reveal>
+                <Reveal delay={0.06} y={14}>
+                  <h3
+                    className="font-serif font-bold text-2xl md:text-3xl tracking-tight mb-4 max-w-2xl"
+                    style={{color: FUNNEL_COLOURS.ink}}
+                  >
+                    Phone tag is not a booking system
+                  </h3>
+                </Reveal>
+                <BookingLeakPair />
+              </section>
             ) : (
               <>
                 <ScoreMoment
@@ -777,6 +884,12 @@ const FunnelPage: React.FC = () => {
                 <ChangePainCards />
               ) : isContentSystem ? (
                 <ContentPainCards />
+              ) : isReviews ? (
+                <ReviewPainCards />
+              ) : isAiPhone ? (
+                <AiPhonePainCards />
+              ) : isBooking ? (
+                <BookingPainCards />
               ) : (
                 <PainCostCards />
               )}
@@ -828,7 +941,12 @@ const FunnelPage: React.FC = () => {
               <div className="mt-10">
                 <CrmFixedThreadMock />
               </div>
-            ) : isTeamAi || isChangePack || isContentSystem ? null : (
+            ) : isTeamAi ||
+              isChangePack ||
+              isContentSystem ||
+              isReviews ||
+              isAiPhone ||
+              isBooking ? null : (
               <ScoreMoment score={90} mode="benchmark" />
             )}
           </section>
@@ -978,6 +1096,12 @@ const FunnelPage: React.FC = () => {
                   <ChangePackDeliverableMock />
                 ) : isContentSystem ? (
                   <ContentMonthDeliverableMock />
+                ) : isReviews ? (
+                  <ReviewDeliverableMock />
+                ) : isAiPhone ? (
+                  <AiPhoneDeliverableMock />
+                ) : isBooking ? (
+                  <BookingDeliverableMock />
                 ) : (
                   <ReportDeliverableMock />
                 )}

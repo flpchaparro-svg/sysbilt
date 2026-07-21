@@ -9,8 +9,11 @@ const PRODUCT_CODES = new Set([
   'speed-fix',
   'missed-call',
   'google-profile',
+  'reviews',
   'search-fix',
+  'booking',
   'landing-page',
+  'ai-phone',
   'crm-rescue',
   'team-ai',
   'change-pack',
@@ -20,8 +23,11 @@ const PRODUCT_LABELS: Record<string, string> = {
   'speed-fix': 'Website Speed Fix',
   'missed-call': 'Missed-Call Text-Back',
   'google-profile': 'Google Profile Fix',
+  reviews: 'Review Engine',
   'search-fix': 'Search Visibility Fix',
+  booking: 'Booking System',
   'landing-page': 'Campaign Landing Page',
+  'ai-phone': 'AI Phone Setup',
   'crm-rescue': 'CRM Rescue',
   'team-ai': 'Team AI',
   'change-pack': 'Change Pack',
@@ -31,8 +37,11 @@ const PRODUCT_AMOUNTS: Record<string, string> = {
   'speed-fix': '1200',
   'missed-call': '750',
   'google-profile': '600',
+  reviews: '1100',
   'search-fix': '1400',
+  booking: '1500',
   'landing-page': '1800',
+  'ai-phone': '1950',
   'crm-rescue': '2800',
   'team-ai': '1950',
   'team-ai-onsite': '2400',
@@ -209,8 +218,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     return;
   }
 
-  const isMissedCall = product === 'missed-call';
-  const isGoogleProfile = product === 'google-profile';
+  const isMissedCall = product === 'missed-call' || product === 'ai-phone';
+  const isGoogleProfile = product === 'google-profile' || product === 'reviews';
   const isCrmRescue = product === 'crm-rescue';
   const isTeamAi = product === 'team-ai';
   const isChangePack = product === 'change-pack';
