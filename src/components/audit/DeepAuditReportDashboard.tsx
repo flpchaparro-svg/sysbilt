@@ -11,7 +11,7 @@ import DiagnosisCard from './DiagnosisCard';
 import FooterBlock from './FooterBlock';
 import IntroParagraph, { firstNameFromEmail } from './IntroParagraph';
 import KeywordGrid from './KeywordGrid';
-import MetricTile, { MetricEmptyState } from './MetricTile';
+import MetricTile, { MetricEmptyState, MetricGrid } from './MetricTile';
 import ReviewSourceList from './ReviewSourceList';
 import SectionContext from './SectionContext';
 import SectionHeader from './SectionHeader';
@@ -138,15 +138,17 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
               preamble="Search, Google's business card, and competitors, before anyone lands on your site."
               headline={find.headline}
             />
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
+            <div>
               {find.metrics.length === 0 ? (
                 <MetricEmptyState />
               ) : (
-                find.metrics.map((m, i) => (
-                  <div key={`${m.label}-${i}`} className="min-w-0">
-                    <MetricTile label={m.label} value={m.value} rating={m.rating} />
-                  </div>
-                ))
+                <MetricGrid count={find.metrics.length}>
+                  {find.metrics.map((m, i) => (
+                    <div key={`${m.label}-${i}`} className="min-w-0">
+                      <MetricTile label={m.label} value={m.value} rating={m.rating} index={i} />
+                    </div>
+                  ))}
+                </MetricGrid>
               )}
             </div>
             <div className="space-y-12 border-t border-white/[0.08] pt-10 md:space-y-14 md:pt-12">
@@ -174,15 +176,17 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
               preamble="What a first-time visitor understands when they arrive, and where the message and the next step fall short."
               headline={perceive.headline}
             />
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
+            <div>
               {perceive.metrics.length === 0 ? (
                 <MetricEmptyState />
               ) : (
-                perceive.metrics.map((m, i) => (
-                  <div key={`${m.label}-${i}`} className="min-w-0">
-                    <MetricTile label={m.label} value={m.value} rating={m.rating} />
-                  </div>
-                ))
+                <MetricGrid count={perceive.metrics.length}>
+                  {perceive.metrics.map((m, i) => (
+                    <div key={`${m.label}-${i}`} className="min-w-0">
+                      <MetricTile label={m.label} value={m.value} rating={m.rating} index={i} />
+                    </div>
+                  ))}
+                </MetricGrid>
               )}
             </div>
             <div className="border-t border-white/[0.08] pt-10 md:pt-12">
@@ -190,7 +194,11 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
               {perceive.compare.length === 0 ? (
                 <div className={auditEmpty}>No comparison rows were returned.</div>
               ) : (
-                <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 lg:gap-6">
+                <div
+                  className={`grid grid-cols-1 gap-5 lg:gap-6 ${
+                    perceive.compare.length === 1 ? 'mx-auto max-w-3xl' : 'lg:grid-cols-2'
+                  }`}
+                >
                   {perceive.compare.map((pair, i) => (
                     <div key={i} className="min-w-0">
                       <CompareCard pair={pair} />
@@ -210,15 +218,17 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
               preamble="Reviews and social signals from public platforms. Treat percentages as a sample from this pass, not a claim about every review ever left."
               headline={say.headline}
             />
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
+            <div>
               {say.metrics.length === 0 ? (
                 <MetricEmptyState />
               ) : (
-                say.metrics.map((m, i) => (
-                  <div key={`${m.label}-${i}`} className="min-w-0">
-                    <MetricTile label={m.label} value={m.value} rating={m.rating} />
-                  </div>
-                ))
+                <MetricGrid count={say.metrics.length}>
+                  {say.metrics.map((m, i) => (
+                    <div key={`${m.label}-${i}`} className="min-w-0">
+                      <MetricTile label={m.label} value={m.value} rating={m.rating} index={i} />
+                    </div>
+                  ))}
+                </MetricGrid>
               )}
             </div>
             <div className="border-t border-white/[0.08] pt-10 md:pt-12">

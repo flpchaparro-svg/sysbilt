@@ -1,3 +1,4 @@
+import { Compass, ListOrdered, SearchCheck } from 'lucide-react';
 import { m, useReducedMotion } from 'framer-motion';
 import { auditCream, auditEase, auditEyebrow } from './auditCardStyles';
 
@@ -11,16 +12,19 @@ const steps = [
     step: '01',
     title: 'What we found first',
     text: 'Three findings, ranked by impact on enquiries and trust.',
+    Icon: SearchCheck,
   },
   {
     step: '02',
     title: 'First moves',
     text: 'What we would do next, in order, if we picked up the work.',
+    Icon: ListOrdered,
   },
   {
     step: '03',
     title: 'The detail',
     text: 'Search, website, reviews, then a short technical checklist.',
+    Icon: Compass,
   },
 ];
 
@@ -40,19 +44,54 @@ export default function IntroParagraph({ firstName, companyName }: IntroParagrap
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-5">
+      <div className="relative grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-5">
+        <div
+          className="pointer-events-none absolute left-[16%] right-[16%] top-[2.75rem] hidden h-px bg-gradient-to-r from-transparent via-gold-on-dark/40 to-transparent sm:block"
+          aria-hidden
+        />
         {steps.map((item, i) => (
           <m.div
             key={item.step}
-            className={`${auditCream} px-5 py-6 md:px-6 md:py-7`}
-            initial={reduce ? false : { opacity: 0, y: 28 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.35 }}
-            transition={{ duration: 0.55, delay: i * 0.1, ease: auditEase }}
-            whileHover={reduce ? undefined : { y: -4, transition: { duration: 0.25 } }}
+            className={`${auditCream} relative px-5 py-6 md:px-6 md:py-7`}
+            initial={
+              reduce
+                ? false
+                : {
+                    opacity: 0,
+                    y: 40,
+                    scale: 0.88,
+                    rotate: i === 0 ? -3 : i === 2 ? 3 : 0,
+                  }
+            }
+            whileInView={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
+            viewport={{ once: true, amount: 0.4 }}
+            transition={{
+              duration: 0.7,
+              delay: 0.15 + i * 0.22,
+              ease: auditEase,
+            }}
+            whileHover={reduce ? undefined : { y: -6, transition: { duration: 0.25 } }}
           >
-            <p className={`${auditEyebrow} text-gold-on-cream`}>{item.step}</p>
-            <p className="mt-3 font-serif text-xl leading-snug text-dark md:text-[1.35rem]">{item.title}</p>
+            <div className="flex items-center justify-between gap-3">
+              <m.p
+                className={`${auditEyebrow} text-gold-on-cream`}
+                initial={reduce ? false : { opacity: 0, scale: 0.6 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{
+                  type: 'spring',
+                  stiffness: 280,
+                  damping: 16,
+                  delay: 0.28 + i * 0.22,
+                }}
+              >
+                {item.step}
+              </m.p>
+              <div className="flex h-9 w-9 items-center justify-center rounded-full border border-dark/10 bg-white/50 text-dark/70">
+                <item.Icon className="h-4 w-4" strokeWidth={1.75} aria-hidden />
+              </div>
+            </div>
+            <p className="mt-4 font-serif text-xl leading-snug text-dark md:text-[1.35rem]">{item.title}</p>
             <p className="mt-3 font-sans text-sm leading-relaxed text-dark/65">{item.text}</p>
           </m.div>
         ))}
