@@ -48,6 +48,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     return;
   }
 
+  const diagnosis = (auditData as { diagnosis?: { critical?: { title?: unknown; evidence?: unknown } } })
+    .diagnosis;
+  const critical = diagnosis?.critical;
+  if (
+    !critical ||
+    typeof critical !== 'object' ||
+    !String(critical.title ?? '').trim() ||
+    !String(critical.evidence ?? '').trim()
+  ) {
+    res.status(400).json({
+      error: 'Invalid audit_data: diagnosis.critical.title and .evidence are required',
+    });
+    return;
+  }
+  if (
+    (auditData as { helpful?: unknown }).helpful === true &&
+    typeof (auditData as { response?: unknown }).response === 'string'
+  ) {
+    res.status(400).json({ error: 'Invalid audit_data: stub model response rejected' });
+    return;
+  }
+
   const reportId = crypto.randomUUID();
   const record: DeepAuditReportRecord = {
     contact_email: contactEmail,

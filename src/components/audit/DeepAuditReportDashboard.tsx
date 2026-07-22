@@ -31,7 +31,9 @@ function LoadingScreen() {
               <p className="mt-2 font-sans text-sm text-white/70">Fetching your report from secure storage.</p>
             </div>
             <div className="h-px w-full bg-gradient-to-r from-transparent via-white/15 to-transparent" aria-hidden />
-            <span className="type-eyebrow text-white/70">/ SYSBILT DEEP AUDIT</span>
+            <span className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-white/45">
+              SYSBILT Deep Audit
+            </span>
           </div>
         </div>
       </div>
@@ -47,13 +49,15 @@ function InvalidReportScreen() {
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-red-on-dark/40 bg-red-on-dark/10">
             <ShieldAlert className="h-7 w-7 text-red-on-dark" strokeWidth={1.25} aria-hidden />
           </div>
-          <h1 className="type-h3 mt-8 font-serif text-white">Report expired or invalid</h1>
+          <h1 className="type-h3 mt-8 font-serif text-white">Report unavailable</h1>
           <p className="mt-4 font-sans text-sm leading-relaxed text-white/75 md:text-[15px]">
-            This secure link is no longer available. It may have expired, been revoked, or the address was mistyped. If
-            you believe this is an error, contact your Sysbilt advisor for a fresh link.
+            This secure link could not load a complete audit. The report may be incomplete, expired,
+            or mistyped. Ask your SYSBILT contact for a fresh link.
           </p>
           <div className="mt-10 h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent" aria-hidden />
-          <span className="type-eyebrow mt-8 block text-center text-white/70">/ SYSBILT DEEP AUDIT</span>
+          <span className="mt-8 block text-center font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-white/45">
+            SYSBILT Deep Audit
+          </span>
         </div>
       </div>
     </div>
@@ -92,8 +96,8 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
           <AuditScrollReveal className="flex flex-col gap-10 md:gap-12">
             <SectionHeader
               id="diagnosis-heading"
-              eyebrow="DIAGNOSIS"
-              preamble="We have put together a snapshot of what we believe is creating the most drag in your front-of-house systems. Three findings, prioritised by impact."
+              eyebrow="01 · What we found first"
+              preamble="Three findings from this outside pass, ranked by impact on enquiries and trust. Start here before the detail sections below."
               staticTitle="Diagnosis"
             />
           <DiagnosisCard variant="critical" {...audit.diagnosis.critical} />
@@ -120,8 +124,8 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
         <section>
           <AuditScrollReveal className="flex flex-col gap-12 md:gap-14">
             <SectionHeader
-              eyebrow="HOW THEY FIND YOU"
-              preamble="How prospects, search engines, and competitors see you in the discovery phase, before they ever land on your site."
+              eyebrow="03 · How people find you"
+              preamble="Search, Google's business card, and competitors, before anyone lands on your site."
               headline={find.headline}
             />
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-5 xl:grid-cols-4">
@@ -140,15 +144,21 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
             <div className="border-t border-white/[0.08] pt-10 md:pt-14">
               <div className="flex flex-col gap-12 md:gap-14">
                 <div className="space-y-5">
-                  <span className="type-eyebrow text-gold-on-dark">/ SEARCH TERMS</span>
+                  <span className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-gold-on-dark">
+                    Search terms
+                  </span>
                   <KeywordGrid keyword_grid={find.keyword_grid} />
                 </div>
                 <div className="space-y-5">
-                  <span className="type-eyebrow text-gold-on-dark">/ COMPETITOR STRIP</span>
+                  <span className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-gold-on-dark">
+                    Competitors
+                  </span>
                   <CompetitorStrip competitors={find.competitors} />
                 </div>
                 <div className="space-y-5">
-                  <span className="type-eyebrow text-gold-on-dark">/ SWOT</span>
+                  <span className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-gold-on-dark">
+                    SWOT
+                  </span>
                   <SwotPanel swot={find.swot} />
                 </div>
               </div>
@@ -160,8 +170,8 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
         <section>
           <AuditScrollReveal className="flex flex-col gap-12 md:gap-14">
             <SectionHeader
-              eyebrow="HOW THEY PERCEIVE YOU"
-              preamble="What your website communicates the moment someone arrives, and how that compares to how you want to be seen."
+              eyebrow="04 · What your website says"
+              preamble="What a first-time visitor understands when they arrive, and where the message and the next step fall short."
               headline={perceive.headline}
             />
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-5 xl:grid-cols-4">
@@ -178,7 +188,9 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
               )}
             </div>
             <div className="space-y-5 border-t border-white/[0.08] pt-10 md:pt-14">
-              <span className="type-eyebrow text-gold-on-dark">/ POSITIONING CHECKS</span>
+              <span className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-gold-on-dark">
+                They say · We see
+              </span>
               {perceive.compare.length === 0 ? (
                 <div className="rounded-xl border border-dashed border-white/15 bg-white/[0.02] p-6 font-sans text-sm text-white/75">
                   No comparison rows were returned.
@@ -200,8 +212,8 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
         <section>
           <AuditScrollReveal className="flex flex-col gap-12 md:gap-14">
             <SectionHeader
-              eyebrow="WHAT PEOPLE SAY"
-              preamble="What the world is saying about you on review platforms, social media, and search."
+              eyebrow="05 · What people say about you"
+              preamble="Reviews and social signals from public platforms. Treat percentages as a sample from this pass, not a claim about every review ever left."
               headline={say.headline}
             />
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-5 xl:grid-cols-4">
@@ -221,7 +233,9 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
               <SentimentBar sentiment={say.sentiment} />
             </div>
             <div className="space-y-5 border-t border-white/[0.08] pt-10 md:pt-14">
-              <span className="type-eyebrow text-gold-on-dark">/ REVIEW SOURCES</span>
+              <span className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-gold-on-dark">
+                Review sources
+              </span>
               <ReviewSourceList review_sources={say.review_sources} />
             </div>
             <SectionContext text={say.context} />

@@ -37,11 +37,15 @@ export default function CompetitorStrip({ competitors }: CompetitorStripProps) {
             <p className="mt-1 font-mono text-xs text-gold-on-dark">{c.domain.trim() || 'Not found'}</p>
             <dl className="mt-4 space-y-3 text-sm">
               <div>
-                <dt className="type-eyebrow text-white/70">/ OUTRANKS ON</dt>
+                <dt className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-white/55">
+                  Outranks on
+                </dt>
                 <dd className="mt-2 text-white/85">{c.outranks_on.trim() || 'Not found'}</dd>
               </div>
               <div>
-                <dt className="type-eyebrow text-white/70">/ THEIR ADVANTAGE</dt>
+                <dt className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-white/55">
+                  Their advantage
+                </dt>
                 <dd className="mt-2 text-white/85">{c.their_advantage.trim() || 'Not found'}</dd>
               </div>
             </dl>

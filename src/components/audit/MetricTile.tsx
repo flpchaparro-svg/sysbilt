@@ -53,7 +53,9 @@ export default function MetricTile({ label, value, rating }: MetricTileProps) {
       className={`flex min-h-full flex-col rounded-xl p-5 font-sans md:p-6 ${borderClass} bg-black/20 ${auditCardLift} ${hoverClass}`}
     >
       <div className={`h-0.5 w-full rounded-full bg-gradient-to-r ${barClass}`} aria-hidden />
-      <span className="type-eyebrow mt-4 text-white/70">/ {label.trim() || 'METRIC'}</span>
+      <span className="mt-4 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-white/55">
+        {label.trim() || 'Metric'}
+      </span>
       <p className={`type-h4 mt-3 font-serif ${weakTile ? 'text-white/75' : 'text-white'}`}>
         {value.trim() || 'Not found'}
       </p>

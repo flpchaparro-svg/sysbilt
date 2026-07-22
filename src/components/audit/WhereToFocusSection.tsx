@@ -11,9 +11,9 @@ export default function WhereToFocusSection({ action_plan }: WhereToFocusSection
     <section className="flex flex-col gap-10 md:gap-12" aria-labelledby="where-to-focus-heading">
       <SectionHeader
         id="where-to-focus-heading"
-        eyebrow="WHERE TO FOCUS"
-        preamble="These are the highest-leverage moves we would make if we picked up the work today, in priority order."
-        staticTitle="Where to focus"
+        eyebrow="02 · First moves"
+        preamble="If we picked up the work today, this is the order we would work in. Each step points at the section of the report it belongs to."
+        staticTitle="First moves"
       />
       <ActionPlan action_plan={action_plan} />
     </section>

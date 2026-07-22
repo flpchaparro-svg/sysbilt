@@ -35,15 +35,21 @@ export default function ReviewSourceList({ review_sources }: ReviewSourceListPro
               <p className={`text-sm font-semibold ${weak ? 'text-white/75' : 'text-white'}`}>{s.platform.trim() || 'Not found'}</p>
             </div>
             <div className="md:col-span-2">
-              <span className="type-eyebrow text-white/70">/ RATING</span>
+              <span className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-white/55">
+                Rating
+              </span>
               <p className="mt-2 text-sm text-white/85">{s.rating.trim() || 'Not found'}</p>
             </div>
             <div className="md:col-span-2">
-              <span className="type-eyebrow text-white/70">/ COUNT</span>
+              <span className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-white/55">
+                Count
+              </span>
               <p className="mt-2 text-sm text-white/85">{countStr.trim() || 'Not found'}</p>
             </div>
             <div className="md:col-span-5">
-              <span className="type-eyebrow text-white/70">/ RECENT THEME</span>
+              <span className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-white/55">
+                Recent theme
+              </span>
               <p className="mt-2 text-sm text-white/85">{s.recent_theme.trim() || 'Not found'}</p>
             </div>
           </div>

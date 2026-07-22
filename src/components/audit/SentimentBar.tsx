@@ -21,38 +21,61 @@ export default function SentimentBar({ sentiment }: SentimentBarProps) {
     neg = (neg / sum) * 100;
   }
   const allZero = p === 0 && n === 0 && neg === 0;
+  const dominantPositive = !allZero && p >= 99.5;
 
   return (
     <div
-      className={`rounded-xl border border-white/10 bg-black/30 p-5 font-sans md:p-6 ${auditCardLift} hover:border-white/25 hover:bg-black/45 motion-safe:hover:shadow-[0_28px_64px_-24px_rgba(0,0,0,0.75)]`}
+      className={`rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.05] to-transparent p-5 font-sans md:p-7 ${auditCardLift} hover:border-white/20`}
     >
-      <div className="flex flex-wrap items-end justify-between gap-2">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/70">Sentiment split</p>
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <p className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-gold-on-dark">
+            Sentiment split
+          </p>
+          <p className="mt-2 font-sans text-sm text-white/65">
+            Share of the reviews we could classify in this pass.
+          </p>
+        </div>
         {allZero ? (
-          <p className="text-xs text-white/75">We could not derive percentages for this pass.</p>
+          <p className="text-xs text-white/65">We could not derive percentages for this pass.</p>
+        ) : null}
+        {dominantPositive ? (
+          <p className="rounded-full border border-teal/40 bg-teal/10 px-3 py-1 text-xs font-medium text-teal">
+            Almost all positive in this sample
+          </p>
         ) : null}
       </div>
+
       <div
-        className={`mt-4 flex h-3 overflow-hidden rounded-full ${allZero ? 'border border-dashed border-white/12' : ''}`}
+        className={`mt-6 flex h-5 overflow-hidden rounded-full bg-white/5 ring-1 ring-inset ring-white/10 ${allZero ? 'border border-dashed border-white/15' : ''}`}
         role="img"
         aria-label={`Sentiment positive ${p.toFixed(0)} percent, neutral ${n.toFixed(0)} percent, negative ${neg.toFixed(0)} percent`}
       >
-        <span style={{ width: `${p}%` }} className="bg-teal/90" />
-        <span style={{ width: `${n}%` }} className="bg-zinc-500/90" />
-        <span style={{ width: `${neg}%` }} className="bg-red-on-dark/90" />
+        {p > 0 ? <span style={{ width: `${p}%` }} className="bg-teal min-w-[0.35rem]" /> : null}
+        {n > 0 ? <span style={{ width: `${n}%` }} className="bg-zinc-400 min-w-[0.35rem]" /> : null}
+        {neg > 0 ? (
+          <span style={{ width: `${neg}%` }} className="bg-red-on-dark min-w-[0.35rem]" />
+        ) : null}
       </div>
-      <dl className="mt-4 grid grid-cols-3 gap-3 text-center text-xs md:text-sm">
-        <div>
-          <dt className="text-white/70">Positive</dt>
-          <dd className="mt-1 font-medium text-teal">{allZero ? '—' : `${p.toFixed(0)}%`}</dd>
+
+      <dl className="mt-5 grid grid-cols-3 gap-3 text-center text-xs md:text-sm">
+        <div className="rounded-lg bg-black/25 px-2 py-3">
+          <dt className="text-white/55">Positive</dt>
+          <dd className="mt-1 font-serif text-xl text-teal md:text-2xl">
+            {allZero ? 'n/a' : `${p.toFixed(0)}%`}
+          </dd>
         </div>
-        <div>
-          <dt className="text-white/70">Neutral</dt>
-          <dd className="mt-1 font-medium text-white/90">{allZero ? '—' : `${n.toFixed(0)}%`}</dd>
+        <div className="rounded-lg bg-black/25 px-2 py-3">
+          <dt className="text-white/55">Neutral</dt>
+          <dd className="mt-1 font-serif text-xl text-white/90 md:text-2xl">
+            {allZero ? 'n/a' : `${n.toFixed(0)}%`}
+          </dd>
         </div>
-        <div>
-          <dt className="text-white/70">Negative</dt>
-          <dd className="mt-1 font-medium text-red-on-dark">{allZero ? '—' : `${neg.toFixed(0)}%`}</dd>
+        <div className="rounded-lg bg-black/25 px-2 py-3">
+          <dt className="text-white/55">Negative</dt>
+          <dd className="mt-1 font-serif text-xl text-red-on-dark md:text-2xl">
+            {allZero ? 'n/a' : `${neg.toFixed(0)}%`}
+          </dd>
         </div>
       </dl>
     </div>

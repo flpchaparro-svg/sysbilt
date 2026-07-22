@@ -18,8 +18,8 @@ export default function FooterBlock({ transparency_note }: FooterBlockProps) {
         )}
       </div>
       <div className="mt-12 border-t border-white/10 pt-10 md:mt-14 md:pt-12" aria-hidden />
-      <p className="type-eyebrow text-center text-white/70">
-        / CONFIDENTIAL · SYSBILT DEEP AUDIT · DO NOT DISTRIBUTE
+      <p className="text-center font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-white/45">
+        Confidential · SYSBILT Deep Audit · Do not distribute
       </p>
     </footer>
   );

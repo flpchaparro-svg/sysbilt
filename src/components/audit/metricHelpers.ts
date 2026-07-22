@@ -5,7 +5,7 @@ export const metricHelpers: Record<string, string> = {
   'Google rankings on key terms':
     'Where you show up when prospects search the terms your business depends on.',
   'Knowledge panel presence':
-    'Whether Google has built a summary card for your business in search results.',
+    'Whether Google has built a summary card for your business in search results. Seeing "Own this business?" on the public page is normal, even when the profile is already claimed.',
   'Search-visible reviews': 'Review platforms that appear when someone Googles your name.',
   'Local pack visibility': 'Whether you show up in the map results for local searches.',
   'Value proposition clarity':
@@ -27,7 +27,7 @@ export function metricHelperForLabel(label: string): string | undefined {
 
 /**
  * We could not observe this signal (paywall, tooling limits, etc.).
- * Treated like a weak tile visually, but the rating badge shows "unknown" — we are not claiming low/medium/high.
+ * Treated like a weak tile visually, but the rating badge shows "unknown". We are not claiming low/medium/high.
  */
 export function isMetricValueUnknown(value: string): boolean {
   const v = value.trim();

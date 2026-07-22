@@ -18,7 +18,9 @@ export default function CompareCard({ pair }: CompareCardProps) {
       }`}
     >
       <div className="border-b border-white/10 bg-black/40 p-5 md:border-b-0 md:border-r md:border-white/10">
-        <span className="type-eyebrow text-white/70">/ THEY SAY</span>
+        <span className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-white/55">
+          They say
+        </span>
         <p
           className={`mt-3 text-sm italic leading-relaxed md:text-[15px] ${
             leftMissing ? 'text-white/75 not-italic' : 'text-white/90'
@@ -28,7 +30,9 @@ export default function CompareCard({ pair }: CompareCardProps) {
         </p>
       </div>
       <div className="bg-black/25 p-5">
-        <span className="type-eyebrow text-gold-on-dark">/ WE SEE</span>
+        <span className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-gold-on-dark">
+          We see
+        </span>
         <p className={`mt-3 text-sm leading-relaxed md:text-[15px] ${rightMissing ? 'text-white/75' : 'text-white/85'}`}>
           {rightMissing ? 'Not found' : pair.we_see}
         </p>

@@ -12,8 +12,8 @@ export interface DiagnosisCardProps {
 
 function MissingNote() {
   return (
-    <p className="mt-2 font-sans text-xs leading-snug text-white/75">
-      We could not read this signal. Treat the diagnosis as incomplete until we re-run the pass.
+    <p className="mt-2 font-sans text-xs leading-snug text-white/65">
+      We could not read this signal. Treat the finding as incomplete until we re-run the pass.
     </p>
   );
 }
@@ -25,29 +25,40 @@ export default function DiagnosisCard({ variant, title, evidence, consequence }:
 
   const shell =
     variant === 'critical'
-      ? 'rounded-2xl border border-red-on-dark/40 bg-red-on-dark/5 p-6 md:p-8'
-      : 'rounded-2xl border border-gold-on-dark/40 bg-gold-on-dark/10 p-5 md:p-6';
+      ? 'rounded-2xl border border-red-on-dark/35 bg-gradient-to-br from-red-on-dark/[0.12] via-black/40 to-black/20 p-6 md:p-8'
+      : 'rounded-2xl border border-white/10 bg-white/[0.03] p-5 md:p-6';
   const hoverShell =
     variant === 'critical'
-      ? `${auditCardLift} hover:border-red-on-dark/85 hover:bg-red-on-dark/[0.12] motion-safe:hover:shadow-[0_32px_72px_-26px_rgba(220,38,38,0.22)]`
-      : `${auditCardLift} hover:border-gold-on-dark/80 hover:bg-gold-on-dark/[0.16] motion-safe:hover:shadow-[0_32px_72px_-26px_rgba(212,168,75,0.2)]`;
+      ? `${auditCardLift} hover:border-red-on-dark/70 hover:from-red-on-dark/[0.16]`
+      : `${auditCardLift} hover:border-gold-on-dark/40 hover:bg-white/[0.05]`;
 
   return (
     <article className={`${shell} ${hoverShell}`}>
+      {variant === 'critical' ? (
+        <p className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-red-on-dark">
+          Primary finding
+        </p>
+      ) : (
+        <p className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-gold-on-dark">
+          Also worth fixing
+        </p>
+      )}
       <h3
-        className={`type-h3 font-serif ${titleMissing ? 'text-white/75' : 'text-white'}`}
+        className={`mt-3 font-serif text-2xl tracking-tight md:text-3xl ${titleMissing ? 'text-white/75' : 'text-cream'}`}
       >
         {title.trim() || 'Not found'}
       </h3>
-      <dl className="mt-6 space-y-6 font-sans text-sm md:text-base">
+      <dl className="mt-6 space-y-5 font-sans text-sm md:text-base">
         <div
           className={
             evidenceMissing ? 'rounded-lg border border-dashed border-white/15 bg-black/25 p-4' : ''
           }
         >
-          <dt className="type-eyebrow text-white/70">/ EVIDENCE</dt>
+          <dt className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-white/45">
+            What we saw
+          </dt>
           <dd
-            className={`mt-2 leading-relaxed ${evidenceMissing ? 'text-white/75' : 'italic text-white/85'}`}
+            className={`mt-2 leading-relaxed ${evidenceMissing ? 'text-white/65' : 'text-white/85'}`}
           >
             {evidence.trim() || 'Not found'}
           </dd>
@@ -58,8 +69,10 @@ export default function DiagnosisCard({ variant, title, evidence, consequence }:
             consequenceMissing ? 'rounded-lg border border-dashed border-white/15 bg-black/25 p-4' : ''
           }
         >
-          <dt className="type-eyebrow text-white/70">/ CONSEQUENCE</dt>
-          <dd className={`mt-2 leading-relaxed ${consequenceMissing ? 'text-white/75' : 'text-white/90'}`}>
+          <dt className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-white/45">
+            Why it matters
+          </dt>
+          <dd className={`mt-2 leading-relaxed ${consequenceMissing ? 'text-white/65' : 'text-white/90'}`}>
             {consequence.trim() || 'Not found'}
           </dd>
           {consequenceMissing ? <MissingNote /> : null}

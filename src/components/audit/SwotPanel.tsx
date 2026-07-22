@@ -26,7 +26,9 @@ export default function SwotPanel({ swot }: SwotPanelProps) {
       <div
         className={`rounded-xl border border-teal/35 bg-teal/10 p-5 md:p-6 ${auditCardLift} hover:border-teal/70 hover:bg-teal/16 motion-safe:hover:shadow-[0_28px_64px_-24px_rgba(15,118,110,0.22)]`}
       >
-        <span className="type-eyebrow text-teal">/ STRENGTHS</span>
+        <span className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-teal">
+          Strengths
+        </span>
         <div className="mt-3">
           <BulletList items={swot.strengths} emptyHint="No strengths were listed." />
         </div>
@@ -34,7 +36,9 @@ export default function SwotPanel({ swot }: SwotPanelProps) {
       <div
         className={`rounded-xl border border-red-on-dark/40 bg-red-on-dark/10 p-5 md:p-6 ${auditCardLift} hover:border-red-on-dark/75 hover:bg-red-on-dark/16 motion-safe:hover:shadow-[0_28px_64px_-24px_rgba(248,113,113,0.2)]`}
       >
-        <span className="type-eyebrow text-red-on-dark">/ WEAKNESSES</span>
+        <span className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-red-on-dark">
+          Weaknesses
+        </span>
         <div className="mt-3">
           <BulletList items={swot.weaknesses} emptyHint="No weaknesses were listed." />
         </div>
@@ -42,7 +46,9 @@ export default function SwotPanel({ swot }: SwotPanelProps) {
       <div
         className={`rounded-xl border border-sky-500/40 bg-sky-500/[0.1] p-5 md:p-6 ${auditCardLift} hover:border-sky-400/70 hover:bg-sky-500/[0.16] motion-safe:hover:shadow-[0_28px_64px_-24px_rgba(56,189,248,0.18)]`}
       >
-        <span className="type-eyebrow text-sky-100">/ OPPORTUNITIES</span>
+        <span className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-sky-100">
+          Opportunities
+        </span>
         <div className="mt-3">
           <BulletList items={swot.opportunities} emptyHint="No opportunities were listed." />
         </div>
@@ -50,7 +56,9 @@ export default function SwotPanel({ swot }: SwotPanelProps) {
       <div
         className={`rounded-xl border border-gold-on-dark/35 bg-gold-on-dark/10 p-5 md:p-6 ${auditCardLift} hover:border-gold-on-dark/70 hover:bg-gold-on-dark/16 motion-safe:hover:shadow-[0_28px_64px_-24px_rgba(212,168,75,0.2)]`}
       >
-        <span className="type-eyebrow text-gold-on-dark">/ THREATS</span>
+        <span className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-gold-on-dark">
+          Threats
+        </span>
         <div className="mt-3">
           <BulletList items={swot.threats} emptyHint="No threats were listed." />
         </div>

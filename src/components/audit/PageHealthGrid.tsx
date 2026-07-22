@@ -55,7 +55,9 @@ function HealthCard({ fieldKey, metric }: { fieldKey: keyof AppendixPageHealth; 
     >
       <div className="flex items-start justify-between gap-2">
         <div>
-          <p className="type-eyebrow text-white/70">/ {KEY_LABELS[fieldKey].toUpperCase()}</p>
+          <p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-white/55">
+            {KEY_LABELS[fieldKey]}
+          </p>
           <p className="mt-2 font-sans text-sm font-medium leading-snug text-white/90">{metric.plain_english.trim() || 'Not found'}</p>
         </div>
         <QualityDot rating={metric.rating} />

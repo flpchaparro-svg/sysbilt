@@ -3,15 +3,52 @@ export interface IntroParagraphProps {
   companyName: string;
 }
 
+/**
+ * Short intro + how to read the report. Presentation only; does not change audit data.
+ */
 export default function IntroParagraph({ firstName, companyName }: IntroParagraphProps) {
   return (
-    <section className="space-y-10 border-b border-white/10 pb-16 pt-8 md:space-y-12 md:pb-20 md:pt-10" aria-label="Introduction">
-      <p className="max-w-3xl font-sans text-lg font-light leading-relaxed text-white/85 md:text-xl">
-        Hi {firstName}, this is the audit we put together for {companyName}. It is a snapshot of how your front-of-house
-        systems read from the outside, based on a research pass on public information about your business. It is not a
-        sales pitch. It is what we would dig into first if we worked together. If anything here resonates, the easiest
-        next step is at the bottom of this page.
-      </p>
+    <section className="space-y-10 border-b border-white/10 pb-14 pt-2 md:space-y-12 md:pb-16" aria-label="Introduction">
+      <div className="max-w-3xl">
+        <h2 className="font-serif text-2xl tracking-tight text-cream md:text-3xl">
+          Hi {firstName}
+        </h2>
+        <p className="mt-4 font-sans text-base leading-relaxed text-white/80 md:text-lg md:leading-relaxed">
+          This is the Deep Audit we put together for {companyName}. It is built from public information
+          only. It is not a sales pitch. It is the order we would dig into things if we worked together.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+        {[
+          {
+            step: '01',
+            title: 'What we found first',
+            text: 'Three findings, ranked by impact on enquiries and trust.',
+          },
+          {
+            step: '02',
+            title: 'First moves',
+            text: 'What we would do next, in order, if we picked up the work.',
+          },
+          {
+            step: '03',
+            title: 'The detail',
+            text: 'Search, website, reviews, then a short technical checklist.',
+          },
+        ].map((item) => (
+          <div
+            key={item.step}
+            className="rounded-xl border border-white/10 bg-white/[0.03] px-4 py-4 md:px-5 md:py-5"
+          >
+            <p className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-gold-on-dark">
+              {item.step}
+            </p>
+            <p className="mt-2 font-serif text-lg text-cream">{item.title}</p>
+            <p className="mt-2 font-sans text-sm leading-relaxed text-white/65">{item.text}</p>
+          </div>
+        ))}
+      </div>
     </section>
   );
 }

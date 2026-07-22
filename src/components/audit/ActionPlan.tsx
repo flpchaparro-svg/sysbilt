@@ -8,11 +8,11 @@ export interface ActionPlanProps {
 
 function formatLinkedSection(raw: string): string {
   const s = raw.trim().toLowerCase();
-  if (s === 'find') return 'FIND';
-  if (s === 'perceive') return 'PERCEIVE';
-  if (s === 'review') return 'REVIEW';
-  if (s === 'appendix') return 'APPENDIX';
-  return raw.trim().toUpperCase() || '';
+  if (s === 'find') return 'Local search';
+  if (s === 'perceive') return 'Website';
+  if (s === 'review') return 'Reviews';
+  if (s === 'appendix') return 'Technical';
+  return raw.trim() || '';
 }
 
 export default function ActionPlan({ action_plan }: ActionPlanProps) {
@@ -50,7 +50,7 @@ export default function ActionPlan({ action_plan }: ActionPlanProps) {
                   {item.title.trim() || 'Not found'}
                 </h4>
                 {tag ? (
-                  <span className="rounded border border-gold-on-dark/50 px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-gold-on-dark">
+                  <span className="rounded-full border border-gold-on-dark/40 bg-gold-on-dark/10 px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-gold-on-dark">
                     {tag}
                   </span>
                 ) : null}
