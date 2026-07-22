@@ -1,6 +1,7 @@
 import type { KeywordGridItem } from '@/types/deepAuditReport';
 import { isMissingSignal } from '@/types/deepAuditReport';
-import { auditCardLift } from './auditCardStyles';
+import { m, useReducedMotion } from 'framer-motion';
+import { auditCardLift, auditEase, auditEmpty, auditGlass } from './auditCardStyles';
 
 function positionTier(position: string): 'top' | 'mid' | 'none' {
   const s = position.trim().toLowerCase();
@@ -13,27 +14,30 @@ function positionTier(position: string): 'top' | 'mid' | 'none' {
   return 'none';
 }
 
-const tierClass = {
-  top: 'border-teal/50 bg-teal/15 text-white',
-  mid: 'border-gold-on-dark/45 bg-gold-on-dark/12 text-white',
-  none: 'border-red-on-dark/45 bg-red-on-dark/12 text-white',
+const tierAccent = {
+  top: 'border-teal/40 hover:border-teal/70',
+  mid: 'border-gold-on-dark/35 hover:border-gold-on-dark/65',
+  none: 'border-red-on-dark/35 hover:border-red-on-dark/65',
 } as const;
 
-const tierHover: Record<'top' | 'mid' | 'none', string> = {
-  top: 'hover:border-teal hover:bg-teal/22 motion-safe:hover:shadow-[0_28px_64px_-24px_rgba(15,118,110,0.24)]',
-  mid: 'hover:border-gold-on-dark hover:bg-gold-on-dark/18 motion-safe:hover:shadow-[0_28px_64px_-24px_rgba(212,168,75,0.2)]',
-  none: 'hover:border-red-on-dark hover:bg-red-on-dark/18 motion-safe:hover:shadow-[0_28px_64px_-24px_rgba(248,113,113,0.2)]',
-};
+const tierDot = {
+  top: 'bg-teal',
+  mid: 'bg-gold-on-dark',
+  none: 'bg-red-on-dark',
+} as const;
 
 export interface KeywordGridProps {
   keyword_grid: KeywordGridItem[];
 }
 
 export default function KeywordGrid({ keyword_grid }: KeywordGridProps) {
+  const reduce = useReducedMotion();
+
   if (keyword_grid.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed border-white/15 bg-white/[0.02] p-6 font-sans text-sm text-white/75">
-        No keyword rows were returned for this audit. We could not map search demand to your site from this pass.
+      <div className={auditEmpty}>
+        No keyword rows were returned for this audit. We could not map search demand to your site from this
+        pass.
       </div>
     );
   }
@@ -45,22 +49,35 @@ export default function KeywordGrid({ keyword_grid }: KeywordGridProps) {
         const posLabel = k.position.trim() || 'Not found';
         const kwMissing = !k.keyword.trim() || isMissingSignal(k.keyword);
         return (
-          <div
+          <m.div
             key={`${k.keyword}-${i}`}
-            className={`rounded-xl border px-4 py-3 ${tierClass[tier]} ${auditCardLift} ${tierHover[tier]} ${
-              kwMissing ? 'border-dashed hover:border-white/35' : ''
+            className={`px-5 py-4 ${auditGlass} ${auditCardLift} ${tierAccent[tier]} ${
+              kwMissing ? 'border-dashed' : ''
             }`}
+            initial={reduce ? false : { opacity: 0, y: 14 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.45, delay: (i % 6) * 0.04, ease: auditEase }}
           >
-            <p className={`text-sm font-semibold tracking-tight ${kwMissing ? 'text-white/75' : ''}`}>
-              {k.keyword.trim() || 'Not found'}
+            <div className="flex items-start justify-between gap-3">
+              <p
+                className={`font-sans text-sm font-semibold tracking-tight md:text-[15px] ${
+                  kwMissing ? 'text-white/65' : 'text-cream'
+                }`}
+              >
+                {k.keyword.trim() || 'Not found'}
+              </p>
+              <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${tierDot[tier]}`} aria-hidden />
+            </div>
+            <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.16em] text-white/45">
+              Position · {posLabel}
             </p>
-            <p className="mt-1 text-xs uppercase tracking-wider text-white/75">Position · {posLabel}</p>
             {k.competitor_ranking_here.trim() ? (
-              <p className="mt-2 border-t border-white/10 pt-2 text-xs text-white/80">
-                Competitor here: <span className="text-white">{k.competitor_ranking_here}</span>
+              <p className="mt-3 border-t border-white/10 pt-3 text-xs text-white/60">
+                Competitor here: <span className="text-white/85">{k.competitor_ranking_here}</span>
               </p>
             ) : null}
-          </div>
+          </m.div>
         );
       })}
     </div>

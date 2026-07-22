@@ -1,6 +1,6 @@
 import type { ReviewSourceModel } from '@/types/deepAuditReport';
 import { isMissingSignal } from '@/types/deepAuditReport';
-import { auditRowHover } from './auditCardStyles';
+import { auditEmpty, auditEyebrow, auditGlass, auditRowHover } from './auditCardStyles';
 
 export interface ReviewSourceListProps {
   review_sources: ReviewSourceModel[];
@@ -9,14 +9,14 @@ export interface ReviewSourceListProps {
 export default function ReviewSourceList({ review_sources }: ReviewSourceListProps) {
   if (review_sources.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed border-white/15 bg-white/[0.02] p-5 font-sans text-sm text-white/75">
+      <div className={auditEmpty}>
         No review sources were attached. We could not list platforms for this pass.
       </div>
     );
   }
 
   return (
-    <div className="divide-y divide-white/10 rounded-xl border border-white/10 bg-black/30 font-sans">
+    <div className={`divide-y divide-white/10 overflow-hidden ${auditGlass}`}>
       {review_sources.map((s, i) => {
         const countStr = s.count;
         const weak =
@@ -27,30 +27,26 @@ export default function ReviewSourceList({ review_sources }: ReviewSourceListPro
         return (
           <div
             key={`${s.platform}-${i}`}
-            className={`grid gap-3 px-4 py-4 md:grid-cols-12 md:items-center md:px-5 ${auditRowHover} ${
-              weak ? 'bg-white/[0.02]' : ''
+            className={`grid gap-3 px-5 py-5 md:grid-cols-12 md:items-center md:px-6 ${auditRowHover} ${
+              weak ? 'bg-white/[0.015]' : ''
             }`}
           >
             <div className="md:col-span-3">
-              <p className={`text-sm font-semibold ${weak ? 'text-white/75' : 'text-white'}`}>{s.platform.trim() || 'Not found'}</p>
+              <p className={`text-sm font-semibold ${weak ? 'text-white/65' : 'text-cream'}`}>
+                {s.platform.trim() || 'Not found'}
+              </p>
             </div>
             <div className="md:col-span-2">
-              <span className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-white/55">
-                Rating
-              </span>
-              <p className="mt-2 text-sm text-white/85">{s.rating.trim() || 'Not found'}</p>
+              <span className={`${auditEyebrow} text-white/40`}>Rating</span>
+              <p className="mt-2 text-sm text-white/80">{s.rating.trim() || 'Not found'}</p>
             </div>
             <div className="md:col-span-2">
-              <span className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-white/55">
-                Count
-              </span>
-              <p className="mt-2 text-sm text-white/85">{countStr.trim() || 'Not found'}</p>
+              <span className={`${auditEyebrow} text-white/40`}>Count</span>
+              <p className="mt-2 text-sm text-white/80">{countStr.trim() || 'Not found'}</p>
             </div>
             <div className="md:col-span-5">
-              <span className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-white/55">
-                Recent theme
-              </span>
-              <p className="mt-2 text-sm text-white/85">{s.recent_theme.trim() || 'Not found'}</p>
+              <span className={`${auditEyebrow} text-white/40`}>Recent theme</span>
+              <p className="mt-2 text-sm text-white/80">{s.recent_theme.trim() || 'Not found'}</p>
             </div>
           </div>
         );

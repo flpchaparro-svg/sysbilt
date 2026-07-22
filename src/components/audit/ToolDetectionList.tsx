@@ -1,14 +1,15 @@
 import type { ToolDetectedRow, ToolQualityRating } from '@/types/deepAuditReport';
-import { auditRowHover } from './auditCardStyles';
+import { Check, AlertTriangle, X } from 'lucide-react';
+import { auditEmpty, auditGlass, auditRowHover } from './auditCardStyles';
 
 function StatusIcon({ status }: { status: ToolDetectedRow['status'] }) {
   if (status === 'found') {
-    return <span className="text-teal" aria-hidden>✓</span>;
+    return <Check className="h-4 w-4 text-teal" strokeWidth={2} aria-hidden />;
   }
   if (status === 'broken') {
-    return <span className="text-gold-on-dark" aria-hidden>⚠</span>;
+    return <AlertTriangle className="h-4 w-4 text-gold-on-dark" strokeWidth={2} aria-hidden />;
   }
-  return <span className="text-red-on-dark" aria-hidden>✗</span>;
+  return <X className="h-4 w-4 text-red-on-dark" strokeWidth={2} aria-hidden />;
 }
 
 function RatingBadge({ rating }: { rating: ToolQualityRating }) {
@@ -18,7 +19,9 @@ function RatingBadge({ rating }: { rating: ToolQualityRating }) {
     bad: 'border-red-on-dark/40 text-red-on-dark',
   };
   return (
-    <span className={`rounded-full border px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider ${styles[rating]}`}>
+    <span
+      className={`rounded-full border px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider ${styles[rating]}`}
+    >
       {rating}
     </span>
   );
@@ -31,25 +34,27 @@ export interface ToolDetectionListProps {
 export default function ToolDetectionList({ tools_detected }: ToolDetectionListProps) {
   if (tools_detected.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed border-white/12 bg-white/[0.02] p-5 text-sm text-white/75">
+      <div className={auditEmpty}>
         No tool rows were returned. We could not show a stack map for this pass.
       </div>
     );
   }
 
   return (
-    <div className="divide-y divide-white/10 rounded-xl border border-white/10 bg-black/30">
+    <div className={`divide-y divide-white/10 overflow-hidden ${auditGlass}`}>
       {tools_detected.map((t, i) => (
-        <div key={`${t.name}-${i}`} className={`flex gap-4 px-4 py-4 md:px-5 ${auditRowHover}`}>
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/[0.08] bg-black/30 text-base">
+        <div key={`${t.name}-${i}`} className={`flex gap-4 px-5 py-5 md:px-6 ${auditRowHover}`}>
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-black/35">
             <StatusIcon status={t.status} />
           </div>
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
-              <p className="font-serif text-base font-semibold text-white md:text-lg">{t.name.trim() || 'Not found'}</p>
+              <p className="font-serif text-base font-semibold text-cream md:text-lg">
+                {t.name.trim() || 'Not found'}
+              </p>
               <RatingBadge rating={t.rating} />
             </div>
-            <p className="mt-1 font-sans text-sm text-white/80">{t.plain_english.trim() || 'Not found'}</p>
+            <p className="mt-1.5 font-sans text-sm text-white/65">{t.plain_english.trim() || 'Not found'}</p>
           </div>
         </div>
       ))}

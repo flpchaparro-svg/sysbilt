@@ -14,6 +14,7 @@ export default function WhereToFocusSection({ action_plan }: WhereToFocusSection
         eyebrow="02 · First moves"
         preamble="If we picked up the work today, this is the order we would work in. Each step points at the section of the report it belongs to."
         staticTitle="First moves"
+        align="center"
       />
       <ActionPlan action_plan={action_plan} />
     </section>

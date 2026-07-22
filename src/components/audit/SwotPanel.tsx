@@ -1,15 +1,17 @@
 import type { SwotModel } from '@/types/deepAuditReport';
-import { auditCardLift } from './auditCardStyles';
+import { m, useReducedMotion } from 'framer-motion';
+import { auditCardLift, auditEase, auditEyebrow, auditGlass } from './auditCardStyles';
 
 function BulletList({ items, emptyHint }: { items: string[]; emptyHint: string }) {
   if (!items.length) {
-    return <p className="font-sans text-sm text-white/80">{emptyHint}</p>;
+    return <p className="font-sans text-sm text-white/60">{emptyHint}</p>;
   }
   return (
-    <ul className="list-inside list-disc space-y-1.5 font-sans text-sm leading-snug text-white/85">
+    <ul className="space-y-2.5 font-sans text-sm leading-snug text-white/80">
       {items.map((t, i) => (
-        <li key={i} className="text-pretty">
-          {t}
+        <li key={i} className="flex gap-2.5 text-pretty">
+          <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-current opacity-50" aria-hidden />
+          <span>{t}</span>
         </li>
       ))}
     </ul>
@@ -20,49 +22,63 @@ export interface SwotPanelProps {
   swot: SwotModel;
 }
 
+const cells: {
+  key: keyof SwotModel;
+  label: string;
+  border: string;
+  labelColor: string;
+  empty: string;
+}[] = [
+  {
+    key: 'strengths',
+    label: 'Strengths',
+    border: 'border-teal/35',
+    labelColor: 'text-teal',
+    empty: 'No strengths were listed.',
+  },
+  {
+    key: 'weaknesses',
+    label: 'Weaknesses',
+    border: 'border-red-on-dark/40',
+    labelColor: 'text-red-on-dark',
+    empty: 'No weaknesses were listed.',
+  },
+  {
+    key: 'opportunities',
+    label: 'Opportunities',
+    border: 'border-sky-400/40',
+    labelColor: 'text-sky-200',
+    empty: 'No opportunities were listed.',
+  },
+  {
+    key: 'threats',
+    label: 'Threats',
+    border: 'border-gold-on-dark/40',
+    labelColor: 'text-gold-on-dark',
+    empty: 'No threats were listed.',
+  },
+];
+
 export default function SwotPanel({ swot }: SwotPanelProps) {
+  const reduce = useReducedMotion();
+
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-      <div
-        className={`rounded-xl border border-teal/35 bg-teal/10 p-5 md:p-6 ${auditCardLift} hover:border-teal/70 hover:bg-teal/16 motion-safe:hover:shadow-[0_28px_64px_-24px_rgba(15,118,110,0.22)]`}
-      >
-        <span className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-teal">
-          Strengths
-        </span>
-        <div className="mt-3">
-          <BulletList items={swot.strengths} emptyHint="No strengths were listed." />
-        </div>
-      </div>
-      <div
-        className={`rounded-xl border border-red-on-dark/40 bg-red-on-dark/10 p-5 md:p-6 ${auditCardLift} hover:border-red-on-dark/75 hover:bg-red-on-dark/16 motion-safe:hover:shadow-[0_28px_64px_-24px_rgba(248,113,113,0.2)]`}
-      >
-        <span className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-red-on-dark">
-          Weaknesses
-        </span>
-        <div className="mt-3">
-          <BulletList items={swot.weaknesses} emptyHint="No weaknesses were listed." />
-        </div>
-      </div>
-      <div
-        className={`rounded-xl border border-sky-500/40 bg-sky-500/[0.1] p-5 md:p-6 ${auditCardLift} hover:border-sky-400/70 hover:bg-sky-500/[0.16] motion-safe:hover:shadow-[0_28px_64px_-24px_rgba(56,189,248,0.18)]`}
-      >
-        <span className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-sky-100">
-          Opportunities
-        </span>
-        <div className="mt-3">
-          <BulletList items={swot.opportunities} emptyHint="No opportunities were listed." />
-        </div>
-      </div>
-      <div
-        className={`rounded-xl border border-gold-on-dark/35 bg-gold-on-dark/10 p-5 md:p-6 ${auditCardLift} hover:border-gold-on-dark/70 hover:bg-gold-on-dark/16 motion-safe:hover:shadow-[0_28px_64px_-24px_rgba(212,168,75,0.2)]`}
-      >
-        <span className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-gold-on-dark">
-          Threats
-        </span>
-        <div className="mt-3">
-          <BulletList items={swot.threats} emptyHint="No threats were listed." />
-        </div>
-      </div>
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5">
+      {cells.map((cell, i) => (
+        <m.div
+          key={cell.key}
+          className={`border ${cell.border} p-5 md:p-6 ${auditGlass} ${auditCardLift}`}
+          initial={reduce ? false : { opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.5, delay: i * 0.06, ease: auditEase }}
+        >
+          <span className={`${auditEyebrow} ${cell.labelColor}`}>{cell.label}</span>
+          <div className="mt-4">
+            <BulletList items={swot[cell.key]} emptyHint={cell.empty} />
+          </div>
+        </m.div>
+      ))}
     </div>
   );
 }

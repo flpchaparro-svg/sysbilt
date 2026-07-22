@@ -1,5 +1,6 @@
 import type { SentimentModel } from '@/types/deepAuditReport';
-import { auditCardLift } from './auditCardStyles';
+import { m, useReducedMotion } from 'framer-motion';
+import { auditCardLift, auditEase, auditEyebrow, auditGlass } from './auditCardStyles';
 
 export interface SentimentBarProps {
   sentiment: SentimentModel;
@@ -22,61 +23,85 @@ export default function SentimentBar({ sentiment }: SentimentBarProps) {
   }
   const allZero = p === 0 && n === 0 && neg === 0;
   const dominantPositive = !allZero && p >= 99.5;
+  const reduce = useReducedMotion();
 
   return (
-    <div
-      className={`rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.05] to-transparent p-5 font-sans md:p-7 ${auditCardLift} hover:border-white/20`}
-    >
+    <div className={`${auditGlass} ${auditCardLift} p-6 md:p-8`}>
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-gold-on-dark">
-            Sentiment split
-          </p>
-          <p className="mt-2 font-sans text-sm text-white/65">
+          <p className={`${auditEyebrow} text-gold-on-dark`}>Sentiment split</p>
+          <p className="mt-2 font-sans text-sm text-white/55">
             Share of the reviews we could classify in this pass.
           </p>
         </div>
         {allZero ? (
-          <p className="text-xs text-white/65">We could not derive percentages for this pass.</p>
+          <p className="text-xs text-white/55">We could not derive percentages for this pass.</p>
         ) : null}
         {dominantPositive ? (
-          <p className="rounded-full border border-teal/40 bg-teal/10 px-3 py-1 text-xs font-medium text-teal">
+          <m.p
+            className="rounded-full border border-teal/40 bg-teal/10 px-3 py-1.5 text-xs font-medium text-teal"
+            initial={reduce ? false : { opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.45, ease: auditEase }}
+          >
             Almost all positive in this sample
-          </p>
+          </m.p>
         ) : null}
       </div>
 
       <div
-        className={`mt-6 flex h-5 overflow-hidden rounded-full bg-white/5 ring-1 ring-inset ring-white/10 ${allZero ? 'border border-dashed border-white/15' : ''}`}
+        className={`mt-7 flex h-6 overflow-hidden rounded-full bg-white/[0.06] ring-1 ring-inset ring-white/10 ${
+          allZero ? 'border border-dashed border-white/15' : ''
+        }`}
         role="img"
         aria-label={`Sentiment positive ${p.toFixed(0)} percent, neutral ${n.toFixed(0)} percent, negative ${neg.toFixed(0)} percent`}
       >
-        {p > 0 ? <span style={{ width: `${p}%` }} className="bg-teal min-w-[0.35rem]" /> : null}
-        {n > 0 ? <span style={{ width: `${n}%` }} className="bg-zinc-400 min-w-[0.35rem]" /> : null}
+        {p > 0 ? (
+          <m.span
+            className="min-w-[0.35rem] bg-gradient-to-r from-teal to-teal/70"
+            initial={reduce ? false : { scaleX: 0 }}
+            whileInView={{ scaleX: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.9, ease: auditEase }}
+            style={{ width: `${p}%`, transformOrigin: 'left' }}
+          />
+        ) : null}
+        {n > 0 ? (
+          <m.span
+            className="min-w-[0.35rem] bg-zinc-400"
+            initial={reduce ? false : { scaleX: 0 }}
+            whileInView={{ scaleX: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.9, delay: 0.08, ease: auditEase }}
+            style={{ width: `${n}%`, transformOrigin: 'left' }}
+          />
+        ) : null}
         {neg > 0 ? (
-          <span style={{ width: `${neg}%` }} className="bg-red-on-dark min-w-[0.35rem]" />
+          <m.span
+            className="min-w-[0.35rem] bg-gradient-to-r from-red-on-dark to-red-on-dark/70"
+            initial={reduce ? false : { scaleX: 0 }}
+            whileInView={{ scaleX: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.9, delay: 0.12, ease: auditEase }}
+            style={{ width: `${neg}%`, transformOrigin: 'left' }}
+          />
         ) : null}
       </div>
 
-      <dl className="mt-5 grid grid-cols-3 gap-3 text-center text-xs md:text-sm">
-        <div className="rounded-lg bg-black/25 px-2 py-3">
-          <dt className="text-white/55">Positive</dt>
-          <dd className="mt-1 font-serif text-xl text-teal md:text-2xl">
-            {allZero ? 'n/a' : `${p.toFixed(0)}%`}
-          </dd>
-        </div>
-        <div className="rounded-lg bg-black/25 px-2 py-3">
-          <dt className="text-white/55">Neutral</dt>
-          <dd className="mt-1 font-serif text-xl text-white/90 md:text-2xl">
-            {allZero ? 'n/a' : `${n.toFixed(0)}%`}
-          </dd>
-        </div>
-        <div className="rounded-lg bg-black/25 px-2 py-3">
-          <dt className="text-white/55">Negative</dt>
-          <dd className="mt-1 font-serif text-xl text-red-on-dark md:text-2xl">
-            {allZero ? 'n/a' : `${neg.toFixed(0)}%`}
-          </dd>
-        </div>
+      <dl className="mt-6 grid grid-cols-3 gap-3 text-center">
+        {[
+          { label: 'Positive', value: p, color: 'text-teal' },
+          { label: 'Neutral', value: n, color: 'text-white/90' },
+          { label: 'Negative', value: neg, color: 'text-red-on-dark' },
+        ].map((cell) => (
+          <div key={cell.label} className="rounded-xl bg-black/30 px-2 py-4">
+            <dt className="text-xs text-white/45">{cell.label}</dt>
+            <dd className={`mt-1.5 font-serif text-2xl md:text-3xl ${cell.color}`}>
+              {allZero ? 'n/a' : `${cell.value.toFixed(0)}%`}
+            </dd>
+          </div>
+        ))}
       </dl>
     </div>
   );
