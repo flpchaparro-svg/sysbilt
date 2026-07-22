@@ -1,6 +1,8 @@
 import type { SwotModel } from '@/types/deepAuditReport';
+import { Shield, ShieldAlert, Sparkles, Swords } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { m, useReducedMotion } from 'framer-motion';
-import { auditCardLift, auditEase, auditEyebrow, auditGlass } from './auditCardStyles';
+import { auditCardLift, auditEase, auditGlass } from './auditCardStyles';
 
 function BulletList({ items, emptyHint }: { items: string[]; emptyHint: string }) {
   if (!items.length) {
@@ -24,37 +26,52 @@ export interface SwotPanelProps {
 
 const cells: {
   key: keyof SwotModel;
+  letter: string;
   label: string;
+  gloss: string;
   border: string;
   labelColor: string;
+  Icon: LucideIcon;
   empty: string;
 }[] = [
   {
     key: 'strengths',
+    letter: 'S',
     label: 'Strengths',
+    gloss: 'What already works for you',
     border: 'border-teal/35',
     labelColor: 'text-teal',
+    Icon: Shield,
     empty: 'No strengths were listed.',
   },
   {
     key: 'weaknesses',
+    letter: 'W',
     label: 'Weaknesses',
+    gloss: 'Where you are soft today',
     border: 'border-red-on-dark/40',
     labelColor: 'text-red-on-dark',
+    Icon: ShieldAlert,
     empty: 'No weaknesses were listed.',
   },
   {
     key: 'opportunities',
+    letter: 'O',
     label: 'Opportunities',
+    gloss: 'Gaps you could take',
     border: 'border-sky-400/40',
     labelColor: 'text-sky-200',
+    Icon: Sparkles,
     empty: 'No opportunities were listed.',
   },
   {
     key: 'threats',
+    letter: 'T',
     label: 'Threats',
+    gloss: 'What could take from you',
     border: 'border-gold-on-dark/40',
     labelColor: 'text-gold-on-dark',
+    Icon: Swords,
     empty: 'No threats were listed.',
   },
 ];
@@ -68,13 +85,29 @@ export default function SwotPanel({ swot }: SwotPanelProps) {
         <m.div
           key={cell.key}
           className={`border ${cell.border} p-5 md:p-6 ${auditGlass} ${auditCardLift}`}
-          initial={reduce ? false : { opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={reduce ? false : { opacity: 0, y: 16, scale: 0.98 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
           viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.5, delay: i * 0.06, ease: auditEase }}
+          transition={{ duration: 0.55, delay: i * 0.08, ease: auditEase }}
         >
-          <span className={`${auditEyebrow} ${cell.labelColor}`}>{cell.label}</span>
-          <div className="mt-4">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-start gap-3">
+              <div
+                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${cell.border} bg-black/30 ${cell.labelColor}`}
+              >
+                <cell.Icon className="h-4 w-4" strokeWidth={1.75} aria-hidden />
+              </div>
+              <div>
+                <p className={`font-serif text-xl tracking-tight text-cream md:text-2xl`}>
+                  <span className={cell.labelColor}>{cell.letter}</span>
+                  <span className="text-white/25"> · </span>
+                  {cell.label}
+                </p>
+                <p className="mt-1 font-sans text-xs text-white/50 md:text-sm">{cell.gloss}</p>
+              </div>
+            </div>
+          </div>
+          <div className="mt-5 border-t border-white/10 pt-4">
             <BulletList items={swot[cell.key]} emptyHint={cell.empty} />
           </div>
         </m.div>

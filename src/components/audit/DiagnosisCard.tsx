@@ -1,6 +1,7 @@
 import { isMissingSignal } from '@/types/deepAuditReport';
+import { AlertTriangle, CircleAlert } from 'lucide-react';
 import { m, useReducedMotion } from 'framer-motion';
-import { auditCardLift, auditCream, auditEase, auditEyebrow, auditGlass } from './auditCardStyles';
+import { auditCardLift, auditEase, auditEyebrow, auditGlass } from './auditCardStyles';
 
 export type DiagnosisVariant = 'critical' | 'secondary';
 
@@ -11,9 +12,9 @@ export interface DiagnosisCardProps {
   consequence: string;
 }
 
-function MissingNote({ onCream }: { onCream?: boolean }) {
+function MissingNote() {
   return (
-    <p className={`mt-2 font-sans text-xs leading-snug ${onCream ? 'text-dark/50' : 'text-white/55'}`}>
+    <p className="mt-2 font-sans text-xs leading-snug text-white/55">
       We could not read this signal. Treat the finding as incomplete until we re-run the pass.
     </p>
   );
@@ -39,7 +40,10 @@ export default function DiagnosisCard({ variant, title, evidence, consequence }:
           className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-red-on-dark/20 blur-3xl"
           aria-hidden
         />
-        <p className={`${auditEyebrow} text-red-on-dark`}>Primary finding</p>
+        <div className="flex items-center gap-2.5">
+          <CircleAlert className="h-4 w-4 text-red-on-dark" strokeWidth={1.75} aria-hidden />
+          <p className={`${auditEyebrow} text-red-on-dark`}>Primary finding</p>
+        </div>
         <h3
           className={`mt-4 max-w-3xl font-serif text-3xl tracking-tight md:text-4xl ${
             titleMissing ? 'text-white/70' : 'text-cream'
@@ -90,38 +94,41 @@ export default function DiagnosisCard({ variant, title, evidence, consequence }:
 
   return (
     <m.article
-      className={`${auditCream} ${auditCardLift} h-full p-6 md:p-7`}
+      className={`${auditGlass} ${auditCardLift} h-full border-gold-on-dark/30 p-6 hover:border-gold-on-dark/50 md:p-7`}
       initial={reduce ? false : { opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.25 }}
       transition={{ duration: 0.55, ease: auditEase }}
       whileHover={reduce ? undefined : { y: -4 }}
     >
-      <p className={`${auditEyebrow} text-gold-on-cream`}>Also worth fixing</p>
+      <div className="flex items-center gap-2.5">
+        <AlertTriangle className="h-4 w-4 text-gold-on-dark" strokeWidth={1.75} aria-hidden />
+        <p className={`${auditEyebrow} text-gold-on-dark`}>Also worth fixing</p>
+      </div>
       <h3
         className={`mt-3 font-serif text-2xl tracking-tight md:text-[1.65rem] ${
-          titleMissing ? 'text-dark/55' : 'text-dark'
+          titleMissing ? 'text-white/60' : 'text-cream'
         }`}
       >
         {title.trim() || 'Not found'}
       </h3>
       <dl className="mt-6 space-y-5 font-sans text-sm md:text-[15px]">
-        <div>
-          <dt className={`${auditEyebrow} text-dark/40`}>What we saw</dt>
-          <dd className={`mt-2 leading-relaxed ${evidenceMissing ? 'text-dark/50' : 'text-dark/75'}`}>
+        <div className="rounded-xl border border-white/10 bg-black/25 p-4">
+          <dt className={`${auditEyebrow} text-white/40`}>What we saw</dt>
+          <dd className={`mt-2 leading-relaxed ${evidenceMissing ? 'text-white/50' : 'text-white/75'}`}>
             {evidence.trim() || 'Not found'}
           </dd>
-          {evidenceMissing ? <MissingNote onCream /> : null}
+          {evidenceMissing ? <MissingNote /> : null}
         </div>
-        <div>
-          <dt className={`${auditEyebrow} text-dark/40`}>Why it matters</dt>
-          <dd className={`mt-2 leading-relaxed ${consequenceMissing ? 'text-dark/50' : 'text-dark/85'}`}>
+        <div className="rounded-xl border border-gold-on-dark/20 bg-gold-on-dark/[0.06] p-4">
+          <dt className={`${auditEyebrow} text-gold-on-dark`}>Why it matters</dt>
+          <dd className={`mt-2 leading-relaxed ${consequenceMissing ? 'text-white/50' : 'text-white/85'}`}>
             {consequence.trim() || 'Not found'}
           </dd>
-          {consequenceMissing ? <MissingNote onCream /> : null}
+          {consequenceMissing ? <MissingNote /> : null}
         </div>
       </dl>
-      {titleMissing ? <MissingNote onCream /> : null}
+      {titleMissing ? <MissingNote /> : null}
     </m.article>
   );
 }

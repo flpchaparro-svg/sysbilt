@@ -1,6 +1,6 @@
 import { Compass, ListOrdered, SearchCheck } from 'lucide-react';
 import { m, useReducedMotion } from 'framer-motion';
-import { auditCream, auditEase, auditEyebrow } from './auditCardStyles';
+import { auditCardLift, auditEase, auditEyebrow, auditGlass } from './auditCardStyles';
 
 export interface IntroParagraphProps {
   firstName: string;
@@ -46,21 +46,21 @@ export default function IntroParagraph({ firstName, companyName }: IntroParagrap
 
       <div className="relative grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-5">
         <div
-          className="pointer-events-none absolute left-[16%] right-[16%] top-[2.75rem] hidden h-px bg-gradient-to-r from-transparent via-gold-on-dark/40 to-transparent sm:block"
+          className="pointer-events-none absolute left-[16%] right-[16%] top-[2.6rem] hidden h-px bg-gradient-to-r from-transparent via-gold-on-dark/45 to-transparent sm:block"
           aria-hidden
         />
         {steps.map((item, i) => (
           <m.div
             key={item.step}
-            className={`${auditCream} relative px-5 py-6 md:px-6 md:py-7`}
+            className={`relative p-5 md:p-6 ${auditGlass} ${auditCardLift} border-gold-on-dark/25 hover:border-gold-on-dark/45`}
             initial={
               reduce
                 ? false
                 : {
                     opacity: 0,
                     y: 40,
-                    scale: 0.88,
-                    rotate: i === 0 ? -3 : i === 2 ? 3 : 0,
+                    scale: 0.9,
+                    rotate: i === 0 ? -2.5 : i === 2 ? 2.5 : 0,
                   }
             }
             whileInView={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
@@ -74,7 +74,7 @@ export default function IntroParagraph({ firstName, companyName }: IntroParagrap
           >
             <div className="flex items-center justify-between gap-3">
               <m.p
-                className={`${auditEyebrow} text-gold-on-cream`}
+                className={`${auditEyebrow} text-gold-on-dark`}
                 initial={reduce ? false : { opacity: 0, scale: 0.6 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
@@ -87,12 +87,12 @@ export default function IntroParagraph({ firstName, companyName }: IntroParagrap
               >
                 {item.step}
               </m.p>
-              <div className="flex h-9 w-9 items-center justify-center rounded-full border border-dark/10 bg-white/50 text-dark/70">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-gold-on-dark/30 bg-gold-on-dark/10 text-gold-on-dark">
                 <item.Icon className="h-4 w-4" strokeWidth={1.75} aria-hidden />
               </div>
             </div>
-            <p className="mt-4 font-serif text-xl leading-snug text-dark md:text-[1.35rem]">{item.title}</p>
-            <p className="mt-3 font-sans text-sm leading-relaxed text-dark/65">{item.text}</p>
+            <p className="mt-5 font-serif text-xl leading-snug text-cream md:text-2xl">{item.title}</p>
+            <p className="mt-3 font-sans text-sm leading-relaxed text-white/60">{item.text}</p>
           </m.div>
         ))}
       </div>

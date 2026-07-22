@@ -1,9 +1,10 @@
 import type { DeepAuditReportPayload } from '@/types/deepAuditReport';
+import { Loader2, MessagesSquare, Search, ShieldAlert, Swords, Users } from 'lucide-react';
 import type { ReactNode } from 'react';
-import { Loader2, ShieldAlert } from 'lucide-react';
 import AuditHeroHeader from './AuditHeroHeader';
 import AuditScrollReveal from './AuditScrollReveal';
 import AppendixSection from './AppendixSection';
+import BlockTitle from './BlockTitle';
 import CompareCard from './CompareCard';
 import CompetitorStrip from './CompetitorStrip';
 import CTABlock from './CTABlock';
@@ -20,7 +21,8 @@ import SwotPanel from './SwotPanel';
 import WhereToFocusSection from './WhereToFocusSection';
 import { auditEmpty, auditEyebrow, auditGlass } from './auditCardStyles';
 
-function SubLabel({ children }: { children: ReactNode }) {
+/** Soft in-section label where the card already repeats the title. */
+function SoftLabel({ children }: { children: ReactNode }) {
   return (
     <div className="mb-5 flex items-center gap-4">
       <span className={`${auditEyebrow} text-gold-on-dark`}>{children}</span>
@@ -153,15 +155,27 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
             </div>
             <div className="space-y-12 border-t border-white/[0.08] pt-10 md:space-y-14 md:pt-12">
               <div>
-                <SubLabel>Search terms</SubLabel>
+                <BlockTitle
+                  title="Search terms"
+                  description="Where you show up when people type the jobs and places that should bring you enquiries."
+                  Icon={Search}
+                />
                 <KeywordGrid keyword_grid={find.keyword_grid} />
               </div>
               <div>
-                <SubLabel>Competitors</SubLabel>
+                <BlockTitle
+                  title="Competitors"
+                  description="Who is winning the clicks around you, and what they are doing better in public."
+                  Icon={Users}
+                />
                 <CompetitorStrip competitors={find.competitors} />
               </div>
               <div>
-                <SubLabel>SWOT</SubLabel>
+                <BlockTitle
+                  title="SWOT snapshot"
+                  description="A plain four-box read: Strengths, Weaknesses, Opportunities, Threats. What helps you, what hurts you, what you could take, and what could take from you."
+                  Icon={Swords}
+                />
                 <SwotPanel swot={find.swot} />
               </div>
             </div>
@@ -190,7 +204,7 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
               )}
             </div>
             <div className="border-t border-white/[0.08] pt-10 md:pt-12">
-              <SubLabel>They say · We see</SubLabel>
+              <SoftLabel>They say · We see</SoftLabel>
               {perceive.compare.length === 0 ? (
                 <div className={auditEmpty}>No comparison rows were returned.</div>
               ) : (
@@ -235,7 +249,11 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
               <SentimentBar sentiment={say.sentiment} />
             </div>
             <div className="border-t border-white/[0.08] pt-10 md:pt-12">
-              <SubLabel>Review sources</SubLabel>
+              <BlockTitle
+                title="Review sources"
+                description="The public platforms we could read in this pass, with rating, volume, and a recent theme."
+                Icon={MessagesSquare}
+              />
               <ReviewSourceList review_sources={say.review_sources} />
             </div>
             <SectionContext text={say.context} />
