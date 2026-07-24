@@ -31,12 +31,9 @@ function websiteSessionDevApi(): Plugin {
     configureServer(server) {
       server.middlewares.use(async (req, res, next) => {
         const url = req.url || '';
-        if (!url.startsWith('/api/funnel/website-session')) return next();
-        if (req.method !== 'GET') {
-          res.statusCode = 405;
-          res.end(JSON.stringify({ error: 'Method not allowed' }));
-          return;
-        }
+        if (!url.startsWith('/api/funnel/access')) return next();
+        // Only handle Stripe session prefill GET locally. POSTs need Vercel/HubSpot.
+        if (req.method !== 'GET') return next();
         try {
           const parsed = new URL(url, 'http://localhost');
           const sessionId = parsed.searchParams.get('session_id') || '';

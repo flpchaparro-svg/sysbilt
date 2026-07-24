@@ -152,8 +152,257 @@ function str(v: unknown, max = 500): string {
 
 function cors(res: VercelResponse): void {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+}
+
+function stripeSecret(): string | undefined {
+  return (
+    process.env.Stripe_Secret_key ||
+    process.env.STRIPE_SECRET_KEY ||
+    process.env.STRIPE_SECRET
+  );
+}
+
+const WEBSITE_TIERS = new Set(['brochure', 'practice', 'full']);
+const WEBSITE_TIER_LABELS: Record<string, string> = {
+  brochure: 'Brochure',
+  practice: 'Practice',
+  full: 'Full site',
+};
+const WEBSITE_TIER_AMOUNTS: Record<string, string> = {
+  brochure: '120',
+  practice: '160',
+  full: '190',
+};
+
+function asPlainAnswer(value: unknown): string {
+  if (value == null) return '';
+  if (typeof value === 'boolean') return value ? 'yes' : 'no';
+  if (typeof value === 'string') return value.trim();
+  if (Array.isArray(value)) {
+    return value
+      .map((item) => {
+        if (typeof item === 'string') return item.trim();
+        if (item && typeof item === 'object' && 'name' in item) {
+          return String((item as { name?: string }).name || '');
+        }
+        return '';
+      })
+      .filter(Boolean)
+      .join(', ');
+  }
+  return String(value);
+}
+
+/** Prefill agreement from Stripe Checkout Session. GET ?session_id=cs_… */
+async function handleWebsiteSession(req: VercelRequest, res: VercelResponse): Promise<void> {
+  const raw = req.query.session_id;
+  const sessionId = Array.isArray(raw) ? raw[0] : raw;
+  if (!sessionId || typeof sessionId !== 'string' || !sessionId.startsWith('cs_')) {
+    res.status(400).json({ error: 'Missing or invalid session_id' });
+    return;
+  }
+
+  const secret = stripeSecret();
+  if (!secret) {
+    res.status(500).json({ error: 'Stripe is not configured' });
+    return;
+  }
+
+  try {
+    const url = new URL(`https://api.stripe.com/v1/checkout/sessions/${sessionId}`);
+    url.searchParams.set('expand[]', 'customer');
+    const stripeRes = await fetch(url.toString(), {
+      headers: { Authorization: `Bearer ${secret}` },
+    });
+    const session = (await stripeRes.json()) as {
+      error?: { message?: string };
+      id?: string;
+      payment_status?: string;
+      status?: string;
+      customer_details?: {
+        name?: string | null;
+        email?: string | null;
+        phone?: string | null;
+        address?: {
+          line1?: string | null;
+          city?: string | null;
+          state?: string | null;
+          postal_code?: string | null;
+        } | null;
+        tax_ids?: Array<{ type?: string; value?: string }> | null;
+      } | null;
+      customer?:
+        | string
+        | {
+            name?: string | null;
+            email?: string | null;
+            phone?: string | null;
+            metadata?: Record<string, string>;
+          }
+        | null;
+      customer_email?: string | null;
+      metadata?: Record<string, string>;
+      amount_total?: number | null;
+    };
+
+    if (!stripeRes.ok) {
+      res.status(stripeRes.status).json({
+        error: session.error?.message || 'Could not load checkout session',
+      });
+      return;
+    }
+
+    if (session.payment_status !== 'paid' && session.status !== 'complete') {
+      res.status(402).json({ error: 'Payment is not complete yet' });
+      return;
+    }
+
+    const details = session.customer_details;
+    const customerObj =
+      session.customer && typeof session.customer === 'object' ? session.customer : null;
+    const taxId =
+      details?.tax_ids?.find((t) => t.value)?.value || details?.tax_ids?.[0]?.value || null;
+    const addressParts = [
+      details?.address?.line1,
+      details?.address?.city,
+      details?.address?.state,
+      details?.address?.postal_code,
+    ].filter(Boolean);
+
+    res.setHeader('Cache-Control', 'no-store');
+    res.status(200).json({
+      sessionId: session.id,
+      email: details?.email || customerObj?.email || session.customer_email || '',
+      name: details?.name || customerObj?.name || '',
+      phone: details?.phone || customerObj?.phone || '',
+      business: customerObj?.metadata?.business || details?.name || '',
+      abn: taxId,
+      address: addressParts.join(', '),
+      tier: session.metadata?.tier || null,
+      amountAud:
+        typeof session.amount_total === 'number'
+          ? Math.round(session.amount_total / 100)
+          : null,
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Server error';
+    console.error('[funnel/access] website-session', err);
+    res.status(500).json({ error: message });
+  }
+}
+
+/** Hosted Website Plan wizard → HubSpot. POST { product:'website', tier, … } */
+async function handleWebsiteAccess(req: VercelRequest, res: VercelResponse): Promise<void> {
+  const body = (req.body ?? {}) as Record<string, unknown>;
+  const tier = str(body.tier, 40).toLowerCase();
+  const name = str(body.name, 120);
+  const email = str(body.email, 200).toLowerCase();
+  const business = str(body.business, 200);
+  const phone = str(body.phone, 40);
+  const answers =
+    body.answers && typeof body.answers === 'object' && !Array.isArray(body.answers)
+      ? (body.answers as Record<string, unknown>)
+      : {};
+
+  if (!WEBSITE_TIERS.has(tier)) {
+    res.status(400).json({ error: 'Missing or invalid plan tier' });
+    return;
+  }
+  if (name.length < 2 || !email.includes('@') || business.length < 2) {
+    res.status(400).json({ error: 'Name, email and business are required' });
+    return;
+  }
+
+  const tierLabel = WEBSITE_TIER_LABELS[tier];
+  const amount = WEBSITE_TIER_AMOUNTS[tier];
+  const answerLines = Object.entries(answers)
+    .filter(([key]) => !['logo', 'photos'].includes(key))
+    .map(([key, value]) => {
+      const plain = asPlainAnswer(value);
+      return plain ? `${key}: ${plain}` : null;
+    })
+    .filter(Boolean) as string[];
+
+  const logoNote =
+    Array.isArray(answers.logo) && answers.logo.length
+      ? `logo: ${answers.logo.length} file(s) chosen in browser (not uploaded to HubSpot yet)`
+      : null;
+  const photosNote =
+    Array.isArray(answers.photos) && answers.photos.length
+      ? `photos: ${answers.photos.length} file(s) chosen in browser (not uploaded to HubSpot yet)`
+      : null;
+
+  const noteBody = [
+    `Hosted Website Plan intake · ${tierLabel}`,
+    `Name: ${name}`,
+    `Email: ${email}`,
+    `Business: ${business}`,
+    phone ? `Phone: ${phone}` : null,
+    `Amount (enrolment / monthly): $${amount}`,
+    '',
+    'Answers:',
+    ...answerLines,
+    logoNote,
+    photosNote,
+  ]
+    .filter(Boolean)
+    .join('\n');
+
+  let hubspotContactId: string | null = null;
+  let hubspotDealId: string | null = null;
+  let hubspotError: string | null = null;
+
+  if (process.env.HUBSPOT_PRIVATE_APP_TOKEN) {
+    try {
+      const { id } = await upsertContactByEmail({
+        email,
+        firstname: name,
+        company: business,
+        phone: phone || undefined,
+        website:
+          str(answers.preferredDomain || answers.currentUrl || answers.domainName, 400) ||
+          undefined,
+        lifecyclestage: 'customer',
+        leadSourceDetail: `go/website/${tier}`,
+      });
+      hubspotContactId = id;
+      await addContactNote(id, noteBody);
+
+      try {
+        const { id: dealId } = await createFunnelAccessDeal({
+          contactId: id,
+          dealname: `Hosted Website Plan · ${tierLabel} — ${business}`,
+          amount,
+          productCode: 'website',
+          noteBody,
+        });
+        hubspotDealId = dealId;
+      } catch (dealErr) {
+        console.error(
+          '[funnel/access] website deal',
+          dealErr instanceof Error ? dealErr.message : dealErr,
+        );
+      }
+    } catch (err) {
+      hubspotError = err instanceof Error ? err.message : 'HubSpot failed';
+      console.error('[funnel/access] website HubSpot', hubspotError);
+    }
+  } else {
+    hubspotError = 'HubSpot is not configured';
+  }
+
+  if (!hubspotContactId) {
+    res.status(502).json({ error: hubspotError || 'Could not save to HubSpot' });
+    return;
+  }
+
+  res.status(200).json({
+    ok: true,
+    hubspotContactId,
+    hubspotDealId,
+  });
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
@@ -162,13 +411,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     res.status(204).end();
     return;
   }
+
+  // Hobby plan: keep website Stripe prefill + intake inside this one function.
+  if (req.method === 'GET') {
+    await handleWebsiteSession(req, res);
+    return;
+  }
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method not allowed' });
     return;
   }
 
-  const body = (req.body ?? {}) as Body;
+  const body = (req.body ?? {}) as Body & { tier?: unknown; answers?: unknown };
   const product = str(body.product, 40);
+  if (product === 'website') {
+    await handleWebsiteAccess(req, res);
+    return;
+  }
+
   const name = str(body.name, 120);
   const email = str(body.email, 200).toLowerCase();
   const business = str(body.business, 200);

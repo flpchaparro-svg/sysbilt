@@ -73,7 +73,7 @@ export default function WebsiteAgreementPage() {
     if (!sessionId || !sessionId.startsWith('cs_') || preview) return
     let cancelled = false
     setPrefillLoading(true)
-    fetch(`/api/funnel/website-session?session_id=${encodeURIComponent(sessionId)}`)
+    fetch(`/api/funnel/access?session_id=${encodeURIComponent(sessionId)}`)
       .then(async (res) => {
         const json = (await res.json()) as Prefill & {error?: string}
         if (!res.ok) throw new Error(json.error || 'Could not load payment details')

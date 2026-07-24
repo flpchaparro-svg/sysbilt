@@ -1,7 +1,7 @@
 /**
  * Hosted Website Plan intake. One question per screen.
  * Stages match /go/access: About you · Your work · Access · Done.
- * Submits to HubSpot via /api/funnel/website-access.
+ * Submits to HubSpot via /api/funnel/access (product: website).
  */
 
 export type WizardFieldType =

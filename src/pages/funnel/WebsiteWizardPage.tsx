@@ -489,10 +489,11 @@ function WebsiteWizardPage() {
     setSubmitting(true)
     setSubmitError(null)
     try {
-      const res = await fetch('/api/funnel/website-access', {
+      const res = await fetch('/api/funnel/access', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          product: 'website',
           tier,
           name,
           email,
