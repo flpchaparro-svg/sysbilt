@@ -30,6 +30,7 @@ import {
   X,
 } from 'lucide-react'
 import { SysbiltLogo } from '../../components/SysbiltLogo'
+import { FUNNEL_COLOURS, FUNNEL_CSS_VARS } from './funnelTheme'
 import {
   WEBSITE_WIZARD_ACKS,
   WEBSITE_WIZARD_STAGES,
@@ -37,10 +38,11 @@ import {
   type WizardOption,
 } from './websiteWizardSpec'
 
-const CREAM = '#F7F4EF'
-const GROUND = '#F7F4EF'
-const INK = '#1A1A1A'
-const RED = '#E21E3F'
+const RED = FUNNEL_COLOURS.accent
+const INK = FUNNEL_COLOURS.ink
+const CREAM = FUNNEL_COLOURS.onInk
+/** Brand cream — same as /go/access and FUNNEL_COLOURS.ground (#FFF2EC) */
+const GROUND = FUNNEL_COLOURS.ground
 
 type Answers = Record<string, string | string[] | boolean | File[] | null>
 
@@ -924,7 +926,7 @@ function WebsiteWizardPage() {
   return (
     <div
       className="min-h-screen font-sans selection:bg-dark selection:text-cream"
-      style={{ backgroundColor: GROUND, color: INK }}
+      style={{ ...FUNNEL_CSS_VARS, backgroundColor: GROUND, color: INK }}
     >
       <div className="fixed top-0 inset-x-0 z-[60] h-1 bg-black/10">
         <div
