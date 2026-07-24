@@ -7,7 +7,7 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   ArrowRight,
@@ -37,6 +37,7 @@ import {
   type WizardField,
   type WizardOption,
 } from './websiteWizardSpec'
+import { isWebsiteTierCode, type WebsiteTierCode } from './websiteAgreementCopy'
 
 const RED = FUNNEL_COLOURS.accent
 const INK = FUNNEL_COLOURS.ink
@@ -45,6 +46,18 @@ const CREAM = FUNNEL_COLOURS.onInk
 const GROUND = FUNNEL_COLOURS.ground
 
 type Answers = Record<string, string | string[] | boolean | File[] | null>
+
+function serialiseAnswers(answers: Answers): Record<string, unknown> {
+  const out: Record<string, unknown> = {}
+  for (const [key, value] of Object.entries(answers)) {
+    if (Array.isArray(value) && value[0] instanceof File) {
+      out[key] = (value as File[]).map((f) => f.name)
+      continue
+    }
+    out[key] = value
+  }
+  return out
+}
 
 const PHASES = WEBSITE_WIZARD_STAGES.map((s, i) => ({
   id: s.id,
@@ -401,11 +414,20 @@ function selectGridClass(count: number) {
 }
 
 function WebsiteWizardPage() {
+  const [params] = useSearchParams()
   const fields = useMemo(() => flatFields(), [])
   const [step, setStep] = useState(0)
   const [answers, setAnswers] = useState<Answers>({})
   const [helpOpen, setHelpOpen] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
+  const [tier, setTier] = useState<WebsiteTierCode | null>(() => {
+    const fromUrl = params.get('tier')
+    return isWebsiteTierCode(fromUrl) ? fromUrl : null
+  })
   const fileRef = useRef<HTMLInputElement>(null)
+  const prefilledRef = useRef(false)
 
   const field = fields[step]
   const stageIdx = stageIndexForField(field.id)
@@ -414,6 +436,84 @@ function WebsiteWizardPage() {
   const setAnswer = useCallback((id: string, value: Answers[string]) => {
     setAnswers((prev) => ({ ...prev, [id]: value }))
   }, [])
+
+  useEffect(() => {
+    if (prefilledRef.current) return
+    prefilledRef.current = true
+    let fromAgreement: {
+      tier?: string
+      name?: string
+      email?: string
+      business?: string
+    } | null = null
+    try {
+      const raw = sessionStorage.getItem('sysbilt_website_agreement')
+      if (raw) fromAgreement = JSON.parse(raw) as typeof fromAgreement
+    } catch {
+      /* ignore */
+    }
+    const nextTier = isWebsiteTierCode(fromAgreement?.tier)
+      ? fromAgreement!.tier
+      : isWebsiteTierCode(params.get('tier'))
+        ? (params.get('tier') as WebsiteTierCode)
+        : null
+    if (nextTier) setTier(nextTier)
+    setAnswers((prev) => ({
+      ...prev,
+      ...(fromAgreement?.name && !prev.contactName
+        ? { contactName: fromAgreement.name }
+        : {}),
+      ...(fromAgreement?.email && !prev.contactEmail
+        ? { contactEmail: fromAgreement.email }
+        : {}),
+      ...(fromAgreement?.business && !prev.businessName
+        ? { businessName: fromAgreement.business }
+        : {}),
+    }))
+  }, [params])
+
+  async function submitToHubSpot() {
+    if (submitting || submitted) return
+    const name = String(answers.contactName || '').trim()
+    const email = String(answers.contactEmail || '').trim()
+    const business = String(answers.businessName || '').trim()
+    const phone = String(answers.contactPhone || '').trim()
+    if (!tier) {
+      setSubmitError('Missing plan tier. Open this page from the agreement after payment.')
+      return
+    }
+    if (name.length < 2 || !email.includes('@') || business.length < 2) {
+      setSubmitError('Name, email and business are required before we can save.')
+      return
+    }
+    setSubmitting(true)
+    setSubmitError(null)
+    try {
+      const res = await fetch('/api/funnel/website-access', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tier,
+          name,
+          email,
+          business,
+          phone,
+          answers: serialiseAnswers(answers),
+        }),
+      })
+      const data = (await res.json().catch(() => ({}))) as { error?: string }
+      if (!res.ok) {
+        throw new Error(data.error || 'Could not save. Try again or email hello@sysbilt.com.')
+      }
+      setSubmitted(true)
+    } catch (err) {
+      setSubmitError(
+        err instanceof Error ? err.message : 'Could not save. Try again or email hello@sysbilt.com.',
+      )
+    } finally {
+      setSubmitting(false)
+    }
+  }
 
   const findNextVisible = useCallback(
     (from: number, dir: 1 | -1) => {
@@ -570,18 +670,43 @@ function WebsiteWizardPage() {
       case 'done':
         return (
           <div className="mt-10 space-y-5">
-            <p className="inline-flex items-center gap-2 rounded-full bg-[#E21E3F]/10 px-4 py-2 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-[#E21E3F]">
-              <Check className="h-3.5 w-3.5" strokeWidth={2.5} /> Preview complete
-            </p>
-            <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-              <Link
-                to="/go/website"
-                className="inline-flex items-center gap-2 rounded-full bg-[#E21E3F] px-8 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.2em] text-cream"
-              >
-                Back to plan
-              </Link>
-              <GhostButton onClick={() => go(0)}>Run again</GhostButton>
-            </div>
+            {submitted ? (
+              <>
+                <p className="inline-flex items-center gap-2 rounded-full bg-[#E21E3F]/10 px-4 py-2 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-[#E21E3F]">
+                  <Check className="h-3.5 w-3.5" strokeWidth={2.5} /> Briefing saved
+                </p>
+                <p className="font-sans text-base text-dark/70 max-w-md">
+                  We have your answers in HubSpot. We research next and book the twenty minute
+                  interview within one business day.
+                </p>
+                <Link
+                  to="/go/website"
+                  className="inline-flex items-center gap-2 rounded-full bg-[#E21E3F] px-8 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.2em] text-cream"
+                >
+                  Done
+                </Link>
+              </>
+            ) : (
+              <>
+                <p className="font-sans text-base text-dark/70 max-w-md">
+                  Last step. Send your briefing so we can research and book the interview.
+                </p>
+                {submitError ? (
+                  <p className="font-sans text-sm text-[#E21E3F]">{submitError}</p>
+                ) : null}
+                <div className="flex flex-wrap gap-3 justify-center md:justify-start">
+                  <button
+                    type="button"
+                    onClick={() => void submitToHubSpot()}
+                    disabled={submitting}
+                    className="rounded-full bg-[#E21E3F] px-8 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.2em] text-cream shadow-[0_12px_28px_-12px_rgba(226,30,63,0.65)] transition hover:bg-[#c41935] disabled:opacity-50"
+                  >
+                    {submitting ? 'Saving…' : 'Submit briefing'}
+                  </button>
+                  <GhostButton onClick={() => go(0)}>Review answers</GhostButton>
+                </div>
+              </>
+            )}
           </div>
         )
 
