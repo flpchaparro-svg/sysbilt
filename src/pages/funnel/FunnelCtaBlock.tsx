@@ -94,10 +94,12 @@ export function FunnelQuietLink({
 }
 
 export type FunnelCtaFields = {
-  ctaMode?: 'buy' | 'call' | 'dual' | string
+  ctaMode?: 'buy' | 'call' | 'dual' | 'waitlist' | string
   ctaLabel?: string | null
   stripeUrl?: string | null
   schedulerUrl?: string | null
+  waitlistUrl?: string | null
+  quietLine?: string | null
   secondaryCtaLabel?: string | null
   secondaryUrl?: string | null
   priceOptions?: Array<{
@@ -121,6 +123,7 @@ export function FunnelCtaBlock({
 }) {
   const mode = fields.ctaMode || 'buy'
   const alignClass = align === 'center' ? 'items-center text-center' : 'items-start text-left'
+  const quietColor = theme === 'dark' ? `${FUNNEL_COLOURS.onInk}70` : FUNNEL_COLOURS.muted
 
   const buttonOrFallback = (href: string | null | undefined, label: string | null | undefined) => {
     if (href && label) return <FunnelPrimaryLink href={href} size={size}>{label}</FunnelPrimaryLink>
@@ -141,6 +144,21 @@ export function FunnelCtaBlock({
     return null
   }
 
+  const quiet = fields.quietLine ? (
+    <p className="mt-3 font-sans text-sm leading-relaxed max-w-md" style={{color: quietColor}}>
+      {fields.quietLine}
+    </p>
+  ) : null
+
+  if (mode === 'waitlist') {
+    return (
+      <div className={`flex flex-col ${alignClass}`}>
+        {buttonOrFallback(fields.waitlistUrl || fields.schedulerUrl, fields.ctaLabel)}
+        {quiet}
+      </div>
+    )
+  }
+
   if (mode === 'dual') {
     const options = (fields.priceOptions || []).filter((o) => o?.ctaLabel && o?.stripeUrl)
     if (options.length < 2) {
@@ -148,12 +166,14 @@ export function FunnelCtaBlock({
       return (
         <div className={`flex flex-col ${alignClass}`}>
           {buttonOrFallback(only?.stripeUrl || fields.stripeUrl, only?.ctaLabel || fields.ctaLabel)}
+          {quiet}
         </div>
       )
     }
     return (
       <div className={`flex flex-col ${alignClass}`}>
         <DualSwapCta options={options} size={size} />
+        {quiet}
       </div>
     )
   }
@@ -175,6 +195,7 @@ export function FunnelCtaBlock({
             </FunnelQuietLink>
           </p>
         ) : null}
+        {quiet}
       </div>
     )
   }
@@ -182,6 +203,14 @@ export function FunnelCtaBlock({
   return (
     <div className={`flex flex-col ${alignClass}`}>
       {buttonOrFallback(fields.stripeUrl, fields.ctaLabel)}
+      {fields.secondaryUrl && fields.secondaryCtaLabel ? (
+        <p className="mt-3">
+          <FunnelQuietLink href={fields.secondaryUrl} theme={theme}>
+            {fields.secondaryCtaLabel}
+          </FunnelQuietLink>
+        </p>
+      ) : null}
+      {quiet}
     </div>
   )
 }

@@ -213,6 +213,7 @@ export function LostClientCalculator({
     | 'reviews'
     | 'ai-phone'
     | 'booking'
+    | 'website'
   theme?: 'dark' | 'cream'
 }) {
   const rootRef = useRef<HTMLDivElement>(null)
@@ -225,7 +226,8 @@ export function LostClientCalculator({
   const isReviews = variant === 'reviews'
   const isAiPhone = variant === 'ai-phone'
   const isBooking = variant === 'booking'
-  const isCountThenMoney = isContent || isReviews
+  const isWebsite = variant === 'website'
+  const isCountThenMoney = isContent || isReviews || isWebsite
   const [value, setValue] = useState(
     isLanding
       ? 2000
@@ -237,6 +239,8 @@ export function LostClientCalculator({
             ? 8
             : isReviews
               ? 12
+              : isWebsite
+                ? 10
               : isAiPhone
                 ? 400
                 : isBooking
@@ -250,6 +254,8 @@ export function LostClientCalculator({
         ? 1500
         : isReviews
           ? 1500
+          : isWebsite
+            ? 800
           : isAiPhone
             ? 8
             : isBooking
@@ -347,6 +353,8 @@ export function LostClientCalculator({
                   ? 'How many decisions get made while looking at your channels'
                   : isReviews
                     ? 'How many customers check your reviews before they call'
+                    : isWebsite
+                      ? "What's your front door deciding"
                     : isAiPhone
                       ? "What's one after-hours miss worth to you"
                       : isBooking
@@ -377,6 +385,8 @@ export function LostClientCalculator({
                       ? 'Customers a month who check you out online'
                       : isReviews
                         ? 'Customers who check reviews'
+                        : isWebsite
+                          ? 'People a month who look you up before deciding'
                         : isAiPhone
                           ? 'Average job worth'
                           : isBooking
@@ -427,6 +437,8 @@ export function LostClientCalculator({
                       ? 'Hours each loses to confusion in month one'
                       : isContent || isReviews
                         ? 'An average client is worth about'
+                        : isWebsite
+                          ? 'An average customer is worth about'
                         : isAiPhone
                           ? 'Missed after-hours calls a month'
                           : isBooking
@@ -528,6 +540,8 @@ export function LostClientCalculator({
                     ? `That's ${formatMoney(display)} a year of decisions made while looking at your feed.`
                     : isReviews
                       ? `That's ${formatMoney(display)} a year decided on review count.`
+                      : isWebsite
+                        ? `That's ${formatMoney(display)} a year of decisions made while looking at your website.`
                       : isAiPhone
                         ? `That's ${formatMoney(display)} a year of after-hours calls walking next door.`
                         : isBooking
@@ -564,6 +578,8 @@ export function LostClientCalculator({
                     ? 'Keeping it alive costs one hour of your month. The system does the rest.'
                     : isReviews
                       ? 'The ask that runs after every job costs less than one of them.'
+                      : isWebsite
+                        ? 'The door costs $120 a month.'
                       : isAiPhone
                         ? 'The setup that answers for you costs less than one of them.'
                         : isBooking
@@ -576,6 +592,8 @@ export function LostClientCalculator({
           >
             {isChange
               ? 'Your numbers, not ours. Change the three fields above. The dollar figure updates.'
+              : isWebsite
+                ? 'Your numbers, not ours. Change them and watch.'
               : isCountThenMoney
                 ? 'Your numbers, not ours. Change the two fields above. The dollar figure updates.'
                 : "Your numbers, not ours. Change them and watch. The leak doesn't care either way."}

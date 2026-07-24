@@ -65,6 +65,13 @@ export function parseSpeedScore(raw: string | null | undefined): number | null {
   return n
 }
 
+/** Hosted website door: Maps listing with no site (?nosite=1). */
+export function parseNoSiteFlag(raw: string | null | undefined): boolean {
+  if (raw == null || raw === '') return false
+  const t = raw.trim().toLowerCase()
+  return t === '1' || t === 'true' || t === 'yes'
+}
+
 /** Pages Google can't see (?n=), integer 1–500. */
 export function parseBlockedPages(raw: string | null | undefined): number | null {
   if (raw == null || raw === '') return null

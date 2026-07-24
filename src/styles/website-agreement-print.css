@@ -1,0 +1,89 @@
+/**
+ * Print styles for Hosted Website Plan agreement.
+ * Unlike proposal-print.css, clauses flow continuously (no one-clause-per-page).
+ */
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm 12mm;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  body *,
+  body *::before,
+  body *::after {
+    color: #000000 !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .website-agreement-doc [class*='text-red'],
+  .website-agreement-doc p[class*='text-red'] {
+    color: #9a1730 !important;
+  }
+
+  [data-noprint],
+  .proposal-accept {
+    display: none !important;
+  }
+
+  .website-agreement-doc {
+    max-width: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .website-agreement-doc header {
+    margin-top: 0 !important;
+    margin-bottom: 14pt !important;
+  }
+
+  .website-agreement-doc h1 {
+    font-size: 22pt !important;
+    line-height: 1.15 !important;
+    margin: 0 0 8pt !important;
+  }
+
+  .website-agreement-doc h2 {
+    font-size: 12pt !important;
+    margin: 14pt 0 6pt !important;
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  .website-agreement-doc section {
+    margin-bottom: 8pt !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .website-agreement-doc p {
+    font-size: 10pt !important;
+    line-height: 1.45 !important;
+    margin: 0 0 6pt !important;
+  }
+
+  .website-agreement-doc hr {
+    margin: 8pt 0 !important;
+  }
+
+  .website-agreement-sign-block {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    margin-top: 12pt !important;
+    margin-bottom: 8pt !important;
+    padding: 10pt !important;
+    border: 1pt solid #000 !important;
+  }
+
+  .website-agreement-sign-block p {
+    margin: 0 0 2pt !important;
+  }
+}

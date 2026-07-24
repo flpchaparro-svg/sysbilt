@@ -1,13 +1,105 @@
-import React from 'react'
+import React, {useMemo, useState} from 'react'
 import {Link} from 'react-router-dom'
 import {ArrowRight} from 'lucide-react'
 import {SysbiltLogo} from '../../components/SysbiltLogo'
 import {PageMeta} from '../../components/PageMeta'
 import {SITE_ORIGIN} from '../../constants/seoMeta'
-import {FUNNEL_PRODUCT_CATALOGUE, type FunnelLane} from '../../constants/funnel'
+import {
+  FUNNEL_PRODUCT_CATALOGUE,
+  type FunnelLane,
+  type FunnelProductCard,
+  type FunnelProductCode,
+} from '../../constants/funnel'
 import {FunnelLegalFooter} from './FunnelCtaBlock'
 import {FUNNEL_COLOURS, FUNNEL_CSS_VARS} from './funnelTheme'
 import {Reveal} from './funnelReveal'
+
+type HomeTab = 'outbound' | 'warm'
+
+type CatalogueGroup = {
+  title: string
+  blurb: string
+  codes: FunnelProductCode[]
+}
+
+/** Outbound tab: cold doors + related drafts, by service, then bundles, then promos. */
+const OUTBOUND_GROUPS: CatalogueGroup[] = [
+  {
+    title: 'Website and search',
+    blurb: 'Speed, findability, pages that convert, and proof you can measure.',
+    codes: [
+      'speed-fix',
+      'website',
+      'search-fix',
+      'landing-page',
+      'conversion-pass',
+      'onpage-search',
+      'schema-faq',
+      'tracking-forms',
+      'site-chat',
+      'media-clean',
+      'a11y-pass',
+      'geo',
+    ],
+  },
+  {
+    title: 'Google and local',
+    blurb: 'Profile, reviews, messaging, and staying visible on Maps.',
+    codes: [
+      'google-profile',
+      'reviews',
+      'profile-messaging',
+      'enquiry-reply',
+      'profile-posting',
+      'qa-review-desk',
+    ],
+  },
+  {
+    title: 'Phone and appointments',
+    blurb: 'Catch the call, book the slot, cover after hours.',
+    codes: ['missed-call', 'booking', 'ai-phone', 'noshow-rescue'],
+  },
+  {
+    title: 'CRM and chase',
+    blurb: 'Enquiries caught, replied, and followed up.',
+    codes: [
+      'crm-rescue',
+      'whatsapp-setup',
+      'dm-reply',
+      'quote-followup',
+      'intake-forms',
+    ],
+  },
+  {
+    title: 'Bundles',
+    blurb: 'Combined scopes at a list price.',
+    codes: ['local-pack', 'bundle-clinic', 'bundle-speed-next', 'bundle-front-door'],
+  },
+  {
+    title: 'Promotions',
+    blurb: 'Entry hooks and commercial experiments. Draft only.',
+    codes: ['website-hook'],
+  },
+]
+
+/** Warm tab: scoping / training / longer relationships. */
+const WARM_GROUPS: CatalogueGroup[] = [
+  {
+    title: 'Team and rollout',
+    blurb: 'Training, change, and playbooks before the software wins.',
+    codes: ['team-ai', 'change-pack', 'sop-playbook', 'inbox-triage'],
+  },
+  {
+    title: 'Content and websites',
+    blurb: 'Ongoing content and the hosted website plan.',
+    codes: ['content-system', 'website', 'client-finder'],
+  },
+  {
+    title: 'Clarity',
+    blurb: 'See the week without a data team.',
+    codes: ['dashboard-lite'],
+  },
+]
 
 function laneStyles(lane: FunnelLane): {
   badge: string
@@ -33,17 +125,86 @@ function laneStyles(lane: FunnelLane): {
     default:
       return {
         badge: FUNNEL_COLOURS.steel,
-        badgeLabel: 'Coming soon',
+        badgeLabel: 'Draft',
         border: `${FUNNEL_COLOURS.ink}14`,
         bar: FUNNEL_COLOURS.steel,
       }
   }
 }
 
+function ProductCard({product, index}: {product: FunnelProductCard; index: number}) {
+  const lane = laneStyles(product.lane)
+  return (
+    <li className="list-none">
+      <Reveal delay={Math.min(0.02 + index * 0.02, 0.22)} y={8}>
+        <Link
+          to={product.href}
+          className="relative block h-full border pl-5 pr-4 py-3.5 md:py-4 transition-colors duration-200 hover:bg-white/40"
+          style={{
+            borderColor: lane.border,
+            backgroundColor: FUNNEL_COLOURS.surface,
+            opacity: product.lane === 'soon' ? 0.92 : 1,
+          }}
+        >
+          <div
+            className="absolute left-0 top-0 bottom-0 w-[3px]"
+            style={{backgroundColor: lane.bar}}
+            aria-hidden
+          />
+          <div className="flex items-start justify-between gap-3 mb-1.5">
+            <p
+              className="font-mono text-[9px] font-bold uppercase tracking-[0.2em]"
+              style={{color: lane.badge}}
+            >
+              {lane.badgeLabel}
+            </p>
+            <p
+              className="font-mono text-xs font-bold tabular-nums shrink-0"
+              style={{color: FUNNEL_COLOURS.ink}}
+            >
+              {product.price}
+            </p>
+          </div>
+          <h3
+            className="font-serif text-lg md:text-xl tracking-tight mb-1 leading-snug"
+            style={{color: FUNNEL_COLOURS.ink}}
+          >
+            {product.title}
+          </h3>
+          <p
+            className="font-sans text-sm leading-snug line-clamp-2"
+            style={{color: FUNNEL_COLOURS.muted}}
+          >
+            {product.blurb}
+          </p>
+          <span
+            className="mt-3 inline-flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.16em]"
+            style={{
+              color: product.lane === 'soon' ? FUNNEL_COLOURS.steel : FUNNEL_COLOURS.accent,
+            }}
+          >
+            {product.lane === 'soon' ? 'Read draft' : 'Open'}
+            <ArrowRight className="w-3.5 h-3.5" />
+          </span>
+        </Link>
+      </Reveal>
+    </li>
+  )
+}
+
 /**
- * Private /go index. Outbound (cold email) vs warm vs coming-soon drafts.
+ * Private /go index. Two tabs (Outbound / Warm), then service groups, bundles, promos.
  */
 const FunnelHomePage: React.FC = () => {
+  const [tab, setTab] = useState<HomeTab>('outbound')
+  const byCode = useMemo(() => {
+    const map = new Map<FunnelProductCode, FunnelProductCard>()
+    for (const p of FUNNEL_PRODUCT_CATALOGUE) map.set(p.code, p)
+    return map
+  }, [])
+
+  const groups = tab === 'outbound' ? OUTBOUND_GROUPS : WARM_GROUPS
+
   return (
     <div
       className="min-h-screen font-sans"
@@ -82,81 +243,88 @@ const FunnelHomePage: React.FC = () => {
         </Reveal>
 
         <Reveal delay={0.08} y={10}>
+          <div
+            className="mt-5 flex flex-wrap gap-2"
+            role="tablist"
+            aria-label="Catalogue mode"
+          >
+            {(
+              [
+                {
+                  id: 'outbound' as const,
+                  label: 'Outbound doors',
+                  hint: 'Cold email and buy paths',
+                  activeColor: FUNNEL_COLOURS.accent,
+                },
+                {
+                  id: 'warm' as const,
+                  label: 'Warm scoping',
+                  hint: 'Call or qualify first',
+                  activeColor: FUNNEL_COLOURS.goldDeep,
+                },
+              ] as const
+            ).map((item) => {
+              const active = tab === item.id
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={active}
+                  onClick={() => setTab(item.id)}
+                  className="px-4 py-2.5 font-mono text-[10px] md:text-[11px] font-bold uppercase tracking-[0.16em] border transition-colors duration-200"
+                  style={{
+                    borderColor: active ? item.activeColor : `${FUNNEL_COLOURS.ink}18`,
+                    backgroundColor: active ? `${item.activeColor}12` : FUNNEL_COLOURS.surface,
+                    color: active ? item.activeColor : FUNNEL_COLOURS.steel,
+                  }}
+                >
+                  {item.label}
+                </button>
+              )
+            })}
+          </div>
           <p
-            className="mt-2.5 font-sans text-sm md:text-base leading-relaxed max-w-lg"
+            className="mt-2.5 font-sans text-sm leading-relaxed max-w-lg"
             style={{color: FUNNEL_COLOURS.muted}}
           >
-            Red edge: cold-email doors. Gold edge: warm / scoping. Grey: drafts to read, not for
-            sale yet.
+            {tab === 'outbound'
+              ? 'Cold doors and related drafts, grouped by service. Grey cards are drafts, not for sale yet.'
+              : 'Warm work that starts with a call or short scope. Grey cards are drafts, not for sale yet.'}
           </p>
         </Reveal>
 
-        <ul className="mt-8 md:mt-9 grid grid-cols-1 md:grid-cols-2 gap-2.5 md:gap-3">
-          {FUNNEL_PRODUCT_CATALOGUE.map((product, i) => {
-            const lane = laneStyles(product.lane)
-            const inner = (
-              <>
-                <div
-                  className="absolute left-0 top-0 bottom-0 w-[3px]"
-                  style={{backgroundColor: lane.bar}}
-                  aria-hidden
-                />
-                <div className="flex items-start justify-between gap-3 mb-1.5">
-                  <p
-                    className="font-mono text-[9px] font-bold uppercase tracking-[0.2em]"
-                    style={{color: lane.badge}}
-                  >
-                    {lane.badgeLabel}
-                  </p>
-                  <p
-                    className="font-mono text-xs font-bold tabular-nums shrink-0"
-                    style={{color: FUNNEL_COLOURS.ink}}
-                  >
-                    {product.price}
-                  </p>
-                </div>
+        {groups.map((group) => {
+          const products = group.codes
+            .map((code) => byCode.get(code))
+            .filter((p): p is FunnelProductCard => Boolean(p))
+          if (products.length === 0) return null
+
+          return (
+            <section key={`${tab}-${group.title}`} className="mt-9 md:mt-10">
+              <Reveal y={8}>
                 <h2
-                  className="font-serif text-lg md:text-xl tracking-tight mb-1 leading-snug"
+                  className="font-serif text-lg md:text-xl tracking-tight"
                   style={{color: FUNNEL_COLOURS.ink}}
                 >
-                  {product.title}
+                  {group.title}
                 </h2>
                 <p
-                  className="font-sans text-sm leading-snug line-clamp-2"
+                  className="mt-1 font-sans text-sm leading-snug max-w-xl"
                   style={{color: FUNNEL_COLOURS.muted}}
                 >
-                  {product.blurb}
+                  {group.blurb}
                 </p>
-                <span
-                  className="mt-3 inline-flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.16em]"
-                  style={{
-                    color:
-                      product.lane === 'soon' ? FUNNEL_COLOURS.steel : FUNNEL_COLOURS.accent,
-                  }}
-                >
-                  {product.lane === 'soon' ? 'Read draft' : 'Open'}
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </span>
-              </>
-            )
-
-            return (
-              <Reveal key={product.code} delay={Math.min(0.04 + i * 0.03, 0.35)} y={10}>
-                <Link
-                  to={product.href}
-                  className="relative block h-full border pl-5 pr-4 py-3.5 md:py-4 transition-colors duration-200 hover:bg-white/40"
-                  style={{
-                    borderColor: lane.border,
-                    backgroundColor: FUNNEL_COLOURS.surface,
-                    opacity: product.lane === 'soon' ? 0.92 : 1,
-                  }}
-                >
-                  {inner}
-                </Link>
               </Reveal>
-            )
-          })}
-        </ul>
+
+              <ul className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-2.5 md:gap-3">
+                {products.map((product, i) => (
+                  <ProductCard key={product.code} product={product} index={i} />
+                ))}
+              </ul>
+            </section>
+          )
+        })}
 
         <FunnelLegalFooter />
       </div>

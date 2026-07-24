@@ -1506,6 +1506,277 @@ const LANDING_VISUALS = [
   TwoDayLiveVisual,
 ]
 
+/** No design spiral: font chaos fades, interview → we build. */
+function NoDesignSpiralVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full overflow-hidden border border-dark/12 bg-white/70 p-2.5">
+      <div className="grid grid-cols-2 gap-2 h-full">
+        <div
+          className="relative rounded-sm border overflow-hidden px-2 py-1.5"
+          style={{borderColor: `${FUNNEL_COLOURS.ink}14`, backgroundColor: FUNNEL_COLOURS.ground}}
+        >
+          <p className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/40 mb-1">
+            Font pick
+          </p>
+          {['Serif?', 'Sans?', 'Bold?', 'Script?'].map((label, i) => (
+            <motion.p
+              key={label}
+              className="font-serif text-[10px] leading-tight truncate"
+              style={{color: FUNNEL_COLOURS.ink}}
+              animate={
+                reduce
+                  ? {opacity: 0.25, x: 0}
+                  : {opacity: [0.85, 0.85, 0.15, 0.15], x: [0, 0, -4, -4]}
+              }
+              transition={
+                reduce
+                  ? undefined
+                  : {duration: 3.2, repeat: Infinity, delay: i * 0.08, times: [0, 0.35, 0.55, 1]}
+              }
+            >
+              {label}
+            </motion.p>
+          ))}
+          <motion.div
+            className="absolute inset-0 flex items-center justify-center"
+            style={{backgroundColor: `${FUNNEL_COLOURS.ground}cc`}}
+            animate={reduce ? {opacity: 0.9} : {opacity: [0, 0, 1, 1, 0]}}
+            transition={reduce ? undefined : {duration: 3.2, repeat: Infinity, times: [0, 0.4, 0.5, 0.9, 1]}}
+          >
+            <span
+              className="font-mono text-[8px] font-bold uppercase tracking-[0.16em]"
+              style={{color: FUNNEL_COLOURS.accent}}
+            >
+              Skip
+            </span>
+          </motion.div>
+        </div>
+        <div
+          className="rounded-sm border px-2 py-1.5 flex flex-col justify-between"
+          style={{borderColor: `${FUNNEL_COLOURS.goldDeep}40`, backgroundColor: `${FUNNEL_COLOURS.goldDeep}0A`}}
+        >
+          <p
+            className="font-mono text-[7px] uppercase tracking-[0.14em]"
+            style={{color: FUNNEL_COLOURS.goldDeep}}
+          >
+            Brief
+          </p>
+          <motion.div
+            className="space-y-1"
+            initial={reduce ? false : {opacity: 0, y: 6}}
+            whileInView={{opacity: 1, y: 0}}
+            viewport={{once: true}}
+          >
+            <div className="h-1.5 rounded-sm" style={{width: '80%', backgroundColor: `${FUNNEL_COLOURS.ink}20`}} />
+            <div className="h-1.5 rounded-sm" style={{width: '60%', backgroundColor: `${FUNNEL_COLOURS.ink}14`}} />
+            <motion.div
+              className="mt-1 h-5 rounded-sm flex items-center justify-center font-mono text-[7px] font-bold uppercase tracking-wider text-white"
+              style={{backgroundColor: FUNNEL_COLOURS.goldDeep}}
+              animate={reduce ? undefined : {scale: [1, 1.04, 1]}}
+              transition={reduce ? undefined : {duration: 1.8, repeat: Infinity}}
+            >
+              We build
+            </motion.div>
+          </motion.div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/** Looks like a business still going: clean phone site, trust cue. */
+function StillGoingSiteVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full overflow-hidden border border-dark/12 bg-white/70 p-2.5 flex items-center justify-center gap-3">
+      <div
+        className="relative w-[72px] h-[98px] rounded-[10px] border overflow-hidden shrink-0"
+        style={{borderColor: `${FUNNEL_COLOURS.ink}22`, backgroundColor: FUNNEL_COLOURS.surface}}
+      >
+        <div className="h-2.5 border-b flex items-center justify-center" style={{borderColor: `${FUNNEL_COLOURS.ink}10`}}>
+          <span className="h-1 w-6 rounded-full" style={{backgroundColor: `${FUNNEL_COLOURS.ink}18`}} />
+        </div>
+        <div className="p-1.5 space-y-1">
+          <motion.div
+            className="h-2 rounded-sm"
+            style={{width: '75%', backgroundColor: FUNNEL_COLOURS.ink}}
+            animate={reduce ? undefined : {opacity: [0.55, 1, 0.55]}}
+            transition={reduce ? undefined : {duration: 2, repeat: Infinity}}
+          />
+          <div className="h-1 w-full rounded-sm" style={{backgroundColor: `${FUNNEL_COLOURS.ink}12`}} />
+          <div className="h-1 rounded-sm" style={{width: '83%', backgroundColor: `${FUNNEL_COLOURS.ink}10`}} />
+          <div
+            className="mt-1 h-8 rounded-sm border"
+            style={{borderColor: `${FUNNEL_COLOURS.ink}10`, backgroundColor: `${FUNNEL_COLOURS.gold}18`}}
+          />
+          <motion.div
+            className="h-4 rounded-sm flex items-center justify-center font-mono text-[6px] font-bold uppercase tracking-wider text-white"
+            style={{backgroundColor: FUNNEL_COLOURS.accent}}
+            animate={reduce ? undefined : {scale: [1, 1.05, 1]}}
+            transition={reduce ? undefined : {duration: 1.6, repeat: Infinity}}
+          >
+            Enquire
+          </motion.div>
+        </div>
+      </div>
+      <div className="min-w-0 flex-1 space-y-2">
+        <p className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/40">On a phone</p>
+        <p className="font-serif text-sm font-bold leading-snug" style={{color: FUNNEL_COLOURS.ink}}>
+          Clean. Fast. Clear.
+        </p>
+        <motion.span
+          className="inline-flex font-mono text-[8px] font-bold uppercase tracking-[0.14em] px-2 py-1"
+          style={{
+            color: '#1a7a4c',
+            backgroundColor: 'rgba(26,122,76,0.12)',
+            border: '1px solid rgba(26,122,76,0.28)',
+          }}
+          animate={reduce ? undefined : {opacity: [0.6, 1, 0.6]}}
+          transition={reduce ? undefined : {duration: 2, repeat: Infinity}}
+        >
+          Looks open
+        </motion.span>
+      </div>
+    </div>
+  )
+}
+
+/** Boring tech is ours: hosting / security / updates handled. */
+function BoringTechOursVisual({reduce}: VisualProps) {
+  const rows = [
+    {label: 'Hosting', status: 'Ours'},
+    {label: 'Security', status: 'Ours'},
+    {label: 'Updates', status: 'Ours'},
+    {label: 'Passwords', status: 'Not yours'},
+  ]
+  return (
+    <div className="relative h-[118px] w-full overflow-hidden border border-dark/12 bg-white/70 p-2.5">
+      <p className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/40 mb-1.5">
+        Technical end
+      </p>
+      <div className="space-y-1.5">
+        {rows.map((row, i) => (
+          <motion.div
+            key={row.label}
+            className="flex items-center justify-between rounded-sm border px-2 py-1"
+            style={{
+              borderColor: `${FUNNEL_COLOURS.ink}12`,
+              backgroundColor: i === 3 ? `${FUNNEL_COLOURS.accent}08` : FUNNEL_COLOURS.ground,
+            }}
+            initial={reduce ? false : {opacity: 0, x: 8}}
+            whileInView={{opacity: 1, x: 0}}
+            viewport={{once: true}}
+            transition={{duration: 0.35, delay: reduce ? 0 : i * 0.08}}
+          >
+            <span className="font-sans text-[10px]" style={{color: FUNNEL_COLOURS.ink}}>
+              {row.label}
+            </span>
+            <motion.span
+              className="font-mono text-[8px] font-bold uppercase tracking-[0.12em]"
+              style={{
+                color: i === 3 ? FUNNEL_COLOURS.accent : FUNNEL_COLOURS.goldDeep,
+              }}
+              animate={
+                reduce
+                  ? undefined
+                  : i < 3
+                    ? {opacity: [0.55, 1, 0.55]}
+                    : {opacity: [0.7, 1, 0.7]}
+              }
+              transition={reduce ? undefined : {duration: 1.8, repeat: Infinity, delay: i * 0.1}}
+            >
+              {row.status}
+            </motion.span>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** Enquiries land somewhere real: form → email. */
+function EnquiryToEmailVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full overflow-hidden border border-dark/12 bg-white/70 p-2.5">
+      <div className="grid grid-cols-[1fr_auto_1fr] gap-2 items-center h-full">
+        <div
+          className="rounded-sm border h-full px-2 py-1.5 flex flex-col gap-1"
+          style={{borderColor: `${FUNNEL_COLOURS.ink}14`, backgroundColor: FUNNEL_COLOURS.ground}}
+        >
+          <p className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/40">Form</p>
+          <div className="h-2 rounded-sm" style={{backgroundColor: `${FUNNEL_COLOURS.ink}12`}} />
+          <div className="h-2 rounded-sm" style={{width: '80%', backgroundColor: `${FUNNEL_COLOURS.ink}10`}} />
+          <div className="h-3 rounded-sm" style={{width: '60%', backgroundColor: `${FUNNEL_COLOURS.ink}08`}} />
+          <motion.div
+            className="mt-auto h-5 rounded-sm flex items-center justify-center font-mono text-[7px] font-bold uppercase tracking-wider text-white"
+            style={{backgroundColor: FUNNEL_COLOURS.accent}}
+            animate={
+              reduce
+                ? undefined
+                : {
+                    scale: [1, 1, 0.94, 1],
+                    boxShadow: [
+                      '0 0 0 0 rgba(226,30,63,0)',
+                      '0 0 0 0 rgba(226,30,63,0)',
+                      '0 0 0 6px rgba(226,30,63,0.2)',
+                      '0 0 0 0 rgba(226,30,63,0)',
+                    ],
+                  }
+            }
+            transition={reduce ? undefined : {duration: 2.4, repeat: Infinity, times: [0, 0.45, 0.6, 1]}}
+          >
+            Send
+          </motion.div>
+        </div>
+        <motion.span
+          className="font-mono text-[10px] font-bold"
+          style={{color: FUNNEL_COLOURS.goldDeep}}
+          animate={reduce ? undefined : {x: [0, 3, 0], opacity: [0.4, 1, 0.4]}}
+          transition={reduce ? undefined : {duration: 1.6, repeat: Infinity}}
+        >
+          →
+        </motion.span>
+        <div
+          className="rounded-sm border h-full px-2 py-1.5 flex flex-col"
+          style={{borderColor: `${FUNNEL_COLOURS.goldDeep}35`, backgroundColor: `${FUNNEL_COLOURS.goldDeep}0A`}}
+        >
+          <p
+            className="font-mono text-[7px] uppercase tracking-[0.14em]"
+            style={{color: FUNNEL_COLOURS.goldDeep}}
+          >
+            Your email
+          </p>
+          <motion.div
+            className="mt-2 rounded-sm border px-1.5 py-1.5"
+            style={{borderColor: `${FUNNEL_COLOURS.ink}12`, backgroundColor: '#fff'}}
+            animate={reduce ? undefined : {y: [6, 0, 0, 6], opacity: [0, 1, 1, 0]}}
+            transition={reduce ? undefined : {duration: 2.4, repeat: Infinity, times: [0, 0.25, 0.8, 1]}}
+          >
+            <p className="font-mono text-[6px] uppercase tracking-widest text-dark/40">New enquiry</p>
+            <p className="font-sans text-[9px] leading-snug mt-0.5" style={{color: FUNNEL_COLOURS.ink}}>
+              Can we book this week?
+            </p>
+          </motion.div>
+          <motion.p
+            className="mt-auto font-mono text-[7px] font-bold uppercase tracking-[0.14em]"
+            style={{color: '#1a7a4c'}}
+            animate={reduce ? undefined : {opacity: [0, 0, 1, 1, 0]}}
+            transition={reduce ? undefined : {duration: 2.4, repeat: Infinity, times: [0, 0.35, 0.45, 0.85, 1]}}
+          >
+            Delivered
+          </motion.p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const WEBSITE_VISUALS = [
+  NoDesignSpiralVisual,
+  StillGoingSiteVisual,
+  BoringTechOursVisual,
+  EnquiryToEmailVisual,
+]
+
 type Benefit = {title: string; text: string}
 
 /**
@@ -1535,6 +1806,7 @@ export function BenefitMotionRows({
     | 'reviews'
     | 'ai-phone'
     | 'booking'
+    | 'website'
 }) {
   const reduce = useReducedMotion()
   const visuals =
@@ -1544,13 +1816,15 @@ export function BenefitMotionRows({
         ? PROFILE_VISUALS
         : variant === 'search-fix'
           ? SEARCH_VISUALS
-          : variant === 'landing-page' || variant === 'booking'
-            ? LANDING_VISUALS
-            : variant === 'crm-rescue'
-              ? CRM_VISUALS
-              : variant === 'team-ai' || variant === 'change-pack' || variant === 'content-system'
-                ? TEAM_AI_VISUALS
-                : SPEED_VISUALS
+          : variant === 'website'
+            ? WEBSITE_VISUALS
+            : variant === 'landing-page' || variant === 'booking'
+              ? LANDING_VISUALS
+              : variant === 'crm-rescue'
+                ? CRM_VISUALS
+                : variant === 'team-ai' || variant === 'change-pack' || variant === 'content-system'
+                  ? TEAM_AI_VISUALS
+                  : SPEED_VISUALS
 
   return (
     <div className="space-y-10 md:space-y-12">

@@ -69,8 +69,15 @@ import {BookingLeakPair} from './BookingLeakPair'
 import {BookingPainCards} from './BookingPainCards'
 import {BookingDeliverableMock} from './BookingDeliverableMock'
 import {FunnelComingSoonCta} from './FunnelComingSoonCta'
+import {WebsiteEvidenceCard, type WebsiteEvidence} from './WebsiteEvidenceCard'
+import {WebsiteLeakPair} from './WebsiteLeakPair'
+import {WebsiteUnknownsCentrepiece} from './WebsiteUnknownsCentrepiece'
+import {WebsiteFixTiers} from './WebsiteFixTiers'
+import {WebsiteDeliverableMock} from './WebsiteDeliverableMock'
+import {WebsitePainCards} from './WebsitePainCards'
 import {
   parseBlockedPages,
+  parseNoSiteFlag,
   parseReviewCount,
   parseSpeedScore,
   sanitiseBusinessName,
@@ -81,6 +88,7 @@ import {
 } from './funnelPersonalise'
 import {FUNNEL_COLOURS, FUNNEL_CSS_VARS} from './funnelTheme'
 import {Reveal, RevealList} from './funnelReveal'
+import {websiteEnrolmentPriceOptions} from '../../constants/websiteStripe'
 import {funnelCopyForSlug} from './funnelCopy'
 import {
   FUNNEL_PRODUCT_LABELS,
@@ -101,6 +109,7 @@ const QUERY = `*[_type == "funnelPage" && slug.current == $slug && !(_id in path
   ctaLabel,
   stripeUrl,
   schedulerUrl,
+  waitlistUrl,
   secondaryCtaLabel,
   secondaryUrl,
   priceOptions[]{ label, ctaLabel, stripeUrl },
@@ -211,6 +220,7 @@ const FunnelPage: React.FC = () => {
   const business = useMemo(() => sanitiseBusinessName(params.get('b')), [params])
   const competitor = useMemo(() => sanitiseCompetitorName(params.get('c')), [params])
   const score = useMemo(() => parseSpeedScore(params.get('s')), [params])
+  const noSite = useMemo(() => parseNoSiteFlag(params.get('nosite')), [params])
   const blockedPages = useMemo(() => parseBlockedPages(params.get('n')), [params])
   const callDay = useMemo(() => sanitiseCallDay(params.get('d')), [params])
   const callTime = useMemo(() => sanitiseCallTime(params.get('t')), [params])
@@ -227,8 +237,9 @@ const FunnelPage: React.FC = () => {
   const isAiPhone = proofKind === 'ai-phone'
   const isBooking = proofKind === 'booking'
   const isSpeed = proofKind === 'speed'
+  const isWebsite = proofKind === 'website'
   const isDraftSoon =
-    proofKind === 'website' || proofKind === 'geo' || proofKind === 'client-finder'
+    proofKind === 'geo' || proofKind === 'client-finder' || proofKind === 'draft'
   const lastPostMonth = useMemo(() => sanitiseLastPostMonth(params.get('m')), [params])
   const yourReviews = useMemo(() => parseReviewCount(params.get('n')), [params])
   const theirReviews = useMemo(() => parseReviewCount(params.get('r')), [params])
@@ -238,23 +249,25 @@ const FunnelPage: React.FC = () => {
       ? 'google-profile'
       : isSearchFix
         ? 'search-fix'
-        : isLandingPage || isDraftSoon
-          ? 'landing-page'
-          : isCrmRescue
-            ? 'crm-rescue'
-            : isTeamAi
-              ? 'team-ai'
-              : isChangePack
-                ? 'change-pack'
-                : isContentSystem
-                  ? 'content-system'
-                  : isReviews
-                    ? 'reviews'
-                    : isAiPhone
-                      ? 'ai-phone'
-                      : isBooking
-                        ? 'booking'
-                        : 'speed'
+        : isWebsite
+          ? 'website'
+          : isLandingPage || isDraftSoon
+            ? 'landing-page'
+            : isCrmRescue
+              ? 'crm-rescue'
+              : isTeamAi
+                ? 'team-ai'
+                : isChangePack
+                  ? 'change-pack'
+                  : isContentSystem
+                    ? 'content-system'
+                    : isReviews
+                      ? 'reviews'
+                      : isAiPhone
+                        ? 'ai-phone'
+                        : isBooking
+                          ? 'booking'
+                          : 'speed'
   const calculatorVariant = isSpeed
     ? 'speed'
     : isMissedCall
@@ -273,11 +286,13 @@ const FunnelPage: React.FC = () => {
                   ? 'ai-phone'
                   : isBooking
                     ? 'booking'
-                    : isSearchFix
-                      ? 'search-fix'
-                      : isLandingPage
-                        ? 'landing-page'
-                        : 'google-profile'
+                    : isWebsite
+                      ? 'website'
+                      : isSearchFix
+                        ? 'search-fix'
+                        : isLandingPage
+                          ? 'landing-page'
+                          : 'google-profile'
   const missedEvidence: MissedCallEvidence = useMemo(() => {
     if (business && callDay && callTime) {
       return {mode: 'tested', business, day: callDay, time: callTime}
@@ -305,6 +320,11 @@ const FunnelPage: React.FC = () => {
     if (business) return {mode: 'live', business}
     return {mode: 'try'}
   }, [business])
+  const websiteEvidence: WebsiteEvidence = useMemo(() => {
+    if (business && noSite) return {mode: 'nosite', business}
+    if (business && score != null) return {mode: 'score', business, score}
+    return {mode: 'try'}
+  }, [business, noSite, score])
   const crmEvidence: CrmEnquiryEvidence = useMemo(() => {
     if (business && callDay && callTime) {
       return {mode: 'tested', business, day: callDay, time: callTime}
@@ -356,26 +376,53 @@ const FunnelPage: React.FC = () => {
   }, [slug])
 
   const rawLabel = doc?.ctaLabel || COPY.ctaLabel
+  // Live Payment Links in websiteStripe.ts. Sanity priceOptions still win if set.
+  const websitePriceOptions =
+    (doc?.priceOptions || []).filter((o) => o?.ctaLabel && o?.stripeUrl).length > 0
+      ? doc?.priceOptions
+      : isWebsite
+        ? websiteEnrolmentPriceOptions()
+        : doc?.priceOptions
+  const websiteStripeUrl =
+    doc?.stripeUrl ||
+    (isWebsite ? websiteEnrolmentPriceOptions()[0]?.stripeUrl : undefined)
   const buyDoorNeedsAccess =
-    (isReviews || isAiPhone || isBooking) && !doc?.stripeUrl
+    (isReviews || isAiPhone || isBooking || isWebsite) &&
+    !doc?.stripeUrl &&
+    !(isWebsite && websiteStripeUrl)
   const ctaFields: FunnelCtaFields = {
     ctaMode: buyDoorNeedsAccess
       ? 'call'
-      : doc?.ctaMode || (isChangePack || isContentSystem ? 'call' : 'buy'),
+      : isWebsite && (websitePriceOptions || []).filter((o) => o?.ctaLabel && o?.stripeUrl).length >= 2
+        ? 'dual'
+        : doc?.ctaMode || (isChangePack || isContentSystem ? 'call' : 'buy'),
     // Authored labels already include price text. Only normalise a comma before $ into one middle dot.
     ctaLabel: rawLabel.replace(/,\s*(?=\$)/, ' · ').replace(/\s*·\s*·\s*(?=\$)/, ' · '),
-    stripeUrl: doc?.stripeUrl,
+    stripeUrl: websiteStripeUrl || doc?.stripeUrl,
+    quietLine: isWebsite
+      ? 'Prefer to talk first? Book 15 minutes.'
+      : undefined,
+    secondaryCtaLabel: isWebsite
+      ? doc?.secondaryCtaLabel || 'Prefer to talk first? Book 15 minutes.'
+      : doc?.secondaryCtaLabel,
+    secondaryUrl: isWebsite
+      ? doc?.secondaryUrl || doc?.schedulerUrl
+      : doc?.secondaryUrl,
     schedulerUrl: buyDoorNeedsAccess
       ? accessFormPathForProduct(
-          isReviews ? 'reviews' : isAiPhone ? 'ai-phone' : 'booking',
+          isReviews
+            ? 'reviews'
+            : isAiPhone
+              ? 'ai-phone'
+              : isBooking
+                ? 'booking'
+                : 'website',
         )
       : doc?.schedulerUrl ||
         (isChangePack || isContentSystem
           ? accessFormPathForProduct(isContentSystem ? 'content-system' : 'change-pack')
           : undefined),
-    secondaryCtaLabel: doc?.secondaryCtaLabel,
-    secondaryUrl: doc?.secondaryUrl,
-    priceOptions: doc?.priceOptions,
+    priceOptions: websitePriceOptions,
   }
 
   const pageTitle = doc?.title ? `${doc.title} | SYSBILT` : 'Fixed-price fix | SYSBILT'
@@ -480,7 +527,9 @@ const FunnelPage: React.FC = () => {
           </header>
 
           <section
-            className={`mx-auto px-6 md:px-10 pb-16 md:pb-24 ${
+            className={`mx-auto px-6 md:px-10 ${
+              isWebsite ? 'pb-20 md:pb-28' : 'pb-16 md:pb-24'
+            } ${
               isSpeed ||
               isSearchFix ||
               isLandingPage ||
@@ -491,6 +540,7 @@ const FunnelPage: React.FC = () => {
               isReviews ||
               isAiPhone ||
               isBooking ||
+              isWebsite ||
               isDraftSoon
                 ? 'max-w-3xl'
                 : 'max-w-5xl'
@@ -536,6 +586,7 @@ const FunnelPage: React.FC = () => {
             ) : null}
             {isAiPhone ? <AiPhoneEvidenceCard evidence={aiPhoneEvidence} /> : null}
             {isBooking ? <BookingEvidenceCard business={business} /> : null}
+            {isWebsite ? <WebsiteEvidenceCard evidence={websiteEvidence} /> : null}
             {isDraftSoon ? (
               <div
                 className="mt-2 rounded-sm border p-5 md:p-6 max-w-2xl"
@@ -562,7 +613,8 @@ const FunnelPage: React.FC = () => {
             !(isLandingPage && adEvidence.mode === 'try') &&
             !(isCrmRescue && crmEvidence.mode === 'try') &&
             !(isContentSystem && !business) &&
-            !isDraftSoon ? (
+            !isDraftSoon &&
+            !isWebsite ? (
               <Reveal delay={0.12} y={12}>
                 <p
                   className={`font-sans text-base md:text-lg leading-relaxed max-w-2xl ${
@@ -852,6 +904,37 @@ const FunnelPage: React.FC = () => {
                 </Reveal>
                 <BookingLeakPair />
               </section>
+            ) : isWebsite ? (
+              <section className="mt-20 md:mt-24">
+                <Reveal y={10}>
+                  <SectionLabel>The leak</SectionLabel>
+                </Reveal>
+                <Reveal delay={0.06} y={14}>
+                  <h3
+                    className="font-serif font-bold text-2xl md:text-3xl tracking-tight mb-6 md:mb-8 max-w-2xl"
+                    style={{color: FUNNEL_COLOURS.ink}}
+                  >
+                    People find you, then they hit a dead end
+                  </h3>
+                </Reveal>
+                <Reveal delay={0.1} y={10}>
+                  <p
+                    className="font-sans text-base md:text-lg leading-relaxed max-w-2xl mb-4"
+                    style={{color: FUNNEL_COLOURS.muted}}
+                  >
+                    {business ? COPY.proofLead(business) : COPY.proofLeadGeneric}
+                  </p>
+                </Reveal>
+                <Reveal delay={0.14} y={10}>
+                  <p
+                    className="font-sans text-base md:text-lg leading-relaxed max-w-2xl mb-2"
+                    style={{color: FUNNEL_COLOURS.muted}}
+                  >
+                    {COPY.proofAfterGeneric}
+                  </p>
+                </Reveal>
+                <WebsiteLeakPair />
+              </section>
             ) : isDraftSoon ? (
               <section className="mt-12 md:mt-14">
                 <Reveal y={10}>
@@ -894,7 +977,7 @@ const FunnelPage: React.FC = () => {
           </section>
 
           <section
-            className="w-full py-16 md:py-24 mb-0"
+            className={`w-full mb-0 ${isWebsite ? 'py-20 md:py-28' : 'py-16 md:py-24'}`}
             style={{backgroundColor: FUNNEL_COLOURS.ink, color: FUNNEL_COLOURS.onInk}}
           >
             <div className="max-w-5xl mx-auto px-6 md:px-10">
@@ -943,6 +1026,8 @@ const FunnelPage: React.FC = () => {
                 <AiPhonePainCards />
               ) : isBooking ? (
                 <BookingPainCards />
+              ) : isWebsite ? (
+                <WebsitePainCards />
               ) : isDraftSoon ? null : (
                 <PainCostCards />
               )}
@@ -952,7 +1037,15 @@ const FunnelPage: React.FC = () => {
             </div>
           </section>
 
-          <section className="max-w-3xl mx-auto px-6 md:px-10 pt-16 md:pt-24 pb-16 md:pb-24">
+          {isWebsite ? <WebsiteUnknownsCentrepiece /> : null}
+
+          <section
+            className={`mx-auto px-6 md:px-10 ${
+              isWebsite
+                ? 'max-w-5xl pt-20 md:pt-28 pb-20 md:pb-28'
+                : 'max-w-3xl pt-16 md:pt-24 pb-16 md:pb-24'
+            }`}
+          >
             <SectionRule />
             <Reveal y={10}>
               <SectionLabel>{COPY.bridgeLabel}</SectionLabel>
@@ -974,14 +1067,18 @@ const FunnelPage: React.FC = () => {
               </p>
             </Reveal>
 
-            <Reveal delay={0.08} y={12}>
-              <p
-                className="mt-12 font-sans text-base md:text-lg leading-relaxed max-w-2xl"
-                style={{color: FUNNEL_COLOURS.muted}}
-              >
-                {COPY.bridgeGaugeCaption}
-              </p>
-            </Reveal>
+            {isWebsite ? (
+              <WebsiteFixTiers />
+            ) : (
+              <Reveal delay={0.08} y={12}>
+                <p
+                  className="mt-12 font-sans text-base md:text-lg leading-relaxed max-w-2xl"
+                  style={{color: FUNNEL_COLOURS.muted}}
+                >
+                  {COPY.bridgeGaugeCaption}
+                </p>
+              </Reveal>
+            )}
             {isMissedCall ? (
               <CallMissedMoment businessName={business} mode="after" />
             ) : isGoogleProfile ? (
@@ -1002,13 +1099,14 @@ const FunnelPage: React.FC = () => {
               isReviews ||
               isAiPhone ||
               isBooking ||
+              isWebsite ||
               isDraftSoon ? null : (
               <ScoreMoment score={90} mode="benchmark" />
             )}
           </section>
 
           <section
-            className="w-full py-16 md:py-24"
+            className={`w-full ${isWebsite ? 'py-20 md:py-28' : 'py-16 md:py-24'}`}
             style={{backgroundColor: FUNNEL_COLOURS.surfaceGold}}
           >
             <div className="max-w-5xl mx-auto px-6 md:px-10">
@@ -1016,9 +1114,11 @@ const FunnelPage: React.FC = () => {
               <Reveal y={10}>
                 <SectionLabel>{COPY.benefitsLabel}</SectionLabel>
               </Reveal>
-              <Reveal delay={0.06} y={18}>
+                  <Reveal delay={0.06} y={18}>
                 <h2
-                  className="font-serif font-bold text-3xl md:text-4xl tracking-tight mb-10 max-w-2xl"
+                  className={`font-serif font-bold text-3xl md:text-4xl tracking-tight max-w-2xl ${
+                    isWebsite ? 'mb-12 md:mb-14' : 'mb-10'
+                  }`}
                   style={{color: FUNNEL_COLOURS.ink}}
                 >
                   {COPY.benefitsHeading}
@@ -1029,12 +1129,16 @@ const FunnelPage: React.FC = () => {
                 ink={FUNNEL_COLOURS.ink}
                 muted={FUNNEL_COLOURS.muted}
                 gold={FUNNEL_COLOURS.goldDeep}
-                variant={motionVariant}
+                variant={isWebsite ? 'website' : motionVariant}
               />
             </div>
           </section>
 
-          <section className="max-w-3xl mx-auto px-6 md:px-10 pt-16 md:pt-24 pb-16 md:pb-24">
+          <section
+            className={`max-w-3xl mx-auto px-6 md:px-10 ${
+              isWebsite ? 'pt-20 md:pt-28 pb-20 md:pb-28' : 'pt-16 md:pt-24 pb-16 md:pb-24'
+            }`}
+          >
             <SectionRule />
             <Reveal y={10}>
               <SectionLabel>{COPY.processLabel}</SectionLabel>
@@ -1067,7 +1171,11 @@ const FunnelPage: React.FC = () => {
             </Reveal>
           </section>
 
-          <section className="max-w-5xl mx-auto px-6 md:px-10 pb-16 md:pb-24">
+          <section
+            className={`max-w-5xl mx-auto px-6 md:px-10 ${
+              isWebsite ? 'pt-4 md:pt-6 pb-20 md:pb-28' : 'pb-16 md:pb-24'
+            }`}
+          >
             <SectionRule />
             <Reveal y={10}>
               <SectionLabel>{COPY.stackLabel}</SectionLabel>
@@ -1084,12 +1192,14 @@ const FunnelPage: React.FC = () => {
               items={COPY.stackItems}
               ink={FUNNEL_COLOURS.ink}
               muted={FUNNEL_COLOURS.muted}
-              variant={motionVariant}
+              variant={isWebsite ? 'website' : motionVariant}
             />
           </section>
 
           <section
-            className="w-full py-16 md:py-24 mb-16 md:mb-24 overflow-hidden"
+            className={`w-full overflow-hidden ${
+              isWebsite ? 'py-20 md:py-28 mb-20 md:mb-28' : 'py-16 md:py-24 mb-16 md:mb-24'
+            }`}
             style={{backgroundColor: FUNNEL_COLOURS.inkSoft, color: FUNNEL_COLOURS.onInk}}
           >
             <div className="max-w-5xl mx-auto px-6 md:px-10">
@@ -1166,6 +1276,8 @@ const FunnelPage: React.FC = () => {
                   <AiPhoneDeliverableMock />
                 ) : isBooking ? (
                   <BookingDeliverableMock />
+                ) : isWebsite ? (
+                  <WebsiteDeliverableMock />
                 ) : isDraftSoon ? (
                   <div
                     className="rounded-sm border p-5 md:p-6"

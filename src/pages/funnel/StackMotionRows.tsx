@@ -942,6 +942,273 @@ const LANDING_STACK_VISUALS = [
   AftercareStackVisual,
 ]
 
+/** Brochure: one live page with the inclusions from the copy. */
+function BrochureStackVisual({reduce, play}: VisualProps) {
+  const go = play && !reduce
+  const bits = ['Who you are', 'Hours', 'Map', 'Form → email']
+  return (
+    <div
+      className="w-full min-h-[96px] overflow-hidden"
+      style={{
+        border: `1px solid ${FUNNEL_COLOURS.ink}18`,
+        backgroundColor: '#fff',
+        boxShadow: `0 12px 28px -20px ${FUNNEL_COLOURS.ink}50`,
+      }}
+    >
+      <div
+        className="flex items-center gap-1.5 px-2.5 h-7 border-b"
+        style={{borderColor: `${FUNNEL_COLOURS.ink}12`, backgroundColor: FUNNEL_COLOURS.ground}}
+      >
+        <span className="h-1.5 w-1.5 rounded-full" style={{backgroundColor: '#D4726A'}} />
+        <span className="h-1.5 w-1.5 rounded-full" style={{backgroundColor: FUNNEL_COLOURS.gold}} />
+        <span className="h-1.5 w-1.5 rounded-full" style={{backgroundColor: `${FUNNEL_COLOURS.ink}35`}} />
+        <span
+          className="ml-1 font-mono text-[8px] uppercase tracking-[0.14em] truncate"
+          style={{color: FUNNEL_COLOURS.steel}}
+        >
+          yoursite.com.au · 1 page
+        </span>
+      </div>
+      <div className="p-2.5 space-y-2" style={{backgroundColor: '#fff'}}>
+        <div className="flex items-center justify-between gap-2">
+          <p className="font-serif text-[13px] font-bold" style={{color: FUNNEL_COLOURS.ink}}>
+            Brochure
+          </p>
+          <motion.span
+            className="font-mono text-[8px] font-bold uppercase tracking-[0.14em] px-1.5 py-0.5"
+            style={{backgroundColor: FUNNEL_COLOURS.ink, color: FUNNEL_COLOURS.onInk}}
+            animate={go ? {opacity: [0.85, 1, 0.85]} : undefined}
+            transition={{duration: 1.8, repeat: Infinity}}
+          >
+            One page
+          </motion.span>
+        </div>
+        <div className="flex flex-wrap gap-1">
+          {bits.map((label, i) => (
+            <motion.span
+              key={label}
+              className="font-mono text-[8px] uppercase tracking-[0.1em] px-1.5 py-1"
+              style={{
+                color: FUNNEL_COLOURS.ink,
+                backgroundColor: FUNNEL_COLOURS.ground,
+                border: `1px solid ${FUNNEL_COLOURS.ink}18`,
+              }}
+              initial={reduce ? false : {opacity: 0, y: 4}}
+              animate={go || reduce ? {opacity: 1, y: 0} : {opacity: 0, y: 4}}
+              transition={{duration: 0.3, delay: reduce ? 0 : 0.12 + i * 0.1}}
+            >
+              {label}
+            </motion.span>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/** Practice: named pages filling a 5–7 page map. */
+function PracticeStackVisual({reduce, play}: VisualProps) {
+  const go = play && !reduce
+  const pages = ['Home', 'Services', 'About', 'Proof', 'Contact', 'FAQ', 'More']
+  return (
+    <div
+      className="w-full min-h-[96px] overflow-hidden"
+      style={{
+        border: `1px solid ${FUNNEL_COLOURS.goldDeep}45`,
+        backgroundColor: '#fff',
+        boxShadow: `0 12px 28px -20px ${FUNNEL_COLOURS.ink}50`,
+      }}
+    >
+      <div
+        className="flex items-center justify-between px-2.5 h-7 border-b"
+        style={{
+          borderColor: `${FUNNEL_COLOURS.goldDeep}30`,
+          backgroundColor: FUNNEL_COLOURS.surfaceGold,
+        }}
+      >
+        <span
+          className="font-mono text-[8px] font-bold uppercase tracking-[0.14em]"
+          style={{color: FUNNEL_COLOURS.ink}}
+        >
+          Practice · sweet spot
+        </span>
+        <span
+          className="font-mono text-[8px] font-bold uppercase tracking-[0.12em]"
+          style={{color: FUNNEL_COLOURS.goldDeep}}
+        >
+          5–7 pages
+        </span>
+      </div>
+      <div className="p-2.5 grid grid-cols-4 gap-1.5" style={{backgroundColor: '#fff'}}>
+        {pages.map((page, i) => (
+          <motion.div
+            key={page}
+            className="h-7 flex items-center justify-center font-mono text-[8px] font-bold uppercase tracking-[0.08em]"
+            style={{
+              border: `1px solid ${i < 5 ? `${FUNNEL_COLOURS.goldDeep}40` : `${FUNNEL_COLOURS.ink}20`}`,
+              backgroundColor: i < 5 ? FUNNEL_COLOURS.ground : '#fff',
+              color: FUNNEL_COLOURS.ink,
+            }}
+            initial={reduce ? false : {opacity: 0, scale: 0.92}}
+            animate={go || reduce ? {opacity: 1, scale: 1} : {opacity: 0, scale: 0.92}}
+            transition={{duration: 0.28, delay: reduce ? 0 : 0.08 + i * 0.07}}
+          >
+            {page}
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** Full site: denser sitemap for 9–12 pages. */
+function FullSiteStackVisual({reduce, play}: VisualProps) {
+  const go = play && !reduce
+  const pages = [
+    'Home',
+    'Service 1',
+    'Service 2',
+    'Service 3',
+    'About',
+    'Team',
+    'Cases',
+    'FAQ',
+    'Areas',
+    'Blog',
+    'Contact',
+    'Legal',
+  ]
+  return (
+    <div
+      className="w-full min-h-[96px] overflow-hidden"
+      style={{
+        border: `1px solid ${FUNNEL_COLOURS.ink}18`,
+        backgroundColor: '#fff',
+        boxShadow: `0 12px 28px -20px ${FUNNEL_COLOURS.ink}50`,
+      }}
+    >
+      <div
+        className="flex items-center justify-between px-2.5 h-7 border-b"
+        style={{borderColor: `${FUNNEL_COLOURS.ink}12`, backgroundColor: FUNNEL_COLOURS.ground}}
+      >
+        <span
+          className="font-mono text-[8px] font-bold uppercase tracking-[0.14em]"
+          style={{color: FUNNEL_COLOURS.ink}}
+        >
+          Full site
+        </span>
+        <motion.span
+          className="font-mono text-[8px] font-bold uppercase tracking-[0.12em] px-1.5 py-0.5"
+          style={{backgroundColor: FUNNEL_COLOURS.accent, color: FUNNEL_COLOURS.onInk}}
+          animate={go ? {opacity: [0.85, 1, 0.85]} : undefined}
+          transition={{duration: 1.8, repeat: Infinity}}
+        >
+          9–12 pages
+        </motion.span>
+      </div>
+      <div className="p-2.5 grid grid-cols-4 gap-1.5" style={{backgroundColor: '#fff'}}>
+        {pages.map((page, i) => (
+          <motion.div
+            key={page}
+            className="h-5 flex items-center justify-center font-mono text-[7px] font-bold uppercase tracking-[0.06em]"
+            style={{
+              border: `1px solid ${FUNNEL_COLOURS.ink}18`,
+              backgroundColor: FUNNEL_COLOURS.ground,
+              color: FUNNEL_COLOURS.ink,
+            }}
+            initial={reduce ? false : {opacity: 0}}
+            animate={go || reduce ? {opacity: 1} : {opacity: 0}}
+            transition={{duration: 0.25, delay: reduce ? 0 : 0.05 + i * 0.05}}
+          >
+            {page}
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** What else later: next doors stay available, not pushed on day one. */
+function LaterUpsellStackVisual({reduce, play}: VisualProps) {
+  const go = play && !reduce
+  const items = [
+    {label: 'Booking', state: 'Later'},
+    {label: 'Follow-up', state: 'Later'},
+    {label: 'Reviews', state: 'Later'},
+    {label: 'Content', state: 'Later'},
+  ]
+  return (
+    <div
+      className="w-full min-h-[96px] overflow-hidden"
+      style={{
+        border: `1px solid ${FUNNEL_COLOURS.ink}18`,
+        backgroundColor: '#fff',
+        boxShadow: `0 12px 28px -20px ${FUNNEL_COLOURS.ink}50`,
+      }}
+    >
+      <div
+        className="flex items-center justify-between px-2.5 h-7 border-b"
+        style={{borderColor: `${FUNNEL_COLOURS.ink}12`, backgroundColor: FUNNEL_COLOURS.ground}}
+      >
+        <span
+          className="font-mono text-[8px] font-bold uppercase tracking-[0.14em]"
+          style={{color: FUNNEL_COLOURS.ink}}
+        >
+          Not day one
+        </span>
+        <motion.span
+          className="font-mono text-[8px] font-bold uppercase tracking-[0.12em] px-1.5 py-0.5"
+          style={{
+            color: FUNNEL_COLOURS.ink,
+            backgroundColor: `${FUNNEL_COLOURS.goldDeep}28`,
+            border: `1px solid ${FUNNEL_COLOURS.goldDeep}45`,
+          }}
+          animate={go ? {opacity: [0.8, 1, 0.8]} : undefined}
+          transition={{duration: 2, repeat: Infinity}}
+        >
+          Ask when ready
+        </motion.span>
+      </div>
+      <div className="p-2.5 grid grid-cols-2 gap-1.5" style={{backgroundColor: '#fff'}}>
+        {items.map((item, i) => (
+          <motion.div
+            key={item.label}
+            className="px-2 py-2 flex items-center justify-between gap-1"
+            style={{
+              border: `1px dashed ${FUNNEL_COLOURS.ink}28`,
+              backgroundColor: FUNNEL_COLOURS.ground,
+            }}
+            initial={reduce ? false : {opacity: 0, y: 6}}
+            animate={go || reduce ? {opacity: 1, y: 0} : {opacity: 0, y: 6}}
+            transition={{duration: 0.3, delay: reduce ? 0 : 0.1 + i * 0.08}}
+          >
+            <span className="font-sans text-[11px] font-semibold" style={{color: FUNNEL_COLOURS.ink}}>
+              {item.label}
+            </span>
+            <span
+              className="font-mono text-[8px] font-bold uppercase tracking-[0.12em] px-1 py-0.5"
+              style={{
+                color: FUNNEL_COLOURS.steel,
+                backgroundColor: '#fff',
+                border: `1px solid ${FUNNEL_COLOURS.ink}18`,
+              }}
+            >
+              {item.state}
+            </span>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+const WEBSITE_STACK_VISUALS: Array<(p: VisualProps) => React.ReactElement> = [
+  BrochureStackVisual,
+  PracticeStackVisual,
+  FullSiteStackVisual,
+  LaterUpsellStackVisual,
+]
+
 /** CRM: full lead-handling rescue — enquiry path lights up. */
 function CrmRescuePathVisual({reduce, play}: VisualProps) {
   const go = play && !reduce
@@ -1278,22 +1545,25 @@ export function StackMotionRows({
     | 'reviews'
     | 'ai-phone'
     | 'booking'
+    | 'website'
 }) {
   const reduce = useReducedMotion()
-  const visuals =
+  const visuals: Array<(p: VisualProps) => React.ReactElement> =
     variant === 'missed-call' || variant === 'ai-phone'
       ? MISSED_VISUALS
       : variant === 'google-profile' || variant === 'reviews'
         ? PROFILE_STACK_VISUALS
         : variant === 'search-fix'
           ? SEARCH_STACK_VISUALS
-          : variant === 'landing-page' || variant === 'booking'
-            ? LANDING_STACK_VISUALS
-            : variant === 'crm-rescue'
-              ? CRM_STACK_VISUALS
-              : variant === 'team-ai' || variant === 'change-pack' || variant === 'content-system'
-                ? TEAM_AI_STACK_VISUALS
-                : SPEED_VISUALS
+          : variant === 'website'
+            ? WEBSITE_STACK_VISUALS
+            : variant === 'landing-page' || variant === 'booking'
+              ? LANDING_STACK_VISUALS
+              : variant === 'crm-rescue'
+                ? CRM_STACK_VISUALS
+                : variant === 'team-ai' || variant === 'change-pack' || variant === 'content-system'
+                  ? TEAM_AI_STACK_VISUALS
+                  : SPEED_VISUALS
 
   return (
     <ul className="space-y-10 md:space-y-12">
@@ -1304,7 +1574,7 @@ export function StackMotionRows({
           index={i}
           ink={ink}
           muted={muted}
-          reduce={reduce}
+          reduce={!!reduce}
           visuals={visuals}
         />
       ))}

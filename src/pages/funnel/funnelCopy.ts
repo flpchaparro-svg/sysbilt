@@ -66,6 +66,7 @@ export type FunnelProductCopy = {
     | 'website'
     | 'geo'
     | 'client-finder'
+    | 'draft'
 }
 
 export const SPEED_FIX_COPY: FunnelProductCopy = {
@@ -1743,134 +1744,149 @@ export const BOOKING_COPY: FunnelProductCopy = {
 }
 
 export const WEBSITE_COPY: FunnelProductCopy = {
-  eyebrow: 'Three packages · Fixed once scoped · Coming soon',
-  h1Generic:
-    'A website that matches the size of the job, not a template someone picked in an afternoon',
+  eyebrow: 'Built by us · Hosted by us · About 14 days to live',
+  h1Generic: 'A website that looks like your business, without the five thousand dollar headache',
   h1Personal: (b: string) =>
-    `${b}, a website that matches the size of the job, not a template someone picked in an afternoon`,
-  sub: "Wrong-sized sites waste money either way: a brochure that can't sell, or a bloated build you never needed. We scope which of three packages fits, then build it. Brochure, seven-page, or full site. Fixed once scoped. This offer is coming soon.",
-  ctaLabel: 'Coming soon',
-  proofLabel: 'The fit',
-  proofHeadingLive: 'Three sizes. One honest scope',
-  proofHeadingGeneric: 'Three sizes. One honest scope',
+    `${b}, a website that looks like your business, without the five thousand dollar headache`,
+  sub: 'If your site is missing, broken, or quietly embarrassing, the people who find you online just leave. We interview you, write it, build it, host it, and keep it running. You never touch a password, a plugin, or a design argument.',
+  ctaLabel: 'Start my site · from $120',
+  proofLabel: 'The evidence',
+  proofHeadingLive: 'This is you, right now',
+  proofHeadingGeneric: 'This is you, right now',
   proofLead: (b: string | null) =>
     b
-      ? `Most ${b}-style sites fail because the brief was wrong, not because the fonts were ugly. Too thin to sell, or too heavy to finish.`
-      : 'Most sites fail because the brief was wrong, not because the fonts were ugly. Too thin to sell, or too heavy to finish.',
+      ? `They saw ${b} on Maps, on social, or a mate mentioned you. They went looking for a proper website, and what they got was nothing, or an old page, or something that did not look like a serious business.`
+      : 'They saw you on Maps, on social, or a mate mentioned you. They went looking for a proper website, and what they got was nothing, or an old page, or something that did not look like a serious business.',
   proofLeadGeneric:
-    'Most sites fail because the brief was wrong, not because the fonts were ugly. Too thin to sell, or too heavy to finish.',
+    'They saw you on Maps, on social, or a mate mentioned you. They went looking for a proper website, and what they got was nothing, or an old page, or something that did not look like a serious business.',
   proofAfter:
-    'We pick the package that matches the job, lock the price, then build. No template roulette, no agency that overbuilds for the invoice.',
+    'So they went back to the results and picked someone else. That is not a branding debate. That is work you had already won, handed away at the last step.',
   proofAfterGeneric:
-    'We pick the package that matches the job, lock the price, then build. No template roulette, no agency that overbuilds for the invoice.',
+    'So they went back to the results and picked someone else. That is not a branding debate. That is work you had already won, handed away at the last step.',
   painLabel: 'What this is costing you',
-  painHeading: "You're paying for the wrong size of site",
+  painHeading: "You're paying for the front door either way",
   painLines: [
-    'A site that is too thin leaves people guessing. Clear offer, proof, and a form never quite land.',
-    'DIY that looks unfinished costs you trust the moment someone compares you to a competitor who looks ready.',
-    'An agency that overbuilds sells you pages, plugins, and meetings you did not need, then invoices for the weight.',
-    'Every month on the wrong size is another month of traffic that never becomes an enquiry.',
+    'Word of mouth, Maps, ads, listings: every one of them ends at the same door, and right now that door does not open.',
+    "You're already paying for hosting and a domain. You're paying to keep a room nobody can walk into.",
+    "A stranger decides in seconds whether you look like a business that's still going. Nothing on your site is arguing your case.",
+    'And the rebuild quotes come back at thousands, so it stays on the list, and another year goes past.',
   ],
   bridgeLabel: 'The fix',
-  bridgeHeading: 'We scope which package fits, then we build',
+  bridgeHeading: 'We build the front door, you stay on one monthly plan',
   bridgeBody:
-    "This isn't a one-size template and it isn't an open-ended agency rebuild. It's three clear packages: brochure, seven-page, or full site. We pick the one that matches how you sell, lock the price once scoped, and build it. Coming soon: you'll buy the right size first, not the loudest quote.",
+    "This isn't a DIY kit and it isn't a six month agency project. You fill in a form, we run a short interview, we research what your customers need to see, then we write and build a professional site on our hosting. The contact form emails you. The search basics are set so you can be found. Privacy and terms come with the plan when it needs them.",
   bridgeGaugeCaption:
-    'Brochure for a clear offer. Seven-page when you need room to sell. Full site when the business needs more pages, a CMS blog if needed, and integrations that earn their keep.',
+    'Three sizes. Same care model. Pick by how much room you need.',
   benefitsLabel: 'What changes for you',
   benefitsHeading: 'Outcomes, not jargon',
   benefits: [
     {
-      title: 'The site matches the job',
-      text: 'Enough pages to sell. Not a skeleton, not a warehouse of unused sections.',
+      title: 'No design spiral',
+      text: 'We ask what you do, who you serve, and what has to be on the page. Then we build. You are not choosing fonts for a month.',
     },
     {
-      title: 'Fixed once scoped',
-      text: 'We agree the package and the price before build. No surprise invoice in month four.',
+      title: "It looks like a business that's still going",
+      text: 'Clean, fast on phones, and clear enough that a stranger trusts you enough to enquire.',
     },
     {
-      title: 'Built to enquire',
-      text: 'Clear offer, proof where it belongs, and a path to contact that does not hide behind menus.',
+      title: 'The boring tech is ours',
+      text: "Hosting for your new site, security, the domain pointing and the search basics all sit with us. Your old hosting account stays yours to close, and we'll tell you when.",
     },
     {
-      title: 'You own it',
-      text: 'Your domain, your hosting path, your CMS if you need one. We leave you something you can keep running.',
+      title: 'Enquiries land somewhere real',
+      text: 'The contact form emails you. That is the minimum. Without it a website is a poster on a wall.',
     },
   ],
   processLabel: 'How it runs',
-  processHeading: 'Scope first, then build',
+  processHeading: 'Form, interview, then we build',
   processSteps: [
     {
-      label: 'Scope',
-      text: 'We map how you sell, what pages you need, and which of the three packages fits. Price locks there.',
+      label: 'Form and interview',
+      text: 'You send the logo, photos, hours, and services. We ask the short questions that matter, so the site matches how you actually work.',
     },
     {
-      label: 'Build',
-      text: 'Structure, copy path, design, and forms. Content rules agreed up front so the job does not stall.',
+      label: 'Research and build',
+      text: 'We check how you show up today and what your customers need to see. We write the copy and build the site on our hosting. Typical turnaround is about fourteen days from a complete brief.',
     },
     {
-      label: 'Launch',
-      text: 'Live on your domain, checked on mobile, with a short handoff so your team knows what to edit.',
+      label: 'Live on Care',
+      text: "Your domain points to us and your site goes live. That day monthly autopay begins on the card you used to start. We'll tell you when it's safe to cancel your old hosting. Light updates stay inside the plan. Twelve month minimum from go-live, then month to month.",
     },
   ],
-  stackLabel: 'The three packages',
-  stackHeading: 'Pick the size that fits, then we lock it',
+  stackLabel: 'Everything included',
+  stackHeading: 'Three sizes, one care model',
   stackItems: [
     {
-      title: 'Brochure · from $4,500',
-      text: 'A few pages, a clear offer, and a form. Enough for a focused business that needs to look ready and take enquiries, not host a magazine.',
+      title: 'Brochure · $120/mo · today $120',
+      text: 'One strong page: who you are, what you do, hours, map, and a contact form to your email. Search basics set up. Privacy and terms when the plan needs them.',
     },
     {
-      title: 'Seven-page · $8,500',
-      text: 'Services, about, proof, contact, and the pages you need to sell without bloating. The middle that most growing companies actually need.',
+      title: 'Practice · $160/mo · today $160',
+      text: 'Five to seven pages: room for services, about, and proof, plus the same form, hosting and care. Privacy and terms included. The sweet spot for most growing businesses.',
     },
     {
-      title: 'Full site · from $14,000',
-      text: 'More pages when the business needs them, a CMS blog if content is part of the plan (CMS means you can edit pages without calling a developer for every line), and integrations that earn their place.',
+      title: 'Full site · $190/mo · today $190',
+      text: 'Nine to twelve pages when you need more room to explain the work. Same form, hosting, and care.',
+    },
+    {
+      title: 'What else later',
+      text: "When the front door works, you can grow into booking, follow-up, reviews and content. Ask when you're ready. It is not part of day one and we will never push it on you.",
     },
   ],
   scopeLine:
-    'Three packages, fixed once scoped. Coming soon. Complex multi-brand or e-commerce builds get a same-day quote so the price stays honest.',
+    'Twelve month minimum term from the day your site goes live, then month to month. Page count, form and care inclusions are written down before we build. Extra work is quoted, never assumed. Leave early and you pay the remaining months of the term. The site is yours to take: migration to your own hosting is a separate one-off fee quoted at the time.',
   priceLabel: 'Investment',
-  price: 'From $4,500 · $8,500 · from $14,000',
+  price: 'From $120 a month · pay $120 today to start',
   priceLead:
-    'Three tiers. Price locks once we scope which package fits. This offer is coming soon, not for sale today.',
+    'Brochure $120/mo. Practice $160/mo. Full site $190/mo. Today you pay one month to start the build. When your site goes live, monthly autopay begins on that same amount. The twelve month term starts at go-live, not the day you pay to begin.',
   guarantee:
-    'When this goes live: we scope the package first, lock the price, then build. If the agreed pages and enquiry path are not delivered as scoped, we keep working at no extra cost until they are.',
+    'Page count, form and care inclusions are written down before we build. Extra work is quoted, never assumed. If what we agreed is not delivered as scoped, we keep working at no extra cost until it is.',
   priceAnchor:
-    'Wrong-sized builds cost more than the invoice. This is priced so the brief matches the job, not the agency wishlist.',
-  faqLabel: 'Objections',
-  faqHeading: 'Straight answers before you waitlist',
+    "You're buying a professional front door and someone else holding the technical end, not a five thousand dollar science project.",
+  faqLabel: 'Straight answers',
+  faqHeading: 'Straight answers before you buy',
   faqs: [
     {
-      q: 'How long does a website take?',
-      a: 'It depends on the package and how fast content lands. Brochure jobs are shorter. Full sites take longer because there are more pages and integrations. We give a plain timeline at scope, before you pay.',
+      q: 'Is there a lock-in?',
+      a: 'Twelve months minimum from the day your site goes live, then it continues month to month. We say that plainly because the plan covers a full build up front, and the term is what makes the monthly price possible. After the first year, any price change follows the market rate written in your agreement, not a surprise jump.',
     },
     {
-      q: 'Do I need a CMS?',
-      a: 'Only if you will edit pages or run a blog yourselves. A CMS is the editing layer so you change text and posts without calling a developer for every line. Brochure and many seven-page builds can stay simple. Full sites often need one.',
+      q: 'What happens if I leave?',
+      a: 'If you leave before the twelve months are up, you pay the remaining months of the term as a single amount. Your domain and content stay yours. If you also want to keep the site on your own hosting, migration is a one-off fee quoted before you commit.',
     },
     {
-      q: 'Who writes the content?',
-      a: 'We agree that at scope. Some clients write. Some want us to draft. The job does not start until we know who owns each page, so it does not stall halfway.',
+      q: 'What do I pay today?',
+      a: 'One month of your plan: $120, $160, or $190. That starts the build. It is not a double start fee.',
     },
     {
-      q: 'Do you host it?',
-      a: 'We help you pick a sensible hosting path and leave you with access. Hosting is usually a small monthly cost on your account, separate from the build fee.',
+      q: 'When does the monthly start?',
+      a: 'The day your site goes live, not the day you pay to begin. That is when monthly autopay begins on the card you used at checkout.',
     },
     {
-      q: 'How is this different from the Landing Page at $1,800?',
-      a: 'Landing Page is one campaign door: one promise, one action, live in two days for ads you already run. These packages are the wider site people browse when they want to understand the business, not a single ad destination.',
+      q: 'What about my current hosting?',
+      a: "That stays yours to cancel, and we'll tell you exactly when it's safe. We host the new site, we point your domain at it, and we never touch or cancel anything on your account.",
     },
     {
-      q: 'Can I buy this today?',
-      a: 'Not yet. This page is the coming-soon brief. When it opens, you will scope a package, lock the price, and we build from there.',
+      q: 'Do I have to write the website?',
+      a: "No. That's the part most people stall on, so it's ours. You talk for about twenty minutes about the work you do, we record the call with your say-so, and we write from that.",
+    },
+    {
+      q: 'Where do enquiries go?',
+      a: "Straight to your email, the moment someone hits send. If you'd rather they landed in a system that alerts your phone and chases the quote, that's a later conversation, not a day one requirement.",
+    },
+    {
+      q: 'Do I manage hosting and passwords?',
+      a: "No. Hosting for your new site, security, the domain pointing and the search basics sit with us. That's the whole point of the plan.",
+    },
+    {
+      q: 'Is this a five thousand dollar agency rebuild?',
+      a: "No, and it isn't trying to be. It's a professional front door that takes enquiries, built fast, kept running. If you ever need the bigger project, you'll know, and by then you'll have something working in the meantime.",
     },
   ],
   finalLabel: 'Last step',
-  finalHeading: 'Pick the right size first, then build',
+  finalHeading: 'A website that looks like you, without the headache',
   finalLine:
-    'Brochure, seven-page, or full site. We scope which fits, lock the price, and build. Coming soon.',
+    'We interview, research, build, and host. You get a front door that opens and a form that emails you.',
   proofKind: 'website',
 }
 
@@ -2150,6 +2166,8 @@ export const CLIENT_FINDER_COPY: FunnelProductCopy = {
   proofKind: 'client-finder',
 }
 
+import {DRAFT_COPY_BY_SLUG} from './funnelDraftProducts'
+
 export function funnelCopyForSlug(slug: string | undefined): FunnelProductCopy {
   if (slug === 'missed-call') return MISSED_CALL_COPY
   if (slug === 'google-profile') return GOOGLE_PROFILE_COPY
@@ -2162,8 +2180,9 @@ export function funnelCopyForSlug(slug: string | undefined): FunnelProductCopy {
   if (slug === 'reviews') return REVIEWS_COPY
   if (slug === 'ai-phone') return AI_PHONE_COPY
   if (slug === 'booking') return BOOKING_COPY
-  if (slug === 'website') return WEBSITE_COPY
+  if (slug === 'website' || slug === 'website-hook') return WEBSITE_COPY
   if (slug === 'geo') return GEO_COPY
   if (slug === 'client-finder') return CLIENT_FINDER_COPY
+  if (slug && DRAFT_COPY_BY_SLUG[slug]) return DRAFT_COPY_BY_SLUG[slug]
   return SPEED_FIX_COPY
 }

@@ -24,6 +24,8 @@ const FunnelPage = lazy(() => import('./pages/funnel/FunnelPage'));
 const FunnelHomePage = lazy(() => import('./pages/funnel/FunnelHomePage'));
 const FunnelThanksPage = lazy(() => import('./pages/funnel/FunnelThanksPage'));
 const FunnelAccessPage = lazy(() => import('./pages/funnel/FunnelAccessPage'));
+const WebsiteWizardPage = lazy(() => import('./pages/funnel/WebsiteWizardPage'));
+const WebsiteAgreementPage = lazy(() => import('./pages/funnel/WebsiteAgreementPage'));
 const BlogPage = lazy(() => import('./pages/BlogPage'));
 const BlogPostPage = lazy(() => import('./pages/BlogPostPage'));
 const NewsPage = lazy(() => import('./pages/NewsPage'));
@@ -263,6 +265,8 @@ const App: React.FC = () => {
                     <Route path="/reports/:token" element={<DeepAuditReportPage />} />
                     <Route path="/go/thanks" element={<FunnelThanksPage />} />
                     <Route path="/go/access" element={<FunnelAccessPage />} />
+                    <Route path="/go/website/agreement" element={<WebsiteAgreementPage />} />
+                    <Route path="/go/website/wizard" element={<WebsiteWizardPage />} />
                     <Route path="/go" element={<FunnelHomePage />} />
                     <Route path="/go/:slug" element={<FunnelPage />} />
 
