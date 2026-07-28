@@ -216,8 +216,15 @@ export default async function middleware(request: Request): Promise<Response> {
 
   const normalizedPath = normalizePathname(url.pathname);
 
+  // Funnel + news: always noindex at the edge, even when the SPA route is "known".
+  // Unstamped /go/* paths otherwise fall through to homepage HTML with no robots meta.
+  const forceNoindex =
+    normalizedPath === '/news' ||
+    normalizedPath === '/go' ||
+    normalizedPath.startsWith('/go/');
+
   // Catch-all 404 URLs: index.html is still 200 — add header so bots get noindex without JS.
-  if (!isSpaRoute(normalizedPath)) {
+  if (forceNoindex || !isSpaRoute(normalizedPath)) {
     const res = await next();
     const headers = new Headers(res.headers);
     headers.set('X-Robots-Tag', 'noindex, follow');

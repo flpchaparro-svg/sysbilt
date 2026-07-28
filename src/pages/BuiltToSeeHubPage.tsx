@@ -9,7 +9,7 @@ import { BSE_HUB_OG } from '../built-to-see/chapter-covers'
 
 export default function BuiltToSeeHubPage() {
   const hubUrl = `${SITE_ORIGIN}${BSE_HUB_PATH}`
-  const htmlTitle = 'Built to See — Know What\'s Actually Happening | SYSBILT'
+  const htmlTitle = 'Built to See: Know What\'s Actually Happening | SYSBILT'
   const description = BSE_META.seoDescription
 
   return (

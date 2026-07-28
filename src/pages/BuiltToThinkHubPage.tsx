@@ -13,7 +13,7 @@ import { BTT_HUB_OG } from '../built-to-think/chapter-covers'
 
 export default function BuiltToThinkHubPage() {
   const hubUrl = `${SITE_ORIGIN}${BTT_HUB_PATH}`
-  const htmlTitle = 'Built to Think — AI for Business Without the Hype | SYSBILT'
+  const htmlTitle = 'Built to Think: AI for Business Without the Hype | SYSBILT'
   const description = BTT_META.seoDescription
 
   return (

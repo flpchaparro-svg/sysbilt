@@ -82,7 +82,7 @@ export const BTT_CHAPTER_META_BY_SLUG = {
 }
 
 export const BTT_HUB_META = {
-  title: 'Built to Think — AI for Business Without the Hype | SYSBILT',
+  title: 'Built to Think: AI for Business Without the Hype | SYSBILT',
   description:
     'How to use AI in your business without burning money on the hype: fit tests, tiers, gates, caps, and growing one proven rung at a time. Free from SYSBILT.',
 }

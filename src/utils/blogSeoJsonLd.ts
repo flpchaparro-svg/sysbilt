@@ -8,19 +8,6 @@ function toIsoDateTime(value: string | undefined): string | undefined {
   return new Date(t).toISOString();
 }
 
-/** Flatten Portable Text blocks to plain string for wordCount in JSON-LD */
-function portableTextToPlain(body: unknown): string {
-  if (!body) return '';
-  if (typeof body === 'string') return body;
-  if (Array.isArray(body)) return body.map(portableTextToPlain).join(' ');
-  if (typeof body === 'object' && body !== null) {
-    const o = body as Record<string, unknown>;
-    if (typeof o.text === 'string') return o.text;
-    if (Array.isArray(o.children)) return portableTextToPlain(o.children);
-  }
-  return '';
-}
-
 export function buildBlogPostingJsonLd(params: {
   post: Record<string, unknown> & {
     title?: string;
@@ -40,9 +27,6 @@ export function buildBlogPostingJsonLd(params: {
   const datePublished = toIsoDateTime(post.publishedAt);
   const dateModified = toIsoDateTime(post._updatedAt || post.publishedAt) ?? datePublished;
 
-  const plain = portableTextToPlain(post.body);
-  const wordCount = plain.split(/\s+/).filter(Boolean).length;
-
   const author =
     post.author?.name != null && post.author.name !== ''
       ? {
@@ -52,7 +36,7 @@ export function buildBlogPostingJsonLd(params: {
             ? {
                 image: {
                   '@type': 'ImageObject' as const,
-                  url: urlFor(post.author.image as any).width(400).height(400).url(),
+                  url: urlFor(post.author.image).width(400).height(400).url(),
                 },
               }
             : {}),
@@ -66,7 +50,7 @@ export function buildBlogPostingJsonLd(params: {
   const schema: Record<string, unknown> = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
-    '@id': `${canonicalUrl}#blogPosting`,
+    '@id': `${canonicalUrl}#article`,
     url: canonicalUrl,
     headline,
     description: pageDescription,
@@ -86,11 +70,6 @@ export function buildBlogPostingJsonLd(params: {
       '@type': 'WebPage',
       '@id': canonicalUrl,
     },
-    isPartOf: {
-      '@type': 'Blog',
-      name: 'Insights',
-      url: `${SITE_ORIGIN}/blog`,
-    },
     inLanguage: 'en-AU',
   };
 
@@ -109,10 +88,6 @@ export function buildBlogPostingJsonLd(params: {
 
   if (post.focusKeyword) {
     schema.keywords = post.focusKeyword;
-  }
-
-  if (wordCount > 0) {
-    schema.wordCount = wordCount;
   }
 
   return schema;

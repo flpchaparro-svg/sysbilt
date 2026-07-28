@@ -2,25 +2,6 @@ import {SITE_ORIGIN} from '../constants/seoMeta'
 import {getCategoryLabel, type ToolkitCategory} from '../constants/toolkit'
 import {urlFor} from '../sanityClient'
 
-type PortableTextBlock = {
-  _type?: string
-  children?: {text?: string}[]
-}
-
-function blockPlainText(block: PortableTextBlock): string {
-  return block.children?.map((c) => c.text ?? '').join('') ?? ''
-}
-
-export function portableTextToPlain(value: unknown): string {
-  if (!Array.isArray(value)) return ''
-  return value
-    .filter((block) => block?._type === 'block')
-    .map((block) => blockPlainText(block as PortableTextBlock))
-    .join(' ')
-    .replace(/\s+/g, ' ')
-    .trim()
-}
-
 function toIsoDateTime(value: string | undefined): string | undefined {
   if (!value) return undefined
   const date = new Date(value)
@@ -46,9 +27,6 @@ export function buildToolkitArticleJsonLd(params: {
 }): Record<string, unknown> {
   const {tool, canonicalUrl, pageDescription, shareImage, headline} = params
   const dateModified = toIsoDateTime(tool._updatedAt)
-
-  const plain = [tool.summary, ...(tool.benefits ?? []), portableTextToPlain(tool.body)].join(' ')
-  const wordCount = plain.split(/\s+/).filter(Boolean).length
 
   const author =
     tool.author?.name != null && tool.author.name.trim() !== ''
@@ -112,10 +90,6 @@ export function buildToolkitArticleJsonLd(params: {
 
   if (tool.focusKeyword) {
     schema.keywords = tool.focusKeyword
-  }
-
-  if (wordCount > 0) {
-    schema.wordCount = wordCount
   }
 
   return schema

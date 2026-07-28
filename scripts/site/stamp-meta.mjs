@@ -227,6 +227,7 @@ const STATIC_ROUTES = [
     path: '/news',
     title: 'News | SYSBILT',
     description: 'Industry news and updates for Australian businesses. Filtered by growth stage.',
+    robots: 'noindex, follow',
   },
   {
     path: '/guides',
@@ -1028,7 +1029,8 @@ function stampHtml(template, route) {
   const safeCanonical = escapeAttr(canonicalUrl(routePath));
   const robots =
     route.robots ||
-    (isGoFunnelPath(routePath) ? 'noindex, nofollow' : null);
+    (isGoFunnelPath(routePath) ? 'noindex, nofollow' : null) ||
+    (INDEXABLE_EXCLUDE.has(routePath) ? 'noindex, follow' : null);
 
   let html = template;
 

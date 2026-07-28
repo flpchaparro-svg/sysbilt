@@ -126,9 +126,17 @@ function checkRouteHtml(route, html) {
       if (!/<meta[^>]+name="robots"[^>]*content="[^"]*nofollow/i.test(html)) {
         addViolation(`${p} — /go/ route missing nofollow robots meta`);
       }
+    } else if (p === '/news') {
+      if (!/<meta[^>]+name="robots"[^>]*content="[^"]*noindex/i.test(html)) {
+        addViolation(`${p} — /news missing noindex robots meta`);
+      }
     }
   } else if (/<meta[^>]+name="robots"[^>]*content="[^"]*noindex/i.test(html)) {
     addViolation(`${p} — unexpected noindex robots meta on an indexable route`);
+  }
+
+  if (/"wordCount"\s*:/.test(html)) {
+    addViolation(`${p} — stamped JSON-LD must not emit wordCount`);
   }
 
   const expectedTypes = Array.isArray(route.jsonLd)
@@ -506,6 +514,12 @@ async function main() {
 
   const sitemapSet = buildSitemapPathSet(content);
   const indexableSet = new Set(routes.map((r) => r.path).filter((p) => !isIndexableExcluded(p)));
+
+  for (const p of sitemapSet) {
+    if (p === '/news' || p === '/go' || p.startsWith('/go/')) {
+      addViolation(`sitemap — ${p} must never appear in the sitemap set (funnel/news are noindex)`);
+    }
+  }
 
   for (const p of indexableSet) {
     if (!sitemapSet.has(p)) addViolation(`sitemap — indexable route ${p} would be missing from the sitemap`);

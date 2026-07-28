@@ -82,7 +82,7 @@ export const BSE_CHAPTER_META_BY_SLUG = {
 }
 
 export const BSE_HUB_META = {
-  title: 'Built to See — Know What\'s Actually Happening | SYSBILT',
+  title: 'Built to See: Know What\'s Actually Happening | SYSBILT',
   description:
     'How to know what is actually happening in your business before it is too late to act: owned data, dashboards that get used, alerts, and the screen where the whole system becomes visible. Free from SYSBILT.',
 }

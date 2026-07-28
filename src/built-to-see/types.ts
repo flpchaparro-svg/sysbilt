@@ -7,7 +7,7 @@ export const BSE_META = {
   coverLegend: 'For Australian businesses flying blind on gut, old reports, or scattered dashboards',
   badgeLabel: 'Dashboards & Reporting',
   badgeLink: '/pillar7',
-  seoTitle: 'Built to See — Know What\'s Actually Happening in Your Business',
+  seoTitle: 'Built to See: Know What\'s Actually Happening in Your Business',
   seoDescription:
     'How to know what is actually happening in your business before it is too late to act: owned data, dashboards that get used, alerts, and the screen where the whole system becomes visible. Free from SYSBILT.',
 } as const

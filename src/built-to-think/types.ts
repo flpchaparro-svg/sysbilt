@@ -7,7 +7,7 @@ export const BTT_META = {
   coverLegend: 'For Australian businesses who want the right AI, in the right places',
   badgeLabel: 'AI Assistants',
   badgeLink: '/pillar4',
-  seoTitle: 'Built to Think — AI for Business Without the Hype',
+  seoTitle: 'Built to Think: AI for Business Without the Hype',
   seoDescription:
     'How to use AI in your business without burning money on the hype: fit tests, tiers, gates, caps, and growing one proven rung at a time. Free from SYSBILT.',
 } as const
