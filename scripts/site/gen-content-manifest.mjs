@@ -49,7 +49,7 @@ async function main() {
   const client = createClient({
     projectId: 'wdlc9pg8',
     dataset: 'production',
-    useCdn: true,
+    useCdn: false,
     apiVersion: '2024-02-20',
   });
 
