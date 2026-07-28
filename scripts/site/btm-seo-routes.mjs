@@ -82,7 +82,7 @@ export const BTM_CHAPTER_META_BY_SLUG = {
 }
 
 export const BTM_HUB_META = {
-  title: 'Built to Multiply — Content Systems Without the Flood | SYSBILT',
+  title: 'Built to Multiply: Content Systems Without the Flood | SYSBILT',
   description:
     'How one voice becomes a month of content: strategy, one source, the toolkit, the production line, measurement, and wiring that turns attention into business. Free from SYSBILT.',
 }

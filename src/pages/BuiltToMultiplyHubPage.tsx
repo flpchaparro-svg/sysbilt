@@ -9,7 +9,7 @@ import { BTM_HUB_OG } from '../built-to-multiply/chapter-covers'
 
 export default function BuiltToMultiplyHubPage() {
   const hubUrl = `${SITE_ORIGIN}${BTM_HUB_PATH}`
-  const htmlTitle = 'Built to Multiply — Content Systems Without the Flood | SYSBILT'
+  const htmlTitle = 'Built to Multiply: Content Systems Without the Flood | SYSBILT'
   const description = BTM_META.seoDescription
 
   return (

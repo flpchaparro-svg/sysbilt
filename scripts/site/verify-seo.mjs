@@ -104,6 +104,9 @@ function checkRouteHtml(route, html) {
     const title = titleMatch[1].trim();
     if (!title) addViolation(`${p} — empty <title>`);
     else if (title === GENERIC_TITLE) addViolation(`${p} — generic/un-stamped <title> ("${title}")`);
+    else if (/\|\s*SYSBILT\s*\|\s*SYSBILT/i.test(title)) {
+      addViolation(`${p} — double-branded <title> ("${title}")`);
+    }
   }
 
   const canonicals = [...html.matchAll(/<link rel="canonical" href="([^"]*)"/g)];

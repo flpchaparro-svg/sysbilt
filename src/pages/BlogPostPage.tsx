@@ -9,6 +9,7 @@ import { ArrowLeft, ArrowUpRight, Quote, Copy, Check, Info, AlertTriangle } from
 import PostEndCTA from '../components/PostEndCTA';
 import ShareButton from '../components/ShareButton';
 import { PageMeta } from '../components/PageMeta';
+import { brandTitle, stripSysbiltBrand } from '../utils/brandTitle';
 
 // Helper function to extract YouTube ID
 const getYouTubeId = (url: string) => {
@@ -712,9 +713,9 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
   // Setup SEO Variables
   const FALLBACK_DESCRIPTION =
     'We build the systems that help Australian businesses stop doing everything manually';
-  const resolvedArticleTitle = post?.seoTitle || post?.title;
+  const resolvedArticleTitle = stripSysbiltBrand(post?.seoTitle || post?.title || '');
   const pageDescription = post?.seoDescription || FALLBACK_DESCRIPTION;
-  const brandedTitle = resolvedArticleTitle ? `${resolvedArticleTitle} | SYSBILT` : 'SYSBILT';
+  const brandedTitle = brandTitle(resolvedArticleTitle || null);
   const canonicalUrl = slug ? `${SITE_ORIGIN}/blog/${slug}` : '';
   const currentUrl = canonicalUrl || (typeof window !== 'undefined' ? window.location.href : '');
   const shareImage = post?.ogImage ? urlFor(post.ogImage).width(1200).height(630).url() : (post?.mainImage ? urlFor(post.mainImage).width(1200).height(630).url() : '');

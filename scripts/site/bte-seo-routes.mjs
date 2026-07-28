@@ -82,7 +82,7 @@ export const BTE_CHAPTER_META_BY_SLUG = {
 }
 
 export const BTE_HUB_META = {
-  title: 'Built to Teach — Team Training at the Speed of Change | SYSBILT',
+  title: 'Built to Teach: Team Training at the Speed of Change | SYSBILT',
   description:
     'How to train your team at the speed your business changes: capture knowledge, the format library, the training agent, onboarding, and change management. Free from SYSBILT.',
 }

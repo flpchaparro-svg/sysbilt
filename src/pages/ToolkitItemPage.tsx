@@ -10,6 +10,7 @@ import {ToolkitPortableText, getToolkitBodyMainSections, getToolkitSectionsFromB
 import {PageMeta} from '../components/PageMeta'
 import {SITE_ORIGIN} from '../constants/seoMeta'
 import {client, urlFor} from '../sanityClient'
+import {brandTitle, stripSysbiltBrand} from '../utils/brandTitle'
 import {
   getCategoryLabel,
   getPricingLabel,
@@ -244,9 +245,9 @@ export default function ToolkitItemPage() {
     )
   }
 
-  const pageTitle = (tool.metaTitle?.trim() || tool.name).trim()
+  const pageTitle = stripSysbiltBrand(tool.metaTitle?.trim() || tool.name)
   const pageDescription = (tool.metaDescription?.trim() || tool.summary).trim()
-  const brandedTitle = `${pageTitle} | SYSBILT`
+  const brandedTitle = brandTitle(pageTitle)
   const canonicalUrl = `${SITE_ORIGIN}/toolkit/${tool.slug}`
   const shareUrl = canonicalUrl
   const shareImage = tool.ogImage

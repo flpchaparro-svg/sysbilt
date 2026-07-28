@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
-import { Helmet } from 'react-helmet-async'
 import { PageMeta } from '../components/PageMeta'
 import { SITE_ORIGIN } from '../constants/seoMeta'
 import { GuideGateForm } from '../components/GuideGateForm'
@@ -31,15 +30,12 @@ export default function BuiltToTeachBookPage() {
     <div className="btw-root btw-book-shell min-h-screen bg-[#1A1A1A] selection:bg-[#C5A059] selection:text-[#1A1A1A] pt-[100px] md:pt-[140px] pb-16 md:pb-24 print:pt-0 print:pb-0">
       <style>{BTW_STYLES}</style>
       <PageMeta
-        title={`${BTE_META.title} — Full edition | SYSBILT`}
+        title={`${BTE_META.title}: Full edition | SYSBILT`}
         description="Download or print the full A4 edition of Built to Teach."
         canonical={bookUrl}
         robots="noindex, follow"
         ogImage={`${SITE_ORIGIN}${BTE_HUB_OG}`}
       />
-      <Helmet>
-        <meta name="robots" team training="noindex, follow" />
-      </Helmet>
 
       <div className="btw-page-stack mx-auto flex w-full max-w-[840px] flex-col items-center gap-10 md:gap-14 px-4">
         <nav aria-label="Guide navigation" className="print:hidden relative z-20 w-full self-stretch">

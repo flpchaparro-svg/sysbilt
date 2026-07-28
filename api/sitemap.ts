@@ -35,13 +35,26 @@ const STATIC_PAGES: readonly StaticPage[] = [
   { path: '/toolkit', priority: '0.7' },
 ] as const;
 
+/** Sanity guide hubs replaced by code-defined /guides/built-to-* routes. */
+const CODE_DEFINED_GUIDE_HUB_SLUGS = new Set([
+  'built-to-work',
+  'built-to-sell',
+  'built-to-close',
+  'built-to-run',
+  'built-to-think',
+  'built-to-multiply',
+  'built-to-teach',
+  'built-to-see',
+]);
+
 const POSTS_QUERY = `*[_type == "post" && !(_id in path("drafts.**"))]{
-  "slug": slug.current, publishedAt
+  "slug": slug.current, publishedAt, _updatedAt
 }`;
 
 const GUIDES_QUERY = `*[_type == "guide" && !(_id in path("drafts.**"))]{
   "slug": slug.current,
-  publishedAt
+  publishedAt,
+  _updatedAt
 }`;
 
 const TOOLKIT_QUERY = `*[_type == "toolkitItem" && !(_id in path("drafts.**"))]{
@@ -49,9 +62,18 @@ const TOOLKIT_QUERY = `*[_type == "toolkitItem" && !(_id in path("drafts.**"))]{
   _updatedAt
 }`;
 
-type PostRow = { slug: string | null; publishedAt: string | null };
-type GuideRow = { slug: string | null; publishedAt: string | null };
+type PostRow = { slug: string | null; publishedAt: string | null; _updatedAt: string | null };
+type GuideRow = { slug: string | null; publishedAt: string | null; _updatedAt: string | null };
 type ToolkitRow = { slug: string | null; _updatedAt: string | null };
+
+/** Prefer real CMS dates. Never invent "today" for static/code routes. */
+function cmsLastmod(updatedAt: string | null | undefined, publishedAt?: string | null): string | undefined {
+  const raw = updatedAt || publishedAt;
+  if (!raw) return undefined;
+  const d = new Date(raw);
+  if (Number.isNaN(d.getTime())) return undefined;
+  return isoDateOnly(d);
+}
 
 function escapeXml(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -102,160 +124,69 @@ export default async function handler(_req: VercelRequest, res: VercelResponse):
       client.fetch<ToolkitRow[]>(TOOLKIT_QUERY),
     ]);
 
-    const today = isoDateOnly(new Date());
-    const guideLastmodBySlug = new Map<string, string>();
-    for (const g of guidesFromCms) {
-      if (typeof g.slug === 'string' && g.slug.length > 0) {
-        const lm = g.publishedAt ? new Date(g.publishedAt).toISOString().split('T')[0] : today;
-        guideLastmodBySlug.set(g.slug, lm);
-      }
-    }
-
     const staticEntries: UrlEntry[] = STATIC_PAGES.map(({ path, priority }) => ({
       loc: path === '/' ? `${BASE_URL}/` : `${BASE_URL}${path}`,
-      lastmod: today,
       changefreq: 'weekly',
       priority,
     }));
 
     const guideDocEntries: UrlEntry[] = guidesFromCms
       .filter(
-        (g): g is { slug: string; publishedAt: string | null } =>
-          typeof g.slug === 'string' && g.slug.length > 0 && g.slug !== 'built-to-work' && g.slug !== 'built-to-sell' && g.slug !== 'built-to-close' && g.slug !== 'built-to-run',
+        (g): g is GuideRow & { slug: string } =>
+          typeof g.slug === 'string' &&
+          g.slug.length > 0 &&
+          !CODE_DEFINED_GUIDE_HUB_SLUGS.has(g.slug),
       )
       .map((g) => ({
         loc: `${BASE_URL}/guides/${encodeURIComponent(g.slug)}`,
-        lastmod: guideLastmodBySlug.get(g.slug) ?? today,
+        lastmod: cmsLastmod(g._updatedAt, g.publishedAt),
         changefreq: 'weekly',
         priority: '0.8',
       }));
 
-    const btwHubEntry: UrlEntry = {
-      loc: `${BASE_URL}${BTW_HUB_PATH}`,
-      lastmod: today,
-      changefreq: 'monthly',
-      priority: '0.8',
-    };
-
-    const btwChapterEntries: UrlEntry[] = BTW_CHAPTER_SLUGS.map((slug) => ({
-      loc: `${BASE_URL}${BTW_HUB_PATH}/${encodeURIComponent(slug)}`,
-      lastmod: today,
+    const chapterEntry = (hubPath: string, slug: string): UrlEntry => ({
+      loc: `${BASE_URL}${hubPath}/${encodeURIComponent(slug)}`,
       changefreq: 'monthly',
       priority: '0.75',
-    }));
+    });
 
-    const btsHubEntry: UrlEntry = {
-      loc: `${BASE_URL}${BTS_HUB_PATH}`,
-      lastmod: today,
+    const hubEntry = (hubPath: string): UrlEntry => ({
+      loc: `${BASE_URL}${hubPath}`,
       changefreq: 'monthly',
       priority: '0.8',
-    };
+    });
 
-    const btsChapterEntries: UrlEntry[] = BTS_CHAPTER_SLUGS.map((slug) => ({
-      loc: `${BASE_URL}${BTS_HUB_PATH}/${encodeURIComponent(slug)}`,
-      lastmod: today,
-      changefreq: 'monthly',
-      priority: '0.75',
-    }));
-
-    const btcHubEntry: UrlEntry = {
-      loc: `${BASE_URL}${BTC_HUB_PATH}`,
-      lastmod: today,
-      changefreq: 'monthly',
-      priority: '0.8',
-    };
-
-    const btcChapterEntries: UrlEntry[] = BTC_CHAPTER_SLUGS.map((slug) => ({
-      loc: `${BASE_URL}${BTC_HUB_PATH}/${encodeURIComponent(slug)}`,
-      lastmod: today,
-      changefreq: 'monthly',
-      priority: '0.75',
-    }));
-
-    const btrHubEntry: UrlEntry = {
-      loc: `${BASE_URL}${BTR_HUB_PATH}`,
-      lastmod: today,
-      changefreq: 'monthly',
-      priority: '0.8',
-    };
-
-    const btrChapterEntries: UrlEntry[] = BTR_CHAPTER_SLUGS.map((slug) => ({
-      loc: `${BASE_URL}${BTR_HUB_PATH}/${encodeURIComponent(slug)}`,
-      lastmod: today,
-      changefreq: 'monthly',
-      priority: '0.75',
-    }));
-
-    const bttHubEntry: UrlEntry = {
-      loc: `${BASE_URL}${BTT_HUB_PATH}`,
-      lastmod: today,
-      changefreq: 'monthly',
-      priority: '0.8',
-    };
-
-    const bttChapterEntries: UrlEntry[] = BTT_CHAPTER_SLUGS.map((slug) => ({
-      loc: `${BASE_URL}${BTT_HUB_PATH}/${encodeURIComponent(slug)}`,
-      lastmod: today,
-      changefreq: 'monthly',
-      priority: '0.75',
-    }));
-
-    const btmHubEntry: UrlEntry = {
-      loc: `${BASE_URL}${BTM_HUB_PATH}`,
-      lastmod: today,
-      changefreq: 'monthly',
-      priority: '0.8',
-    };
-
-    const btmChapterEntries: UrlEntry[] = BTM_CHAPTER_SLUGS.map((slug) => ({
-      loc: `${BASE_URL}${BTM_HUB_PATH}/${encodeURIComponent(slug)}`,
-      lastmod: today,
-      changefreq: 'monthly',
-      priority: '0.75',
-    }));
-
-    const bteHubEntry: UrlEntry = {
-      loc: `${BASE_URL}${BTE_HUB_PATH}`,
-      lastmod: today,
-      changefreq: 'monthly',
-      priority: '0.8',
-    };
-
-    const bteChapterEntries: UrlEntry[] = BTE_CHAPTER_SLUGS.map((slug) => ({
-      loc: `${BASE_URL}${BTE_HUB_PATH}/${encodeURIComponent(slug)}`,
-      lastmod: today,
-      changefreq: 'monthly',
-      priority: '0.75',
-    }));
-
-    const bseHubEntry: UrlEntry = {
-      loc: `${BASE_URL}${BSE_HUB_PATH}`,
-      lastmod: today,
-      changefreq: 'monthly',
-      priority: '0.8',
-    };
-
-    const bseChapterEntries: UrlEntry[] = BSE_CHAPTER_SLUGS.map((slug) => ({
-      loc: `${BASE_URL}${BSE_HUB_PATH}/${encodeURIComponent(slug)}`,
-      lastmod: today,
-      changefreq: 'monthly',
-      priority: '0.75',
-    }));
+    const btwHubEntry = hubEntry(BTW_HUB_PATH);
+    const btwChapterEntries = BTW_CHAPTER_SLUGS.map((slug) => chapterEntry(BTW_HUB_PATH, slug));
+    const btsHubEntry = hubEntry(BTS_HUB_PATH);
+    const btsChapterEntries = BTS_CHAPTER_SLUGS.map((slug) => chapterEntry(BTS_HUB_PATH, slug));
+    const btcHubEntry = hubEntry(BTC_HUB_PATH);
+    const btcChapterEntries = BTC_CHAPTER_SLUGS.map((slug) => chapterEntry(BTC_HUB_PATH, slug));
+    const btrHubEntry = hubEntry(BTR_HUB_PATH);
+    const btrChapterEntries = BTR_CHAPTER_SLUGS.map((slug) => chapterEntry(BTR_HUB_PATH, slug));
+    const bttHubEntry = hubEntry(BTT_HUB_PATH);
+    const bttChapterEntries = BTT_CHAPTER_SLUGS.map((slug) => chapterEntry(BTT_HUB_PATH, slug));
+    const btmHubEntry = hubEntry(BTM_HUB_PATH);
+    const btmChapterEntries = BTM_CHAPTER_SLUGS.map((slug) => chapterEntry(BTM_HUB_PATH, slug));
+    const bteHubEntry = hubEntry(BTE_HUB_PATH);
+    const bteChapterEntries = BTE_CHAPTER_SLUGS.map((slug) => chapterEntry(BTE_HUB_PATH, slug));
+    const bseHubEntry = hubEntry(BSE_HUB_PATH);
+    const bseChapterEntries = BSE_CHAPTER_SLUGS.map((slug) => chapterEntry(BSE_HUB_PATH, slug));
 
     const blogUrls: UrlEntry[] = posts
-      .filter((p): p is { slug: string; publishedAt: string | null } => typeof p.slug === 'string' && p.slug.length > 0)
+      .filter((p): p is PostRow & { slug: string } => typeof p.slug === 'string' && p.slug.length > 0)
       .map((p) => ({
         loc: `${BASE_URL}/blog/${encodeURIComponent(p.slug)}`,
-        lastmod: p.publishedAt ? new Date(p.publishedAt).toISOString().split('T')[0] : today,
+        lastmod: cmsLastmod(p._updatedAt, p.publishedAt),
         changefreq: 'weekly',
         priority: '0.65',
       }));
 
     const toolkitUrls: UrlEntry[] = toolkitItems
-      .filter((t): t is { slug: string; _updatedAt: string | null } => typeof t.slug === 'string' && t.slug.length > 0)
+      .filter((t): t is ToolkitRow & { slug: string } => typeof t.slug === 'string' && t.slug.length > 0)
       .map((t) => ({
         loc: `${BASE_URL}/toolkit/${encodeURIComponent(t.slug)}`,
-        lastmod: t._updatedAt ? new Date(t._updatedAt).toISOString().split('T')[0] : today,
+        lastmod: cmsLastmod(t._updatedAt),
         changefreq: 'weekly',
         priority: '0.65',
       }));

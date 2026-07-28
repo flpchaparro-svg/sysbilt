@@ -9,7 +9,7 @@ import { BTE_HUB_OG } from '../built-to-teach/chapter-covers'
 
 export default function BuiltToTeachHubPage() {
   const hubUrl = `${SITE_ORIGIN}${BTE_HUB_PATH}`
-  const htmlTitle = 'Built to Teach — Team Training at the Speed of Change | SYSBILT'
+  const htmlTitle = 'Built to Teach: Team Training at the Speed of Change | SYSBILT'
   const description = BTE_META.seoDescription
 
   return (

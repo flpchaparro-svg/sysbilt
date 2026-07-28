@@ -34,6 +34,7 @@ import {
   BTR_CHAPTER_META_BY_SLUG,
   BTR_HUB_META,
 } from './btr-seo-routes.mjs';
+import { brandTitle, stripSysbiltBrand } from './brand-title.mjs';
 import {
   BTT_CHAPTER_SLUGS,
   BTT_HUB_ROUTE,
@@ -1146,8 +1147,8 @@ function buildAllRoutes({ posts, guides, toolkitItems, funnelPages = [] }) {
       skipped.push(`post:${post.slug ?? '(no slug)'} — missing slug or title`);
       continue;
     }
-    const rawTitle = (post.seoTitle || post.title).trim();
-    const title = `${rawTitle} | SYSBILT`;
+    const rawTitle = stripSysbiltBrand(post.seoTitle || post.title);
+    const title = brandTitle(rawTitle);
     const description = (post.seoDescription || BLOG_FALLBACK_DESCRIPTION).trim();
     const canonical = canonicalUrl(`/blog/${post.slug}`);
     const jsonLd = [
@@ -1211,8 +1212,8 @@ function buildAllRoutes({ posts, guides, toolkitItems, funnelPages = [] }) {
       skipped.push('guide:built-to-see — handled by static Built to See routes');
       continue;
     }
-    const rawTitle = (guide.seoTitle?.trim() || guide.title).trim();
-    const title = `${rawTitle} | SYSBILT`;
+    const rawTitle = stripSysbiltBrand(guide.seoTitle?.trim() || guide.title);
+    const title = brandTitle(rawTitle);
     const description = (guide.seoDescription?.trim() || guide.subtitle?.trim() || '').trim();
     const ogTitle = rawTitle;
     const canonical = canonicalUrl(`/guides/${guide.slug}`);
@@ -1232,8 +1233,8 @@ function buildAllRoutes({ posts, guides, toolkitItems, funnelPages = [] }) {
       skipped.push(`toolkitItem:${item.slug ?? '(no slug)'} — missing slug or name`);
       continue;
     }
-    const rawTitle = (item.metaTitle?.trim() || item.name).trim();
-    const title = `${rawTitle} | SYSBILT`;
+    const rawTitle = stripSysbiltBrand(item.metaTitle?.trim() || item.name);
+    const title = brandTitle(rawTitle);
     const description = (item.metaDescription?.trim() || item.summary?.trim() || '').trim();
     const canonical = canonicalUrl(`/toolkit/${item.slug}`);
     const jsonLd = [
@@ -1266,7 +1267,7 @@ function buildAllRoutes({ posts, guides, toolkitItems, funnelPages = [] }) {
       skipped.push(`funnelPage:${page.slug ?? '(no slug)'} — missing slug or title`);
       continue;
     }
-    const title = `${String(page.title).trim()} | SYSBILT`;
+    const title = brandTitle(page.title);
     const description = (page.sub || 'Fixed-scope service from SYSBILT.').trim();
     dynamic.push({
       path: `/go/${page.slug}`,

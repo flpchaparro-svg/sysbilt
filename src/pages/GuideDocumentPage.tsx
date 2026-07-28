@@ -5,6 +5,7 @@ import {client, urlFor} from '../sanityClient'
 import {Helmet} from 'react-helmet-async'
 import {PageMeta} from '../components/PageMeta'
 import {SITE_ORIGIN} from '../constants/seoMeta'
+import {brandTitle, stripSysbiltBrand} from '../utils/brandTitle'
 import {SysbiltLogo} from '../components/SysbiltLogo'
 import ShareButton from '../components/ShareButton'
 import {GuideGateForm} from '../components/GuideGateForm'
@@ -1329,11 +1330,11 @@ export default function GuideDocumentPage() {
   }
 
   const pageDescription = guideData.seoDescription?.trim() || guideData.subtitle?.trim() || ''
-  const rawDocTitle = guideData.seoTitle?.trim() || guideData.title
-  const htmlTitle = `${rawDocTitle} | SYSBILT`
+  const rawDocTitle = stripSysbiltBrand(guideData.seoTitle?.trim() || guideData.title)
+  const htmlTitle = brandTitle(rawDocTitle)
   const guideSlug = guideData.slug?.current ?? slug ?? ''
   const guidePageUrl = `${SITE_ORIGIN}/guides/${guideSlug}`
-  const ogTitle = guideData.seoTitle?.trim() || guideData.title
+  const ogTitle = rawDocTitle
   const defaultOgImage = `${SITE_ORIGIN}/images/og-sysbilt.png`
 
   return (

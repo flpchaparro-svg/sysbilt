@@ -7,7 +7,7 @@ export const BTM_META = {
   coverLegend: 'For Australian businesses who want content that earns, not a flood that spins',
   badgeLabel: 'Content Systems',
   badgeLink: '/pillar5',
-  seoTitle: 'Built to Multiply — Content Systems Without the Flood',
+  seoTitle: 'Built to Multiply: Content Systems Without the Flood',
   seoDescription:
     'How one voice becomes a month of content: strategy, one source, the toolkit, the production line, measurement, and wiring that turns attention into business. Free from SYSBILT.',
 } as const
