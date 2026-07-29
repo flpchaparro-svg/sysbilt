@@ -380,6 +380,11 @@ For appendix.tools_detected[].plain_english: one or two sentences of OWNER MEANI
 
 For appendix.page_health.*.plain_english: one sentence of OWNER MEANING tied to the Present / Missing / Could not verify state (snippet clicks, machine understanding, trust, scanability). Do not only restate the field name.
 
+Also add on appendix (same object as tools_detected):
+
+- "tools_context": 60 to 110 words AFTER the tools list. Interpret the actual found vs missing rows for the owner (good that analytics is live; bad that chat, booking, or CRM is missing). Do not explain what tools are in general. Explain what THESE results mean for booked jobs and follow-up.
+- "page_health_context": 60 to 110 words AFTER the page health cards. Interpret Present / Missing / Could not verify for money and discovery. Do not restate the section definition.
+
 For every section "context" field (how_they_find_you, how_they_perceive_you, what_people_say): write 70 to 120 words of OWNER RESULT MEANING. Do not explain what the section is. Explain what the results above mean for money, patients, booked jobs, or wasted ads. Example shape: you are 4th for X, so named competitors get the first clicks; a few focused fixes can move you up and stop you paying for attention you should already own.
 
 diagnosis.consequence must be owner cost language (leads, trust, bookings), never jargon for its own sake.

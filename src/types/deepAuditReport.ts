@@ -132,6 +132,10 @@ export interface AppendixBlock {
   page_health: AppendixPageHealth;
   action_plan: ActionPlanItem[];
   transparency_note: string;
+  /** Optional model write-up after tools list. UI synthesises from rows if empty. */
+  tools_context?: string;
+  /** Optional model write-up after page health. UI synthesises from cards if empty. */
+  page_health_context?: string;
 }
 
 export interface DeepAuditData {
@@ -461,6 +465,8 @@ function parseAppendix(o: unknown): AppendixBlock {
       page_health: parseAppendixPageHealth(null),
       action_plan: [],
       transparency_note: '',
+      tools_context: '',
+      page_health_context: '',
     };
   }
   const a = o as Record<string, unknown>;
@@ -482,6 +488,8 @@ function parseAppendix(o: unknown): AppendixBlock {
     page_health: parseAppendixPageHealth(a.page_health),
     action_plan,
     transparency_note: str(a.transparency_note),
+    tools_context: str(a.tools_context).trim(),
+    page_health_context: str(a.page_health_context).trim(),
   };
 }
 
