@@ -27,6 +27,23 @@ export default function AppendixSection({ appendix }: AppendixSectionProps) {
         align="center"
       />
 
+      <div
+        className={`relative mx-auto max-w-2xl overflow-hidden rounded-2xl border border-gold-on-dark/35 bg-gold-on-dark/[0.07] px-6 py-7 md:px-8 md:py-8 ${auditGlass}`}
+      >
+        <div
+          className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold-on-dark/70 to-transparent"
+          aria-hidden
+        />
+        <p className={`${auditEyebrow} text-gold-on-dark`}>What this means for you</p>
+        <p className="mt-4 font-sans text-sm leading-relaxed text-cream/90 md:text-[15px] md:leading-[1.7]">
+          This section is the under-the-bonnet check. ABN confirms the business is real on the public
+          register. Tools show whether the site can track visitors, take bookings, and catch messages.
+          Page health shows whether Google can read the page cleanly. Green is fine. Amber means we
+          could not confirm it, or it is weak. None of this is the full story on its own. It tells you
+          where the site helps enquiries, and where it quietly loses them.
+        </p>
+      </div>
+
       <div>
         <BlockTitle
           title="Business registry"

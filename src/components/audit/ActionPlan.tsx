@@ -133,17 +133,25 @@ export default function ActionPlan({
                 {item.rationale.trim() || 'Not found'}
               </p>
               {product ? (
-                <p className="mt-3 font-sans text-sm italic leading-relaxed text-white/45 md:text-[15px]">
-                  We do this as a fixed-scope job:{' '}
-                  <a
-                    href={withB(product.href)}
-                    className="text-gold-on-dark/90 underline decoration-gold-on-dark/35 underline-offset-2 transition-colors hover:text-gold-on-dark"
-                    target="_blank"
-                    rel="noopener noreferrer"
+                <a
+                  href={withB(product.href)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group mt-5 inline-flex min-h-[3.25rem] w-full items-center justify-between gap-3 rounded-2xl border border-gold-on-dark bg-gold-on-dark px-5 py-3.5 font-sans text-sm font-medium text-dark transition-all duration-[250ms] hover:bg-cream active:scale-[0.99] md:min-h-[3.5rem] md:px-6 md:text-base"
+                >
+                  <span className="text-left leading-snug">
+                    <span className="block text-[11px] font-normal uppercase tracking-[0.14em] text-dark/55">
+                      Fixed-scope job
+                    </span>
+                    <span className="mt-0.5 block">{product.name}</span>
+                  </span>
+                  <span
+                    className="shrink-0 font-mono text-xs uppercase tracking-[0.16em] text-dark/70 transition-transform duration-[250ms] group-hover:translate-x-0.5"
+                    aria-hidden
                   >
-                    {product.name}
-                  </a>
-                </p>
+                    Open →
+                  </span>
+                </a>
               ) : null}
             </div>
           </m.li>

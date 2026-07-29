@@ -1,12 +1,17 @@
 import { useMemo } from 'react';
 import { isMissingSignal } from '@/types/deepAuditReport';
-import { auditEmpty } from './auditCardStyles';
+import { auditEmpty, auditEyebrow, auditGlass } from './auditCardStyles';
 
 export interface SectionContextProps {
   text: string;
+  /** Short label above the meaning box. */
+  label?: string;
 }
 
-export default function SectionContext({ text }: SectionContextProps) {
+export default function SectionContext({
+  text,
+  label = 'What this means for you',
+}: SectionContextProps) {
   const trimmed = text.trim();
   const blocks = useMemo(() => {
     if (!trimmed) return [];
@@ -28,13 +33,16 @@ export default function SectionContext({ text }: SectionContextProps) {
   }
 
   return (
-    <div className="border-t border-white/[0.08] pt-10 md:pt-12">
-      <div className="relative mx-auto max-w-2xl rounded-2xl border border-white/10 bg-white/[0.03] px-6 py-7 md:px-8 md:py-8">
+    <div className="pt-2 md:pt-3">
+      <div
+        className={`relative mx-auto max-w-2xl overflow-hidden rounded-2xl border border-gold-on-dark/35 bg-gold-on-dark/[0.07] px-6 py-7 md:px-8 md:py-8 ${auditGlass}`}
+      >
         <div
-          className="pointer-events-none absolute left-0 top-6 bottom-6 w-0.5 rounded-full bg-gradient-to-b from-gold-on-dark via-gold-on-dark/40 to-transparent"
+          className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold-on-dark/70 to-transparent"
           aria-hidden
         />
-        <div className="space-y-4 pl-4 font-sans text-sm font-light leading-relaxed text-white/70 md:space-y-5 md:pl-5 md:text-[15px] md:leading-[1.7]">
+        <p className={`${auditEyebrow} text-gold-on-dark`}>{label}</p>
+        <div className="mt-4 space-y-4 font-sans text-sm leading-relaxed text-cream/90 md:space-y-5 md:text-[15px] md:leading-[1.7]">
           {blocks.map((para, i) => (
             <p key={i} className="text-pretty">
               {para}

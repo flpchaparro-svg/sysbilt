@@ -4,6 +4,8 @@ import { auditCardLift, auditEase, auditEyebrow, auditGlass } from './auditCardS
 
 export interface SentimentBarProps {
   sentiment: SentimentModel;
+  /** Total Google reviews behind the star split, when known. */
+  reviewCount?: string;
 }
 
 function clampPct(n: number): number {
@@ -11,7 +13,7 @@ function clampPct(n: number): number {
   return Math.min(100, n);
 }
 
-export default function SentimentBar({ sentiment }: SentimentBarProps) {
+export default function SentimentBar({ sentiment, reviewCount }: SentimentBarProps) {
   let p = clampPct(sentiment.positive);
   let n = clampPct(sentiment.neutral);
   let neg = clampPct(sentiment.negative);
@@ -22,20 +24,23 @@ export default function SentimentBar({ sentiment }: SentimentBarProps) {
     neg = (neg / sum) * 100;
   }
   const allZero = p === 0 && n === 0 && neg === 0;
-  const dominantPositive = !allZero && p >= 99.5;
+  const dominantPositive = !allZero && p >= 85;
   const reduce = useReducedMotion();
+  const countLabel = reviewCount?.trim() && !/^n\/?a$/i.test(reviewCount.trim()) ? reviewCount.trim() : '';
 
   return (
     <div className={`${auditGlass} ${auditCardLift} p-6 md:p-8`}>
       <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
+        <div className="max-w-xl">
           <p className={`${auditEyebrow} text-gold-on-dark`}>Sentiment split</p>
           <p className="mt-2 font-sans text-sm text-white/55">
-            Share of the reviews we could classify in this pass.
+            From Google star ratings across
+            {countLabel ? ` all ${countLabel} counted reviews` : ' the counted reviews on the listing'}
+            . Four and five stars count as positive, three as neutral, one and two as negative.
           </p>
         </div>
         {allZero ? (
-          <p className="text-xs text-white/55">We could not derive percentages for this pass.</p>
+          <p className="text-xs text-white/55">We could not read a Google star split for this pass.</p>
         ) : null}
         {dominantPositive ? (
           <m.p
@@ -45,7 +50,7 @@ export default function SentimentBar({ sentiment }: SentimentBarProps) {
             viewport={{ once: true }}
             transition={{ duration: 0.45, ease: auditEase }}
           >
-            Almost all positive in this sample
+            Strongly positive on Google stars
           </m.p>
         ) : null}
       </div>

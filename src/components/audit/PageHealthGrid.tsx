@@ -28,12 +28,28 @@ function QualityDot({ rating }: { rating: PageHealthQualityRating }) {
   return <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${qualityDot[rating]}`} aria-hidden />;
 }
 
+/** True when we have no usable reading (not when the page confirmed something is Missing). */
+function isUnreadPageHealth(value: string): boolean {
+  const v = value.trim().toLowerCase();
+  if (!v) return true;
+  if (isMissingSignal(v)) return false;
+  return (
+    v === 'could not verify' ||
+    v.startsWith('could not verify') ||
+    v === 'not verified' ||
+    v.includes('no pagespeed')
+  );
+}
+
 function HealthCard({ fieldKey, metric }: { fieldKey: keyof AppendixPageHealth; metric: PageHealthMetric }) {
-  const valMissing = isMissingSignal(metric.value) || !metric.value.trim();
+  const unread = isUnreadPageHealth(metric.value);
+  const confirmedMissing = isMissingSignal(metric.value);
   return (
     <div
       className={`h-full p-5 ${auditGlass} ${auditCardLift} ${
-        valMissing ? 'border-dashed border-white/20' : 'hover:border-gold-on-dark/35'
+        unread || confirmedMissing
+          ? 'border-dashed border-white/20'
+          : 'hover:border-gold-on-dark/35'
       }`}
     >
       <div className="flex items-start justify-between gap-2">
@@ -45,12 +61,16 @@ function HealthCard({ fieldKey, metric }: { fieldKey: keyof AppendixPageHealth; 
         </div>
         <QualityDot rating={metric.rating} />
       </div>
-      <p className={`mt-4 font-mono text-xs md:text-sm ${valMissing ? 'text-white/55' : 'text-gold-on-dark'}`}>
+      <p
+        className={`mt-4 font-mono text-xs md:text-sm ${
+          unread || confirmedMissing ? 'text-white/55' : 'text-gold-on-dark'
+        }`}
+      >
         {metric.value.trim() || 'Not found'}
       </p>
-      {valMissing ? (
+      {unread ? (
         <p className="mt-2 font-sans text-xs text-white/55">
-          We could not read this field. Check the appendix note for consequence.
+          We could not read this field in this pass.
         </p>
       ) : null}
     </div>

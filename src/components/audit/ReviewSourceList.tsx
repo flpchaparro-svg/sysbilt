@@ -6,6 +6,10 @@ export interface ReviewSourceListProps {
   review_sources: ReviewSourceModel[];
 }
 
+function isGooglePlatform(platform: string): boolean {
+  return /google/i.test(platform);
+}
+
 export default function ReviewSourceList({ review_sources }: ReviewSourceListProps) {
   if (review_sources.length === 0) {
     return (
@@ -19,6 +23,7 @@ export default function ReviewSourceList({ review_sources }: ReviewSourceListPro
     <div className={`divide-y divide-white/10 overflow-hidden ${auditGlass}`}>
       {review_sources.map((s, i) => {
         const countStr = s.count;
+        const google = isGooglePlatform(s.platform);
         const weak =
           isMissingSignal(s.platform) ||
           !s.platform.trim() ||
@@ -27,26 +32,44 @@ export default function ReviewSourceList({ review_sources }: ReviewSourceListPro
         return (
           <div
             key={`${s.platform}-${i}`}
-            className={`grid gap-3 px-5 py-5 md:grid-cols-12 md:items-center md:px-6 ${auditRowHover} ${
-              weak ? 'bg-white/[0.015]' : ''
+            className={`grid gap-4 px-5 py-5 md:grid-cols-12 md:items-center md:px-6 ${auditRowHover} ${
+              weak ? 'bg-white/[0.015]' : google ? 'bg-white/[0.03]' : ''
             }`}
           >
             <div className="md:col-span-3">
-              <p className={`text-sm font-semibold ${weak ? 'text-white/65' : 'text-cream'}`}>
+              <p
+                className={`font-semibold ${
+                  google ? 'font-serif text-xl text-cream md:text-2xl' : 'text-sm text-cream'
+                } ${weak ? 'text-white/65' : ''}`}
+              >
                 {s.platform.trim() || 'Not found'}
               </p>
             </div>
             <div className="md:col-span-2">
               <span className={`${auditEyebrow} text-white/40`}>Rating</span>
-              <p className="mt-2 text-sm text-white/80">{s.rating.trim() || 'Not found'}</p>
+              <p
+                className={`mt-2 text-white/90 ${
+                  google ? 'font-serif text-2xl md:text-3xl text-cream' : 'text-sm text-white/80'
+                }`}
+              >
+                {s.rating.trim() || 'Not found'}
+              </p>
             </div>
             <div className="md:col-span-2">
               <span className={`${auditEyebrow} text-white/40`}>Count</span>
-              <p className="mt-2 text-sm text-white/80">{countStr.trim() || 'Not found'}</p>
+              <p
+                className={`mt-2 text-white/90 ${
+                  google ? 'font-serif text-2xl md:text-3xl text-cream' : 'text-sm text-white/80'
+                }`}
+              >
+                {countStr.trim() || 'Not found'}
+              </p>
             </div>
             <div className="md:col-span-5">
               <span className={`${auditEyebrow} text-white/40`}>Recent theme</span>
-              <p className="mt-2 text-sm text-white/80">{s.recent_theme.trim() || 'Not found'}</p>
+              <p className="mt-2 text-sm leading-relaxed text-white/80">
+                {s.recent_theme.trim() || 'Not found'}
+              </p>
             </div>
           </div>
         );
