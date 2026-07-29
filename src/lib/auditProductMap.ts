@@ -1,7 +1,7 @@
 /**
  * Map Deep Audit findings to outbound products for First Moves whisper lines
- * and the single closing CTA. Replace-vs-patch prefers Hosted Website Plan
- * when enough structural failures stack up.
+ * and the single closing CTA. Sheet column "Offer Product" always wins when set.
+ * Replace-vs-patch prefers Hosted Website Plan when the site base is too weak to patch.
  */
 
 import type { ActionPlanItem, DeepAuditData, PageHealthQualityRating } from '@/types/deepAuditReport';
@@ -15,7 +15,7 @@ export interface AuditProductOffer {
 
 const SITE = 'https://sysbilt.com';
 
-const PRODUCTS = {
+export const AUDIT_PRODUCTS = {
   speed: {
     name: 'Website Speed Fix',
     blurb: 'Fixed-scope mobile speed work, measured before and after',
@@ -24,7 +24,7 @@ const PRODUCTS = {
   },
   search: {
     name: 'Search Visibility Fix',
-    blurb: 'Indexing and crawl setup so Google can see the pages you paid for',
+    blurb: 'Indexing, crawl, and local search setup so the right pages get found',
     href: `${SITE}/go/search-fix`,
     code: 'search-fix',
   },
@@ -78,24 +78,48 @@ const PRODUCTS = {
   },
 } as const satisfies Record<string, AuditProductOffer>;
 
-const RULES: Array<{ re: RegExp; product: keyof typeof PRODUCTS }> = [
-  { re: /\b(speed|mobile|lighthouse|load time|page ?speed|slow)\b/i, product: 'speed' },
+type ProductKey = keyof typeof AUDIT_PRODUCTS;
+
+/** Sheet "Offer Product" values → product key. Empty = auto. */
+const OFFER_ALIASES: Array<{ re: RegExp; key: ProductKey }> = [
+  { re: /^(website|hosted(\s+website)?(\s+plan)?|rebuild|front\s*door)$/i, key: 'website' },
+  { re: /^(speed(\s*fix)?|website\s+speed\s+fix)$/i, key: 'speed' },
+  { re: /^(search(\s*fix)?|search\s+visibility(\s+fix)?|seo)$/i, key: 'search' },
+  { re: /^(google\s*profile(\s*fix)?|gbp|profile)$/i, key: 'profile' },
+  { re: /^(review(\s*engine)?|reviews)$/i, key: 'reviews' },
+  { re: /^(booking(\s*system)?)$/i, key: 'booking' },
+  { re: /^(missed[- ]?call(\s*text-?back)?)$/i, key: 'missedCall' },
+  { re: /^(crm(\s*rescue)?)$/i, key: 'crm' },
+  { re: /^(landing(\s*page)?|campaign\s+landing\s+page)$/i, key: 'landing' },
+  { re: /^(content(\s*system)?)$/i, key: 'content' },
+];
+
+const RULES: Array<{ re: RegExp; product: ProductKey }> = [
+  { re: /\b(speed|lighthouse|load time|page ?speed|slow (site|page|on phones?))\b/i, product: 'speed' },
   {
     re: /\b(index|noindex|sitemap|crawl|canonical|robots\.txt|search visibility)\b/i,
     product: 'search',
   },
+  {
+    re: /\b(keyword|local seo|rank(?:ing)? for|optimis[ee] for|optimize for|dedicated (local )?page)\b/i,
+    product: 'search',
+  },
   { re: /\b(heading|schema|meta description|on-?page seo)\b/i, product: 'search' },
   {
-    re: /\b(google (business )?profile|gbp|maps listing|categories|photos)\b/i,
+    re: /\b(google (business )?profile|gbp|maps listing|categories|profile photos)\b/i,
     product: 'profile',
   },
-  { re: /\b(review|rating)\b/i, product: 'reviews' },
-  { re: /\b(booking|book online|appointments?)\b/i, product: 'booking' },
+  { re: /\b(google maps embed|maps embed)\b/i, product: 'search' },
+  { re: /\b(review engine|review (count|volume|ask)|more reviews)\b/i, product: 'reviews' },
+  { re: /\b(booking widget|book online|online booking|appointments?)\b/i, product: 'booking' },
   { re: /\b(missed[- ]?call|after[- ]?hours|ring(?:s|ing)? out)\b/i, product: 'missedCall' },
   { re: /\b(form|enquir|crm|follow[- ]?up|lead handling|nobody repl)\b/i, product: 'crm' },
   { re: /\b(landing page|ads? land|ad library|campaign page)\b/i, product: 'landing' },
-  { re: /\b(social|content|instagram|facebook|stale)\b/i, product: 'content' },
-  { re: /\b(rebuild|hosted website|start again|front door)\b/i, product: 'website' },
+  {
+    re: /\b(instagram|facebook|linkedin|social media|stale social|content cadence|content system)\b/i,
+    product: 'content',
+  },
+  { re: /\b(rebuild|hosted website|start again|front door|squarespace|wix)\b/i, product: 'website' },
 ];
 
 function isBad(rating: PageHealthQualityRating | string | undefined): boolean {
@@ -110,21 +134,44 @@ function parseScore(raw: string | undefined): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
-/** Three or more structural failures → recommend Hosted Website Plan instead of patch stack. */
-export function shouldRecommendHostedRebuild(data: DeepAuditData): boolean {
+export function resolveOfferProductKey(raw: string | undefined | null): ProductKey | null {
+  const v = String(raw || '').trim();
+  if (!v || /^(auto|none|n\/a|-)$/i.test(v)) return null;
+  for (const row of OFFER_ALIASES) {
+    if (row.re.test(v)) return row.key;
+  }
+  return null;
+}
+
+/** Structural failures → Hosted Website Plan instead of a patch stack. */
+export function shouldRecommendHostedRebuild(
+  data: DeepAuditData,
+  lhMobile?: string | number | null,
+): boolean {
   let hits = 0;
   const health = data.appendix.page_health;
   const perceive = data.how_they_perceive_you;
   const tools = data.appendix.tools_detected || [];
+  const diagBlob = JSON.stringify(data.diagnosis || {});
 
+  const sheetScore = parseScore(lhMobile != null ? String(lhMobile) : '');
+  let speedScore = sheetScore;
   for (const m of perceive.metrics || []) {
     if (!/speed|mobile|performance|lighthouse/i.test(m.label)) continue;
     const score = parseScore(m.value);
-    if (score != null && score < 40) hits += 1;
+    if (score != null) speedScore = speedScore == null ? score : Math.min(speedScore, score);
   }
+  const speedFromDiag = diagBlob.match(/(?:performance|speed|pagespeed|scored?)\D{0,12}(\d{1,3})\s*(?:\/\s*100|out of 100)?/i);
+  if (speedFromDiag) {
+    const s = Number(speedFromDiag[1]);
+    if (Number.isFinite(s)) speedScore = speedScore == null ? s : Math.min(speedScore, s);
+  }
+  if (speedScore != null && speedScore < 55) hits += 1;
+  if (speedScore != null && speedScore < 40) hits += 1;
 
   if (isBad(health.heading_hierarchy?.rating)) hits += 1;
   if (isBad(health.schema_markup?.rating)) hits += 1;
+  if (isBad(health.meta_description?.rating)) hits += 1;
 
   for (const m of perceive.metrics || []) {
     if (!/accessib/i.test(m.label)) continue;
@@ -132,28 +179,23 @@ export function shouldRecommendHostedRebuild(data: DeepAuditData): boolean {
     if (score != null && score < 50) hits += 1;
   }
 
-  const hasEnquiryPath = tools.some((t) => {
-    const blob = `${t.name} ${t.plain_english}`.toLowerCase();
-    return /form|crm|enquiry|booking|hubspot|calendly/.test(blob) && t.status === 'found';
-  });
-  if (!hasEnquiryPath) hits += 1;
+  const missingStructural = tools.filter((t) => {
+    if (t.status !== 'missing' && t.status !== 'broken') return false;
+    return /maps|booking|chat|crm|form|enquiry/i.test(`${t.name} ${t.plain_english}`);
+  }).length;
+  if (missingStructural >= 2) hits += 1;
+  if (missingStructural >= 3) hits += 1;
 
-  const sslOrAbandoned = tools.some((t) => {
-    const blob = `${t.name} ${t.plain_english}`.toLowerCase();
-    return (
-      (/ssl|https|certificate/.test(blob) && (t.status === 'missing' || t.status === 'broken')) ||
-      (/wordpress|wix|squarespace|builder/.test(blob) && t.rating === 'bad')
-    );
-  });
-  if (sslOrAbandoned) hits += 1;
+  if (/squarespace|wix|weebly|godaddy|wordpress\.com|jimdo/i.test(diagBlob)) hits += 1;
+  if (/squarespace|wix|weebly|godaddy/i.test(JSON.stringify(tools))) hits += 1;
 
-  return hits >= 3;
+  return hits >= 2;
 }
 
 export function productForActionItem(item: ActionPlanItem): AuditProductOffer | null {
   const blob = `${item.title} ${item.rationale}`;
   for (const rule of RULES) {
-    if (rule.re.test(blob)) return PRODUCTS[rule.product];
+    if (rule.re.test(blob)) return AUDIT_PRODUCTS[rule.product];
   }
   return null;
 }
@@ -161,16 +203,31 @@ export function productForActionItem(item: ActionPlanItem): AuditProductOffer | 
 export function primaryOfferFromAudit(
   data: DeepAuditData,
   businessName?: string,
-): { offer: AuditProductOffer; findingLabel: string; rebuild: boolean } {
+  options?: { offerProduct?: string | null; lhMobile?: string | number | null },
+): { offer: AuditProductOffer; findingLabel: string; rebuild: boolean; forced: boolean } {
   const b = encodeURIComponent((businessName || '').trim().slice(0, 40));
   const withB = (offer: AuditProductOffer): AuditProductOffer =>
     b ? { ...offer, href: `${offer.href}?b=${b}` } : offer;
 
-  if (shouldRecommendHostedRebuild(data)) {
+  const forcedKey = resolveOfferProductKey(options?.offerProduct);
+  if (forcedKey) {
+    const rebuild = forcedKey === 'website';
     return {
-      offer: withB(PRODUCTS.website),
+      offer: withB(AUDIT_PRODUCTS[forcedKey]),
+      findingLabel: rebuild
+        ? 'Several structural failures on the same site'
+        : data.diagnosis.critical.title || AUDIT_PRODUCTS[forcedKey].name,
+      rebuild,
+      forced: true,
+    };
+  }
+
+  if (shouldRecommendHostedRebuild(data, options?.lhMobile)) {
+    return {
+      offer: withB(AUDIT_PRODUCTS.website),
       findingLabel: 'Several structural failures on the same site',
       rebuild: true,
+      forced: false,
     };
   }
 
@@ -182,6 +239,7 @@ export function primaryOfferFromAudit(
         offer: withB(product),
         findingLabel: (item.title || '').trim() || data.diagnosis.critical.title,
         rebuild: false,
+        forced: false,
       };
     }
   }
@@ -190,16 +248,18 @@ export function primaryOfferFromAudit(
   for (const rule of RULES) {
     if (rule.re.test(criticalBlob)) {
       return {
-        offer: withB(PRODUCTS[rule.product]),
+        offer: withB(AUDIT_PRODUCTS[rule.product]),
         findingLabel: data.diagnosis.critical.title,
         rebuild: false,
+        forced: false,
       };
     }
   }
 
   return {
-    offer: withB(PRODUCTS.speed),
+    offer: withB(AUDIT_PRODUCTS.speed),
     findingLabel: data.diagnosis.critical.title || 'The highest-impact issue in this audit',
     rebuild: false,
+    forced: false,
   };
 }

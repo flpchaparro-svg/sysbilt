@@ -146,6 +146,10 @@ export interface DeepAuditReportPayload {
   contact_email: string;
   company_name: string;
   contact_first_name?: string;
+  /** Master Leads "Offer Product" override when set. */
+  offer_product?: string;
+  /** Master Leads LH Mobile score when present. */
+  lh_mobile?: string;
   audit_data: DeepAuditData;
 }
 
@@ -497,6 +501,8 @@ export function normalizeDeepAuditReportPayload(raw: unknown): DeepAuditReportPa
     contact_email: contact,
     company_name: company,
     contact_first_name: contactFirstName,
+    ...(str(o.offer_product).trim() ? { offer_product: str(o.offer_product).trim() } : {}),
+    ...(str(o.lh_mobile).trim() ? { lh_mobile: str(o.lh_mobile).trim() } : {}),
     audit_data: {
       diagnosis,
       how_they_find_you: parseFindYou(a.how_they_find_you),

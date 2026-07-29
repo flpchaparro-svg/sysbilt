@@ -21,6 +21,7 @@ import SwotPanel from './SwotPanel';
 import WhereToFocusSection from './WhereToFocusSection';
 import { auditEmpty, auditEyebrow, auditGlass } from './auditCardStyles';
 import { primaryOfferFromAudit } from '@/lib/auditProductMap';
+import { isMetricValueEmpty } from './metricHelpers';
 
 /** Soft in-section label where the card already repeats the title. */
 function SoftLabel({ children }: { children: ReactNode }) {
@@ -87,7 +88,13 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
   const perceive = audit.how_they_perceive_you;
   const say = audit.what_people_say;
   const firstName = data.contact_first_name?.trim() || firstNameFromEmail(contact_email);
-  const { offer, findingLabel, rebuild } = primaryOfferFromAudit(audit, company_name);
+  const { offer, findingLabel, rebuild } = primaryOfferFromAudit(audit, company_name, {
+    offerProduct: data.offer_product,
+    lhMobile: data.lh_mobile,
+  });
+  const findMetrics = find.metrics.filter((m) => !isMetricValueEmpty(m.value));
+  const perceiveMetrics = perceive.metrics.filter((m) => !isMetricValueEmpty(m.value));
+  const sayMetrics = say.metrics.filter((m) => !isMetricValueEmpty(m.value));
 
   return (
     <div className="min-h-screen bg-dark font-sans text-white selection:bg-gold-on-dark/30 selection:text-dark">
@@ -147,11 +154,11 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
               headline={find.headline}
             />
             <div>
-              {find.metrics.length === 0 ? (
+              {findMetrics.length === 0 ? (
                 <MetricEmptyState />
               ) : (
-                <MetricGrid count={find.metrics.length}>
-                  {find.metrics.map((m, i) => (
+                <MetricGrid count={findMetrics.length}>
+                  {findMetrics.map((m, i) => (
                     <div key={`${m.label}-${i}`} className="min-w-0">
                       <MetricTile label={m.label} value={m.value} rating={m.rating} index={i} />
                     </div>
@@ -197,11 +204,11 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
               headline={perceive.headline}
             />
             <div>
-              {perceive.metrics.length === 0 ? (
+              {perceiveMetrics.length === 0 ? (
                 <MetricEmptyState />
               ) : (
-                <MetricGrid count={perceive.metrics.length}>
-                  {perceive.metrics.map((m, i) => (
+                <MetricGrid count={perceiveMetrics.length}>
+                  {perceiveMetrics.map((m, i) => (
                     <div key={`${m.label}-${i}`} className="min-w-0">
                       <MetricTile label={m.label} value={m.value} rating={m.rating} index={i} />
                     </div>
@@ -239,11 +246,11 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
               headline={say.headline}
             />
             <div>
-              {say.metrics.length === 0 ? (
+              {sayMetrics.length === 0 ? (
                 <MetricEmptyState />
               ) : (
-                <MetricGrid count={say.metrics.length}>
-                  {say.metrics.map((m, i) => (
+                <MetricGrid count={sayMetrics.length}>
+                  {sayMetrics.map((m, i) => (
                     <div key={`${m.label}-${i}`} className="min-w-0">
                       <MetricTile label={m.label} value={m.value} rating={m.rating} index={i} />
                     </div>

@@ -37,6 +37,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       contact_email: record.contact_email,
       company_name: record.company_name,
       contact_first_name: record.contact_first_name,
+      offer_product: record.offer_product,
+      lh_mobile: record.lh_mobile,
       audit_data: record.audit_data,
     });
   } catch (err) {

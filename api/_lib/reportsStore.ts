@@ -8,6 +8,8 @@ export interface DeepAuditReportRecord {
   contact_email: string;
   company_name: string;
   contact_first_name?: string;
+  offer_product?: string;
+  lh_mobile?: string;
   audit_data: unknown;
 }
 

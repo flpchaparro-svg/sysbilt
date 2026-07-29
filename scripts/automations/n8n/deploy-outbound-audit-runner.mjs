@@ -221,6 +221,7 @@ function headerSchema() {
   const headers = [
     'Business Name', 'Suburb', 'Address', 'Website', 'Phone', 'Rating', 'Reviews',
     'Maps ID', 'Owner Name', 'Email', 'Status', 'Audit Link', 'Emailed', 'Notes',
+    'Offer Product', 'LH Mobile', 'Manual Lane',
   ];
   return headers.map((id) => ({
     id,

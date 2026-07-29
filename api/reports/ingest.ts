@@ -21,6 +21,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     contact_email?: unknown;
     company_name?: unknown;
     contact_first_name?: unknown;
+    offer_product?: unknown;
+    lh_mobile?: unknown;
     audit_data?: unknown;
   };
 
@@ -29,6 +31,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const companyName = typeof body.company_name === 'string' ? body.company_name.trim() : '';
   const contactFirstName =
     typeof body.contact_first_name === 'string' ? body.contact_first_name.trim() : '';
+  const offerProduct =
+    typeof body.offer_product === 'string' ? body.offer_product.trim() : '';
+  const lhMobile = typeof body.lh_mobile === 'string' ? body.lh_mobile.trim() : '';
   const auditData = body.audit_data;
 
   if (!contactEmail) {
@@ -75,6 +80,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     contact_email: contactEmail,
     company_name: companyName,
     ...(contactFirstName ? { contact_first_name: contactFirstName } : {}),
+    ...(offerProduct ? { offer_product: offerProduct } : {}),
+    ...(lhMobile ? { lh_mobile: lhMobile } : {}),
     audit_data: auditData,
   };
 
