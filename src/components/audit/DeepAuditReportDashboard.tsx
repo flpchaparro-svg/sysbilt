@@ -211,7 +211,7 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
           <AuditScrollReveal className="flex flex-col gap-10 md:gap-12">
             <SectionHeader
               eyebrow="04 · What your website says"
-              preamble="What a first-time visitor understands in the first few seconds, and whether they know what to do next."
+              preamble="What the site communicates in the first few seconds, and whether someone knows what to do next."
               headline={perceive.headline}
             />
             <div>

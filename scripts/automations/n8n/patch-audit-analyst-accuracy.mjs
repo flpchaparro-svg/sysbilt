@@ -53,14 +53,18 @@ For appendix.page_health values (meta_description, schema_markup, cookie_complia
 
 Never write "Missing" when you mean "Could not verify". Never pair those two meanings in the same field.
 
-OWNER GIFT RULES v1 (critical, non-negotiable):
+OWNER GIFT RULES v2 (critical, non-negotiable):
 
 This report is a gift for a busy business owner, not a technical memo for an agency. Every sentence must earn its place by helping them see lost enquiries, lost trust, or a clear next move.
 
 Add these top-level fields on the same JSON object as "diagnosis" (not nested under appendix):
 
 - "gift_intro": 2 to 3 sentences. Speak to the owner. Say what you checked (find, trust, book) and that the pages below show what it is costing them and what to fix first. Never write "not a sales pitch", "front-of-house systems", "outside pass", or "if we worked together".
-- "ai_site_read": 90 to 140 words. Using Raw HTML (ScrapingBee) as source of truth, plus the Jina scrape for readable copy: write what a first visitor would notice on the homepage. Tone, promise, booking path, speed feel, clutter, trust. If the page was bot-blocked, thin, broken, or unreadable, say that plainly and why it matters for Google and for AI answers. This paragraph is mandatory.
+- "ai_site_read": mandatory. Using Raw HTML (ScrapingBee) as source of truth, plus the Jina scrape for readable copy. This is a MACHINE / AI read of the homepage, not a pretend human visit. Do not write "a first visitor would notice" or "when you walk into the site". Write 2 to 4 short paragraphs separated by blank lines (\\n\\n), or one short opening paragraph plus 3 to 5 bullet lines each starting with "- ". Cover promise, booking path, speed feel, trust, and clutter in polished owner English. Every line must sound written for a person, not a checklist dump. If the page was bot-blocked, thin, broken, or unreadable, say that plainly and why it matters for Google and for AI answers. About 90 to 160 words total.
+
+For appendix.tools_detected[].plain_english: one or two sentences of OWNER MEANING. Say what found / missing / broken means for catching or losing an enquiry (booking path, live chat, CRM or form handoff, tracking). Do not only name the tool.
+
+For appendix.page_health.*.plain_english: one sentence of OWNER MEANING tied to the Present / Missing / Could not verify state (snippet clicks, machine understanding, trust, scanability). Do not only restate the field name.
 
 For every section "context" field (how_they_find_you, how_they_perceive_you, what_people_say): write 70 to 120 words of OWNER RESULT MEANING. Do not explain what the section is. Explain what the results above mean for money, patients, booked jobs, or wasted ads. Example shape: you are 4th for X, so named competitors get the first clicks; a few focused fixes can move you up and stop you paying for attention you should already own.
 
@@ -69,6 +73,8 @@ diagnosis.consequence must be owner cost language (leads, trust, bookings), neve
 Do not open diagnosis.critical with ABN / interstate entity name collisions unless the public search results clearly show a different clinic stealing branded clicks. Prefer findability, pack, speed, booking path, or trust.
 
 SWOT opportunities must never say "claim", "unclaimed", or "verify your Google". Prefer "strengthen Google profile activity", posts, photos, categories, or local pages.
+
+Never mention "Own this business?", claiming, or verifying a Google listing in any owner-facing field.
 
 Banned owner-facing filler: "leverage", "utilise", "click goldmine", "outside pass", "systems audit", "directional not definitive" inside findings.
 `.trim();
@@ -148,7 +154,7 @@ function stripOldAccuracyBlocks(prompt) {
       '\n\n',
     )
     .replace(
-      /\n*OWNER GIFT RULES(?: v1)? \(critical, non-negotiable\):[\s\S]*?(?=\n(?:CRITICAL OUTPUT RULES:|JSON SYNTAX \(mandatory\):|GOOGLE BUSINESS PROFILE CLAIM RULE|REVIEW NUMBER CONSISTENCY RULE|PAGE HEALTH VALUE RULE)|$)/g,
+      /\n*OWNER GIFT RULES(?: v[12])? \(critical, non-negotiable\):[\s\S]*?(?=\n(?:CRITICAL OUTPUT RULES:|JSON SYNTAX \(mandatory\):|GOOGLE BUSINESS PROFILE CLAIM RULE|REVIEW NUMBER CONSISTENCY RULE|PAGE HEALTH VALUE RULE)|$)/g,
       '\n\n',
     );
 }
@@ -195,7 +201,7 @@ function injectAccuracyRules(prompt) {
     working.includes('GOOGLE BUSINESS PROFILE CLAIM RULE v2') &&
     working.includes('REVIEW NUMBER CONSISTENCY RULE v1') &&
     working.includes('PAGE HEALTH VALUE RULE v1') &&
-    working.includes('OWNER GIFT RULES v1');
+    working.includes('OWNER GIFT RULES v2');
 
   if (!hasFullBlock) {
     const anchor = 'CRITICAL OUTPUT RULES:';

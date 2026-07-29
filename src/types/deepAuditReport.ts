@@ -136,7 +136,7 @@ export interface AppendixBlock {
 
 export interface DeepAuditData {
   diagnosis: DiagnosisBlock;
-  /** Plain-English visit to the site: what a first visitor / bot actually saw. */
+  /** Machine / AI pass on the public homepage (structured short paragraphs or bullets). */
   ai_site_read?: string;
   /** Optional gift framing override from the model. UI has a strong default if empty. */
   gift_intro?: string;

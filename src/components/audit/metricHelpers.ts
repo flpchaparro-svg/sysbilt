@@ -5,11 +5,11 @@ export const metricHelpers: Record<string, string> = {
   'Google rankings on key terms':
     'Where you show up when prospects search the terms your business depends on.',
   'Knowledge panel presence':
-    'Whether Google has built a summary card for your business in search results. Seeing "Own this business?" on the public page is normal, even when the profile is already claimed.',
+    'Whether Google has built a summary card for your business in search results.',
   'Search-visible reviews': 'Review platforms that appear when someone Googles your name.',
   'Local pack visibility': 'Whether you show up in the map results for local searches.',
   'Value proposition clarity':
-    'How quickly a first-time visitor understands what you do and who it is for.',
+    'How quickly someone understands what you do and who it is for.',
   'Call to action strength': 'How clearly your website tells a visitor what to do next.',
   'Brand consistency':
     'Whether your visual identity and tone read consistently across pages and channels.',

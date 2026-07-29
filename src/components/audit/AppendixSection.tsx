@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import type { AppendixBlock } from '@/types/deepAuditReport';
 import { isMissingSignal } from '@/types/deepAuditReport';
 import { Activity, Building2, Wrench } from 'lucide-react';
@@ -11,6 +12,29 @@ export interface AppendixSectionProps {
   appendix: AppendixBlock;
 }
 
+function MeaningBox({
+  eyebrow,
+  children,
+}: {
+  eyebrow: string;
+  children: ReactNode;
+}) {
+  return (
+    <div
+      className={`relative mx-auto max-w-3xl overflow-hidden rounded-2xl border border-gold-on-dark/35 bg-gold-on-dark/[0.07] px-6 py-7 md:px-8 md:py-8 ${auditGlass}`}
+    >
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold-on-dark/70 to-transparent"
+        aria-hidden
+      />
+      <p className={`${auditEyebrow} text-gold-on-dark`}>{eyebrow}</p>
+      <div className="mt-4 space-y-4 font-sans text-sm leading-relaxed text-cream/90 md:text-[15px] md:leading-[1.7]">
+        {children}
+      </div>
+    </div>
+  );
+}
+
 export default function AppendixSection({ appendix }: AppendixSectionProps) {
   const { registry, tools_detected, page_health } = appendix;
 
@@ -22,25 +46,22 @@ export default function AppendixSection({ appendix }: AppendixSectionProps) {
       <SectionHeader
         id="appendix-heading"
         eyebrow="06 · Technical checklist"
-        preamble="Registry lookups, tools we detected, and page-health checks. Use this as a short technical pass, not the main story."
+        preamble="The stack and page basics that decide whether warm traffic becomes a booked job. Read the meaning, not only Present or Missing."
         staticTitle="Technical checklist"
         align="center"
       />
 
-      <div
-        className={`relative mx-auto max-w-2xl overflow-hidden rounded-2xl border border-gold-on-dark/35 bg-gold-on-dark/[0.07] px-6 py-7 md:px-8 md:py-8 ${auditGlass}`}
-      >
-        <div
-          className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold-on-dark/70 to-transparent"
-          aria-hidden
-        />
-        <p className={`${auditEyebrow} text-gold-on-dark`}>What this means for your business</p>
-        <p className="mt-4 font-sans text-sm leading-relaxed text-cream/90 md:text-[15px] md:leading-[1.7]">
-          Only care about this section if it tells you whether the site can win and keep an enquiry. Can
-          people book. Can you see who visited. Can Google read the page. Amber usually means we could not
-          confirm it, or it is weak. That alone can be the reason warm traffic never becomes a booked job.
+      <MeaningBox eyebrow="What this means for your business">
+        <p>
+          This section is where many reports go quiet. We will not. These checks answer three owner questions:
+          can someone book without friction, can you see and follow the lead, and can Google and AI systems
+          read the page the way a competitor&apos;s site already does.
         </p>
-      </div>
+        <p>
+          Amber usually means we could not confirm it, or it is weak next to what winning local sites carry.
+          That alone can be why ads and pack clicks never turn into diary bookings.
+        </p>
+      </MeaningBox>
 
       <div>
         <BlockTitle
@@ -87,20 +108,46 @@ export default function AppendixSection({ appendix }: AppendixSectionProps) {
       <div className="border-t border-white/[0.08] pt-10 md:pt-12">
         <BlockTitle
           title="Tools detected"
-          description="Tracking and stack signals we found on the public site. Useful as a checklist, not a full tech audit."
+          description="Booking, chat, CRM, and tracking signals on the public site. Missing here often means missed follow-up."
           Icon={Wrench}
         />
-        <ToolDetectionList tools_detected={tools_detected} />
+        <MeaningBox eyebrow="Why tools matter">
+          <p>
+            Live chat, a clear booking path, and a CRM or form handoff are how strong local sites catch the
+            enquiry while the person is still interested. If those are missing or broken, you pay for attention
+            and then lose it to whoever answers first.
+          </p>
+        </MeaningBox>
+        <div className="mt-6">
+          <ToolDetectionList tools_detected={tools_detected} />
+        </div>
       </div>
 
       <div className="border-t border-white/[0.08] pt-10 md:pt-12">
         <BlockTitle
           title="Page health"
-          description="Basic on-page checks: meta, schema, cookies, alt text, and heading structure."
+          description="On-page basics: the search snippet, structured data, cookies, image text, and headings."
           Icon={Activity}
         />
-        <PageHealthGrid page_health={page_health} />
+        <MeaningBox eyebrow="Why page health matters">
+          <p>
+            These are not vanity tech scores. They shape how your link looks in Google, how machines label your
+            business, and whether the page is easy to trust and scan. Weak here usually means weaker discovery
+            next to clinics that already cleaned this up.
+          </p>
+        </MeaningBox>
+        <div className="mt-6">
+          <PageHealthGrid page_health={page_health} />
+        </div>
       </div>
+
+      <MeaningBox eyebrow="Bottom line on this checklist">
+        <p>
+          Treat Present as table stakes and Missing as a sales leak until proven otherwise. Compared with
+          competitors who already book online, answer in chat, and keep clean page basics, every gap here is a
+          reason a warm lead never reaches your chair.
+        </p>
+      </MeaningBox>
     </section>
   );
 }
