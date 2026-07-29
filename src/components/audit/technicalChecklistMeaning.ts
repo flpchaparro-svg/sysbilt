@@ -27,8 +27,13 @@ function isWeakTool(t: ToolDetectedRow): boolean {
   return !isStrongTool(t);
 }
 
+function toBullets(items: string[]): string {
+  return items.map((item) => `- ${item}`).join('\n');
+}
+
 /**
  * Owner meaning from the actual tools list: what is working, what is missing, what that costs.
+ * Returns short paragraphs and/or markdown-style bullets for SectionContext.
  */
 export function buildToolsResultMeaning(tools: ToolDetectedRow[]): string {
   if (!tools.length) {
@@ -48,21 +53,21 @@ export function buildToolsResultMeaning(tools: ToolDetectedRow[]): string {
       .filter(Boolean);
     if (names.length) {
       goodBits.push(
-        `Good: ${names.join(', ')} ${names.length === 1 ? 'is' : 'are'} in place, so you can measure traffic and ad performance.`,
+        `${names.join(', ')} ${names.length === 1 ? 'is' : 'are'} in place, so you can measure traffic and ad performance.`,
       );
     }
   }
   for (const t of strong) {
     const k = toolKind(t.name);
     if (k === 'booking' || k === 'chat' || k === 'crm' || k === 'maps') {
-      goodBits.push(`Good: ${t.name.trim()} looks live on the public site.`);
+      goodBits.push(`${t.name.trim()} looks live on the public site.`);
     }
   }
 
   const badBits: string[] = [];
   if (kindsWeak.has('chat')) {
     badBits.push(
-      'No live chat showed up. When someone has a quick question after hours or mid-scroll, they leave instead of asking.',
+      'No live chat showed up. Quick questions after hours or mid-scroll walk away instead of asking.',
     );
   }
   if (kindsWeak.has('booking')) {
@@ -81,7 +86,6 @@ export function buildToolsResultMeaning(tools: ToolDetectedRow[]): string {
     );
   }
 
-  // Catch weak tools that did not match known kinds
   for (const t of weak) {
     if (toolKind(t.name) !== 'other') continue;
     const label = t.name.trim() || 'A listed tool';
@@ -92,21 +96,23 @@ export function buildToolsResultMeaning(tools: ToolDetectedRow[]): string {
     }
   }
 
-  const paras: string[] = [];
-  if (goodBits.length) paras.push(goodBits.join(' '));
+  const parts: string[] = [];
+  if (goodBits.length) {
+    parts.push(`What is working\n${toBullets(goodBits)}`);
+  }
   if (badBits.length) {
-    paras.push(badBits.join(' '));
+    parts.push(`What is missing or weak\n${toBullets(badBits)}`);
   } else if (strong.length === tools.length) {
-    paras.push(
+    parts.push(
       'The public stack looks solid for capture and tracking. Keep it maintained so warm traffic still reaches a booked job.',
     );
   } else {
-    paras.push(
+    parts.push(
       'Some tools are weak or unconfirmed. Until booking, chat, and follow-up are clear, you risk paying for attention you cannot catch.',
     );
   }
 
-  return paras.join('\n\n');
+  return parts.join('\n\n');
 }
 
 function healthWeak(metric: PageHealthMetric): boolean {
@@ -125,34 +131,29 @@ function healthStrong(metric: PageHealthMetric): boolean {
  * Owner meaning from the actual page-health cards.
  */
 export function buildPageHealthResultMeaning(page_health: AppendixPageHealth): string {
-  const labels: { key: keyof AppendixPageHealth; name: string; weakLine: string; strongLine: string }[] = [
+  const labels: { key: keyof AppendixPageHealth; weakLine: string; strongLine: string }[] = [
     {
       key: 'meta_description',
-      name: 'meta description',
-      weakLine: 'Your search snippet is weak or missing, so fewer people understand why to click before they land.',
-      strongLine: 'Your meta description is present, which helps the Google snippet under your link.',
+      weakLine: 'Search snippet is weak or missing, so fewer people understand why to click before they land.',
+      strongLine: 'Meta description is present, which helps the Google snippet under your link.',
     },
     {
       key: 'schema_markup',
-      name: 'schema markup',
-      weakLine: 'Schema markup is missing, so Google and AI systems get less help labelling your business, hours, and services.',
+      weakLine: 'Schema markup is missing, so Google and AI systems get less help labelling your business.',
       strongLine: 'Schema markup is present, which helps machines understand the business.',
     },
     {
       key: 'cookie_compliance',
-      name: 'cookie notice',
       weakLine: 'A clear cookie notice was not confirmed, which can hurt trust and create compliance risk.',
       strongLine: 'Cookie compliance signals look in place on this pass.',
     },
     {
       key: 'alt_text_rate',
-      name: 'alt text',
       weakLine: 'Image alt text is thin, so search and accessibility tools waste the trust your photos should earn.',
       strongLine: 'Alt text coverage looks solid.',
     },
     {
       key: 'heading_hierarchy',
-      name: 'heading structure',
       weakLine: 'Heading structure is messy, which makes the offer harder to scan for people and machines.',
       strongLine: 'Heading hierarchy looks correct.',
     },
@@ -166,17 +167,24 @@ export function buildPageHealthResultMeaning(page_health: AppendixPageHealth): s
     else if (healthWeak(metric)) bad.push(row.weakLine);
   }
 
-  const paras: string[] = [];
-  if (good.length) paras.push(good.join(' '));
+  const parts: string[] = [];
+  if (good.length) {
+    parts.push(`What is in good shape\n${toBullets(good)}`);
+  }
   if (bad.length) {
-    paras.push(
-      `${bad.join(' ')} Against clinics that already cleaned this up, those gaps make discovery and trust harder than they need to be.`,
+    parts.push(`What is costing you\n${toBullets(bad)}`);
+    parts.push(
+      'Against clinics that already cleaned this up, those gaps make discovery and trust harder than they need to be.',
     );
   } else if (good.length) {
-    paras.push('Page basics look in good shape. Keep them maintained so the site stays easy for Google, AI answers, and first-time readers.');
+    parts.push(
+      'Page basics look in good shape. Keep them maintained so the site stays easy for Google, AI answers, and first-time readers.',
+    );
   } else {
-    paras.push('We could not turn page health into a clear owner takeaway on this pass. Use the cards above and re-run if you need a sharper read.');
+    parts.push(
+      'We could not turn page health into a clear owner takeaway on this pass. Use the cards above and re-run if you need a sharper read.',
+    );
   }
 
-  return paras.join('\n\n');
+  return parts.join('\n\n');
 }

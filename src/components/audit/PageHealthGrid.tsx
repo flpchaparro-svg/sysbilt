@@ -105,7 +105,7 @@ export interface PageHealthGridProps {
 
 export default function PageHealthGrid({ page_health }: PageHealthGridProps) {
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
       {PAGE_HEALTH_KEYS.map((key) => (
         <div key={key} className="min-w-0">
           <HealthCard fieldKey={key} metric={page_health[key]} />

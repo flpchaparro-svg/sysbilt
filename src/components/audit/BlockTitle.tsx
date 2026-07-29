@@ -18,7 +18,7 @@ export default function BlockTitle({ title, description, Icon, children }: Block
 
   return (
     <m.div
-      className="mb-6 md:mb-8"
+      className="mb-8 md:mb-10"
       initial={reduce ? false : { opacity: 0, y: 14 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.4 }}
@@ -40,7 +40,7 @@ export default function BlockTitle({ title, description, Icon, children }: Block
           <div className="min-w-0">
             <h3 className="font-serif text-2xl tracking-tight text-cream md:text-3xl">{title}</h3>
             {description ? (
-              <p className="mt-2 max-w-2xl font-sans text-sm leading-relaxed text-white/55 md:text-[15px]">
+              <p className="mt-3 max-w-2xl font-sans text-sm leading-relaxed text-white/55 md:text-[15px] md:leading-relaxed">
                 {description}
               </p>
             ) : null}
@@ -48,7 +48,7 @@ export default function BlockTitle({ title, description, Icon, children }: Block
         </div>
         {children}
       </div>
-      <div className="mt-5 h-px w-full bg-gradient-to-r from-gold-on-dark/40 via-white/10 to-transparent" aria-hidden />
+      <div className="mt-6 h-px w-full bg-gradient-to-r from-gold-on-dark/40 via-white/10 to-transparent" aria-hidden />
     </m.div>
   );
 }

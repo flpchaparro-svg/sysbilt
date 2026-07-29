@@ -110,7 +110,7 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
 
       <AuditHeroHeader company_name={company_name} contact_email={contact_email} />
 
-      <main className="relative mx-auto max-w-[1120px] space-y-24 px-6 py-16 md:space-y-28 md:px-10 md:py-20 lg:space-y-32 lg:px-12 lg:py-24">
+      <main className="relative mx-auto max-w-[1120px] space-y-28 px-6 py-16 md:space-y-36 md:px-10 md:py-20 lg:space-y-40 lg:px-12 lg:py-24">
         <AuditScrollReveal>
           <IntroParagraph
             firstName={firstName}
@@ -158,7 +158,7 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
         </AuditScrollReveal>
 
         <section>
-          <AuditScrollReveal className="flex flex-col gap-10 md:gap-12">
+          <AuditScrollReveal className="flex flex-col gap-12 md:gap-16">
             <SectionHeader
               eyebrow="03 · How people find you"
               preamble="Can a stranger in your suburb find you before they find a competitor."
@@ -177,7 +177,7 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
                 </MetricGrid>
               )}
             </div>
-            <div className="space-y-12 border-t border-white/[0.08] pt-10 md:space-y-14 md:pt-12">
+            <div className="space-y-14 border-t border-white/[0.08] pt-12 md:space-y-16 md:pt-16">
               <div>
                 <BlockTitle
                   title="Search terms"
@@ -208,7 +208,7 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
         </section>
 
         <section>
-          <AuditScrollReveal className="flex flex-col gap-10 md:gap-12">
+          <AuditScrollReveal className="flex flex-col gap-12 md:gap-16">
             <SectionHeader
               eyebrow="04 · What your website says"
               preamble="What the site communicates in the first few seconds, and whether someone knows what to do next."
@@ -227,7 +227,7 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
                 </MetricGrid>
               )}
             </div>
-            <div className="border-t border-white/[0.08] pt-10 md:pt-12">
+            <div className="border-t border-white/[0.08] pt-12 md:pt-16">
               <SoftLabel>They say · We see</SoftLabel>
               {perceive.compare.length === 0 ? (
                 <div className={auditEmpty}>No comparison rows were returned.</div>
@@ -250,7 +250,7 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
         </section>
 
         <section>
-          <AuditScrollReveal className="flex flex-col gap-10 md:gap-12">
+          <AuditScrollReveal className="flex flex-col gap-12 md:gap-16">
             <SectionHeader
               eyebrow="05 · What people say about you"
               preamble="Google star ratings drive the sentiment split. Recent themes come from the latest review text we could read, not every review on the listing."
@@ -269,7 +269,7 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
                 </MetricGrid>
               )}
             </div>
-            <div className="border-t border-white/[0.08] pt-10 md:pt-12">
+            <div className="border-t border-white/[0.08] pt-12 md:pt-16">
               <SentimentBar
                 sentiment={say.sentiment}
                 reviewCount={
@@ -277,7 +277,7 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
                 }
               />
             </div>
-            <div className="border-t border-white/[0.08] pt-10 md:pt-12">
+            <div className="border-t border-white/[0.08] pt-12 md:pt-16">
               <BlockTitle
                 title="Review sources"
                 description="Public platforms with a clear rating or count. Google rating and volume are the main numbers. Recent theme is from the latest review text we read."

@@ -43,7 +43,7 @@ export default function ToolDetectionList({ tools_detected }: ToolDetectionListP
   return (
     <div className={`divide-y divide-white/10 overflow-hidden ${auditGlass}`}>
       {tools_detected.map((t, i) => (
-        <div key={`${t.name}-${i}`} className={`flex gap-4 px-5 py-5 md:px-6 ${auditRowHover}`}>
+        <div key={`${t.name}-${i}`} className={`flex gap-4 px-5 py-6 md:px-6 md:py-7 ${auditRowHover}`}>
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-black/35">
             <StatusIcon status={t.status} />
           </div>

@@ -25,7 +25,7 @@ export default function AppendixSection({ appendix }: AppendixSectionProps) {
 
   return (
     <section
-      className="flex flex-col gap-12 border-t border-white/10 pt-16 md:gap-14 md:pt-20"
+      className="flex flex-col gap-16 border-t border-white/10 pt-16 md:gap-20 md:pt-24"
       aria-labelledby="appendix-heading"
     >
       <SectionHeader
@@ -78,7 +78,7 @@ export default function AppendixSection({ appendix }: AppendixSectionProps) {
         </div>
       </div>
 
-      <div className="border-t border-white/[0.08] pt-10 md:pt-12">
+      <div className="border-t border-white/[0.08] pt-14 md:pt-16">
         <BlockTitle
           title="Tools detected"
           description="Live chat, a clear booking path, and a CRM or form handoff are how strong local sites catch the enquiry while interest is still hot. Tracking tools show whether you can measure the traffic you pay for. Missing or unconfirmed rows below usually mean missed follow-up."
@@ -88,7 +88,7 @@ export default function AppendixSection({ appendix }: AppendixSectionProps) {
         <SectionContext text={toolsMeaning} label="What this means" />
       </div>
 
-      <div className="border-t border-white/[0.08] pt-10 md:pt-12">
+      <div className="border-t border-white/[0.08] pt-14 md:pt-16">
         <BlockTitle
           title="Page health"
           description="These are not vanity scores. Meta, schema, cookies, alt text, and headings shape how your link looks in Google, how machines label your business, and whether the page is easy to trust and scan."

@@ -9,10 +9,10 @@ function BulletList({ items, emptyHint }: { items: string[]; emptyHint: string }
     return <p className="font-sans text-sm text-white/60">{emptyHint}</p>;
   }
   return (
-    <ul className="space-y-2.5 font-sans text-sm leading-snug text-white/80">
+    <ul className="space-y-3.5 font-sans text-sm leading-relaxed text-white/80 md:text-[15px]">
       {items.map((t, i) => (
-        <li key={i} className="flex gap-2.5 text-pretty">
-          <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-current opacity-50" aria-hidden />
+        <li key={i} className="flex gap-3 text-pretty">
+          <span className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-current opacity-45" aria-hidden />
           <span>{t}</span>
         </li>
       ))}
@@ -80,18 +80,18 @@ export default function SwotPanel({ swot }: SwotPanelProps) {
   const reduce = useReducedMotion();
 
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5">
+    <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-6">
       {cells.map((cell, i) => (
         <m.div
           key={cell.key}
-          className={`border ${cell.border} p-5 md:p-6 ${auditGlass} ${auditCardLift}`}
+          className={`border ${cell.border} p-6 md:p-7 ${auditGlass} ${auditCardLift}`}
           initial={reduce ? false : { opacity: 0, y: 16, scale: 0.98 }}
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.55, delay: i * 0.08, ease: auditEase }}
         >
           <div className="flex items-start justify-between gap-3">
-            <div className="flex items-start gap-3">
+            <div className="flex items-start gap-3.5">
               <div
                 className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${cell.border} bg-black/30 ${cell.labelColor}`}
               >
@@ -103,11 +103,11 @@ export default function SwotPanel({ swot }: SwotPanelProps) {
                   <span className="text-white/25"> · </span>
                   {cell.label}
                 </p>
-                <p className="mt-1 font-sans text-xs text-white/50 md:text-sm">{cell.gloss}</p>
+                <p className="mt-1.5 font-sans text-xs text-white/50 md:text-sm">{cell.gloss}</p>
               </div>
             </div>
           </div>
-          <div className="mt-5 border-t border-white/10 pt-4">
+          <div className="mt-6 border-t border-white/10 pt-5">
             <BulletList items={swot[cell.key]} emptyHint={cell.empty} />
           </div>
         </m.div>
