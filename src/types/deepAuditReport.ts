@@ -136,6 +136,10 @@ export interface AppendixBlock {
 
 export interface DeepAuditData {
   diagnosis: DiagnosisBlock;
+  /** Plain-English visit to the site: what a first visitor / bot actually saw. */
+  ai_site_read?: string;
+  /** Optional gift framing override from the model. UI has a strong default if empty. */
+  gift_intro?: string;
   how_they_find_you: HowTheyFindYouSection;
   how_they_perceive_you: HowTheyPerceiveYouSection;
   what_people_say: WhatPeopleSaySection;
@@ -505,6 +509,8 @@ export function normalizeDeepAuditReportPayload(raw: unknown): DeepAuditReportPa
     ...(str(o.lh_mobile).trim() ? { lh_mobile: str(o.lh_mobile).trim() } : {}),
     audit_data: {
       diagnosis,
+      ai_site_read: str(a.ai_site_read).trim(),
+      gift_intro: str(a.gift_intro).trim(),
       how_they_find_you: parseFindYou(a.how_they_find_you),
       how_they_perceive_you: parsePerceive(a.how_they_perceive_you),
       what_people_say: parseWhatPeopleSay(a.what_people_say),

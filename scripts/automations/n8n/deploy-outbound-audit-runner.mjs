@@ -18,7 +18,7 @@ const GOOGLE_SHEETS_CRED_ID = 'W8jOFatMKmraYw0F';
 const GOOGLE_SHEETS_CRED_NAME = 'Google Sheets account';
 const DEEPSEEK_CRED_ID = 'XgmuWh1nV8XX7x83';
 const DEEPSEEK_CRED_NAME = 'SYSBILT DeepSeek';
-const SHEET_DATA_RANGE = 'A1:N5000';
+const SHEET_DATA_RANGE = 'A1:Z5000';
 
 const FORMAT_AI_OUTPUT_JS = `const raw = $input.first().json || {};
 const value =
@@ -221,7 +221,7 @@ function headerSchema() {
   const headers = [
     'Business Name', 'Suburb', 'Address', 'Website', 'Phone', 'Rating', 'Reviews',
     'Maps ID', 'Owner Name', 'Email', 'Status', 'Audit Link', 'Emailed', 'Notes',
-    'Offer Product', 'LH Mobile', 'Manual Lane',
+    'Offer Product', 'LH Mobile', 'SV Indexed', 'LP Ads', 'CRM Form', 'Manual Lane',
   ];
   return headers.map((id) => ({
     id,
@@ -360,21 +360,44 @@ For appendix.page_health values (meta_description, schema_markup, cookie_complia
 - "Could not verify" when that check has no usable input (no PageSpeed data, blocked HTML, field not returned).
 
 Never write "Missing" when you mean "Could not verify". Never pair those two meanings in the same field.
+
+OWNER GIFT RULES v1 (critical, non-negotiable):
+
+This report is a gift for a busy business owner, not a technical memo for an agency. Every sentence must earn its place by helping them see lost enquiries, lost trust, or a clear next move.
+
+Add these top-level fields on the same JSON object as "diagnosis" (not nested under appendix):
+
+- "gift_intro": 2 to 3 sentences. Speak to the owner. Say what you checked (find, trust, book) and that the pages below show what it is costing them and what to fix first. Never write "not a sales pitch", "front-of-house systems", "outside pass", or "if we worked together".
+- "ai_site_read": 90 to 140 words. Using Raw HTML (ScrapingBee) as source of truth, plus the Jina scrape for readable copy: write what a first visitor would notice on the homepage. Tone, promise, booking path, speed feel, clutter, trust. If the page was bot-blocked, thin, broken, or unreadable, say that plainly and why it matters for Google and for AI answers. This paragraph is mandatory.
+
+For every section "context" field (how_they_find_you, how_they_perceive_you, what_people_say): write 70 to 120 words of OWNER RESULT MEANING. Do not explain what the section is. Explain what the results above mean for money, patients, booked jobs, or wasted ads. Example shape: you are 4th for X, so named competitors get the first clicks; a few focused fixes can move you up and stop you paying for attention you should already own.
+
+diagnosis.consequence must be owner cost language (leads, trust, bookings), never jargon for its own sake.
+
+Do not open diagnosis.critical with ABN / interstate entity name collisions unless the public search results clearly show a different clinic stealing branded clicks. Prefer findability, pack, speed, booking path, or trust.
+
+SWOT opportunities must never say "claim", "unclaimed", or "verify your Google". Prefer "strengthen Google profile activity", posts, photos, categories, or local pages.
+
+Banned owner-facing filler: "leverage", "utilise", "click goldmine", "outside pass", "systems audit", "directional not definitive" inside findings.
 `;
 
 function stripOldGbpClaimRule(content) {
   // Remove prior accuracy blocks so redeploys replace instead of stacking.
   return content
     .replace(
-      /\n*GOOGLE BUSINESS PROFILE CLAIM RULE(?: v2)? \(critical, non-negotiable\):[\s\S]*?(?=\n(?:CRITICAL OUTPUT RULES:|JSON SYNTAX \(mandatory\):|REVIEW NUMBER CONSISTENCY RULE|PAGE HEALTH VALUE RULE)|$)/g,
+      /\n*GOOGLE BUSINESS PROFILE CLAIM RULE(?: v2)? \(critical, non-negotiable\):[\s\S]*?(?=\n(?:CRITICAL OUTPUT RULES:|JSON SYNTAX \(mandatory\):|REVIEW NUMBER CONSISTENCY RULE|PAGE HEALTH VALUE RULE|OWNER GIFT RULES)|$)/g,
       '\n\n',
     )
     .replace(
-      /\n*REVIEW NUMBER CONSISTENCY RULE(?: v1)? \(critical, non-negotiable\):[\s\S]*?(?=\n(?:CRITICAL OUTPUT RULES:|JSON SYNTAX \(mandatory\):|PAGE HEALTH VALUE RULE|GOOGLE BUSINESS PROFILE CLAIM RULE)|$)/g,
+      /\n*REVIEW NUMBER CONSISTENCY RULE(?: v1)? \(critical, non-negotiable\):[\s\S]*?(?=\n(?:CRITICAL OUTPUT RULES:|JSON SYNTAX \(mandatory\):|PAGE HEALTH VALUE RULE|GOOGLE BUSINESS PROFILE CLAIM RULE|OWNER GIFT RULES)|$)/g,
       '\n\n',
     )
     .replace(
-      /\n*PAGE HEALTH VALUE RULE(?: v1)? \(critical, non-negotiable\):[\s\S]*?(?=\n(?:CRITICAL OUTPUT RULES:|JSON SYNTAX \(mandatory\):|GOOGLE BUSINESS PROFILE CLAIM RULE|REVIEW NUMBER CONSISTENCY RULE)|$)/g,
+      /\n*PAGE HEALTH VALUE RULE(?: v1)? \(critical, non-negotiable\):[\s\S]*?(?=\n(?:CRITICAL OUTPUT RULES:|JSON SYNTAX \(mandatory\):|GOOGLE BUSINESS PROFILE CLAIM RULE|REVIEW NUMBER CONSISTENCY RULE|OWNER GIFT RULES)|$)/g,
+      '\n\n',
+    )
+    .replace(
+      /\n*OWNER GIFT RULES(?: v1)? \(critical, non-negotiable\):[\s\S]*?(?=\n(?:CRITICAL OUTPUT RULES:|JSON SYNTAX \(mandatory\):|GOOGLE BUSINESS PROFILE CLAIM RULE|REVIEW NUMBER CONSISTENCY RULE|PAGE HEALTH VALUE RULE)|$)/g,
       '\n\n',
     );
 }
@@ -899,6 +922,7 @@ async function upsertWorkflow(workflow) {
 }
 
 async function main() {
+  const activate = process.argv.includes('--activate');
   const sheetId = process.env.OUTBOUND_LEADS_SHEET_ID;
   if (!sheetId) {
     console.error('Missing OUTBOUND_LEADS_SHEET_ID. Run deploy-outbound-list-builder.mjs --setup-sheet first.');
@@ -911,15 +935,19 @@ async function main() {
   patchOutboundResearchInputs(workflow, auditKeys);
   const wf = await upsertWorkflow(workflow);
 
+  if (activate) {
+    await n8n('POST', `/workflows/${wf.id}/activate`, {});
+    console.log(`Activated workflow ${wf.id}`);
+  }
+
   saveDeployState({ OUTBOUND_AUDIT_RUNNER_WORKFLOW_ID: wf.id });
 
-  console.log(`\nWorkflow B deployed (inactive): ${N8N_BASE}/workflow/${wf.id}`);
+  console.log(`\nWorkflow B deployed (${activate ? 'active' : 'inactive'}): ${N8N_BASE}/workflow/${wf.id}`);
   console.log(`Sheet: https://docs.google.com/spreadsheets/d/${sheetId}/edit`);
   console.log('\nHow to test:');
   console.log('  1. Set one row Status to Audit in the sheet');
-  console.log('  2. Activate this workflow in n8n (or wait for the 5-minute schedule)');
+  console.log('  2. Wait for the 5-minute schedule, or Execute Workflow in n8n');
   console.log('  3. Status should move Auditing → Audited; Audit Link column fills; Gmail draft created');
-  console.log('  4. Deactivate when not actively auditing outbound leads');
 }
 
 main().catch((err) => {

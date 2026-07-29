@@ -34,13 +34,11 @@ export default function AppendixSection({ appendix }: AppendixSectionProps) {
           className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold-on-dark/70 to-transparent"
           aria-hidden
         />
-        <p className={`${auditEyebrow} text-gold-on-dark`}>What this means for you</p>
+        <p className={`${auditEyebrow} text-gold-on-dark`}>What this means for your business</p>
         <p className="mt-4 font-sans text-sm leading-relaxed text-cream/90 md:text-[15px] md:leading-[1.7]">
-          This section is the under-the-bonnet check. ABN confirms the business is real on the public
-          register. Tools show whether the site can track visitors, take bookings, and catch messages.
-          Page health shows whether Google can read the page cleanly. Green is fine. Amber means we
-          could not confirm it, or it is weak. None of this is the full story on its own. It tells you
-          where the site helps enquiries, and where it quietly loses them.
+          Only care about this section if it tells you whether the site can win and keep an enquiry. Can
+          people book. Can you see who visited. Can Google read the page. Amber usually means we could not
+          confirm it, or it is weak. That alone can be the reason warm traffic never becomes a booked job.
         </p>
       </div>
 

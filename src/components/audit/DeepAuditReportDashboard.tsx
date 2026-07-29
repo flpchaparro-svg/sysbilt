@@ -11,6 +11,7 @@ import CTABlock from './CTABlock';
 import DiagnosisCard from './DiagnosisCard';
 import FooterBlock from './FooterBlock';
 import IntroParagraph, { firstNameFromEmail } from './IntroParagraph';
+import AiSiteRead from './AiSiteRead';
 import KeywordGrid from './KeywordGrid';
 import MetricTile, { MetricEmptyState, MetricGrid } from './MetricTile';
 import ReviewSourceList from './ReviewSourceList';
@@ -111,16 +112,26 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
 
       <main className="relative mx-auto max-w-[1120px] space-y-24 px-6 py-16 md:space-y-28 md:px-10 md:py-20 lg:space-y-32 lg:px-12 lg:py-24">
         <AuditScrollReveal>
-          <IntroParagraph firstName={firstName} companyName={company_name} />
+          <IntroParagraph
+            firstName={firstName}
+            companyName={company_name}
+            giftIntro={audit.gift_intro}
+          />
         </AuditScrollReveal>
+
+        {audit.ai_site_read?.trim() ? (
+          <AuditScrollReveal>
+            <AiSiteRead text={audit.ai_site_read} companyName={company_name} />
+          </AuditScrollReveal>
+        ) : null}
 
         <section aria-labelledby="diagnosis-heading">
           <AuditScrollReveal className="flex flex-col gap-8 md:gap-10">
             <SectionHeader
               id="diagnosis-heading"
               eyebrow="01 · What we found first"
-              preamble="Three findings from this outside pass, ranked by impact on enquiries and trust. Start here before the detail sections below."
-              staticTitle="Diagnosis"
+              preamble="The three things costing you the most enquiries and trust. Read these before the detail."
+              staticTitle="The costly problems"
               align="center"
             />
             <DiagnosisCard variant="critical" {...audit.diagnosis.critical} />
@@ -150,7 +161,7 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
           <AuditScrollReveal className="flex flex-col gap-10 md:gap-12">
             <SectionHeader
               eyebrow="03 · How people find you"
-              preamble="Search, Google's business card, and competitors, before anyone lands on your site."
+              preamble="Can a stranger in your suburb find you before they find a competitor."
               headline={find.headline}
             />
             <div>
@@ -200,7 +211,7 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
           <AuditScrollReveal className="flex flex-col gap-10 md:gap-12">
             <SectionHeader
               eyebrow="04 · What your website says"
-              preamble="What a first-time visitor understands when they arrive, and where the message and the next step fall short."
+              preamble="What a first-time visitor understands in the first few seconds, and whether they know what to do next."
               headline={perceive.headline}
             />
             <div>

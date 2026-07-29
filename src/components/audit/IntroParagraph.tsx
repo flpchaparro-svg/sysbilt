@@ -1,101 +1,36 @@
-import { Compass, ListOrdered, SearchCheck } from 'lucide-react';
 import { m, useReducedMotion } from 'framer-motion';
-import { auditCardLift, auditEase, auditEyebrow, auditGlass } from './auditCardStyles';
+import { auditEase } from './auditCardStyles';
 
 export interface IntroParagraphProps {
   firstName: string;
   companyName: string;
+  /** Optional model-written gift framing. */
+  giftIntro?: string;
 }
 
-const steps = [
-  {
-    step: '01',
-    title: 'What we found first',
-    text: 'Three findings, ranked by impact on enquiries and trust.',
-    Icon: SearchCheck,
-  },
-  {
-    step: '02',
-    title: 'First moves',
-    text: 'What we would do next, in order, if we picked up the work.',
-    Icon: ListOrdered,
-  },
-  {
-    step: '03',
-    title: 'The detail',
-    text: 'Search, website, reviews, then a short technical checklist.',
-    Icon: Compass,
-  },
-];
-
 /**
- * Short intro + how to read the report. Presentation only; does not change audit data.
+ * Gift intro: why this exists, what the owner gets, no process theatre.
  */
-export default function IntroParagraph({ firstName, companyName }: IntroParagraphProps) {
+export default function IntroParagraph({ firstName, companyName, giftIntro }: IntroParagraphProps) {
   const reduce = useReducedMotion();
+  const body =
+    giftIntro?.trim() ||
+    `We checked how easy it is for a new patient or client to find ${companyName}, trust you, and take the next step. Search, your Google listing, your website, and your reviews. Below is what we saw, what it is costing you, and what we would fix first.`;
 
   return (
-    <section className="space-y-12 pb-4 pt-2 md:space-y-14" aria-label="Introduction">
-      <div className="mx-auto max-w-2xl text-center">
-        <h2 className="font-serif text-3xl tracking-tight text-cream md:text-4xl">Hi {firstName}</h2>
-        <p className="mt-5 font-sans text-base leading-relaxed text-white/70 md:text-lg">
-          This is the Deep Audit we put together for {companyName}. It is built from public information
-          only. It is not a sales pitch. It is the order we would dig into things if we worked together.
+    <section className="space-y-8 pb-2 pt-2 md:space-y-10" aria-label="Introduction">
+      <m.div
+        className="mx-auto max-w-3xl text-center"
+        initial={reduce ? false : { opacity: 0, y: 18 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.55, ease: auditEase }}
+      >
+        <h2 className="font-serif text-3xl tracking-tight text-cream md:text-5xl">Hi {firstName}</h2>
+        <p className="mt-6 font-sans text-base leading-relaxed text-white/75 md:text-xl md:leading-[1.65]">
+          {body}
         </p>
-      </div>
-
-      <div className="relative grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-5">
-        <div
-          className="pointer-events-none absolute left-[16%] right-[16%] top-[2.6rem] hidden h-px bg-gradient-to-r from-transparent via-gold-on-dark/45 to-transparent sm:block"
-          aria-hidden
-        />
-        {steps.map((item, i) => (
-          <m.div
-            key={item.step}
-            className={`relative p-5 md:p-6 ${auditGlass} ${auditCardLift} border-gold-on-dark/25 hover:border-gold-on-dark/45`}
-            initial={
-              reduce
-                ? false
-                : {
-                    opacity: 0,
-                    y: 40,
-                    scale: 0.9,
-                    rotate: i === 0 ? -2.5 : i === 2 ? 2.5 : 0,
-                  }
-            }
-            whileInView={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
-            viewport={{ once: true, amount: 0.4 }}
-            transition={{
-              duration: 0.7,
-              delay: 0.15 + i * 0.22,
-              ease: auditEase,
-            }}
-            whileHover={reduce ? undefined : { y: -6, transition: { duration: 0.25 } }}
-          >
-            <div className="flex items-center justify-between gap-3">
-              <m.p
-                className={`${auditEyebrow} text-gold-on-dark`}
-                initial={reduce ? false : { opacity: 0, scale: 0.6 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{
-                  type: 'spring',
-                  stiffness: 280,
-                  damping: 16,
-                  delay: 0.28 + i * 0.22,
-                }}
-              >
-                {item.step}
-              </m.p>
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-gold-on-dark/30 bg-gold-on-dark/10 text-gold-on-dark">
-                <item.Icon className="h-4 w-4" strokeWidth={1.75} aria-hidden />
-              </div>
-            </div>
-            <p className="mt-5 font-serif text-xl leading-snug text-cream md:text-2xl">{item.title}</p>
-            <p className="mt-3 font-sans text-sm leading-relaxed text-white/60">{item.text}</p>
-          </m.div>
-        ))}
-      </div>
+      </m.div>
     </section>
   );
 }

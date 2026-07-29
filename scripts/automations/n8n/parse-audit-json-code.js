@@ -87,6 +87,11 @@ function scrubFalseGbpClaimFindings(audit) {
   if (Array.isArray(audit.action_plan)) {
     audit.action_plan = audit.action_plan.filter((item) => !findingLooksLikeFalseGbpClaim(item));
   }
+  if (audit.appendix && typeof audit.appendix === 'object' && Array.isArray(audit.appendix.action_plan)) {
+    audit.appendix.action_plan = audit.appendix.action_plan.filter(
+      (item) => !findingLooksLikeFalseGbpClaim(item),
+    );
+  }
   const metricBuckets = [audit.metrics, audit.find, audit.perceive, audit.what_we_found];
   for (const bucket of metricBuckets) {
     if (!bucket) continue;

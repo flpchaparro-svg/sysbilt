@@ -76,7 +76,7 @@ export default function DiagnosisCard({ variant, title, evidence, consequence }:
                 : 'rounded-xl border border-gold-on-dark/25 bg-gold-on-dark/[0.08] p-5 md:p-6'
             }
           >
-            <dt className={`${auditEyebrow} text-gold-on-dark`}>Why it matters</dt>
+            <dt className={`${auditEyebrow} text-gold-on-dark`}>What it costs you</dt>
             <dd
               className={`mt-3 font-sans text-sm leading-relaxed md:text-base ${
                 consequenceMissing ? 'text-white/60' : 'text-white/90'
@@ -121,7 +121,7 @@ export default function DiagnosisCard({ variant, title, evidence, consequence }:
           {evidenceMissing ? <MissingNote /> : null}
         </div>
         <div className="rounded-xl border border-gold-on-dark/20 bg-gold-on-dark/[0.06] p-4">
-          <dt className={`${auditEyebrow} text-gold-on-dark`}>Why it matters</dt>
+          <dt className={`${auditEyebrow} text-gold-on-dark`}>What it costs you</dt>
           <dd className={`mt-2 leading-relaxed ${consequenceMissing ? 'text-white/50' : 'text-white/85'}`}>
             {consequence.trim() || 'Not found'}
           </dd>

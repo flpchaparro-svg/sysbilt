@@ -20,8 +20,8 @@ export default function WhereToFocusSection({
         eyebrow="02 · First moves"
         preamble={
           rebuildMode
-            ? 'If we picked up the work today, we would not patch this site piece by piece. The base is the constraint.'
-            : 'If we picked up the work today, this is the order we would work in. Each step points at the section of the report it belongs to.'
+            ? 'If we picked up the work today, we would not patch this site piece by piece. The base is the constraint. Start here.'
+            : 'If we picked up the work today, this is the order. Each move points at the detail section it belongs to.'
         }
         staticTitle="First moves"
         align="center"

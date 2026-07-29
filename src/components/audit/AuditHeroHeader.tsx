@@ -95,8 +95,8 @@ export default function AuditHeroHeader({ company_name, contact_email }: AuditHe
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.65, delay: 0.22, ease: auditEase }}
         >
-          An outside read of how your front-of-house systems show up online: search, Google&apos;s business
-          card, your website, and reviews.
+          How easy it is for someone to find you, trust you, and book. We checked search, your Google
+          listing, your website, and your reviews.
         </m.p>
 
         <m.div
