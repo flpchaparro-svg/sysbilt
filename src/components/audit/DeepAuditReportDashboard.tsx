@@ -20,6 +20,7 @@ import SentimentBar from './SentimentBar';
 import SwotPanel from './SwotPanel';
 import WhereToFocusSection from './WhereToFocusSection';
 import { auditEmpty, auditEyebrow, auditGlass } from './auditCardStyles';
+import { primaryOfferFromAudit } from '@/lib/auditProductMap';
 
 /** Soft in-section label where the card already repeats the title. */
 function SoftLabel({ children }: { children: ReactNode }) {
@@ -86,6 +87,7 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
   const perceive = audit.how_they_perceive_you;
   const say = audit.what_people_say;
   const firstName = data.contact_first_name?.trim() || firstNameFromEmail(contact_email);
+  const { offer, findingLabel, rebuild } = primaryOfferFromAudit(audit, company_name);
 
   return (
     <div className="min-h-screen bg-dark font-sans text-white selection:bg-gold-on-dark/30 selection:text-dark">
@@ -130,7 +132,11 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
         </section>
 
         <AuditScrollReveal>
-          <WhereToFocusSection action_plan={appendix.action_plan} />
+          <WhereToFocusSection
+            action_plan={appendix.action_plan}
+            rebuildMode={rebuild}
+            businessName={company_name}
+          />
         </AuditScrollReveal>
 
         <section>
@@ -229,7 +235,7 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
           <AuditScrollReveal className="flex flex-col gap-10 md:gap-12">
             <SectionHeader
               eyebrow="05 · What people say about you"
-              preamble="Reviews and social signals from public platforms. Treat percentages as a sample from this pass, not a claim about every review ever left."
+              preamble="Google star ratings drive the sentiment split. Recent themes come from the latest review text we could read, not every review on the listing."
               headline={say.headline}
             />
             <div>
@@ -246,12 +252,17 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
               )}
             </div>
             <div className="border-t border-white/[0.08] pt-10 md:pt-12">
-              <SentimentBar sentiment={say.sentiment} />
+              <SentimentBar
+                sentiment={say.sentiment}
+                reviewCount={
+                  say.review_sources.find((s) => /google/i.test(s.platform))?.count || undefined
+                }
+              />
             </div>
             <div className="border-t border-white/[0.08] pt-10 md:pt-12">
               <BlockTitle
                 title="Review sources"
-                description="The public platforms we could read in this pass, with rating, volume, and a recent theme."
+                description="Public platforms with a clear rating or count. Google rating and volume are the main numbers. Recent theme is from the latest review text we read."
                 Icon={MessagesSquare}
               />
               <ReviewSourceList review_sources={say.review_sources} />
@@ -265,7 +276,7 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
         </AuditScrollReveal>
 
         <AuditScrollReveal>
-          <CTABlock />
+          <CTABlock findingLabel={findingLabel} offer={offer} />
         </AuditScrollReveal>
 
         <AuditScrollReveal>

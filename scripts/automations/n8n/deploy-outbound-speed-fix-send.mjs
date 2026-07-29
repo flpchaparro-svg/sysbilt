@@ -257,30 +257,30 @@ const websiteHost = (() => {
 })();
 
 const owner = String(lead['Owner Name'] || '').trim();
-let firstName = 'there';
+let firstName = '';
 if (owner) {
   const part = owner.split(/\\s+/)[0].replace(/[^a-zA-Z'-]/g, '');
   if (part.length >= 2) firstName = part;
 }
+const greeting = firstName ? ('Hi ' + esc(firstName) + ',') : 'Hi,';
 
 const bParam = encodeURIComponent(business.slice(0, 40));
 const funnelUrl = '${FUNNEL_BASE}?b=' + bParam + '&s=' + encodeURIComponent(score);
 
 const subject = business + "'s website scored " + score + " on mobile";
 
-// Professional Gmail HTML: company name is the hyperlink (never paste raw UTM URLs as link text)
 const siteLink = websiteHref
   ? '<a href="' + esc(websiteHref) + '" style="color:#1a73e8;text-decoration:underline">' + esc(business) + '</a>'
   : esc(business);
 
 const html = [
   '<div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.55;color:#222">',
-  '<p style="margin:0 0 14px">Hi ' + esc(firstName) + ',</p>',
-  '<p style="margin:0 0 14px">We ran ' + siteLink + ' through the same speed test Google uses. It scored <strong>' + esc(score) + '</strong> on mobile. The practice ranking above you loads in under two seconds.</p>',
-  '<p style="margin:0 0 14px">Slow sites lose people before the page appears, and Google ranks them lower for it.</p>',
-  '<p style="margin:0 0 14px">We fix this as a fixed-scope job. Compression, scripts, caching, done in one to three days, measured before and after so you can see the difference. The full scope and the price are here: <a href="' + esc(funnelUrl) + '" style="color:#1a73e8;text-decoration:underline">Website Speed Fix</a>.</p>',
-  '<p style="margin:0 0 14px">Want the two-minute report we ran on your site? Reply and we\\'ll send it over, no obligation.</p>',
-  '<p style="margin:0 0 14px">Felipe<br>SYSBILT</p>',
+  '<p style="margin:0 0 14px">' + greeting + '</p>',
+  '<p style="margin:0 0 14px">We ran ' + siteLink + ' through the same speed test Google uses. On mobile it scored <strong>' + esc(score) + '</strong> out of 100.</p>',
+  '<p style="margin:0 0 14px">Nearly everyone looking for a business does it on a phone, and a page that is slow to appear loses them before they see anything at all. Google ranks slower sites lower too, so the same problem costs you twice.</p>',
+  '<p style="margin:0 0 14px">We fix this as a fixed-scope job: images, scripts, caching and mobile tuning, done in one to three days, with the same public Google test run before and after so you can see the difference rather than take our word for it. The full scope and the price are here: <a href="' + esc(funnelUrl) + '" style="color:#1a73e8;text-decoration:underline">Website Speed Fix</a>.</p>',
+  '<p style="margin:0 0 14px">Either way, happy to send you the short report we ran on your site. Just reply and it\\'s yours.</p>',
+  '<p style="margin:0 0 14px">Felipe<br><a href="https://sysbilt.com" style="color:#1a73e8;text-decoration:underline">SYSBILT</a>, Sydney<br>Websites and business systems for growing Australian businesses</p>',
   '<p style="margin:0;color:#666;font-size:12px;line-height:1.4">If you\\'d rather not hear from us again, reply &quot;no thanks&quot; and that\\'s the end of it.</p>',
   '</div>',
 ].join('');

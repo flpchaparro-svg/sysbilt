@@ -247,11 +247,12 @@ const formDay = String(row['Form Day'] || '').trim();
 const formTime = String(row['Form Time'] || '').trim();
 
 const owner = String(lead['Owner Name'] || '').trim();
-let firstName = 'there';
+let firstName = '';
 if (owner) {
   const part = owner.split(/\\s+/)[0].replace(/[^a-zA-Z'-]/g, '');
   if (part.length >= 2) firstName = part;
 }
+const greeting = firstName ? ('Hi ' + esc(firstName) + ',') : 'Hi,';
 
 const bParam = encodeURIComponent(business.slice(0, 40));
 let funnelUrl = '${FUNNEL_BASE}?b=' + bParam;
@@ -272,11 +273,12 @@ const siteLink = websiteHref
 
 const html = [
   '<div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.55;color:#222">',
-  '<p style="margin:0 0 14px">Hi ' + esc(firstName) + ',</p>',
+  '<p style="margin:0 0 14px">' + greeting + '</p>',
   '<p style="margin:0 0 14px">We sent a genuine enquiry through ' + siteLink + '\\'s website form' + esc(whenBit) + '. As of this morning, no reply had come back.</p>',
-  '<p style="margin:0 0 14px">That is not a dig. It is how a real customer experienced your business. Enquiries are arriving. The system catching them is what is broken, and it is fixable in five days.</p>',
-  '<p style="margin:0 0 14px">We rescue the lead-handling setup you already have so every enquiry alerts the right phone, replies instantly, and chases every quote you send. Fixed price, paid once: <a href="' + esc(funnelUrl) + '" style="color:#1a73e8;text-decoration:underline">CRM Rescue</a>.</p>',
-  '<p style="margin:0 0 14px">Felipe<br>SYSBILT</p>',
+  '<p style="margin:0 0 14px">That is how a real customer experienced your business. Enquiries are arriving. The system catching them is what is broken, and it is fixable in five days.</p>',
+  '<p style="margin:0 0 14px">We rescue the lead-handling setup you already have so every enquiry alerts the right phone, replies instantly, and chases every quote you send. The full scope and the price are here: <a href="' + esc(funnelUrl) + '" style="color:#1a73e8;text-decoration:underline">CRM Rescue</a>.</p>',
+  '<p style="margin:0 0 14px">Either way, happy to send you the notes from the form test. Just reply and they\\'re yours.</p>',
+  '<p style="margin:0 0 14px">Felipe<br><a href="https://sysbilt.com" style="color:#1a73e8;text-decoration:underline">SYSBILT</a>, Sydney<br>Websites and business systems for growing Australian businesses</p>',
   '<p style="margin:0;color:#666;font-size:12px;line-height:1.4">If you\\'d rather not hear from us again, reply &quot;no thanks&quot; and that\\'s the end of it.</p>',
   '</div>',
 ].join('');

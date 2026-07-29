@@ -228,11 +228,12 @@ const reviews = String(row.Reviews || lead.Reviews || '').trim() || 'few';
 const suburb = String(row.Suburb || lead.Suburb || '').trim();
 
 const owner = String(lead['Owner Name'] || '').trim();
-let firstName = 'there';
+let firstName = '';
 if (owner) {
   const part = owner.split(/\\s+/)[0].replace(/[^a-zA-Z'-]/g, '');
   if (part.length >= 2) firstName = part;
 }
+const greeting = firstName ? ('Hi ' + esc(firstName) + ',') : 'Hi,';
 
 const bParam = encodeURIComponent(business.slice(0, 40));
 const funnelUrl = '${FUNNEL_BASE}?b=' + bParam;
@@ -243,11 +244,12 @@ const place = suburb ? ' in ' + esc(suburb) : '';
 
 const html = [
   '<div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.55;color:#222">',
-  '<p style="margin:0 0 14px">Hi ' + esc(firstName) + ',</p>',
-  '<p style="margin:0 0 14px">Before anyone opens your website, they see your Google Business Profile' + place + '. Yours looks thin right now — about <strong>' + esc(reviews) + '</strong> reviews showing, and the panel is what customers use to decide who to call.</p>',
-  '<p style="margin:0 0 14px">We fix that as a fixed-scope job: categories, hours, services, description, photos, review link, done in two business days, ownership stays on your account. Scope and price: <a href="' + esc(funnelUrl) + '" style="color:#1a73e8;text-decoration:underline">Google Profile Fix</a>.</p>',
-  '<p style="margin:0 0 14px">Search your name next to a competitor on Maps and you will feel the gap.</p>',
-  '<p style="margin:0 0 14px">Felipe<br>SYSBILT</p>',
+  '<p style="margin:0 0 14px">' + greeting + '</p>',
+  '<p style="margin:0 0 14px">Before anyone opens your website, they see your Google Business Profile' + place + '. Yours looks thin right now: about <strong>' + esc(reviews) + '</strong> reviews showing, and the panel is what customers use to decide who to call.</p>',
+  '<p style="margin:0 0 14px">A thin profile loses local searches and phone calls to whoever looks more complete on Maps.</p>',
+  '<p style="margin:0 0 14px">We fix that as a fixed-scope job: categories, hours, services, description, photos, review link, done in two business days, ownership stays on your account. The full scope and the price are here: <a href="' + esc(funnelUrl) + '" style="color:#1a73e8;text-decoration:underline">Google Profile Fix</a>.</p>',
+  '<p style="margin:0 0 14px">Either way, happy to send you the short profile check we ran. Just reply and it\\'s yours.</p>',
+  '<p style="margin:0 0 14px">Felipe<br><a href="https://sysbilt.com" style="color:#1a73e8;text-decoration:underline">SYSBILT</a>, Sydney<br>Websites and business systems for growing Australian businesses</p>',
   '<p style="margin:0;color:#666;font-size:12px;line-height:1.4">If you\\'d rather not hear from us again, reply &quot;no thanks&quot; and that\\'s the end of it.</p>',
   '</div>',
 ].join('');

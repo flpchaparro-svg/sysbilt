@@ -1,10 +1,14 @@
 import type { ActionPlanItem } from '@/types/deepAuditReport';
 import { isMissingSignal } from '@/types/deepAuditReport';
+import { productForActionItem } from '@/lib/auditProductMap';
 import { m, useReducedMotion } from 'framer-motion';
 import { auditCardLift, auditEase, auditEmpty, auditEyebrow, auditGlass } from './auditCardStyles';
 
 export interface ActionPlanProps {
   action_plan: ActionPlanItem[];
+  /** When true, First Moves collapse to a single rebuild recommendation. */
+  rebuildMode?: boolean;
+  businessName?: string;
 }
 
 function formatLinkedSection(raw: string): string {
@@ -16,9 +20,25 @@ function formatLinkedSection(raw: string): string {
   return raw.trim() || '';
 }
 
-export default function ActionPlan({ action_plan }: ActionPlanProps) {
+export default function ActionPlan({
+  action_plan,
+  rebuildMode = false,
+  businessName = '',
+}: ActionPlanProps) {
   const sorted = [...action_plan].sort((a, b) => (a.rank || 0) - (b.rank || 0));
-  const display = sorted.slice(0, 5);
+  const bParam = encodeURIComponent(businessName.trim().slice(0, 40));
+  const withB = (href: string) => (bParam ? `${href}${href.includes('?') ? '&' : '?'}b=${bParam}` : href);
+  const display = rebuildMode
+    ? [
+        {
+          rank: 1,
+          title: 'Start again rather than patch',
+          rationale:
+            'Several structural failures sit on the same base. Fixing them one at a time costs more than rebuilding, and each fix is constrained by the same underlying structure.',
+          linked_to_section: 'perceive',
+        } satisfies ActionPlanItem,
+      ]
+    : sorted.slice(0, 5);
   const reduce = useReducedMotion();
 
   if (display.length === 0) {
@@ -43,6 +63,14 @@ export default function ActionPlan({ action_plan }: ActionPlanProps) {
         const rank = item.rank > 0 ? item.rank : idx + 1;
         const titleMissing = isMissingSignal(item.title) || !item.title.trim();
         const tag = formatLinkedSection(item.linked_to_section);
+        const product = rebuildMode
+          ? {
+              name: 'Hosted Website Plan',
+              blurb: 'A clean brochure site we build and host',
+              href: 'https://sysbilt.com/go/website',
+              code: 'website',
+            }
+          : productForActionItem(item);
         const fromLeft = idx % 2 === 0;
         return (
           <m.li
@@ -104,6 +132,19 @@ export default function ActionPlan({ action_plan }: ActionPlanProps) {
               <p className="mt-3 font-sans text-sm leading-relaxed text-white/65 md:text-base">
                 {item.rationale.trim() || 'Not found'}
               </p>
+              {product ? (
+                <p className="mt-3 font-sans text-sm italic leading-relaxed text-white/45 md:text-[15px]">
+                  We do this as a fixed-scope job:{' '}
+                  <a
+                    href={withB(product.href)}
+                    className="text-gold-on-dark/90 underline decoration-gold-on-dark/35 underline-offset-2 transition-colors hover:text-gold-on-dark"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {product.name}
+                  </a>
+                </p>
+              ) : null}
             </div>
           </m.li>
         );

@@ -254,11 +254,12 @@ const websiteHost = (() => {
 })();
 
 const owner = String(lead['Owner Name'] || '').trim();
-let firstName = 'there';
+let firstName = '';
 if (owner) {
   const part = owner.split(/\\s+/)[0].replace(/[^a-zA-Z'-]/g, '');
   if (part.length >= 2) firstName = part;
 }
+const greeting = firstName ? ('Hi ' + esc(firstName) + ',') : 'Hi,';
 
 const bParam = encodeURIComponent(business.slice(0, 40));
 const funnelUrl = '${FUNNEL_BASE}?b=' + bParam + '&n=' + encodeURIComponent(blocked);
@@ -275,11 +276,12 @@ const indexedLine = indexed && indexed !== 'err'
 
 const html = [
   '<div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.55;color:#222">',
-  '<p style="margin:0 0 14px">Hi ' + esc(firstName) + ',</p>',
-  '<p style="margin:0 0 14px">We checked how Google reads ' + siteLink + '.' + indexedLine + ' That usually means a chunk of the site is blocked or set up in a way Google cannot crawl cleanly — roughly <strong>' + esc(blocked) + '</strong> pages it cannot see properly.</p>',
-  '<p style="margin:0 0 14px">We fix that as a fixed-scope job. Indexing and crawl setup cleaned up in a few days, then we watch Google\\'s recrawl for 30 days. Scope and price: <a href="' + esc(funnelUrl) + '" style="color:#1a73e8;text-decoration:underline">Search Visibility Fix</a>.</p>',
-  '<p style="margin:0 0 14px">Want the short index check we ran? Reply and we will send it over, no obligation.</p>',
-  '<p style="margin:0 0 14px">Felipe<br>SYSBILT</p>',
+  '<p style="margin:0 0 14px">' + greeting + '</p>',
+  '<p style="margin:0 0 14px">We checked how Google reads ' + siteLink + '.' + indexedLine + ' That usually means a chunk of the site is blocked or set up in a way Google cannot crawl cleanly, roughly <strong>' + esc(blocked) + '</strong> pages it cannot see properly.</p>',
+  '<p style="margin:0 0 14px">Pages Google cannot see do not bring enquiries. You paid for the site, and search is skipping part of it.</p>',
+  '<p style="margin:0 0 14px">We fix that as a fixed-scope job: indexing and crawl setup cleaned up in a few days, then we watch Google\\'s recrawl for 30 days. The full scope and the price are here: <a href="' + esc(funnelUrl) + '" style="color:#1a73e8;text-decoration:underline">Search Visibility Fix</a>.</p>',
+  '<p style="margin:0 0 14px">Either way, happy to send you the short index check we ran. Just reply and it\\'s yours.</p>',
+  '<p style="margin:0 0 14px">Felipe<br><a href="https://sysbilt.com" style="color:#1a73e8;text-decoration:underline">SYSBILT</a>, Sydney<br>Websites and business systems for growing Australian businesses</p>',
   '<p style="margin:0;color:#666;font-size:12px;line-height:1.4">If you\\'d rather not hear from us again, reply &quot;no thanks&quot; and that\\'s the end of it.</p>',
   '</div>',
 ].join('');

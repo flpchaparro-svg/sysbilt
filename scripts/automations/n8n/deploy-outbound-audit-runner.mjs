@@ -289,63 +289,10 @@ function patchVercelPush(wf) {
   node.parameters.jsonBody = '={{ JSON.stringify($json) }}';
 }
 
-const PARSE_AUDIT_JSON_JS = `function repairAuditJson(raw) {
-  let t = String(raw || '').replace(/^\\\`\\\`\\\`(json)?/mi, '').replace(/\\\`\\\`\\\$/mi, '').trim();
-  t = t.replace(/[\\u0000-\\u001F]+/g, ' ');
-  t = t.replace(/,\\s*([}\\]])/g, '$1');
-  t = t.replace(/"([a-zA-Z_][a-zA-Z0-9_]*)"\\s+\\\\"/g, '"$1": "');
-  t = t.replace(/"([a-zA-Z_][a-zA-Z0-9_]*) "(?=[^:])/g, '"$1": "');
-  const m = t.match(/\\{[\\s\\S]*\\}/);
-  return m ? m[0] : t;
-}
-
-function parseAuditText(raw) {
-  if (raw && typeof raw === 'object' && !Array.isArray(raw)) return raw;
-  const cleaned = repairAuditJson(raw);
-  try {
-    return JSON.parse(cleaned);
-  } catch (first) {
-    const m = cleaned.match(/\\{[\\s\\S]*\\}/);
-    if (m) return JSON.parse(repairAuditJson(m[0]));
-    throw first;
-  }
-}
-
-const filter = $('Filter').item.json;
-const company = filter.properties.company?.value || 'Unknown';
-const firstName = filter.properties.firstname?.value || '';
-const email = filter._realEmail || filter.properties.email?.value || 'Unknown';
-
-try {
-  const rawStr = $('Master Analyst').item.json.content.parts[0].text;
-  const auditObj = parseAuditText(rawStr);
-  return [{
-    json: {
-      contact_first_name: firstName,
-      contact_email: email,
-      company_name: company,
-      audit_data: auditObj,
-    },
-  }];
-} catch (e) {
-  return [{
-    json: {
-      contact_first_name: firstName,
-      contact_email: email,
-      company_name: company,
-      audit_data: {
-        diagnosis: {
-          critical: {
-            title: 'Failed to parse AI JSON',
-            evidence: String(e.message || e),
-            consequence: 'The audit model returned malformed JSON. Re-run the workflow or inspect Master Analyst output in n8n.',
-          },
-          secondary: [],
-        },
-      },
-    },
-  }];
-}`;
+const PARSE_AUDIT_JSON_JS = readFileSync(
+  resolve(__dirname, 'parse-audit-json-code.js'),
+  'utf8',
+);
 
 function patchParseAuditJsonNode(wf) {
   let node = wf.nodes.find((n) => n.name === 'Parse Audit JSON');
@@ -377,26 +324,146 @@ function patchParseAuditJsonNode(wf) {
 const MASTER_ANALYST_JSON_RULE =
   '\\n\\nJSON SYNTAX (mandatory): Return ONLY one valid JSON object. Every key must use a colon: \\"key\\": \\"value\\". Never write \\"key \\"value. No markdown fences.';
 
+const MASTER_ANALYST_GBP_CLAIM_RULE = `
+
+GOOGLE BUSINESS PROFILE CLAIM RULE v2 (critical, non-negotiable):
+
+Claim status is OUT OF SCOPE for this audit by default. Do not diagnose, metric, SWOT, or action-plan anything about claiming, verifying, or an "unclaimed" Google listing / Google Business Profile / knowledge panel.
+
+SerpAPI knowledge_graph.unclaimed_listing is a KNOWN FALSE POSITIVE. It often returns true on fully managed profiles that already have photos, services, posts, review replies, booking links, and social profiles. IGNORE that field completely. Treat it as if it does not exist. The same applies to public "Own this business?" CTAs.
+
+Photos, services, posts, reviews, updates, booking links, or social profiles on the listing are signs of an active profile, not an unclaimed one.
+
+For the metric "Knowledge panel presence": if a panel exists, value like "Present" or "Present with X stars, Y reviews". Never write "Present but unclaimed" or mention claim status.
+
+Only mention claim status if an operator note in the sheet inputs explicitly says the listing is unclaimed. SerpAPI fields alone never qualify.
+
+BOOKING AND UNDETECTED TOOLS (reinforce):
+
+A website "Book Now" button that opens a form, phone link, or contact page is NOT proof that online booking is missing. If Detected tools marks booking false or could_not_verify, you may note that a live booking widget could not be confirmed in this pass. You must NOT title a diagnosis "No online booking available", and you must NOT treat an undetected booking widget as a proven absence.
+
+REVIEW NUMBER CONSISTENCY RULE v1 (critical, non-negotiable):
+
+Before you write any diagnosis, SWOT weakness, opportunity, metric value, or reviews context about review volume, compare the subject's Google review count to every competitor review count you cite.
+
+- If the subject has more reviews than the competitors you mention, you must NOT say "only X reviews", "low review count", "low volume vs competitors", or "competitors with more reviews".
+- If they have the most reviews in the set and still rank worse in the local pack, that is the finding: volume is not the lever. Say they have the strongest review count in this pack and still sit behind on pack position, so proximity, categories, photos, posts, and profile activity matter more than raw volume.
+- Numbers in the primary finding, SWOT, and reviews section must agree with each other. Do not invent a volume weakness the numbers contradict.
+
+PAGE HEALTH VALUE RULE v1 (critical, non-negotiable):
+
+For appendix.page_health values (meta_description, schema_markup, cookie_compliance, alt_text_rate, heading_hierarchy), use exactly one state:
+
+- "Present" or a short present detail when the HTML / PageSpeed input confirms it.
+- "Missing" only when the HTML / PageSpeed input confirms absence.
+- "Could not verify" when that check has no usable input (no PageSpeed data, blocked HTML, field not returned).
+
+Never write "Missing" when you mean "Could not verify". Never pair those two meanings in the same field.
+`;
+
+function stripOldGbpClaimRule(content) {
+  // Remove prior accuracy blocks so redeploys replace instead of stacking.
+  return content
+    .replace(
+      /\n*GOOGLE BUSINESS PROFILE CLAIM RULE(?: v2)? \(critical, non-negotiable\):[\s\S]*?(?=\n(?:CRITICAL OUTPUT RULES:|JSON SYNTAX \(mandatory\):|REVIEW NUMBER CONSISTENCY RULE|PAGE HEALTH VALUE RULE)|$)/g,
+      '\n\n',
+    )
+    .replace(
+      /\n*REVIEW NUMBER CONSISTENCY RULE(?: v1)? \(critical, non-negotiable\):[\s\S]*?(?=\n(?:CRITICAL OUTPUT RULES:|JSON SYNTAX \(mandatory\):|PAGE HEALTH VALUE RULE|GOOGLE BUSINESS PROFILE CLAIM RULE)|$)/g,
+      '\n\n',
+    )
+    .replace(
+      /\n*PAGE HEALTH VALUE RULE(?: v1)? \(critical, non-negotiable\):[\s\S]*?(?=\n(?:CRITICAL OUTPUT RULES:|JSON SYNTAX \(mandatory\):|GOOGLE BUSINESS PROFILE CLAIM RULE|REVIEW NUMBER CONSISTENCY RULE)|$)/g,
+      '\n\n',
+    );
+}
+
+const MASTER_ANALYST_SENTIMENT_RULE =
+  '- For sentiment: do NOT classify from review text snippets. Prefer whole-number percentages that sum to 100 from a Google Maps star histogram / rating_summary when present (4 and 5 stars = positive, 3 = neutral, 1 and 2 = negative). If no histogram is available, set positive, neutral and negative all to 0. A downstream step overwrites sentiment from Maps stars when available. Use Customer reviews text only for recent_theme and warm context, not for the sentiment percentages.';
+
+function patchSentimentAndReviewSample(content) {
+  let next = content;
+  const sentimentRe =
+    /- For sentiment:[\s\S]*?(?=\n\n- For review_sources|\n\n### |\n\nCRITICAL OUTPUT RULES:|$)/;
+  if (sentimentRe.test(next)) {
+    next = next.replace(sentimentRe, `${MASTER_ANALYST_SENTIMENT_RULE}\n\n`);
+  } else if (!next.includes('do NOT classify from review text snippets')) {
+    const themeAnchor = '- For review_sources, the Google recent_theme';
+    if (next.includes(themeAnchor)) {
+      next = next.replace(themeAnchor, `${MASTER_ANALYST_SENTIMENT_RULE}\n\n${themeAnchor}`);
+    }
+  }
+  next = next.replace(/\.slice\(0,\s*12\)/g, '.slice(0, 20)');
+  return next;
+}
+
 function patchMasterAnalystPrompt(wf) {
   const node = wf.nodes.find((n) => n.name === 'DS Master Analyst');
   if (!node?.parameters?.messages?.values?.[0]) return;
-  const content = node.parameters.messages.values[0].content || '';
+  let content = node.parameters.messages.values[0].content || '';
   if (!content.includes('JSON SYNTAX (mandatory)')) {
-    node.parameters.messages.values[0].content = content + MASTER_ANALYST_JSON_RULE;
+    content += MASTER_ANALYST_JSON_RULE;
   }
+  content = stripOldGbpClaimRule(content);
+  content = patchSentimentAndReviewSample(content);
+  const anchor = 'CRITICAL OUTPUT RULES:';
+  if (content.includes(anchor)) {
+    content = content.replace(anchor, `${MASTER_ANALYST_GBP_CLAIM_RULE.trim()}\n\n\n${anchor}`);
+  } else {
+    content = `${content.trimEnd()}\n\n${MASTER_ANALYST_GBP_CLAIM_RULE}`;
+  }
+  node.parameters.messages.values[0].content = content;
 }
 
 
 function patchGmailDraft(wf) {
   const node = findNode(wf, 'Gmail Draft to prospect');
   if (!node) return;
+  // Template A: gift the audit only. One link. Offer lives inside the audit page.
   node.parameters.subject =
-    '=Outbound audit: {{ $(\'Filter\').item.json.properties.company?.value || $(\'Filter\').item.json.properties.firstname.value }}';
-  node.parameters.message = `=<p>Hi {{ $('Filter').item.json.properties.firstname.value }},</p>
-<p>We put together an audit for {{ $('Filter').item.json.properties.company?.value || 'your business' }} based on what we could see from the outside — your site, search footprint, and reviews.</p>
-<p><a href="{{ $('Vercel Push').item.json.url }}">Open the audit</a></p>
-<p>The link stays live for 90 days. If anything in there lands, the simplest next step is a short call. <a href="https://meetings-ap1.hubspot.com/felipe-chaparro?uuid=087901aa-c896-4adf-86b4-61f001d96900">Pick a time here</a> if it suits.</p>
-<p>Talk soon,<br>The SYSBILT team</p>`;
+    "={{ (() => { const f = $('Filter').item.json; const company = f.properties?.company?.value || f._sheetRow?.['Business Name'] || 'your business'; return 'The audit we ran on ' + company; })() }}";
+  node.parameters.emailType = 'html';
+  node.parameters.message = `={{ (() => {
+  const f = $('Filter').item.json;
+  const sheet = f._sheetRow || {};
+  const company = String(f.properties?.company?.value || sheet['Business Name'] || 'your business').trim();
+  const ownerRaw = String(f.properties?.firstname?.value || sheet['Owner Name'] || '').trim();
+  let firstName = '';
+  const firstPart = ownerRaw.split(/\\s+/)[0].replace(/[^a-zA-Z'-]/g, '');
+  if (firstPart.length >= 2) firstName = firstPart;
+  const greeting = firstName ? ('Hi ' + firstName + ',') : 'Hi,';
+  const auditUrl = String($('Vercel Push').item.json.url || '').trim();
+  const diagnosis = (() => {
+    try {
+      const parsed = $('Parse Audit JSON').item.json || {};
+      const title = String(parsed?.audit_data?.diagnosis?.critical?.title || '').trim();
+      if (title) return title;
+    } catch (_) {}
+    const score = String(sheet['LH Mobile'] || '').trim();
+    if (score) return 'the site scored ' + score + ' on Google\\'s mobile speed test';
+    return '';
+  })();
+  const standout = diagnosis
+    ? diagnosis.replace(/[.!]+$/g, '')
+    : 'the site is costing you enquiries before people ever speak to you';
+  const esc = (s) => String(s || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+  return [
+    '<div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.55;color:#222">',
+    '<p style="margin:0 0 14px">' + esc(greeting) + '</p>',
+    '<p style="margin:0 0 14px">We ran an outside audit on ' + esc(company) + ': the website, how you show up in search, and your reviews. It\\'s ready, and it\\'s yours. No charge and nothing expected back.</p>',
+    '<p style="margin:0 0 14px">Most firms run something like this and charge for it before they\\'ll quote any work. We can hand it over because our systems had already done the pass.</p>',
+    '<p style="margin:0 0 14px"><a href="' + esc(auditUrl) + '" style="color:#1a73e8;text-decoration:underline">Open the audit</a></p>',
+    '<p style="margin:0 0 14px">The one that stood out: ' + esc(standout) + '.</p>',
+    '<p style="margin:0 0 14px">Worth a look while it\\'s in front of you. If anything in there doesn\\'t make sense, reply and we\\'ll explain it properly.</p>',
+    '<p style="margin:0 0 14px">Felipe<br><a href="https://sysbilt.com" style="color:#1a73e8;text-decoration:underline">SYSBILT</a>, Sydney<br>Websites and business systems for growing Australian businesses</p>',
+    '<p style="margin:0;color:#666;font-size:12px;line-height:1.4">If you\\'d rather not hear from us again, reply &quot;no thanks&quot; and that\\'s the end of it.</p>',
+    '</div>',
+  ].join('');
+})() }}`;
 }
 
 function patchIfAlwaysAudit(wf) {
@@ -459,10 +526,59 @@ function geminiToDeepSeek(node, { model, jsonOutput }) {
   };
 }
 
+function deepSeekPromptLength(node) {
+  const values = node?.parameters?.messages?.values;
+  if (!Array.isArray(values) || !values[0]) return 0;
+  return String(values[0].content || '').length;
+}
+
+/** Drop duplicate DS * nodes left by re-running the Gemini→DeepSeek swap. Keep the longest prompt. */
+function dedupeDeepSeekNodes(wf) {
+  const groups = new Map();
+  for (const n of wf.nodes) {
+    if (!n.name?.startsWith('DS ')) continue;
+    if (n.type !== '@n8n/n8n-nodes-langchain.openAi') continue;
+    const list = groups.get(n.name) || [];
+    list.push(n);
+    groups.set(n.name, list);
+  }
+  const drop = new Set();
+  for (const list of groups.values()) {
+    if (list.length < 2) continue;
+    list.sort((a, b) => deepSeekPromptLength(b) - deepSeekPromptLength(a));
+    for (const loser of list.slice(1)) drop.add(loser.id);
+  }
+  if (drop.size) {
+    wf.nodes = wf.nodes.filter((n) => !drop.has(n.id));
+  }
+}
+
 function applyDeepSeekSwap(wf) {
+  // Inbound may already contain DS * nodes from a prior conversion. Never swap a format Code
+  // node named "Master Analyst" into a second empty DS node.
+  dedupeDeepSeekNodes(wf);
+
   for (const swap of DEEPSEEK_SWAPS) {
+    const llmName = `DS ${swap.name}`;
+    const existingDs = wf.nodes.filter(
+      (n) => n.name === llmName && n.type === '@n8n/n8n-nodes-langchain.openAi',
+    );
+    if (existingDs.length) {
+      existingDs.sort((a, b) => deepSeekPromptLength(b) - deepSeekPromptLength(a));
+      const keep = existingDs[0];
+      if (deepSeekPromptLength(keep) < 200) {
+        console.warn(`Warning: ${llmName} prompt looks empty (${deepSeekPromptLength(keep)} chars)`);
+      }
+      for (const extra of existingDs.slice(1)) {
+        wf.nodes = wf.nodes.filter((n) => n.id !== extra.id);
+      }
+      continue;
+    }
+
     const idx = wf.nodes.findIndex((n) => n.name === swap.name);
     if (idx === -1) continue;
+    // Only swap real LLM nodes (Gemini / OpenAI), never the format Code node.
+    if (wf.nodes[idx].type === 'n8n-nodes-base.code') continue;
     if (wf.nodes[idx].type === '@n8n/n8n-nodes-langchain.openAi' && wf.nodes[idx].name.startsWith('DS ')) {
       continue;
     }
@@ -472,7 +588,6 @@ function applyDeepSeekSwap(wf) {
     if (downstream.length !== 1) continue;
 
     const nextNode = downstream[0];
-    const llmName = `DS ${swap.name}`;
     const llmNode = geminiToDeepSeek({ ...geminiNode, name: llmName, id: uid() }, swap);
     const formatNode = {
       id: uid(),
@@ -493,6 +608,7 @@ function applyDeepSeekSwap(wf) {
     wf.connections[swap.name] = { main: [[{ node: nextNode, type: 'main', index: 0 }]] };
   }
 
+  dedupeDeepSeekNodes(wf);
   patchMasterAnalystPrompt(wf);
 
   const vercel = findNode(wf, 'Vercel Push');

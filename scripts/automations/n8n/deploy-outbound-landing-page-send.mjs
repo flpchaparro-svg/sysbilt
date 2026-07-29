@@ -243,11 +243,12 @@ const email = String(row.Email || '').trim();
 const websiteHref = cleanSiteUrl(row.Website);
 
 const owner = String(lead['Owner Name'] || '').trim();
-let firstName = 'there';
+let firstName = '';
 if (owner) {
   const part = owner.split(/\\s+/)[0].replace(/[^a-zA-Z'-]/g, '');
   if (part.length >= 2) firstName = part;
 }
+const greeting = firstName ? ('Hi ' + esc(firstName) + ',') : 'Hi,';
 
 const bParam = encodeURIComponent(business.slice(0, 40));
 const funnelUrl = '${FUNNEL_BASE}?b=' + bParam;
@@ -260,11 +261,12 @@ const siteLink = websiteHref
 
 const html = [
   '<div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.55;color:#222">',
-  '<p style="margin:0 0 14px">Hi ' + esc(firstName) + ',</p>',
+  '<p style="margin:0 0 14px">' + greeting + '</p>',
   '<p style="margin:0 0 14px">We looked at how ' + siteLink + ' shows up in the Ad Library. The ads look clear. The click often lands on a homepage built for everyone, which is a soft place to ask for the thing the ad promised.</p>',
-  '<p style="margin:0 0 14px">We build one campaign page that repeats the ad promise word for word, on your domain, live in two business days, with tracking wired so the platform can learn. Fixed price, paid once: <a href="' + esc(funnelUrl) + '" style="color:#1a73e8;text-decoration:underline">Campaign Landing Page</a>.</p>',
-  '<p style="margin:0 0 14px">If you are already running ads this week, that is usually the highest-leverage fix.</p>',
-  '<p style="margin:0 0 14px">Felipe<br>SYSBILT</p>',
+  '<p style="margin:0 0 14px">You pay for the click. If the landing page does not match the ad, you lose that spend before the enquiry starts.</p>',
+  '<p style="margin:0 0 14px">We build one campaign page that repeats the ad promise word for word, on your domain, live in two business days, with tracking wired so the platform can learn. The full scope and the price are here: <a href="' + esc(funnelUrl) + '" style="color:#1a73e8;text-decoration:underline">Campaign Landing Page</a>.</p>',
+  '<p style="margin:0 0 14px">Either way, happy to send you the short notes we took on the ad-to-page gap. Just reply and they\\'re yours.</p>',
+  '<p style="margin:0 0 14px">Felipe<br><a href="https://sysbilt.com" style="color:#1a73e8;text-decoration:underline">SYSBILT</a>, Sydney<br>Websites and business systems for growing Australian businesses</p>',
   '<p style="margin:0;color:#666;font-size:12px;line-height:1.4">If you\\'d rather not hear from us again, reply &quot;no thanks&quot; and that\\'s the end of it.</p>',
   '</div>',
 ].join('');

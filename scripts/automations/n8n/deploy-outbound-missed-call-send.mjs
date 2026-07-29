@@ -227,11 +227,12 @@ const business = String(row['Business Name'] || '').trim();
 const email = String(row.Email || '').trim();
 
 const owner = String(lead['Owner Name'] || '').trim();
-let firstName = 'there';
+let firstName = '';
 if (owner) {
   const part = owner.split(/\\s+/)[0].replace(/[^a-zA-Z'-]/g, '');
   if (part.length >= 2) firstName = part;
 }
+const greeting = firstName ? ('Hi ' + esc(firstName) + ',') : 'Hi,';
 
 const bParam = encodeURIComponent(business.slice(0, 40));
 const funnelUrl = '${FUNNEL_BASE}?b=' + bParam;
@@ -240,11 +241,12 @@ const subject = 'What happens when ' + business + ' misses a call';
 
 const html = [
   '<div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.55;color:#222">',
-  '<p style="margin:0 0 14px">Hi ' + esc(firstName) + ',</p>',
+  '<p style="margin:0 0 14px">' + greeting + '</p>',
   '<p style="margin:0 0 14px">When a call rings out at ' + esc(business) + ', most people hang up and dial the next listing. You never see that lead leave.</p>',
-  '<p style="margin:0 0 14px">We wire a missed-call text-back on the number you already use: they get a short SMS, you call back with the brief already in. Fixed scope, live proof before we hand it over. Details and price: <a href="' + esc(funnelUrl) + '" style="color:#1a73e8;text-decoration:underline">Missed-Call Text-Back</a>.</p>',
-  '<p style="margin:0 0 14px">Worth a look if the phone is how you win work.</p>',
-  '<p style="margin:0 0 14px">Felipe<br>SYSBILT</p>',
+  '<p style="margin:0 0 14px">If the phone is how you win work, every unanswered ring is lost revenue you will not see in a report.</p>',
+  '<p style="margin:0 0 14px">We wire a missed-call text-back on the number you already use: they get a short SMS, you call back with the brief already in. Fixed scope, live proof before we hand it over. The full scope and the price are here: <a href="' + esc(funnelUrl) + '" style="color:#1a73e8;text-decoration:underline">Missed-Call Text-Back</a>.</p>',
+  '<p style="margin:0 0 14px">Either way, happy to send you a short note on how the callback path works. Just reply and it\\'s yours.</p>',
+  '<p style="margin:0 0 14px">Felipe<br><a href="https://sysbilt.com" style="color:#1a73e8;text-decoration:underline">SYSBILT</a>, Sydney<br>Websites and business systems for growing Australian businesses</p>',
   '<p style="margin:0;color:#666;font-size:12px;line-height:1.4">If you\\'d rather not hear from us again, reply &quot;no thanks&quot; and that\\'s the end of it.</p>',
   '</div>',
 ].join('');
