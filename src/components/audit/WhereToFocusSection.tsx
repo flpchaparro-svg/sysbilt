@@ -36,6 +36,7 @@ export default function WhereToFocusSection({
         action_plan={displayPlan}
         rebuildMode={rebuildMode}
         businessName={businessName}
+        showWebsiteEscalate={!rebuildMode}
       />
     </section>
   );
