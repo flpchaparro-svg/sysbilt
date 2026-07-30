@@ -5,13 +5,14 @@ import { auditEase, auditEyebrow } from './auditCardStyles';
 
 const CALL_HREF =
   'https://meetings-ap1.hubspot.com/felipe-chaparro?uuid=087901aa-c896-4adf-86b4-61f001d96900';
+const CONTACT_HREF = 'https://sysbilt.com/contact';
 
 export interface CTABlockProps {
   findingLabel?: string;
   offer?: AuditProductOffer | null;
 }
 
-/** Closing CTA: one product from the audit, plus optional call. */
+/** Closing CTA: one product from the audit, plus optional call. Soft contact link below. */
 export default function CTABlock({ findingLabel, offer }: CTABlockProps) {
   const reduce = useReducedMotion();
   const title = (findingLabel || '').trim() || 'The one we would start with';
@@ -87,8 +88,17 @@ export default function CTABlock({ findingLabel, offer }: CTABlockProps) {
           </span>
         </a>
       </div>
-      <p className="mx-auto mt-6 max-w-xl text-center font-sans text-sm text-white/45">
-        Or book a 15-minute call to walk through the whole audit.
+      <p className="mx-auto mt-6 max-w-xl text-center font-sans text-sm leading-relaxed text-white/45">
+        Something else on your mind, or an idea you want to pressure-test.{' '}
+        <a
+          href={CONTACT_HREF}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-gold-on-dark/90 underline decoration-gold-on-dark/40 underline-offset-2 transition-colors hover:text-cream hover:decoration-cream/50"
+        >
+          Contact us
+        </a>{' '}
+        and tell us what you need.
       </p>
     </section>
   );

@@ -81,6 +81,16 @@ SWOT opportunities must never say "claim", "unclaimed", or "verify your Google".
 
 Never mention "Own this business?", claiming, or verifying a Google listing in any owner-facing field.
 
+PRODUCT PICK RULE v1 (critical, non-negotiable):
+
+appendix.action_plan must recommend the real next job, not Hosted Website Plan by default.
+
+- Do NOT write "start again", "rebuild", "brochure site", "front door rebuild", or "hosted website" in action_plan unless the homepage is thin, dead, parked, bot-blocked, or a throwaway builder page with almost no real practice content.
+- A multi-page clinic site with services, a blog, or long-running brand copy is NOT a rebuild case. Prefer Google Profile Fix, Website Speed Fix, Search Visibility Fix, Booking System, or Review Engine based on the primary diagnosis.
+- Never call the offer a "brochure" in owner-facing copy. That word is banned in findings, action_plan, and context.
+- PageSpeed in the 40s to 60s is Website Speed Fix territory, not a new site.
+- Missing meta, schema, chat, or CRM alone is a patch, not a rebuild.
+
 Banned owner-facing filler: "leverage", "utilise", "click goldmine", "outside pass", "systems audit", "directional not definitive" inside findings.
 `.trim();
 
@@ -147,19 +157,23 @@ function stripOldAccuracyBlocks(prompt) {
   // Remove prior accuracy blocks so redeploys replace instead of stacking.
   return prompt
     .replace(
-      /\n*GOOGLE BUSINESS PROFILE CLAIM RULE(?: v2)? \(critical, non-negotiable\):[\s\S]*?(?=\n(?:CRITICAL OUTPUT RULES:|JSON SYNTAX \(mandatory\):|REVIEW NUMBER CONSISTENCY RULE|PAGE HEALTH VALUE RULE|OWNER GIFT RULES)|$)/g,
+      /\n*GOOGLE BUSINESS PROFILE CLAIM RULE(?: v2)? \(critical, non-negotiable\):[\s\S]*?(?=\n(?:CRITICAL OUTPUT RULES:|JSON SYNTAX \(mandatory\):|REVIEW NUMBER CONSISTENCY RULE|PAGE HEALTH VALUE RULE|OWNER GIFT RULES|PRODUCT PICK RULE)|$)/g,
       '\n\n',
     )
     .replace(
-      /\n*REVIEW NUMBER CONSISTENCY RULE(?: v1)? \(critical, non-negotiable\):[\s\S]*?(?=\n(?:CRITICAL OUTPUT RULES:|JSON SYNTAX \(mandatory\):|PAGE HEALTH VALUE RULE|GOOGLE BUSINESS PROFILE CLAIM RULE)|$)/g,
+      /\n*REVIEW NUMBER CONSISTENCY RULE(?: v1)? \(critical, non-negotiable\):[\s\S]*?(?=\n(?:CRITICAL OUTPUT RULES:|JSON SYNTAX \(mandatory\):|PAGE HEALTH VALUE RULE|GOOGLE BUSINESS PROFILE CLAIM RULE|OWNER GIFT RULES|PRODUCT PICK RULE)|$)/g,
       '\n\n',
     )
     .replace(
-      /\n*PAGE HEALTH VALUE RULE(?: v1)? \(critical, non-negotiable\):[\s\S]*?(?=\n(?:CRITICAL OUTPUT RULES:|JSON SYNTAX \(mandatory\):|GOOGLE BUSINESS PROFILE CLAIM RULE|REVIEW NUMBER CONSISTENCY RULE|OWNER GIFT RULES)|$)/g,
+      /\n*PAGE HEALTH VALUE RULE(?: v1)? \(critical, non-negotiable\):[\s\S]*?(?=\n(?:CRITICAL OUTPUT RULES:|JSON SYNTAX \(mandatory\):|GOOGLE BUSINESS PROFILE CLAIM RULE|REVIEW NUMBER CONSISTENCY RULE|OWNER GIFT RULES|PRODUCT PICK RULE)|$)/g,
       '\n\n',
     )
     .replace(
-      /\n*OWNER GIFT RULES(?: v[12])? \(critical, non-negotiable\):[\s\S]*?(?=\n(?:CRITICAL OUTPUT RULES:|JSON SYNTAX \(mandatory\):|GOOGLE BUSINESS PROFILE CLAIM RULE|REVIEW NUMBER CONSISTENCY RULE|PAGE HEALTH VALUE RULE)|$)/g,
+      /\n*OWNER GIFT RULES(?: v[12])? \(critical, non-negotiable\):[\s\S]*?(?=\n(?:CRITICAL OUTPUT RULES:|JSON SYNTAX \(mandatory\):|GOOGLE BUSINESS PROFILE CLAIM RULE|REVIEW NUMBER CONSISTENCY RULE|PAGE HEALTH VALUE RULE|PRODUCT PICK RULE)|$)/g,
+      '\n\n',
+    )
+    .replace(
+      /\n*PRODUCT PICK RULE(?: v1)? \(critical, non-negotiable\):[\s\S]*?(?=\n(?:CRITICAL OUTPUT RULES:|JSON SYNTAX \(mandatory\):|GOOGLE BUSINESS PROFILE CLAIM RULE|REVIEW NUMBER CONSISTENCY RULE|PAGE HEALTH VALUE RULE|OWNER GIFT RULES)|$)/g,
       '\n\n',
     );
 }
@@ -206,7 +220,8 @@ function injectAccuracyRules(prompt) {
     working.includes('GOOGLE BUSINESS PROFILE CLAIM RULE v2') &&
     working.includes('REVIEW NUMBER CONSISTENCY RULE v1') &&
     working.includes('PAGE HEALTH VALUE RULE v1') &&
-    working.includes('OWNER GIFT RULES v2');
+    working.includes('OWNER GIFT RULES v2') &&
+    working.includes('PRODUCT PICK RULE v1');
 
   if (!hasFullBlock) {
     const anchor = 'CRITICAL OUTPUT RULES:';

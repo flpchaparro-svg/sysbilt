@@ -32,9 +32,9 @@ export default function ActionPlan({
     ? [
         {
           rank: 1,
-          title: 'Start again rather than patch',
+          title: 'Replace the base, do not keep patching',
           rationale:
-            'Several structural failures sit on the same base. Fixing them one at a time costs more than rebuilding, and each fix is constrained by the same underlying structure.',
+            'This public site is too thin or fragile to carry the fixes one by one. A clean hosted site is the shorter path to a front door that can convert.',
           linked_to_section: 'perceive',
         } satisfies ActionPlanItem,
       ]
@@ -66,11 +66,11 @@ export default function ActionPlan({
         const product = rebuildMode
           ? {
               name: 'Hosted Website Plan',
-              blurb: 'A clean brochure site we build and host',
+              blurb: 'A clean site we build and host',
               href: 'https://sysbilt.com/go/website',
               code: 'website',
             }
-          : productForActionItem(item);
+          : productForActionItem(item, { allowRebuild: false });
         const fromLeft = idx % 2 === 0;
         return (
           <m.li

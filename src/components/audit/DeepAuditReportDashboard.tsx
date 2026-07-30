@@ -154,6 +154,11 @@ export default function DeepAuditReportDashboard({ loading, error, data }: DeepA
             action_plan={appendix.action_plan}
             rebuildMode={rebuild}
             businessName={company_name}
+            fallbackMove={{
+              title: findingLabel || audit.diagnosis.critical.title,
+              rationale: audit.diagnosis.critical.consequence,
+              linked_to_section: 'find',
+            }}
           />
         </AuditScrollReveal>
 
