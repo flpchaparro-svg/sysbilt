@@ -1,10 +1,12 @@
 {
   "createdAt": "2026-07-30T11:40:00.000Z",
+  "updatedAt": "2026-07-30T12:40:00.000Z",
   "mode": "live",
-  "note": "Google Profile Fix · live Payment Link. After pay → https://sysbilt.com/go/thanks?p=google-profile → Google access wizard. Never use buy.stripe.com/test_ on this page.",
+  "note": "Google Profile Fix · live Payment Link. Product now has description + marketing_features (Speed Fix pattern). After pay → https://sysbilt.com/go/thanks?p=google-profile → Google access wizard. Never use buy.stripe.com/test_ on this page.",
   "product": {
     "code": "google-profile",
     "name": "Google Profile Fix",
+    "productId": "prod_UuEjIHz4hGeb6H",
     "paymentLinkId": "plink_1TvqGL7kQC0CB85zBiPPktA8",
     "paymentLinkUrl": "https://buy.stripe.com/eVq4gt3dT7jiemG90f3gk06",
     "amountAud": 600

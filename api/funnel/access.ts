@@ -90,7 +90,7 @@ const GOOGLE_PROFILE_STATUS = new Set([
   'suspended',
   'unsure',
 ]);
-const GOOGLE_PROFILE_ACCESS = new Set(['invite', 'call']);
+const GOOGLE_PROFILE_ACCESS = new Set(['invite', 'call', 'claim', 'recover']);
 const PLATFORMS = new Set([
   'wordpress',
   'wordpress-com',

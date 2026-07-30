@@ -366,37 +366,82 @@ const PROVIDER_OPTIONS: {
   },
 ]
 
-const ACCESS_OPTIONS: {
-  id: AccessPathId
-  label: string
-  blurb: string
-  icon: React.ReactNode
-}[] = [
+const ACCESS_BY_ID: Record<
+  'wp-admin' | 'hosting' | 'agency' | 'call',
   {
+    id: AccessPathId
+    label: string
+    blurb: string
+    icon: React.ReactNode
+  }
+> = {
+  'wp-admin': {
     id: 'wp-admin',
     label: 'Website admin',
     blurb: 'Create a temporary admin, or tell us how we should get in.',
     icon: <LayoutTemplate className="w-full h-full" strokeWidth={1.25} />,
   },
-  {
+  hosting: {
     id: 'hosting',
     label: 'Hosting panel',
     blurb: 'cPanel, Plesk, or your host dashboard.',
     icon: <Server className="w-full h-full" strokeWidth={1.25} />,
   },
-  {
+  agency: {
     id: 'agency',
     label: 'Someone else',
     blurb: 'Agency or developer. We will ask you to introduce us.',
     icon: <Building2 className="w-full h-full" strokeWidth={1.25} />,
   },
-  {
+  call: {
     id: 'call',
     label: 'Quick call',
     blurb: 'We walk through access together. About five minutes.',
     icon: <Phone className="w-full h-full" strokeWidth={1.25} />,
   },
-]
+}
+
+/** Speed Fix and other site jobs: access cards follow the platform they picked. */
+function siteAccessOptionsForPlatform(platform: PlatformId | null) {
+  switch (platform) {
+    case 'wordpress':
+    case 'joomla':
+    case 'drupal':
+    case 'magento':
+      return [
+        ACCESS_BY_ID['wp-admin'],
+        ACCESS_BY_ID.hosting,
+        ACCESS_BY_ID.agency,
+        ACCESS_BY_ID.call,
+      ]
+    case 'wordpress-com':
+    case 'shopify':
+    case 'squarespace':
+    case 'wix':
+    case 'webflow':
+    case 'framer':
+    case 'bigcommerce':
+      return [
+        {
+          ...ACCESS_BY_ID['wp-admin'],
+          label: 'Platform admin',
+          blurb: 'Invite us inside the builder, or share a temporary staff login.',
+        },
+        ACCESS_BY_ID.agency,
+        ACCESS_BY_ID.call,
+      ]
+    case 'custom':
+      return [ACCESS_BY_ID.hosting, ACCESS_BY_ID.agency, ACCESS_BY_ID.call]
+    case 'other':
+    default:
+      return [
+        ACCESS_BY_ID.call,
+        ACCESS_BY_ID.agency,
+        ACCESS_BY_ID['wp-admin'],
+        ACCESS_BY_ID.hosting,
+      ]
+  }
+}
 
 const PHONE_SETUP_OPTIONS: {
   id: PhoneSetupId
@@ -438,37 +483,69 @@ const PHONE_SETUP_OPTIONS: {
   },
 ]
 
-const MISSED_CALL_ACCESS_OPTIONS: {
-  id: AccessPathId
-  label: string
-  blurb: string
-  icon: React.ReactNode
-}[] = [
+const MISSED_CALL_ACCESS_BY_ID: Record<
+  'forward' | 'provider' | 'crm' | 'call',
   {
+    id: AccessPathId
+    label: string
+    blurb: string
+    icon: React.ReactNode
+  }
+> = {
+  forward: {
     id: 'forward',
     label: 'Call forward',
     blurb: 'You can change divert / unanswered forwarding on the number.',
     icon: <Phone className="w-full h-full" strokeWidth={1.25} />,
   },
-  {
+  provider: {
     id: 'provider',
     label: 'Phone / SMS login',
     blurb: 'Carrier portal, VoIP admin, or SMS provider we can use.',
     icon: <Server className="w-full h-full" strokeWidth={1.25} />,
   },
-  {
+  crm: {
     id: 'crm',
     label: 'CRM already linked',
     blurb: 'HubSpot or similar already sees your calls. Tell us how.',
     icon: <Building2 className="w-full h-full" strokeWidth={1.25} />,
   },
-  {
+  call: {
     id: 'call',
     label: 'Quick call',
     blurb: 'We walk through access together. About five minutes.',
     icon: <Phone className="w-full h-full" strokeWidth={1.25} />,
   },
-]
+}
+
+/** Access path cards depend on phone setup. Same four options for every answer is wrong. */
+function missedCallAccessOptionsForSetup(setup: PhoneSetupId | null) {
+  switch (setup) {
+    case 'mobile':
+    case 'landline':
+      return [
+        MISSED_CALL_ACCESS_BY_ID.forward,
+        MISSED_CALL_ACCESS_BY_ID.provider,
+        MISSED_CALL_ACCESS_BY_ID.call,
+      ]
+    case 'voip':
+      return [
+        MISSED_CALL_ACCESS_BY_ID.provider,
+        MISSED_CALL_ACCESS_BY_ID.crm,
+        MISSED_CALL_ACCESS_BY_ID.call,
+      ]
+    case 'mixed':
+      return [
+        MISSED_CALL_ACCESS_BY_ID.forward,
+        MISSED_CALL_ACCESS_BY_ID.provider,
+        MISSED_CALL_ACCESS_BY_ID.crm,
+        MISSED_CALL_ACCESS_BY_ID.call,
+      ]
+    case 'unsure':
+    default:
+      return [MISSED_CALL_ACCESS_BY_ID.call, MISSED_CALL_ACCESS_BY_ID.provider]
+  }
+}
 
 const GOOGLE_PROFILE_STATUS_OPTIONS: {
   id: ProfileStatusId
@@ -510,25 +587,95 @@ const GOOGLE_PROFILE_STATUS_OPTIONS: {
   },
 ]
 
-const GOOGLE_PROFILE_ACCESS_OPTIONS: {
-  id: AccessPathId
-  label: string
-  blurb: string
-  icon: React.ReactNode
-}[] = [
+const GOOGLE_PROFILE_ACCESS_BY_ID: Record<
+  'invite' | 'call' | 'claim' | 'recover',
   {
+    id: AccessPathId
+    label: string
+    blurb: string
+    icon: React.ReactNode
+  }
+> = {
+  invite: {
     id: 'invite',
     label: 'Manager invite',
     blurb: 'You add us as a manager in Google. No password sharing.',
     icon: <Check className="w-full h-full" strokeWidth={1.25} />,
   },
-  {
+  call: {
     id: 'call',
     label: 'Quick call',
-    blurb: 'We walk through the invite together. About five minutes.',
+    blurb: 'We walk through it together. About five minutes.',
     icon: <Phone className="w-full h-full" strokeWidth={1.25} />,
   },
-]
+  claim: {
+    id: 'claim',
+    label: 'Claim it with us',
+    blurb: 'Nobody owns it yet. We walk the Google claim together. Manager invite comes after.',
+    icon: <Globe2 className="w-full h-full" strokeWidth={1.25} />,
+  },
+  recover: {
+    id: 'recover',
+    label: 'Recover ownership',
+    blurb: 'We start Google recovery for a listing you do not control today.',
+    icon: <Building2 className="w-full h-full" strokeWidth={1.25} />,
+  },
+}
+
+/** Access path cards depend on profile status. Unclaimed cannot invite a manager. */
+function googleAccessOptionsForStatus(status: ProfileStatusId | null) {
+  switch (status) {
+    case 'claimed-me':
+      return [
+        GOOGLE_PROFILE_ACCESS_BY_ID.invite,
+        {
+          ...GOOGLE_PROFILE_ACCESS_BY_ID.call,
+          blurb: 'We walk through the manager invite together. About five minutes.',
+        },
+      ]
+    case 'unclaimed':
+      return [
+        GOOGLE_PROFILE_ACCESS_BY_ID.claim,
+        {
+          ...GOOGLE_PROFILE_ACCESS_BY_ID.call,
+          blurb: 'Talk through whether a listing already exists and how to claim it.',
+        },
+      ]
+    case 'claimed-other':
+      return [
+        GOOGLE_PROFILE_ACCESS_BY_ID.recover,
+        {
+          ...GOOGLE_PROFILE_ACCESS_BY_ID.call,
+          blurb: 'Useful if you know who claimed it or have old emails.',
+        },
+      ]
+    case 'suspended':
+      return [
+        {
+          ...GOOGLE_PROFILE_ACCESS_BY_ID.recover,
+          label: 'Assess the suspension',
+          blurb: 'We open the case with you and map what Google will allow.',
+        },
+        {
+          ...GOOGLE_PROFILE_ACCESS_BY_ID.call,
+          blurb: 'Best when you have the suspension email from Google.',
+        },
+      ]
+    case 'unsure':
+    default:
+      return [
+        {
+          ...GOOGLE_PROFILE_ACCESS_BY_ID.call,
+          blurb: 'We look at the listing together and pick claim, invite, or recovery.',
+        },
+        {
+          ...GOOGLE_PROFILE_ACCESS_BY_ID.invite,
+          label: 'I think I manage it',
+          blurb: 'If you can already open Business Profile, invite us as manager.',
+        },
+      ]
+  }
+}
 
 const CRM_SYSTEM_OPTIONS: {
   id: CrmSystemId
@@ -690,37 +837,63 @@ const CRM_GOAL_OPTIONS: {
   },
 ]
 
-const CRM_ACCESS_OPTIONS: {
-  id: AccessPathId
-  label: string
-  blurb: string
-  icon: React.ReactNode
-}[] = [
+const CRM_ACCESS_BY_ID: Record<
+  'invite' | 'admin' | 'form-provider' | 'call',
   {
+    id: AccessPathId
+    label: string
+    blurb: string
+    icon: React.ReactNode
+  }
+> = {
+  invite: {
     id: 'invite',
     label: 'CRM invite',
     blurb: 'You invite us as a user or admin. No password sharing.',
     icon: <Check className="w-full h-full" strokeWidth={1.25} />,
   },
-  {
+  admin: {
     id: 'admin',
     label: 'Admin login details',
     blurb: 'You share a temporary admin path we can use for the build.',
     icon: <Server className="w-full h-full" strokeWidth={1.25} />,
   },
-  {
+  'form-provider': {
     id: 'form-provider',
     label: 'Form / email provider',
     blurb: 'Typeform, Gravity Forms, Gmail, or the tool that catches leads today.',
     icon: <Globe2 className="w-full h-full" strokeWidth={1.25} />,
   },
-  {
+  call: {
     id: 'call',
     label: 'We will call you',
     blurb: 'After we audit the form, we call to finish access. You do not book a sales chat.',
     icon: <Phone className="w-full h-full" strokeWidth={1.25} />,
   },
-]
+}
+
+/** CRM Rescue: access cards follow the system they said they use. */
+function crmAccessOptionsForSystem(system: CrmSystemId | null) {
+  switch (system) {
+    case 'hubspot':
+    case 'pipedrive':
+    case 'salesforce':
+    case 'zoho':
+    case 'monday':
+      return [CRM_ACCESS_BY_ID.invite, CRM_ACCESS_BY_ID.admin, CRM_ACCESS_BY_ID.call]
+    case 'sheets':
+    case 'inbox':
+    case 'none':
+      return [CRM_ACCESS_BY_ID['form-provider'], CRM_ACCESS_BY_ID.call]
+    case 'other':
+    default:
+      return [
+        CRM_ACCESS_BY_ID.call,
+        CRM_ACCESS_BY_ID.invite,
+        CRM_ACCESS_BY_ID['form-provider'],
+      ]
+  }
+}
 
 const BOOKING_TOOL_OPTIONS: {
   id: BookingToolId
@@ -838,37 +1011,86 @@ const BOOKING_WHERE_OPTIONS: {
   },
 ]
 
-const BOOKING_ACCESS_OPTIONS: {
-  id: AccessPathId
-  label: string
-  blurb: string
-  icon: React.ReactNode
-}[] = [
+const BOOKING_ACCESS_BY_ID: Record<
+  'invite' | 'wp-admin' | 'admin' | 'call',
   {
+    id: AccessPathId
+    label: string
+    blurb: string
+    icon: React.ReactNode
+  }
+> = {
+  invite: {
     id: 'invite',
     label: 'Calendar share',
     blurb: 'Share your Google or Outlook calendar with us. No password sharing.',
     icon: <Calendar className="w-full h-full" strokeWidth={1.25} />,
   },
-  {
+  'wp-admin': {
     id: 'wp-admin',
     label: 'Website access',
     blurb: 'Temporary site admin so we can place Book now where it belongs.',
     icon: <LayoutTemplate className="w-full h-full" strokeWidth={1.25} />,
   },
-  {
+  admin: {
     id: 'admin',
     label: 'Google profile manager',
     blurb: 'Add us as a manager so we can turn booking on the listing.',
     icon: <Check className="w-full h-full" strokeWidth={1.25} />,
   },
-  {
+  call: {
     id: 'call',
     label: 'Quick call',
     blurb: 'We walk through calendar, site, and Google access together.',
     icon: <Phone className="w-full h-full" strokeWidth={1.25} />,
   },
-]
+}
+
+/** Booking: access cards follow where Book now will live. Site-only cannot need Google manager. */
+function bookingAccessOptionsForWhere(
+  where: BookingWhereId | null,
+  tool: BookingToolId | null,
+) {
+  const calendar =
+    tool === 'none'
+      ? {
+          ...BOOKING_ACCESS_BY_ID.invite,
+          label: 'Calendar share first',
+          blurb: 'Share the calendar we will book against. We pick the lightest booking tool after.',
+        }
+      : tool === 'hubspot' || tool === 'calendly' || tool === 'setmore' || tool === 'fresha'
+        ? {
+            ...BOOKING_ACCESS_BY_ID.invite,
+            label: 'Tool + calendar',
+            blurb: `Invite us into ${
+              tool === 'hubspot'
+                ? 'HubSpot'
+                : tool === 'calendly'
+                  ? 'Calendly'
+                  : tool === 'setmore'
+                    ? 'your booking tool'
+                    : 'Fresha'
+            } and share the calendar it uses.`,
+          }
+        : BOOKING_ACCESS_BY_ID.invite
+
+  switch (where) {
+    case 'site':
+      return [calendar, BOOKING_ACCESS_BY_ID['wp-admin'], BOOKING_ACCESS_BY_ID.call]
+    case 'google':
+      return [calendar, BOOKING_ACCESS_BY_ID.admin, BOOKING_ACCESS_BY_ID.call]
+    case 'both':
+      return [
+        calendar,
+        BOOKING_ACCESS_BY_ID['wp-admin'],
+        BOOKING_ACCESS_BY_ID.admin,
+        BOOKING_ACCESS_BY_ID.call,
+      ]
+    case 'unsure':
+    default:
+      return [BOOKING_ACCESS_BY_ID.call, calendar, BOOKING_ACCESS_BY_ID['wp-admin']]
+  }
+}
 
 const TEAM_FORMAT_OPTIONS = [
   {
@@ -1815,14 +2037,14 @@ const FunnelAccessPage: React.FC = () => {
   }, [product])
   const canGoBack = step !== 'done' && step !== firstStep
   const accessOptions = usesMissedWizard
-    ? MISSED_CALL_ACCESS_OPTIONS
+    ? missedCallAccessOptionsForSetup(phoneSetup)
     : usesGoogleWizard
-      ? GOOGLE_PROFILE_ACCESS_OPTIONS
+      ? googleAccessOptionsForStatus(profileStatus)
       : isCrmRescue
-        ? CRM_ACCESS_OPTIONS
+        ? crmAccessOptionsForSystem(crmSystem)
         : isBooking
-          ? BOOKING_ACCESS_OPTIONS
-        : ACCESS_OPTIONS
+          ? bookingAccessOptionsForWhere(bookingWhere, bookingTool)
+          : siteAccessOptionsForPlatform(platform)
 
   function goNext(from: StepId) {
     setError(null)
@@ -2100,16 +2322,19 @@ const FunnelAccessPage: React.FC = () => {
 
   function selectPhoneSetup(id: PhoneSetupId) {
     setPhoneSetup(id)
+    setAccessPath(null)
     window.setTimeout(() => goNext('phoneSetup'), 200)
   }
 
   function selectProfileStatus(id: ProfileStatusId) {
     setProfileStatus(id)
+    setAccessPath(null)
     window.setTimeout(() => goNext('profileStatus'), 200)
   }
 
   function selectPlatform(id: PlatformId) {
     setPlatform(id)
+    setAccessPath(null)
     window.setTimeout(() => goNext('platform'), 200)
   }
 
@@ -2599,6 +2824,7 @@ const FunnelAccessPage: React.FC = () => {
                         selected={bookingWhere === opt.id}
                         onSelect={() => {
                           setBookingWhere(opt.id)
+                          setAccessPath(null)
                           goNext('bookingWhere')
                         }}
                         title={opt.label}
@@ -3140,7 +3366,15 @@ const FunnelAccessPage: React.FC = () => {
                 <p className="font-sans text-dark/55 mb-6 max-w-xl leading-relaxed">
                   Hover, then Select. Pick whatever is easiest for you.
                 </p>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+                <div
+                  className={
+                    accessOptions.length <= 2
+                      ? 'grid grid-cols-2 gap-3 md:gap-4 max-w-2xl'
+                      : accessOptions.length === 3
+                        ? 'grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 max-w-3xl'
+                        : 'grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4'
+                  }
+                >
                   {accessOptions.map((opt) => (
                     <div key={opt.id}>
                       <SelectCard
@@ -3171,7 +3405,11 @@ const FunnelAccessPage: React.FC = () => {
                     : usesGoogleWizard
                       ? accessPath === 'invite'
                         ? 'The Google account email that can add managers, or say you will send the invite shortly.'
-                        : 'Best times to call, or anything that usually trips people up.'
+                        : accessPath === 'claim'
+                          ? 'Business name, suburb, and the Google Maps link if you have one. Do not share passwords here.'
+                          : accessPath === 'recover'
+                            ? 'Who used to manage it if you know, any suspension email from Google, and best times to call.'
+                            : 'Best times to call, or anything that usually trips people up.'
                       : accessPath === 'wp-admin'
                         ? 'Login URL, or say you will email credentials separately.'
                         : accessPath === 'hosting'
