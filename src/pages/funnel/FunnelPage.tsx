@@ -90,6 +90,7 @@ import {FUNNEL_COLOURS, FUNNEL_CSS_VARS} from './funnelTheme'
 import {Reveal, RevealList} from './funnelReveal'
 import {websiteEnrolmentPriceOptions} from '../../constants/websiteStripe'
 import {BOOKING_STRIPE_URL} from '../../constants/bookingStripe'
+import {SPEED_FIX_STRIPE_URL} from '../../constants/speedFixStripe'
 import {funnelCopyForSlug} from './funnelCopy'
 import {
   FUNNEL_PRODUCT_LABELS,
@@ -387,7 +388,8 @@ const FunnelPage: React.FC = () => {
   const resolvedStripeUrl =
     doc?.stripeUrl ||
     (isWebsite ? websiteEnrolmentPriceOptions()[0]?.stripeUrl : undefined) ||
-    (isBooking ? BOOKING_STRIPE_URL : undefined)
+    (isBooking ? BOOKING_STRIPE_URL : undefined) ||
+    (isSpeed ? SPEED_FIX_STRIPE_URL : undefined)
   const buyDoorNeedsAccess =
     (isReviews || isAiPhone || isBooking || isWebsite) && !resolvedStripeUrl
   const ctaFields: FunnelCtaFields = {

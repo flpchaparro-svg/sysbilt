@@ -1,0 +1,12 @@
+{
+  "createdAt": "2026-07-30T11:35:00.000Z",
+  "mode": "live",
+  "note": "Website Speed Fix · live Payment Link. After pay → https://sysbilt.com/go/thanks?p=speed-fix → access form (site/platform). Wire Sanity funnelPage speed-fix stripeUrl to paymentLinkUrl.",
+  "product": {
+    "code": "speed-fix",
+    "name": "Website Speed Fix",
+    "paymentLinkId": "plink_1TvqGL7kQC0CB85zZADITzIJ",
+    "paymentLinkUrl": "https://buy.stripe.com/6oU8wJaGl0UUdiC5O33gk04",
+    "amountAud": 1200
+  }
+}

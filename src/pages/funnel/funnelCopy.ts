@@ -189,7 +189,7 @@ export const SPEED_FIX_COPY: FunnelProductCopy = {
     },
     {
       q: 'What do you need from me?',
-      a: 'A short access form after payment — how your site is built and how we should get in. About five minutes, plain English.',
+      a: 'A short access form after payment: how your site is built and how we should get in. About five minutes, plain English.',
     },
     {
       q: 'Why is this cheaper than an agency retainer?',
