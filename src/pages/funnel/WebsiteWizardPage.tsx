@@ -32,7 +32,7 @@ import {
 import { SysbiltLogo } from '../../components/SysbiltLogo'
 import { FUNNEL_COLOURS, FUNNEL_CSS_VARS } from './funnelTheme'
 import {
-  WEBSITE_WIZARD_ACKS,
+  websiteWizardAcks,
   WEBSITE_WIZARD_STAGES,
   type WizardField,
   type WizardOption,
@@ -133,10 +133,17 @@ function asStringList(raw: Answers[string] | undefined, count: number): string[]
 }
 
 function fieldIsVisible(field: WizardField, answers: Answers): boolean {
-  if (field.id !== 'domainName') return true
-  const situation = answers.domainSituation
-  // No domain to confirm when they need a new one or are unsure.
-  return situation === 'have_login' || situation === 'have_no_login'
+  if (field.id === 'domainName') {
+    const situation = answers.domainSituation
+    // No domain to confirm when they need a new one or are unsure.
+    return situation === 'have_login' || situation === 'have_no_login'
+  }
+  if (field.id === 'currentUrl' || field.id === 'keepFromOld') {
+    const has = answers.hasSite
+    // No current site means nothing to paste or keep from.
+    return has === 'yes' || has === 'sort_of'
+  }
+  return true
 }
 
 function optionIcon(value: string): ReactNode {
@@ -432,6 +439,10 @@ function WebsiteWizardPage() {
   const field = fields[step]
   const stageIdx = stageIndexForField(field.id)
   const progress = ((step + 1) / fields.length) * 100
+  const wizardAcks = useMemo(
+    () => websiteWizardAcks(tier ?? 'brochure'),
+    [tier],
+  )
 
   const setAnswer = useCallback((id: string, value: Answers[string]) => {
     setAnswers((prev) => ({ ...prev, [id]: value }))
@@ -581,7 +592,7 @@ function WebsiteWizardPage() {
     twinEmpty || (isValidName(twinName) && isValidEmail(twinEmail))
 
   const acksOk =
-    field.type === 'acks' && WEBSITE_WIZARD_ACKS.every((a) => answers[a.id] === true)
+    field.type === 'acks' && wizardAcks.every((a) => answers[a.id] === true)
 
   const boxesFilled = boxes.map((b) => b.trim()).filter(Boolean)
   const boxesUrlsOk =
@@ -793,7 +804,7 @@ function WebsiteWizardPage() {
       case 'acks':
         return (
           <div className="mt-6 space-y-3 max-w-2xl">
-            {WEBSITE_WIZARD_ACKS.map((ack) => {
+            {wizardAcks.map((ack) => {
               const on = answers[ack.id] === true
               return (
                 <button

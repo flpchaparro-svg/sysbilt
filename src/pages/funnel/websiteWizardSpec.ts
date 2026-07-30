@@ -4,6 +4,8 @@
  * Submits to HubSpot via /api/funnel/access (product: website).
  */
 
+import {WEBSITE_TIER_META, type WebsiteTierCode} from './websiteAgreementCopy'
+
 export type WizardFieldType =
   | 'intro'
   | 'text'
@@ -425,25 +427,32 @@ export const WEBSITE_WIZARD_STAGES: WizardStage[] = [
   },
 ]
 
-export const WEBSITE_WIZARD_ACKS = [
-  {
-    id: 'ack_scope',
-    label: 'Brochure site on our hosting. Not a custom app or online shop.',
-  },
-  {
-    id: 'ack_term',
-    label: 'Twelve months from go-live. Leave early and I pay the remaining months of the term.',
-  },
-  {
-    id: 'ack_billing',
-    label: 'Today I pay one month to start. Monthly autopay begins the day the site goes live.',
-  },
-  {
-    id: 'ack_interview',
-    label: 'Twenty minute phone interview. We record it with my say-so.',
-  },
-  {
-    id: 'ack_content',
-    label: 'I will answer follow-ups so we can ship on time.',
-  },
-] as const
+export function websiteWizardAcks(tier: WebsiteTierCode) {
+  const meta = WEBSITE_TIER_META[tier]
+  return [
+    {
+      id: 'ack_scope',
+      label: `${meta.name} site on our hosting. Not a custom app or online shop.`,
+    },
+    {
+      id: 'ack_term',
+      label:
+        'Twelve months from go-live. Leave early and I pay the remaining months of the term.',
+    },
+    {
+      id: 'ack_billing',
+      label: `Today I pay $${meta.enrolmentAud} to start. Monthly $${meta.monthlyAud} autopay begins the day the site goes live.`,
+    },
+    {
+      id: 'ack_interview',
+      label: 'Twenty minute phone interview. We record it with my say-so.',
+    },
+    {
+      id: 'ack_content',
+      label: 'I will answer follow-ups so we can ship on time.',
+    },
+  ] as const
+}
+
+/** @deprecated Prefer websiteWizardAcks(tier) so Brochure / Practice / Full match the paid plan. */
+export const WEBSITE_WIZARD_ACKS = websiteWizardAcks('brochure')

@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState} from 'react'
-import {Link, useSearchParams} from 'react-router-dom'
+import {Link, useNavigate, useSearchParams} from 'react-router-dom'
 import {m, AnimatePresence} from 'framer-motion'
 import {
   ArrowRight,
@@ -1769,14 +1769,30 @@ const inputClass =
 
 const FunnelAccessPage: React.FC = () => {
   const [params] = useSearchParams()
+  const navigate = useNavigate()
   const prefilled = params.get('p')
   const initialProduct = isFunnelProductCode(prefilled) ? prefilled : null
   const modeParam = params.get('m')?.trim().toLowerCase()
   const initialSessionFormat: 'remote' | 'onsite' | null =
     modeParam === 'remote' || modeParam === 'onsite' ? modeParam : null
 
+  // Hosted Website Plan has its own agreement → wizard path. Never run Speed Fix steps.
+  useEffect(() => {
+    if (prefilled === 'website' || prefilled === 'website-hook') {
+      const tier = params.get('tier')
+      navigate(
+        tier && (tier === 'brochure' || tier === 'practice' || tier === 'full')
+          ? `/go/website/wizard?tier=${tier}`
+          : '/go/website',
+        {replace: true},
+      )
+    }
+  }, [navigate, params, prefilled])
+
   const [step, setStep] = useState<StepId>('product')
-  const [product, setProduct] = useState<FunnelProductCode | null>(initialProduct)
+  const [product, setProduct] = useState<FunnelProductCode | null>(
+    prefilled === 'website' || prefilled === 'website-hook' ? null : initialProduct,
+  )
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [business, setBusiness] = useState('')
@@ -2029,7 +2045,9 @@ const FunnelAccessPage: React.FC = () => {
   const firstStep: StepId = 'product'
   const help = helpForStep(step)
   const liveProducts = useMemo(() => {
-    const all = FUNNEL_PRODUCT_CATALOGUE.filter((p) => p.status === 'live')
+    const all = FUNNEL_PRODUCT_CATALOGUE.filter(
+      (p) => p.status === 'live' && p.code !== 'website' && p.code !== 'website-hook',
+    )
     if (!product) return all
     const selected = all.find((p) => p.code === product)
     if (!selected) return all

@@ -4,6 +4,7 @@ import {Link, useNavigate, useSearchParams} from 'react-router-dom'
 import {SysbiltLogo} from '../../components/SysbiltLogo'
 import {
   buildWebsiteAgreementClauses,
+  buildWebsiteAgreementSummary,
   isWebsiteTierCode,
   WEBSITE_TIER_META,
   type WebsiteTierCode,
@@ -57,6 +58,7 @@ export default function WebsiteAgreementPage() {
   const tier: WebsiteTierCode | null = isWebsiteTierCode(tierParam) ? tierParam : null
   const meta = tier ? WEBSITE_TIER_META[tier] : null
   const clauses = useMemo(() => (tier ? buildWebsiteAgreementClauses(tier) : []), [tier])
+  const summary = useMemo(() => (tier ? buildWebsiteAgreementSummary(tier) : null), [tier])
 
   const [acceptAgreement, setAcceptAgreement] = useState(false)
   const [acceptBilling, setAcceptBilling] = useState(false)
@@ -273,6 +275,33 @@ export default function WebsiteAgreementPage() {
             ) : null}
           </header>
 
+          {summary ? (
+            <section className="mb-14 border-2 border-dark bg-white p-6 md:p-8">
+              <p className="mb-4 font-mono text-xs uppercase tracking-[0.3em] text-red-text">
+                / Summary
+              </p>
+              <h2 className="mb-6 font-serif text-2xl font-semibold uppercase tracking-tight text-dark md:text-3xl">
+                {summary.title}
+              </h2>
+              <div className="divide-y divide-dark/10">
+                {summary.rows.map((row) => (
+                  <div
+                    key={row.label}
+                    className="grid grid-cols-1 gap-1 py-3 md:grid-cols-[11rem_1fr] md:gap-6"
+                  >
+                    <p className="font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-dark/55">
+                      {row.label}
+                    </p>
+                    <p className="font-sans text-base leading-relaxed text-dark/85">{row.value}</p>
+                  </div>
+                ))}
+              </div>
+              <p className="mt-6 font-sans text-sm text-dark/60">
+                Everything below explains those points properly. Nothing below contradicts them.
+              </p>
+            </section>
+          ) : null}
+
           {clauses.map((clause) => (
             <section key={clause.id} id={clause.id} className="mb-10">
               <h2 className="mb-4 font-serif text-2xl font-semibold uppercase tracking-tight text-dark md:text-3xl">
@@ -283,6 +312,13 @@ export default function WebsiteAgreementPage() {
                   {p}
                 </p>
               ))}
+              {clause.bullets?.length ? (
+                <ul className="mb-4 list-disc space-y-2 pl-5 text-base leading-relaxed text-dark/85 md:text-lg">
+                  {clause.bullets.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              ) : null}
             </section>
           ))}
 

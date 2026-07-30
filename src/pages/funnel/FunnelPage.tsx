@@ -379,13 +379,15 @@ const FunnelPage: React.FC = () => {
   }, [slug])
 
   const rawLabel = doc?.ctaLabel || COPY.ctaLabel
-  // Live Payment Links in code. Sanity wins only when it is a real (non-test) buy link.
-  const websitePriceOptions =
-    (doc?.priceOptions || []).filter((o) => o?.ctaLabel && o?.stripeUrl).length > 0
-      ? doc?.priceOptions
-      : isWebsite
-        ? websiteEnrolmentPriceOptions()
-        : doc?.priceOptions
+  // Live Payment Links in code. Website always uses the three enrolment tiers from
+  // websiteStripe.ts so Sanity cannot leak test buy links into the dual CTA.
+  const liveWebsitePriceOptions = isWebsite ? websiteEnrolmentPriceOptions() : null
+  const sanityPriceOptions = (doc?.priceOptions || []).filter(
+    (o) =>
+      o?.ctaLabel &&
+      o?.stripeUrl &&
+      !String(o.stripeUrl).includes('buy.stripe.com/test_'),
+  )
   const liveFallback =
     (isWebsite ? websiteEnrolmentPriceOptions()[0]?.stripeUrl : undefined) ||
     (isBooking ? BOOKING_STRIPE_URL : undefined) ||
@@ -398,10 +400,12 @@ const FunnelPage: React.FC = () => {
       : liveFallback || sanityStripe || undefined
   const buyDoorNeedsAccess =
     (isReviews || isAiPhone || isBooking || isWebsite) && !resolvedStripeUrl
+  const dualWebsite =
+    isWebsite && (liveWebsitePriceOptions || []).filter((o) => o?.ctaLabel && o?.stripeUrl).length >= 2
   const ctaFields: FunnelCtaFields = {
     ctaMode: buyDoorNeedsAccess
       ? 'call'
-      : isWebsite && (websitePriceOptions || []).filter((o) => o?.ctaLabel && o?.stripeUrl).length >= 2
+      : dualWebsite
         ? 'dual'
         : doc?.ctaMode || (isChangePack || isContentSystem ? 'call' : 'buy'),
     // Authored labels already include price text. Only normalise a comma before $ into one middle dot.
@@ -430,7 +434,7 @@ const FunnelPage: React.FC = () => {
         (isChangePack || isContentSystem
           ? accessFormPathForProduct(isContentSystem ? 'content-system' : 'change-pack')
           : undefined),
-    priceOptions: websitePriceOptions,
+    priceOptions: liveWebsitePriceOptions || (sanityPriceOptions.length > 0 ? sanityPriceOptions : undefined),
   }
 
   const pageTitle = doc?.title ? `${doc.title} | SYSBILT` : 'Fixed-price fix | SYSBILT'
