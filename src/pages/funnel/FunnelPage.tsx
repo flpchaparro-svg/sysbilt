@@ -89,6 +89,7 @@ import {
 import {FUNNEL_COLOURS, FUNNEL_CSS_VARS} from './funnelTheme'
 import {Reveal, RevealList} from './funnelReveal'
 import {websiteEnrolmentPriceOptions} from '../../constants/websiteStripe'
+import {BOOKING_STRIPE_URL} from '../../constants/bookingStripe'
 import {funnelCopyForSlug} from './funnelCopy'
 import {
   FUNNEL_PRODUCT_LABELS,
@@ -376,20 +377,19 @@ const FunnelPage: React.FC = () => {
   }, [slug])
 
   const rawLabel = doc?.ctaLabel || COPY.ctaLabel
-  // Live Payment Links in websiteStripe.ts. Sanity priceOptions still win if set.
+  // Live Payment Links in websiteStripe.ts / bookingStripe.ts. Sanity still wins when set.
   const websitePriceOptions =
     (doc?.priceOptions || []).filter((o) => o?.ctaLabel && o?.stripeUrl).length > 0
       ? doc?.priceOptions
       : isWebsite
         ? websiteEnrolmentPriceOptions()
         : doc?.priceOptions
-  const websiteStripeUrl =
+  const resolvedStripeUrl =
     doc?.stripeUrl ||
-    (isWebsite ? websiteEnrolmentPriceOptions()[0]?.stripeUrl : undefined)
+    (isWebsite ? websiteEnrolmentPriceOptions()[0]?.stripeUrl : undefined) ||
+    (isBooking ? BOOKING_STRIPE_URL : undefined)
   const buyDoorNeedsAccess =
-    (isReviews || isAiPhone || isBooking || isWebsite) &&
-    !doc?.stripeUrl &&
-    !(isWebsite && websiteStripeUrl)
+    (isReviews || isAiPhone || isBooking || isWebsite) && !resolvedStripeUrl
   const ctaFields: FunnelCtaFields = {
     ctaMode: buyDoorNeedsAccess
       ? 'call'
@@ -398,7 +398,7 @@ const FunnelPage: React.FC = () => {
         : doc?.ctaMode || (isChangePack || isContentSystem ? 'call' : 'buy'),
     // Authored labels already include price text. Only normalise a comma before $ into one middle dot.
     ctaLabel: rawLabel.replace(/,\s*(?=\$)/, ' · ').replace(/\s*·\s*·\s*(?=\$)/, ' · '),
-    stripeUrl: websiteStripeUrl || doc?.stripeUrl,
+    stripeUrl: resolvedStripeUrl,
     quietLine: isWebsite
       ? 'Prefer to talk first? Book 15 minutes.'
       : undefined,
