@@ -1,0 +1,14 @@
+{
+  "createdAt": "2026-07-30T13:00:00.000Z",
+  "mode": "live",
+  "note": "Missed-Call Text-Back · live Payment Link. After pay → https://sysbilt.com/go/thanks?p=missed-call → phone access wizard. Never use buy.stripe.com/test_ on this page.",
+  "product": {
+    "code": "missed-call",
+    "name": "Missed-Call Text-Back",
+    "productId": "prod_UuDuUun5FJEOrj",
+    "priceId": "price_1TvqGI7kQC0CB85zaS6mHaBe",
+    "paymentLinkId": "plink_1TvqGM7kQC0CB85zIxKYQec9",
+    "paymentLinkUrl": "https://buy.stripe.com/bJe5kx6q55ba92m1xN3gk07",
+    "amountAud": 750
+  }
+}
