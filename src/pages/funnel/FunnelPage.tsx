@@ -91,6 +91,7 @@ import {Reveal, RevealList} from './funnelReveal'
 import {websiteEnrolmentPriceOptions} from '../../constants/websiteStripe'
 import {BOOKING_STRIPE_URL} from '../../constants/bookingStripe'
 import {SPEED_FIX_STRIPE_URL} from '../../constants/speedFixStripe'
+import {GOOGLE_PROFILE_STRIPE_URL} from '../../constants/googleProfileStripe'
 import {funnelCopyForSlug} from './funnelCopy'
 import {
   FUNNEL_PRODUCT_LABELS,
@@ -378,18 +379,23 @@ const FunnelPage: React.FC = () => {
   }, [slug])
 
   const rawLabel = doc?.ctaLabel || COPY.ctaLabel
-  // Live Payment Links in websiteStripe.ts / bookingStripe.ts. Sanity still wins when set.
+  // Live Payment Links in code. Sanity wins only when it is a real (non-test) buy link.
   const websitePriceOptions =
     (doc?.priceOptions || []).filter((o) => o?.ctaLabel && o?.stripeUrl).length > 0
       ? doc?.priceOptions
       : isWebsite
         ? websiteEnrolmentPriceOptions()
         : doc?.priceOptions
-  const resolvedStripeUrl =
-    doc?.stripeUrl ||
+  const liveFallback =
     (isWebsite ? websiteEnrolmentPriceOptions()[0]?.stripeUrl : undefined) ||
     (isBooking ? BOOKING_STRIPE_URL : undefined) ||
-    (isSpeed ? SPEED_FIX_STRIPE_URL : undefined)
+    (isSpeed ? SPEED_FIX_STRIPE_URL : undefined) ||
+    (isGoogleProfile ? GOOGLE_PROFILE_STRIPE_URL : undefined)
+  const sanityStripe = (doc?.stripeUrl || '').trim()
+  const resolvedStripeUrl =
+    sanityStripe && !sanityStripe.includes('buy.stripe.com/test_')
+      ? sanityStripe
+      : liveFallback || sanityStripe || undefined
   const buyDoorNeedsAccess =
     (isReviews || isAiPhone || isBooking || isWebsite) && !resolvedStripeUrl
   const ctaFields: FunnelCtaFields = {
