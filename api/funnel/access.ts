@@ -77,6 +77,10 @@ const CRM_GOALS = new Set([
   'full',
 ]);
 const CRM_ACCESS = new Set(['invite', 'admin', 'form-provider', 'call']);
+const BOOKING_TOOLS = new Set(['hubspot', 'calendly', 'setmore', 'fresha', 'other', 'none']);
+const BOOKING_WHAT = new Set(['appointments', 'calls', 'consults', 'mixed', 'other']);
+const BOOKING_WHERE = new Set(['site', 'google', 'both', 'unsure']);
+const BOOKING_ACCESS = new Set(['invite', 'wp-admin', 'admin', 'call']);
 const MISSED_CALL_SETUPS = new Set(['mobile', 'landline', 'voip', 'mixed', 'unsure']);
 const MISSED_CALL_ACCESS = new Set(['forward', 'provider', 'crm', 'call']);
 const GOOGLE_PROFILE_STATUS = new Set([
@@ -126,6 +130,9 @@ type Body = {
   crmSystem?: unknown;
   leadSource?: unknown;
   crmGoal?: unknown;
+  bookingTool?: unknown;
+  bookingWhat?: unknown;
+  bookingWhere?: unknown;
   websiteUrl?: unknown;
   teamSize?: unknown;
   teamTools?: unknown;
@@ -447,6 +454,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const crmSystem = str(body.crmSystem, 40);
   const leadSource = str(body.leadSource, 40);
   const crmGoal = str(body.crmGoal, 40);
+  const bookingTool = str(body.bookingTool, 40);
+  const bookingWhat = str(body.bookingWhat, 40);
+  const bookingWhere = str(body.bookingWhere, 40);
   const websiteUrl = str(body.websiteUrl, 400);
   const teamSize = str(body.teamSize, 40);
   const teamTools = str(body.teamTools, 2000);
@@ -481,6 +491,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const isMissedCall = product === 'missed-call' || product === 'ai-phone';
   const isGoogleProfile = product === 'google-profile' || product === 'reviews';
   const isCrmRescue = product === 'crm-rescue';
+  const isBooking = product === 'booking';
   const isTeamAi = product === 'team-ai';
   const isChangePack = product === 'change-pack';
   const isContentSystem = product === 'content-system';
@@ -510,6 +521,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       return;
     }
     if (!CRM_ACCESS.has(accessPath)) {
+      res.status(400).json({ error: 'Invalid access path' });
+      return;
+    }
+  } else if (isBooking) {
+    if (!BOOKING_TOOLS.has(bookingTool) || !BOOKING_WHAT.has(bookingWhat) || !BOOKING_WHERE.has(bookingWhere)) {
+      res.status(400).json({ error: 'Invalid booking tool, booking type, or Book now surfaces' });
+      return;
+    }
+    if (!BOOKING_ACCESS.has(accessPath)) {
       res.status(400).json({ error: 'Invalid access path' });
       return;
     }
@@ -603,6 +623,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           ]
             .filter(Boolean)
             .join('\n')
+        : isBooking
+          ? [
+              `Funnel access form — ${product}`,
+              `Business: ${business}`,
+              websiteUrl ? `Website: ${websiteUrl}` : null,
+              `Booking tool: ${bookingTool}`,
+              `What gets booked: ${bookingWhat}`,
+              `Book now surfaces: ${bookingWhere}`,
+              `Access path: ${accessPath}`,
+              accessDetail ? `Access notes:\n${accessDetail}` : null,
+              notes ? `Other notes:\n${notes}` : null,
+              `Submitted: ${new Date().toISOString()}`,
+            ]
+              .filter(Boolean)
+              .join('\n')
         : isTeamAi
           ? [
               `Funnel access form — ${product}`,
@@ -667,7 +702,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     name,
     email,
     business,
-    website: isCrmRescue ? websiteUrl : website,
+    website: isCrmRescue || isBooking ? websiteUrl : website,
     platform,
     sameProvider,
     domainProvider,
@@ -682,6 +717,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     crmSystem,
     leadSource,
     crmGoal,
+    bookingTool,
+    bookingWhat,
+    bookingWhere,
     websiteUrl,
     teamSize,
     teamTools,
@@ -725,7 +763,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         email,
         firstname: name,
         company: business,
-        website: (isCrmRescue ? websiteUrl : website) || undefined,
+        website: (isCrmRescue || isBooking ? websiteUrl : website) || undefined,
         phone: phone || undefined,
         lifecyclestage: isChangePack || isContentSystem ? 'lead' : 'customer',
         leadSourceDetail: `go/${product}`,
@@ -791,14 +829,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
             ? `Profile: ${profileUrl.slice(0, 80)} · Status: ${profileStatus}`
             : isCrmRescue
               ? `CRM: ${crmSystem} · Leads: ${leadSource} · Goal: ${crmGoal}`
+              : isBooking
+                ? `Tool: ${bookingTool} · Books: ${bookingWhat} · Surfaces: ${bookingWhere}`
               : website,
-        isMissedCall || isGoogleProfile || isCrmRescue
+        isMissedCall || isGoogleProfile || isCrmRescue || isBooking
           ? `Access: ${accessPath}`
           : `Platform: ${platform} · Access: ${accessPath}`,
-        !isMissedCall && !isGoogleProfile && !isCrmRescue && sameProvider !== 'yes'
+        !isMissedCall && !isGoogleProfile && !isCrmRescue && !isBooking && sameProvider !== 'yes'
           ? `Domain/hosting same: ${sameProvider}${domainProvider ? ` · Domain: ${domainProvider}` : ''}${hostingProvider ? ` · Host: ${hostingProvider}` : ''}`
           : null,
-        isCrmRescue && websiteUrl ? `Website: ${websiteUrl}` : null,
+        (isCrmRescue || isBooking) && websiteUrl ? `Website: ${websiteUrl}` : null,
         accessDetail ? `Access notes: ${accessDetail.slice(0, 280)}` : null,
         dealLink ? `<${dealLink}|Open deal>` : null,
         `<${contactLink}|Open contact>`,

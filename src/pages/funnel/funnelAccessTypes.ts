@@ -53,6 +53,9 @@ export type CrmLeadSourceId =
   | 'mixed'
   | 'unsure'
 export type CrmGoalId = 'speed' | 'alerts' | 'follow-up' | 'quotes' | 'missed-call' | 'full'
+export type BookingToolId = 'hubspot' | 'calendly' | 'setmore' | 'fresha' | 'other' | 'none'
+export type BookingWhatId = 'appointments' | 'calls' | 'consults' | 'mixed' | 'other'
+export type BookingWhereId = 'site' | 'google' | 'both' | 'unsure'
 
 export type FunnelAccessPayload = {
   product: FunnelProductCode
@@ -74,6 +77,9 @@ export type FunnelAccessPayload = {
   crmSystem?: CrmSystemId | ''
   leadSource?: CrmLeadSourceId | ''
   crmGoal?: CrmGoalId | ''
+  bookingTool?: BookingToolId | ''
+  bookingWhat?: BookingWhatId | ''
+  bookingWhere?: BookingWhereId | ''
   websiteUrl?: string
   teamSize?: string
   teamTools?: string

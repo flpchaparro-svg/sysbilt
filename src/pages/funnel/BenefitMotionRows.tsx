@@ -1506,6 +1506,139 @@ const LANDING_VISUALS = [
   TwoDayLiveVisual,
 ]
 
+/** Hot intent → Book now tap. */
+function BookingHotTapVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full overflow-hidden border border-dark/12 bg-white/70 p-3 flex flex-col justify-between">
+      <p className="font-mono text-[8px] uppercase tracking-[0.14em] text-dark/40">Ready customer</p>
+      <div className="space-y-2">
+        <p className="font-serif text-sm font-bold" style={{color: FUNNEL_COLOURS.ink}}>
+          They want a time now
+        </p>
+        <motion.span
+          className="inline-flex font-mono text-[10px] font-bold uppercase tracking-[0.14em] px-2.5 py-1.5"
+          style={{backgroundColor: FUNNEL_COLOURS.accent, color: FUNNEL_COLOURS.onInk}}
+          animate={reduce ? undefined : {scale: [1, 1.06, 1], opacity: [0.85, 1, 0.85]}}
+          transition={reduce ? undefined : {duration: 1.5, repeat: Infinity}}
+        >
+          Book now
+        </motion.span>
+      </div>
+    </div>
+  )
+}
+
+/** Calendar stays source of truth. */
+function BookingCalendarTruthVisual({reduce}: VisualProps) {
+  const slots = ['9:00', '10:30', '14:00']
+  return (
+    <div className="relative h-[118px] w-full overflow-hidden border border-dark/12 bg-white/70 p-3">
+      <p className="font-mono text-[8px] uppercase tracking-[0.14em] text-dark/40 mb-2">Your calendar</p>
+      <div className="space-y-1.5">
+        {slots.map((slot, i) => (
+          <motion.div
+            key={slot}
+            className="flex items-center justify-between border px-2 py-1"
+            style={{borderColor: `${FUNNEL_COLOURS.ink}14`, backgroundColor: FUNNEL_COLOURS.ground}}
+            animate={
+              reduce
+                ? undefined
+                : {opacity: [0.45, 1, 0.45], borderColor: [`${FUNNEL_COLOURS.ink}14`, `${FUNNEL_COLOURS.goldDeep}55`, `${FUNNEL_COLOURS.ink}14`]}
+            }
+            transition={reduce ? undefined : {duration: 2.4, repeat: Infinity, delay: i * 0.25}}
+          >
+            <span className="font-mono text-[10px]" style={{color: FUNNEL_COLOURS.ink}}>
+              {slot}
+            </span>
+            <span
+              className="font-mono text-[8px] font-bold uppercase tracking-[0.12em]"
+              style={{color: i === 1 ? FUNNEL_COLOURS.accent : FUNNEL_COLOURS.goldDeep}}
+            >
+              {i === 1 ? 'New' : 'Held'}
+            </span>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** Empty chair → text chase. */
+function BookingNoShowVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full overflow-hidden border border-dark/12 bg-white/70 p-3 flex flex-col justify-center gap-2">
+      <div className="flex items-center gap-2">
+        <motion.span
+          className="font-mono text-[9px] font-bold uppercase tracking-[0.12em] px-1.5 py-1"
+          style={{backgroundColor: `${FUNNEL_COLOURS.accent}22`, color: FUNNEL_COLOURS.accent}}
+          animate={reduce ? undefined : {opacity: [1, 0.35, 1]}}
+          transition={reduce ? undefined : {duration: 1.8, repeat: Infinity}}
+        >
+          Empty slot
+        </motion.span>
+        <motion.span
+          className="font-mono text-[10px] text-dark/35"
+          animate={reduce ? undefined : {x: [0, 4, 0], opacity: [0.3, 1, 0.3]}}
+          transition={reduce ? undefined : {duration: 1.4, repeat: Infinity}}
+        >
+          →
+        </motion.span>
+        <motion.span
+          className="font-mono text-[9px] font-bold uppercase tracking-[0.12em] px-1.5 py-1"
+          style={{backgroundColor: FUNNEL_COLOURS.ink, color: FUNNEL_COLOURS.onInk}}
+          animate={reduce ? undefined : {scale: [0.92, 1, 0.92]}}
+          transition={reduce ? undefined : {duration: 1.8, repeat: Infinity, delay: 0.4}}
+        >
+          Text sent
+        </motion.span>
+      </div>
+      <p className="font-serif text-sm font-bold" style={{color: FUNNEL_COLOURS.ink}}>
+        Fewer quiet no-shows
+      </p>
+    </div>
+  )
+}
+
+/** Two to three day delivery. */
+function BookingDaysVisual({reduce}: VisualProps) {
+  const days = [
+    {n: '01', label: 'Access'},
+    {n: '02', label: 'Wire'},
+    {n: '03', label: 'Live'},
+  ]
+  return (
+    <div className="relative h-[118px] w-full overflow-hidden border border-dark/12 bg-white/70 p-3">
+      <p className="font-mono text-[8px] uppercase tracking-[0.14em] text-dark/40 mb-3">Delivery</p>
+      <div className="grid grid-cols-3 gap-2">
+        {days.map((day, i) => (
+          <motion.div
+            key={day.n}
+            className="border px-1.5 py-2 text-center"
+            style={{borderColor: `${FUNNEL_COLOURS.ink}14`, backgroundColor: FUNNEL_COLOURS.ground}}
+            initial={reduce ? false : {opacity: 0, y: 8}}
+            animate={reduce ? undefined : {opacity: [0.4, 1, 0.4], y: [4, 0, 4]}}
+            transition={reduce ? undefined : {duration: 2.2, repeat: Infinity, delay: i * 0.3}}
+          >
+            <p className="font-mono text-[10px] font-bold" style={{color: FUNNEL_COLOURS.accent}}>
+              {day.n}
+            </p>
+            <p className="mt-1 font-mono text-[8px] uppercase tracking-[0.1em]" style={{color: FUNNEL_COLOURS.ink}}>
+              {day.label}
+            </p>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+const BOOKING_VISUALS = [
+  BookingHotTapVisual,
+  BookingCalendarTruthVisual,
+  BookingNoShowVisual,
+  BookingDaysVisual,
+]
+
 /** No design spiral: font chaos fades, interview → we build. */
 function NoDesignSpiralVisual({reduce}: VisualProps) {
   return (
@@ -1818,8 +1951,10 @@ export function BenefitMotionRows({
           ? SEARCH_VISUALS
           : variant === 'website'
             ? WEBSITE_VISUALS
-            : variant === 'landing-page' || variant === 'booking'
+            : variant === 'landing-page'
               ? LANDING_VISUALS
+              : variant === 'booking'
+                ? BOOKING_VISUALS
               : variant === 'crm-rescue'
                 ? CRM_VISUALS
                 : variant === 'team-ai' || variant === 'change-pack' || variant === 'content-system'

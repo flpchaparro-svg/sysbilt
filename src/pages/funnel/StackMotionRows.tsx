@@ -942,6 +942,131 @@ const LANDING_STACK_VISUALS = [
   AftercareStackVisual,
 ]
 
+/** Booking tool ↔ calendar handshake. */
+function BookingToolStackVisual({reduce, play}: VisualProps) {
+  const go = play && !reduce
+  return (
+    <div className="w-full h-[72px] border border-dark/12 bg-cream px-3 py-2 flex items-center gap-2 overflow-hidden">
+      <motion.div
+        className="flex-1 min-w-0 h-full border px-2 flex flex-col justify-center"
+        style={{borderColor: `${FUNNEL_COLOURS.ink}14`, backgroundColor: '#fff'}}
+        animate={go ? {x: [0, 2, 0]} : undefined}
+        transition={{duration: 2.2, repeat: Infinity}}
+      >
+        <p className="font-mono text-[7px] uppercase tracking-widest text-dark/40">Tool</p>
+        <p className="font-serif text-[12px] font-bold truncate" style={{color: FUNNEL_COLOURS.ink}}>
+          Calendly / HubSpot
+        </p>
+      </motion.div>
+      <motion.span
+        className="font-mono text-[10px] font-bold shrink-0"
+        style={{color: FUNNEL_COLOURS.goldDeep}}
+        animate={go ? {opacity: [0.3, 1, 0.3], scale: [0.9, 1.1, 0.9]} : undefined}
+        transition={{duration: 1.4, repeat: Infinity}}
+      >
+        ↔
+      </motion.span>
+      <motion.div
+        className="flex-1 min-w-0 h-full border px-2 flex flex-col justify-center"
+        style={{borderColor: `${FUNNEL_COLOURS.goldDeep}40`, backgroundColor: FUNNEL_COLOURS.surfaceGold}}
+        animate={go ? {x: [0, -2, 0]} : undefined}
+        transition={{duration: 2.2, repeat: Infinity}}
+      >
+        <p className="font-mono text-[7px] uppercase tracking-widest" style={{color: FUNNEL_COLOURS.goldDeep}}>
+          Calendar
+        </p>
+        <p className="font-serif text-[12px] font-bold truncate" style={{color: FUNNEL_COLOURS.ink}}>
+          Your real diary
+        </p>
+      </motion.div>
+    </div>
+  )
+}
+
+/** Confirm → remind → empty-slot chase. */
+function BookingRemindersStackVisual({reduce, play}: VisualProps) {
+  const go = play && !reduce
+  const steps = [
+    {label: 'Booked', tone: FUNNEL_COLOURS.gold},
+    {label: 'Remind', tone: FUNNEL_COLOURS.goldDeep},
+    {label: 'Chase', tone: FUNNEL_COLOURS.accent},
+  ]
+  return (
+    <div className="w-full h-[72px] border border-dark/12 bg-cream px-3 py-2.5 flex items-center gap-1.5">
+      {steps.map((step, i) => (
+        <React.Fragment key={step.label}>
+          <motion.div
+            className="flex-1 min-w-0 h-full border px-1.5 flex flex-col items-center justify-center text-center"
+            style={{borderColor: `${FUNNEL_COLOURS.ink}14`, backgroundColor: '#fff'}}
+            initial={reduce ? false : {opacity: 0, y: 6}}
+            animate={go || reduce ? {opacity: 1, y: 0} : {opacity: 0.35, y: 6}}
+            transition={{duration: 0.35, delay: reduce ? 0 : i * 0.35}}
+          >
+            <motion.span
+              className="h-1.5 w-1.5 rounded-full mb-1"
+              style={{backgroundColor: step.tone}}
+              animate={go ? {scale: [1, 1.4, 1]} : undefined}
+              transition={{duration: 1.2, repeat: Infinity, delay: i * 0.25}}
+            />
+            <p className="font-mono text-[8px] font-bold uppercase tracking-[0.1em]" style={{color: FUNNEL_COLOURS.ink}}>
+              {step.label}
+            </p>
+          </motion.div>
+          {i < steps.length - 1 ? (
+            <motion.span
+              className="font-mono text-[9px] text-dark/35 shrink-0"
+              animate={go ? {opacity: [0.2, 1, 0.2]} : undefined}
+              transition={{duration: 1.2, repeat: Infinity, delay: 0.2 + i * 0.25}}
+            >
+              →
+            </motion.span>
+          ) : null}
+        </React.Fragment>
+      ))}
+    </div>
+  )
+}
+
+/** Book now on site + Google. */
+function BookingSurfacesStackVisual({reduce, play}: VisualProps) {
+  const go = play && !reduce
+  return (
+    <div className="w-full h-[72px] border border-dark/12 bg-cream px-3 py-2 flex gap-2">
+      {[
+        {label: 'Your site', cta: 'Book now'},
+        {label: 'Google', cta: 'Book now'},
+      ].map((surface, i) => (
+        <motion.div
+          key={surface.label}
+          className="flex-1 border px-2 py-1.5 flex flex-col justify-between"
+          style={{borderColor: `${FUNNEL_COLOURS.ink}14`, backgroundColor: '#fff'}}
+          initial={reduce ? false : {opacity: 0, y: 8}}
+          animate={go || reduce ? {opacity: 1, y: 0} : {opacity: 0.4, y: 8}}
+          transition={{duration: 0.4, delay: reduce ? 0 : i * 0.2}}
+        >
+          <p className="font-mono text-[7px] uppercase tracking-widest text-dark/40">{surface.label}</p>
+          <motion.span
+            className="self-start font-mono text-[8px] font-bold uppercase tracking-[0.12em] px-1.5 py-0.5"
+            style={{backgroundColor: FUNNEL_COLOURS.accent, color: FUNNEL_COLOURS.onInk}}
+            animate={go ? {opacity: [0.75, 1, 0.75]} : undefined}
+            transition={{duration: 1.6, repeat: Infinity, delay: i * 0.2}}
+          >
+            {surface.cta}
+          </motion.span>
+        </motion.div>
+      ))}
+    </div>
+  )
+}
+
+const BOOKING_STACK_VISUALS = [
+  BookingToolStackVisual,
+  BookingRemindersStackVisual,
+  BookingSurfacesStackVisual,
+  SnapshotStackVisual,
+  AftercareStackVisual,
+]
+
 /** Brochure: one live page with the inclusions from the copy. */
 function BrochureStackVisual({reduce, play}: VisualProps) {
   const go = play && !reduce
@@ -1557,8 +1682,10 @@ export function StackMotionRows({
           ? SEARCH_STACK_VISUALS
           : variant === 'website'
             ? WEBSITE_STACK_VISUALS
-            : variant === 'landing-page' || variant === 'booking'
+            : variant === 'landing-page'
               ? LANDING_STACK_VISUALS
+              : variant === 'booking'
+                ? BOOKING_STACK_VISUALS
               : variant === 'crm-rescue'
                 ? CRM_STACK_VISUALS
                 : variant === 'team-ai' || variant === 'change-pack' || variant === 'content-system'

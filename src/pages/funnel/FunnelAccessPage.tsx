@@ -5,6 +5,7 @@ import {
   ArrowRight,
   Box,
   Building2,
+  Calendar,
   Check,
   ChevronDown,
   ChevronUp,
@@ -35,6 +36,9 @@ import {
   DOMAIN_REGISTRARS,
   HOSTING_PROVIDERS,
   type AccessPathId,
+  type BookingToolId,
+  type BookingWhatId,
+  type BookingWhereId,
   type CrmGoalId,
   type CrmLeadSourceId,
   type CrmSystemId,
@@ -68,6 +72,9 @@ type StepId =
   | 'crmSystem'
   | 'leadSource'
   | 'crmGoal'
+  | 'bookingTool'
+  | 'bookingWhat'
+  | 'bookingWhere'
   | 'sessionFormat'
   | 'teamSize'
   | 'teamTools'
@@ -123,6 +130,13 @@ const PHASES_CRM: {id: PhaseId; n: number; label: string}[] = [
   {id: 'done', n: 4, label: 'Done'},
 ]
 
+const PHASES_BOOKING: {id: PhaseId; n: number; label: string}[] = [
+  {id: 'about', n: 1, label: 'About you'},
+  {id: 'site', n: 2, label: 'Your booking'},
+  {id: 'access', n: 3, label: 'Access'},
+  {id: 'done', n: 4, label: 'Done'},
+]
+
 const PHASES_TEAM: {id: PhaseId; n: number; label: string}[] = [
   {id: 'about', n: 1, label: 'About you'},
   {id: 'site', n: 2, label: 'Your work'},
@@ -155,6 +169,7 @@ function phaseForStep(
     | 'missed-call'
     | 'google-profile'
     | 'crm-rescue'
+    | 'booking'
     | 'team-ai'
     | 'change-pack'
     | 'content-system',
@@ -182,6 +197,17 @@ function phaseForStep(
       step === 'crmSystem' ||
       step === 'leadSource' ||
       step === 'crmGoal'
+    ) {
+      return 'site'
+    }
+    return 'access'
+  }
+  if (kind === 'booking') {
+    if (
+      step === 'bookingTool' ||
+      step === 'bookingWhat' ||
+      step === 'bookingWhere' ||
+      step === 'websiteUrl'
     ) {
       return 'site'
     }
@@ -696,6 +722,154 @@ const CRM_ACCESS_OPTIONS: {
   },
 ]
 
+const BOOKING_TOOL_OPTIONS: {
+  id: BookingToolId
+  label: string
+  blurb: string
+  icon: React.ReactNode
+  unsure?: boolean
+}[] = [
+  {
+    id: 'hubspot',
+    label: 'HubSpot Meetings',
+    blurb: 'You already use HubSpot for meetings or want to.',
+    icon: <Building2 className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'calendly',
+    label: 'Calendly',
+    blurb: 'Calendly is the tool, or the one you want.',
+    icon: <Calendar className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'setmore',
+    label: 'Setmore / similar',
+    blurb: 'Setmore, SimplyBook, or another appointment tool.',
+    icon: <LayoutTemplate className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'fresha',
+    label: 'Fresha / salon tool',
+    blurb: 'Fresha, Timely, or a salon or clinic booking app.',
+    icon: <Sparkles className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'other',
+    label: 'Something else',
+    blurb: 'Tell us the name in the notes. We will work with it.',
+    icon: <Code2 className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'none',
+    label: 'Nothing yet',
+    blurb: 'We pick the lightest fit and explain any monthly cost before we lock it in.',
+    icon: null,
+    unsure: true,
+  },
+]
+
+const BOOKING_WHAT_OPTIONS: {
+  id: BookingWhatId
+  label: string
+  blurb: string
+  icon: React.ReactNode
+}[] = [
+  {
+    id: 'appointments',
+    label: 'In-person appointments',
+    blurb: 'Clinic visits, site visits, or face-to-face sessions.',
+    icon: <Users className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'calls',
+    label: 'Phone or video calls',
+    blurb: 'Discovery calls, consults on Zoom, or phone slots.',
+    icon: <Phone className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'consults',
+    label: 'Paid consults',
+    blurb: 'Booked paid time, assessments, or quote sessions.',
+    icon: <FileText className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'mixed',
+    label: 'A mix',
+    blurb: 'More than one type of booking on the same calendar.',
+    icon: <LayoutTemplate className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'other',
+    label: 'Something else',
+    blurb: 'Describe it in the notes so we set the right rules.',
+    icon: <Code2 className="w-full h-full" strokeWidth={1.25} />,
+  },
+]
+
+const BOOKING_WHERE_OPTIONS: {
+  id: BookingWhereId
+  label: string
+  blurb: string
+  icon: React.ReactNode
+}[] = [
+  {
+    id: 'both',
+    label: 'Site and Google',
+    blurb: 'Book now on the website and the Google Business Profile. The usual path.',
+    icon: <Check className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'site',
+    label: 'Website only',
+    blurb: 'Button or embed on the site first. Google can wait.',
+    icon: <Globe2 className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'google',
+    label: 'Google profile only',
+    blurb: 'Book from Maps and the knowledge panel first.',
+    icon: <Building2 className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'unsure',
+    label: 'Not sure yet',
+    blurb: 'We will recommend based on where people already find you.',
+    icon: <Sparkles className="w-full h-full" strokeWidth={1.25} />,
+  },
+]
+
+const BOOKING_ACCESS_OPTIONS: {
+  id: AccessPathId
+  label: string
+  blurb: string
+  icon: React.ReactNode
+}[] = [
+  {
+    id: 'invite',
+    label: 'Calendar share',
+    blurb: 'Share your Google or Outlook calendar with us. No password sharing.',
+    icon: <Calendar className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'wp-admin',
+    label: 'Website access',
+    blurb: 'Temporary site admin so we can place Book now where it belongs.',
+    icon: <LayoutTemplate className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'admin',
+    label: 'Google profile manager',
+    blurb: 'Add us as a manager so we can turn booking on the listing.',
+    icon: <Check className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'call',
+    label: 'Quick call',
+    blurb: 'We walk through calendar, site, and Google access together.',
+    icon: <Phone className="w-full h-full" strokeWidth={1.25} />,
+  },
+]
+
 const TEAM_FORMAT_OPTIONS = [
   {
     id: 'remote' as const,
@@ -997,6 +1171,21 @@ function helpForStep(step: StepId): HelpBlock {
       return {
         title: 'What to fix first',
         body: 'Speed of reply, phone alerts, follow-up, quote chasing, missed calls, or the full rescue. This steers the build.',
+      }
+    case 'bookingTool':
+      return {
+        title: 'Which booking tool',
+        body: 'What you already use, or nothing yet. We wire that tool to your calendar. We do not sell you software for its own sake.',
+      }
+    case 'bookingWhat':
+      return {
+        title: 'What people book',
+        body: 'Appointments, calls, paid consults, or a mix. This sets the rules, duration, and reminder wording.',
+      }
+    case 'bookingWhere':
+      return {
+        title: 'Where Book now should live',
+        body: 'Website, Google Business Profile, both, or we decide with you. Ready customers look in both places.',
       }
     case 'sessionFormat':
       return {
@@ -1378,6 +1567,9 @@ const FunnelAccessPage: React.FC = () => {
   const [crmSystem, setCrmSystem] = useState<CrmSystemId | null>(null)
   const [leadSource, setLeadSource] = useState<CrmLeadSourceId | null>(null)
   const [crmGoal, setCrmGoal] = useState<CrmGoalId | null>(null)
+  const [bookingTool, setBookingTool] = useState<BookingToolId | null>(null)
+  const [bookingWhat, setBookingWhat] = useState<BookingWhatId | null>(null)
+  const [bookingWhere, setBookingWhere] = useState<BookingWhereId | null>(null)
   const [sessionFormat, setSessionFormat] = useState<'remote' | 'onsite' | null>(
     initialSessionFormat,
   )
@@ -1418,6 +1610,7 @@ const FunnelAccessPage: React.FC = () => {
   const isGoogleProfile = product === 'google-profile'
   const isReviews = product === 'reviews'
   const isCrmRescue = product === 'crm-rescue'
+  const isBooking = product === 'booking'
   const isTeamAi = product === 'team-ai'
   const isChangePack = product === 'change-pack'
   const isContentSystem = product === 'content-system'
@@ -1428,6 +1621,7 @@ const FunnelAccessPage: React.FC = () => {
     | 'missed-call'
     | 'google-profile'
     | 'crm-rescue'
+    | 'booking'
     | 'team-ai'
     | 'change-pack'
     | 'content-system' =
@@ -1437,6 +1631,8 @@ const FunnelAccessPage: React.FC = () => {
         ? 'google-profile'
         : isCrmRescue
           ? 'crm-rescue'
+          : isBooking
+            ? 'booking'
           : isTeamAi
             ? 'team-ai'
             : isChangePack
@@ -1450,6 +1646,8 @@ const FunnelAccessPage: React.FC = () => {
       ? PHASES_GOOGLE
       : isCrmRescue
         ? PHASES_CRM
+        : isBooking
+          ? PHASES_BOOKING
         : isTeamAi
           ? PHASES_TEAM
           : isChangePack
@@ -1499,6 +1697,22 @@ const FunnelAccessPage: React.FC = () => {
         'crmSystem',
         'leadSource',
         'crmGoal',
+        'access',
+        'accessDetail',
+        'notes',
+        'done',
+      ]
+    }
+    if (isBooking) {
+      return [
+        'product',
+        'name',
+        'email',
+        'business',
+        'bookingTool',
+        'bookingWhat',
+        'bookingWhere',
+        'websiteUrl',
         'access',
         'accessDetail',
         'notes',
@@ -1575,6 +1789,7 @@ const FunnelAccessPage: React.FC = () => {
     isGoogleProfile,
     isReviews,
     isCrmRescue,
+    isBooking,
     isTeamAi,
     isChangePack,
     isContentSystem,
@@ -1605,6 +1820,8 @@ const FunnelAccessPage: React.FC = () => {
       ? GOOGLE_PROFILE_ACCESS_OPTIONS
       : isCrmRescue
         ? CRM_ACCESS_OPTIONS
+        : isBooking
+          ? BOOKING_ACCESS_OPTIONS
         : ACCESS_OPTIONS
 
   function goNext(from: StepId) {
@@ -1641,6 +1858,11 @@ const FunnelAccessPage: React.FC = () => {
       }
     } else if (isCrmRescue) {
       if (!crmSystem || !leadSource || !crmGoal) {
+        setError('Something is missing. Use Back to check your answers.')
+        return
+      }
+    } else if (isBooking) {
+      if (!bookingTool || !bookingWhat || !bookingWhere) {
         setError('Something is missing. Use Back to check your answers.')
         return
       }
@@ -1725,6 +1947,20 @@ const FunnelAccessPage: React.FC = () => {
               accessDetail: accessDetail.trim(),
               notes: notes.trim(),
             }
+          : isBooking
+            ? {
+                product,
+                name: name.trim(),
+                email: email.trim(),
+                business: business.trim(),
+                websiteUrl: websiteUrl.trim(),
+                bookingTool: bookingTool!,
+                bookingWhat: bookingWhat!,
+                bookingWhere: bookingWhere!,
+                accessPath,
+                accessDetail: accessDetail.trim(),
+                notes: notes.trim(),
+              }
           : isTeamAi
             ? {
                 product,
@@ -2193,7 +2429,11 @@ const FunnelAccessPage: React.FC = () => {
             {step === 'websiteUrl' ? (
               <OneField
                 title="What is the website URL?"
-                hint="Optional but helpful. The site people use to enquire with you."
+                hint={
+                  isBooking
+                    ? 'Optional but helpful. The site where Book now should appear.'
+                    : 'Optional but helpful. The site people use to enquire with you.'
+                }
                 value={websiteUrl}
                 onChange={setWebsiteUrl}
                 placeholder="https://yourbusiness.com.au"
@@ -2277,6 +2517,89 @@ const FunnelAccessPage: React.FC = () => {
                         onSelect={() => {
                           setCrmGoal(opt.id)
                           goNext('crmGoal')
+                        }}
+                        title={opt.label}
+                        blurb={opt.blurb}
+                        icon={opt.icon}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : null}
+
+            {step === 'bookingTool' ? (
+              <>
+                <QuestionTitle>
+                  Which booking tool do you <span style={{color: RED}}>use</span>?
+                </QuestionTitle>
+                <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
+                  What you already pay for, or nothing yet. Hover a card, then Select.
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+                  {BOOKING_TOOL_OPTIONS.map((opt) => (
+                    <div key={opt.id}>
+                      <SelectCard
+                        selected={bookingTool === opt.id}
+                        onSelect={() => {
+                          setBookingTool(opt.id)
+                          setAccessPath(null)
+                          goNext('bookingTool')
+                        }}
+                        title={opt.label}
+                        blurb={opt.blurb}
+                        icon={opt.icon}
+                        unsure={opt.unsure}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : null}
+
+            {step === 'bookingWhat' ? (
+              <>
+                <QuestionTitle>
+                  What should people <span style={{color: RED}}>book</span>?
+                </QuestionTitle>
+                <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
+                  Appointments, calls, paid consults, or a mix. This sets the rules.
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+                  {BOOKING_WHAT_OPTIONS.map((opt) => (
+                    <div key={opt.id}>
+                      <SelectCard
+                        selected={bookingWhat === opt.id}
+                        onSelect={() => {
+                          setBookingWhat(opt.id)
+                          goNext('bookingWhat')
+                        }}
+                        title={opt.label}
+                        blurb={opt.blurb}
+                        icon={opt.icon}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : null}
+
+            {step === 'bookingWhere' ? (
+              <>
+                <QuestionTitle>
+                  Where should <span style={{color: RED}}>Book now</span> live?
+                </QuestionTitle>
+                <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
+                  Site, Google profile, both, or we decide with you.
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+                  {BOOKING_WHERE_OPTIONS.map((opt) => (
+                    <div key={opt.id}>
+                      <SelectCard
+                        selected={bookingWhere === opt.id}
+                        onSelect={() => {
+                          setBookingWhere(opt.id)
+                          goNext('bookingWhere')
                         }}
                         title={opt.label}
                         blurb={opt.blurb}
