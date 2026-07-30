@@ -224,10 +224,14 @@ const n8n = async (method, path, body) => {
 const uid = () => randomUUID();
 
 function headerSchema() {
+  // Must match Master Leads headers as Google Sheets node sees them (row 1).
+  // Extra schema columns (e.g. Offer Product when the header is missing) cause:
+  // "Column names were updated after the node's setup"
   const headers = [
     'Business Name', 'Suburb', 'Address', 'Website', 'Phone', 'Rating', 'Reviews',
     'Maps ID', 'Owner Name', 'Email', 'Status', 'Audit Link', 'Emailed', 'Notes',
-    'Offer Product', 'LH Mobile', 'SV Indexed', 'LP Ads', 'CRM Form', 'Manual Lane',
+    'LH Mobile', 'SV Indexed', 'LP Ads', 'CRM Form', 'Manual Lane',
+    '_alert', '_quotaHit',
   ];
   return headers.map((id) => ({
     id,
