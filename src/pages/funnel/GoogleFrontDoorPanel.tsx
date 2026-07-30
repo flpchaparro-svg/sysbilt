@@ -242,7 +242,7 @@ export function GoogleFrontDoorPanel({
   competitorName?: string | null
 }) {
   const ref = useRef<HTMLDivElement>(null)
-  const inView = useInView(ref, {once: true, amount: 0.3})
+  const inView = useInView(ref, {once: false, amount: 0.25})
   const reduce = useReducedMotion()
   const play = inView && !reduce
   const yours = businessName?.trim() || 'Your business'
@@ -250,7 +250,7 @@ export function GoogleFrontDoorPanel({
   const showPair = Boolean(competitorName?.trim())
 
   return (
-    <div ref={ref} className="mt-10 md:mt-12 w-full">
+    <div ref={ref} className="mt-10 md:mt-12 w-full max-w-2xl">
       {showPair ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5 items-stretch">
           <ProfilePanel

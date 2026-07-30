@@ -549,6 +549,8 @@ const FunnelPage: React.FC = () => {
               isAiPhone ||
               isBooking ||
               isWebsite ||
+              isGoogleProfile ||
+              isMissedCall ||
               isDraftSoon
                 ? 'max-w-3xl'
                 : 'max-w-5xl'
