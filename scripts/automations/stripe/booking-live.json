@@ -1,0 +1,14 @@
+{
+  "createdAt": "2026-07-30T06:30:00.000Z",
+  "mode": "live",
+  "note": "Booking System · live Payment Link. After pay → https://sysbilt.com/go/thanks?p=booking → access form. Wire Sanity funnelPage.booking stripeUrl to paymentLinkUrl.",
+  "product": {
+    "code": "booking",
+    "name": "Booking System",
+    "productId": "prod_Uykx4Xd62ZMqy0",
+    "priceId": "price_1TynRA7kQC0CB85zqCclJLX7",
+    "paymentLinkId": "plink_1TynSy7kQC0CB85ztTSifDZY",
+    "paymentLinkUrl": "https://buy.stripe.com/3cI28l5m17jiceya4j3gk0b",
+    "amountAud": 1500
+  }
+}
