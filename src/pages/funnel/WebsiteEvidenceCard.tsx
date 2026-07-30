@@ -85,14 +85,15 @@ export function WebsiteEvidenceCard({evidence}: {evidence: WebsiteEvidence}) {
               className="font-serif font-bold text-xl md:text-2xl leading-snug tracking-tight"
               style={{color: FUNNEL_COLOURS.ink}}
             >
-              Open your own site on your phone, on mobile data, not the office wifi
+              Open your site in a private window on your phone, on mobile data, not wifi
             </p>
             <p
               className="mt-4 font-sans text-sm md:text-[15px] leading-relaxed"
               style={{color: FUNNEL_COLOURS.muted}}
             >
-              Count the seconds before anything appears. Then ask yourself whether a stranger
-              would have waited that long.
+              Your own phone already has the site in memory, so it loads fast for you. A stranger
+              gets the first-load wait. Count the seconds before anything appears, then ask whether
+              they would have stayed.
             </p>
           </div>
         </Frame>

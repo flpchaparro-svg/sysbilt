@@ -2,7 +2,7 @@
 /**
  * Deploy SYSBILT - Outbound Website Send.
  *
- * Website tab Status=Ready + Email → Gmail draft (placeholder Email A + /go/website?b=)
+ * Website tab Status=Ready + Email → Gmail draft (Cold Emails V2 Template B + /go/website?b=)
  * → Status=Emailed. Does NOT send.
  *
  * Usage:
@@ -24,7 +24,7 @@ const GMAIL_CRED_NAME = 'Gmail account'
 const SHEET_ID_DEFAULT = '1aGz6kruGwSpt55rwlcknxVDXp9dgL_M-OnVJrDIbTlE'
 const WEBSITE_SHEET = 'Website'
 const LEADS_SHEET = 'Master Leads'
-const WEBSITE_RANGE = 'A1:R5000'
+const WEBSITE_RANGE = 'A1:N5000'
 const LEADS_RANGE = 'A1:R5000'
 const FUNNEL_BASE = 'https://sysbilt.com/go/website'
 
@@ -38,10 +38,6 @@ const WEBSITE_HEADERS = [
   'LH SEO',
   'LH A11y',
   'LH BP',
-  'Page Count',
-  'Single Page',
-  'Has Form',
-  'Looks Dead',
   'Route',
   'Status',
   'Maps ID',
@@ -234,62 +230,33 @@ function esc(s) {
     .replace(/"/g, '&quot;');
 }
 
-function cleanSiteUrl(raw) {
-  let s = String(raw || '').trim();
-  if (!s) return '';
-  s = s.split('#')[0].split('?')[0];
-  if (!/^https?:\\/\\//i.test(s)) s = 'https://' + s;
-  try {
-    const u = new URL(s);
-    let path = u.pathname || '/';
-    if (path !== '/' && path.endsWith('/')) path = path.slice(0, -1);
-    return u.origin + (path === '/' ? '' : path);
-  } catch {
-    return s;
-  }
+/** First name only when Owner Name has two or more words. Single tokens are often surnames. */
+function verifiedFirstName(raw) {
+  const parts = String(raw || '').trim().split(/\\s+/).filter(Boolean);
+  if (parts.length < 2) return '';
+  const part = parts[0].replace(/[^a-zA-Z'-]/g, '');
+  return part.length >= 2 ? part : '';
 }
 
 const business = String(row['Business Name'] || '').trim();
 const email = String(row.Email || '').trim();
-const seo = String(row['LH SEO'] || '').trim();
-const a11y = String(row['LH A11y'] || '').trim();
-const perf = String(row['LH Perf'] || '').trim();
-const route = String(row.Route || 'website_only').trim();
-const websiteHref = cleanSiteUrl(row.Website);
-
 const owner = String(lead['Owner Name'] || '').trim();
-let firstName = '';
-if (owner) {
-  const part = owner.split(/\\s+/)[0].replace(/[^a-zA-Z'-]/g, '');
-  if (part.length >= 2) firstName = part;
-}
+const firstName = verifiedFirstName(owner);
 const greeting = firstName ? ('Hi ' + esc(firstName) + ',') : 'Hi,';
 
 const bParam = encodeURIComponent(business.slice(0, 40));
 const funnelUrl = '${FUNNEL_BASE}?b=' + bParam;
 
-const subject = business + ': your website needs a proper front door';
-
-const siteLink = websiteHref
-  ? '<a href="' + esc(websiteHref) + '" style="color:#1a73e8;text-decoration:underline">' + esc(business) + '</a>'
-  : esc(business);
-
-const scoreBits = [];
-if (seo) scoreBits.push('SEO ' + seo);
-if (a11y) scoreBits.push('accessibility ' + a11y);
-if (perf) scoreBits.push('speed ' + perf);
-const scoreLine = scoreBits.length
-  ? 'On a quick check we saw ' + scoreBits.join(', ') + '.'
-  : 'On a quick check the site is thin, unclear, or hard to trust at a glance.';
+const subject = business + ' on a phone';
 
 const html = [
   '<div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.55;color:#222">',
   '<p style="margin:0 0 14px">' + greeting + '</p>',
-  '<p style="margin:0 0 14px">People find ' + siteLink + ' and then bounce. ' + esc(scoreLine) + '</p>',
-  '<p style="margin:0 0 14px">A weak front door costs enquiries before you ever speak to them. Patching one issue at a time on a broken base rarely fixes that.</p>',
-  '<p style="margin:0 0 14px">We build and host a clean brochure site for growing Australian businesses: interview, write, build, about fourteen days to live. The full scope and the price are here: <a href="' + esc(funnelUrl) + '" style="color:#1a73e8;text-decoration:underline">Hosted Website Plan</a>.</p>',
-  '<p style="margin:0 0 14px">Either way, happy to send a short take on what is wrong with the current page. Just reply and it\\'s yours.</p>',
-  '<p style="margin:0 0 14px">Felipe<br><a href="https://sysbilt.com" style="color:#1a73e8;text-decoration:underline">SYSBILT</a>, Sydney<br>Websites and business systems for growing Australian businesses</p>',
+  '<p style="margin:0 0 14px">I opened the ' + esc(business) + ' site on my phone this morning. It\\'s slow enough that a first-time patient gives up before the page finishes loading.</p>',
+  '<p style="margin:0 0 14px">You wouldn\\'t notice it yourself. Your phone has been to the site before, so it loads from memory. A stranger\\'s doesn\\'t.</p>',
+  '<p style="margin:0 0 14px">We build and host clean sites for clinics: I interview you, we write it, we build it, about fourteen days to live. Scope and price are on the <a href="' + esc(funnelUrl) + '" style="color:#1a73e8;text-decoration:underline">Hosted Website Plan</a> page.</p>',
+  '<p style="margin:0 0 14px">If you\\'d rather see what\\'s wrong with the current one first, reply and I\\'ll send it through.</p>',
+  '<p style="margin:0 0 14px">Felipe<br>SYSBILT</p>',
   '<p style="margin:0;color:#666;font-size:12px;line-height:1.4">If you\\'d rather not hear from us again, reply &quot;no thanks&quot; and that\\'s the end of it.</p>',
   '</div>',
 ].join('');
@@ -480,10 +447,6 @@ function buildSeedWorkflow(sheetId) {
     'LH SEO': '32',
     'LH A11y': '41',
     'LH BP': '44',
-    'Page Count': '1',
-    'Single Page': 'Y',
-    'Has Form': 'N',
-    'Looks Dead': 'Y',
     Route: 'website_only',
     Status: 'Ready',
     'Maps ID': demoMaps,

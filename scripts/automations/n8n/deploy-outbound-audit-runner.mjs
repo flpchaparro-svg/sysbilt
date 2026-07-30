@@ -460,33 +460,39 @@ function patchMasterAnalystPrompt(wf) {
 function patchGmailDraft(wf) {
   const node = findNode(wf, 'Gmail Draft to prospect');
   if (!node) return;
-  // Template A: gift the audit only. One link. Offer lives inside the audit page.
+  // Cold Emails V2 Template A: gift the audit only. One link. Offer lives inside the audit page.
   node.parameters.subject =
-    "={{ (() => { const f = $('Filter').item.json; const company = f.properties?.company?.value || f._sheetRow?.['Business Name'] || 'your business'; return 'The audit we ran on ' + company; })() }}";
+    "={{ (() => { const f = $('Filter').item.json; const company = f.properties?.company?.value || f._sheetRow?.['Business Name'] || 'your business'; return 'I had a look at ' + company; })() }}";
   node.parameters.emailType = 'html';
   node.parameters.message = `={{ (() => {
   const f = $('Filter').item.json;
   const sheet = f._sheetRow || {};
   const company = String(f.properties?.company?.value || sheet['Business Name'] || 'your business').trim();
   const ownerRaw = String(f.properties?.firstname?.value || sheet['Owner Name'] || '').trim();
+  const parts = ownerRaw.split(/\\s+/).filter(Boolean);
   let firstName = '';
-  const firstPart = ownerRaw.split(/\\s+/)[0].replace(/[^a-zA-Z'-]/g, '');
-  if (firstPart.length >= 2) firstName = firstPart;
+  if (parts.length >= 2) {
+    const part = parts[0].replace(/[^a-zA-Z'-]/g, '');
+    if (part.length >= 2) firstName = part;
+  }
   const greeting = firstName ? ('Hi ' + firstName + ',') : 'Hi,';
   const auditUrl = String($('Vercel Push').item.json.url || '').trim();
   const diagnosis = (() => {
     try {
       const parsed = $('Parse Audit JSON').item.json || {};
-      const title = String(parsed?.audit_data?.diagnosis?.critical?.title || '').trim();
-      if (title) return title;
-    } catch (_) {}
-    const score = String(sheet['LH Mobile'] || '').trim();
-    if (score) return 'the site scored ' + score + ' on Google\\'s mobile speed test';
-    return '';
+      const critical = parsed?.audit_data?.diagnosis?.critical || {};
+      const consequence = String(critical.consequence || '').trim();
+      const title = String(critical.title || '').trim();
+      const pick = consequence || title;
+      if (!pick) return '';
+      if (/scored\\s+\\d+/i.test(pick) || /\\d+\\s*out of\\s*100/i.test(pick)) return '';
+      return pick.replace(/[.!]+$/g, '');
+    } catch (_) {
+      return '';
+    }
   })();
   const standout = diagnosis
-    ? diagnosis.replace(/[.!]+$/g, '')
-    : 'the site is costing you enquiries before people ever speak to you';
+    || 'the site is costing you enquiries before people ever speak to you';
   const esc = (s) => String(s || '')
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -495,12 +501,11 @@ function patchGmailDraft(wf) {
   return [
     '<div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.55;color:#222">',
     '<p style="margin:0 0 14px">' + esc(greeting) + '</p>',
-    '<p style="margin:0 0 14px">We ran an outside audit on ' + esc(company) + ': the website, how you show up in search, and your reviews. It\\'s ready, and it\\'s yours. No charge and nothing expected back.</p>',
-    '<p style="margin:0 0 14px">Most firms run something like this and charge for it before they\\'ll quote any work. We can hand it over because our systems had already done the pass.</p>',
-    '<p style="margin:0 0 14px"><a href="' + esc(auditUrl) + '" style="color:#1a73e8;text-decoration:underline">Open the audit</a></p>',
-    '<p style="margin:0 0 14px">The one that stood out: ' + esc(standout) + '.</p>',
-    '<p style="margin:0 0 14px">Worth a look while it\\'s in front of you. If anything in there doesn\\'t make sense, reply and we\\'ll explain it properly.</p>',
-    '<p style="margin:0 0 14px">Felipe<br><a href="https://sysbilt.com" style="color:#1a73e8;text-decoration:underline">SYSBILT</a>, Sydney<br>Websites and business systems for growing Australian businesses</p>',
+    '<p style="margin:0 0 14px">I ran a proper look over ' + esc(company) + ' this week: the site, how you come up in search, your Google listing, your reviews. Wrote it up as a report. It\\'s yours, no charge and nothing expected back.</p>',
+    '<p style="margin:0 0 14px"><a href="' + esc(auditUrl) + '" style="color:#1a73e8;text-decoration:underline">Open the report here</a>.</p>',
+    '<p style="margin:0 0 14px">The short version: ' + esc(standout) + '.</p>',
+    '<p style="margin:0 0 14px">Have a read. If anything in there doesn\\'t make sense, reply and I\\'ll explain it properly.</p>',
+    '<p style="margin:0 0 14px">Felipe<br>SYSBILT</p>',
     '<p style="margin:0;color:#666;font-size:12px;line-height:1.4">If you\\'d rather not hear from us again, reply &quot;no thanks&quot; and that\\'s the end of it.</p>',
     '</div>',
   ].join('');

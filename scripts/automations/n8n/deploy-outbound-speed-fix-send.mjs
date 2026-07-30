@@ -228,59 +228,34 @@ function esc(s) {
     .replace(/"/g, '&quot;');
 }
 
-function cleanSiteUrl(raw) {
-  let s = String(raw || '').trim();
-  if (!s) return '';
-  // Drop tracking junk before parse as well
-  s = s.split('#')[0].split('?')[0];
-  if (!/^https?:\\/\\//i.test(s)) s = 'https://' + s;
-  try {
-    const u = new URL(s);
-    let path = u.pathname || '/';
-    if (path !== '/' && path.endsWith('/')) path = path.slice(0, -1);
-    return u.origin + (path === '/' ? '' : path);
-  } catch {
-    return s;
-  }
+/** First name only when Owner Name has two or more words. Single tokens are often surnames. */
+function verifiedFirstName(raw) {
+  const parts = String(raw || '').trim().split(/\\s+/).filter(Boolean);
+  if (parts.length < 2) return '';
+  const part = parts[0].replace(/[^a-zA-Z'-]/g, '');
+  return part.length >= 2 ? part : '';
 }
 
 const business = String(row['Business Name'] || '').trim();
 const email = String(row.Email || '').trim();
 const score = String(row['LH Mobile'] || '').trim();
-const websiteHref = cleanSiteUrl(row.Website);
-const websiteHost = (() => {
-  try {
-    return new URL(websiteHref).host.replace(/^www\\./i, '');
-  } catch {
-    return websiteHref.replace(/^https?:\\/\\//i, '').replace(/^www\\./i, '');
-  }
-})();
-
 const owner = String(lead['Owner Name'] || '').trim();
-let firstName = '';
-if (owner) {
-  const part = owner.split(/\\s+/)[0].replace(/[^a-zA-Z'-]/g, '');
-  if (part.length >= 2) firstName = part;
-}
+const firstName = verifiedFirstName(owner);
 const greeting = firstName ? ('Hi ' + esc(firstName) + ',') : 'Hi,';
 
 const bParam = encodeURIComponent(business.slice(0, 40));
-const funnelUrl = '${FUNNEL_BASE}?b=' + bParam + '&s=' + encodeURIComponent(score);
+const funnelUrl = '${FUNNEL_BASE}?b=' + bParam + (score ? '&s=' + encodeURIComponent(score) : '');
 
-const subject = business + "'s website scored " + score + " on mobile";
-
-const siteLink = websiteHref
-  ? '<a href="' + esc(websiteHref) + '" style="color:#1a73e8;text-decoration:underline">' + esc(business) + '</a>'
-  : esc(business);
+const subject = business + ' loads slowly on phones';
 
 const html = [
   '<div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.55;color:#222">',
   '<p style="margin:0 0 14px">' + greeting + '</p>',
-  '<p style="margin:0 0 14px">We ran ' + siteLink + ' through the same speed test Google uses. On mobile it scored <strong>' + esc(score) + '</strong> out of 100.</p>',
-  '<p style="margin:0 0 14px">Nearly everyone looking for a business does it on a phone, and a page that is slow to appear loses them before they see anything at all. Google ranks slower sites lower too, so the same problem costs you twice.</p>',
-  '<p style="margin:0 0 14px">We fix this as a fixed-scope job: images, scripts, caching and mobile tuning, done in one to three days, with the same public Google test run before and after so you can see the difference rather than take our word for it. The full scope and the price are here: <a href="' + esc(funnelUrl) + '" style="color:#1a73e8;text-decoration:underline">Website Speed Fix</a>.</p>',
-  '<p style="margin:0 0 14px">Either way, happy to send you the short report we ran on your site. Just reply and it\\'s yours.</p>',
-  '<p style="margin:0 0 14px">Felipe<br><a href="https://sysbilt.com" style="color:#1a73e8;text-decoration:underline">SYSBILT</a>, Sydney<br>Websites and business systems for growing Australian businesses</p>',
+  '<p style="margin:0 0 14px">I put the ' + esc(business) + ' site through Google\\'s own speed test. On a phone it\\'s slow enough that a lot of people won\\'t wait for it.</p>',
+  '<p style="margin:0 0 14px">You wouldn\\'t feel that yourself. Your phone has been there before, so it loads from memory. A first-time visitor\\'s doesn\\'t.</p>',
+  '<p style="margin:0 0 14px">We fix this as one job, three days, and we run the same test before and after so you can see what changed rather than take my word for it. Scope and price are on the <a href="' + esc(funnelUrl) + '" style="color:#1a73e8;text-decoration:underline">Website Speed Fix</a> page.</p>',
+  '<p style="margin:0 0 14px">Either way, happy to send you the test result. Just reply.</p>',
+  '<p style="margin:0 0 14px">Felipe<br>SYSBILT</p>',
   '<p style="margin:0;color:#666;font-size:12px;line-height:1.4">If you\\'d rather not hear from us again, reply &quot;no thanks&quot; and that\\'s the end of it.</p>',
   '</div>',
 ].join('');
@@ -289,8 +264,6 @@ return [{
   json: {
     ...row,
     _firstName: firstName,
-    _websiteClean: websiteHref,
-    _websiteHost: websiteHost,
     _funnelUrl: funnelUrl,
     _subject: subject,
     _html: html,
