@@ -91,6 +91,8 @@ const GOOGLE_PROFILE_STATUS = new Set([
   'unsure',
 ]);
 const GOOGLE_PROFILE_ACCESS = new Set(['invite', 'call', 'claim', 'recover']);
+const REVIEW_JOBS = new Set(['sms', 'email', 'software', 'manual', 'unsure']);
+const REVIEWS_ACCESS = new Set(['invite', 'call', 'claim', 'recover', 'provider', 'crm']);
 const PLATFORMS = new Set([
   'wordpress',
   'wordpress-com',
@@ -127,6 +129,7 @@ type Body = {
   phoneSetup?: unknown;
   profileUrl?: unknown;
   profileStatus?: unknown;
+  reviewJob?: unknown;
   crmSystem?: unknown;
   leadSource?: unknown;
   crmGoal?: unknown;
@@ -451,6 +454,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const phoneSetup = str(body.phoneSetup, 40);
   const profileUrl = str(body.profileUrl, 500);
   const profileStatus = str(body.profileStatus, 40);
+  const reviewJob = str(body.reviewJob, 40);
   const crmSystem = str(body.crmSystem, 40);
   const leadSource = str(body.leadSource, 40);
   const crmGoal = str(body.crmGoal, 40);
@@ -489,7 +493,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   }
 
   const isMissedCall = product === 'missed-call' || product === 'ai-phone';
-  const isGoogleProfile = product === 'google-profile' || product === 'reviews';
+  const isGoogleProfile = product === 'google-profile';
+  const isReviews = product === 'reviews';
   const isCrmRescue = product === 'crm-rescue';
   const isBooking = product === 'booking';
   const isTeamAi = product === 'team-ai';
@@ -513,6 +518,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     }
     if (!GOOGLE_PROFILE_STATUS.has(profileStatus) || !GOOGLE_PROFILE_ACCESS.has(accessPath)) {
       res.status(400).json({ error: 'Invalid profile status or access path' });
+      return;
+    }
+  } else if (isReviews) {
+    if (profileUrl.length < 3) {
+      res.status(400).json({ error: 'Please enter your Google profile link or exact listing name.' });
+      return;
+    }
+    if (!GOOGLE_PROFILE_STATUS.has(profileStatus) || !REVIEWS_ACCESS.has(accessPath)) {
+      res.status(400).json({ error: 'Invalid profile status or access path' });
+      return;
+    }
+    if (profileStatus === 'claimed-me' && !REVIEW_JOBS.has(reviewJob)) {
+      res.status(400).json({ error: 'Invalid job-complete path' });
       return;
     }
   } else if (isCrmRescue) {
@@ -608,6 +626,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         ]
           .filter(Boolean)
           .join('\n')
+      : isReviews
+        ? [
+            `Funnel access form — ${product}`,
+            `Business: ${business}`,
+            `Profile: ${profileUrl}`,
+            `Profile status: ${profileStatus}`,
+            reviewJob ? `Job complete path: ${reviewJob}` : null,
+            `Access path: ${accessPath}`,
+            accessDetail ? `Access notes:\n${accessDetail}` : null,
+            notes ? `Other notes:\n${notes}` : null,
+            `Submitted: ${new Date().toISOString()}`,
+          ]
+            .filter(Boolean)
+            .join('\n')
       : isCrmRescue
         ? [
             `Funnel access form — ${product}`,
@@ -714,6 +746,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     phoneSetup,
     profileUrl,
     profileStatus,
+    reviewJob,
     crmSystem,
     leadSource,
     crmGoal,
@@ -827,15 +860,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           ? `Phone: ${phone} · Setup: ${phoneSetup}`
           : isGoogleProfile
             ? `Profile: ${profileUrl.slice(0, 80)} · Status: ${profileStatus}`
-            : isCrmRescue
-              ? `CRM: ${crmSystem} · Leads: ${leadSource} · Goal: ${crmGoal}`
-              : isBooking
-                ? `Tool: ${bookingTool} · Books: ${bookingWhat} · Surfaces: ${bookingWhere}`
-              : website,
-        isMissedCall || isGoogleProfile || isCrmRescue || isBooking
+            : isReviews
+              ? `Profile: ${profileUrl.slice(0, 80)} · Status: ${profileStatus}${reviewJob ? ` · Job: ${reviewJob}` : ''}`
+              : isCrmRescue
+                ? `CRM: ${crmSystem} · Leads: ${leadSource} · Goal: ${crmGoal}`
+                : isBooking
+                  ? `Tool: ${bookingTool} · Books: ${bookingWhat} · Surfaces: ${bookingWhere}`
+                  : website,
+        isMissedCall || isGoogleProfile || isReviews || isCrmRescue || isBooking
           ? `Access: ${accessPath}`
           : `Platform: ${platform} · Access: ${accessPath}`,
-        !isMissedCall && !isGoogleProfile && !isCrmRescue && !isBooking && sameProvider !== 'yes'
+        !isMissedCall && !isGoogleProfile && !isReviews && !isCrmRescue && !isBooking && sameProvider !== 'yes'
           ? `Domain/hosting same: ${sameProvider}${domainProvider ? ` · Domain: ${domainProvider}` : ''}${hostingProvider ? ` · Host: ${hostingProvider}` : ''}`
           : null,
         (isCrmRescue || isBooking) && websiteUrl ? `Website: ${websiteUrl}` : null,

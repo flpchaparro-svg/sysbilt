@@ -1,0 +1,14 @@
+{
+  "createdAt": "2026-07-31T04:10:00.000Z",
+  "mode": "live",
+  "note": "Review Engine · live Payment Link. After pay → https://sysbilt.com/go/thanks?p=reviews → reviews access wizard. Never use buy.stripe.com/test_ on this page.",
+  "product": {
+    "code": "reviews",
+    "name": "Review Engine",
+    "productId": "prod_Uz5wDf7z25mmgX",
+    "priceId": "price_1Tz7kY7kQC0CB85z7ftLP33i",
+    "paymentLinkId": "plink_1Tz7m37kQC0CB85zCVmic3Oo",
+    "paymentLinkUrl": "https://buy.stripe.com/fZu4gt3dTgTSfqK90f3gk0c",
+    "amountAud": 1100
+  }
+}

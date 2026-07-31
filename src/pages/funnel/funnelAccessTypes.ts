@@ -37,6 +37,7 @@ export type ProfileStatusId =
   | 'claimed-other'
   | 'suspended'
   | 'unsure'
+export type ReviewJobId = 'sms' | 'email' | 'software' | 'manual' | 'unsure'
 export type CrmSystemId =
   | 'hubspot'
   | 'pipedrive'
@@ -77,6 +78,7 @@ export type FunnelAccessPayload = {
   phoneSetup?: PhoneSetupId | ''
   profileUrl?: string
   profileStatus?: ProfileStatusId | ''
+  reviewJob?: ReviewJobId | ''
   crmSystem?: CrmSystemId | ''
   leadSource?: CrmLeadSourceId | ''
   crmGoal?: CrmGoalId | ''

@@ -46,6 +46,7 @@ import {
   type PhoneSetupId,
   type PlatformId,
   type ProfileStatusId,
+  type ReviewJobId,
   type SameProviderId,
 } from './funnelAccessTypes'
 
@@ -69,6 +70,7 @@ type StepId =
   | 'phoneSetup'
   | 'profileUrl'
   | 'profileStatus'
+  | 'reviewJob'
   | 'crmSystem'
   | 'leadSource'
   | 'crmGoal'
@@ -123,6 +125,13 @@ const PHASES_GOOGLE: {id: PhaseId; n: number; label: string}[] = [
   {id: 'done', n: 4, label: 'Done'},
 ]
 
+const PHASES_REVIEWS: {id: PhaseId; n: number; label: string}[] = [
+  {id: 'about', n: 1, label: 'About you'},
+  {id: 'site', n: 2, label: 'Your reviews'},
+  {id: 'access', n: 3, label: 'Access'},
+  {id: 'done', n: 4, label: 'Done'},
+]
+
 const PHASES_CRM: {id: PhaseId; n: number; label: string}[] = [
   {id: 'about', n: 1, label: 'About you'},
   {id: 'site', n: 2, label: 'Your system'},
@@ -168,6 +177,7 @@ function phaseForStep(
     | 'speed'
     | 'missed-call'
     | 'google-profile'
+    | 'reviews'
     | 'crm-rescue'
     | 'booking'
     | 'team-ai'
@@ -189,6 +199,10 @@ function phaseForStep(
   }
   if (kind === 'google-profile') {
     if (step === 'profileUrl' || step === 'profileStatus') return 'site'
+    return 'access'
+  }
+  if (kind === 'reviews') {
+    if (step === 'profileUrl' || step === 'profileStatus' || step === 'reviewJob') return 'site'
     return 'access'
   }
   if (kind === 'crm-rescue') {
@@ -727,6 +741,133 @@ function googleAccessOptionsForStatus(status: ProfileStatusId | null) {
       ]
   }
 }
+
+/** Reviews: access depends on profile status, then how jobs get marked complete. */
+function reviewsAccessOptionsForStatus(
+  status: ProfileStatusId | null,
+  job: ReviewJobId | null,
+) {
+  const invite = {
+    id: 'invite' as AccessPathId,
+    label: 'Manager invite',
+    blurb: 'Add us as a manager on the Google listing. No password sharing.',
+    icon: <Check className="w-full h-full" strokeWidth={1.25} />,
+  }
+  const call = {
+    id: 'call' as AccessPathId,
+    label: 'Quick call',
+    blurb: 'We walk through listing access and the ask path together.',
+    icon: <Phone className="w-full h-full" strokeWidth={1.25} />,
+  }
+  const smsProvider = {
+    id: 'provider' as AccessPathId,
+    label: 'SMS / email tool',
+    blurb: 'The tool that already texts or emails customers after a job.',
+    icon: <Server className="w-full h-full" strokeWidth={1.25} />,
+  }
+  const crm = {
+    id: 'crm' as AccessPathId,
+    label: 'Job software login',
+    blurb: 'CRM, job management, or booking tool where jobs get marked done.',
+    icon: <Building2 className="w-full h-full" strokeWidth={1.25} />,
+  }
+
+  switch (status) {
+    case 'unclaimed':
+      return [
+        {
+          id: 'claim' as AccessPathId,
+          label: 'Claim the listing first',
+          blurb: 'Nobody owns it yet. We claim it with you, then wire the ask.',
+          icon: <Globe2 className="w-full h-full" strokeWidth={1.25} />,
+        },
+        call,
+      ]
+    case 'claimed-other':
+      return [
+        {
+          id: 'recover' as AccessPathId,
+          label: 'Recover ownership',
+          blurb: 'We start Google recovery, then wire the ask once you control it.',
+          icon: <Building2 className="w-full h-full" strokeWidth={1.25} />,
+        },
+        call,
+      ]
+    case 'suspended':
+      return [
+        {
+          id: 'recover' as AccessPathId,
+          label: 'Assess the suspension',
+          blurb: 'Reviews cannot grow on a locked listing. We map what Google will allow.',
+          icon: <Building2 className="w-full h-full" strokeWidth={1.25} />,
+        },
+        call,
+      ]
+    case 'claimed-me':
+      switch (job) {
+        case 'sms':
+        case 'email':
+          return [invite, smsProvider, call]
+        case 'software':
+          return [invite, crm, call]
+        case 'manual':
+          return [invite, call]
+        case 'unsure':
+        default:
+          return [call, invite, smsProvider]
+      }
+    case 'unsure':
+    default:
+      return [
+        call,
+        {
+          ...invite,
+          label: 'I think I manage it',
+          blurb: 'If you can open Business Profile, invite us as manager.',
+        },
+      ]
+  }
+}
+
+const REVIEW_JOB_OPTIONS: {
+  id: ReviewJobId
+  label: string
+  blurb: string
+  icon: React.ReactNode
+  unsure?: boolean
+}[] = [
+  {
+    id: 'sms',
+    label: 'SMS after the job',
+    blurb: 'A text goes out when the work is done, or when you mark it complete.',
+    icon: <Phone className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'email',
+    label: 'Email after the job',
+    blurb: 'An email fires from your inbox tool or CRM when the job closes.',
+    icon: <Mail className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'software',
+    label: 'Job software',
+    blurb: 'A CRM, booking tool, or job app already marks jobs complete.',
+    icon: <Building2 className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'manual',
+    label: 'We ask by hand',
+    blurb: 'QR, short link, or a verbal ask. No automation yet.',
+    icon: <Check className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'unsure',
+    label: 'Not sure',
+    blurb: 'Fine. We will pick the lightest path on a short call if needed.',
+    icon: null,
+    unsure: true,
+  },
+]
 
 const CRM_SYSTEM_OPTIONS: {
   id: CrmSystemId
@@ -1852,6 +1993,7 @@ const FunnelAccessPage: React.FC = () => {
   const [phoneSetup, setPhoneSetup] = useState<PhoneSetupId | null>(null)
   const [profileUrl, setProfileUrl] = useState('')
   const [profileStatus, setProfileStatus] = useState<ProfileStatusId | null>(null)
+  const [reviewJob, setReviewJob] = useState<ReviewJobId | null>(null)
   const [websiteUrl, setWebsiteUrl] = useState('')
   const [crmSystem, setCrmSystem] = useState<CrmSystemId | null>(null)
   const [leadSource, setLeadSource] = useState<CrmLeadSourceId | null>(null)
@@ -1905,11 +2047,13 @@ const FunnelAccessPage: React.FC = () => {
   const isChangePack = product === 'change-pack'
   const isContentSystem = product === 'content-system'
   const usesMissedWizard = isMissedCall || isAiPhone
-  const usesGoogleWizard = isGoogleProfile || isReviews
+  const usesGoogleWizard = isGoogleProfile
+  const usesReviewsWizard = isReviews
   const productKind:
     | 'speed'
     | 'missed-call'
     | 'google-profile'
+    | 'reviews'
     | 'crm-rescue'
     | 'booking'
     | 'team-ai'
@@ -1919,32 +2063,36 @@ const FunnelAccessPage: React.FC = () => {
       ? 'missed-call'
       : usesGoogleWizard
         ? 'google-profile'
-        : isCrmRescue
-          ? 'crm-rescue'
-          : isBooking
-            ? 'booking'
-          : isTeamAi
-            ? 'team-ai'
-            : isChangePack
-              ? 'change-pack'
-              : isContentSystem
-                ? 'content-system'
-                : 'speed'
+        : usesReviewsWizard
+          ? 'reviews'
+          : isCrmRescue
+            ? 'crm-rescue'
+            : isBooking
+              ? 'booking'
+              : isTeamAi
+                ? 'team-ai'
+                : isChangePack
+                  ? 'change-pack'
+                  : isContentSystem
+                    ? 'content-system'
+                    : 'speed'
   const phases = usesMissedWizard
     ? PHASES_MISSED
     : usesGoogleWizard
       ? PHASES_GOOGLE
-      : isCrmRescue
-        ? PHASES_CRM
-        : isBooking
-          ? PHASES_BOOKING
-        : isTeamAi
-          ? PHASES_TEAM
-          : isChangePack
-            ? PHASES_CHANGE
-            : isContentSystem
-              ? PHASES_CONTENT
-              : PHASES_SPEED
+      : usesReviewsWizard
+        ? PHASES_REVIEWS
+        : isCrmRescue
+          ? PHASES_CRM
+          : isBooking
+            ? PHASES_BOOKING
+            : isTeamAi
+              ? PHASES_TEAM
+              : isChangePack
+                ? PHASES_CHANGE
+                : isContentSystem
+                  ? PHASES_CONTENT
+                  : PHASES_SPEED
 
   const stepOrder = useMemo((): StepId[] => {
     // Always show the product picker first so buyers see their purchase highlighted
@@ -1976,6 +2124,19 @@ const FunnelAccessPage: React.FC = () => {
         'notes',
         'done',
       ]
+    }
+    if (usesReviewsWizard) {
+      const steps: StepId[] = [
+        'product',
+        'name',
+        'email',
+        'business',
+        'profileUrl',
+        'profileStatus',
+      ]
+      if (profileStatus === 'claimed-me') steps.push('reviewJob')
+      steps.push('access', 'accessDetail', 'notes', 'done')
+      return steps
     }
     if (isCrmRescue) {
       return [
@@ -2078,6 +2239,7 @@ const FunnelAccessPage: React.FC = () => {
     isAiPhone,
     isGoogleProfile,
     isReviews,
+    profileStatus,
     isCrmRescue,
     isBooking,
     isSearchFix,
@@ -2113,13 +2275,15 @@ const FunnelAccessPage: React.FC = () => {
       : missedCallAccessOptionsForSetup(phoneSetup)
     : usesGoogleWizard
       ? googleAccessOptionsForStatus(profileStatus)
-      : isCrmRescue
-        ? crmAccessOptionsForSystem(crmSystem)
-        : isBooking
-          ? bookingAccessOptionsForWhere(bookingWhere, bookingTool)
-          : isSearchFix
-            ? searchAccessOptionsForPlatform(platform)
-            : siteAccessOptionsForPlatform(platform)
+      : usesReviewsWizard
+        ? reviewsAccessOptionsForStatus(profileStatus, reviewJob)
+        : isCrmRescue
+          ? crmAccessOptionsForSystem(crmSystem)
+          : isBooking
+            ? bookingAccessOptionsForWhere(bookingWhere, bookingTool)
+            : isSearchFix
+              ? searchAccessOptionsForPlatform(platform)
+              : siteAccessOptionsForPlatform(platform)
 
   function goNext(from: StepId) {
     setError(null)
@@ -2150,6 +2314,15 @@ const FunnelAccessPage: React.FC = () => {
       }
     } else if (usesGoogleWizard) {
       if (!profileStatus) {
+        setError('Something is missing. Use Back to check your answers.')
+        return
+      }
+    } else if (usesReviewsWizard) {
+      if (!profileStatus) {
+        setError('Something is missing. Use Back to check your answers.')
+        return
+      }
+      if (profileStatus === 'claimed-me' && !reviewJob) {
         setError('Something is missing. Use Back to check your answers.')
         return
       }
@@ -2230,7 +2403,20 @@ const FunnelAccessPage: React.FC = () => {
             accessDetail: accessDetail.trim(),
             notes: notes.trim(),
           }
-        : isCrmRescue
+        : usesReviewsWizard
+          ? {
+              product,
+              name: name.trim(),
+              email: email.trim(),
+              business: business.trim(),
+              profileUrl: profileUrl.trim(),
+              profileStatus: profileStatus!,
+              reviewJob: profileStatus === 'claimed-me' ? reviewJob! : '',
+              accessPath,
+              accessDetail: accessDetail.trim(),
+              notes: notes.trim(),
+            }
+          : isCrmRescue
           ? {
               product,
               name: name.trim(),
@@ -2403,8 +2589,15 @@ const FunnelAccessPage: React.FC = () => {
 
   function selectProfileStatus(id: ProfileStatusId) {
     setProfileStatus(id)
+    setReviewJob(null)
     setAccessPath(null)
     window.setTimeout(() => goNext('profileStatus'), 200)
+  }
+
+  function selectReviewJob(id: ReviewJobId) {
+    setReviewJob(id)
+    setAccessPath(null)
+    window.setTimeout(() => goNext('reviewJob'), 200)
   }
 
   function selectPlatform(id: PlatformId) {
@@ -2715,6 +2908,31 @@ const FunnelAccessPage: React.FC = () => {
                       <SelectCard
                         selected={profileStatus === opt.id}
                         onSelect={() => selectProfileStatus(opt.id)}
+                        title={opt.label}
+                        blurb={opt.blurb}
+                        icon={opt.icon}
+                        unsure={opt.unsure}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : null}
+
+            {step === 'reviewJob' ? (
+              <>
+                <QuestionTitle>
+                  How do jobs get marked <span style={{color: RED}}>done</span>?
+                </QuestionTitle>
+                <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
+                  That is when the review ask should fire. Hover a card, then Select.
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+                  {REVIEW_JOB_OPTIONS.map((opt) => (
+                    <div key={opt.id}>
+                      <SelectCard
+                        selected={reviewJob === opt.id}
+                        onSelect={() => selectReviewJob(opt.id)}
                         title={opt.label}
                         blurb={opt.blurb}
                         icon={opt.icon}
@@ -3487,14 +3705,18 @@ const FunnelAccessPage: React.FC = () => {
                           : accessPath === 'crm'
                             ? 'Which CRM, and whether calls already log there.'
                             : 'Best times to call, or anything that usually trips people up.'
-                    : usesGoogleWizard
+                    : usesGoogleWizard || usesReviewsWizard
                       ? accessPath === 'invite'
                         ? 'The Google account email that can add managers, or say you will send the invite shortly.'
                         : accessPath === 'claim'
                           ? 'Business name, suburb, and the Google Maps link if you have one. Do not share passwords here.'
                           : accessPath === 'recover'
                             ? 'Who used to manage it if you know, any suspension email from Google, and best times to call.'
-                            : 'Best times to call, or anything that usually trips people up.'
+                            : accessPath === 'provider'
+                              ? 'SMS or email tool name and login URL, or say you will email access separately.'
+                              : accessPath === 'crm'
+                                ? 'Which job software, and how a job gets marked complete today.'
+                                : 'Best times to call, or anything that usually trips people up.'
                       : accessPath === 'search-console'
                         ? 'The Google account email that owns Search Console, or say you will approve the invite shortly.'
                         : accessPath === 'wp-admin'
