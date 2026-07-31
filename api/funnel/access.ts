@@ -81,6 +81,10 @@ const BOOKING_TOOLS = new Set(['hubspot', 'calendly', 'setmore', 'fresha', 'othe
 const BOOKING_WHAT = new Set(['appointments', 'calls', 'consults', 'mixed', 'other']);
 const BOOKING_WHERE = new Set(['site', 'google', 'both', 'unsure']);
 const BOOKING_ACCESS = new Set(['invite', 'wp-admin', 'admin', 'call']);
+const LANDING_GOALS = new Set(['leads', 'calls', 'book', 'buy', 'other']);
+const LANDING_ADS = new Set(['meta', 'google', 'both', 'not-live', 'other']);
+const LANDING_TRACKING = new Set(['meta', 'google', 'both', 'none', 'unsure']);
+const LANDING_ACCESS = new Set(['ad-account', 'wp-admin', 'hosting', 'agency', 'call']);
 const MISSED_CALL_SETUPS = new Set(['mobile', 'landline', 'voip', 'mixed', 'unsure']);
 const MISSED_CALL_ACCESS = new Set(['forward', 'provider', 'crm', 'call', 'invite']);
 const GOOGLE_PROFILE_STATUS = new Set([
@@ -136,6 +140,10 @@ type Body = {
   bookingTool?: unknown;
   bookingWhat?: unknown;
   bookingWhere?: unknown;
+  landingGoal?: unknown;
+  landingAds?: unknown;
+  landingOffer?: unknown;
+  landingTracking?: unknown;
   websiteUrl?: unknown;
   teamSize?: unknown;
   teamTools?: unknown;
@@ -461,6 +469,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const bookingTool = str(body.bookingTool, 40);
   const bookingWhat = str(body.bookingWhat, 40);
   const bookingWhere = str(body.bookingWhere, 40);
+  const landingGoal = str(body.landingGoal, 40);
+  const landingAds = str(body.landingAds, 40);
+  const landingOffer = str(body.landingOffer, 4000);
+  const landingTracking = str(body.landingTracking, 40);
   const websiteUrl = str(body.websiteUrl, 400);
   const teamSize = str(body.teamSize, 40);
   const teamTools = str(body.teamTools, 2000);
@@ -497,6 +509,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const isReviews = product === 'reviews';
   const isCrmRescue = product === 'crm-rescue';
   const isBooking = product === 'booking';
+  const isLandingPage = product === 'landing-page';
   const isTeamAi = product === 'team-ai';
   const isChangePack = product === 'change-pack';
   const isContentSystem = product === 'content-system';
@@ -549,6 +562,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     }
     if (!BOOKING_ACCESS.has(accessPath)) {
       res.status(400).json({ error: 'Invalid access path' });
+      return;
+    }
+  } else if (isLandingPage) {
+    if (
+      !LANDING_GOALS.has(landingGoal) ||
+      !LANDING_ADS.has(landingAds) ||
+      landingOffer.length < 8 ||
+      !LANDING_TRACKING.has(landingTracking)
+    ) {
+      res.status(400).json({ error: 'Invalid campaign goal, ads channel, offer, or tracking' });
+      return;
+    }
+    if (website.length < 4) {
+      res.status(400).json({ error: 'Missing website' });
+      return;
+    }
+    if (!PLATFORMS.has(platform) || !SAME.has(sameProvider) || !LANDING_ACCESS.has(accessPath)) {
+      res.status(400).json({ error: 'Invalid platform, provider, or access path' });
       return;
     }
   } else if (isTeamAi) {
@@ -670,6 +701,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
             ]
               .filter(Boolean)
               .join('\n')
+        : isLandingPage
+          ? [
+              `Funnel access form — ${product}`,
+              `Business: ${business}`,
+              `Website: ${website}`,
+              `Page goal: ${landingGoal}`,
+              `Ads channel: ${landingAds}`,
+              `Offer / ad promise:\n${landingOffer}`,
+              `Tracking today: ${landingTracking}`,
+              `Platform: ${platform}`,
+              `Domain + hosting same provider: ${sameProvider}`,
+              domainProvider ? `Domain provider: ${domainProvider}` : null,
+              hostingProvider ? `Hosting provider: ${hostingProvider}` : null,
+              `Access path: ${accessPath}`,
+              accessDetail ? `Access notes:\n${accessDetail}` : null,
+              notes ? `Other notes:\n${notes}` : null,
+              `Submitted: ${new Date().toISOString()}`,
+            ]
+              .filter(Boolean)
+              .join('\n')
         : isTeamAi
           ? [
               `Funnel access form — ${product}`,
@@ -753,6 +804,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     bookingTool,
     bookingWhat,
     bookingWhere,
+    landingGoal,
+    landingAds,
+    landingOffer,
+    landingTracking,
     websiteUrl,
     teamSize,
     teamTools,

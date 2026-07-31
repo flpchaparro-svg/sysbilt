@@ -30,6 +30,7 @@ export type AccessPathId =
   | 'claim'
   | 'recover'
   | 'search-console'
+  | 'ad-account'
 export type PhoneSetupId = 'mobile' | 'landline' | 'voip' | 'mixed' | 'unsure'
 export type ProfileStatusId =
   | 'unclaimed'
@@ -60,6 +61,9 @@ export type CrmGoalId = 'speed' | 'alerts' | 'follow-up' | 'quotes' | 'missed-ca
 export type BookingToolId = 'hubspot' | 'calendly' | 'setmore' | 'fresha' | 'other' | 'none'
 export type BookingWhatId = 'appointments' | 'calls' | 'consults' | 'mixed' | 'other'
 export type BookingWhereId = 'site' | 'google' | 'both' | 'unsure'
+export type LandingGoalId = 'leads' | 'calls' | 'book' | 'buy' | 'other'
+export type LandingAdsId = 'meta' | 'google' | 'both' | 'not-live' | 'other'
+export type LandingTrackingId = 'meta' | 'google' | 'both' | 'none' | 'unsure'
 
 export type FunnelAccessPayload = {
   product: FunnelProductCode
@@ -85,6 +89,10 @@ export type FunnelAccessPayload = {
   bookingTool?: BookingToolId | ''
   bookingWhat?: BookingWhatId | ''
   bookingWhere?: BookingWhereId | ''
+  landingGoal?: LandingGoalId | ''
+  landingAds?: LandingAdsId | ''
+  landingOffer?: string
+  landingTracking?: LandingTrackingId | ''
   websiteUrl?: string
   teamSize?: string
   teamTools?: string

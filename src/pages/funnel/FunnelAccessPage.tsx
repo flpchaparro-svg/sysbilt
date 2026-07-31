@@ -43,6 +43,9 @@ import {
   type CrmLeadSourceId,
   type CrmSystemId,
   type FunnelAccessPayload,
+  type LandingAdsId,
+  type LandingGoalId,
+  type LandingTrackingId,
   type PhoneSetupId,
   type PlatformId,
   type ProfileStatusId,
@@ -77,6 +80,10 @@ type StepId =
   | 'bookingTool'
   | 'bookingWhat'
   | 'bookingWhere'
+  | 'landingGoal'
+  | 'landingAds'
+  | 'landingOffer'
+  | 'landingTracking'
   | 'sessionFormat'
   | 'teamSize'
   | 'teamTools'
@@ -146,6 +153,13 @@ const PHASES_BOOKING: {id: PhaseId; n: number; label: string}[] = [
   {id: 'done', n: 4, label: 'Done'},
 ]
 
+const PHASES_LANDING: {id: PhaseId; n: number; label: string}[] = [
+  {id: 'about', n: 1, label: 'About you'},
+  {id: 'site', n: 2, label: 'Your campaign'},
+  {id: 'access', n: 3, label: 'Access'},
+  {id: 'done', n: 4, label: 'Done'},
+]
+
 const PHASES_TEAM: {id: PhaseId; n: number; label: string}[] = [
   {id: 'about', n: 1, label: 'About you'},
   {id: 'site', n: 2, label: 'Your work'},
@@ -180,6 +194,7 @@ function phaseForStep(
     | 'reviews'
     | 'crm-rescue'
     | 'booking'
+    | 'landing-page'
     | 'team-ai'
     | 'change-pack'
     | 'content-system',
@@ -222,6 +237,22 @@ function phaseForStep(
       step === 'bookingWhat' ||
       step === 'bookingWhere' ||
       step === 'websiteUrl'
+    ) {
+      return 'site'
+    }
+    return 'access'
+  }
+  if (kind === 'landing-page') {
+    if (
+      step === 'landingGoal' ||
+      step === 'landingAds' ||
+      step === 'landingOffer' ||
+      step === 'landingTracking' ||
+      step === 'website' ||
+      step === 'platform' ||
+      step === 'provider' ||
+      step === 'domainProvider' ||
+      step === 'hostingProvider'
     ) {
       return 'site'
     }
@@ -611,6 +642,161 @@ function searchAccessOptionsForPlatform(platform: PlatformId | null) {
   const site = siteAccessOptionsForPlatform(platform).filter((opt) => opt.id !== 'call')
   return [searchConsole, ...site, ACCESS_BY_ID.call]
 }
+
+const LANDING_GOAL_OPTIONS: {
+  id: LandingGoalId
+  label: string
+  blurb: string
+  icon: React.ReactNode
+}[] = [
+  {
+    id: 'leads',
+    label: 'Lead form',
+    blurb: 'Capture name, phone, or email for follow-up.',
+    icon: <FileText className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'calls',
+    label: 'Call now',
+    blurb: 'Push people to ring your number.',
+    icon: <Phone className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'book',
+    label: 'Book a consult',
+    blurb: 'Calendar or booking link as the main action.',
+    icon: <Calendar className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'buy',
+    label: 'Buy or pay',
+    blurb: 'Checkout, deposit, or paid offer on the page.',
+    icon: <ShoppingBag className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'other',
+    label: 'Something else',
+    blurb: 'Tell us the action in the offer step.',
+    icon: <Code2 className="w-full h-full" strokeWidth={1.25} />,
+  },
+]
+
+const LANDING_ADS_OPTIONS: {
+  id: LandingAdsId
+  label: string
+  blurb: string
+  icon: React.ReactNode
+  unsure?: boolean
+}[] = [
+  {
+    id: 'meta',
+    label: 'Meta ads',
+    blurb: 'Facebook or Instagram ads are live or about to be.',
+    icon: <Users className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'google',
+    label: 'Google ads',
+    blurb: 'Search, Display, or YouTube ads.',
+    icon: <Globe2 className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'both',
+    label: 'Meta and Google',
+    blurb: 'Clicks come from both platforms.',
+    icon: <Box className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'not-live',
+    label: 'Not live yet',
+    blurb: 'You have the offer. Ads start after the page is ready.',
+    icon: <FileText className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'other',
+    label: 'Other / not sure',
+    blurb: 'LinkedIn, TikTok, or you are still deciding.',
+    icon: null,
+    unsure: true,
+  },
+]
+
+const LANDING_TRACKING_OPTIONS: {
+  id: LandingTrackingId
+  label: string
+  blurb: string
+  icon: React.ReactNode
+  unsure?: boolean
+}[] = [
+  {
+    id: 'meta',
+    label: 'Meta pixel',
+    blurb: 'Pixel already on the site, or you can share it.',
+    icon: <Users className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'google',
+    label: 'Google tag',
+    blurb: 'gtag, Google Ads tag, or Tag Manager.',
+    icon: <Globe2 className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'both',
+    label: 'Both',
+    blurb: 'Meta and Google tracking both matter.',
+    icon: <Box className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'none',
+    label: 'Nothing yet',
+    blurb: 'We wire tracking as part of the build.',
+    icon: <Server className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'unsure',
+    label: 'Not sure',
+    blurb: 'Fine. We will check the site and set what is missing.',
+    icon: null,
+    unsure: true,
+  },
+]
+
+/** Campaign Landing Page: ad account when ads are live, then platform-aware site access. */
+function landingAccessOptionsForAds(ads: LandingAdsId | null, platform: PlatformId | null) {
+  const site = siteAccessOptionsForPlatform(platform).filter((opt) => opt.id !== 'call')
+  const adMeta = {
+    id: 'ad-account' as AccessPathId,
+    label: 'Meta Business Manager',
+    blurb: 'Invite us as a partner or advertiser. Ownership stays yours.',
+    icon: <Users className="w-full h-full" strokeWidth={1.25} />,
+  }
+  const adGoogle = {
+    id: 'ad-account' as AccessPathId,
+    label: 'Google Ads access',
+    blurb: 'Add us as a user on the Google Ads account, or share the tag details.',
+    icon: <Globe2 className="w-full h-full" strokeWidth={1.25} />,
+  }
+  const adBoth = {
+    id: 'ad-account' as AccessPathId,
+    label: 'Ad account invite',
+    blurb: 'Invite us on Meta and Google so tracking and destinations line up.',
+    icon: <Box className="w-full h-full" strokeWidth={1.25} />,
+  }
+  switch (ads) {
+    case 'meta':
+      return [adMeta, ...site, ACCESS_BY_ID.call]
+    case 'google':
+      return [adGoogle, ...site, ACCESS_BY_ID.call]
+    case 'both':
+      return [adBoth, ...site, ACCESS_BY_ID.call]
+    case 'not-live':
+      return [...site, ACCESS_BY_ID.call]
+    case 'other':
+    default:
+      return [ACCESS_BY_ID.call, adBoth, ...site]
+  }
+}
+
 
 const GOOGLE_PROFILE_STATUS_OPTIONS: {
   id: ProfileStatusId
@@ -1681,6 +1867,31 @@ function helpForStep(step: StepId): HelpBlock {
         title: 'What content should do',
         body: 'Pick the main outcome. Mixed is fine if you want more than one.',
       }
+    case 'landingGoal':
+      return {
+        title: 'What the page should do',
+        body: 'One main action. The page exists to finish one promise, not twelve.',
+      }
+    case 'landingAds':
+      return {
+        title: 'Where the clicks come from',
+        body: 'This shapes tracking and whether we need an ad-account invite. Not live yet is fine.',
+      }
+    case 'landingOffer':
+      return {
+        title: 'The promise to repeat',
+        body: 'Paste the ad copy, the offer, or the one sentence a visitor should believe. We write the page from that.',
+        steps: [
+          'Headline and main offer from the ad',
+          'Any price, bonus, or deadline that matters',
+          'Logo link or brand notes if you have them',
+        ],
+      }
+    case 'landingTracking':
+      return {
+        title: 'Conversion tracking',
+        body: 'Pixels and tags teach the ad platform what worked. Tell us what exists today.',
+      }
     case 'website':
       return {
         title: 'Which site we are fixing',
@@ -2001,6 +2212,10 @@ const FunnelAccessPage: React.FC = () => {
   const [bookingTool, setBookingTool] = useState<BookingToolId | null>(null)
   const [bookingWhat, setBookingWhat] = useState<BookingWhatId | null>(null)
   const [bookingWhere, setBookingWhere] = useState<BookingWhereId | null>(null)
+  const [landingGoal, setLandingGoal] = useState<LandingGoalId | null>(null)
+  const [landingAds, setLandingAds] = useState<LandingAdsId | null>(null)
+  const [landingOffer, setLandingOffer] = useState('')
+  const [landingTracking, setLandingTracking] = useState<LandingTrackingId | null>(null)
   const [sessionFormat, setSessionFormat] = useState<'remote' | 'onsite' | null>(
     initialSessionFormat,
   )
@@ -2043,6 +2258,7 @@ const FunnelAccessPage: React.FC = () => {
   const isCrmRescue = product === 'crm-rescue'
   const isBooking = product === 'booking'
   const isSearchFix = product === 'search-fix'
+  const isLandingPage = product === 'landing-page'
   const isTeamAi = product === 'team-ai'
   const isChangePack = product === 'change-pack'
   const isContentSystem = product === 'content-system'
@@ -2056,6 +2272,7 @@ const FunnelAccessPage: React.FC = () => {
     | 'reviews'
     | 'crm-rescue'
     | 'booking'
+    | 'landing-page'
     | 'team-ai'
     | 'change-pack'
     | 'content-system' =
@@ -2069,13 +2286,15 @@ const FunnelAccessPage: React.FC = () => {
             ? 'crm-rescue'
             : isBooking
               ? 'booking'
-              : isTeamAi
-                ? 'team-ai'
-                : isChangePack
-                  ? 'change-pack'
-                  : isContentSystem
-                    ? 'content-system'
-                    : 'speed'
+              : isLandingPage
+                ? 'landing-page'
+                : isTeamAi
+                  ? 'team-ai'
+                  : isChangePack
+                    ? 'change-pack'
+                    : isContentSystem
+                      ? 'content-system'
+                      : 'speed'
   const phases = usesMissedWizard
     ? PHASES_MISSED
     : usesGoogleWizard
@@ -2086,13 +2305,15 @@ const FunnelAccessPage: React.FC = () => {
           ? PHASES_CRM
           : isBooking
             ? PHASES_BOOKING
-            : isTeamAi
-              ? PHASES_TEAM
-              : isChangePack
-                ? PHASES_CHANGE
-                : isContentSystem
-                  ? PHASES_CONTENT
-                  : PHASES_SPEED
+            : isLandingPage
+              ? PHASES_LANDING
+              : isTeamAi
+                ? PHASES_TEAM
+                : isChangePack
+                  ? PHASES_CHANGE
+                  : isContentSystem
+                    ? PHASES_CONTENT
+                    : PHASES_SPEED
 
   const stepOrder = useMemo((): StepId[] => {
     // Always show the product picker first so buyers see their purchase highlighted
@@ -2170,6 +2391,26 @@ const FunnelAccessPage: React.FC = () => {
         'done',
       ]
     }
+    if (isLandingPage) {
+      const base: StepId[] = [
+        'product',
+        'name',
+        'email',
+        'business',
+        'landingGoal',
+        'landingAds',
+        'landingOffer',
+        'landingTracking',
+        'website',
+        'platform',
+        'provider',
+      ]
+      if (sameProvider === 'no') {
+        base.push('domainProvider', 'hostingProvider')
+      }
+      base.push('access', 'accessDetail', 'notes', 'done')
+      return base
+    }
     if (isTeamAi) {
       const teamSteps: StepId[] = [
         'product',
@@ -2242,6 +2483,7 @@ const FunnelAccessPage: React.FC = () => {
     profileStatus,
     isCrmRescue,
     isBooking,
+    isLandingPage,
     isSearchFix,
     isTeamAi,
     isChangePack,
@@ -2281,9 +2523,11 @@ const FunnelAccessPage: React.FC = () => {
           ? crmAccessOptionsForSystem(crmSystem)
           : isBooking
             ? bookingAccessOptionsForWhere(bookingWhere, bookingTool)
-            : isSearchFix
-              ? searchAccessOptionsForPlatform(platform)
-              : siteAccessOptionsForPlatform(platform)
+            : isLandingPage
+              ? landingAccessOptionsForAds(landingAds, platform)
+              : isSearchFix
+                ? searchAccessOptionsForPlatform(platform)
+                : siteAccessOptionsForPlatform(platform)
 
   function goNext(from: StepId) {
     setError(null)
@@ -2333,6 +2577,18 @@ const FunnelAccessPage: React.FC = () => {
       }
     } else if (isBooking) {
       if (!bookingTool || !bookingWhat || !bookingWhere) {
+        setError('Something is missing. Use Back to check your answers.')
+        return
+      }
+    } else if (isLandingPage) {
+      if (
+        !landingGoal ||
+        !landingAds ||
+        landingOffer.trim().length < 8 ||
+        !landingTracking ||
+        !platform ||
+        !sameProvider
+      ) {
         setError('Something is missing. Use Back to check your answers.')
         return
       }
@@ -2430,6 +2686,25 @@ const FunnelAccessPage: React.FC = () => {
               accessDetail: accessDetail.trim(),
               notes: notes.trim(),
             }
+          : isLandingPage
+            ? {
+                product,
+                name: name.trim(),
+                email: email.trim(),
+                business: business.trim(),
+                landingGoal: landingGoal!,
+                landingAds: landingAds!,
+                landingOffer: landingOffer.trim(),
+                landingTracking: landingTracking!,
+                website: website.trim(),
+                platform: platform!,
+                sameProvider: sameProvider!,
+                domainProvider: domainProvider.trim(),
+                hostingProvider: hostingProvider.trim(),
+                accessPath,
+                accessDetail: accessDetail.trim(),
+                notes: notes.trim(),
+              }
           : isBooking
             ? {
                 product,
@@ -3046,6 +3321,103 @@ const FunnelAccessPage: React.FC = () => {
               </>
             ) : null}
 
+            {step === 'landingGoal' ? (
+              <>
+                <QuestionTitle>
+                  What should this page <span style={{color: RED}}>do</span>?
+                </QuestionTitle>
+                <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
+                  One main action. Hover a card, then Select.
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+                  {LANDING_GOAL_OPTIONS.map((opt) => (
+                    <div key={opt.id}>
+                      <SelectCard
+                        selected={landingGoal === opt.id}
+                        onSelect={() => {
+                          setLandingGoal(opt.id)
+                          goNext('landingGoal')
+                        }}
+                        title={opt.label}
+                        blurb={opt.blurb}
+                        icon={opt.icon}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : null}
+
+            {step === 'landingAds' ? (
+              <>
+                <QuestionTitle>
+                  Where are the <span style={{color: RED}}>clicks</span> coming from?
+                </QuestionTitle>
+                <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
+                  Live ads, or not live yet. This changes the access cards later.
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+                  {LANDING_ADS_OPTIONS.map((opt) => (
+                    <div key={opt.id}>
+                      <SelectCard
+                        selected={landingAds === opt.id}
+                        onSelect={() => {
+                          setLandingAds(opt.id)
+                          setAccessPath(null)
+                          goNext('landingAds')
+                        }}
+                        title={opt.label}
+                        blurb={opt.blurb}
+                        icon={opt.icon}
+                        unsure={opt.unsure}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : null}
+
+            {step === 'landingOffer' ? (
+              <OneField
+                title="What promise should the page repeat?"
+                hint="Paste the ad copy, the offer, or the one sentence a visitor should believe. Include price or deadline if it matters."
+                value={landingOffer}
+                onChange={setLandingOffer}
+                placeholder="e.g. Free kitchen design consult this month · book online…"
+                multiline
+                disabled={landingOffer.trim().length < 8}
+                onNext={() => goNext('landingOffer')}
+              />
+            ) : null}
+
+            {step === 'landingTracking' ? (
+              <>
+                <QuestionTitle>
+                  What tracking is on the site <span style={{color: RED}}>today</span>?
+                </QuestionTitle>
+                <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
+                  Pixel, Google tag, both, or nothing. Not sure is fine.
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+                  {LANDING_TRACKING_OPTIONS.map((opt) => (
+                    <div key={opt.id}>
+                      <SelectCard
+                        selected={landingTracking === opt.id}
+                        onSelect={() => {
+                          setLandingTracking(opt.id)
+                          goNext('landingTracking')
+                        }}
+                        title={opt.label}
+                        blurb={opt.blurb}
+                        icon={opt.icon}
+                        unsure={opt.unsure}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : null}
+
             {step === 'bookingTool' ? (
               <>
                 <QuestionTitle>
@@ -3566,8 +3938,16 @@ const FunnelAccessPage: React.FC = () => {
 
             {step === 'website' ? (
               <OneField
-                title="Which website are we fixing?"
-                hint="Paste the live site URL for this job."
+                title={
+                  isLandingPage
+                    ? 'Which website should host the page?'
+                    : 'Which website are we fixing?'
+                }
+                hint={
+                  isLandingPage
+                    ? 'Your domain. The campaign page lives on your site, not ours.'
+                    : 'Paste the live site URL for this job.'
+                }
                 value={website}
                 onChange={setWebsite}
                 placeholder="https://yourbusiness.com.au"
