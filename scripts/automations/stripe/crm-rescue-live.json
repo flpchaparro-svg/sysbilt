@@ -1,0 +1,14 @@
+{
+  "createdAt": "2026-07-31T05:05:00.000Z",
+  "mode": "live",
+  "note": "CRM Rescue · live Payment Link. Product has description + marketing_features (Speed Fix pattern). After pay → https://sysbilt.com/go/thanks?p=crm-rescue → CRM access wizard. Never use buy.stripe.com/test_ on this page.",
+  "product": {
+    "code": "crm-rescue",
+    "name": "CRM Rescue",
+    "productId": "prod_UuLwXbibCLp7MK",
+    "priceId": "price_1TvqGI7kQC0CB85zYs5a6x9G",
+    "paymentLinkId": "plink_1TvqGK7kQC0CB85z2Xk3oqA5",
+    "paymentLinkUrl": "https://buy.stripe.com/4gMeV74hXdHG7Yi5O33gk01",
+    "amountAud": 2800
+  }
+}

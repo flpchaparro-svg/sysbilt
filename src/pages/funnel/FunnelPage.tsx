@@ -95,6 +95,7 @@ import {GOOGLE_PROFILE_STRIPE_URL} from '../../constants/googleProfileStripe'
 import {MISSED_CALL_STRIPE_URL} from '../../constants/missedCallStripe'
 import {SEARCH_FIX_STRIPE_URL} from '../../constants/searchFixStripe'
 import {REVIEWS_STRIPE_URL} from '../../constants/reviewsStripe'
+import {CRM_RESCUE_STRIPE_URL} from '../../constants/crmRescueStripe'
 import {funnelCopyForSlug} from './funnelCopy'
 import {
   FUNNEL_PRODUCT_LABELS,
@@ -398,7 +399,8 @@ const FunnelPage: React.FC = () => {
     (isGoogleProfile ? GOOGLE_PROFILE_STRIPE_URL : undefined) ||
     (isMissedCall ? MISSED_CALL_STRIPE_URL : undefined) ||
     (isSearchFix ? SEARCH_FIX_STRIPE_URL : undefined) ||
-    (isReviews ? REVIEWS_STRIPE_URL : undefined)
+    (isReviews ? REVIEWS_STRIPE_URL : undefined) ||
+    (isCrmRescue ? CRM_RESCUE_STRIPE_URL : undefined)
   const sanityStripe = (doc?.stripeUrl || '').trim()
   const resolvedStripeUrl =
     sanityStripe && !sanityStripe.includes('buy.stripe.com/test_')
