@@ -1052,6 +1052,204 @@ const PROFILE_VISUALS = [
   TwoDayProfileVisual,
 ]
 
+/** Job stamped complete → SMS ask fires. */
+function JobDoneAskVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white/70 p-2.5 flex flex-col justify-between">
+      <motion.div
+        className="self-start rounded-md border px-2 py-1 font-mono text-[8px] font-bold uppercase tracking-wider"
+        style={{
+          borderColor: `${FUNNEL_COLOURS.gold}66`,
+          backgroundColor: `${FUNNEL_COLOURS.gold}18`,
+          color: FUNNEL_COLOURS.goldDeep,
+        }}
+        initial={reduce ? false : {opacity: 0, scale: 0.9}}
+        whileInView={{opacity: 1, scale: 1}}
+        viewport={{once: true}}
+      >
+        Job complete
+      </motion.div>
+      <motion.div
+        className="rounded-2xl rounded-bl-sm border px-2.5 py-2 self-start max-w-[90%]"
+        style={{
+          borderColor: `${FUNNEL_COLOURS.ink}14`,
+          backgroundColor: FUNNEL_COLOURS.ground,
+        }}
+        initial={reduce ? false : {opacity: 0, y: 12, x: -6}}
+        whileInView={{opacity: 1, y: 0, x: 0}}
+        viewport={{once: true}}
+        transition={{delay: reduce ? 0 : 0.35, duration: 0.4, ease: [0.16, 1, 0.3, 1]}}
+      >
+        <div className="flex gap-1 mb-1.5">
+          {[0, 1, 2].map((i) => (
+            <motion.span
+              key={i}
+              className="h-1 w-1 rounded-full"
+              style={{backgroundColor: FUNNEL_COLOURS.accent}}
+              animate={reduce ? undefined : {opacity: [0.3, 1, 0.3]}}
+              transition={reduce ? undefined : {duration: 1.2, repeat: Infinity, delay: i * 0.15}}
+            />
+          ))}
+        </div>
+        <div className="h-1.5 w-28 rounded-sm mb-1" style={{backgroundColor: `${FUNNEL_COLOURS.ink}22`}} />
+        <div className="h-1.5 w-16 rounded-sm" style={{backgroundColor: FUNNEL_COLOURS.accent}} />
+      </motion.div>
+    </div>
+  )
+}
+
+/** Robot script fades. Your short voice bubble lands. */
+function YourVoiceVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white/70 p-2.5">
+      <motion.div
+        className="absolute inset-x-2.5 top-2.5 border border-dashed px-2 py-1.5"
+        style={{borderColor: `${FUNNEL_COLOURS.ink}22`, backgroundColor: `${FUNNEL_COLOURS.ink}05`}}
+        initial={reduce ? false : {opacity: 0.7}}
+        whileInView={{opacity: 0.25, y: -4}}
+        viewport={{once: true}}
+        transition={{delay: reduce ? 0 : 0.4, duration: 0.5}}
+      >
+        <div className="h-1.5 w-full rounded-sm mb-1" style={{backgroundColor: `${FUNNEL_COLOURS.ink}16`}} />
+        <div className="h-1.5 w-4/5 rounded-sm" style={{backgroundColor: `${FUNNEL_COLOURS.ink}12`}} />
+        <motion.div
+          className="absolute inset-0 flex items-center justify-center"
+          initial={{opacity: 0}}
+          whileInView={{opacity: 1}}
+          viewport={{once: true}}
+          transition={{delay: reduce ? 0 : 0.5}}
+        >
+          <span
+            className="font-mono text-[9px] font-bold uppercase tracking-widest px-2 py-0.5"
+            style={{backgroundColor: `${FUNNEL_COLOURS.accent}22`, color: FUNNEL_COLOURS.accent}}
+          >
+            Script cut
+          </span>
+        </motion.div>
+      </motion.div>
+      <motion.div
+        className="absolute bottom-2.5 left-2.5 right-2.5 rounded-2xl rounded-bl-sm border px-2.5 py-2"
+        style={{
+          borderColor: `${FUNNEL_COLOURS.gold}55`,
+          backgroundColor: `${FUNNEL_COLOURS.gold}14`,
+        }}
+        initial={reduce ? false : {opacity: 0, y: 10}}
+        whileInView={{opacity: 1, y: 0}}
+        viewport={{once: true}}
+        transition={{delay: reduce ? 0 : 0.65, duration: 0.4}}
+      >
+        <p className="font-mono text-[7px] uppercase tracking-widest mb-1" style={{color: FUNNEL_COLOURS.goldDeep}}>
+          Your voice
+        </p>
+        <div className="h-1.5 w-24 rounded-sm" style={{backgroundColor: `${FUNNEL_COLOURS.ink}28`}} />
+      </motion.div>
+    </div>
+  )
+}
+
+/** QR tiles fill in. Short link bar completes. */
+function QrLinkReadyVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white/70 p-2.5 flex items-center gap-3">
+      <div
+        className="h-[72px] w-[72px] shrink-0 rounded-sm border grid grid-cols-3 grid-rows-3 gap-0.5 p-1.5"
+        style={{borderColor: `${FUNNEL_COLOURS.ink}18`}}
+        aria-hidden
+      >
+        {Array.from({length: 9}).map((_, i) => (
+          <motion.div
+            key={i}
+            className="rounded-[1px]"
+            style={{
+              backgroundColor: i === 4 ? 'transparent' : FUNNEL_COLOURS.ink,
+            }}
+            initial={reduce ? false : {opacity: 0, scale: 0.5}}
+            whileInView={{opacity: i === 4 ? 0 : i % 2 === 0 ? 0.9 : 0.45, scale: 1}}
+            viewport={{once: true}}
+            transition={{delay: reduce ? 0 : i * 0.05, duration: 0.25}}
+          />
+        ))}
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="font-mono text-[7px] uppercase tracking-widest text-dark/40 mb-2">Short link</p>
+        <div className="h-2 w-full bg-dark/10 overflow-hidden rounded-full">
+          <motion.div
+            className="h-full"
+            style={{backgroundColor: FUNNEL_COLOURS.goldDeep}}
+            initial={{width: '0%'}}
+            whileInView={{width: '100%'}}
+            viewport={{once: true}}
+            transition={{delay: reduce ? 0 : 0.35, duration: 0.8, ease: [0.16, 1, 0.3, 1]}}
+          />
+        </div>
+        <motion.p
+          className="mt-2 font-mono text-[8px] font-bold uppercase tracking-widest"
+          style={{color: FUNNEL_COLOURS.goldDeep}}
+          initial={{opacity: 0}}
+          whileInView={{opacity: 1}}
+          viewport={{once: true}}
+          transition={{delay: reduce ? 0 : 0.9}}
+        >
+          Van · desk · invoice
+        </motion.p>
+      </div>
+    </div>
+  )
+}
+
+/** Good and bad reply cards flip in. */
+function ReplyTemplatesVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white/70 p-2.5 flex gap-2">
+      {[
+        {label: 'Good', color: '#1B6B3A', delay: 0},
+        {label: 'Tough', color: FUNNEL_COLOURS.accent, delay: 0.28},
+      ].map((card) => (
+        <motion.div
+          key={card.label}
+          className="flex-1 border px-2 py-2 flex flex-col justify-between"
+          style={{
+            borderColor: `${FUNNEL_COLOURS.ink}14`,
+            backgroundColor: FUNNEL_COLOURS.ground,
+          }}
+          initial={reduce ? false : {opacity: 0, rotateY: -40}}
+          whileInView={{opacity: 1, rotateY: 0}}
+          viewport={{once: true}}
+          transition={{delay: reduce ? 0 : card.delay, duration: 0.45}}
+        >
+          <p
+            className="font-mono text-[8px] font-bold uppercase tracking-widest"
+            style={{color: card.color}}
+          >
+            {card.label}
+          </p>
+          <div className="space-y-1">
+            <div className="h-1.5 w-full rounded-sm" style={{backgroundColor: `${FUNNEL_COLOURS.ink}18`}} />
+            <div className="h-1.5 w-3/4 rounded-sm" style={{backgroundColor: `${FUNNEL_COLOURS.ink}12`}} />
+          </div>
+          <motion.span
+            className="font-mono text-[8px] font-bold uppercase tracking-widest self-end"
+            style={{color: FUNNEL_COLOURS.goldDeep}}
+            initial={{opacity: 0}}
+            whileInView={{opacity: 1}}
+            viewport={{once: true}}
+            transition={{delay: reduce ? 0 : card.delay + 0.35}}
+          >
+            Ready
+          </motion.span>
+        </motion.div>
+      ))}
+    </div>
+  )
+}
+
+const REVIEWS_VISUALS = [
+  JobDoneAskVisual,
+  YourVoiceVisual,
+  QrLinkReadyVisual,
+  ReplyTemplatesVisual,
+]
+
 /** Empty SERP slot fills with your listing. */
 function FoundAgainVisual({reduce}: VisualProps) {
   return (
@@ -1945,21 +2143,23 @@ export function BenefitMotionRows({
   const visuals =
     variant === 'missed-call' || variant === 'ai-phone'
       ? MISSED_VISUALS
-      : variant === 'google-profile' || variant === 'reviews'
-        ? PROFILE_VISUALS
-        : variant === 'search-fix'
-          ? SEARCH_VISUALS
-          : variant === 'website'
-            ? WEBSITE_VISUALS
-            : variant === 'landing-page'
-              ? LANDING_VISUALS
-              : variant === 'booking'
-                ? BOOKING_VISUALS
-              : variant === 'crm-rescue'
-                ? CRM_VISUALS
-                : variant === 'team-ai' || variant === 'change-pack' || variant === 'content-system'
-                  ? TEAM_AI_VISUALS
-                  : SPEED_VISUALS
+      : variant === 'reviews'
+        ? REVIEWS_VISUALS
+        : variant === 'google-profile'
+          ? PROFILE_VISUALS
+          : variant === 'search-fix'
+            ? SEARCH_VISUALS
+            : variant === 'website'
+              ? WEBSITE_VISUALS
+              : variant === 'landing-page'
+                ? LANDING_VISUALS
+                : variant === 'booking'
+                  ? BOOKING_VISUALS
+                  : variant === 'crm-rescue'
+                    ? CRM_VISUALS
+                    : variant === 'team-ai' || variant === 'change-pack' || variant === 'content-system'
+                      ? TEAM_AI_VISUALS
+                      : SPEED_VISUALS
 
   return (
     <div className="space-y-10 md:space-y-12">

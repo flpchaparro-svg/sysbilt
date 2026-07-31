@@ -507,6 +507,144 @@ const PROFILE_STACK_VISUALS = [
   AftercareStampVisual,
 ]
 
+/** Auto ask: job stamp → SMS pulse. */
+function ReviewsAskFireVisual({reduce, play}: VisualProps) {
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex items-center gap-3">
+      <motion.div
+        className="rounded-md border px-2 py-1.5 font-mono text-[8px] font-bold uppercase tracking-wider shrink-0"
+        style={{
+          borderColor: play || reduce ? `${FUNNEL_COLOURS.gold}88` : `${FUNNEL_COLOURS.ink}20`,
+          backgroundColor: play || reduce ? `${FUNNEL_COLOURS.gold}22` : FUNNEL_COLOURS.ground,
+          color: FUNNEL_COLOURS.goldDeep,
+        }}
+        animate={{opacity: play || reduce ? 1 : 0.4}}
+      >
+        Done
+      </motion.div>
+      <motion.span
+        className="font-mono text-[12px] font-bold"
+        style={{color: FUNNEL_COLOURS.goldDeep}}
+        initial={{opacity: 0, x: -4}}
+        animate={{opacity: play || reduce ? 1 : 0, x: play || reduce ? 0 : -4}}
+        transition={{delay: play ? 0.2 : 0}}
+      >
+        →
+      </motion.span>
+      <motion.div
+        className="flex-1 border px-2.5 py-2"
+        style={{
+          borderColor: play || reduce ? `${FUNNEL_COLOURS.accent}55` : `${FUNNEL_COLOURS.ink}14`,
+          backgroundColor: FUNNEL_COLOURS.ground,
+        }}
+        initial={{opacity: 0, x: 8}}
+        animate={{opacity: play || reduce ? 1 : 0, x: play || reduce ? 0 : 8}}
+        transition={{delay: play ? 0.3 : 0, duration: 0.35}}
+      >
+        <div className="flex gap-1 mb-1.5">
+          {[0, 1, 2].map((i) => (
+            <motion.span
+              key={i}
+              className="h-1.5 w-1.5 rounded-full"
+              style={{backgroundColor: FUNNEL_COLOURS.accent}}
+              animate={
+                play
+                  ? {opacity: [0.3, 1, 0.3]}
+                  : {opacity: 0.5}
+              }
+              transition={play ? {duration: 1.1, repeat: Infinity, delay: i * 0.15} : undefined}
+            />
+          ))}
+        </div>
+        <div className="h-1.5 w-full rounded-sm" style={{backgroundColor: `${FUNNEL_COLOURS.ink}18`}} />
+      </motion.div>
+    </div>
+  )
+}
+
+/** Voice wording: bars type in. */
+function ReviewsVoiceVisual({reduce, play}: VisualProps) {
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex flex-col justify-center gap-1.5">
+      {[88, 64, 40].map((w, i) => (
+        <motion.div
+          key={w}
+          className="h-2 rounded-sm origin-left"
+          style={{
+            width: `${w}%`,
+            backgroundColor: i === 2 ? FUNNEL_COLOURS.goldDeep : `${FUNNEL_COLOURS.ink}${i === 0 ? '28' : '18'}`,
+          }}
+          initial={{scaleX: 0}}
+          animate={{scaleX: play || reduce ? 1 : 0}}
+          transition={{delay: play ? i * 0.18 : 0, duration: 0.4, ease: [0.16, 1, 0.3, 1]}}
+        />
+      ))}
+    </div>
+  )
+}
+
+/** Mini QR builds. */
+function ReviewsQrStackVisual({reduce, play}: VisualProps) {
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex items-center justify-center gap-3">
+      <div className="h-12 w-12 border grid grid-cols-3 grid-rows-3 gap-0.5 p-1" style={{borderColor: `${FUNNEL_COLOURS.ink}18`}}>
+        {Array.from({length: 9}).map((_, i) => (
+          <motion.div
+            key={i}
+            className="rounded-[1px]"
+            style={{backgroundColor: i === 4 ? 'transparent' : FUNNEL_COLOURS.ink}}
+            initial={{opacity: 0}}
+            animate={{opacity: play || reduce ? (i === 4 ? 0 : i % 2 === 0 ? 0.9 : 0.4) : 0}}
+            transition={{delay: play ? i * 0.05 : 0}}
+          />
+        ))}
+      </div>
+      <motion.p
+        className="font-mono text-[9px] font-bold uppercase tracking-widest"
+        style={{color: FUNNEL_COLOURS.goldDeep}}
+        initial={{opacity: 0, x: 6}}
+        animate={{opacity: play || reduce ? 1 : 0, x: play || reduce ? 0 : 6}}
+        transition={{delay: play ? 0.45 : 0}}
+      >
+        Ready
+      </motion.p>
+    </div>
+  )
+}
+
+/** Good / tough reply pair. */
+function ReviewsReplyPairVisual({reduce, play}: VisualProps) {
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex gap-2">
+      {['Good', 'Tough'].map((label, i) => (
+        <motion.div
+          key={label}
+          className="flex-1 border px-2 py-2 flex flex-col justify-between"
+          style={{
+            borderColor: play || reduce ? `${FUNNEL_COLOURS.gold}66` : `${FUNNEL_COLOURS.ink}14`,
+            backgroundColor: FUNNEL_COLOURS.ground,
+          }}
+          initial={{opacity: 0, y: 8}}
+          animate={{opacity: play || reduce ? 1 : 0, y: play || reduce ? 0 : 8}}
+          transition={{delay: play ? i * 0.2 : 0, duration: 0.35}}
+        >
+          <p className="font-mono text-[8px] font-bold uppercase tracking-widest text-dark/55">{label}</p>
+          <div className="h-1.5 w-full rounded-sm" style={{backgroundColor: `${FUNNEL_COLOURS.ink}16`}} />
+        </motion.div>
+      ))}
+    </div>
+  )
+}
+
+const REVIEWS_STACK_VISUALS = [
+  ReviewsAskFireVisual,
+  ReviewsVoiceVisual,
+  ReviewsQrStackVisual,
+  ReviewsReplyPairVisual,
+  HabitSnapshotVisual,
+  AftercareStampVisual,
+]
+
 /** Diagnosis checklist ticks on — white panel so it reads on cream page. */
 function IndexDiagnosisVisual({reduce, play}: VisualProps) {
   const items = ['noindex', 'robots', 'canonicals', 'redirects']
@@ -1676,21 +1814,23 @@ export function StackMotionRows({
   const visuals: Array<(p: VisualProps) => React.ReactElement> =
     variant === 'missed-call' || variant === 'ai-phone'
       ? MISSED_VISUALS
-      : variant === 'google-profile' || variant === 'reviews'
-        ? PROFILE_STACK_VISUALS
-        : variant === 'search-fix'
-          ? SEARCH_STACK_VISUALS
-          : variant === 'website'
-            ? WEBSITE_STACK_VISUALS
-            : variant === 'landing-page'
-              ? LANDING_STACK_VISUALS
-              : variant === 'booking'
-                ? BOOKING_STACK_VISUALS
-              : variant === 'crm-rescue'
-                ? CRM_STACK_VISUALS
-                : variant === 'team-ai' || variant === 'change-pack' || variant === 'content-system'
-                  ? TEAM_AI_STACK_VISUALS
-                  : SPEED_VISUALS
+      : variant === 'reviews'
+        ? REVIEWS_STACK_VISUALS
+        : variant === 'google-profile'
+          ? PROFILE_STACK_VISUALS
+          : variant === 'search-fix'
+            ? SEARCH_STACK_VISUALS
+            : variant === 'website'
+              ? WEBSITE_STACK_VISUALS
+              : variant === 'landing-page'
+                ? LANDING_STACK_VISUALS
+                : variant === 'booking'
+                  ? BOOKING_STACK_VISUALS
+                  : variant === 'crm-rescue'
+                    ? CRM_STACK_VISUALS
+                    : variant === 'team-ai' || variant === 'change-pack' || variant === 'content-system'
+                      ? TEAM_AI_STACK_VISUALS
+                      : SPEED_VISUALS
 
   return (
     <ul className="space-y-10 md:space-y-12">
