@@ -494,37 +494,48 @@ function ThreeDayCalendarVisual({reduce}: VisualProps) {
 function CrmInstantReplyVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
-      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2.5">
+      <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2">
         <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
           New form enquiry
         </span>
-        <span className="font-mono text-[7px] font-bold uppercase tracking-wide text-gold-on-cream">
+        <motion.span
+          className="font-mono text-[7px] font-bold uppercase tracking-wide text-gold-on-cream"
+          animate={reduce ? undefined : {opacity: [0.55, 1, 0.55]}}
+          transition={{duration: 1.4, repeat: Infinity}}
+        >
           Auto-reply
-        </span>
+        </motion.span>
       </div>
-      <div className="flex-1 p-2.5 space-y-1.5">
+      <div className="flex-1 min-h-0 p-2 flex flex-col justify-center gap-1.5">
         <motion.div
-          className="rounded-sm border border-dark/10 bg-cream px-2 py-1.5"
-          initial={{opacity: 0, x: -8}}
-          whileInView={{opacity: 1, x: 0}}
+          className="rounded-sm border border-dark/10 bg-cream px-2 py-1 shrink-0"
+          initial={reduce ? false : {opacity: 0, x: -14, scale: 0.96}}
+          whileInView={{opacity: 1, x: 0, scale: 1}}
           viewport={{once: true}}
-          transition={{delay: reduce ? 0 : 0.15}}
+          transition={{type: 'spring', stiffness: 380, damping: 22}}
         >
           <p className="font-mono text-[7px] text-dark/40">Lead</p>
-          <p className="font-sans text-[10px] text-dark/70">Website form · just now</p>
+          <p className="font-sans text-[10px] text-dark/70 leading-tight">Website form · just now</p>
         </motion.div>
         <motion.div
-          className="rounded-sm border px-2 py-1.5"
+          className="rounded-sm border px-2 py-1 shrink-0"
           style={{borderColor: `${colors.teal}55`, backgroundColor: `${colors.teal}12`}}
-          initial={{opacity: 0, x: 8}}
-          whileInView={{opacity: 1, x: 0}}
+          initial={reduce ? false : {opacity: 0, y: 10, scale: 0.92}}
+          whileInView={{opacity: 1, y: 0, scale: 1}}
           viewport={{once: true}}
-          transition={{delay: reduce ? 0 : 0.45}}
+          transition={{delay: reduce ? 0 : 0.35, type: 'spring', stiffness: 420, damping: 18}}
         >
-          <p className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
+          <motion.p
+            className="font-mono text-[7px] font-bold uppercase tracking-wide"
+            style={{color: colors.teal}}
+            animate={reduce ? undefined : {scale: [1, 1.04, 1]}}
+            transition={{duration: 1.1, repeat: Infinity, delay: 0.6}}
+          >
             Instant reply sent · 4s
+          </motion.p>
+          <p className="font-sans text-[10px] text-dark/65 leading-tight">
+            Thanks, we got it. Someone will follow up.
           </p>
-          <p className="font-sans text-[10px] text-dark/65">Thanks — we got it. Someone will follow up.</p>
         </motion.div>
       </div>
     </div>
@@ -534,9 +545,11 @@ function CrmInstantReplyVisual({reduce}: VisualProps) {
 /** CRM Rescue: right phone buzzes. */
 function CrmRightPhoneVisual({reduce}: VisualProps) {
   return (
-    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white p-2.5">
-      <p className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/40 mb-2">Route to</p>
-      <div className="space-y-1.5">
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2">
+        <span className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/40">Route to</span>
+      </div>
+      <div className="flex-1 min-h-0 p-1.5 flex flex-col justify-center gap-1">
         {[
           {who: 'Sales · Jordan', ok: true},
           {who: 'Ops inbox', ok: false},
@@ -544,31 +557,43 @@ function CrmRightPhoneVisual({reduce}: VisualProps) {
         ].map((row, i) => (
           <motion.div
             key={row.who}
-            className="flex items-center justify-between rounded-sm border px-2 py-1.5"
-            initial={{
-              opacity: 0.35,
-              borderColor: 'rgba(26,26,26,0.12)',
-              backgroundColor: colors.cream,
-            }}
-            whileInView={
+            className="flex items-center justify-between rounded-sm border px-2 py-1 shrink-0"
+            style={
               row.ok
-                ? {
-                    opacity: 1,
-                    borderColor: colors.teal,
-                    backgroundColor: `${colors.teal}14`,
-                  }
-                : {opacity: 0.45}
+                ? {borderColor: colors.teal, backgroundColor: `${colors.teal}14`}
+                : {borderColor: 'rgba(26,26,26,0.12)', backgroundColor: colors.cream}
             }
+            initial={reduce ? false : {opacity: 0, x: row.ok ? -10 : 10, scale: 0.96}}
+            whileInView={{opacity: row.ok ? 1 : 0.4, x: 0, scale: 1}}
             viewport={{once: true}}
-            transition={{delay: reduce ? 0 : 0.2 + i * 0.2}}
+            transition={{delay: reduce ? 0 : 0.1 + i * 0.14, type: 'spring', stiffness: 380, damping: 20}}
           >
-            <span className="font-sans text-[11px] text-dark/75">{row.who}</span>
+            <motion.span
+              className="font-sans text-[10px] text-dark/75 truncate pr-2"
+              animate={
+                reduce || !row.ok ? undefined : {x: [0, -1.5, 1.5, -1, 1, 0]}
+              }
+              transition={
+                reduce || !row.ok
+                  ? undefined
+                  : {duration: 0.55, repeat: Infinity, repeatDelay: 0.9, ease: 'easeInOut'}
+              }
+            >
+              {row.who}
+            </motion.span>
             {row.ok ? (
-              <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
+              <motion.span
+                className="font-mono text-[7px] font-bold uppercase tracking-wide shrink-0"
+                style={{color: colors.teal}}
+                animate={reduce ? undefined : {opacity: [1, 0.35, 1], scale: [1, 1.14, 1]}}
+                transition={{duration: 0.8, repeat: Infinity, ease: 'easeInOut'}}
+              >
                 Buzzing
-              </span>
+              </motion.span>
             ) : (
-              <span className="font-mono text-[7px] uppercase tracking-wide text-dark/30">Skip</span>
+              <span className="font-mono text-[7px] uppercase tracking-wide text-dark/30 shrink-0">
+                Skip
+              </span>
             )}
           </motion.div>
         ))}
@@ -580,42 +605,49 @@ function CrmRightPhoneVisual({reduce}: VisualProps) {
 /** CRM Rescue: quotes chased. */
 function CrmQuoteChaseVisual({reduce}: VisualProps) {
   const steps = [
-    {label: 'Quote sent', done: true},
-    {label: 'Day 2 nudge', done: true},
-    {label: 'Day 5 chase', done: false},
+    {label: 'Quote sent', done: true, pulse: false},
+    {label: 'Day 2 nudge', done: true, pulse: false},
+    {label: 'Day 5 chase', done: false, pulse: true},
   ]
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
-      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
+      <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2">
         <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
           Open quote · kitchen reno
         </span>
       </div>
-      <div className="flex-1 flex items-center gap-1.5 p-2.5">
+      <div className="flex-1 min-h-0 flex items-stretch gap-1.5 p-2">
         {steps.map((s, i) => (
           <motion.div
             key={s.label}
-            className="flex-1 rounded-sm border px-1.5 py-2 text-center"
-            initial={{opacity: 0.4, y: 6}}
-            whileInView={{
-              opacity: 1,
-              y: 0,
-              borderColor: s.done ? colors.teal : 'rgba(26,26,26,0.15)',
-              backgroundColor: s.done ? `${colors.teal}14` : colors.cream,
+            className="flex-1 min-w-0 rounded-sm border px-1 py-1.5 text-center flex flex-col items-center justify-center"
+            style={{
+              borderColor: s.done || s.pulse ? colors.teal : 'rgba(26,26,26,0.15)',
+              backgroundColor: s.done || s.pulse ? `${colors.teal}14` : colors.cream,
             }}
+            initial={reduce ? false : {opacity: 0, y: 12, scale: 0.9}}
+            whileInView={{opacity: 1, y: 0, scale: 1}}
             viewport={{once: true}}
-            transition={{delay: reduce ? 0 : 0.2 + i * 0.25}}
+            transition={{delay: reduce ? 0 : 0.12 + i * 0.2, type: 'spring', stiffness: 360, damping: 18}}
           >
             <p className="font-mono text-[7px] uppercase tracking-wide text-dark/50 leading-tight">
               {s.label}
             </p>
             <motion.span
-              className="mt-1.5 inline-block h-1.5 w-1.5 rounded-full"
-              style={{backgroundColor: s.done ? colors.teal : 'rgba(26,26,26,0.2)'}}
-              initial={{scale: 0}}
-              whileInView={{scale: 1}}
+              className="mt-1 inline-block h-1.5 w-1.5 rounded-full"
+              style={{backgroundColor: s.done || s.pulse ? colors.teal : 'rgba(26,26,26,0.2)'}}
+              initial={reduce ? false : {scale: 0, opacity: 0}}
+              whileInView={
+                reduce || !s.pulse
+                  ? {scale: 1, opacity: 1}
+                  : {scale: [1, 1.7, 1], opacity: [1, 0.45, 1]}
+              }
               viewport={{once: true}}
-              transition={{delay: reduce ? 0 : 0.35 + i * 0.25}}
+              transition={
+                s.pulse && !reduce
+                  ? {delay: 0.35 + i * 0.2, duration: 1.05, repeat: Infinity, ease: 'easeInOut'}
+                  : {delay: reduce ? 0 : 0.28 + i * 0.2, type: 'spring', stiffness: 500}
+              }
             />
           </motion.div>
         ))}
@@ -632,31 +664,54 @@ function CrmFiveDayVisual({reduce}: VisualProps) {
   ]
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
-      <div className="h-7 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2.5">
+      <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2">
         <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
           Delivery window
         </span>
-        <span className="font-mono text-[8px] font-bold uppercase tracking-[0.12em] text-gold-on-cream">
+        <motion.span
+          className="font-mono text-[7px] font-bold uppercase tracking-[0.12em] text-gold-on-cream"
+          animate={reduce ? undefined : {opacity: [0.55, 1, 0.55]}}
+          transition={{duration: 1.4, repeat: Infinity}}
+        >
           Within 5 days
-        </span>
+        </motion.span>
       </div>
-      <div className="flex-1 grid grid-cols-2 gap-1.5 p-2">
+      <div className="flex-1 min-h-0 grid grid-cols-2 gap-1.5 p-1.5">
         {cells.map((c, i) => (
           <motion.div
             key={c.label}
-            className="border flex flex-col items-center justify-center"
-            initial={{
-              backgroundColor: colors.cream,
-              borderColor: 'rgba(26,26,26,0.15)',
-            }}
+            className="border flex flex-col items-center justify-center min-h-0"
+            initial={
+              reduce
+                ? false
+                : {
+                    backgroundColor: colors.cream,
+                    borderColor: 'rgba(26,26,26,0.15)',
+                    scale: 0.92,
+                    y: 8,
+                  }
+            }
             whileInView={{
               backgroundColor: `${colors.teal}18`,
               borderColor: colors.teal,
+              scale: 1,
+              y: 0,
             }}
             viewport={{once: true, amount: 0.7}}
-            transition={{duration: 0.35, delay: reduce ? 0 : 0.25 + i * 0.35}}
+            transition={{
+              type: 'spring',
+              stiffness: 360,
+              damping: 18,
+              delay: reduce ? 0 : 0.12 + i * 0.25,
+            }}
           >
-            <span className="font-serif text-lg text-dark leading-none">{c.label}</span>
+            <motion.span
+              className="font-serif text-base text-dark leading-none"
+              animate={reduce ? undefined : {scale: [1, 1.06, 1]}}
+              transition={{duration: 1.5, repeat: Infinity, delay: 0.5 + i * 0.3}}
+            >
+              {c.label}
+            </motion.span>
             <span className="mt-0.5 font-mono text-[6px] uppercase tracking-wide text-dark/45">
               {c.sub}
             </span>
@@ -664,12 +719,12 @@ function CrmFiveDayVisual({reduce}: VisualProps) {
         ))}
       </div>
       <motion.p
-        className="pb-2 text-center font-mono text-[7px] uppercase tracking-[0.14em]"
+        className="shrink-0 pb-1.5 text-center font-mono text-[7px] uppercase tracking-[0.14em]"
         style={{color: colors.teal}}
-        initial={{opacity: 0}}
-        whileInView={{opacity: 1}}
+        initial={reduce ? false : {opacity: 0, y: 4}}
+        whileInView={{opacity: 1, y: 0}}
         viewport={{once: true}}
-        transition={{delay: reduce ? 0 : 0.95}}
+        transition={{delay: reduce ? 0 : 0.7}}
       >
         Then 14 days watching · we call if it slips
       </motion.p>

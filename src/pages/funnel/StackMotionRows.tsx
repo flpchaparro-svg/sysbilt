@@ -1477,7 +1477,7 @@ function CrmRescuePathVisual({reduce, play}: VisualProps) {
   const go = play && !reduce
   const steps = ['In', 'Alert', 'Reply', 'Chase']
   return (
-    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex flex-col justify-center">
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex flex-col justify-center overflow-hidden">
       <p className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/40 mb-2 text-center">
         Lead path
       </p>
@@ -1486,25 +1486,30 @@ function CrmRescuePathVisual({reduce, play}: VisualProps) {
           <React.Fragment key={s}>
             <motion.span
               className="font-mono text-[8px] uppercase tracking-wider px-2 py-1 border"
-              initial={{opacity: 0.4, borderColor: 'rgba(26,26,26,0.15)', backgroundColor: '#fff'}}
+              initial={{opacity: 0.35, borderColor: 'rgba(26,26,26,0.15)', backgroundColor: '#fff', scale: 0.92}}
               animate={
                 go
                   ? {
                       opacity: 1,
                       borderColor: FUNNEL_COLOURS.accent,
                       backgroundColor: `${FUNNEL_COLOURS.accent}18`,
+                      scale: [1, 1.06, 1],
                     }
                   : undefined
               }
-              transition={{delay: i * 0.22, duration: 0.3}}
+              transition={{
+                delay: i * 0.18,
+                duration: 0.35,
+                scale: {delay: 0.5 + i * 0.18, duration: 1.2, repeat: Infinity},
+              }}
             >
               {s}
             </motion.span>
             {i < steps.length - 1 && (
               <motion.span
                 className="font-mono text-[9px] text-dark/25"
-                animate={go ? {opacity: [0.2, 1, 0.2]} : undefined}
-                transition={{delay: 0.15 + i * 0.22, duration: 1.2, repeat: Infinity}}
+                animate={go ? {opacity: [0.15, 1, 0.15], x: [0, 2, 0]} : undefined}
+                transition={{delay: 0.12 + i * 0.18, duration: 0.9, repeat: Infinity}}
               >
                 →
               </motion.span>
@@ -1520,22 +1525,29 @@ function CrmRescuePathVisual({reduce, play}: VisualProps) {
 function CrmMissedCallIncludedVisual({reduce, play}: VisualProps) {
   const go = play && !reduce
   return (
-    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex items-center justify-center gap-3">
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex items-center justify-center gap-3 overflow-hidden">
       <motion.div
-        className="h-10 w-10 rounded-sm border flex items-center justify-center"
+        className="h-10 w-10 rounded-sm border flex items-center justify-center shrink-0"
         style={{borderColor: FUNNEL_COLOURS.accent, color: FUNNEL_COLOURS.accent}}
-        animate={go ? {scale: [1, 1.06, 1]} : undefined}
-        transition={{duration: 1.6, repeat: Infinity}}
+        animate={
+          go
+            ? {
+                scale: [1, 1.1, 1],
+                rotate: [0, -4, 4, 0],
+              }
+            : undefined
+        }
+        transition={{duration: 1.3, repeat: Infinity}}
       >
         <span className="font-mono text-[9px] font-bold uppercase tracking-wide">MC</span>
       </motion.div>
-      <div>
+      <div className="min-w-0">
         <p className="font-mono text-[8px] uppercase tracking-widest text-dark/45">Included</p>
         <motion.p
           className="font-sans text-[12px] text-dark/80"
-          initial={{opacity: 0}}
-          animate={go ? {opacity: 1} : {opacity: 1}}
-          transition={{delay: reduce ? 0 : 0.25}}
+          initial={{opacity: 0, x: 8}}
+          animate={go ? {opacity: 1, x: 0} : {opacity: 1}}
+          transition={{delay: reduce ? 0 : 0.2, type: 'spring', stiffness: 340}}
         >
           Missed-call text-back
         </motion.p>
@@ -1549,30 +1561,33 @@ function CrmTripleWireVisual({reduce, play}: VisualProps) {
   const go = play && !reduce
   const rows = ['Phone alert', 'Instant reply', 'Quote chase']
   return (
-    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-2.5 space-y-1.5">
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-2.5 space-y-1.5 overflow-hidden">
       {rows.map((label, i) => (
         <motion.div
           key={label}
           className="flex items-center justify-between border px-2 py-1"
-          initial={{opacity: 0.35, borderColor: 'rgba(26,26,26,0.12)'}}
+          initial={{opacity: 0.3, x: -8, borderColor: 'rgba(26,26,26,0.12)'}}
           animate={
             go
               ? {
                   opacity: 1,
+                  x: 0,
                   borderColor: FUNNEL_COLOURS.accent,
                   backgroundColor: `${FUNNEL_COLOURS.accent}12`,
                 }
               : undefined
           }
-          transition={{delay: i * 0.28, duration: 0.3}}
+          transition={{delay: i * 0.22, type: 'spring', stiffness: 360, damping: 20}}
         >
           <span className="font-sans text-[11px] text-dark/75">{label}</span>
-          <span
+          <motion.span
             className="font-mono text-[7px] font-bold uppercase tracking-wide"
             style={{color: FUNNEL_COLOURS.accent}}
+            animate={go ? {opacity: [0.45, 1, 0.45], scale: [1, 1.12, 1]} : undefined}
+            transition={{duration: 1.1, repeat: Infinity, delay: 0.4 + i * 0.22}}
           >
             On
-          </span>
+          </motion.span>
         </motion.div>
       ))}
     </div>
@@ -1583,12 +1598,12 @@ function CrmTripleWireVisual({reduce, play}: VisualProps) {
 function CrmWalkthroughVisual({reduce, play}: VisualProps) {
   const go = play && !reduce
   return (
-    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex items-center gap-3">
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex items-center gap-3 overflow-hidden">
       <motion.div
         className="font-serif text-3xl font-bold tabular-nums leading-none"
         style={{color: FUNNEL_COLOURS.accent}}
-        animate={go ? {scale: [1, 1.08, 1]} : undefined}
-        transition={{duration: 1.5, repeat: Infinity}}
+        animate={go ? {scale: [1, 1.12, 1], rotate: [0, -2, 2, 0]} : undefined}
+        transition={{duration: 1.25, repeat: Infinity}}
       >
         30
       </motion.div>

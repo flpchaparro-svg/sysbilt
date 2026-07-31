@@ -23,10 +23,10 @@ function Card({
         borderColor: `${FUNNEL_COLOURS.ink}12`,
         backgroundColor: FUNNEL_COLOURS.surface,
       }}
-      initial={reduce ? false : {opacity: 0, y: 16}}
-      whileInView={{opacity: 1, y: 0}}
+      initial={reduce ? false : {opacity: 0, y: 20, scale: 0.98}}
+      whileInView={{opacity: 1, y: 0, scale: 1}}
       viewport={{once: true, amount: 0.3}}
-      transition={{duration: 0.45, ease: [0.16, 1, 0.3, 1]}}
+      transition={{type: 'spring', stiffness: 280, damping: 22}}
     >
       <p
         className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] mb-3"
@@ -56,12 +56,15 @@ export function CrmPainCards() {
                   backgroundColor: `${FUNNEL_COLOURS.ink}08`,
                   color: i === 2 ? FUNNEL_COLOURS.accent : FUNNEL_COLOURS.muted,
                 }}
+                initial={reduce ? false : {opacity: 0, x: -8}}
                 animate={
                   reduce || !inView
-                    ? undefined
-                    : {opacity: [0.5, 1, 0.5], x: [0, i === 2 ? 4 : 0, 0]}
+                    ? {opacity: 1, x: 0}
+                    : i === 2
+                      ? {opacity: [0.45, 1, 0.45], x: [0, 5, 0]}
+                      : {opacity: [0.7, 1, 0.7], x: 0}
                 }
-                transition={{duration: 1.8, repeat: Infinity, delay: i * 0.15}}
+                transition={{duration: 1.5, repeat: Infinity, delay: i * 0.12, ease: 'easeInOut'}}
               >
                 {row}
               </motion.div>
@@ -81,8 +84,11 @@ export function CrmPainCards() {
             <motion.span
               className="mt-3 inline-block font-mono text-[10px] font-bold uppercase tracking-wider px-2 py-1 text-white"
               style={{backgroundColor: '#1F7A4D'}}
-              animate={reduce || !inView ? undefined : {scale: [1, 1.06, 1]}}
-              transition={{duration: 1.4, repeat: Infinity}}
+              initial={reduce ? false : {opacity: 0, scale: 0.8}}
+              whileInView={{opacity: 1, scale: 1}}
+              viewport={{once: true}}
+              transition={{type: 'spring', stiffness: 420, damping: 14}}
+              animate={reduce || !inView ? undefined : {scale: [1, 1.08, 1]}}
             >
               Booked
             </motion.span>
@@ -94,16 +100,20 @@ export function CrmPainCards() {
           <motion.div
             className="rounded-lg p-3 font-mono text-[11px] leading-relaxed"
             style={{backgroundColor: `${FUNNEL_COLOURS.ink}06`, color: FUNNEL_COLOURS.ink}}
-            animate={reduce || !inView ? undefined : {opacity: [0.65, 1, 0.65]}}
-            transition={{duration: 2.2, repeat: Infinity}}
+            animate={reduce || !inView ? undefined : {opacity: [0.7, 1, 0.7]}}
+            transition={{duration: 2, repeat: Infinity}}
           >
             <div>Quote sent · Monday</div>
             <div>Follow-up · none</div>
             <motion.div
               className="mt-1 font-bold"
               style={{color: FUNNEL_COLOURS.accent}}
-              animate={reduce || !inView ? undefined : {scale: [1, 1.08, 1]}}
-              transition={{duration: 1.3, repeat: Infinity}}
+              animate={
+                reduce || !inView
+                  ? undefined
+                  : {scale: [1, 1.1, 1], x: [0, 2, 0]}
+              }
+              transition={{duration: 1.15, repeat: Infinity}}
             >
               Status · gone cold
             </motion.div>
