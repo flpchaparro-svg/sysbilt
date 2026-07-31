@@ -1,0 +1,14 @@
+{
+  "createdAt": "2026-07-31T07:35:00.000Z",
+  "mode": "live",
+  "note": "Campaign Landing Page · live Payment Link. Product has description + marketing_features (Speed Fix pattern). After pay → https://sysbilt.com/go/thanks?p=landing-page → site access wizard. Never use buy.stripe.com/test_ on this page.",
+  "product": {
+    "code": "landing-page",
+    "name": "Campaign Landing Page",
+    "productId": "prod_UuIw5RcSpkOwvB",
+    "priceId": "price_1TvqGI7kQC0CB85zpeB4sP7K",
+    "paymentLinkId": "plink_1TvqGK7kQC0CB85zkEmkWold",
+    "paymentLinkUrl": "https://buy.stripe.com/dRm00deWBdHG0vQ3FV3gk00",
+    "amountAud": 1800
+  }
+}
