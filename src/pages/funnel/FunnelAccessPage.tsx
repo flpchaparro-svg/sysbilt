@@ -547,6 +547,57 @@ function missedCallAccessOptionsForSetup(setup: PhoneSetupId | null) {
   }
 }
 
+/** AI Phone Setup: different job from text-back. Cards follow phone setup, not a static set. */
+function aiPhoneAccessOptionsForSetup(setup: PhoneSetupId | null) {
+  const vendor = {
+    id: 'provider' as AccessPathId,
+    label: 'Voice vendor login',
+    blurb: 'Retell, Vapi, or similar. Invite us as staff, or share a temporary admin path.',
+    icon: <Server className="w-full h-full" strokeWidth={1.25} />,
+  }
+  const calendar = {
+    id: 'invite' as AccessPathId,
+    label: 'Calendar share',
+    blurb: 'Share the Google or Outlook calendar the agent will book into.',
+    icon: <Calendar className="w-full h-full" strokeWidth={1.25} />,
+  }
+  const divert = {
+    id: 'forward' as AccessPathId,
+    label: 'Call divert',
+    blurb: 'You can divert unanswered or after-hours calls to the AI number.',
+    icon: <Phone className="w-full h-full" strokeWidth={1.25} />,
+  }
+  const call = {
+    ...MISSED_CALL_ACCESS_BY_ID.call,
+    blurb: 'We walk through vendor, calendar, and divert together. About five minutes.',
+  }
+
+  switch (setup) {
+    case 'mobile':
+    case 'landline':
+      return [divert, vendor, calendar, call]
+    case 'voip':
+      return [vendor, calendar, MISSED_CALL_ACCESS_BY_ID.crm, call]
+    case 'mixed':
+      return [divert, vendor, calendar, call]
+    case 'unsure':
+    default:
+      return [call, vendor, calendar]
+  }
+}
+
+/** Search Visibility Fix: Search Console first, then platform-aware site access. */
+function searchAccessOptionsForPlatform(platform: PlatformId | null) {
+  const searchConsole = {
+    id: 'search-console' as AccessPathId,
+    label: 'Search Console',
+    blurb: 'Approve us as a user on your Search Console property. Ownership stays yours.',
+    icon: <Globe2 className="w-full h-full" strokeWidth={1.25} />,
+  }
+  const site = siteAccessOptionsForPlatform(platform).filter((opt) => opt.id !== 'call')
+  return [searchConsole, ...site, ACCESS_BY_ID.call]
+}
+
 const GOOGLE_PROFILE_STATUS_OPTIONS: {
   id: ProfileStatusId
   label: string
@@ -1849,6 +1900,7 @@ const FunnelAccessPage: React.FC = () => {
   const isReviews = product === 'reviews'
   const isCrmRescue = product === 'crm-rescue'
   const isBooking = product === 'booking'
+  const isSearchFix = product === 'search-fix'
   const isTeamAi = product === 'team-ai'
   const isChangePack = product === 'change-pack'
   const isContentSystem = product === 'content-system'
@@ -2028,6 +2080,7 @@ const FunnelAccessPage: React.FC = () => {
     isReviews,
     isCrmRescue,
     isBooking,
+    isSearchFix,
     isTeamAi,
     isChangePack,
     isContentSystem,
@@ -2055,14 +2108,18 @@ const FunnelAccessPage: React.FC = () => {
   }, [product])
   const canGoBack = step !== 'done' && step !== firstStep
   const accessOptions = usesMissedWizard
-    ? missedCallAccessOptionsForSetup(phoneSetup)
+    ? isAiPhone
+      ? aiPhoneAccessOptionsForSetup(phoneSetup)
+      : missedCallAccessOptionsForSetup(phoneSetup)
     : usesGoogleWizard
       ? googleAccessOptionsForStatus(profileStatus)
       : isCrmRescue
         ? crmAccessOptionsForSystem(crmSystem)
         : isBooking
           ? bookingAccessOptionsForWhere(bookingWhere, bookingTool)
-          : siteAccessOptionsForPlatform(platform)
+          : isSearchFix
+            ? searchAccessOptionsForPlatform(platform)
+            : siteAccessOptionsForPlatform(platform)
 
   function goNext(from: StepId) {
     setError(null)
@@ -3413,13 +3470,23 @@ const FunnelAccessPage: React.FC = () => {
                 title="Anything we should know about access?"
                 hint={
                   usesMissedWizard
-                    ? accessPath === 'forward'
-                      ? 'Carrier name, or how you change divert today.'
-                      : accessPath === 'provider'
-                        ? 'VoIP or SMS login URL, or say you will email credentials separately.'
-                        : accessPath === 'crm'
-                          ? 'Which CRM, and whether calls already log there.'
-                          : 'Best times to call, or anything that usually trips people up.'
+                    ? isAiPhone
+                      ? accessPath === 'forward'
+                        ? 'Carrier name, or how you change divert / after-hours routing today.'
+                        : accessPath === 'provider'
+                          ? 'Voice vendor name and login URL, or say you will email an invite separately.'
+                          : accessPath === 'invite'
+                            ? 'Which calendar (Google or Outlook), and the email to share with.'
+                            : accessPath === 'crm'
+                              ? 'Which CRM, and whether calls or bookings already log there.'
+                              : 'Best times to call, or anything that usually trips people up.'
+                      : accessPath === 'forward'
+                        ? 'Carrier name, or how you change divert today.'
+                        : accessPath === 'provider'
+                          ? 'VoIP or SMS login URL, or say you will email credentials separately.'
+                          : accessPath === 'crm'
+                            ? 'Which CRM, and whether calls already log there.'
+                            : 'Best times to call, or anything that usually trips people up.'
                     : usesGoogleWizard
                       ? accessPath === 'invite'
                         ? 'The Google account email that can add managers, or say you will send the invite shortly.'
@@ -3428,13 +3495,15 @@ const FunnelAccessPage: React.FC = () => {
                           : accessPath === 'recover'
                             ? 'Who used to manage it if you know, any suspension email from Google, and best times to call.'
                             : 'Best times to call, or anything that usually trips people up.'
-                      : accessPath === 'wp-admin'
-                        ? 'Login URL, or say you will email credentials separately.'
-                        : accessPath === 'hosting'
-                          ? 'Hosting panel name, or how you usually log in.'
-                          : accessPath === 'agency'
-                            ? 'Who manages the site? Name or email is enough.'
-                            : 'Best times to call, or anything that usually trips people up.'
+                      : accessPath === 'search-console'
+                        ? 'The Google account email that owns Search Console, or say you will approve the invite shortly.'
+                        : accessPath === 'wp-admin'
+                          ? 'Login URL, or say you will email credentials separately.'
+                          : accessPath === 'hosting'
+                            ? 'Hosting panel name, or how you usually log in.'
+                            : accessPath === 'agency'
+                              ? 'Who manages the site? Name or email is enough.'
+                              : 'Best times to call, or anything that usually trips people up.'
                 }
                 value={accessDetail}
                 onChange={setAccessDetail}

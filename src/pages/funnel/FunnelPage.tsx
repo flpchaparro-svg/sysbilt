@@ -93,6 +93,7 @@ import {BOOKING_STRIPE_URL} from '../../constants/bookingStripe'
 import {SPEED_FIX_STRIPE_URL} from '../../constants/speedFixStripe'
 import {GOOGLE_PROFILE_STRIPE_URL} from '../../constants/googleProfileStripe'
 import {MISSED_CALL_STRIPE_URL} from '../../constants/missedCallStripe'
+import {SEARCH_FIX_STRIPE_URL} from '../../constants/searchFixStripe'
 import {funnelCopyForSlug} from './funnelCopy'
 import {
   FUNNEL_PRODUCT_LABELS,
@@ -394,7 +395,8 @@ const FunnelPage: React.FC = () => {
     (isBooking ? BOOKING_STRIPE_URL : undefined) ||
     (isSpeed ? SPEED_FIX_STRIPE_URL : undefined) ||
     (isGoogleProfile ? GOOGLE_PROFILE_STRIPE_URL : undefined) ||
-    (isMissedCall ? MISSED_CALL_STRIPE_URL : undefined)
+    (isMissedCall ? MISSED_CALL_STRIPE_URL : undefined) ||
+    (isSearchFix ? SEARCH_FIX_STRIPE_URL : undefined)
   const sanityStripe = (doc?.stripeUrl || '').trim()
   const resolvedStripeUrl =
     sanityStripe && !sanityStripe.includes('buy.stripe.com/test_')

@@ -29,6 +29,7 @@ export type AccessPathId =
   | 'form-provider'
   | 'claim'
   | 'recover'
+  | 'search-console'
 export type PhoneSetupId = 'mobile' | 'landline' | 'voip' | 'mixed' | 'unsure'
 export type ProfileStatusId =
   | 'unclaimed'

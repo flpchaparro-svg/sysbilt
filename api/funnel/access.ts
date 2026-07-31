@@ -82,7 +82,7 @@ const BOOKING_WHAT = new Set(['appointments', 'calls', 'consults', 'mixed', 'oth
 const BOOKING_WHERE = new Set(['site', 'google', 'both', 'unsure']);
 const BOOKING_ACCESS = new Set(['invite', 'wp-admin', 'admin', 'call']);
 const MISSED_CALL_SETUPS = new Set(['mobile', 'landline', 'voip', 'mixed', 'unsure']);
-const MISSED_CALL_ACCESS = new Set(['forward', 'provider', 'crm', 'call']);
+const MISSED_CALL_ACCESS = new Set(['forward', 'provider', 'crm', 'call', 'invite']);
 const GOOGLE_PROFILE_STATUS = new Set([
   'unclaimed',
   'claimed-me',
@@ -108,7 +108,7 @@ const PLATFORMS = new Set([
 ]);
 
 const SAME = new Set(['yes', 'no', 'unsure']);
-const ACCESS = new Set(['wp-admin', 'hosting', 'agency', 'call']);
+const ACCESS = new Set(['wp-admin', 'hosting', 'agency', 'call', 'search-console']);
 
 type Body = {
   product?: unknown;

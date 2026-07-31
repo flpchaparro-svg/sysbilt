@@ -1,0 +1,14 @@
+{
+  "createdAt": "2026-07-31T03:40:00.000Z",
+  "mode": "live",
+  "note": "Search Visibility Fix · live Payment Link. After pay → https://sysbilt.com/go/thanks?p=search-fix → site access wizard with Search Console first. Never use buy.stripe.com/test_ on this page.",
+  "product": {
+    "code": "search-fix",
+    "name": "Search Visibility Fix",
+    "productId": "prod_UuGNNUscZ4gSVp",
+    "priceId": "price_1TvqGJ7kQC0CB85zGD62qADU",
+    "paymentLinkId": "plink_1TvqGK7kQC0CB85zDGh7gfWk",
+    "paymentLinkUrl": "https://buy.stripe.com/8x26oB01HavufqK90f3gk03",
+    "amountAud": 1400
+  }
+}
