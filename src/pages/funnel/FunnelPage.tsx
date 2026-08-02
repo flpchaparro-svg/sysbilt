@@ -424,7 +424,9 @@ const FunnelPage: React.FC = () => {
       ? 'call'
       : dualWebsite || dualTeamAi
         ? 'dual'
-        : doc?.ctaMode || (isChangePack || isContentSystem ? 'call' : 'buy'),
+        : isChangePack || isContentSystem
+          ? 'call'
+          : doc?.ctaMode || 'buy',
     // Authored labels already include price text. Only normalise a comma before $ into one middle dot.
     ctaLabel: rawLabel.replace(/,\s*(?=\$)/, ' · ').replace(/\s*·\s*·\s*(?=\$)/, ' · '),
     stripeUrl: resolvedStripeUrl,
@@ -447,10 +449,9 @@ const FunnelPage: React.FC = () => {
                 ? 'booking'
                 : 'website',
         )
-      : doc?.schedulerUrl ||
-        (isChangePack || isContentSystem
-          ? accessFormPathForProduct(isContentSystem ? 'content-system' : 'change-pack')
-          : undefined),
+      : isChangePack || isContentSystem
+        ? accessFormPathForProduct(isContentSystem ? 'content-system' : 'change-pack')
+        : doc?.schedulerUrl || undefined,
     priceOptions:
       liveWebsitePriceOptions ||
       liveTeamAiPriceOptions ||

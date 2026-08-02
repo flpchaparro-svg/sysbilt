@@ -1864,6 +1864,153 @@ function TeamCheckInStackVisual({reduce, play}: VisualProps) {
   )
 }
 
+/** Change Pack: commute audio. */
+function ChangeAudioStackVisual({reduce, play}: VisualProps) {
+  const go = play && !reduce
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex items-center gap-3 overflow-hidden">
+      <motion.div
+        className="h-10 w-10 rounded-sm border flex items-center justify-center shrink-0 font-mono text-[9px] font-bold"
+        style={{borderColor: FUNNEL_COLOURS.accent, color: FUNNEL_COLOURS.accent}}
+        animate={go ? {scale: [1, 1.08, 1]} : undefined}
+        transition={{duration: 1.2, repeat: Infinity}}
+      >
+        ▶
+      </motion.div>
+      <div className="min-w-0">
+        <p className="font-mono text-[8px] uppercase tracking-widest text-dark/45">Audio explainer</p>
+        <p className="font-sans text-[12px] text-dark/75 mt-0.5">What is changing · why · what good looks like</p>
+      </div>
+    </div>
+  )
+}
+
+/** Change Pack: screen how-tos. */
+function ChangeHowToStackVisual({reduce, play}: VisualProps) {
+  const go = play && !reduce
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex flex-col justify-center overflow-hidden">
+      <p className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/40 mb-2">Screen how-to</p>
+      <div className="flex gap-1.5">
+        {['01', '02', '03'].map((n, i) => (
+          <motion.div
+            key={n}
+            className="flex-1 border px-1.5 py-2 text-center"
+            initial={{opacity: 0.35}}
+            animate={
+              go
+                ? {
+                    opacity: 1,
+                    borderColor: FUNNEL_COLOURS.accent,
+                    backgroundColor: `${FUNNEL_COLOURS.accent}12`,
+                  }
+                : undefined
+            }
+            transition={{delay: i * 0.18, duration: 0.3}}
+          >
+            <p className="font-mono text-[8px] font-bold" style={{color: FUNNEL_COLOURS.accent}}>
+              {n}
+            </p>
+            <p className="font-mono text-[6px] uppercase tracking-wide text-dark/45 mt-0.5">2–4 min</p>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** Change Pack: desk sheets. */
+function ChangeDeskSheetStackVisual({reduce, play}: VisualProps) {
+  const go = play && !reduce
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex items-center gap-3 overflow-hidden">
+      <motion.div
+        className="h-12 w-9 border shrink-0 flex flex-col justify-center gap-1 p-1"
+        style={{
+          borderColor: go || reduce ? FUNNEL_COLOURS.accent : 'rgba(26,26,26,0.15)',
+          backgroundColor: go || reduce ? `${FUNNEL_COLOURS.accent}10` : '#fff',
+        }}
+        animate={go ? {y: [0, -2, 0]} : undefined}
+        transition={{duration: 1.4, repeat: Infinity}}
+      >
+        <span className="h-0.5 w-full bg-dark/20" />
+        <span className="h-0.5 w-4/5 bg-dark/15" />
+        <span className="h-0.5 w-full bg-dark/20" />
+      </motion.div>
+      <div className="min-w-0">
+        <p className="font-mono text-[8px] uppercase tracking-widest text-dark/45">Desk one-pager</p>
+        <p className="font-sans text-[12px] text-dark/75 mt-0.5">Daily steps · print or PDF</p>
+      </div>
+    </div>
+  )
+}
+
+/** Change Pack: live Q and A after real use. */
+function ChangeQaStackVisual({reduce, play}: VisualProps) {
+  const go = play && !reduce
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex flex-col justify-center overflow-hidden">
+      <p className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/40 mb-2">
+        Live Q and A
+      </p>
+      <motion.div
+        className="border px-2.5 py-2 flex items-center justify-between"
+        initial={{opacity: 0.4}}
+        animate={
+          go
+            ? {
+                opacity: 1,
+                borderColor: FUNNEL_COLOURS.accent,
+                backgroundColor: `${FUNNEL_COLOURS.accent}12`,
+              }
+            : undefined
+        }
+        transition={{duration: 0.35}}
+      >
+        <span className="font-sans text-[12px] text-dark/80">After they have tried it</span>
+        <motion.span
+          className="font-mono text-[7px] font-bold uppercase tracking-wide"
+          style={{color: FUNNEL_COLOURS.accent}}
+          animate={go ? {opacity: [0.45, 1, 0.45]} : undefined}
+          transition={{duration: 1.1, repeat: Infinity}}
+        >
+          Booked
+        </motion.span>
+      </motion.div>
+    </div>
+  )
+}
+
+/** Change Pack: day-30 check-in. */
+function ChangeDay30StackVisual({reduce, play}: VisualProps) {
+  const go = play && !reduce
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex items-center gap-3 overflow-hidden">
+      <motion.div
+        className="font-serif text-3xl font-bold tabular-nums leading-none"
+        style={{color: FUNNEL_COLOURS.accent}}
+        animate={go ? {scale: [1, 1.1, 1]} : undefined}
+        transition={{duration: 1.3, repeat: Infinity}}
+      >
+        30
+      </motion.div>
+      <div className="min-w-0">
+        <p className="font-mono text-[8px] uppercase tracking-widest text-dark/45">Day check-in</p>
+        <p className="font-sans text-[11px] text-dark/70 mt-0.5">Adoption · workarounds · patch</p>
+      </div>
+    </div>
+  )
+}
+
+const CHANGE_PACK_STACK_VISUALS = [
+  ChangeAudioStackVisual,
+  ChangeHowToStackVisual,
+  ChangeDeskSheetStackVisual,
+  ChangeQaStackVisual,
+  ChangeDay30StackVisual,
+  SnapshotStackVisual,
+]
+
 const TEAM_AI_STACK_VISUALS = [
   TeamHalfDayStackVisual,
   TeamWorkspaceStackVisual,
@@ -1975,8 +2122,10 @@ export function StackMotionRows({
                     ? BOOKING_STACK_VISUALS
                     : variant === 'crm-rescue'
                       ? CRM_STACK_VISUALS
-                      : variant === 'team-ai' || variant === 'change-pack' || variant === 'content-system'
-                        ? TEAM_AI_STACK_VISUALS
+                      : variant === 'change-pack'
+                        ? CHANGE_PACK_STACK_VISUALS
+                        : variant === 'team-ai' || variant === 'content-system'
+                          ? TEAM_AI_STACK_VISUALS
                         : SPEED_VISUALS
 
   return (

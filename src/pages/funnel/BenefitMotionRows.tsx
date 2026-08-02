@@ -1112,6 +1112,167 @@ function TeamSticksVisual({reduce}: VisualProps) {
   )
 }
 
+/** Change Pack: day one has a path per role. */
+function ChangeDayOnePathVisual({reduce}: VisualProps) {
+  const roles = ['Sales', 'Ops', 'Admin']
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+          Day one pack
+        </span>
+        <motion.span
+          className="font-mono text-[7px] font-bold uppercase tracking-wide text-gold-on-cream"
+          animate={reduce ? undefined : {opacity: [0.5, 1, 0.5]}}
+          transition={{duration: 1.3, repeat: Infinity}}
+        >
+          Ready
+        </motion.span>
+      </div>
+      <div className="flex-1 min-h-0 grid grid-cols-3 gap-1 p-1.5">
+        {roles.map((r, i) => (
+          <motion.div
+            key={r}
+            className="border flex flex-col items-center justify-center min-h-0"
+            initial={
+              reduce
+                ? false
+                : {backgroundColor: colors.cream, borderColor: 'rgba(26,26,26,0.12)', y: 8}
+            }
+            whileInView={{
+              backgroundColor: `${colors.teal}16`,
+              borderColor: colors.teal,
+              y: 0,
+            }}
+            viewport={{once: true}}
+            transition={{delay: reduce ? 0 : 0.1 + i * 0.15, type: 'spring', stiffness: 340}}
+          >
+            <span className="font-mono text-[8px] uppercase tracking-wide text-dark/55">{r}</span>
+            <span className="mt-1 font-mono text-[6px] uppercase tracking-wide" style={{color: colors.teal}}>
+              How-tos
+            </span>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** Change Pack: fewer tickets in week two. */
+function ChangeFewerTicketsVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+          Week two · help desk
+        </span>
+      </div>
+      <div className="flex-1 min-h-0 p-2 flex flex-col justify-center gap-1.5">
+        <motion.div
+          className="rounded-sm border border-dark/10 bg-cream px-2 py-1 flex items-center justify-between"
+          initial={reduce ? false : {opacity: 0.45, x: -6}}
+          whileInView={{opacity: 0.35, x: 0}}
+          viewport={{once: true}}
+        >
+          <span className="font-sans text-[10px] text-dark/45 line-through">How do I log a job?</span>
+          <span className="font-mono text-[7px] uppercase text-dark/30">Ticket</span>
+        </motion.div>
+        <motion.div
+          className="rounded-sm border px-2 py-1.5"
+          style={{borderColor: `${colors.teal}55`, backgroundColor: `${colors.teal}12`}}
+          initial={reduce ? false : {opacity: 0, y: 8, scale: 0.96}}
+          whileInView={{opacity: 1, y: 0, scale: 1}}
+          viewport={{once: true}}
+          transition={{delay: reduce ? 0 : 0.25, type: 'spring', stiffness: 380}}
+        >
+          <p className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
+            Answered in pack
+          </p>
+          <p className="font-sans text-[10px] text-dark/70 leading-tight">2-min video · desk one-pager</p>
+        </motion.div>
+      </div>
+    </div>
+  )
+}
+
+/** Change Pack: materials stay yours for new hires. */
+function ChangePackStaysYoursVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+          Training library
+        </span>
+        <span className="font-mono text-[7px] font-bold uppercase tracking-wide text-gold-on-cream">
+          Yours
+        </span>
+      </div>
+      <div className="flex-1 min-h-0 p-2 flex flex-col justify-center gap-1">
+        {['Audio · what changed', 'Videos · click by click', 'Sheets · daily steps'].map((row, i) => (
+          <motion.div
+            key={row}
+            className="rounded-sm border px-2 py-1 flex items-center justify-between"
+            style={{borderColor: `${colors.teal}44`, backgroundColor: `${colors.teal}10`}}
+            initial={reduce ? false : {opacity: 0, x: -8}}
+            whileInView={{opacity: 1, x: 0}}
+            viewport={{once: true}}
+            transition={{delay: reduce ? 0 : 0.1 + i * 0.12, type: 'spring', stiffness: 360}}
+          >
+            <span className="font-sans text-[10px] text-dark/75">{row}</span>
+            <span className="font-mono text-[7px] font-bold uppercase" style={{color: colors.teal}}>
+              Keep
+            </span>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** Change Pack: day-30 ownership check-in. */
+function ChangeDay30OwnerVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+          People side
+        </span>
+        <motion.span
+          className="font-mono text-[7px] font-bold uppercase tracking-wide"
+          style={{color: colors.teal}}
+          animate={reduce ? undefined : {opacity: [0.5, 1, 0.5]}}
+          transition={{duration: 1.2, repeat: Infinity}}
+        >
+          Named
+        </motion.span>
+      </div>
+      <div className="flex-1 min-h-0 p-2 flex items-center gap-2">
+        <motion.div
+          className="font-serif text-3xl font-bold tabular-nums leading-none"
+          style={{color: colors.teal}}
+          animate={reduce ? undefined : {scale: [1, 1.06, 1]}}
+          transition={{duration: 1.4, repeat: Infinity}}
+        >
+          30
+        </motion.div>
+        <div className="min-w-0">
+          <p className="font-sans text-[11px] font-semibold text-dark/80">Day check-in</p>
+          <p className="font-mono text-[7px] uppercase tracking-wide text-dark/40 mt-0.5">
+            What stuck · what we patch
+          </p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const CHANGE_PACK_VISUALS = [
+  ChangeDayOnePathVisual,
+  ChangeFewerTicketsVisual,
+  ChangePackStaysYoursVisual,
+  ChangeDay30OwnerVisual,
+]
+
 const TEAM_AI_VISUALS = [
   TeamSharedSetupVisual,
   TeamSafeDataVisual,
@@ -2404,8 +2565,10 @@ export function BenefitMotionRows({
                     ? BOOKING_VISUALS
                     : variant === 'crm-rescue'
                       ? CRM_VISUALS
-                      : variant === 'team-ai' || variant === 'change-pack' || variant === 'content-system'
-                        ? TEAM_AI_VISUALS
+                      : variant === 'change-pack'
+                        ? CHANGE_PACK_VISUALS
+                        : variant === 'team-ai' || variant === 'content-system'
+                          ? TEAM_AI_VISUALS
                         : SPEED_VISUALS
 
   return (
