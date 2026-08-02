@@ -1870,16 +1870,27 @@ function ChangeAudioStackVisual({reduce, play}: VisualProps) {
   return (
     <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex items-center gap-3 overflow-hidden">
       <motion.div
-        className="h-10 w-10 rounded-sm border flex items-center justify-center shrink-0 font-mono text-[9px] font-bold"
-        style={{borderColor: FUNNEL_COLOURS.accent, color: FUNNEL_COLOURS.accent}}
-        animate={go ? {scale: [1, 1.08, 1]} : undefined}
-        transition={{duration: 1.2, repeat: Infinity}}
+        className="font-serif text-3xl font-bold tabular-nums leading-none"
+        style={{color: FUNNEL_COLOURS.accent}}
+        animate={go ? {scale: [1, 1.06, 1]} : undefined}
+        transition={{duration: 1.6, repeat: Infinity}}
       >
-        ▶
+        12
       </motion.div>
-      <div className="min-w-0">
-        <p className="font-mono text-[8px] uppercase tracking-widest text-dark/45">Audio explainer</p>
+      <div className="min-w-0 flex-1">
+        <p className="font-mono text-[8px] uppercase tracking-widest text-dark/45">Min · commute audio</p>
         <p className="font-sans text-[12px] text-dark/75 mt-0.5">What is changing · why · what good looks like</p>
+        <div className="mt-2 flex items-end gap-0.5 h-4">
+          {[4, 8, 5, 10, 6, 9, 4, 7, 5].map((h, i) => (
+            <motion.span
+              key={i}
+              className="w-1 rounded-sm"
+              style={{backgroundColor: FUNNEL_COLOURS.accent, height: h}}
+              animate={go ? {scaleY: [0.55, 1, 0.7, 1]} : undefined}
+              transition={{duration: 0.9, repeat: Infinity, delay: i * 0.07}}
+            />
+          ))}
+        </div>
       </div>
     </div>
   )
@@ -1892,11 +1903,11 @@ function ChangeHowToStackVisual({reduce, play}: VisualProps) {
     <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex flex-col justify-center overflow-hidden">
       <p className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/40 mb-2">Screen how-to</p>
       <div className="flex gap-1.5">
-        {['01', '02', '03'].map((n, i) => (
+        {['Log a job', 'Raise invoice', 'Close day'].map((label, i) => (
           <motion.div
-            key={n}
-            className="flex-1 border px-1.5 py-2 text-center"
-            initial={{opacity: 0.35}}
+            key={label}
+            className="flex-1 border px-1.5 py-2"
+            initial={{opacity: 0.35, borderColor: 'rgba(26,26,26,0.12)'}}
             animate={
               go
                 ? {
@@ -1909,9 +1920,12 @@ function ChangeHowToStackVisual({reduce, play}: VisualProps) {
             transition={{delay: i * 0.18, duration: 0.3}}
           >
             <p className="font-mono text-[8px] font-bold" style={{color: FUNNEL_COLOURS.accent}}>
-              {n}
+              {String(i + 1).padStart(2, '0')}
             </p>
-            <p className="font-mono text-[6px] uppercase tracking-wide text-dark/45 mt-0.5">2–4 min</p>
+            <p className="font-mono text-[6px] uppercase tracking-wide text-dark/55 mt-0.5 leading-tight">
+              {label}
+            </p>
+            <p className="font-mono text-[6px] uppercase tracking-wide text-dark/40 mt-1">2–4 min</p>
           </motion.div>
         ))}
       </div>
@@ -1922,25 +1936,34 @@ function ChangeHowToStackVisual({reduce, play}: VisualProps) {
 /** Change Pack: desk sheets. */
 function ChangeDeskSheetStackVisual({reduce, play}: VisualProps) {
   const go = play && !reduce
+  const items = ['Daily steps', 'Print or PDF', 'Stays on the desk']
   return (
-    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex items-center gap-3 overflow-hidden">
-      <motion.div
-        className="h-12 w-9 border shrink-0 flex flex-col justify-center gap-1 p-1"
-        style={{
-          borderColor: go || reduce ? FUNNEL_COLOURS.accent : 'rgba(26,26,26,0.15)',
-          backgroundColor: go || reduce ? `${FUNNEL_COLOURS.accent}10` : '#fff',
-        }}
-        animate={go ? {y: [0, -2, 0]} : undefined}
-        transition={{duration: 1.4, repeat: Infinity}}
-      >
-        <span className="h-0.5 w-full bg-dark/20" />
-        <span className="h-0.5 w-4/5 bg-dark/15" />
-        <span className="h-0.5 w-full bg-dark/20" />
-      </motion.div>
-      <div className="min-w-0">
-        <p className="font-mono text-[8px] uppercase tracking-widest text-dark/45">Desk one-pager</p>
-        <p className="font-sans text-[12px] text-dark/75 mt-0.5">Daily steps · print or PDF</p>
-      </div>
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-2.5 space-y-1.5 overflow-hidden">
+      {items.map((label, i) => (
+        <motion.div
+          key={label}
+          className="flex items-center justify-between border px-2 py-1"
+          initial={{opacity: 0.35, borderColor: 'rgba(26,26,26,0.12)'}}
+          animate={
+            go
+              ? {
+                  opacity: 1,
+                  borderColor: FUNNEL_COLOURS.accent,
+                  backgroundColor: `${FUNNEL_COLOURS.accent}10`,
+                }
+              : undefined
+          }
+          transition={{delay: i * 0.22, duration: 0.3}}
+        >
+          <span className="font-sans text-[11px] text-dark/75">{label}</span>
+          <span
+            className="font-mono text-[7px] font-bold uppercase tracking-wide"
+            style={{color: FUNNEL_COLOURS.accent}}
+          >
+            In
+          </span>
+        </motion.div>
+      ))}
     </div>
   )
 }
@@ -1955,11 +1978,10 @@ function ChangeQaStackVisual({reduce, play}: VisualProps) {
       </p>
       <motion.div
         className="border px-2.5 py-2 flex items-center justify-between"
-        initial={{opacity: 0.4}}
+        initial={{borderColor: 'rgba(26,26,26,0.12)', backgroundColor: '#fff'}}
         animate={
           go
             ? {
-                opacity: 1,
                 borderColor: FUNNEL_COLOURS.accent,
                 backgroundColor: `${FUNNEL_COLOURS.accent}12`,
               }
@@ -1989,8 +2011,8 @@ function ChangeDay30StackVisual({reduce, play}: VisualProps) {
       <motion.div
         className="font-serif text-3xl font-bold tabular-nums leading-none"
         style={{color: FUNNEL_COLOURS.accent}}
-        animate={go ? {scale: [1, 1.1, 1]} : undefined}
-        transition={{duration: 1.3, repeat: Infinity}}
+        animate={go ? {scale: [1, 1.08, 1]} : undefined}
+        transition={{duration: 1.5, repeat: Infinity}}
       >
         30
       </motion.div>
