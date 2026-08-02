@@ -2293,6 +2293,129 @@ const LOCAL_PACK_STACK_VISUALS = [
   LocalPackChecklistStackVisual,
 ]
 
+/** Conversion Pass: the headline resolves into a single clear ask. */
+function ConversionHomeClearStackVisual({reduce, play}: VisualProps) {
+  const go = play || reduce
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-2.5 flex flex-col gap-2">
+      <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/40">Homepage</span>
+      <div className="flex-1 flex flex-col justify-center gap-2">
+        <motion.div
+          className="h-2 rounded-sm"
+          style={{backgroundColor: colors.teal}}
+          initial={reduce ? false : {width: '45%', opacity: 0.4}}
+          animate={go ? {width: '80%', opacity: 1} : {width: '45%', opacity: 0.4}}
+          transition={{duration: 0.45, ease: [0.16, 1, 0.3, 1]}}
+        />
+        <motion.div
+          className="self-start rounded-sm px-2.5 py-1"
+          style={{backgroundColor: colors.teal}}
+          initial={reduce ? false : {opacity: 0, scale: 0.85}}
+          animate={go ? {opacity: 1, scale: 1} : {opacity: 0, scale: 0.85}}
+          transition={{delay: reduce ? 0 : 0.25, type: 'spring', stiffness: 340, damping: 22}}
+        >
+          <span className="font-mono text-[7px] font-bold uppercase tracking-wide text-white">Enquire</span>
+        </motion.div>
+      </div>
+    </div>
+  )
+}
+
+/** Conversion Pass: contact reachable from every page, one step. */
+function ConversionContactObviousStackVisual({reduce, play}: VisualProps) {
+  const go = play || reduce
+  const pages = ['Home', 'Services', 'About']
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-2.5 flex flex-col gap-1.5">
+      <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/40">Every page</span>
+      <div className="space-y-1 flex-1">
+        {pages.map((page, i) => (
+          <motion.div
+            key={page}
+            className="flex items-center justify-between rounded-sm border px-2 py-1"
+            style={{borderColor: `${colors.teal}30`, backgroundColor: '#fff'}}
+            initial={reduce ? false : {opacity: 0.35, x: 8}}
+            animate={go ? {opacity: 1, x: 0} : {opacity: 0.35, x: 8}}
+            transition={{delay: reduce ? 0 : i * 0.1, type: 'spring', stiffness: 360, damping: 22}}
+          >
+            <span className="font-mono text-[7px] uppercase tracking-wide text-dark/55">{page}</span>
+            <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
+              Contact
+            </span>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** Conversion Pass: services stop reading like the same page twice. */
+function ConversionServicesSpecificStackVisual({reduce, play}: VisualProps) {
+  const go = play || reduce
+  const services = [
+    {label: 'Plumbing', detail: 'Hot water · leaks'},
+    {label: 'Electrical', detail: 'Switchboards · wiring'},
+  ]
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-2.5 flex flex-col gap-1.5">
+      <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/40">Service pages</span>
+      <div className="space-y-1.5 flex-1">
+        {services.map((s, i) => (
+          <motion.div
+            key={s.label}
+            className="rounded-sm border px-2 py-1"
+            style={{borderColor: `${colors.teal}30`, backgroundColor: `${colors.teal}0C`}}
+            initial={reduce ? false : {opacity: 0.35, y: 6}}
+            animate={go ? {opacity: 1, y: 0} : {opacity: 0.35, y: 6}}
+            transition={{delay: reduce ? 0 : i * 0.14, duration: 0.35}}
+          >
+            <p className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
+              {s.label}
+            </p>
+            <p className="font-mono text-[6px] uppercase tracking-wide text-dark/45">{s.detail}</p>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** Conversion Pass: checked on a real phone before it ships. */
+function ConversionMobileCheckedStackVisual({reduce, play}: VisualProps) {
+  const go = play || reduce
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-2.5 flex items-center gap-3">
+      <div className="h-[62px] w-9 shrink-0 rounded-md border-2 border-dark/20 flex flex-col gap-1 p-1.5">
+        <div className="h-1 w-full rounded-sm bg-dark/10" />
+        <div className="h-1 w-3/4 rounded-sm bg-dark/10" />
+        <motion.div
+          className="mt-auto h-2 rounded-sm"
+          style={{backgroundColor: colors.teal, transformOrigin: 'left'}}
+          initial={reduce ? false : {opacity: 0.4, scaleX: 0.5}}
+          animate={go ? {opacity: 1, scaleX: 1} : {opacity: 0.4, scaleX: 0.5}}
+          transition={{delay: reduce ? 0 : 0.2, duration: 0.4}}
+        />
+      </div>
+      <motion.span
+        className="font-mono text-[8px] font-bold uppercase tracking-wide"
+        style={{color: colors.teal}}
+        initial={reduce ? false : {opacity: 0}}
+        animate={go ? {opacity: 1} : {opacity: 0}}
+        transition={{delay: reduce ? 0 : 0.4}}
+      >
+        Checked on mobile
+      </motion.span>
+    </div>
+  )
+}
+
+const CONVERSION_PASS_STACK_VISUALS = [
+  ConversionHomeClearStackVisual,
+  ConversionContactObviousStackVisual,
+  ConversionServicesSpecificStackVisual,
+  ConversionMobileCheckedStackVisual,
+]
+
 /** Team AI: half-day remote session. */
 function TeamHalfDayStackVisual({reduce, play}: VisualProps) {
   const go = play && !reduce
@@ -2785,6 +2908,7 @@ export function StackMotionRows({
     | 'enquiry-reply'
     | 'profile-posting'
     | 'local-pack'
+    | 'conversion-pass'
 }) {
   const reduce = useReducedMotion()
   const visuals: Array<(p: VisualProps) => React.ReactElement> =
@@ -2812,6 +2936,8 @@ export function StackMotionRows({
                           ? PROFILE_POSTING_STACK_VISUALS
                           : variant === 'local-pack'
                             ? LOCAL_PACK_STACK_VISUALS
+                          : variant === 'conversion-pass'
+                            ? CONVERSION_PASS_STACK_VISUALS
                           : variant === 'change-pack'
                           ? CHANGE_PACK_STACK_VISUALS
                           : variant === 'content-system'

@@ -81,6 +81,10 @@ import {LocalPackEvidenceCard} from './LocalPackEvidenceCard'
 import {LocalPackLeakPair} from './LocalPackLeakPair'
 import {LocalPackPainCards} from './LocalPackPainCards'
 import {LocalPackDeliverableMock} from './LocalPackDeliverableMock'
+import {ConversionEvidenceCard} from './ConversionEvidenceCard'
+import {ConversionLeakPair} from './ConversionLeakPair'
+import {ConversionPainCards} from './ConversionPainCards'
+import {ConversionDeliverableMock} from './ConversionDeliverableMock'
 import {WebsiteEvidenceCard, type WebsiteEvidence} from './WebsiteEvidenceCard'
 import {WebsiteLeakPair} from './WebsiteLeakPair'
 import {WebsiteUnknownsCentrepiece} from './WebsiteUnknownsCentrepiece'
@@ -113,6 +117,7 @@ import {AI_PHONE_STRIPE_URL} from '../../constants/aiPhoneStripe'
 import {PROFILE_POSTING_STRIPE_URL} from '../../constants/profilePostingStripe'
 import {ENQUIRY_REPLY_STRIPE_URL} from '../../constants/enquiryReplyStripe'
 import {LOCAL_PACK_STRIPE_URL} from '../../constants/localPackStripe'
+import {CONVERSION_PASS_STRIPE_URL} from '../../constants/conversionPassStripe'
 import {teamAiPriceOptions} from '../../constants/teamAiStripe'
 import {funnelCopyForSlug} from './funnelCopy'
 import {
@@ -266,6 +271,7 @@ const FunnelPage: React.FC = () => {
   const isEnquiryReply = proofKind === 'enquiry-reply'
   const isProfilePosting = proofKind === 'profile-posting'
   const isLocalPack = proofKind === 'local-pack'
+  const isConversionPass = proofKind === 'conversion-pass'
   const isDraftSoon =
     proofKind === 'geo' || proofKind === 'client-finder' || proofKind === 'draft'
   /** Visual drafts and priced-but-not-wired products that are not buyable yet. */
@@ -291,7 +297,9 @@ const FunnelPage: React.FC = () => {
                   ? 'profile-posting'
                   : isLocalPack
                     ? 'local-pack'
-                    : isTeamAi
+                    : isConversionPass
+                      ? 'conversion-pass'
+                      : isTeamAi
                     ? 'team-ai'
                     : isChangePack
                       ? 'change-pack'
@@ -436,6 +444,7 @@ const FunnelPage: React.FC = () => {
     (isAiPhone ? AI_PHONE_STRIPE_URL : undefined) ||
     (isProfilePosting ? PROFILE_POSTING_STRIPE_URL : undefined) ||
     (isLocalPack ? LOCAL_PACK_STRIPE_URL : undefined) ||
+    (isConversionPass ? CONVERSION_PASS_STRIPE_URL : undefined) ||
     (isEnquiryReply ? ENQUIRY_REPLY_STRIPE_URL : undefined)
   const sanityStripe = (doc?.stripeUrl || '').trim()
   const resolvedStripeUrl =
@@ -610,6 +619,7 @@ const FunnelPage: React.FC = () => {
               isEnquiryReply ||
               isProfilePosting ||
               isLocalPack ||
+              isConversionPass ||
               isDraftSoon
                 ? 'max-w-3xl'
                 : 'max-w-5xl'
@@ -645,6 +655,7 @@ const FunnelPage: React.FC = () => {
               <ProfilePostingEvidenceCard business={business} lastPostMonth={lastPostMonth} />
             ) : null}
             {isLocalPack ? <LocalPackEvidenceCard business={business} /> : null}
+            {isConversionPass ? <ConversionEvidenceCard business={business} /> : null}
             {isTeamAi ? <TeamRecognitionCards /> : null}
             {isChangePack ? <ChangeRiskRegisterCard business={business} /> : null}
             {isContentSystem ? (
@@ -700,6 +711,7 @@ const FunnelPage: React.FC = () => {
                     isEnquiryReply ||
                     isProfilePosting ||
                     isLocalPack ||
+                    isConversionPass ||
                     isTeamAi ||
                     isChangePack ||
                     isContentSystem ||
@@ -965,6 +977,42 @@ const FunnelPage: React.FC = () => {
                   <LocalPackLeakPair />
                 </section>
               </>
+            ) : isConversionPass ? (
+              <>
+                <Reveal delay={0.08} y={12}>
+                  <p
+                    className="mt-6 font-sans text-base md:text-lg leading-relaxed max-w-2xl"
+                    style={{color: FUNNEL_COLOURS.muted}}
+                  >
+                    {COPY.proofAfterGeneric}
+                  </p>
+                </Reveal>
+                <section className="mt-12 md:mt-14">
+                  <Reveal y={10}>
+                    <SectionLabel>The leak</SectionLabel>
+                  </Reveal>
+                  <Reveal delay={0.06} y={14}>
+                    <h3
+                      className="font-serif font-bold text-2xl md:text-3xl tracking-tight mb-4 max-w-2xl"
+                      style={{color: FUNNEL_COLOURS.ink}}
+                    >
+                      Fast pages still lose when the ask is buried
+                    </h3>
+                  </Reveal>
+                  <Reveal delay={0.1} y={10}>
+                    <p
+                      className="font-sans text-base md:text-lg leading-relaxed max-w-2xl mb-2"
+                      style={{color: FUNNEL_COLOURS.muted}}
+                    >
+                      The score looks fine and people stay long enough to skim. Then the homepage
+                      talks about the business instead of the job, contact hides behind another tap,
+                      and the service pages sound like each other. Traffic arrived. The enquiry did
+                      not.
+                    </p>
+                  </Reveal>
+                  <ConversionLeakPair />
+                </section>
+              </>
             ) : isTeamAi ? (
               <section className="mt-12 md:mt-14">
                 <Reveal y={10}>
@@ -1205,6 +1253,8 @@ const FunnelPage: React.FC = () => {
                 <ProfilePostingPainCards />
               ) : isLocalPack ? (
                 <LocalPackPainCards />
+              ) : isConversionPass ? (
+                <ConversionPainCards />
               ) : isTeamAi ? (
                 <TeamPainCards />
               ) : isChangePack ? (
@@ -1287,6 +1337,7 @@ const FunnelPage: React.FC = () => {
             ) : isEnquiryReply ||
               isProfilePosting ||
               isLocalPack ||
+              isConversionPass ||
               isTeamAi ||
               isChangePack ||
               isContentSystem ||
@@ -1464,6 +1515,8 @@ const FunnelPage: React.FC = () => {
                   <ProfilePostingDeliverableMock />
                 ) : isLocalPack ? (
                   <LocalPackDeliverableMock />
+                ) : isConversionPass ? (
+                  <ConversionDeliverableMock />
                 ) : isTeamAi ? (
                   <TeamSessionDeliverableMock />
                 ) : isChangePack ? (

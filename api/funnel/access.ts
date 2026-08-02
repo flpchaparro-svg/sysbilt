@@ -21,6 +21,7 @@ const PRODUCT_CODES = new Set([
   'team-ai',
   'change-pack',
   'content-system',
+  'conversion-pass',
 ]);
 const PRODUCT_LABELS: Record<string, string> = {
   'speed-fix': 'Website Speed Fix',
@@ -38,6 +39,7 @@ const PRODUCT_LABELS: Record<string, string> = {
   'team-ai': 'Team AI',
   'change-pack': 'Change Pack',
   'content-system': 'Content System',
+  'conversion-pass': 'Conversion Pass',
 };
 const PRODUCT_AMOUNTS: Record<string, string> = {
   'speed-fix': '1200',
@@ -56,6 +58,7 @@ const PRODUCT_AMOUNTS: Record<string, string> = {
   'team-ai-onsite': '2400',
   'change-pack': '6000',
   'content-system': '3400',
+  'conversion-pass': '1400',
 };
 const CRM_SYSTEMS = new Set([
   'hubspot',
@@ -94,6 +97,7 @@ const LANDING_GOALS = new Set(['leads', 'calls', 'book', 'buy', 'other']);
 const LANDING_ADS = new Set(['meta', 'google', 'both', 'not-live', 'other']);
 const LANDING_TRACKING = new Set(['meta', 'google', 'both', 'none', 'unsure']);
 const LANDING_ACCESS = new Set(['ad-account', 'wp-admin', 'hosting', 'agency', 'call']);
+const CONVERSION_ASK = new Set(['call', 'form', 'book']);
 const MISSED_CALL_SETUPS = new Set(['mobile', 'landline', 'voip', 'mixed', 'unsure']);
 const MISSED_CALL_ACCESS = new Set(['forward', 'provider', 'crm', 'call', 'invite']);
 const GOOGLE_PROFILE_STATUS = new Set([
@@ -162,6 +166,10 @@ type Body = {
   landingAds?: unknown;
   landingOffer?: unknown;
   landingTracking?: unknown;
+  conversionServiceA?: unknown;
+  conversionServiceB?: unknown;
+  conversionAsk?: unknown;
+  conversionOffer?: unknown;
   websiteUrl?: unknown;
   teamSize?: unknown;
   teamTools?: unknown;
@@ -495,6 +503,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const landingAds = str(body.landingAds, 40);
   const landingOffer = str(body.landingOffer, 4000);
   const landingTracking = str(body.landingTracking, 40);
+  const conversionServiceA = str(body.conversionServiceA, 200);
+  const conversionServiceB = str(body.conversionServiceB, 200);
+  const conversionAsk = str(body.conversionAsk, 40);
+  const conversionOffer = str(body.conversionOffer, 4000);
   const websiteUrl = str(body.websiteUrl, 400);
   const teamSize = str(body.teamSize, 40);
   const teamTools = str(body.teamTools, 2000);
@@ -536,6 +548,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const isCrmRescue = product === 'crm-rescue';
   const isBooking = product === 'booking';
   const isLandingPage = product === 'landing-page';
+  const isConversionPass = product === 'conversion-pass';
   const isTeamAi = product === 'team-ai';
   const isChangePack = product === 'change-pack';
   const isContentSystem = product === 'content-system';
@@ -645,6 +658,27 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     }
     if (!PLATFORMS.has(platform) || !SAME.has(sameProvider) || !LANDING_ACCESS.has(accessPath)) {
       res.status(400).json({ error: 'Invalid platform, provider, or access path' });
+      return;
+    }
+  } else if (isConversionPass) {
+    if (website.length < 4) {
+      res.status(400).json({ error: 'Missing website' });
+      return;
+    }
+    if (!PLATFORMS.has(platform) || !SAME.has(sameProvider) || !ACCESS.has(accessPath)) {
+      res.status(400).json({ error: 'Invalid platform, provider, or access path' });
+      return;
+    }
+    if (conversionServiceA.length < 2 || conversionServiceB.length < 2) {
+      res.status(400).json({ error: 'Missing the two service pages' });
+      return;
+    }
+    if (!CONVERSION_ASK.has(conversionAsk)) {
+      res.status(400).json({ error: 'Invalid main action' });
+      return;
+    }
+    if (conversionOffer.length < 8) {
+      res.status(400).json({ error: 'Missing the one-line offer' });
       return;
     }
   } else if (isTeamAi) {
@@ -829,6 +863,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
             ]
               .filter(Boolean)
               .join('\n')
+        : isConversionPass
+          ? [
+              `Funnel access form — ${product}`,
+              `Business: ${business}`,
+              `Website: ${website}`,
+              `Service page 1: ${conversionServiceA}`,
+              `Service page 2: ${conversionServiceB}`,
+              `Main action: ${conversionAsk}`,
+              `One-line offer:\n${conversionOffer}`,
+              `Platform: ${platform}`,
+              `Domain + hosting same provider: ${sameProvider}`,
+              domainProvider ? `Domain provider: ${domainProvider}` : null,
+              hostingProvider ? `Hosting provider: ${hostingProvider}` : null,
+              `Access path: ${accessPath}`,
+              accessDetail ? `Access notes:\n${accessDetail}` : null,
+              notes ? `Other notes:\n${notes}` : null,
+              `Submitted: ${new Date().toISOString()}`,
+            ]
+              .filter(Boolean)
+              .join('\n')
         : isTeamAi
           ? [
               `Funnel access form — ${product}`,
@@ -920,6 +974,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     landingAds,
     landingOffer,
     landingTracking,
+    conversionServiceA,
+    conversionServiceB,
+    conversionAsk,
+    conversionOffer,
     websiteUrl,
     teamSize,
     teamTools,
@@ -1040,7 +1098,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
                     ? `CRM: ${crmSystem} · Leads: ${leadSource} · Goal: ${crmGoal}`
                     : isBooking
                       ? `Tool: ${bookingTool} · Books: ${bookingWhat} · Surfaces: ${bookingWhere}`
-                      : website,
+                      : isConversionPass
+                        ? `${website} · Pages: ${conversionServiceA}, ${conversionServiceB} · Ask: ${conversionAsk}`
+                        : website,
         isMissedCall ||
         isGoogleProfile ||
         isProfilePosting ||

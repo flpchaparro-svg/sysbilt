@@ -1,0 +1,14 @@
+{
+  "createdAt": "2026-08-02T12:25:00.000Z",
+  "mode": "live",
+  "note": "Conversion Pass · $1,400 live Payment Link. Home, contact, up to two service pages. After pay → thanks?p=conversion-pass → access wizard.",
+  "product": {
+    "code": "conversion-pass",
+    "name": "Conversion Pass",
+    "productId": "prod_UzyGZRjre9cn0w",
+    "priceId": "price_1TzyR97kQC0CB85zWkG52HU0",
+    "paymentLinkId": "plink_1TzyRQ7kQC0CB85z5cnd8muO",
+    "paymentLinkUrl": "https://buy.stripe.com/bJe14hbKpfPO2DY0tJ3gk0j",
+    "amountAud": 1400
+  }
+}

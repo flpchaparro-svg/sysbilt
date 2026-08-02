@@ -69,6 +69,7 @@ export type FunnelProductCopy = {
     | 'enquiry-reply'
     | 'profile-posting'
     | 'local-pack'
+    | 'conversion-pass'
     | 'draft'
 }
 
@@ -2549,9 +2550,138 @@ export const LOCAL_PACK_COPY: FunnelProductCopy = {
   proofKind: 'local-pack',
 }
 
+/** Home, contact, up to two service pages rewritten so people enquire. Not a redesign. */
+export const CONVERSION_PASS_COPY: FunnelProductCopy = {
+  eyebrow: 'Fixed price · Three to five days · One site',
+  h1Generic: 'Your site can be fast and still fail to ask for the enquiry',
+  h1Personal: (b: string) =>
+    `${b}, your site can be fast and still fail to ask for the enquiry`,
+  sub: 'We rewrite home, contact, and up to two service pages so the offer is obvious, proof is visible, and the next step is hard to miss. Not a full redesign. Best after Website Speed Fix, while access is still open.',
+  ctaLabel: 'Fix my conversion · $1,400',
+  proofLabel: 'The picture',
+  proofHeadingLive: 'Speed without a clear ask still leaks',
+  proofHeadingGeneric: 'Speed without a clear ask still leaks',
+  proofLead: (b: string | null) =>
+    b
+      ? `${b} can keep people reading, then lose them when the next step is buried.`
+      : 'A site can keep people reading, then lose them when the next step is buried.',
+  proofLeadGeneric:
+    'People stay long enough to read, then shrug. Weak headlines, buried contact, and vague services waste the traffic you already paid for.',
+  proofAfter:
+    'Priority pages say what you do, who it is for, why you, and how to enquire, without a redesign of the whole brand.',
+  proofAfterGeneric:
+    'Priority pages say what you do, who it is for, why you, and how to enquire, without a redesign of the whole brand.',
+  painLabel: 'What this is costing you',
+  painHeading: 'Traffic arrives. Clarity does not',
+  painLines: [
+    'The homepage talks about you, not the job the visitor needs done.',
+    'Contact is three clicks deep on mobile.',
+    'Service pages are thin or interchangeable.',
+    'You fixed speed and still cannot explain why enquiries did not rise.',
+  ],
+  bridgeLabel: 'The fix',
+  bridgeHeading: 'A conversion pass on the pages that matter',
+  bridgeBody:
+    'This is not a brand redesign and it is not a twelve-page content project. It is a focused rewrite on home, contact, and up to two service pages. Clear offer. Visible proof. Obvious next step.',
+  bridgeGaugeCaption: 'Clear offer. Visible proof. Obvious next step.',
+  benefitsLabel: 'What changes for you',
+  benefitsHeading: 'The pages that ask, rewritten',
+  benefits: [
+    {
+      title: 'The ask is obvious',
+      text: 'Visitors know what to do next without hunting.',
+    },
+    {
+      title: 'Proof sits where eyes go',
+      text: 'Reviews, outcomes, or credentials near the decision.',
+    },
+    {
+      title: 'Mobile-first clarity',
+      text: 'The phone view is where most people decide.',
+    },
+    {
+      title: 'Pairs with Speed Fix',
+      text: 'While the site is open, fix the words as well as the weight.',
+    },
+  ],
+  processLabel: 'How it runs',
+  processHeading: 'Audit, rewrite, ship',
+  processSteps: [
+    {
+      label: 'Audit',
+      text: 'Which pages leak, and what the real offer is.',
+    },
+    {
+      label: 'Rewrite',
+      text: 'Headlines, sections, CTAs, and form labels on scoped pages.',
+    },
+    {
+      label: 'Ship',
+      text: 'Live on your site, checked on mobile, with a short before/after note.',
+    },
+  ],
+  stackLabel: 'Everything included',
+  stackHeading: 'Four pages that earn their keep',
+  stackItems: [
+    {
+      title: 'Home rewrite',
+      text: 'Offer, proof, and primary CTA.',
+    },
+    {
+      title: 'Contact clarity',
+      text: 'Form and path that do not hide.',
+    },
+    {
+      title: 'Up to two service pages',
+      text: 'Specific enough to sell without a novel.',
+    },
+    {
+      title: 'Mobile pass',
+      text: 'We judge the work on a phone first.',
+    },
+  ],
+  scopeLine:
+    'Home, contact, up to two service pages on one site. Extra pages quoted the same day. Visual redesign is a different job.',
+  priceLabel: 'Investment',
+  price: '$1,400',
+  priceLead: 'Paid once for the scoped pages.',
+  guarantee:
+    'Scoped pages ship with a clear offer and CTA as agreed, or we keep working at no extra cost until they do.',
+  priceAnchor: 'Cheaper than another month of ads into unclear pages.',
+  faqLabel: 'Objections',
+  faqHeading: 'Straight answers before you pay',
+  faqs: [
+    {
+      q: 'Do you redesign the whole site?',
+      a: 'No. Words, structure, and CTAs on priority pages. Visual redesign is a different job.',
+    },
+    {
+      q: 'Is this SEO or title tags?',
+      a: 'No. This pass is for humans who already landed. On-Page Search Pack is the titles and headings job.',
+    },
+    {
+      q: 'Do I need Speed Fix first?',
+      a: 'Not required, but best after Speed Fix while access is still open. You can buy this alone.',
+    },
+    {
+      q: 'What if I need more than two service pages?',
+      a: 'We quote extras the same day. The $1,400 lock is home, contact, and two services.',
+    },
+    {
+      q: 'Is this refundable?',
+      a: "There's no change-of-mind refund, because we start straight away. If the agreed pages are not delivered, we keep working at no extra cost until they are.",
+    },
+  ],
+  finalLabel: 'Last step',
+  finalHeading: 'Make the next step impossible to miss',
+  finalLine: 'Home, contact, key services. Clear ask. Paid once.',
+  proofKind: 'conversion-pass',
+}
+
 import {DRAFT_COPY_BY_SLUG} from './funnelDraftProducts'
 
 export function funnelCopyForSlug(slug: string | undefined): FunnelProductCopy {
+  if (slug === 'conversion-pass') return CONVERSION_PASS_COPY
   if (slug === 'local-pack') return LOCAL_PACK_COPY
   if (slug === 'enquiry-reply') return ENQUIRY_REPLY_COPY
   if (slug === 'profile-posting') return PROFILE_POSTING_COPY

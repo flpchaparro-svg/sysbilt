@@ -72,6 +72,7 @@ export type BookingWhereId = 'site' | 'google' | 'both' | 'unsure'
 export type LandingGoalId = 'leads' | 'calls' | 'book' | 'buy' | 'other'
 export type LandingAdsId = 'meta' | 'google' | 'both' | 'not-live' | 'other'
 export type LandingTrackingId = 'meta' | 'google' | 'both' | 'none' | 'unsure'
+export type ConversionAskId = 'call' | 'form' | 'book'
 
 export type FunnelAccessPayload = {
   product: FunnelProductCode
@@ -104,6 +105,10 @@ export type FunnelAccessPayload = {
   landingAds?: LandingAdsId | ''
   landingOffer?: string
   landingTracking?: LandingTrackingId | ''
+  conversionServiceA?: string
+  conversionServiceB?: string
+  conversionAsk?: ConversionAskId | ''
+  conversionOffer?: string
   websiteUrl?: string
   teamSize?: string
   teamTools?: string

@@ -175,6 +175,7 @@ export const FUNNEL_OUTBOUND_CODES: ReadonlySet<string> = new Set([
   'profile-posting',
   'enquiry-reply',
   'local-pack',
+  'conversion-pass',
 ])
 
 export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
@@ -332,10 +333,10 @@ export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
     code: 'conversion-pass',
     title: 'Conversion Pass',
     price: '$1,400',
-    blurb: 'Home, contact, and key service pages rewritten so people enquire. Draft.',
-    status: 'soon',
-    lane: 'soon',
-    section: 'draft-after-site',
+    blurb: 'Home, contact, and key service pages rewritten so people enquire.',
+    status: 'live',
+    lane: 'outbound',
+    section: 'outbound',
     href: '/go/conversion-pass',
   },
   {

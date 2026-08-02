@@ -1473,6 +1473,137 @@ const LOCAL_PACK_VISUALS = [
   LocalPackClearPriceVisual,
 ]
 
+/** Conversion Pass: the headline settles into one clear ask. */
+function ConversionHomeClearVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Homepage</span>
+      </div>
+      <div className="flex-1 flex flex-col items-center justify-center gap-2 px-4">
+        <motion.div
+          className="h-2 rounded-sm"
+          style={{backgroundColor: colors.teal}}
+          initial={reduce ? false : {width: '42%', opacity: 0.4}}
+          whileInView={{width: '78%', opacity: 1}}
+          viewport={{once: true}}
+          transition={{duration: 0.5, ease: [0.16, 1, 0.3, 1]}}
+        />
+        <motion.div
+          className="rounded-sm px-2.5 py-1"
+          style={{backgroundColor: colors.teal}}
+          initial={reduce ? false : {opacity: 0, scale: 0.85}}
+          whileInView={{opacity: 1, scale: 1}}
+          viewport={{once: true}}
+          transition={{delay: reduce ? 0 : 0.3, type: 'spring', stiffness: 340, damping: 22}}
+        >
+          <span className="font-mono text-[7px] font-bold uppercase tracking-wide text-white">Enquire</span>
+        </motion.div>
+      </div>
+    </div>
+  )
+}
+
+/** Conversion Pass: contact reachable from every page in one step. */
+function ConversionContactObviousVisual({reduce}: VisualProps) {
+  const pages = ['Home', 'Services', 'About']
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Every page</span>
+      </div>
+      <div className="flex-1 flex flex-col items-center justify-center gap-1.5 px-3">
+        {pages.map((page, i) => (
+          <motion.div
+            key={page}
+            className="flex items-center justify-between w-full max-w-[150px] rounded-sm border px-2 py-1"
+            style={{borderColor: `${colors.teal}30`, backgroundColor: '#fff'}}
+            initial={reduce ? false : {opacity: 0, x: -8}}
+            whileInView={{opacity: 1, x: 0}}
+            viewport={{once: true}}
+            transition={{delay: reduce ? 0 : i * 0.12}}
+          >
+            <span className="font-mono text-[6px] uppercase tracking-wide text-dark/45">{page}</span>
+            <span className="font-mono text-[6px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
+              Contact
+            </span>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** Conversion Pass: each service page makes its own specific case. */
+function ConversionServicesSpecificVisual({reduce}: VisualProps) {
+  const services = [
+    {label: 'Plumbing', detail: 'Hot water · leaks'},
+    {label: 'Electrical', detail: 'Switchboards · wiring'},
+  ]
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Service pages</span>
+      </div>
+      <div className="flex-1 flex flex-col justify-center gap-1.5 px-3 py-2">
+        {services.map((s, i) => (
+          <motion.div
+            key={s.label}
+            className="rounded-sm border px-2 py-1.5"
+            style={{borderColor: `${colors.teal}30`, backgroundColor: `${colors.teal}0C`}}
+            initial={reduce ? false : {opacity: 0, y: 8}}
+            whileInView={{opacity: 1, y: 0}}
+            viewport={{once: true}}
+            transition={{delay: reduce ? 0 : i * 0.15}}
+          >
+            <p className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
+              {s.label}
+            </p>
+            <p className="font-mono text-[6px] uppercase tracking-wide text-dark/45">{s.detail}</p>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** Conversion Pass: checked and working on an actual phone. */
+function ConversionMobileCheckedVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex items-center justify-center gap-3">
+      <div className="h-[84px] w-11 shrink-0 rounded-md border-2 border-dark/20 flex flex-col gap-1 p-1.5">
+        <div className="h-1 w-full rounded-sm bg-dark/10" />
+        <div className="h-1 w-3/4 rounded-sm bg-dark/10" />
+        <motion.div
+          className="mt-auto h-2.5 rounded-sm"
+          style={{backgroundColor: colors.teal, transformOrigin: 'left'}}
+          initial={reduce ? false : {opacity: 0.4, scaleX: 0.6}}
+          whileInView={{opacity: 1, scaleX: 1}}
+          viewport={{once: true}}
+          transition={{delay: reduce ? 0 : 0.25, duration: 0.4}}
+        />
+      </div>
+      <motion.span
+        className="font-mono text-[8px] font-bold uppercase tracking-wide"
+        style={{color: colors.teal}}
+        initial={reduce ? false : {opacity: 0}}
+        whileInView={{opacity: 1}}
+        viewport={{once: true}}
+        transition={{delay: reduce ? 0 : 0.5}}
+      >
+        Checked
+      </motion.span>
+    </div>
+  )
+}
+
+const CONVERSION_PASS_VISUALS = [
+  ConversionHomeClearVisual,
+  ConversionContactObviousVisual,
+  ConversionServicesSpecificVisual,
+  ConversionMobileCheckedVisual,
+]
+
 /** Team AI: whole team shares the same setup. */
 function TeamSharedSetupVisual({reduce}: VisualProps) {
   const seats = ['You', 'Sales', 'Ops', 'Admin']
@@ -3257,6 +3388,7 @@ export function BenefitMotionRows({
     | 'enquiry-reply'
     | 'profile-posting'
     | 'local-pack'
+    | 'conversion-pass'
 }) {
   const reduce = useReducedMotion()
   const visuals =
@@ -3284,6 +3416,8 @@ export function BenefitMotionRows({
                           ? PROFILE_POSTING_VISUALS
                           : variant === 'local-pack'
                             ? LOCAL_PACK_VISUALS
+                          : variant === 'conversion-pass'
+                            ? CONVERSION_PASS_VISUALS
                           : variant === 'change-pack'
                           ? CHANGE_PACK_VISUALS
                           : variant === 'content-system'

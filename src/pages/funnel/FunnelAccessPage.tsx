@@ -39,6 +39,7 @@ import {
   type BookingToolId,
   type BookingWhatId,
   type BookingWhereId,
+  type ConversionAskId,
   type CrmGoalId,
   type CrmLeadSourceId,
   type CrmSystemId,
@@ -90,6 +91,10 @@ type StepId =
   | 'landingAds'
   | 'landingOffer'
   | 'landingTracking'
+  | 'conversionServiceA'
+  | 'conversionServiceB'
+  | 'conversionAsk'
+  | 'conversionOffer'
   | 'sessionFormat'
   | 'teamSize'
   | 'teamTools'
@@ -187,6 +192,13 @@ const PHASES_LANDING: {id: PhaseId; n: number; label: string}[] = [
   {id: 'done', n: 4, label: 'Done'},
 ]
 
+const PHASES_CONVERSION: {id: PhaseId; n: number; label: string}[] = [
+  {id: 'about', n: 1, label: 'About you'},
+  {id: 'site', n: 2, label: 'Your pages'},
+  {id: 'access', n: 3, label: 'Access'},
+  {id: 'done', n: 4, label: 'Done'},
+]
+
 const PHASES_TEAM: {id: PhaseId; n: number; label: string}[] = [
   {id: 'about', n: 1, label: 'About you'},
   {id: 'site', n: 2, label: 'Your work'},
@@ -225,6 +237,7 @@ function phaseForStep(
     | 'crm-rescue'
     | 'booking'
     | 'landing-page'
+    | 'conversion-pass'
     | 'team-ai'
     | 'change-pack'
     | 'content-system',
@@ -303,6 +316,22 @@ function phaseForStep(
       step === 'landingAds' ||
       step === 'landingOffer' ||
       step === 'landingTracking' ||
+      step === 'website' ||
+      step === 'platform' ||
+      step === 'provider' ||
+      step === 'domainProvider' ||
+      step === 'hostingProvider'
+    ) {
+      return 'site'
+    }
+    return 'access'
+  }
+  if (kind === 'conversion-pass') {
+    if (
+      step === 'conversionServiceA' ||
+      step === 'conversionServiceB' ||
+      step === 'conversionAsk' ||
+      step === 'conversionOffer' ||
       step === 'website' ||
       step === 'platform' ||
       step === 'provider' ||
@@ -733,6 +762,32 @@ const LANDING_GOAL_OPTIONS: {
     label: 'Something else',
     blurb: 'Tell us the action in the offer step.',
     icon: <Code2 className="w-full h-full" strokeWidth={1.25} />,
+  },
+]
+
+const CONVERSION_ASK_OPTIONS: {
+  id: ConversionAskId
+  label: string
+  blurb: string
+  icon: React.ReactNode
+}[] = [
+  {
+    id: 'call',
+    label: 'Call now',
+    blurb: 'The main next step is picking up the phone.',
+    icon: <Phone className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'form',
+    label: 'Enquiry form',
+    blurb: 'The main next step is filling in a form.',
+    icon: <FileText className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'book',
+    label: 'Book a time',
+    blurb: 'The main next step is a calendar or booking link.',
+    icon: <Calendar className="w-full h-full" strokeWidth={1.25} />,
   },
 ]
 
@@ -2518,6 +2573,22 @@ function helpForStep(step: StepId, opts?: {isAiPhone?: boolean}): HelpBlock {
         title: 'Conversion tracking',
         body: 'Pixels and tags teach the ad platform what worked. Tell us what exists today.',
       }
+    case 'conversionServiceA':
+    case 'conversionServiceB':
+      return {
+        title: 'Which service pages',
+        body: 'Home and contact are already in scope. Tell us the two service pages that matter most so we rewrite those as well.',
+      }
+    case 'conversionAsk':
+      return {
+        title: 'The one main action',
+        body: 'Every rewritten page should point at the same next step. Pick the one that fits how you actually take enquiries.',
+      }
+    case 'conversionOffer':
+      return {
+        title: 'The one-line offer',
+        body: 'The single sentence a visitor should believe after reading. We build the headlines and proof around this line.',
+      }
     case 'website':
       return {
         title: 'Which site we are fixing',
@@ -2860,6 +2931,10 @@ const FunnelAccessPage: React.FC = () => {
   const [landingAds, setLandingAds] = useState<LandingAdsId | null>(null)
   const [landingOffer, setLandingOffer] = useState('')
   const [landingTracking, setLandingTracking] = useState<LandingTrackingId | null>(null)
+  const [conversionServiceA, setConversionServiceA] = useState('')
+  const [conversionServiceB, setConversionServiceB] = useState('')
+  const [conversionAsk, setConversionAsk] = useState<ConversionAskId | null>(null)
+  const [conversionOffer, setConversionOffer] = useState('')
   const [sessionFormat, setSessionFormat] = useState<'remote' | 'onsite' | null>(
     initialSessionFormat,
   )
@@ -2907,6 +2982,7 @@ const FunnelAccessPage: React.FC = () => {
   const isBooking = product === 'booking'
   const isSearchFix = product === 'search-fix'
   const isLandingPage = product === 'landing-page'
+  const isConversionPass = product === 'conversion-pass'
   const isTeamAi = product === 'team-ai'
   const isChangePack = product === 'change-pack'
   const isContentSystem = product === 'content-system'
@@ -2916,6 +2992,7 @@ const FunnelAccessPage: React.FC = () => {
   const usesEnquiryWizard = isEnquiryReply
   const usesReviewsWizard = isReviews
   const usesLocalPackWizard = isLocalPack
+  const usesConversionWizard = isConversionPass
   const productKind:
     | 'speed'
     | 'missed-call'
@@ -2927,6 +3004,7 @@ const FunnelAccessPage: React.FC = () => {
     | 'crm-rescue'
     | 'booking'
     | 'landing-page'
+    | 'conversion-pass'
     | 'team-ai'
     | 'change-pack'
     | 'content-system' =
@@ -2948,13 +3026,15 @@ const FunnelAccessPage: React.FC = () => {
                   ? 'booking'
                   : isLandingPage
                     ? 'landing-page'
-                    : isTeamAi
-                      ? 'team-ai'
-                      : isChangePack
-                        ? 'change-pack'
-                        : isContentSystem
-                          ? 'content-system'
-                          : 'speed'
+                    : usesConversionWizard
+                      ? 'conversion-pass'
+                      : isTeamAi
+                        ? 'team-ai'
+                        : isChangePack
+                          ? 'change-pack'
+                          : isContentSystem
+                            ? 'content-system'
+                            : 'speed'
   const phases = usesMissedWizard
     ? PHASES_MISSED
     : usesGoogleWizard
@@ -2973,13 +3053,15 @@ const FunnelAccessPage: React.FC = () => {
                 ? PHASES_BOOKING
                 : isLandingPage
                   ? PHASES_LANDING
-                  : isTeamAi
-                    ? PHASES_TEAM
-                    : isChangePack
-                      ? PHASES_CHANGE
-                      : isContentSystem
-                        ? PHASES_CONTENT
-                        : PHASES_SPEED
+                  : usesConversionWizard
+                    ? PHASES_CONVERSION
+                    : isTeamAi
+                      ? PHASES_TEAM
+                      : isChangePack
+                        ? PHASES_CHANGE
+                        : isContentSystem
+                          ? PHASES_CONTENT
+                          : PHASES_SPEED
 
   const stepOrder = useMemo((): StepId[] => {
     // Always show the product picker first so buyers see their purchase highlighted
@@ -3135,6 +3217,31 @@ const FunnelAccessPage: React.FC = () => {
       base.push('access', 'accessDetail', 'notes', 'done')
       return base
     }
+    if (usesConversionWizard) {
+      const base: StepId[] = [
+        'product',
+        'name',
+        'email',
+        'business',
+        'website',
+        'platform',
+        'provider',
+      ]
+      if (sameProvider === 'no') {
+        base.push('domainProvider', 'hostingProvider')
+      }
+      base.push(
+        'conversionServiceA',
+        'conversionServiceB',
+        'conversionAsk',
+        'conversionOffer',
+        'access',
+        'accessDetail',
+        'notes',
+        'done',
+      )
+      return base
+    }
     if (isTeamAi) {
       const teamSteps: StepId[] = [
         'product',
@@ -3211,6 +3318,7 @@ const FunnelAccessPage: React.FC = () => {
     isCrmRescue,
     isBooking,
     isLandingPage,
+    usesConversionWizard,
     isSearchFix,
     isTeamAi,
     isChangePack,
@@ -3348,6 +3456,19 @@ const FunnelAccessPage: React.FC = () => {
         !landingTracking ||
         !platform ||
         !sameProvider
+      ) {
+        setError('Something is missing. Use Back to check your answers.')
+        return
+      }
+    } else if (usesConversionWizard) {
+      if (
+        !isValidWebsite(website) ||
+        !platform ||
+        !sameProvider ||
+        conversionServiceA.trim().length < 2 ||
+        conversionServiceB.trim().length < 2 ||
+        !conversionAsk ||
+        conversionOffer.trim().length < 8
       ) {
         setError('Something is missing. Use Back to check your answers.')
         return
@@ -3515,6 +3636,25 @@ const FunnelAccessPage: React.FC = () => {
                 bookingTool: bookingTool!,
                 bookingWhat: bookingWhat!,
                 bookingWhere: bookingWhere!,
+                accessPath,
+                accessDetail: accessDetail.trim(),
+                notes: notes.trim(),
+              }
+          : usesConversionWizard
+            ? {
+                product,
+                name: name.trim(),
+                email: email.trim(),
+                business: business.trim(),
+                website: website.trim(),
+                platform: platform!,
+                sameProvider: sameProvider!,
+                domainProvider: domainProvider.trim(),
+                hostingProvider: hostingProvider.trim(),
+                conversionServiceA: conversionServiceA.trim(),
+                conversionServiceB: conversionServiceB.trim(),
+                conversionAsk: conversionAsk!,
+                conversionOffer: conversionOffer.trim(),
                 accessPath,
                 accessDetail: accessDetail.trim(),
                 notes: notes.trim(),
@@ -4418,6 +4558,70 @@ const FunnelAccessPage: React.FC = () => {
                   ))}
                 </div>
               </>
+            ) : null}
+
+            {step === 'conversionServiceA' ? (
+              <OneField
+                title="First service page to rewrite"
+                hint="Page name or URL. Home and contact are already included."
+                value={conversionServiceA}
+                onChange={setConversionServiceA}
+                placeholder="e.g. Kitchen renovations, or /services/kitchens"
+                disabled={conversionServiceA.trim().length < 2}
+                onNext={() => goNext('conversionServiceA')}
+              />
+            ) : null}
+
+            {step === 'conversionServiceB' ? (
+              <OneField
+                title="Second service page"
+                hint="Page name or URL. Home and contact are already included."
+                value={conversionServiceB}
+                onChange={setConversionServiceB}
+                placeholder="e.g. Bathroom renovations, or /services/bathrooms"
+                disabled={conversionServiceB.trim().length < 2}
+                onNext={() => goNext('conversionServiceB')}
+              />
+            ) : null}
+
+            {step === 'conversionAsk' ? (
+              <>
+                <QuestionTitle>
+                  What should visitors <span style={{color: RED}}>do</span> next?
+                </QuestionTitle>
+                <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
+                  One main action across the rewritten pages. Hover a card, then Select.
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4 max-w-3xl">
+                  {CONVERSION_ASK_OPTIONS.map((opt) => (
+                    <div key={opt.id}>
+                      <SelectCard
+                        selected={conversionAsk === opt.id}
+                        onSelect={() => {
+                          setConversionAsk(opt.id)
+                          goNext('conversionAsk')
+                        }}
+                        title={opt.label}
+                        blurb={opt.blurb}
+                        icon={opt.icon}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : null}
+
+            {step === 'conversionOffer' ? (
+              <OneField
+                title="What is the one-line offer?"
+                hint="The single sentence a visitor should believe after reading. Include price or deadline if it matters."
+                value={conversionOffer}
+                onChange={setConversionOffer}
+                placeholder="e.g. Free kitchen design consult, fixed quote within 48 hours…"
+                multiline
+                disabled={conversionOffer.trim().length < 8}
+                onNext={() => goNext('conversionOffer')}
+              />
             ) : null}
 
             {step === 'bookingTool' ? (
