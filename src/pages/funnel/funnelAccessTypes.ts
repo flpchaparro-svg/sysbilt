@@ -106,6 +106,7 @@ export type FunnelAccessPayload = {
   trainingPlan?: string
   riskSignal?: string
   contentChannels?: string
+  contentChannelLinks?: string
   lastPostWhen?: string
   hourReady?: string
   contentGoal?: string

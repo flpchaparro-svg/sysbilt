@@ -1617,6 +1617,17 @@ const CONTENT_CHANNEL_OPTIONS = [
   {id: 'other', label: 'Other'},
 ] as const
 
+const CONTENT_CHANNEL_URL_HINTS: Record<string, string> = {
+  linkedin: 'linkedin.com/company/your-business',
+  instagram: 'instagram.com/yourhandle',
+  facebook: 'facebook.com/yourpage',
+  youtube: 'youtube.com/@yourchannel',
+  tiktok: 'tiktok.com/@yourhandle',
+  email: 'Newsletter signup or list page URL',
+  blog: 'yoursite.com/blog',
+  other: 'Profile or feed URL',
+}
+
 const LAST_POST_OPTIONS = [
   {id: 'this-week', label: 'This week', blurb: 'You are posting right now.'},
   {id: 'this-month', label: 'This month', blurb: 'Something went out recently.'},
@@ -1852,7 +1863,7 @@ function helpForStep(step: StepId, opts?: {isAiPhone?: boolean}): HelpBlock {
     case 'contentChannels':
       return {
         title: 'Which channels',
-        body: 'Tap every channel you want in the system. Missing one? Type it below.',
+        body: 'Tap every channel you want in the system. As soon as you tap one, paste the profile or page link if you have it. Links are optional, but they stop us chasing the wrong accounts later.',
       }
     case 'lastPostWhen':
       return {
@@ -2239,6 +2250,7 @@ const FunnelAccessPage: React.FC = () => {
   const [riskSignal, setRiskSignal] = useState('')
   const [contentChannels, setContentChannels] = useState<string[]>([])
   const [contentChannelsOther, setContentChannelsOther] = useState('')
+  const [contentChannelUrls, setContentChannelUrls] = useState<Record<string, string>>({})
   const [lastPostWhen, setLastPostWhen] = useState('')
   const [hourReady, setHourReady] = useState('')
   const [contentGoal, setContentGoal] = useState('')
@@ -2817,6 +2829,33 @@ const FunnelAccessPage: React.FC = () => {
                       )
                       if (contentChannelsOther.trim()) labels.push(contentChannelsOther.trim())
                       return labels.join(', ')
+                    })(),
+                    contentChannelLinks: (() => {
+                      const rows: string[] = []
+                      for (const id of contentChannels) {
+                        if (id === 'other') {
+                          const label = contentChannelsOther.trim() || 'Other'
+                          const url = (contentChannelUrls.other || '').trim()
+                          rows.push(url ? `${label}: ${url}` : `${label}: (no link yet)`)
+                          continue
+                        }
+                        const label =
+                          CONTENT_CHANNEL_OPTIONS.find((o) => o.id === id)?.label || id
+                        const url = (contentChannelUrls[id] || '').trim()
+                        rows.push(url ? `${label}: ${url}` : `${label}: (no link yet)`)
+                      }
+                      if (
+                        contentChannelsOther.trim() &&
+                        !contentChannels.includes('other')
+                      ) {
+                        const url = (contentChannelUrls.other || '').trim()
+                        rows.push(
+                          url
+                            ? `${contentChannelsOther.trim()}: ${url}`
+                            : `${contentChannelsOther.trim()}: (no link yet)`,
+                        )
+                      }
+                      return rows.join('\n')
                     })(),
                     lastPostWhen:
                       LAST_POST_OPTIONS.find((o) => o.id === lastPostWhen)?.label || lastPostWhen,
@@ -3838,23 +3877,132 @@ const FunnelAccessPage: React.FC = () => {
             ) : null}
 
             {step === 'contentChannels' ? (
-              <ChipPickStep
-                title={
-                  <>
-                    Which <span style={{color: RED}}>channels</span>?
-                  </>
-                }
-                hint="Tap every channel you want in the system. Missing one? Type it below."
-                options={CONTENT_CHANNEL_OPTIONS}
-                selected={contentChannels}
-                onToggle={(id) => setContentChannels((prev) => toggleChip(prev, id))}
-                otherValue={contentChannelsOther}
-                onOtherChange={setContentChannelsOther}
-                otherPlaceholder="e.g. Threads, newsletter elsewhere…"
-                otherHint="Another channel we did not list"
-                disabled={contentChannels.length < 1 && contentChannelsOther.trim().length < 2}
-                onNext={() => goNext('contentChannels')}
-              />
+              <div className="max-w-2xl mx-auto text-center py-4">
+                <QuestionTitle>
+                  Which <span style={{color: RED}}>channels</span>?
+                </QuestionTitle>
+                <p className="font-sans text-dark/55 mb-8 leading-relaxed">
+                  Tap every channel you want in the system. As soon as you tap one, paste the
+                  profile or page link if you have it. Links are optional, but they stop us chasing
+                  the wrong accounts later.
+                </p>
+                <div className="flex flex-wrap justify-center gap-2.5">
+                  {CONTENT_CHANNEL_OPTIONS.map((opt) => {
+                    const on = contentChannels.includes(opt.id)
+                    return (
+                      <button
+                        key={opt.id}
+                        type="button"
+                        onClick={() =>
+                          setContentChannels((prev) => toggleChip(prev, opt.id))
+                        }
+                        className="inline-flex items-center gap-2 rounded-xl border px-4 py-3 font-sans text-sm font-semibold transition-[border-color,background-color,color] duration-200"
+                        style={{
+                          borderColor: on ? RED : 'rgba(26,26,26,0.14)',
+                          backgroundColor: on ? 'rgba(226,30,63,0.08)' : '#fff',
+                          color: on ? RED : INK,
+                        }}
+                      >
+                        {on ? <Check className="w-3.5 h-3.5 shrink-0" strokeWidth={2.5} /> : null}
+                        {opt.label}
+                      </button>
+                    )
+                  })}
+                </div>
+
+                {contentChannels.length > 0 || contentChannelsOther.trim().length >= 2 ? (
+                  <div className="mt-8 max-w-lg mx-auto text-left space-y-4">
+                    <p className="font-sans text-sm text-dark/50 text-center">
+                      Paste each profile or page link. Skip any you do not have handy.
+                    </p>
+                    {contentChannels
+                      .filter((id) => id !== 'other')
+                      .map((id) => {
+                        const label =
+                          CONTENT_CHANNEL_OPTIONS.find((o) => o.id === id)?.label || id
+                        return (
+                          <div key={id}>
+                            <label className="block font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-dark/45 mb-2">
+                              {label} link
+                            </label>
+                            <input
+                              className={inputClass}
+                              type="url"
+                              inputMode="url"
+                              autoComplete="url"
+                              value={contentChannelUrls[id] || ''}
+                              onChange={(e) =>
+                                setContentChannelUrls((prev) => ({
+                                  ...prev,
+                                  [id]: e.target.value,
+                                }))
+                              }
+                              placeholder={CONTENT_CHANNEL_URL_HINTS[id] || 'https://…'}
+                            />
+                          </div>
+                        )
+                      })}
+                    {contentChannels.includes('other') ||
+                    contentChannelsOther.trim().length >= 2 ? (
+                      <div>
+                        <label className="block font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-dark/45 mb-2">
+                          {contentChannelsOther.trim() || 'Other'} link
+                        </label>
+                        <input
+                          className={inputClass}
+                          type="url"
+                          inputMode="url"
+                          autoComplete="url"
+                          value={contentChannelUrls.other || ''}
+                          onChange={(e) =>
+                            setContentChannelUrls((prev) => ({
+                              ...prev,
+                              other: e.target.value,
+                            }))
+                          }
+                          placeholder={CONTENT_CHANNEL_URL_HINTS.other}
+                        />
+                      </div>
+                    ) : null}
+                  </div>
+                ) : null}
+
+                <div className="mt-8 max-w-lg mx-auto text-left">
+                  <p className="font-sans text-sm text-dark/50 mb-2 text-center">
+                    Another channel we did not list
+                  </p>
+                  <input
+                    className={inputClass}
+                    type="text"
+                    value={contentChannelsOther}
+                    onChange={(e) => setContentChannelsOther(e.target.value)}
+                    placeholder="e.g. Threads, newsletter elsewhere…"
+                    onKeyDown={(e) => {
+                      if (
+                        e.key === 'Enter' &&
+                        (contentChannels.length >= 1 || contentChannelsOther.trim().length >= 2)
+                      ) {
+                        goNext('contentChannels')
+                      }
+                    }}
+                  />
+                </div>
+
+                <div className="mt-8 flex justify-center">
+                  <button
+                    type="button"
+                    disabled={
+                      contentChannels.length < 1 && contentChannelsOther.trim().length < 2
+                    }
+                    onClick={() => goNext('contentChannels')}
+                    className="inline-flex items-center gap-2 font-mono font-bold uppercase tracking-[0.16em] text-xs px-10 py-4 text-white disabled:opacity-40 transition-opacity"
+                    style={{backgroundColor: INK}}
+                  >
+                    Continue
+                    <ArrowRight className="w-4 h-4" strokeWidth={2.5} />
+                  </button>
+                </div>
+              </div>
             ) : null}
 
             {step === 'lastPostWhen' ? (

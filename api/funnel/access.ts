@@ -158,6 +158,7 @@ type Body = {
   trainingPlan?: unknown;
   riskSignal?: unknown;
   contentChannels?: unknown;
+  contentChannelLinks?: unknown;
   lastPostWhen?: unknown;
   hourReady?: unknown;
   contentGoal?: unknown;
@@ -491,6 +492,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const trainingPlan = str(body.trainingPlan, 120);
   const riskSignal = str(body.riskSignal, 200);
   const contentChannels = str(body.contentChannels, 2000);
+  const contentChannelLinks = str(body.contentChannelLinks, 4000);
   const lastPostWhen = str(body.lastPostWhen, 120);
   const hourReady = str(body.hourReady, 120);
   const contentGoal = str(body.contentGoal, 200);
@@ -756,6 +758,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
                   `Funnel scoping form — ${product}`,
                   `Business: ${business}`,
                   `Channels:\n${contentChannels}`,
+                  contentChannelLinks ? `Channel links:\n${contentChannelLinks}` : null,
                   `Last posted: ${lastPostWhen}`,
                   `Hour ready: ${hourReady}`,
                   `Content goal: ${contentGoal}`,
@@ -822,6 +825,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     trainingPlan: trainingPlan || undefined,
     riskSignal: riskSignal || undefined,
     contentChannels: contentChannels || undefined,
+    contentChannelLinks: contentChannelLinks || undefined,
     lastPostWhen: lastPostWhen || undefined,
     hourReady: hourReady || undefined,
     contentGoal: contentGoal || undefined,
