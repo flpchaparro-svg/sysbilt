@@ -98,7 +98,6 @@ import {REVIEWS_STRIPE_URL} from '../../constants/reviewsStripe'
 import {CRM_RESCUE_STRIPE_URL} from '../../constants/crmRescueStripe'
 import {LANDING_PAGE_STRIPE_URL} from '../../constants/landingStripe'
 import {AI_PHONE_STRIPE_URL} from '../../constants/aiPhoneStripe'
-import {CHANGE_PACK_STRIPE_URL} from '../../constants/changePackStripe'
 import {teamAiPriceOptions} from '../../constants/teamAiStripe'
 import {funnelCopyForSlug} from './funnelCopy'
 import {
@@ -359,10 +358,13 @@ const FunnelPage: React.FC = () => {
             const copy = funnelCopyForSlug(slug)
             setDoc({
               title: FUNNEL_PRODUCT_LABELS[slug],
-              ctaMode: slug === 'content-system' ? 'call' : 'buy',
+              ctaMode:
+                slug === 'change-pack' || slug === 'content-system' ? 'call' : 'buy',
               ctaLabel: copy.ctaLabel,
               schedulerUrl:
-                slug === 'content-system' ? accessFormPathForProduct(slug) : undefined,
+                slug === 'change-pack' || slug === 'content-system'
+                  ? accessFormPathForProduct(slug)
+                  : undefined,
             })
             setStatus('ready')
             return
@@ -405,8 +407,7 @@ const FunnelPage: React.FC = () => {
     (isReviews ? REVIEWS_STRIPE_URL : undefined) ||
     (isCrmRescue ? CRM_RESCUE_STRIPE_URL : undefined) ||
     (isLandingPage ? LANDING_PAGE_STRIPE_URL : undefined) ||
-    (isAiPhone ? AI_PHONE_STRIPE_URL : undefined) ||
-    (isChangePack ? CHANGE_PACK_STRIPE_URL : undefined)
+    (isAiPhone ? AI_PHONE_STRIPE_URL : undefined)
   const sanityStripe = (doc?.stripeUrl || '').trim()
   const resolvedStripeUrl =
     sanityStripe && !sanityStripe.includes('buy.stripe.com/test_')
@@ -423,11 +424,9 @@ const FunnelPage: React.FC = () => {
       ? 'call'
       : dualWebsite || dualTeamAi
         ? 'dual'
-        : isChangePack
-          ? 'buy'
-          : isContentSystem
-            ? 'call'
-            : doc?.ctaMode || 'buy',
+        : isChangePack || isContentSystem
+          ? 'call'
+          : doc?.ctaMode || 'buy',
     // Authored labels already include price text. Only normalise a comma before $ into one middle dot.
     ctaLabel: rawLabel.replace(/,\s*(?=\$)/, ' · ').replace(/\s*·\s*·\s*(?=\$)/, ' · '),
     stripeUrl: resolvedStripeUrl,
@@ -450,8 +449,8 @@ const FunnelPage: React.FC = () => {
                 ? 'booking'
                 : 'website',
         )
-      : isContentSystem
-        ? accessFormPathForProduct('content-system')
+      : isChangePack || isContentSystem
+        ? accessFormPathForProduct(isContentSystem ? 'content-system' : 'change-pack')
         : doc?.schedulerUrl || undefined,
     priceOptions:
       liveWebsitePriceOptions ||

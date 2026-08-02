@@ -1041,12 +1041,12 @@ export const TEAM_AI_COPY: FunnelProductCopy = {
 }
 
 export const CHANGE_PACK_COPY: FunnelProductCopy = {
-  eyebrow: 'New system or AI rollout · Built before day one · Fixed price',
+  eyebrow: 'New system or AI rollout · Built before day one · Fixed once scoped',
   h1Generic: 'The software is ready. The team is not, and a slide deck will not fix that',
   h1Personal: (b: string) =>
     `${b}, the software is ready. The team is not, and a slide deck will not fix that`,
   sub: 'CRM, AI tools, rostering, accounts, anything people have to use differently on Monday. The project plan covers the build. Nobody owns the part where busy people learn the new way of working. That usually becomes one long session half the team misses. We build the training materials before go-live, then check in for 30 days after.',
-  ctaLabel: 'Get the Change Pack · $6,000',
+  ctaLabel: 'Start the scoping form',
   proofLabel: 'Sound familiar',
   proofHeadingLive: "Every rollout's risk register",
   proofHeadingGeneric: "Every rollout's risk register",
@@ -1139,13 +1139,14 @@ export const CHANGE_PACK_COPY: FunnelProductCopy = {
   scopeLine:
     'Best started two to three weeks before go-live. Later than that, start anyway. A partial pack beats a slide deck.',
   priceLabel: 'Investment',
-  price: '$6,000',
-  priceLead: 'Paid once, and we start. Fill the access form after payment so we know the system, headcount, and go-live date.',
+  price: 'From $6,000',
+  priceLead:
+    'Fixed once scoped. The form and the call set the system, the headcount, the date, and which pieces you need. You get the number in writing the same day.',
   guarantee:
     'Our promise: the pack ships before your go-live date, complete, or we keep building at no extra cost until it is.',
   priceAnchor: 'Priced against the project it protects, not the hours of recording.',
   faqLabel: 'Objections',
-  faqHeading: 'Straight answers before you pay',
+  faqHeading: 'Straight answers before you book',
   faqs: [
     {
       q: 'What systems is this for?',
@@ -1160,8 +1161,8 @@ export const CHANGE_PACK_COPY: FunnelProductCopy = {
       a: 'Two to three weeks before go-live is ideal. Later than that, start anyway. A partial pack beats a slide deck.',
     },
     {
-      q: 'What happens after I pay?',
-      a: 'You land on a short access form: system, people, go-live window, and risk signal. We start from that brief.',
+      q: 'What does the scoping call cost?',
+      a: 'Nothing, and you leave with the fixed price in writing whether you go ahead or not.',
     },
     {
       q: 'Our processes are confidential',

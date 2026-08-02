@@ -1,7 +1,7 @@
 {
   "createdAt": "2026-08-02T06:46:00.000Z",
   "mode": "live",
-  "note": "Change Pack · live Payment Link. Product has description + marketing_features. After pay → https://sysbilt.com/go/thanks?p=change-pack → Change Pack access wizard. Never use buy.stripe.com/test_ on this page. Do not leave Sanity stripeUrl null (that soft-falls to unpaid access).",
+  "note": "Change Pack · live Payment Link kept for AFTER the scoping call, when the fixed quote is locked. Do NOT put this on the /go/change-pack CTA (that page is call/scoping). Product has description + marketing_features. After pay → https://sysbilt.com/go/thanks?p=change-pack.",
   "product": {
     "code": "change-pack",
     "name": "Change Pack",
