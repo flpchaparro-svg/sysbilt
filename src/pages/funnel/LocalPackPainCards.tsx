@@ -9,11 +9,12 @@ function Card({
 }: {
   index: string
   title: string
-  children: (opts: {inView: boolean; reduce: boolean | null}) => React.ReactNode
+  children: (opts: {play: boolean; reduce: boolean | null}) => React.ReactNode
 }) {
   const ref = useRef<HTMLDivElement>(null)
-  const inView = useInView(ref, {amount: 0.35})
+  const inView = useInView(ref, {once: true, amount: 0.35})
   const reduce = useReducedMotion()
+  const play = Boolean(inView && !reduce)
 
   return (
     <motion.div
@@ -37,7 +38,7 @@ function Card({
       <h3 className="font-serif text-xl font-bold mb-4" style={{color: FUNNEL_COLOURS.ink}}>
         {title}
       </h3>
-      {children({inView, reduce})}
+      {children({play, reduce})}
     </motion.div>
   )
 }
@@ -47,11 +48,14 @@ export function LocalPackPainCards() {
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5">
       {/* 01: profile chip lit and done, reviews chip frozen dashed beside it */}
       <Card index="01" title="Categories got cleaned, reviews never did">
-        {({inView, reduce}) => (
+        {({play}) => (
           <div className="flex items-center justify-center gap-3 py-2">
-            <div
+            <motion.div
               className="flex-1 rounded-lg border px-3 py-3 text-center"
               style={{borderColor: `${FUNNEL_COLOURS.goldDeep}55`, backgroundColor: `${FUNNEL_COLOURS.gold}18`}}
+              initial={false}
+              animate={play ? {opacity: 1, y: 0} : {opacity: 1}}
+              transition={{duration: 0.4}}
             >
               <p className="font-mono text-[7px] uppercase tracking-wide mb-1" style={{color: FUNNEL_COLOURS.goldDeep}}>
                 Profile
@@ -59,18 +63,18 @@ export function LocalPackPainCards() {
               <p className="font-mono text-[9px] font-bold" style={{color: FUNNEL_COLOURS.goldDeep}}>
                 Done
               </p>
-            </div>
+            </motion.div>
             <motion.span
               className="font-mono text-[10px]"
               style={{color: `${FUNNEL_COLOURS.ink}30`}}
-              animate={reduce || !inView ? undefined : {opacity: [0.2, 0.5, 0.2]}}
-              transition={{duration: 1.8, repeat: Infinity}}
+              animate={play ? {opacity: [0.25, 0.55, 0.25]} : {opacity: 0.35}}
+              transition={{duration: 2.2, repeat: Infinity, ease: 'easeInOut'}}
             >
               ···
             </motion.span>
             <div
               className="flex-1 rounded-lg border border-dashed px-3 py-3 text-center"
-              style={{borderColor: `${FUNNEL_COLOURS.ink}20`}}
+              style={{borderColor: `${FUNNEL_COLOURS.ink}20`, opacity: 0.85}}
             >
               <p className="font-mono text-[7px] uppercase tracking-wide mb-1" style={{color: `${FUNNEL_COLOURS.ink}45`}}>
                 Reviews
@@ -83,36 +87,43 @@ export function LocalPackPainCards() {
         )}
       </Card>
 
-      {/* 02: one review star burst, then fades to nothing */}
+      {/* 02: one review star lands, the rest stay dead */}
       <Card index="02" title="One ask, then the habit died">
-        {({inView, reduce}) => (
+        {({play, reduce}) => (
           <div className="flex items-center gap-1.5 py-3 justify-center">
-            {Array.from({length: 6}).map((_, i) => (
+            {Array.from({length: 5}).map((_, i) => (
               <motion.span
                 key={i}
                 className="h-4 w-4"
                 style={{
-                  backgroundColor: i === 0 ? FUNNEL_COLOURS.gold : `${FUNNEL_COLOURS.ink}10`,
+                  backgroundColor: i === 0 ? FUNNEL_COLOURS.gold : `${FUNNEL_COLOURS.ink}12`,
                   clipPath:
                     'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)',
                 }}
+                initial={reduce ? false : i === 0 ? {opacity: 0, scale: 0.6} : {opacity: 0.35}}
                 animate={
-                  reduce || !inView
-                    ? undefined
+                  play
+                    ? i === 0
+                      ? {opacity: 1, scale: [0.6, 1.15, 1]}
+                      : {opacity: 0.28, scale: 1}
                     : i === 0
-                      ? {scale: [1, 1.2, 1]}
-                      : {opacity: [0.5, 0.2, 0.5]}
+                      ? {opacity: 1, scale: 1}
+                      : {opacity: 0.28, scale: 1}
                 }
-                transition={{duration: 1.8, repeat: Infinity, delay: i * 0.08}}
+                transition={
+                  i === 0
+                    ? {duration: 0.55, delay: 0.15, ease: [0.22, 1, 0.36, 1]}
+                    : {duration: 0.35, delay: 0.2 + i * 0.04}
+                }
               />
             ))}
           </div>
         )}
       </Card>
 
-      {/* 03: a guilty finger tap, one lonely post, long gap after */}
+      {/* 03: empty calendar, one lonely post that soft-pulses */}
       <Card index="03" title="Posts happen on guilt, not a schedule">
-        {({inView, reduce}) => {
+        {({play, reduce}) => {
           const cells = Array.from({length: 12})
           return (
             <div className="grid grid-cols-6 gap-1.5">
@@ -126,13 +137,17 @@ export function LocalPackPainCards() {
                   }}
                   initial={reduce ? false : {opacity: 0}}
                   animate={
-                    reduce || !inView
-                      ? {opacity: 1}
-                      : i === 3
-                        ? {opacity: 1}
-                        : {opacity: [0.35, 0.6, 0.35]}
+                    play || reduce
+                      ? i === 3
+                        ? {opacity: [1, 0.55, 1], scale: [1, 0.96, 1]}
+                        : {opacity: 0.55, scale: 1}
+                      : {opacity: 0.4}
                   }
-                  transition={{duration: 1.8, repeat: Infinity, delay: i * 0.05, ease: 'easeInOut'}}
+                  transition={
+                    i === 3 && play
+                      ? {duration: 2.4, repeat: Infinity, ease: 'easeInOut', delay: 0.35}
+                      : {duration: 0.35, delay: reduce ? 0 : i * 0.03}
+                  }
                 >
                   {i === 3 ? (
                     <span className="h-1.5 w-1.5 rounded-full" style={{backgroundColor: FUNNEL_COLOURS.accent}} />
@@ -144,9 +159,9 @@ export function LocalPackPainCards() {
         }}
       </Card>
 
-      {/* 04: three separate stalled receipts, each with its own dashed border */}
+      {/* 04: three stalled receipts, soft sequential fade */}
       <Card index="04" title="Three buys, three chances to stall">
-        {({inView, reduce}) => (
+        {({play}) => (
           <div className="flex items-center gap-2 py-1">
             {['Brief', 'Access', 'Start'].map((label, i) => (
               <motion.div
@@ -154,11 +169,16 @@ export function LocalPackPainCards() {
                 className="flex-1 rounded-md border border-dashed px-1.5 py-2.5 text-center"
                 style={{borderColor: `${FUNNEL_COLOURS.ink}22`}}
                 animate={
-                  reduce || !inView
-                    ? undefined
-                    : {opacity: [0.4, 0.75, 0.4]}
+                  play
+                    ? {opacity: [0.45, 0.9, 0.45]}
+                    : {opacity: 0.6}
                 }
-                transition={{duration: 2, repeat: Infinity, delay: i * 0.3}}
+                transition={{
+                  duration: 2.8,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                  delay: i * 0.45,
+                }}
               >
                 <p className="font-mono text-[6px] uppercase tracking-wide" style={{color: `${FUNNEL_COLOURS.ink}55`}}>
                   {label}

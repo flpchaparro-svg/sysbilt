@@ -9,11 +9,16 @@ import {FUNNEL_COLOURS} from './funnelTheme'
  */
 export function LocalPackLeakPair() {
   const ref = useRef<HTMLDivElement>(null)
-  const inView = useInView(ref, {amount: 0.3})
+  const inView = useInView(ref, {once: true, amount: 0.3})
   const reduce = useReducedMotion()
   const go = !reduce && inView
 
   const labels = ['Profile', 'Reviews', 'Posts']
+  const positions = [
+    {left: '10%', top: '18%'},
+    {left: '52%', top: '52%'},
+    {left: '18%', top: '68%'},
+  ]
 
   return (
     <motion.div
@@ -24,7 +29,7 @@ export function LocalPackLeakPair() {
       viewport={{once: true, amount: 0.35}}
       transition={{duration: 0.55, ease: [0.16, 1, 0.3, 1]}}
     >
-      {/* Piecemeal: three bits scattered and drifting apart, no connecting lines */}
+      {/* Piecemeal: three bits scattered, soft drift, no connecting lines */}
       <div
         className="rounded-xl overflow-hidden border"
         style={{borderColor: `${FUNNEL_COLOURS.accent}40`, backgroundColor: FUNNEL_COLOURS.surface}}
@@ -38,41 +43,33 @@ export function LocalPackLeakPair() {
           </span>
         </div>
         <div className="px-4 md:px-5 pb-5 md:pb-6 h-[164px] relative">
-          {labels.map((label, i) => {
-            const positions = [
-              {left: '10%', top: '18%'},
-              {left: '52%', top: '52%'},
-              {left: '18%', top: '68%'},
-            ]
-            return (
-              <motion.div
-                key={label}
-                className="absolute flex flex-col items-center gap-1.5"
-                style={positions[i]}
-                animate={
-                  go
-                    ? {
-                        x: [0, i % 2 === 0 ? -4 : 5, 0],
-                        y: [0, i === 1 ? -5 : 4, 0],
-                        opacity: [0.5, 0.75, 0.5],
-                      }
-                    : {opacity: 0.55}
-                }
-                transition={{duration: 3 + i * 0.4, repeat: Infinity, ease: 'easeInOut'}}
+          {labels.map((label, i) => (
+            <motion.div
+              key={label}
+              className="absolute flex flex-col items-center gap-1.5"
+              style={{...positions[i], opacity: 0.55}}
+              animate={
+                go
+                  ? {
+                      x: [0, i % 2 === 0 ? -5 : 6, 0],
+                      y: [0, i === 1 ? -6 : 5, 0],
+                    }
+                  : undefined
+              }
+              transition={{duration: 4.2 + i * 0.5, repeat: Infinity, ease: 'easeInOut'}}
+            >
+              <div
+                className="h-8 w-8 rounded-md border border-dashed"
+                style={{borderColor: `${FUNNEL_COLOURS.ink}28`, backgroundColor: `${FUNNEL_COLOURS.ink}05`}}
+              />
+              <span
+                className="font-mono text-[6px] uppercase tracking-wide"
+                style={{color: `${FUNNEL_COLOURS.ink}55`}}
               >
-                <div
-                  className="h-8 w-8 rounded-md border border-dashed"
-                  style={{borderColor: `${FUNNEL_COLOURS.ink}28`, backgroundColor: `${FUNNEL_COLOURS.ink}05`}}
-                />
-                <span
-                  className="font-mono text-[6px] uppercase tracking-wide"
-                  style={{color: `${FUNNEL_COLOURS.ink}55`}}
-                >
-                  {label}
-                </span>
-              </motion.div>
-            )
-          })}
+                {label}
+              </span>
+            </motion.div>
+          ))}
           <span
             className="absolute bottom-2 right-2.5 font-mono text-[7px] uppercase tracking-[0.14em]"
             style={{color: `${FUNNEL_COLOURS.ink}30`}}
@@ -82,7 +79,7 @@ export function LocalPackLeakPair() {
         </div>
       </div>
 
-      {/* One sprint: same three, connected by lit lines, glowing together */}
+      {/* One sprint: same three, connected by lines that draw once */}
       <div
         className="rounded-xl overflow-hidden border"
         style={{borderColor: `${FUNNEL_COLOURS.goldDeep}55`, backgroundColor: FUNNEL_COLOURS.surface}}
@@ -97,65 +94,57 @@ export function LocalPackLeakPair() {
           <motion.span
             className="h-1.5 w-1.5 rounded-full"
             style={{backgroundColor: '#1F7A4D'}}
-            animate={go ? {opacity: [0.35, 1, 0.35], scale: [1, 1.25, 1]} : {opacity: 0.7}}
-            transition={{duration: 1.2, repeat: Infinity, ease: 'easeInOut'}}
+            animate={go ? {opacity: [0.45, 1, 0.45]} : {opacity: 0.7}}
+            transition={{duration: 1.6, repeat: Infinity, ease: 'easeInOut'}}
           />
         </div>
         <div className="px-4 md:px-5 pb-5 md:pb-6 h-[164px] relative">
-          <svg className="absolute inset-0 h-full w-full" aria-hidden>
-            <motion.line
-              x1="26%"
-              y1="30%"
-              x2="60%"
-              y2="60%"
+          <svg className="absolute inset-0 h-full w-full" aria-hidden viewBox="0 0 100 100" preserveAspectRatio="none">
+            <motion.path
+              d="M 18 30 L 60 60"
+              fill="none"
               stroke={FUNNEL_COLOURS.goldDeep}
-              strokeWidth={1.5}
-              initial={reduce ? undefined : {pathLength: 0, opacity: 0}}
-              animate={go ? {pathLength: 1, opacity: 0.6} : {opacity: 0.35}}
-              transition={{duration: 0.6, delay: 0.15}}
+              strokeWidth={1.2}
+              vectorEffect="non-scaling-stroke"
+              initial={reduce ? false : {pathLength: 0, opacity: 0}}
+              animate={go || reduce ? {pathLength: 1, opacity: 0.55} : {pathLength: 0, opacity: 0}}
+              transition={{duration: 0.7, delay: 0.25, ease: [0.22, 1, 0.36, 1]}}
             />
-            <motion.line
-              x1="60%"
-              y1="60%"
-              x2="30%"
-              y2="76%"
+            <motion.path
+              d="M 60 60 L 26 78"
+              fill="none"
               stroke={FUNNEL_COLOURS.goldDeep}
-              strokeWidth={1.5}
-              initial={reduce ? undefined : {pathLength: 0, opacity: 0}}
-              animate={go ? {pathLength: 1, opacity: 0.6} : {opacity: 0.35}}
-              transition={{duration: 0.6, delay: 0.35}}
+              strokeWidth={1.2}
+              vectorEffect="non-scaling-stroke"
+              initial={reduce ? false : {pathLength: 0, opacity: 0}}
+              animate={go || reduce ? {pathLength: 1, opacity: 0.55} : {pathLength: 0, opacity: 0}}
+              transition={{duration: 0.7, delay: 0.45, ease: [0.22, 1, 0.36, 1]}}
             />
           </svg>
-          {labels.map((label, i) => {
-            const positions = [
-              {left: '10%', top: '18%'},
-              {left: '52%', top: '52%'},
-              {left: '18%', top: '68%'},
-            ]
-            return (
-              <motion.div
-                key={label}
-                className="absolute flex flex-col items-center gap-1.5"
-                style={positions[i]}
-                initial={reduce ? false : {opacity: 0.4, scale: 0.9}}
-                animate={go ? {opacity: 1, scale: 1} : {opacity: 1, scale: 1}}
-                transition={{delay: 0.1 + i * 0.15, type: 'spring', stiffness: 320, damping: 20}}
+          {labels.map((label, i) => (
+            <motion.div
+              key={label}
+              className="absolute flex flex-col items-center gap-1.5"
+              style={positions[i]}
+              initial={reduce ? false : {opacity: 0, scale: 0.88}}
+              animate={go || reduce ? {opacity: 1, scale: 1} : {opacity: 0.4, scale: 0.9}}
+              transition={{delay: 0.08 + i * 0.12, type: 'spring', stiffness: 340, damping: 22}}
+            >
+              <div
+                className="h-8 w-8 rounded-md"
+                style={{
+                  backgroundColor: `${FUNNEL_COLOURS.gold}30`,
+                  border: `1px solid ${FUNNEL_COLOURS.goldDeep}70`,
+                }}
+              />
+              <span
+                className="font-mono text-[6px] uppercase tracking-wide"
+                style={{color: FUNNEL_COLOURS.goldDeep}}
               >
-                <motion.div
-                  className="h-8 w-8 rounded-md"
-                  style={{backgroundColor: `${FUNNEL_COLOURS.gold}30`, border: `1px solid ${FUNNEL_COLOURS.goldDeep}70`}}
-                  animate={go ? {boxShadow: ['0 0 0 0 rgba(197,160,89,0)', '0 0 0 5px rgba(197,160,89,0.16)', '0 0 0 0 rgba(197,160,89,0)']} : undefined}
-                  transition={{duration: 1.8, repeat: Infinity, delay: i * 0.3}}
-                />
-                <span
-                  className="font-mono text-[6px] uppercase tracking-wide"
-                  style={{color: FUNNEL_COLOURS.goldDeep}}
-                >
-                  {label}
-                </span>
-              </motion.div>
-            )
-          })}
+                {label}
+              </span>
+            </motion.div>
+          ))}
           <span
             className="absolute bottom-2 right-2.5 font-mono text-[7px] font-bold uppercase tracking-[0.14em]"
             style={{color: FUNNEL_COLOURS.goldDeep}}

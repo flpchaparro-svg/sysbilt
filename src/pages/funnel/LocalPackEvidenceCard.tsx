@@ -37,7 +37,7 @@ function ColumnFrame({
 /** Proof: three connected panels for the three jobs in the pack. Shape-first, almost no words. */
 export function LocalPackEvidenceCard({business}: {business?: string | null}) {
   const ref = useRef<HTMLDivElement>(null)
-  const inView = useInView(ref, {amount: 0.35})
+  const inView = useInView(ref, {once: true, amount: 0.35})
   const reduce = useReducedMotion()
   const go = !reduce && inView
   const initials = initialsOf(business)
