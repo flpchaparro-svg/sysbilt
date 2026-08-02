@@ -976,6 +976,244 @@ const WHO_PUBLISHES_OPTIONS: {
   },
 ]
 
+/** Who-publishes cards change with listing status. Unclaimed / locked listings ask about later. */
+function whoPublishesOptionsForStatus(status: ProfileStatusId | null) {
+  const base = WHO_PUBLISHES_OPTIONS
+  switch (status) {
+    case 'unclaimed':
+      return [
+        {
+          ...base[0],
+          label: 'I will, once claimed',
+          blurb: 'After we claim the listing, you hit publish from the kit.',
+        },
+        {
+          ...base[1],
+          label: 'Staff, once claimed',
+          blurb: 'After claim, someone on the team publishes from the bank.',
+        },
+        {
+          ...base[2],
+          label: 'May want care later',
+          blurb: 'Claim and kit first. Care month is optional once posting is live.',
+        },
+        {
+          ...base[3],
+          blurb: 'Fine. We decide who publishes after the listing is claimed.',
+        },
+      ]
+    case 'claimed-other':
+      return [
+        {
+          ...base[0],
+          label: 'I will, once recovered',
+          blurb: 'After ownership is back with you, you hit publish from the kit.',
+        },
+        {
+          ...base[1],
+          label: 'Staff, once recovered',
+          blurb: 'After recovery, someone on the team publishes from the bank.',
+        },
+        {
+          ...base[2],
+          label: 'May want care later',
+          blurb: 'Recover first. Care month is optional once you control the listing.',
+        },
+        {
+          ...base[3],
+          blurb: 'Fine. We decide who publishes after recovery.',
+        },
+      ]
+    case 'suspended':
+      return [
+        {
+          ...base[0],
+          label: 'I will, if it reopens',
+          blurb: 'If Google restores the listing, you publish from the kit.',
+        },
+        {
+          ...base[1],
+          label: 'Staff, if it reopens',
+          blurb: 'If it reopens, someone on the team publishes from the bank.',
+        },
+        {
+          ...base[2],
+          label: 'May want care later',
+          blurb: 'Suspension first. Care month only makes sense if the listing is usable.',
+        },
+        {
+          ...base[3],
+          blurb: 'Fine. We decide after we know what Google will allow.',
+        },
+      ]
+    case 'unsure':
+      return [
+        {
+          ...base[0],
+          blurb: 'If you already manage it, you hit publish. If not, we sort access first.',
+        },
+        {
+          ...base[1],
+          blurb: 'A staff member publishes once we know who can open the profile.',
+        },
+        {...base[2]},
+        {
+          ...base[3],
+          blurb: 'Fine. We match publisher to access once we see the listing.',
+        },
+      ]
+    case 'claimed-me':
+    default:
+      return base
+  }
+}
+
+/** Profile Posting access: status first, then refine by who publishes when they already manage it. */
+function postingAccessOptionsForStatus(
+  status: ProfileStatusId | null,
+  who: WhoPublishesId | null,
+) {
+  const invite = GOOGLE_PROFILE_ACCESS_BY_ID.invite
+  const call = GOOGLE_PROFILE_ACCESS_BY_ID.call
+  const claim = GOOGLE_PROFILE_ACCESS_BY_ID.claim
+  const recover = GOOGLE_PROFILE_ACCESS_BY_ID.recover
+
+  switch (status) {
+    case 'claimed-me': {
+      if (who === 'staff') {
+        return [
+          {
+            ...invite,
+            label: 'Manager invite',
+            blurb: 'Invite us as manager so we can hand the kit to you and your publisher.',
+          },
+          {
+            ...call,
+            blurb: 'Walk through invite plus who on the team will hit publish. About five minutes.',
+          },
+        ]
+      }
+      if (who === 'care-later') {
+        return [
+          {
+            ...invite,
+            blurb: 'Invite us as manager for the kit now. Care month, if you want it, is a separate step later.',
+          },
+          {
+            ...call,
+            blurb: 'Useful if you want to talk through solo publish vs care month.',
+          },
+        ]
+      }
+      if (who === 'unsure') {
+        return [
+          {
+            ...call,
+            blurb: 'We look at the listing together and decide invite vs who should publish.',
+          },
+          {
+            ...invite,
+            blurb: 'If you can already open Business Profile, invite us as manager.',
+          },
+        ]
+      }
+      return [
+        {
+          ...invite,
+          blurb: 'Add us as a manager so we can set cadence, templates, and the bank. No password sharing.',
+        },
+        {
+          ...call,
+          blurb: 'We walk the manager invite together. About five minutes.',
+        },
+      ]
+    }
+    case 'unclaimed':
+      return [
+        {
+          ...claim,
+          label: 'Claim it with us',
+          blurb: 'Nobody owns it yet. We claim it together, then build the posting kit.',
+        },
+        {
+          ...call,
+          blurb: 'Talk through whether a listing already exists and how to claim it before any posts.',
+        },
+      ]
+    case 'claimed-other':
+      return [
+        {
+          ...recover,
+          label: 'Recover ownership',
+          blurb: 'We start Google recovery. The posting kit waits until you control the listing.',
+        },
+        {
+          ...call,
+          blurb: 'Useful if you know who claimed it or still have old Google emails.',
+        },
+      ]
+    case 'suspended':
+      return [
+        {
+          ...recover,
+          label: 'Assess the suspension',
+          blurb: 'We open the case with you. No point building posts until Google will allow them.',
+        },
+        {
+          ...call,
+          blurb: 'Best when you have the suspension email from Google.',
+        },
+      ]
+    case 'unsure':
+    default:
+      return [
+        {
+          ...call,
+          blurb: 'We look at the listing together and pick claim, invite, or recovery before the kit.',
+        },
+        {
+          ...invite,
+          label: 'I think I manage it',
+          blurb: 'If you can already open Business Profile, invite us as manager for the kit.',
+        },
+      ]
+  }
+}
+
+/** Posting-specific status blurbs (same ids as Google Profile Fix). */
+const POSTING_PROFILE_STATUS_OPTIONS: typeof GOOGLE_PROFILE_STATUS_OPTIONS =
+  GOOGLE_PROFILE_STATUS_OPTIONS.map((opt) => {
+    switch (opt.id) {
+      case 'claimed-me':
+        return {
+          ...opt,
+          blurb: 'You can already open Business Profile and post updates today.',
+        }
+      case 'unclaimed':
+        return {
+          ...opt,
+          blurb: 'Nobody owns it yet. Claim comes before any posting kit.',
+        }
+      case 'claimed-other':
+        return {
+          ...opt,
+          blurb: 'Ex-staff or old agency holds it. Recovery first, then the kit.',
+        }
+      case 'suspended':
+        return {
+          ...opt,
+          blurb: 'Google locked it. We assess recovery before we write posts.',
+        }
+      case 'unsure':
+        return {
+          ...opt,
+          blurb: 'Fine. We will sort claim vs invite once we see the listing.',
+        }
+      default:
+        return opt
+    }
+  })
+
 /** Reviews: access depends on profile status, then how jobs get marked complete. */
 function reviewsAccessOptionsForStatus(
   status: ProfileStatusId | null,
@@ -2010,6 +2248,11 @@ function helpForStep(step: StepId, opts?: {isAiPhone?: boolean}): HelpBlock {
           'Not sure is fine. We can find it together',
         ],
       }
+    case 'whoPublishes':
+      return {
+        title: 'Who hits publish',
+        body: 'This is for after the listing is usable. If it still needs claim or recovery, we sort that first, then match the kit to whoever publishes.',
+      }
     case 'access':
       return {
         title: 'How we get in',
@@ -2020,11 +2263,6 @@ function helpForStep(step: StepId, opts?: {isAiPhone?: boolean}): HelpBlock {
           'Someone else: agency or developer. You introduce us',
           'Quick call: we walk through it together in about five minutes',
         ],
-      }
-    case 'whoPublishes':
-      return {
-        title: 'Who hits publish',
-        body: 'This decides who needs the calendar and templates day to day. Pick the closest match. We can adjust later.',
       }
     case 'accessDetail':
       return {
@@ -2422,19 +2660,30 @@ const FunnelAccessPage: React.FC = () => {
       ]
     }
     if (usesPostingWizard) {
-      return [
+      const steps: StepId[] = [
         'product',
         'name',
         'email',
         'business',
         'profileUrl',
         'profileStatus',
-        'whoPublishes',
-        'access',
-        'accessDetail',
-        'notes',
-        'done',
       ]
+      // Claimed: who publishes first, then access tailored to that.
+      // Locked / foreign / unclaimed: access first, then who publishes once usable.
+      if (profileStatus === 'claimed-me') {
+        steps.push('whoPublishes', 'access', 'accessDetail')
+      } else if (
+        profileStatus === 'unclaimed' ||
+        profileStatus === 'claimed-other' ||
+        profileStatus === 'suspended'
+      ) {
+        steps.push('access', 'accessDetail', 'whoPublishes')
+      } else {
+        // unsure, or not chosen yet: access first so we do not pretend they can invite
+        steps.push('access', 'whoPublishes', 'accessDetail')
+      }
+      steps.push('notes', 'done')
+      return steps
     }
     if (usesReviewsWizard) {
       const steps: StepId[] = [
@@ -2606,7 +2855,9 @@ const FunnelAccessPage: React.FC = () => {
     ? isAiPhone
       ? aiPhoneAccessOptionsForSetup(phoneSetup)
       : missedCallAccessOptionsForSetup(phoneSetup)
-    : usesGoogleWizard || usesPostingWizard
+    : usesPostingWizard
+      ? postingAccessOptionsForStatus(profileStatus, whoPublishes)
+      : usesGoogleWizard
       ? googleAccessOptionsForStatus(profileStatus)
       : usesReviewsWizard
         ? reviewsAccessOptionsForStatus(profileStatus, reviewJob)
@@ -2619,6 +2870,11 @@ const FunnelAccessPage: React.FC = () => {
               : isSearchFix
                 ? searchAccessOptionsForPlatform(platform)
                 : siteAccessOptionsForPlatform(platform)
+
+  const postingWhoOptions = whoPublishesOptionsForStatus(profileStatus)
+  const postingStatusOptions = usesPostingWizard
+    ? POSTING_PROFILE_STATUS_OPTIONS
+    : GOOGLE_PROFILE_STATUS_OPTIONS
 
   function goNext(from: StepId) {
     setError(null)
@@ -3001,14 +3257,46 @@ const FunnelAccessPage: React.FC = () => {
   function selectProfileStatus(id: ProfileStatusId) {
     setProfileStatus(id)
     setReviewJob(null)
+    setWhoPublishes(null)
     setAccessPath(null)
-    window.setTimeout(() => goNext('profileStatus'), 200)
+    window.setTimeout(() => {
+      // Branch from the id just chosen. Do not trust stepOrder from the previous render.
+      if (usesPostingWizard) {
+        setStep(id === 'claimed-me' ? 'whoPublishes' : 'access')
+        return
+      }
+      if (usesReviewsWizard) {
+        setStep(id === 'claimed-me' ? 'reviewJob' : 'access')
+        return
+      }
+      goNext('profileStatus')
+    }, 200)
   }
 
   function selectWhoPublishes(id: WhoPublishesId) {
     setWhoPublishes(id)
     setAccessPath(null)
-    window.setTimeout(() => goNext('whoPublishes'), 200)
+    window.setTimeout(() => {
+      if (usesPostingWizard) {
+        // claimed-me: access next. Other statuses ask whoPublishes after accessDetail → notes.
+        if (profileStatus === 'claimed-me') {
+          setStep('access')
+          return
+        }
+        if (
+          profileStatus === 'unclaimed' ||
+          profileStatus === 'claimed-other' ||
+          profileStatus === 'suspended'
+        ) {
+          setStep('notes')
+          return
+        }
+        // unsure: access already done, accessDetail next
+        setStep('accessDetail')
+        return
+      }
+      goNext('whoPublishes')
+    }, 200)
   }
 
   function selectReviewJob(id: ReviewJobId) {
@@ -3314,13 +3602,23 @@ const FunnelAccessPage: React.FC = () => {
             {step === 'profileStatus' ? (
               <>
                 <QuestionTitle>
-                  What is the <span style={{color: RED}}>profile</span> status?
+                  {usesPostingWizard ? (
+                    <>
+                      What is the <span style={{color: RED}}>listing</span> status?
+                    </>
+                  ) : (
+                    <>
+                      What is the <span style={{color: RED}}>profile</span> status?
+                    </>
+                  )}
                 </QuestionTitle>
                 <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
-                  Hover a card, then Select. Not sure is fine.
+                  {usesPostingWizard
+                    ? 'This decides whether we claim, recover, or invite before the posting kit. Hover a card, then Select.'
+                    : 'Hover a card, then Select. Not sure is fine.'}
                 </p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
-                  {GOOGLE_PROFILE_STATUS_OPTIONS.map((opt) => (
+                  {postingStatusOptions.map((opt) => (
                     <div key={opt.id}>
                       <SelectCard
                         selected={profileStatus === opt.id}
@@ -3339,13 +3637,32 @@ const FunnelAccessPage: React.FC = () => {
             {step === 'whoPublishes' ? (
               <>
                 <QuestionTitle>
-                  Who will hit <span style={{color: RED}}>publish</span>?
+                  {profileStatus === 'unclaimed' ||
+                  profileStatus === 'claimed-other' ||
+                  profileStatus === 'suspended' ? (
+                    <>
+                      Once the listing is usable, who hits{' '}
+                      <span style={{color: RED}}>publish</span>?
+                    </>
+                  ) : (
+                    <>
+                      Who will hit <span style={{color: RED}}>publish</span>?
+                    </>
+                  )}
                 </QuestionTitle>
                 <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
-                  This decides who needs the calendar and templates. Hover a card, then Select.
+                  {profileStatus === 'unclaimed'
+                    ? 'Claim comes first. Tell us who will publish after that. Hover a card, then Select.'
+                    : profileStatus === 'claimed-other'
+                      ? 'Recovery comes first. Tell us who will publish after ownership is back. Hover a card, then Select.'
+                      : profileStatus === 'suspended'
+                        ? 'We assess the suspension first. Tell us who would publish if Google restores it. Hover a card, then Select.'
+                        : profileStatus === 'unsure'
+                          ? 'Best guess is fine. We match this to access once we see the listing. Hover a card, then Select.'
+                          : 'This decides who needs the calendar and templates. Hover a card, then Select.'}
                 </p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
-                  {WHO_PUBLISHES_OPTIONS.map((opt) => (
+                  {postingWhoOptions.map((opt) => (
                     <div key={opt.id}>
                       <SelectCard
                         selected={whoPublishes === opt.id}
@@ -4351,10 +4668,46 @@ const FunnelAccessPage: React.FC = () => {
             {step === 'access' ? (
               <>
                 <QuestionTitle>
-                  How should we get <span style={{color: RED}}>in</span>?
+                  {usesPostingWizard ? (
+                    profileStatus === 'unclaimed' ? (
+                      <>
+                        How do we <span style={{color: RED}}>claim</span> it?
+                      </>
+                    ) : profileStatus === 'claimed-other' ? (
+                      <>
+                        How do we <span style={{color: RED}}>recover</span> it?
+                      </>
+                    ) : profileStatus === 'suspended' ? (
+                      <>
+                        How do we handle the <span style={{color: RED}}>suspension</span>?
+                      </>
+                    ) : profileStatus === 'claimed-me' ? (
+                      <>
+                        How do we get <span style={{color: RED}}>manager</span> access?
+                      </>
+                    ) : (
+                      <>
+                        How should we get <span style={{color: RED}}>in</span>?
+                      </>
+                    )
+                  ) : (
+                    <>
+                      How should we get <span style={{color: RED}}>in</span>?
+                    </>
+                  )}
                 </QuestionTitle>
                 <p className="font-sans text-dark/55 mb-6 max-w-xl leading-relaxed">
-                  Hover, then Select. Pick whatever is easiest for you.
+                  {usesPostingWizard
+                    ? profileStatus === 'unclaimed'
+                      ? 'The listing is unclaimed. Pick claim with us, or a short call first.'
+                      : profileStatus === 'claimed-other'
+                        ? 'Someone else holds it. Recovery or a call. The posting kit waits until you control it.'
+                        : profileStatus === 'suspended'
+                          ? 'No posts until Google allows them. Assess with us, or call first.'
+                          : profileStatus === 'claimed-me' && whoPublishes === 'staff'
+                            ? 'You manage it. Invite us so we can hand the kit to you and your publisher.'
+                            : 'Hover, then Select. Pick whatever is easiest for you.'
+                    : 'Hover, then Select. Pick whatever is easiest for you.'}
                 </p>
                 <div
                   className={
