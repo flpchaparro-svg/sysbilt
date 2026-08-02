@@ -98,6 +98,7 @@ import {REVIEWS_STRIPE_URL} from '../../constants/reviewsStripe'
 import {CRM_RESCUE_STRIPE_URL} from '../../constants/crmRescueStripe'
 import {LANDING_PAGE_STRIPE_URL} from '../../constants/landingStripe'
 import {AI_PHONE_STRIPE_URL} from '../../constants/aiPhoneStripe'
+import {teamAiPriceOptions} from '../../constants/teamAiStripe'
 import {funnelCopyForSlug} from './funnelCopy'
 import {
   FUNNEL_PRODUCT_LABELS,
@@ -385,9 +386,10 @@ const FunnelPage: React.FC = () => {
   }, [slug])
 
   const rawLabel = doc?.ctaLabel || COPY.ctaLabel
-  // Live Payment Links in code. Website always uses the three enrolment tiers from
-  // websiteStripe.ts so Sanity cannot leak test buy links into the dual CTA.
+  // Live Payment Links in code. Website / Team AI dual CTAs always use code options
+  // so Sanity cannot leak test buy links.
   const liveWebsitePriceOptions = isWebsite ? websiteEnrolmentPriceOptions() : null
+  const liveTeamAiPriceOptions = isTeamAi ? teamAiPriceOptions() : null
   const sanityPriceOptions = (doc?.priceOptions || []).filter(
     (o) =>
       o?.ctaLabel &&
@@ -396,6 +398,7 @@ const FunnelPage: React.FC = () => {
   )
   const liveFallback =
     (isWebsite ? websiteEnrolmentPriceOptions()[0]?.stripeUrl : undefined) ||
+    (isTeamAi ? teamAiPriceOptions()[0]?.stripeUrl : undefined) ||
     (isBooking ? BOOKING_STRIPE_URL : undefined) ||
     (isSpeed ? SPEED_FIX_STRIPE_URL : undefined) ||
     (isGoogleProfile ? GOOGLE_PROFILE_STRIPE_URL : undefined) ||
@@ -414,10 +417,12 @@ const FunnelPage: React.FC = () => {
     (isReviews || isAiPhone || isBooking || isWebsite) && !resolvedStripeUrl
   const dualWebsite =
     isWebsite && (liveWebsitePriceOptions || []).filter((o) => o?.ctaLabel && o?.stripeUrl).length >= 2
+  const dualTeamAi =
+    isTeamAi && (liveTeamAiPriceOptions || []).filter((o) => o?.ctaLabel && o?.stripeUrl).length >= 2
   const ctaFields: FunnelCtaFields = {
     ctaMode: buyDoorNeedsAccess
       ? 'call'
-      : dualWebsite
+      : dualWebsite || dualTeamAi
         ? 'dual'
         : doc?.ctaMode || (isChangePack || isContentSystem ? 'call' : 'buy'),
     // Authored labels already include price text. Only normalise a comma before $ into one middle dot.
@@ -446,7 +451,10 @@ const FunnelPage: React.FC = () => {
         (isChangePack || isContentSystem
           ? accessFormPathForProduct(isContentSystem ? 'content-system' : 'change-pack')
           : undefined),
-    priceOptions: liveWebsitePriceOptions || (sanityPriceOptions.length > 0 ? sanityPriceOptions : undefined),
+    priceOptions:
+      liveWebsitePriceOptions ||
+      liveTeamAiPriceOptions ||
+      (sanityPriceOptions.length > 0 ? sanityPriceOptions : undefined),
   }
 
   const pageTitle = doc?.title ? `${doc.title} | SYSBILT` : 'Fixed-price fix | SYSBILT'

@@ -1,0 +1,27 @@
+{
+  "createdAt": "2026-08-02T06:30:00.000Z",
+  "mode": "live",
+  "note": "Team AI · dual live Payment Links. Code owns dual CTA via teamAiStripe.ts so Sanity test buys cannot leak. After pay → https://sysbilt.com/go/thanks?p=team-ai&m=remote|onsite → prep wizard.",
+  "products": {
+    "remote": {
+      "code": "team-ai",
+      "mode": "remote",
+      "name": "Team AI (Remote)",
+      "productId": "prod_UuMt8liY0159aM",
+      "priceId": "price_1TvqGK7kQC0CB85zJebHgdVD",
+      "paymentLinkId": "plink_1TvqGL7kQC0CB85zwmNkXuiF",
+      "paymentLinkUrl": "https://buy.stripe.com/6oU4gt9Chavu5Qab8n3gk05",
+      "amountAud": 1950
+    },
+    "onsite": {
+      "code": "team-ai",
+      "mode": "onsite",
+      "name": "Team AI · Face-to-face",
+      "productId": "prod_UuNaQVr3nckrPK",
+      "priceId": "price_1TvqGJ7kQC0CB85z5qF5Wvjq",
+      "paymentLinkId": "plink_1TvqGK7kQC0CB85zfssE23Yl",
+      "paymentLinkUrl": "https://buy.stripe.com/aFa9AN4hXeLKdiC5O33gk02",
+      "amountAud": 2400
+    }
+  }
+}
