@@ -1446,6 +1446,155 @@ const CONTENT_SYSTEM_VISUALS = [
   ContentReportVisual,
 ]
 
+/** Profile Messaging: first answer lands. */
+function ProfileMsgFirstAnswerVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+          Maps thread
+        </span>
+        <motion.span
+          className="font-mono text-[7px] font-bold uppercase tracking-wide"
+          style={{color: colors.teal}}
+          animate={reduce ? undefined : {opacity: [0.5, 1, 0.5]}}
+          transition={{duration: 1.2, repeat: Infinity}}
+        >
+          Replied
+        </motion.span>
+      </div>
+      <div className="flex-1 min-h-0 p-2 flex flex-col justify-center gap-1.5">
+        <div className="rounded-sm border border-dark/10 bg-cream px-2 py-1 self-start max-w-[90%]">
+          <span className="font-sans text-[10px] text-dark/55">Do you have a slot?</span>
+        </div>
+        <motion.div
+          className="rounded-sm border px-2 py-1.5 self-end max-w-[90%]"
+          style={{borderColor: `${colors.teal}55`, backgroundColor: `${colors.teal}12`}}
+          initial={reduce ? false : {opacity: 0, y: 8}}
+          whileInView={{opacity: 1, y: 0}}
+          viewport={{once: true}}
+          transition={{delay: reduce ? 0 : 0.2, type: 'spring', stiffness: 380}}
+        >
+          <p className="font-sans text-[10px] text-dark/75 leading-tight">Thanks. We will get back shortly.</p>
+        </motion.div>
+      </div>
+    </div>
+  )
+}
+
+/** Profile Messaging: hours match reality. */
+function ProfileMsgHoursVisual({reduce}: VisualProps) {
+  const rows = [
+    {label: 'Mon–Fri', tag: 'Open'},
+    {label: 'Sat morning', tag: 'Open'},
+    {label: 'Night', tag: 'Closed'},
+  ]
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+          Availability
+        </span>
+      </div>
+      <div className="flex-1 min-h-0 p-2 space-y-1">
+        {rows.map((row, i) => (
+          <motion.div
+            key={row.label}
+            className="rounded-sm border px-2 py-1 flex items-center justify-between"
+            style={{
+              borderColor: row.tag === 'Closed' ? `${FUNNEL_COLOURS.ink}12` : `${colors.teal}44`,
+              backgroundColor: row.tag === 'Closed' ? colors.cream : `${colors.teal}10`,
+            }}
+            initial={reduce ? false : {opacity: 0, x: -8}}
+            whileInView={{opacity: 1, x: 0}}
+            viewport={{once: true}}
+            transition={{delay: reduce ? 0 : 0.1 + i * 0.1}}
+          >
+            <span className="font-sans text-[10px] text-dark/75">{row.label}</span>
+            <span
+              className="font-mono text-[7px] font-bold uppercase"
+              style={{color: row.tag === 'Closed' ? FUNNEL_COLOURS.muted : colors.teal}}
+            >
+              {row.tag}
+            </span>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** Profile Messaging: one shared voice. */
+function ProfileMsgSharedVoiceVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+          Reply bank
+        </span>
+      </div>
+      <div className="flex-1 min-h-0 p-2 space-y-1">
+        {['First reply', 'After hours', 'Common questions'].map((label, i) => (
+          <motion.div
+            key={label}
+            className="rounded-sm border px-2 py-1 flex items-center justify-between"
+            style={{borderColor: `${colors.teal}44`, backgroundColor: `${colors.teal}10`}}
+            initial={reduce ? false : {opacity: 0, x: -8}}
+            whileInView={{opacity: 1, x: 0}}
+            viewport={{once: true}}
+            transition={{delay: reduce ? 0 : 0.1 + i * 0.12}}
+          >
+            <span className="font-sans text-[10px] text-dark/75">{label}</span>
+            <span className="font-mono text-[7px] font-bold uppercase" style={{color: colors.teal}}>
+              Ready
+            </span>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** Profile Messaging: handoff alert. */
+function ProfileMsgHandoffVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+          Human needed
+        </span>
+        <motion.span
+          className="font-mono text-[7px] font-bold uppercase tracking-wide text-gold-on-cream"
+          animate={reduce ? undefined : {opacity: [0.5, 1, 0.5]}}
+          transition={{duration: 1.1, repeat: Infinity}}
+        >
+          Alert
+        </motion.span>
+      </div>
+      <div className="flex-1 min-h-0 p-2 flex items-center gap-2">
+        <motion.div
+          className="font-mono text-[10px] font-bold uppercase tracking-wider px-2 py-1.5 text-white"
+          style={{backgroundColor: '#1F7A4D'}}
+          animate={reduce ? undefined : {scale: [1, 1.05, 1]}}
+          transition={{duration: 1.3, repeat: Infinity}}
+        >
+          Phone
+        </motion.div>
+        <p className="font-sans text-[11px] text-dark/70 leading-snug">
+          Lands where you already work
+        </p>
+      </div>
+    </div>
+  )
+}
+
+const PROFILE_MESSAGING_VISUALS = [
+  ProfileMsgFirstAnswerVisual,
+  ProfileMsgHoursVisual,
+  ProfileMsgSharedVoiceVisual,
+  ProfileMsgHandoffVisual,
+]
+
 const TEAM_AI_VISUALS = [
   TeamSharedSetupVisual,
   TeamSafeDataVisual,
@@ -2713,6 +2862,7 @@ export function BenefitMotionRows({
     | 'team-ai'
     | 'change-pack'
     | 'content-system'
+    | 'profile-messaging'
     | 'reviews'
     | 'ai-phone'
     | 'booking'
@@ -2742,9 +2892,11 @@ export function BenefitMotionRows({
                         ? CHANGE_PACK_VISUALS
                         : variant === 'content-system'
                           ? CONTENT_SYSTEM_VISUALS
-                          : variant === 'team-ai'
-                            ? TEAM_AI_VISUALS
-                            : SPEED_VISUALS
+                          : variant === 'profile-messaging'
+                            ? PROFILE_MESSAGING_VISUALS
+                            : variant === 'team-ai'
+                              ? TEAM_AI_VISUALS
+                              : SPEED_VISUALS
 
   return (
     <div className="space-y-10 md:space-y-12">

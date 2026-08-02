@@ -66,6 +66,7 @@ export type FunnelProductCopy = {
     | 'website'
     | 'geo'
     | 'client-finder'
+    | 'profile-messaging'
     | 'draft'
 }
 

@@ -86,7 +86,8 @@ const comingSoonFaq: FunnelFaq = {
   a: 'Not yet. This page is a draft for review. When it opens, you will get a clear buy path or a short scope form. Until then, treat the price as the intended list price.',
 }
 
-export const PROFILE_MESSAGING_COPY = makeDraftCopy({
+export const PROFILE_MESSAGING_COPY: FunnelProductCopy = {
+  ...makeDraftCopy({
   eyebrow: 'Fixed price · One to two days · Coming soon',
   h1Generic: 'People message your Google profile. Right now nobody answers in time',
   sub: 'Messaging is on for many profiles, or it should be. Without hours, canned replies, and a handoff, enquiries die in the thread. We switch it on properly and leave you rules you can keep.',
@@ -155,7 +156,9 @@ export const PROFILE_MESSAGING_COPY = makeDraftCopy({
   ],
   finalHeading: 'Stop looking open while threads go quiet',
   finalLine: 'Messaging on. Hours honest. First reply ready. Coming soon.',
-})
+}),
+  proofKind: 'profile-messaging',
+}
 
 export const ENQUIRY_REPLY_COPY = makeDraftCopy({
   eyebrow: 'Fixed price · Two to three days · Coming soon',

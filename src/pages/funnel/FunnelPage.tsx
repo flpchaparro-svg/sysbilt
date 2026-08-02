@@ -53,6 +53,10 @@ import {ContentLastPostCard} from './ContentLastPostCard'
 import {ContentFeedLeakPair} from './ContentFeedLeakPair'
 import {ContentPainCards} from './ContentPainCards'
 import {ContentMonthDeliverableMock} from './ContentMonthDeliverableMock'
+import {ProfileMessagingEvidenceCard} from './ProfileMessagingEvidenceCard'
+import {ProfileMessagingLeakPair} from './ProfileMessagingLeakPair'
+import {ProfileMessagingPainCards} from './ProfileMessagingPainCards'
+import {ProfileMessagingDeliverableMock} from './ProfileMessagingDeliverableMock'
 import {ReviewEvidenceCard} from './ReviewEvidenceCard'
 import {ReviewLeakPair} from './ReviewLeakPair'
 import {ReviewPainCards} from './ReviewPainCards'
@@ -243,6 +247,7 @@ const FunnelPage: React.FC = () => {
   const isTeamAi = proofKind === 'team-ai'
   const isChangePack = proofKind === 'change-pack'
   const isContentSystem = proofKind === 'content-system'
+  const isProfileMessaging = proofKind === 'profile-messaging'
   const isReviews = proofKind === 'reviews'
   const isAiPhone = proofKind === 'ai-phone'
   const isBooking = proofKind === 'booking'
@@ -250,6 +255,8 @@ const FunnelPage: React.FC = () => {
   const isWebsite = proofKind === 'website'
   const isDraftSoon =
     proofKind === 'geo' || proofKind === 'client-finder' || proofKind === 'draft'
+  /** Visual drafts that are not buyable yet. */
+  const usesComingSoonCta = isDraftSoon || isProfileMessaging
   const lastPostMonth = useMemo(() => sanitiseLastPostMonth(params.get('m')), [params])
   const yourReviews = useMemo(() => parseReviewCount(params.get('n')), [params])
   const theirReviews = useMemo(() => parseReviewCount(params.get('r')), [params])
@@ -271,13 +278,15 @@ const FunnelPage: React.FC = () => {
                   ? 'change-pack'
                   : isContentSystem
                     ? 'content-system'
-                    : isReviews
-                      ? 'reviews'
-                      : isAiPhone
-                        ? 'ai-phone'
-                        : isBooking
-                          ? 'booking'
-                          : 'speed'
+                    : isProfileMessaging
+                      ? 'profile-messaging'
+                      : isReviews
+                        ? 'reviews'
+                        : isAiPhone
+                          ? 'ai-phone'
+                          : isBooking
+                            ? 'booking'
+                            : 'speed'
   const calculatorVariant = isSpeed
     ? 'speed'
     : isMissedCall
@@ -550,7 +559,7 @@ const FunnelPage: React.FC = () => {
 
             <Reveal delay={0.32} y={12}>
               <div className="mt-10">
-                {isDraftSoon ? (
+                {usesComingSoonCta ? (
                   <FunnelComingSoonCta label={COPY.ctaLabel} size="final" />
                 ) : (
                   <FunnelCtaBlock fields={ctaFields} size="final" />
@@ -570,6 +579,7 @@ const FunnelPage: React.FC = () => {
               isTeamAi ||
               isChangePack ||
               isContentSystem ||
+              isProfileMessaging ||
               isReviews ||
               isAiPhone ||
               isBooking ||
@@ -622,6 +632,7 @@ const FunnelPage: React.FC = () => {
             {isAiPhone ? <AiPhoneEvidenceCard evidence={aiPhoneEvidence} /> : null}
             {isBooking ? <BookingEvidenceCard business={business} /> : null}
             {isWebsite ? <WebsiteEvidenceCard evidence={websiteEvidence} /> : null}
+            {isProfileMessaging ? <ProfileMessagingEvidenceCard business={business} /> : null}
             {isDraftSoon ? (
               <div
                 className="mt-2 rounded-sm border p-5 md:p-6 max-w-2xl"
@@ -661,6 +672,7 @@ const FunnelPage: React.FC = () => {
                     isTeamAi ||
                     isChangePack ||
                     isContentSystem ||
+                    isProfileMessaging ||
                     isReviews ||
                     isAiPhone ||
                     isBooking
@@ -970,6 +982,31 @@ const FunnelPage: React.FC = () => {
                 </Reveal>
                 <WebsiteLeakPair />
               </section>
+            ) : isProfileMessaging ? (
+              <section className="mt-12 md:mt-14">
+                <Reveal y={10}>
+                  <SectionLabel>The leak</SectionLabel>
+                </Reveal>
+                <Reveal delay={0.06} y={14}>
+                  <h3
+                    className="font-serif font-bold text-2xl md:text-3xl tracking-tight mb-4 max-w-2xl"
+                    style={{color: FUNNEL_COLOURS.ink}}
+                  >
+                    They message. You look open. Nobody answers in time
+                  </h3>
+                </Reveal>
+                <Reveal delay={0.1} y={10}>
+                  <p
+                    className="font-sans text-base md:text-lg leading-relaxed max-w-2xl mb-2"
+                    style={{color: FUNNEL_COLOURS.muted}}
+                  >
+                    Maps sends people to Message. Without hours, a first reply, and a handoff, the
+                    thread dies while you are busy. The next clinic down the street looks more
+                    available than you are.
+                  </p>
+                </Reveal>
+                <ProfileMessagingLeakPair />
+              </section>
             ) : isDraftSoon ? (
               <section className="mt-12 md:mt-14">
                 <Reveal y={10}>
@@ -1063,10 +1100,12 @@ const FunnelPage: React.FC = () => {
                 <BookingPainCards />
               ) : isWebsite ? (
                 <WebsitePainCards />
+              ) : isProfileMessaging ? (
+                <ProfileMessagingPainCards />
               ) : isDraftSoon ? null : (
                 <PainCostCards />
               )}
-              {!isDraftSoon ? (
+              {!usesComingSoonCta ? (
                 <LostClientCalculator variant={calculatorVariant} theme="dark" />
               ) : null}
             </div>
@@ -1131,6 +1170,7 @@ const FunnelPage: React.FC = () => {
             ) : isTeamAi ||
               isChangePack ||
               isContentSystem ||
+              isProfileMessaging ||
               isReviews ||
               isAiPhone ||
               isBooking ||
@@ -1197,7 +1237,7 @@ const FunnelPage: React.FC = () => {
             </Reveal>
             <Reveal delay={0.16} y={10}>
               <div className="mt-10">
-                {isDraftSoon ? (
+                {usesComingSoonCta ? (
                   <FunnelComingSoonCta label={COPY.ctaLabel} size="lg" />
                 ) : (
                   <FunnelCtaBlock fields={ctaFields} size="lg" />
@@ -1281,7 +1321,7 @@ const FunnelPage: React.FC = () => {
                     </p>
                   </Reveal>
                   <Reveal delay={0.28} y={10}>
-                    {isDraftSoon ? (
+                    {usesComingSoonCta ? (
                       <FunnelComingSoonCta label={COPY.ctaLabel} theme="dark" size="xl" />
                     ) : (
                       <FunnelCtaBlock fields={ctaFields} theme="dark" size="xl" />
@@ -1313,6 +1353,8 @@ const FunnelPage: React.FC = () => {
                   <BookingDeliverableMock />
                 ) : isWebsite ? (
                   <WebsiteDeliverableMock />
+                ) : isProfileMessaging ? (
+                  <ProfileMessagingDeliverableMock />
                 ) : isDraftSoon ? (
                   <div
                     className="rounded-sm border p-5 md:p-6"
@@ -1385,7 +1427,7 @@ const FunnelPage: React.FC = () => {
                 </p>
               </Reveal>
               <Reveal delay={0.24} y={12}>
-                {isDraftSoon ? (
+                {usesComingSoonCta ? (
                   <FunnelComingSoonCta label={COPY.ctaLabel} theme="dark" size="final" />
                 ) : (
                   <FunnelCtaBlock

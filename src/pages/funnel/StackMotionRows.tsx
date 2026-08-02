@@ -2153,6 +2153,134 @@ const CONTENT_SYSTEM_STACK_VISUALS = [
   SnapshotStackVisual,
 ]
 
+/** Profile Messaging stack frames. */
+function ProfileMsgEnabledStackVisual({reduce, play}: VisualProps) {
+  const go = play && !reduce
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex flex-col justify-center overflow-hidden">
+      <p className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/40 mb-2">
+        Messaging
+      </p>
+      <motion.div
+        className="border px-2.5 py-2 flex items-center justify-between"
+        initial={{borderColor: 'rgba(26,26,26,0.12)', backgroundColor: '#fff'}}
+        animate={
+          go
+            ? {
+                borderColor: FUNNEL_COLOURS.accent,
+                backgroundColor: `${FUNNEL_COLOURS.accent}12`,
+              }
+            : undefined
+        }
+        transition={{duration: 0.35}}
+      >
+        <span className="font-sans text-[12px] text-dark/80">On your profile</span>
+        <motion.span
+          className="font-mono text-[7px] font-bold uppercase tracking-wide"
+          style={{color: FUNNEL_COLOURS.accent}}
+          animate={go ? {opacity: [0.45, 1, 0.45]} : undefined}
+          transition={{duration: 1.1, repeat: Infinity}}
+        >
+          Checked
+        </motion.span>
+      </motion.div>
+    </div>
+  )
+}
+
+function ProfileMsgHoursStackVisual({reduce, play}: VisualProps) {
+  const go = play && !reduce
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex items-center gap-3 overflow-hidden">
+      <motion.div
+        className="font-serif text-2xl font-bold leading-none"
+        style={{color: FUNNEL_COLOURS.accent}}
+        animate={go ? {scale: [1, 1.06, 1]} : undefined}
+        transition={{duration: 1.5, repeat: Infinity}}
+      >
+        Hrs
+      </motion.div>
+      <div className="min-w-0">
+        <p className="font-mono text-[8px] uppercase tracking-widest text-dark/45">Availability</p>
+        <p className="font-sans text-[12px] text-dark/75 mt-0.5">Honest windows · no 2am flood</p>
+      </div>
+    </div>
+  )
+}
+
+function ProfileMsgCannedStackVisual({reduce, play}: VisualProps) {
+  const go = play && !reduce
+  const items = ['First reply', 'After hours', 'Common questions']
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-2.5 space-y-1.5 overflow-hidden">
+      {items.map((label, i) => (
+        <motion.div
+          key={label}
+          className="flex items-center justify-between border px-2 py-1"
+          initial={{opacity: 0.35, borderColor: 'rgba(26,26,26,0.12)'}}
+          animate={
+            go
+              ? {
+                  opacity: 1,
+                  borderColor: FUNNEL_COLOURS.accent,
+                  backgroundColor: `${FUNNEL_COLOURS.accent}10`,
+                }
+              : undefined
+          }
+          transition={{delay: i * 0.2, duration: 0.3}}
+        >
+          <span className="font-sans text-[11px] text-dark/75">{label}</span>
+          <span
+            className="font-mono text-[7px] font-bold uppercase tracking-wide"
+            style={{color: FUNNEL_COLOURS.accent}}
+          >
+            In
+          </span>
+        </motion.div>
+      ))}
+    </div>
+  )
+}
+
+function ProfileMsgHandoffStackVisual({reduce, play}: VisualProps) {
+  const go = play && !reduce
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex flex-col justify-center overflow-hidden">
+      <p className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/40 mb-2">
+        Handoff
+      </p>
+      <motion.div
+        className="border px-2.5 py-2 flex items-center justify-between"
+        initial={{borderColor: 'rgba(26,26,26,0.12)', backgroundColor: '#fff'}}
+        animate={
+          go
+            ? {
+                borderColor: FUNNEL_COLOURS.accent,
+                backgroundColor: `${FUNNEL_COLOURS.accent}12`,
+              }
+            : undefined
+        }
+        transition={{duration: 0.35}}
+      >
+        <span className="font-sans text-[12px] text-dark/80">When a human must take it</span>
+        <span
+          className="font-mono text-[7px] font-bold uppercase tracking-wide"
+          style={{color: FUNNEL_COLOURS.accent}}
+        >
+          Alert
+        </span>
+      </motion.div>
+    </div>
+  )
+}
+
+const PROFILE_MESSAGING_STACK_VISUALS = [
+  ProfileMsgEnabledStackVisual,
+  ProfileMsgHoursStackVisual,
+  ProfileMsgCannedStackVisual,
+  ProfileMsgHandoffStackVisual,
+]
+
 const TEAM_AI_STACK_VISUALS = [
   TeamHalfDayStackVisual,
   TeamWorkspaceStackVisual,
@@ -2239,6 +2367,7 @@ export function StackMotionRows({
     | 'team-ai'
     | 'change-pack'
     | 'content-system'
+    | 'profile-messaging'
     | 'reviews'
     | 'ai-phone'
     | 'booking'
@@ -2268,9 +2397,11 @@ export function StackMotionRows({
                         ? CHANGE_PACK_STACK_VISUALS
                         : variant === 'content-system'
                           ? CONTENT_SYSTEM_STACK_VISUALS
-                          : variant === 'team-ai'
-                            ? TEAM_AI_STACK_VISUALS
-                            : SPEED_VISUALS
+                          : variant === 'profile-messaging'
+                            ? PROFILE_MESSAGING_STACK_VISUALS
+                            : variant === 'team-ai'
+                              ? TEAM_AI_STACK_VISUALS
+                              : SPEED_VISUALS
 
   return (
     <ul className="space-y-10 md:space-y-12">
