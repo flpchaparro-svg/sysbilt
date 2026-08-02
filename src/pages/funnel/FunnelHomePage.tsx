@@ -49,7 +49,6 @@ const OUTBOUND_GROUPS: CatalogueGroup[] = [
       'google-profile',
       'reviews',
       'profile-posting',
-      'qa-review-desk',
     ],
   },
   {

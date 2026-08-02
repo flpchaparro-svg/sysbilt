@@ -86,54 +86,6 @@ const comingSoonFaq: FunnelFaq = {
   a: 'Not yet. This page is a draft for review. When it opens, you will get a clear buy path or a short scope form. Until then, treat the price as the intended list price.',
 }
 
-export const QA_REVIEW_DESK_COPY = makeDraftCopy({
-  eyebrow: 'Fixed price · Two days · Coming soon',
-  h1Generic: 'Reviews and questions arrive. Your replies still feel improvised',
-  sub: 'We seed honest Q&A on your profile and leave a reply desk: wording for praise, complaints, and the questions people ask before they book.',
-  proofHeading: 'Public trust is unfinished without replies',
-  proofLead:
-    'A five-star review with no reply looks ignored. A one-star with a messy reply looks worse. Empty Q&A leaves Google guessing.',
-  proofAfter:
-    'You get a desk: seeded questions, answer patterns, and reply lines your team can paste and personalise.',
-  painHeading: 'Public silence costs bookings',
-  painLines: [
-    'Good reviews sit unanswered for weeks.',
-    'Bad reviews get emotional replies that make things worse.',
-    'The same questions keep arriving because nothing is answered in public.',
-    'New staff do not know what they are allowed to say.',
-  ],
-  bridgeHeading: 'A reply desk, not a lecture',
-  bridgeBody:
-    "This isn't fake reviews and it isn't us logging in forever. It's Q&A seeded with real facts, plus reply patterns for the reviews you already get. Coming soon.",
-  bridgeGaugeCaption: 'Honest answers. Calm replies. Your voice.',
-  benefits: [
-    {title: 'Questions answered once', text: 'Public Q&A reduces the same WhatsApp questions on repeat.'},
-    {title: 'Reviews get a human reply', text: 'Praise thanked. Problems handled without a public argument.'},
-    {title: 'Staff stop guessing', text: 'A short desk means anyone can reply safely.'},
-    {title: 'Pairs with Review Engine', text: 'Asking for reviews is half. Answering them is the other half.'},
-  ],
-  processSteps: [
-    {label: 'Pull', text: 'Recent reviews and the questions people already ask.'},
-    {label: 'Write', text: 'Q&A set and reply patterns in your voice.'},
-    {label: 'Load', text: 'Seed where Google allows, hand you the desk document.'},
-  ],
-  stackItems: [
-    {title: 'Q&A pack', text: 'Core questions with plain answers you approve.'},
-    {title: 'Praise replies', text: 'Short, warm patterns that do not sound robotic.'},
-    {title: 'Problem replies', text: 'Calm wording that takes it offline when needed.'},
-    {title: 'Desk one-pager', text: 'Who replies, how fast, and what never goes public.'},
-  ],
-  scopeLine: 'One profile. Coming soon.',
-  price: '$850',
-  priceLead: 'Fixed price. Coming soon, not for sale today.',
-  guarantee:
-    'When this goes live: agreed Q&A and reply desk are delivered as scoped, or we keep working at no extra cost until they are.',
-  priceAnchor: 'One saved reputation moment covers this.',
-  faqs: [comingSoonFaq],
-  finalHeading: 'Answer in public like you mean it',
-  finalLine: 'Q&A seeded. Reply desk ready. Coming soon.',
-})
-
 export const LOCAL_PACK_COPY = makeDraftCopy({
   eyebrow: 'Bundle · One sprint · Coming soon',
   h1Generic: 'Profile, reviews, and posts in one local sprint',
@@ -1170,7 +1122,6 @@ export const WEBSITE_HOOK_COPY = makeDraftCopy({
 })
 
 export const DRAFT_COPY_BY_SLUG: Record<string, FunnelProductCopy> = {
-  'qa-review-desk': QA_REVIEW_DESK_COPY,
   'local-pack': LOCAL_PACK_COPY,
   'conversion-pass': CONVERSION_PASS_COPY,
   'onpage-search': ONPAGE_SEARCH_COPY,
