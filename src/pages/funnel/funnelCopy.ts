@@ -2270,10 +2270,6 @@ export const ENQUIRY_REPLY_COPY: FunnelProductCopy = {
   faqHeading: 'Straight answers before you pay',
   faqs: [
     {
-      q: 'Can I pay for this today?',
-      a: "Not on this page yet. Payment isn't wired here, and the price above is the locked list price for when it opens. Reply to any SYSBILT email if you want it scoped sooner.",
-    },
-    {
       q: 'Does this cover Google Business Profile messages?',
       a: "No. Profile chat sits inside Google's own tools and behaves differently to a form or inbox. This product covers written enquiries: your website form and email.",
     },
@@ -2284,6 +2280,10 @@ export const ENQUIRY_REPLY_COPY: FunnelProductCopy = {
     {
       q: 'How is this different from CRM Rescue?',
       a: 'CRM Rescue rebuilds the whole catch-and-chase system inside your CRM. This is smaller: the first reply, and the route into wherever you already work.',
+    },
+    {
+      q: 'Is this refundable?',
+      a: "There's no change-of-mind refund, because we start straight away. If the agreed channels do not acknowledge and route as scoped, we keep working at no extra cost until they do.",
     },
   ],
   finalLabel: 'Last step',

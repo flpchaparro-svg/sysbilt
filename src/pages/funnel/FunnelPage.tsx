@@ -107,6 +107,7 @@ import {CRM_RESCUE_STRIPE_URL} from '../../constants/crmRescueStripe'
 import {LANDING_PAGE_STRIPE_URL} from '../../constants/landingStripe'
 import {AI_PHONE_STRIPE_URL} from '../../constants/aiPhoneStripe'
 import {PROFILE_POSTING_STRIPE_URL} from '../../constants/profilePostingStripe'
+import {ENQUIRY_REPLY_STRIPE_URL} from '../../constants/enquiryReplyStripe'
 import {teamAiPriceOptions} from '../../constants/teamAiStripe'
 import {funnelCopyForSlug} from './funnelCopy'
 import {
@@ -262,7 +263,7 @@ const FunnelPage: React.FC = () => {
   const isDraftSoon =
     proofKind === 'geo' || proofKind === 'client-finder' || proofKind === 'draft'
   /** Visual drafts and priced-but-not-wired products that are not buyable yet. */
-  const usesComingSoonCta = isDraftSoon || isEnquiryReply
+  const usesComingSoonCta = isDraftSoon
   const lastPostMonth = useMemo(() => sanitiseLastPostMonth(params.get('m')), [params])
   const yourReviews = useMemo(() => parseReviewCount(params.get('n')), [params])
   const theirReviews = useMemo(() => parseReviewCount(params.get('r')), [params])
@@ -425,7 +426,8 @@ const FunnelPage: React.FC = () => {
     (isCrmRescue ? CRM_RESCUE_STRIPE_URL : undefined) ||
     (isLandingPage ? LANDING_PAGE_STRIPE_URL : undefined) ||
     (isAiPhone ? AI_PHONE_STRIPE_URL : undefined) ||
-    (isProfilePosting ? PROFILE_POSTING_STRIPE_URL : undefined)
+    (isProfilePosting ? PROFILE_POSTING_STRIPE_URL : undefined) ||
+    (isEnquiryReply ? ENQUIRY_REPLY_STRIPE_URL : undefined)
   const sanityStripe = (doc?.stripeUrl || '').trim()
   const resolvedStripeUrl =
     sanityStripe && !sanityStripe.includes('buy.stripe.com/test_')

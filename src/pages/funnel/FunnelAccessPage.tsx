@@ -52,6 +52,8 @@ import {
   type ReviewJobId,
   type SameProviderId,
   type WhoPublishesId,
+  type EnquiryChannelId,
+  type EnquiryRouteId,
 } from './funnelAccessTypes'
 
 const SCHEDULER_URL = 'https://meetings-ap1.hubspot.com/felipe-chaparro'
@@ -75,6 +77,8 @@ type StepId =
   | 'profileUrl'
   | 'profileStatus'
   | 'whoPublishes'
+  | 'enquiryChannels'
+  | 'enquiryRoute'
   | 'reviewJob'
   | 'crmSystem'
   | 'leadSource'
@@ -141,6 +145,13 @@ const PHASES_POSTING: {id: PhaseId; n: number; label: string}[] = [
   {id: 'done', n: 4, label: 'Done'},
 ]
 
+const PHASES_ENQUIRY: {id: PhaseId; n: number; label: string}[] = [
+  {id: 'about', n: 1, label: 'About you'},
+  {id: 'site', n: 2, label: 'Your channels'},
+  {id: 'access', n: 3, label: 'Access'},
+  {id: 'done', n: 4, label: 'Done'},
+]
+
 const PHASES_REVIEWS: {id: PhaseId; n: number; label: string}[] = [
   {id: 'about', n: 1, label: 'About you'},
   {id: 'site', n: 2, label: 'Your reviews'},
@@ -201,6 +212,7 @@ function phaseForStep(
     | 'missed-call'
     | 'google-profile'
     | 'profile-posting'
+    | 'enquiry-reply'
     | 'reviews'
     | 'crm-rescue'
     | 'booking'
@@ -228,6 +240,16 @@ function phaseForStep(
   }
   if (kind === 'profile-posting') {
     if (step === 'profileUrl' || step === 'profileStatus' || step === 'whoPublishes') return 'site'
+    return 'access'
+  }
+  if (kind === 'enquiry-reply') {
+    if (
+      step === 'websiteUrl' ||
+      step === 'enquiryChannels' ||
+      step === 'enquiryRoute'
+    ) {
+      return 'site'
+    }
     return 'access'
   }
   if (kind === 'reviews') {
@@ -1559,6 +1581,179 @@ function crmAccessOptionsForSystem(system: CrmSystemId | null) {
   }
 }
 
+const ENQUIRY_CHANNEL_OPTIONS: {
+  id: EnquiryChannelId
+  label: string
+  blurb: string
+  icon: React.ReactNode
+  unsure?: boolean
+}[] = [
+  {
+    id: 'both',
+    label: 'Form and email',
+    blurb: 'Website form plus the inbox people write to. The usual fixed-price scope.',
+    icon: <Mail className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'form',
+    label: 'Website form only',
+    blurb: 'Contact or quote form on the site. Email can wait.',
+    icon: <Globe2 className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'email',
+    label: 'Email only',
+    blurb: 'People write to an address. No public form in scope for this job.',
+    icon: <Mail className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'both-plus',
+    label: 'Form, email, plus one more',
+    blurb: 'The fixed price includes one extra intake you already use, for example chat or WhatsApp.',
+    icon: <Server className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'unsure',
+    label: 'Not sure',
+    blurb: 'Fine. We will map channels on a short call.',
+    icon: null,
+    unsure: true,
+  },
+]
+
+const ENQUIRY_ROUTE_BY_ID: Record<
+  EnquiryRouteId,
+  {id: EnquiryRouteId; label: string; blurb: string; icon: React.ReactNode; unsure?: boolean}
+> = {
+  inbox: {
+    id: 'inbox',
+    label: 'One email inbox',
+    blurb: 'The real message lands in one shared inbox your team already watches.',
+    icon: <Mail className="w-full h-full" strokeWidth={1.25} />,
+  },
+  sms: {
+    id: 'sms',
+    label: 'SMS alert',
+    blurb: 'Someone gets a text when an enquiry lands, then opens the full message.',
+    icon: <Phone className="w-full h-full" strokeWidth={1.25} />,
+  },
+  crm: {
+    id: 'crm',
+    label: 'CRM or job software',
+    blurb: 'The enquiry creates or updates a record where you already work leads.',
+    icon: <Building2 className="w-full h-full" strokeWidth={1.25} />,
+  },
+  unsure: {
+    id: 'unsure',
+    label: 'Not sure',
+    blurb: 'Fine. We will pick the simplest route once we see your tools.',
+    icon: null,
+    unsure: true,
+  },
+}
+
+/** Route cards change with channel scope. */
+function enquiryRouteOptionsForChannels(channels: EnquiryChannelId | null) {
+  if (channels === 'email') {
+    return [
+      {
+        ...ENQUIRY_ROUTE_BY_ID.inbox,
+        label: 'Same inbox, with auto-ack',
+        blurb: 'Acknowledgement fires, and the real email stays in the inbox you already use.',
+      },
+      ENQUIRY_ROUTE_BY_ID.sms,
+      ENQUIRY_ROUTE_BY_ID.crm,
+      ENQUIRY_ROUTE_BY_ID.unsure,
+    ]
+  }
+  if (channels === 'form') {
+    return [
+      {
+        ...ENQUIRY_ROUTE_BY_ID.inbox,
+        blurb: 'Form submissions land in one watched inbox, with the acknowledgement first.',
+      },
+      ENQUIRY_ROUTE_BY_ID.sms,
+      ENQUIRY_ROUTE_BY_ID.crm,
+      ENQUIRY_ROUTE_BY_ID.unsure,
+    ]
+  }
+  if (channels === 'both-plus') {
+    return [
+      {
+        ...ENQUIRY_ROUTE_BY_ID.inbox,
+        blurb: 'Every in-scope channel feeds one watched inbox after the acknowledgement.',
+      },
+      ENQUIRY_ROUTE_BY_ID.sms,
+      ENQUIRY_ROUTE_BY_ID.crm,
+      ENQUIRY_ROUTE_BY_ID.unsure,
+    ]
+  }
+  return [
+    ENQUIRY_ROUTE_BY_ID.inbox,
+    ENQUIRY_ROUTE_BY_ID.sms,
+    ENQUIRY_ROUTE_BY_ID.crm,
+    ENQUIRY_ROUTE_BY_ID.unsure,
+  ]
+}
+
+/** Access path depends on channels and where the real message should land. */
+function enquiryAccessOptionsFor(
+  channels: EnquiryChannelId | null,
+  route: EnquiryRouteId | null,
+) {
+  const formProvider = {
+    ...CRM_ACCESS_BY_ID['form-provider'],
+    label: 'Form / email tool',
+    blurb: 'Login or invite for the form builder, mailbox, or tool that catches enquiries today.',
+  }
+  const emailProvider = {
+    ...CRM_ACCESS_BY_ID['form-provider'],
+    label: 'Email inbox access',
+    blurb: 'The mailbox people write to, or the filter that catches enquiries today.',
+  }
+  const crm = {
+    id: 'crm' as AccessPathId,
+    label: 'CRM invite',
+    blurb: 'Invite us into the CRM or job software where leads should land.',
+    icon: <Building2 className="w-full h-full" strokeWidth={1.25} />,
+  }
+  const call = {
+    ...CRM_ACCESS_BY_ID.call,
+    label: 'Quick call',
+    blurb: 'We walk channel access and routing together. About five minutes.',
+  }
+  const smsTool = {
+    id: 'provider' as AccessPathId,
+    label: 'SMS tool access',
+    blurb: 'The SMS or alert tool that should ping when an enquiry lands.',
+    icon: <Phone className="w-full h-full" strokeWidth={1.25} />,
+  }
+
+  if (channels === 'unsure' || !channels) {
+    return [call, formProvider]
+  }
+
+  if (route === 'crm') {
+    if (channels === 'email') return [crm, call]
+    return [formProvider, crm, call]
+  }
+
+  if (route === 'sms') {
+    if (channels === 'email') return [emailProvider, smsTool, call]
+    return [formProvider, smsTool, call]
+  }
+
+  if (channels === 'email') {
+    return [emailProvider, call]
+  }
+
+  if (route === 'unsure') {
+    return [call, formProvider]
+  }
+
+  return [formProvider, call]
+}
+
 const BOOKING_TOOL_OPTIONS: {
   id: BookingToolId
   label: string
@@ -2253,6 +2448,16 @@ function helpForStep(step: StepId, opts?: {isAiPhone?: boolean}): HelpBlock {
         title: 'Who hits publish',
         body: 'This is for after the listing is usable. If it still needs claim or recovery, we sort that first, then match the kit to whoever publishes.',
       }
+    case 'enquiryChannels':
+      return {
+        title: 'Which channels get the first reply',
+        body: 'Website forms and email are in the fixed price. One extra intake you already use can sit in the same job. Extra channels beyond that are quoted the same day.',
+      }
+    case 'enquiryRoute':
+      return {
+        title: 'Where the real message lands',
+        body: 'The acknowledgement goes to the customer in seconds. The real enquiry should land in one place your team already watches: inbox, SMS alert, or CRM.',
+      }
     case 'access':
       return {
         title: 'How we get in',
@@ -2510,6 +2715,8 @@ const FunnelAccessPage: React.FC = () => {
   const [profileStatus, setProfileStatus] = useState<ProfileStatusId | null>(null)
   const [reviewJob, setReviewJob] = useState<ReviewJobId | null>(null)
   const [whoPublishes, setWhoPublishes] = useState<WhoPublishesId | null>(null)
+  const [enquiryChannels, setEnquiryChannels] = useState<EnquiryChannelId | null>(null)
+  const [enquiryRoute, setEnquiryRoute] = useState<EnquiryRouteId | null>(null)
   const [websiteUrl, setWebsiteUrl] = useState('')
   const [crmSystem, setCrmSystem] = useState<CrmSystemId | null>(null)
   const [leadSource, setLeadSource] = useState<CrmLeadSourceId | null>(null)
@@ -2561,6 +2768,7 @@ const FunnelAccessPage: React.FC = () => {
   const isAiPhone = product === 'ai-phone'
   const isGoogleProfile = product === 'google-profile'
   const isProfilePosting = product === 'profile-posting'
+  const isEnquiryReply = product === 'enquiry-reply'
   const isReviews = product === 'reviews'
   const isCrmRescue = product === 'crm-rescue'
   const isBooking = product === 'booking'
@@ -2572,12 +2780,14 @@ const FunnelAccessPage: React.FC = () => {
   const usesMissedWizard = isMissedCall || isAiPhone
   const usesGoogleWizard = isGoogleProfile
   const usesPostingWizard = isProfilePosting
+  const usesEnquiryWizard = isEnquiryReply
   const usesReviewsWizard = isReviews
   const productKind:
     | 'speed'
     | 'missed-call'
     | 'google-profile'
     | 'profile-posting'
+    | 'enquiry-reply'
     | 'reviews'
     | 'crm-rescue'
     | 'booking'
@@ -2591,42 +2801,46 @@ const FunnelAccessPage: React.FC = () => {
         ? 'google-profile'
         : usesPostingWizard
           ? 'profile-posting'
-          : usesReviewsWizard
-            ? 'reviews'
-            : isCrmRescue
-              ? 'crm-rescue'
-              : isBooking
-                ? 'booking'
-                : isLandingPage
-                  ? 'landing-page'
-                  : isTeamAi
-                    ? 'team-ai'
-                    : isChangePack
-                      ? 'change-pack'
-                      : isContentSystem
-                        ? 'content-system'
-                        : 'speed'
+          : usesEnquiryWizard
+            ? 'enquiry-reply'
+            : usesReviewsWizard
+              ? 'reviews'
+              : isCrmRescue
+                ? 'crm-rescue'
+                : isBooking
+                  ? 'booking'
+                  : isLandingPage
+                    ? 'landing-page'
+                    : isTeamAi
+                      ? 'team-ai'
+                      : isChangePack
+                        ? 'change-pack'
+                        : isContentSystem
+                          ? 'content-system'
+                          : 'speed'
   const phases = usesMissedWizard
     ? PHASES_MISSED
     : usesGoogleWizard
       ? PHASES_GOOGLE
       : usesPostingWizard
         ? PHASES_POSTING
-        : usesReviewsWizard
-          ? PHASES_REVIEWS
-          : isCrmRescue
-            ? PHASES_CRM
-            : isBooking
-              ? PHASES_BOOKING
-              : isLandingPage
-                ? PHASES_LANDING
-                : isTeamAi
-                  ? PHASES_TEAM
-                  : isChangePack
-                    ? PHASES_CHANGE
-                    : isContentSystem
-                      ? PHASES_CONTENT
-                      : PHASES_SPEED
+        : usesEnquiryWizard
+          ? PHASES_ENQUIRY
+          : usesReviewsWizard
+            ? PHASES_REVIEWS
+            : isCrmRescue
+              ? PHASES_CRM
+              : isBooking
+                ? PHASES_BOOKING
+                : isLandingPage
+                  ? PHASES_LANDING
+                  : isTeamAi
+                    ? PHASES_TEAM
+                    : isChangePack
+                      ? PHASES_CHANGE
+                      : isContentSystem
+                        ? PHASES_CONTENT
+                        : PHASES_SPEED
 
   const stepOrder = useMemo((): StepId[] => {
     // Always show the product picker first so buyers see their purchase highlighted
@@ -2684,6 +2898,21 @@ const FunnelAccessPage: React.FC = () => {
       }
       steps.push('notes', 'done')
       return steps
+    }
+    if (usesEnquiryWizard) {
+      return [
+        'product',
+        'name',
+        'email',
+        'business',
+        'websiteUrl',
+        'enquiryChannels',
+        'enquiryRoute',
+        'access',
+        'accessDetail',
+        'notes',
+        'done',
+      ]
     }
     if (usesReviewsWizard) {
       const steps: StepId[] = [
@@ -2819,6 +3048,7 @@ const FunnelAccessPage: React.FC = () => {
     isAiPhone,
     isGoogleProfile,
     isProfilePosting,
+    isEnquiryReply,
     isReviews,
     profileStatus,
     isCrmRescue,
@@ -2857,7 +3087,9 @@ const FunnelAccessPage: React.FC = () => {
       : missedCallAccessOptionsForSetup(phoneSetup)
     : usesPostingWizard
       ? postingAccessOptionsForStatus(profileStatus, whoPublishes)
-      : usesGoogleWizard
+      : usesEnquiryWizard
+        ? enquiryAccessOptionsFor(enquiryChannels, enquiryRoute)
+        : usesGoogleWizard
       ? googleAccessOptionsForStatus(profileStatus)
       : usesReviewsWizard
         ? reviewsAccessOptionsForStatus(profileStatus, reviewJob)
@@ -2875,6 +3107,7 @@ const FunnelAccessPage: React.FC = () => {
   const postingStatusOptions = usesPostingWizard
     ? POSTING_PROFILE_STATUS_OPTIONS
     : GOOGLE_PROFILE_STATUS_OPTIONS
+  const enquiryRouteOptions = enquiryRouteOptionsForChannels(enquiryChannels)
 
   function goNext(from: StepId) {
     setError(null)
@@ -2910,6 +3143,11 @@ const FunnelAccessPage: React.FC = () => {
       }
     } else if (usesPostingWizard) {
       if (!profileStatus || !whoPublishes) {
+        setError('Something is missing. Use Back to check your answers.')
+        return
+      }
+    } else if (usesEnquiryWizard) {
+      if (!enquiryChannels || !enquiryRoute) {
         setError('Something is missing. Use Back to check your answers.')
         return
       }
@@ -3024,6 +3262,19 @@ const FunnelAccessPage: React.FC = () => {
               accessDetail: accessDetail.trim(),
               notes: notes.trim(),
             }
+          : usesEnquiryWizard
+            ? {
+                product,
+                name: name.trim(),
+                email: email.trim(),
+                business: business.trim(),
+                websiteUrl: websiteUrl.trim(),
+                enquiryChannels: enquiryChannels!,
+                enquiryRoute: enquiryRoute!,
+                accessPath,
+                accessDetail: accessDetail.trim(),
+                notes: notes.trim(),
+              }
         : usesReviewsWizard
           ? {
               product,
@@ -3297,6 +3548,19 @@ const FunnelAccessPage: React.FC = () => {
       }
       goNext('whoPublishes')
     }, 200)
+  }
+
+  function selectEnquiryChannels(id: EnquiryChannelId) {
+    setEnquiryChannels(id)
+    setEnquiryRoute(null)
+    setAccessPath(null)
+    window.setTimeout(() => setStep('enquiryRoute'), 200)
+  }
+
+  function selectEnquiryRoute(id: EnquiryRouteId) {
+    setEnquiryRoute(id)
+    setAccessPath(null)
+    window.setTimeout(() => setStep('access'), 200)
   }
 
   function selectReviewJob(id: ReviewJobId) {
@@ -3707,9 +3971,11 @@ const FunnelAccessPage: React.FC = () => {
               <OneField
                 title="What is the website URL?"
                 hint={
-                  isBooking
-                    ? 'Optional but helpful. The site where Book now should appear.'
-                    : 'Optional but helpful. The site people use to enquire with you.'
+                  usesEnquiryWizard
+                    ? 'The site with the contact or quote form. Paste the homepage if you are not sure which page holds the form.'
+                    : isBooking
+                      ? 'Optional but helpful. The site where Book now should appear.'
+                      : 'Optional but helpful. The site people use to enquire with you.'
                 }
                 value={websiteUrl}
                 onChange={setWebsiteUrl}
@@ -3719,6 +3985,66 @@ const FunnelAccessPage: React.FC = () => {
                 onNext={() => goNext('websiteUrl')}
                 nextLabel={websiteUrl.trim() ? 'Continue' : 'Skip for now'}
               />
+            ) : null}
+
+            {step === 'enquiryChannels' ? (
+              <>
+                <QuestionTitle>
+                  Which channels should get the{' '}
+                  <span style={{color: RED}}>first reply</span>?
+                </QuestionTitle>
+                <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
+                  Fixed price covers website forms and email, plus one extra intake if you already use one. Hover a card, then Select.
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+                  {ENQUIRY_CHANNEL_OPTIONS.map((opt) => (
+                    <div key={opt.id}>
+                      <SelectCard
+                        selected={enquiryChannels === opt.id}
+                        onSelect={() => selectEnquiryChannels(opt.id)}
+                        title={opt.label}
+                        blurb={opt.blurb}
+                        icon={opt.icon}
+                        unsure={opt.unsure}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : null}
+
+            {step === 'enquiryRoute' ? (
+              <>
+                <QuestionTitle>
+                  Where should the real message{' '}
+                  <span style={{color: RED}}>land</span>?
+                </QuestionTitle>
+                <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
+                  {enquiryChannels === 'email'
+                    ? 'Email is in scope. Pick where the team should see the real message after the acknowledgement.'
+                    : enquiryChannels === 'form'
+                      ? 'Form only. Pick where submissions should land after the acknowledgement.'
+                      : enquiryChannels === 'both-plus'
+                        ? 'Form, email, and one extra channel. Pick the place your team already watches.'
+                        : enquiryChannels === 'unsure'
+                          ? 'Best guess is fine. We will confirm once we map the channels.'
+                          : 'The acknowledgement goes to the customer. The real enquiry goes here. Hover a card, then Select.'}
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+                  {enquiryRouteOptions.map((opt) => (
+                    <div key={opt.id}>
+                      <SelectCard
+                        selected={enquiryRoute === opt.id}
+                        onSelect={() => selectEnquiryRoute(opt.id)}
+                        title={opt.label}
+                        blurb={opt.blurb}
+                        icon={opt.icon}
+                        unsure={opt.unsure}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </>
             ) : null}
 
             {step === 'crmSystem' ? (
@@ -4690,6 +5016,20 @@ const FunnelAccessPage: React.FC = () => {
                         How should we get <span style={{color: RED}}>in</span>?
                       </>
                     )
+                  ) : usesEnquiryWizard ? (
+                    enquiryRoute === 'crm' ? (
+                      <>
+                        How do we reach the <span style={{color: RED}}>CRM</span>?
+                      </>
+                    ) : enquiryChannels === 'email' ? (
+                      <>
+                        How do we reach the <span style={{color: RED}}>inbox</span>?
+                      </>
+                    ) : (
+                      <>
+                        How do we reach the <span style={{color: RED}}>enquiry tools</span>?
+                      </>
+                    )
                   ) : (
                     <>
                       How should we get <span style={{color: RED}}>in</span>?
@@ -4707,6 +5047,12 @@ const FunnelAccessPage: React.FC = () => {
                           : profileStatus === 'claimed-me' && whoPublishes === 'staff'
                             ? 'You manage it. Invite us so we can hand the kit to you and your publisher.'
                             : 'Hover, then Select. Pick whatever is easiest for you.'
+                    : usesEnquiryWizard
+                      ? enquiryRoute === 'crm'
+                        ? 'The real message lands in your CRM. Pick CRM invite, form tool access if needed, or a short call.'
+                        : enquiryRoute === 'sms'
+                          ? 'We need the form or inbox tool, plus the SMS alert path. Or a short call.'
+                          : 'Hover, then Select. Pick whatever is easiest for you.'
                     : 'Hover, then Select. Pick whatever is easiest for you.'}
                 </p>
                 <div
@@ -4755,17 +5101,25 @@ const FunnelAccessPage: React.FC = () => {
                           : accessPath === 'crm'
                             ? 'Which CRM, and whether calls already log there.'
                             : 'Best times to call, or anything that usually trips people up.'
-                    : usesGoogleWizard || usesPostingWizard || usesReviewsWizard
+                    : usesGoogleWizard || usesPostingWizard || usesReviewsWizard || usesEnquiryWizard
                       ? accessPath === 'invite'
                         ? 'The Google account email that can add managers, or say you will send the invite shortly.'
                         : accessPath === 'claim'
                           ? 'Business name, suburb, and the Google Maps link if you have one. Do not share passwords here.'
                           : accessPath === 'recover'
                             ? 'Who used to manage it if you know, any suspension email from Google, and best times to call.'
-                            : accessPath === 'provider'
-                              ? 'SMS or email tool name and login URL, or say you will email access separately.'
+                            : accessPath === 'form-provider'
+                              ? usesEnquiryWizard
+                                ? 'Form tool or mailbox name, login URL, or say you will email an invite separately.'
+                                : 'SMS or email tool name and login URL, or say you will email access separately.'
+                              : accessPath === 'provider'
+                              ? usesEnquiryWizard
+                                ? 'SMS or alert tool name and login URL, or say you will email access separately.'
+                                : 'SMS or email tool name and login URL, or say you will email access separately.'
                               : accessPath === 'crm'
-                                ? 'Which job software, and how a job gets marked complete today.'
+                                ? usesEnquiryWizard
+                                  ? 'Which CRM, and the email to invite. Or say you will send the invite shortly.'
+                                  : 'Which job software, and how a job gets marked complete today.'
                                 : 'Best times to call, or anything that usually trips people up.'
                       : accessPath === 'search-console'
                         ? 'The Google account email that owns Search Console, or say you will approve the invite shortly.'

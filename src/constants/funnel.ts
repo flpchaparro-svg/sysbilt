@@ -175,6 +175,7 @@ export const FUNNEL_OUTBOUND_CODES: ReadonlySet<string> = new Set([
   'ai-phone',
   'crm-rescue',
   'profile-posting',
+  'enquiry-reply',
 ])
 
 export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
@@ -313,9 +314,9 @@ export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
     title: 'Enquiry Auto-Reply',
     price: '$1,250',
     blurb: 'Instant acknowledgement on website forms and email, routed to one inbox.',
-    status: 'soon',
-    lane: 'soon',
-    section: 'draft-local',
+    status: 'live',
+    lane: 'outbound',
+    section: 'outbound',
     href: '/go/enquiry-reply',
   },
   {

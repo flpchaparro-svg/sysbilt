@@ -40,6 +40,13 @@ export type ProfileStatusId =
   | 'unsure'
 export type ReviewJobId = 'sms' | 'email' | 'software' | 'manual' | 'unsure'
 export type WhoPublishesId = 'owner' | 'staff' | 'care-later' | 'unsure'
+export type EnquiryChannelId =
+  | 'form'
+  | 'email'
+  | 'both'
+  | 'both-plus'
+  | 'unsure'
+export type EnquiryRouteId = 'inbox' | 'sms' | 'crm' | 'unsure'
 export type CrmSystemId =
   | 'hubspot'
   | 'pipedrive'
@@ -85,6 +92,8 @@ export type FunnelAccessPayload = {
   profileStatus?: ProfileStatusId | ''
   reviewJob?: ReviewJobId | ''
   whoPublishes?: WhoPublishesId | ''
+  enquiryChannels?: EnquiryChannelId | ''
+  enquiryRoute?: EnquiryRouteId | ''
   crmSystem?: CrmSystemId | ''
   leadSource?: CrmLeadSourceId | ''
   crmGoal?: CrmGoalId | ''

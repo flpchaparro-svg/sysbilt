@@ -1,0 +1,14 @@
+{
+  "createdAt": "2026-08-02T10:55:00.000Z",
+  "mode": "live",
+  "note": "Enquiry Auto-Reply · $1,250 live Payment Link. After pay → thanks?p=enquiry-reply → access wizard. Never use buy.stripe.com/test_ on this page.",
+  "product": {
+    "code": "enquiry-reply",
+    "name": "Enquiry Auto-Reply",
+    "productId": "prod_UzwuK8Pcg40XHZ",
+    "priceId": "price_1Tzx0d7kQC0CB85zyckKkbkF",
+    "paymentLinkId": "plink_1Tzx0m7kQC0CB85zr067MX9I",
+    "paymentLinkUrl": "https://buy.stripe.com/5kQdR3cOtdHGguO2BR3gk0g",
+    "amountAud": 1250
+  }
+}

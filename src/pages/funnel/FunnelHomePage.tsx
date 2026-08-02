@@ -48,7 +48,6 @@ const OUTBOUND_GROUPS: CatalogueGroup[] = [
     codes: [
       'google-profile',
       'reviews',
-      'enquiry-reply',
       'profile-posting',
       'qa-review-desk',
     ],
@@ -62,6 +61,7 @@ const OUTBOUND_GROUPS: CatalogueGroup[] = [
     title: 'CRM and chase',
     blurb: 'Enquiries caught, replied, and followed up.',
     codes: [
+      'enquiry-reply',
       'crm-rescue',
       'whatsapp-setup',
       'dm-reply',

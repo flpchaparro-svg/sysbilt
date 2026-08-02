@@ -10,6 +10,7 @@ const PRODUCT_CODES = new Set([
   'missed-call',
   'google-profile',
   'profile-posting',
+  'enquiry-reply',
   'reviews',
   'search-fix',
   'booking',
@@ -25,6 +26,7 @@ const PRODUCT_LABELS: Record<string, string> = {
   'missed-call': 'Missed-Call Text-Back',
   'google-profile': 'Google Profile Fix',
   'profile-posting': 'Profile Posting System',
+  'enquiry-reply': 'Enquiry Auto-Reply',
   reviews: 'Review Engine',
   'search-fix': 'Search Visibility Fix',
   booking: 'Booking System',
@@ -40,6 +42,7 @@ const PRODUCT_AMOUNTS: Record<string, string> = {
   'missed-call': '750',
   'google-profile': '600',
   'profile-posting': '1100',
+  'enquiry-reply': '1250',
   reviews: '1100',
   'search-fix': '1400',
   booking: '1500',
@@ -100,6 +103,9 @@ const GOOGLE_PROFILE_STATUS = new Set([
 const GOOGLE_PROFILE_ACCESS = new Set(['invite', 'call', 'claim', 'recover']);
 const WHO_PUBLISHES = new Set(['owner', 'staff', 'care-later', 'unsure']);
 const PROFILE_POSTING_ACCESS = new Set(['invite', 'call', 'claim', 'recover']);
+const ENQUIRY_CHANNELS = new Set(['form', 'email', 'both', 'both-plus', 'unsure']);
+const ENQUIRY_ROUTES = new Set(['inbox', 'sms', 'crm', 'unsure']);
+const ENQUIRY_REPLY_ACCESS = new Set(['form-provider', 'call', 'crm', 'provider']);
 const REVIEW_JOBS = new Set(['sms', 'email', 'software', 'manual', 'unsure']);
 const REVIEWS_ACCESS = new Set(['invite', 'call', 'claim', 'recover', 'provider', 'crm']);
 const PLATFORMS = new Set([
@@ -139,6 +145,8 @@ type Body = {
   profileUrl?: unknown;
   profileStatus?: unknown;
   whoPublishes?: unknown;
+  enquiryChannels?: unknown;
+  enquiryRoute?: unknown;
   reviewJob?: unknown;
   crmSystem?: unknown;
   leadSource?: unknown;
@@ -470,6 +478,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const profileUrl = str(body.profileUrl, 500);
   const profileStatus = str(body.profileStatus, 40);
   const whoPublishes = str(body.whoPublishes, 40);
+  const enquiryChannels = str(body.enquiryChannels, 40);
+  const enquiryRoute = str(body.enquiryRoute, 40);
   const reviewJob = str(body.reviewJob, 40);
   const crmSystem = str(body.crmSystem, 40);
   const leadSource = str(body.leadSource, 40);
@@ -516,6 +526,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const isMissedCall = product === 'missed-call' || product === 'ai-phone';
   const isGoogleProfile = product === 'google-profile';
   const isProfilePosting = product === 'profile-posting';
+  const isEnquiryReply = product === 'enquiry-reply';
   const isReviews = product === 'reviews';
   const isCrmRescue = product === 'crm-rescue';
   const isBooking = product === 'booking';
@@ -554,6 +565,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     }
     if (!WHO_PUBLISHES.has(whoPublishes)) {
       res.status(400).json({ error: 'Invalid who-publishes answer' });
+      return;
+    }
+  } else if (isEnquiryReply) {
+    if (!ENQUIRY_CHANNELS.has(enquiryChannels) || !ENQUIRY_ROUTES.has(enquiryRoute)) {
+      res.status(400).json({ error: 'Invalid enquiry channels or route' });
+      return;
+    }
+    if (!ENQUIRY_REPLY_ACCESS.has(accessPath)) {
+      res.status(400).json({ error: 'Invalid access path' });
       return;
     }
   } else if (isReviews) {
@@ -687,6 +707,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
             `Profile: ${profileUrl}`,
             `Profile status: ${profileStatus}`,
             `Who publishes: ${whoPublishes}`,
+            `Access path: ${accessPath}`,
+            accessDetail ? `Access notes:\n${accessDetail}` : null,
+            notes ? `Other notes:\n${notes}` : null,
+            `Submitted: ${new Date().toISOString()}`,
+          ]
+            .filter(Boolean)
+            .join('\n')
+      : isEnquiryReply
+        ? [
+            `Funnel access form — ${product}`,
+            `Business: ${business}`,
+            websiteUrl ? `Website: ${websiteUrl}` : null,
+            `Channels: ${enquiryChannels}`,
+            `Route: ${enquiryRoute}`,
             `Access path: ${accessPath}`,
             accessDetail ? `Access notes:\n${accessDetail}` : null,
             notes ? `Other notes:\n${notes}` : null,
@@ -836,6 +870,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     profileUrl,
     profileStatus,
     whoPublishes,
+    enquiryChannels,
+    enquiryRoute,
     reviewJob,
     crmSystem,
     leadSource,
@@ -957,6 +993,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
             ? `Profile: ${profileUrl.slice(0, 80)} · Status: ${profileStatus}`
             : isProfilePosting
               ? `Profile: ${profileUrl.slice(0, 80)} · Status: ${profileStatus} · Publishes: ${whoPublishes}`
+              : isEnquiryReply
+                ? `Channels: ${enquiryChannels} · Route: ${enquiryRoute}${websiteUrl ? ` · ${websiteUrl.slice(0, 60)}` : ''}`
               : isReviews
                 ? `Profile: ${profileUrl.slice(0, 80)} · Status: ${profileStatus}${reviewJob ? ` · Job: ${reviewJob}` : ''}`
                 : isCrmRescue
@@ -964,19 +1002,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
                   : isBooking
                     ? `Tool: ${bookingTool} · Books: ${bookingWhat} · Surfaces: ${bookingWhere}`
                     : website,
-        isMissedCall || isGoogleProfile || isProfilePosting || isReviews || isCrmRescue || isBooking
+        isMissedCall ||
+        isGoogleProfile ||
+        isProfilePosting ||
+        isEnquiryReply ||
+        isReviews ||
+        isCrmRescue ||
+        isBooking
           ? `Access: ${accessPath}`
           : `Platform: ${platform} · Access: ${accessPath}`,
         !isMissedCall &&
         !isGoogleProfile &&
         !isProfilePosting &&
+        !isEnquiryReply &&
         !isReviews &&
         !isCrmRescue &&
         !isBooking &&
         sameProvider !== 'yes'
           ? `Domain/hosting same: ${sameProvider}${domainProvider ? ` · Domain: ${domainProvider}` : ''}${hostingProvider ? ` · Host: ${hostingProvider}` : ''}`
           : null,
-        (isCrmRescue || isBooking) && websiteUrl ? `Website: ${websiteUrl}` : null,
+        (isCrmRescue || isBooking || isEnquiryReply) && websiteUrl ? `Website: ${websiteUrl}` : null,
         accessDetail ? `Access notes: ${accessDetail.slice(0, 280)}` : null,
         dealLink ? `<${dealLink}|Open deal>` : null,
         `<${contactLink}|Open contact>`,
