@@ -3863,7 +3863,11 @@ const FunnelAccessPage: React.FC = () => {
                   When did you last <span style={{color: RED}}>post</span>?
                 </QuestionTitle>
                 <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
-                  Rough is fine. This tells us how cold the feed is today.
+                  {contentChannels.includes('linkedin') && contentChannels.length === 1
+                    ? 'LinkedIn only is fine. Rough date tells us how cold that feed is today.'
+                    : contentChannels.length >= 3
+                      ? 'Across those channels, pick the last time anything real went out.'
+                      : 'Rough is fine. This tells us how cold the feed is today.'}
                 </p>
                 <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
                   {LAST_POST_OPTIONS.map((opt) => (
@@ -3890,10 +3894,19 @@ const FunnelAccessPage: React.FC = () => {
                   Can you give <span style={{color: RED}}>one hour</span> a month?
                 </QuestionTitle>
                 <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
-                  That hour is the input. The system does the rest.
+                  {lastPostWhen === 'this-week' || lastPostWhen === 'this-month'
+                    ? 'You are already posting somehow. The question is whether one protected hour can replace the scramble.'
+                    : lastPostWhen === '6-plus' || lastPostWhen === 'never-sure'
+                      ? 'Restarting from cold is normal. One honest hour a month is still the input. Without it, this product does not fit yet.'
+                      : 'That hour is the input. The system does the rest.'}
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4">
-                  {HOUR_READY_OPTIONS.map((opt) => (
+                  {(lastPostWhen === '6-plus' || lastPostWhen === 'never-sure'
+                    ? [...HOUR_READY_OPTIONS].sort((a, b) =>
+                        a.id === 'not-yet' ? -1 : b.id === 'not-yet' ? 1 : 0,
+                      )
+                    : HOUR_READY_OPTIONS
+                  ).map((opt) => (
                     <div key={opt.id}>
                       <SelectCard
                         selected={hourReady === opt.id}
@@ -3902,7 +3915,13 @@ const FunnelAccessPage: React.FC = () => {
                           goNext('hourReady')
                         }}
                         title={opt.label}
-                        blurb={opt.blurb}
+                        blurb={
+                          lastPostWhen === 'this-week' && opt.id === 'yes'
+                            ? 'Swap the late nights for one booked hour.'
+                            : lastPostWhen === 'never-sure' && opt.id === 'not-yet'
+                              ? 'Say so. The call is where we decide if now is the right time.'
+                              : opt.blurb
+                        }
                         icon={<Users className="w-full h-full" strokeWidth={1.25} />}
                       />
                     </div>
@@ -3917,10 +3936,28 @@ const FunnelAccessPage: React.FC = () => {
                   What should content <span style={{color: RED}}>do</span>?
                 </QuestionTitle>
                 <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
-                  Pick the main outcome. Mixed is fine if you want more than one.
+                  {hourReady === 'not-yet'
+                    ? 'Even if the hour is not locked yet, pick the outcome you would want. The call pressure-tests fit.'
+                    : contentChannels.includes('linkedin') &&
+                        !contentChannels.includes('instagram') &&
+                        !contentChannels.includes('tiktok')
+                      ? 'With LinkedIn in the mix, most owners pick visibility, enquiries, or sounding like the expert.'
+                      : 'Pick the main outcome. Mixed is fine if you want more than one.'}
                 </p>
                 <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
-                  {CONTENT_GOAL_OPTIONS.map((opt) => (
+                  {(contentChannels.includes('linkedin') &&
+                  !contentChannels.includes('instagram') &&
+                  !contentChannels.includes('tiktok')
+                    ? [
+                        ...CONTENT_GOAL_OPTIONS.filter((o) =>
+                          ['stay-visible', 'leads', 'authority', 'hire', 'mixed'].includes(o.id),
+                        ),
+                      ].sort((a, b) => {
+                        const order = ['authority', 'leads', 'stay-visible', 'hire', 'mixed']
+                        return order.indexOf(a.id) - order.indexOf(b.id)
+                      })
+                    : CONTENT_GOAL_OPTIONS
+                  ).map((opt) => (
                     <div key={opt.id}>
                       <SelectCard
                         selected={contentGoal === opt.id}
@@ -3929,7 +3966,11 @@ const FunnelAccessPage: React.FC = () => {
                           goNext('contentGoal')
                         }}
                         title={opt.label}
-                        blurb={opt.blurb}
+                        blurb={
+                          hourReady === 'not-yet' && opt.id === 'stay-visible'
+                            ? 'The usual first win once the hour exists.'
+                            : opt.blurb
+                        }
                         icon={<Sparkles className="w-full h-full" strokeWidth={1.25} />}
                       />
                     </div>
@@ -4182,11 +4223,13 @@ const FunnelAccessPage: React.FC = () => {
                       : 'Access received. We are on it'}
                 </h1>
                 <p className="font-sans text-dark/65 leading-relaxed mb-8">
-                  {isChangePack || isContentSystem
-                    ? 'We have what we need. Next, book the 15-minute scoping call. You get a fixed price in writing the same day.'
-                    : isTeamAi
-                      ? `We will review what you sent, then call you to lock a tentative day inside your window. If we need anything else, we will email ${email || 'you'}.`
-                      : `Your delivery clock starts from this submission. If we need anything else, we will email ${email || 'you'}, usually the same day.`}
+                  {isContentSystem && hourReady === 'not-yet'
+                    ? 'We have the brief. Book the 15-minute call so we can pressure-test the hour and see if this product fits yet. You leave with a clear yes or no.'
+                    : isChangePack || isContentSystem
+                      ? 'We have what we need. Next, book the 15-minute scoping call. You get a fixed price in writing the same day.'
+                      : isTeamAi
+                        ? `We will review what you sent, then call you to lock a tentative day inside your window. If we need anything else, we will email ${email || 'you'}.`
+                        : `Your delivery clock starts from this submission. If we need anything else, we will email ${email || 'you'}, usually the same day.`}
                 </p>
                 {isChangePack || isContentSystem ? (
                   <a

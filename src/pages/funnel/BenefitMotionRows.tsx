@@ -1273,6 +1273,179 @@ const CHANGE_PACK_VISUALS = [
   ChangeDay30OwnerVisual,
 ]
 
+/** Content System: channels stay alive. */
+function ContentAliveChannelsVisual({reduce}: VisualProps) {
+  const channels = ['LI', 'IG', 'FB', 'EM']
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+          This week
+        </span>
+        <motion.span
+          className="font-mono text-[7px] font-bold uppercase tracking-wide text-gold-on-cream"
+          animate={reduce ? undefined : {opacity: [0.5, 1, 0.5]}}
+          transition={{duration: 1.3, repeat: Infinity}}
+        >
+          Live
+        </motion.span>
+      </div>
+      <div className="flex-1 min-h-0 grid grid-cols-4 gap-1 p-1.5">
+        {channels.map((c, i) => (
+          <motion.div
+            key={c}
+            className="border flex flex-col items-center justify-center min-h-0"
+            initial={
+              reduce
+                ? false
+                : {backgroundColor: colors.cream, borderColor: 'rgba(26,26,26,0.12)', y: 8}
+            }
+            whileInView={{
+              backgroundColor: `${colors.teal}16`,
+              borderColor: colors.teal,
+              y: 0,
+            }}
+            viewport={{once: true}}
+            transition={{delay: reduce ? 0 : 0.1 + i * 0.12, type: 'spring', stiffness: 340}}
+          >
+            <span className="font-mono text-[10px] font-bold" style={{color: colors.teal}}>
+              {c}
+            </span>
+            <span className="font-mono text-[6px] uppercase tracking-wide text-dark/45 mt-0.5">
+              Set
+            </span>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** Content System: sounds like you. */
+function ContentSoundsLikeYouVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+          Voice check
+        </span>
+      </div>
+      <div className="flex-1 min-h-0 p-2 flex flex-col justify-center gap-1.5">
+        <motion.div
+          className="rounded-sm border border-dark/10 bg-cream px-2 py-1"
+          initial={reduce ? false : {opacity: 0.4, x: -6}}
+          whileInView={{opacity: 0.4, x: 0}}
+          viewport={{once: true}}
+        >
+          <span className="font-sans text-[10px] text-dark/40 line-through">
+            Exciting synergy for your journey
+          </span>
+        </motion.div>
+        <motion.div
+          className="rounded-sm border px-2 py-1.5"
+          style={{borderColor: `${colors.teal}55`, backgroundColor: `${colors.teal}12`}}
+          initial={reduce ? false : {opacity: 0, y: 8, scale: 0.96}}
+          whileInView={{opacity: 1, y: 0, scale: 1}}
+          viewport={{once: true}}
+          transition={{delay: reduce ? 0 : 0.25, type: 'spring', stiffness: 380}}
+        >
+          <p className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
+            Sounds like you
+          </p>
+          <p className="font-sans text-[10px] text-dark/70 leading-tight">Human-reviewed · batch approved</p>
+        </motion.div>
+      </div>
+    </div>
+  )
+}
+
+/** Content System: one hour is the whole job. */
+function ContentOneHourVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+          Input
+        </span>
+        <span className="font-mono text-[7px] font-bold uppercase tracking-wide text-gold-on-cream">
+          1 hour
+        </span>
+      </div>
+      <div className="flex-1 min-h-0 p-2 flex items-center gap-2">
+        <motion.div
+          className="font-serif text-3xl font-bold tabular-nums leading-none"
+          style={{color: colors.teal}}
+          animate={reduce ? undefined : {scale: [1, 1.06, 1]}}
+          transition={{duration: 1.4, repeat: Infinity}}
+        >
+          1
+        </motion.div>
+        <div className="min-w-0 flex-1">
+          <p className="font-sans text-[11px] font-semibold text-dark/80">Talk · we produce</p>
+          <div className="mt-1.5 flex gap-1">
+            {['Post', 'Carousel', 'Caption'].map((label, i) => (
+              <motion.span
+                key={label}
+                className="font-mono text-[6px] uppercase tracking-wide border px-1 py-0.5"
+                style={{borderColor: `${colors.teal}55`, color: colors.teal}}
+                initial={reduce ? false : {opacity: 0, y: 4}}
+                whileInView={{opacity: 1, y: 0}}
+                viewport={{once: true}}
+                transition={{delay: reduce ? 0 : 0.2 + i * 0.1}}
+              >
+                {label}
+              </motion.span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/** Content System: monthly report. */
+function ContentReportVisual({reduce}: VisualProps) {
+  const rows = [
+    {label: 'What went out', tag: 'Done'},
+    {label: 'What landed', tag: 'Noted'},
+    {label: 'What we do more of', tag: 'Next'},
+  ]
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+          Monthly report
+        </span>
+      </div>
+      <div className="flex-1 min-h-0 p-2 space-y-1">
+        {rows.map((row, i) => (
+          <motion.div
+            key={row.label}
+            className="rounded-sm border px-2 py-1 flex items-center justify-between"
+            style={{borderColor: `${colors.teal}44`, backgroundColor: `${colors.teal}10`}}
+            initial={reduce ? false : {opacity: 0, x: -8}}
+            whileInView={{opacity: 1, x: 0}}
+            viewport={{once: true}}
+            transition={{delay: reduce ? 0 : 0.1 + i * 0.12, type: 'spring', stiffness: 360}}
+          >
+            <span className="font-sans text-[10px] text-dark/75">{row.label}</span>
+            <span className="font-mono text-[7px] font-bold uppercase" style={{color: colors.teal}}>
+              {row.tag}
+            </span>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+const CONTENT_SYSTEM_VISUALS = [
+  ContentAliveChannelsVisual,
+  ContentSoundsLikeYouVisual,
+  ContentOneHourVisual,
+  ContentReportVisual,
+]
+
 const TEAM_AI_VISUALS = [
   TeamSharedSetupVisual,
   TeamSafeDataVisual,
@@ -2567,9 +2740,11 @@ export function BenefitMotionRows({
                       ? CRM_VISUALS
                       : variant === 'change-pack'
                         ? CHANGE_PACK_VISUALS
-                        : variant === 'team-ai' || variant === 'content-system'
-                          ? TEAM_AI_VISUALS
-                        : SPEED_VISUALS
+                        : variant === 'content-system'
+                          ? CONTENT_SYSTEM_VISUALS
+                          : variant === 'team-ai'
+                            ? TEAM_AI_VISUALS
+                            : SPEED_VISUALS
 
   return (
     <div className="space-y-10 md:space-y-12">
