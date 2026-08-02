@@ -77,6 +77,10 @@ import {ProfilePostingEvidenceCard} from './ProfilePostingEvidenceCard'
 import {ProfilePostingLeakPair} from './ProfilePostingLeakPair'
 import {ProfilePostingPainCards} from './ProfilePostingPainCards'
 import {ProfilePostingDeliverableMock} from './ProfilePostingDeliverableMock'
+import {LocalPackEvidenceCard} from './LocalPackEvidenceCard'
+import {LocalPackLeakPair} from './LocalPackLeakPair'
+import {LocalPackPainCards} from './LocalPackPainCards'
+import {LocalPackDeliverableMock} from './LocalPackDeliverableMock'
 import {WebsiteEvidenceCard, type WebsiteEvidence} from './WebsiteEvidenceCard'
 import {WebsiteLeakPair} from './WebsiteLeakPair'
 import {WebsiteUnknownsCentrepiece} from './WebsiteUnknownsCentrepiece'
@@ -108,6 +112,7 @@ import {LANDING_PAGE_STRIPE_URL} from '../../constants/landingStripe'
 import {AI_PHONE_STRIPE_URL} from '../../constants/aiPhoneStripe'
 import {PROFILE_POSTING_STRIPE_URL} from '../../constants/profilePostingStripe'
 import {ENQUIRY_REPLY_STRIPE_URL} from '../../constants/enquiryReplyStripe'
+import {LOCAL_PACK_STRIPE_URL} from '../../constants/localPackStripe'
 import {teamAiPriceOptions} from '../../constants/teamAiStripe'
 import {funnelCopyForSlug} from './funnelCopy'
 import {
@@ -260,6 +265,7 @@ const FunnelPage: React.FC = () => {
   const isWebsite = proofKind === 'website'
   const isEnquiryReply = proofKind === 'enquiry-reply'
   const isProfilePosting = proofKind === 'profile-posting'
+  const isLocalPack = proofKind === 'local-pack'
   const isDraftSoon =
     proofKind === 'geo' || proofKind === 'client-finder' || proofKind === 'draft'
   /** Visual drafts and priced-but-not-wired products that are not buyable yet. */
@@ -283,7 +289,9 @@ const FunnelPage: React.FC = () => {
                 ? 'enquiry-reply'
                 : isProfilePosting
                   ? 'profile-posting'
-                  : isTeamAi
+                  : isLocalPack
+                    ? 'local-pack'
+                    : isTeamAi
                     ? 'team-ai'
                     : isChangePack
                       ? 'change-pack'
@@ -427,6 +435,7 @@ const FunnelPage: React.FC = () => {
     (isLandingPage ? LANDING_PAGE_STRIPE_URL : undefined) ||
     (isAiPhone ? AI_PHONE_STRIPE_URL : undefined) ||
     (isProfilePosting ? PROFILE_POSTING_STRIPE_URL : undefined) ||
+    (isLocalPack ? LOCAL_PACK_STRIPE_URL : undefined) ||
     (isEnquiryReply ? ENQUIRY_REPLY_STRIPE_URL : undefined)
   const sanityStripe = (doc?.stripeUrl || '').trim()
   const resolvedStripeUrl =
@@ -434,7 +443,7 @@ const FunnelPage: React.FC = () => {
       ? sanityStripe
       : liveFallback || sanityStripe || undefined
   const buyDoorNeedsAccess =
-    (isReviews || isAiPhone || isBooking || isWebsite) && !resolvedStripeUrl
+    (isReviews || isAiPhone || isBooking || isWebsite || isLocalPack) && !resolvedStripeUrl
   const dualWebsite =
     isWebsite && (liveWebsitePriceOptions || []).filter((o) => o?.ctaLabel && o?.stripeUrl).length >= 2
   const dualTeamAi =
@@ -467,7 +476,9 @@ const FunnelPage: React.FC = () => {
               ? 'ai-phone'
               : isBooking
                 ? 'booking'
-                : 'website',
+                : isLocalPack
+                  ? 'local-pack'
+                  : 'website',
         )
       : isChangePack || isContentSystem
         ? accessFormPathForProduct(isContentSystem ? 'content-system' : 'change-pack')
@@ -598,6 +609,7 @@ const FunnelPage: React.FC = () => {
               isMissedCall ||
               isEnquiryReply ||
               isProfilePosting ||
+              isLocalPack ||
               isDraftSoon
                 ? 'max-w-3xl'
                 : 'max-w-5xl'
@@ -632,6 +644,7 @@ const FunnelPage: React.FC = () => {
             {isProfilePosting ? (
               <ProfilePostingEvidenceCard business={business} lastPostMonth={lastPostMonth} />
             ) : null}
+            {isLocalPack ? <LocalPackEvidenceCard business={business} /> : null}
             {isTeamAi ? <TeamRecognitionCards /> : null}
             {isChangePack ? <ChangeRiskRegisterCard business={business} /> : null}
             {isContentSystem ? (
@@ -686,6 +699,7 @@ const FunnelPage: React.FC = () => {
                     isCrmRescue ||
                     isEnquiryReply ||
                     isProfilePosting ||
+                    isLocalPack ||
                     isTeamAi ||
                     isChangePack ||
                     isContentSystem ||
@@ -913,6 +927,42 @@ const FunnelPage: React.FC = () => {
                     </p>
                   </Reveal>
                   <ProfilePostingLeakPair />
+                </section>
+              </>
+            ) : isLocalPack ? (
+              <>
+                <Reveal delay={0.08} y={12}>
+                  <p
+                    className="mt-6 font-sans text-base md:text-lg leading-relaxed max-w-2xl"
+                    style={{color: FUNNEL_COLOURS.muted}}
+                  >
+                    {COPY.proofAfterGeneric}
+                  </p>
+                </Reveal>
+                <section className="mt-12 md:mt-14">
+                  <Reveal y={10}>
+                    <SectionLabel>The leak</SectionLabel>
+                  </Reveal>
+                  <Reveal delay={0.06} y={14}>
+                    <h3
+                      className="font-serif font-bold text-2xl md:text-3xl tracking-tight mb-4 max-w-2xl"
+                      style={{color: FUNNEL_COLOURS.ink}}
+                    >
+                      Buying the three jobs apart means none of them finish
+                    </h3>
+                  </Reveal>
+                  <Reveal delay={0.1} y={10}>
+                    <p
+                      className="font-sans text-base md:text-lg leading-relaxed max-w-2xl mb-2"
+                      style={{color: FUNNEL_COLOURS.muted}}
+                    >
+                      The profile gets cleaned once, then reviews sit untouched. Reviews get asked
+                      for once, then the habit dies. Posting only happens when someone remembers and
+                      feels guilty about it. Each job on its own is a fresh kickoff and a fresh
+                      access chat, and each one is a fresh chance to stall.
+                    </p>
+                  </Reveal>
+                  <LocalPackLeakPair />
                 </section>
               </>
             ) : isTeamAi ? (
@@ -1153,6 +1203,8 @@ const FunnelPage: React.FC = () => {
                 <EnquiryReplyPainCards />
               ) : isProfilePosting ? (
                 <ProfilePostingPainCards />
+              ) : isLocalPack ? (
+                <LocalPackPainCards />
               ) : isTeamAi ? (
                 <TeamPainCards />
               ) : isChangePack ? (
@@ -1234,6 +1286,7 @@ const FunnelPage: React.FC = () => {
               </div>
             ) : isEnquiryReply ||
               isProfilePosting ||
+              isLocalPack ||
               isTeamAi ||
               isChangePack ||
               isContentSystem ||
@@ -1409,6 +1462,8 @@ const FunnelPage: React.FC = () => {
                   <EnquiryReplyDeliverableMock />
                 ) : isProfilePosting ? (
                   <ProfilePostingDeliverableMock />
+                ) : isLocalPack ? (
+                  <LocalPackDeliverableMock />
                 ) : isTeamAi ? (
                   <TeamSessionDeliverableMock />
                 ) : isChangePack ? (

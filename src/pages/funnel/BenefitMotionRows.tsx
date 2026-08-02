@@ -1299,6 +1299,180 @@ const PROFILE_POSTING_VISUALS = [
   ProfilePostingNextStepVisual,
 ]
 
+/** Local Pack: three separate briefs collapse into one kickoff. */
+function LocalPackOneKickoffVisual({reduce}: VisualProps) {
+  const labels = ['Profile', 'Reviews', 'Posts']
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Three briefs → one</span>
+      </div>
+      <div className="flex-1 flex items-center justify-center gap-2 px-3">
+        {labels.map((label, i) => (
+          <motion.div
+            key={label}
+            className="rounded-sm border px-2 py-1.5 flex flex-col items-center gap-0.5"
+            style={{borderColor: `${colors.teal}55`, backgroundColor: `${colors.teal}0C`}}
+            initial={reduce ? false : {x: (i - 1) * 18, opacity: 0.5}}
+            whileInView={{x: 0, opacity: 1, borderColor: colors.teal, backgroundColor: `${colors.teal}14`}}
+            viewport={{once: true}}
+            transition={{delay: reduce ? 0 : 0.15 + i * 0.1, type: 'spring', stiffness: 340, damping: 22}}
+          >
+            <span className="h-1.5 w-1.5 rounded-full" style={{backgroundColor: colors.teal}} />
+            <span className="font-mono text-[6px] uppercase tracking-wide" style={{color: colors.teal}}>
+              {label}
+            </span>
+          </motion.div>
+        ))}
+      </div>
+      <motion.div
+        className="mb-2 mx-3 rounded-sm border px-2 py-1 text-center"
+        style={{borderColor: colors.teal, backgroundColor: `${colors.teal}18`}}
+        initial={reduce ? false : {opacity: 0, y: 6}}
+        whileInView={{opacity: 1, y: 0}}
+        viewport={{once: true}}
+        transition={{delay: reduce ? 0 : 0.55}}
+      >
+        <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
+          One kickoff
+        </span>
+      </motion.div>
+    </div>
+  )
+}
+
+/** Local Pack: profile, reviews, and posts align into one coherent line. */
+function LocalPackCoherentMapVisual({reduce}: VisualProps) {
+  const labels = ['Profile', 'Reviews', 'Posts']
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Maps listing</span>
+      </div>
+      <div className="flex-1 flex flex-col items-center justify-center gap-1.5 px-3">
+        {labels.map((label, i) => (
+          <motion.div
+            key={label}
+            className="flex items-center gap-2 w-full max-w-[150px]"
+            initial={reduce ? false : {opacity: 0.4}}
+            whileInView={{opacity: 1}}
+            viewport={{once: true}}
+            transition={{delay: reduce ? 0 : 0.15 + i * 0.14}}
+          >
+            <span className="font-mono text-[6px] uppercase tracking-wide text-dark/45 w-11 shrink-0">
+              {label}
+            </span>
+            <motion.div
+              className="h-1.5 flex-1 rounded-sm"
+              style={{transformOrigin: 'left', backgroundColor: `${colors.teal}25`}}
+              initial={reduce ? false : {scaleX: 0.3}}
+              whileInView={{scaleX: 1, backgroundColor: colors.teal}}
+              viewport={{once: true}}
+              transition={{delay: reduce ? 0 : 0.25 + i * 0.14, duration: 0.5}}
+            />
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** Local Pack: three full products stacked, not thin samples. */
+function LocalPackRealProductsVisual({reduce}: VisualProps) {
+  const items = ['Profile Fix', 'Review Engine', 'Posting System']
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Full scope, each one</span>
+      </div>
+      <div className="flex-1 flex flex-col justify-center gap-1.5 px-3 py-2">
+        {items.map((label, i) => (
+          <motion.div
+            key={label}
+            className="flex items-center gap-2 rounded-sm border px-2 py-1"
+            style={{borderColor: `${colors.teal}30`, backgroundColor: '#fff'}}
+            initial={reduce ? false : {opacity: 0, x: -10}}
+            whileInView={{opacity: 1, x: 0, borderColor: colors.teal, backgroundColor: `${colors.teal}12`}}
+            viewport={{once: true}}
+            transition={{delay: reduce ? 0 : 0.1 + i * 0.12}}
+          >
+            <span className="font-mono text-[7px] text-dark/40 shrink-0">{String(i + 1).padStart(2, '0')}</span>
+            <span className="font-mono text-[7px] font-bold uppercase tracking-wide flex-1" style={{color: colors.teal}}>
+              {label}
+            </span>
+            <motion.span
+              className="font-mono text-[7px] font-bold"
+              style={{color: colors.teal}}
+              initial={reduce ? false : {opacity: 0}}
+              whileInView={{opacity: 1}}
+              viewport={{once: true}}
+              transition={{delay: reduce ? 0 : 0.3 + i * 0.12}}
+            >
+              ✓
+            </motion.span>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** Local Pack: $2,800 separate crossed out, $2,400 bundle, $400 under. */
+function LocalPackClearPriceVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col items-center justify-center gap-2">
+      <div className="flex items-center gap-2.5">
+        <motion.span
+          className="font-mono text-xs text-dark/35 relative"
+          initial={reduce ? false : {opacity: 0.6}}
+          whileInView={{opacity: 1}}
+          viewport={{once: true}}
+        >
+          $2,800
+          <motion.span
+            className="absolute left-0 top-1/2 h-px w-full"
+            style={{backgroundColor: FUNNEL_COLOURS.accent}}
+            initial={reduce ? false : {scaleX: 0}}
+            whileInView={{scaleX: 1}}
+            viewport={{once: true}}
+            transition={{delay: reduce ? 0 : 0.25, duration: 0.35}}
+          />
+        </motion.span>
+        <span className="font-mono text-[9px] text-dark/35">→</span>
+        <motion.span
+          className="font-serif font-bold text-xl"
+          style={{color: colors.teal}}
+          initial={reduce ? false : {opacity: 0, scale: 0.9}}
+          whileInView={{opacity: 1, scale: 1}}
+          viewport={{once: true}}
+          transition={{delay: reduce ? 0 : 0.5, type: 'spring', stiffness: 320, damping: 20}}
+        >
+          $2,400
+        </motion.span>
+      </div>
+      <motion.div
+        className="rounded-sm border px-2.5 py-1"
+        style={{borderColor: colors.teal, backgroundColor: `${colors.teal}14`}}
+        initial={reduce ? false : {opacity: 0, y: 6}}
+        whileInView={{opacity: 1, y: 0}}
+        viewport={{once: true}}
+        transition={{delay: reduce ? 0 : 0.75}}
+      >
+        <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
+          $400 under
+        </span>
+      </motion.div>
+    </div>
+  )
+}
+
+const LOCAL_PACK_VISUALS = [
+  LocalPackOneKickoffVisual,
+  LocalPackCoherentMapVisual,
+  LocalPackRealProductsVisual,
+  LocalPackClearPriceVisual,
+]
+
 /** Team AI: whole team shares the same setup. */
 function TeamSharedSetupVisual({reduce}: VisualProps) {
   const seats = ['You', 'Sales', 'Ops', 'Admin']
@@ -3082,6 +3256,7 @@ export function BenefitMotionRows({
     | 'website'
     | 'enquiry-reply'
     | 'profile-posting'
+    | 'local-pack'
 }) {
   const reduce = useReducedMotion()
   const visuals =
@@ -3107,6 +3282,8 @@ export function BenefitMotionRows({
                         ? ENQUIRY_REPLY_VISUALS
                         : variant === 'profile-posting'
                           ? PROFILE_POSTING_VISUALS
+                          : variant === 'local-pack'
+                            ? LOCAL_PACK_VISUALS
                           : variant === 'change-pack'
                           ? CHANGE_PACK_VISUALS
                           : variant === 'content-system'

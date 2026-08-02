@@ -12,6 +12,7 @@ const PRODUCT_CODES = new Set([
   'profile-posting',
   'enquiry-reply',
   'reviews',
+  'local-pack',
   'search-fix',
   'booking',
   'landing-page',
@@ -28,6 +29,7 @@ const PRODUCT_LABELS: Record<string, string> = {
   'profile-posting': 'Profile Posting System',
   'enquiry-reply': 'Enquiry Auto-Reply',
   reviews: 'Review Engine',
+  'local-pack': 'Local Pack',
   'search-fix': 'Search Visibility Fix',
   booking: 'Booking System',
   'landing-page': 'Campaign Landing Page',
@@ -44,6 +46,7 @@ const PRODUCT_AMOUNTS: Record<string, string> = {
   'profile-posting': '1100',
   'enquiry-reply': '350',
   reviews: '1100',
+  'local-pack': '2400',
   'search-fix': '1400',
   booking: '1500',
   'landing-page': '1800',
@@ -108,6 +111,7 @@ const ENQUIRY_ROUTES = new Set(['inbox', 'sms', 'crm', 'unsure']);
 const ENQUIRY_REPLY_ACCESS = new Set(['form-provider', 'call', 'crm', 'provider']);
 const REVIEW_JOBS = new Set(['sms', 'email', 'software', 'manual', 'unsure']);
 const REVIEWS_ACCESS = new Set(['invite', 'call', 'claim', 'recover', 'provider', 'crm']);
+const LOCAL_PACK_ACCESS = new Set(['invite', 'call', 'claim', 'recover', 'provider', 'crm']);
 const PLATFORMS = new Set([
   'wordpress',
   'wordpress-com',
@@ -528,6 +532,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const isProfilePosting = product === 'profile-posting';
   const isEnquiryReply = product === 'enquiry-reply';
   const isReviews = product === 'reviews';
+  const isLocalPack = product === 'local-pack';
   const isCrmRescue = product === 'crm-rescue';
   const isBooking = product === 'booking';
   const isLandingPage = product === 'landing-page';
@@ -583,6 +588,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     }
     if (!GOOGLE_PROFILE_STATUS.has(profileStatus) || !REVIEWS_ACCESS.has(accessPath)) {
       res.status(400).json({ error: 'Invalid profile status or access path' });
+      return;
+    }
+    if (profileStatus === 'claimed-me' && !REVIEW_JOBS.has(reviewJob)) {
+      res.status(400).json({ error: 'Invalid job-complete path' });
+      return;
+    }
+  } else if (isLocalPack) {
+    if (profileUrl.length < 3) {
+      res.status(400).json({ error: 'Please enter your Google profile link or exact listing name.' });
+      return;
+    }
+    if (!GOOGLE_PROFILE_STATUS.has(profileStatus) || !LOCAL_PACK_ACCESS.has(accessPath)) {
+      res.status(400).json({ error: 'Invalid profile status or access path' });
+      return;
+    }
+    if (!WHO_PUBLISHES.has(whoPublishes)) {
+      res.status(400).json({ error: 'Invalid who-publishes answer' });
       return;
     }
     if (profileStatus === 'claimed-me' && !REVIEW_JOBS.has(reviewJob)) {
@@ -735,6 +757,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
             `Profile: ${profileUrl}`,
             `Profile status: ${profileStatus}`,
             reviewJob ? `Job complete path: ${reviewJob}` : null,
+            `Access path: ${accessPath}`,
+            accessDetail ? `Access notes:\n${accessDetail}` : null,
+            notes ? `Other notes:\n${notes}` : null,
+            `Submitted: ${new Date().toISOString()}`,
+          ]
+            .filter(Boolean)
+            .join('\n')
+      : isLocalPack
+        ? [
+            `Funnel access form — ${product}`,
+            `Business: ${business}`,
+            `Profile: ${profileUrl}`,
+            `Profile status: ${profileStatus}`,
+            reviewJob ? `Job complete path: ${reviewJob}` : null,
+            `Who publishes: ${whoPublishes}`,
             `Access path: ${accessPath}`,
             accessDetail ? `Access notes:\n${accessDetail}` : null,
             notes ? `Other notes:\n${notes}` : null,
@@ -997,16 +1034,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
                 ? `Channels: ${enquiryChannels} · Route: ${enquiryRoute}${websiteUrl ? ` · ${websiteUrl.slice(0, 60)}` : ''}`
               : isReviews
                 ? `Profile: ${profileUrl.slice(0, 80)} · Status: ${profileStatus}${reviewJob ? ` · Job: ${reviewJob}` : ''}`
-                : isCrmRescue
-                  ? `CRM: ${crmSystem} · Leads: ${leadSource} · Goal: ${crmGoal}`
-                  : isBooking
-                    ? `Tool: ${bookingTool} · Books: ${bookingWhat} · Surfaces: ${bookingWhere}`
-                    : website,
+                : isLocalPack
+                  ? `Profile: ${profileUrl.slice(0, 80)} · Status: ${profileStatus} · Publishes: ${whoPublishes}${reviewJob ? ` · Job: ${reviewJob}` : ''}`
+                  : isCrmRescue
+                    ? `CRM: ${crmSystem} · Leads: ${leadSource} · Goal: ${crmGoal}`
+                    : isBooking
+                      ? `Tool: ${bookingTool} · Books: ${bookingWhat} · Surfaces: ${bookingWhere}`
+                      : website,
         isMissedCall ||
         isGoogleProfile ||
         isProfilePosting ||
         isEnquiryReply ||
         isReviews ||
+        isLocalPack ||
         isCrmRescue ||
         isBooking
           ? `Access: ${accessPath}`
@@ -1016,6 +1056,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         !isProfilePosting &&
         !isEnquiryReply &&
         !isReviews &&
+        !isLocalPack &&
         !isCrmRescue &&
         !isBooking &&
         sameProvider !== 'yes'

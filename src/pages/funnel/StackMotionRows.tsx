@@ -2119,6 +2119,180 @@ const PROFILE_POSTING_STACK_VISUALS = [
   HandoverNotesStackVisual,
 ]
 
+/** Local Pack: profile fix items ticking clean. */
+function LocalPackProfileFixStackVisual({reduce, play}: VisualProps) {
+  const go = play || reduce
+  const rows = ['Claim / recover', 'Categories', 'Photos', 'Review link']
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-2.5 flex flex-col gap-1.5">
+      <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/40">Profile Fix</span>
+      <div className="space-y-1 flex-1">
+        {rows.map((label, i) => (
+          <motion.div
+            key={label}
+            className="flex items-center gap-2 rounded-sm border px-2 py-1"
+            style={{borderColor: `${FUNNEL_COLOURS.ink}12`, backgroundColor: '#fff'}}
+            initial={reduce ? false : {opacity: 0.35, x: 8}}
+            animate={
+              go
+                ? {opacity: 1, x: 0, borderColor: colors.teal, backgroundColor: `${colors.teal}12`}
+                : {opacity: 1, x: 0}
+            }
+            transition={{delay: reduce ? 0 : i * 0.1, type: 'spring', stiffness: 360, damping: 22}}
+          >
+            <motion.span
+              className="h-1.5 w-1.5 rounded-full shrink-0"
+              style={{backgroundColor: colors.teal}}
+              initial={reduce ? false : {scale: 0}}
+              animate={go ? {scale: 1} : {scale: 1}}
+              transition={{delay: reduce ? 0 : 0.15 + i * 0.1}}
+            />
+            <span className="font-mono text-[8px] uppercase tracking-wide text-dark/60">{label}</span>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** Local Pack: review ask automation firing after a job. */
+function LocalPackReviewEngineStackVisual({reduce, play}: VisualProps) {
+  const go = play || reduce
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-2.5 flex flex-col gap-2">
+      <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/40">Review Engine</span>
+      <div className="flex-1 flex items-center gap-2.5">
+        <motion.div
+          className="rounded-sm border px-2 py-1.5 flex flex-col items-center gap-0.5 shrink-0"
+          style={{borderColor: `${FUNNEL_COLOURS.ink}12`}}
+          initial={reduce ? false : {opacity: 0.5}}
+          animate={go ? {opacity: 1} : {opacity: 1}}
+        >
+          <span className="font-mono text-[6px] uppercase tracking-wide text-dark/40">Job done</span>
+        </motion.div>
+        <motion.span
+          className="font-mono text-[8px] shrink-0"
+          style={{color: colors.teal}}
+          animate={go ? {x: [0, 3, 0]} : undefined}
+          transition={{duration: 1.1, repeat: Infinity}}
+        >
+          →
+        </motion.span>
+        <motion.div
+          className="rounded-sm border px-2 py-1.5 flex-1 flex flex-col items-center gap-0.5"
+          style={{borderColor: colors.teal, backgroundColor: `${colors.teal}12`}}
+          initial={reduce ? false : {opacity: 0.4, scale: 0.94}}
+          animate={go ? {opacity: 1, scale: 1} : {opacity: 1, scale: 1}}
+          transition={{delay: reduce ? 0 : 0.3, type: 'spring', stiffness: 340, damping: 20}}
+        >
+          <span className="font-mono text-[6px] uppercase tracking-wide" style={{color: colors.teal}}>
+            Ask sent
+          </span>
+          <div className="flex gap-0.5">
+            {[0, 1, 2, 3, 4].map((i) => (
+              <motion.span
+                key={i}
+                className="text-[9px] leading-none"
+                style={{color: colors.teal}}
+                initial={reduce ? false : {opacity: 0.15}}
+                animate={go ? {opacity: 1} : {opacity: 1}}
+                transition={{delay: reduce ? 0 : 0.5 + i * 0.08}}
+              >
+                ★
+              </motion.span>
+            ))}
+          </div>
+        </motion.div>
+      </div>
+    </div>
+  )
+}
+
+/** Local Pack: posting cadence with a starter bank waiting to publish. */
+function LocalPackPostingStackVisual({reduce, play}: VisualProps) {
+  const go = play || reduce
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-2.5 flex flex-col gap-1.5">
+      <div className="flex items-center justify-between">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/40">Posting cadence</span>
+        <motion.span
+          className="font-mono text-[7px] font-bold uppercase tracking-wide"
+          style={{color: colors.teal}}
+          animate={go ? {opacity: 1} : {opacity: 0.7}}
+        >
+          Bank ready
+        </motion.span>
+      </div>
+      <div className="space-y-1 flex-1">
+        {[0, 1, 2].map((i) => (
+          <motion.div
+            key={i}
+            className="flex items-center gap-2 rounded-sm border px-2 py-1"
+            style={{borderColor: `${FUNNEL_COLOURS.ink}12`, backgroundColor: '#fff'}}
+            initial={reduce ? false : {opacity: 0.35, x: 10}}
+            animate={
+              go
+                ? {opacity: 1, x: 0, borderColor: colors.teal, backgroundColor: `${colors.teal}12`}
+                : {opacity: 1, x: 0}
+            }
+            transition={{delay: reduce ? 0 : i * 0.1, type: 'spring', stiffness: 360, damping: 20}}
+          >
+            <span className="font-mono text-[7px] font-bold tabular-nums shrink-0" style={{color: colors.teal}}>
+              W{i + 1}
+            </span>
+            <div className="flex-1 h-1 rounded-sm" style={{backgroundColor: `${colors.teal}35`}} />
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** Local Pack: monthly checklist so profile, asks, and posts do not rot. */
+function LocalPackChecklistStackVisual({reduce, play}: VisualProps) {
+  const go = play || reduce
+  const items = ['Profile still clean', 'Asks still firing', 'Bank still fresh']
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-2.5 flex flex-col gap-1.5">
+      <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/40">Monthly check</span>
+      <div className="space-y-1 flex-1">
+        {items.map((label, i) => (
+          <motion.div
+            key={label}
+            className="flex items-center gap-2 rounded-sm border px-2 py-1"
+            style={{borderColor: `${FUNNEL_COLOURS.ink}12`, backgroundColor: '#fff'}}
+            initial={reduce ? false : {opacity: 0.35, y: 6}}
+            animate={
+              go
+                ? {opacity: 1, y: 0, borderColor: colors.teal, backgroundColor: `${colors.teal}12`}
+                : {opacity: 1, y: 0}
+            }
+            transition={{delay: reduce ? 0 : 0.12 + i * 0.12, duration: 0.35}}
+          >
+            <motion.span
+              className="font-mono text-[8px]"
+              style={{color: colors.teal}}
+              initial={reduce ? false : {opacity: 0}}
+              animate={go ? {opacity: 1} : {opacity: 1}}
+              transition={{delay: reduce ? 0 : 0.3 + i * 0.12}}
+            >
+              ✓
+            </motion.span>
+            <span className="font-mono text-[8px] uppercase tracking-wide text-dark/60">{label}</span>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+const LOCAL_PACK_STACK_VISUALS = [
+  LocalPackProfileFixStackVisual,
+  LocalPackReviewEngineStackVisual,
+  LocalPackPostingStackVisual,
+  LocalPackChecklistStackVisual,
+]
+
 /** Team AI: half-day remote session. */
 function TeamHalfDayStackVisual({reduce, play}: VisualProps) {
   const go = play && !reduce
@@ -2610,6 +2784,7 @@ export function StackMotionRows({
     | 'website'
     | 'enquiry-reply'
     | 'profile-posting'
+    | 'local-pack'
 }) {
   const reduce = useReducedMotion()
   const visuals: Array<(p: VisualProps) => React.ReactElement> =
@@ -2635,6 +2810,8 @@ export function StackMotionRows({
                         ? ENQUIRY_REPLY_STACK_VISUALS
                         : variant === 'profile-posting'
                           ? PROFILE_POSTING_STACK_VISUALS
+                          : variant === 'local-pack'
+                            ? LOCAL_PACK_STACK_VISUALS
                           : variant === 'change-pack'
                           ? CHANGE_PACK_STACK_VISUALS
                           : variant === 'content-system'

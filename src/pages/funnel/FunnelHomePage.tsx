@@ -49,6 +49,7 @@ const OUTBOUND_GROUPS: CatalogueGroup[] = [
       'google-profile',
       'reviews',
       'profile-posting',
+      'local-pack',
     ],
   },
   {
@@ -71,7 +72,7 @@ const OUTBOUND_GROUPS: CatalogueGroup[] = [
   {
     title: 'Bundles',
     blurb: 'Combined scopes at a list price.',
-    codes: ['local-pack', 'bundle-clinic', 'bundle-speed-next', 'bundle-front-door'],
+    codes: ['bundle-clinic', 'bundle-speed-next', 'bundle-front-door'],
   },
   {
     title: 'Promotions',

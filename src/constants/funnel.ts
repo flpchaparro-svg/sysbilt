@@ -174,6 +174,7 @@ export const FUNNEL_OUTBOUND_CODES: ReadonlySet<string> = new Set([
   'crm-rescue',
   'profile-posting',
   'enquiry-reply',
+  'local-pack',
 ])
 
 export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
@@ -320,11 +321,11 @@ export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
   {
     code: 'local-pack',
     title: 'Local Pack',
-    price: '$2,900',
-    blurb: 'Profile Fix, Review Engine, and posting kickoff in one sprint. Draft.',
-    status: 'soon',
-    lane: 'soon',
-    section: 'draft-bundles',
+    price: '$2,400',
+    blurb: 'Profile Fix, Review Engine, and Profile Posting in one sprint. Not local SEO.',
+    status: 'live',
+    lane: 'outbound',
+    section: 'outbound',
     href: '/go/local-pack',
   },
   {

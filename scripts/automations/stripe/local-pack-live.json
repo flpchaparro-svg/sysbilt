@@ -1,0 +1,14 @@
+{
+  "createdAt": "2026-08-02T11:25:00.000Z",
+  "mode": "live",
+  "note": "Local Pack · $2,400 live Payment Link. Bundle of Profile Fix + Review Engine + Profile Posting. Not local SEO. After pay → thanks?p=local-pack → access wizard.",
+  "product": {
+    "code": "local-pack",
+    "name": "Local Pack",
+    "productId": "prod_UzxRD4hBZC8NLx",
+    "priceId": "price_1TzxWJ7kQC0CB85zXFh4FBD5",
+    "paymentLinkId": "plink_1TzxWz7kQC0CB85zEisQ0rS2",
+    "paymentLinkUrl": "https://buy.stripe.com/00w6oB4hX3325Qab8n3gk0i",
+    "amountAud": 2400
+  }
+}

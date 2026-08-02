@@ -86,54 +86,6 @@ const comingSoonFaq: FunnelFaq = {
   a: 'Not yet. This page is a draft for review. When it opens, you will get a clear buy path or a short scope form. Until then, treat the price as the intended list price.',
 }
 
-export const LOCAL_PACK_COPY = makeDraftCopy({
-  eyebrow: 'Bundle · One sprint · Coming soon',
-  h1Generic: 'Profile, reviews, and posts in one local sprint',
-  sub: 'Separately you would buy Profile Fix, Review Engine, and posting kickoff. Together we run them as one local pack so Maps stops working against you.',
-  proofHeading: 'Local trust is a system',
-  proofLead:
-    'A clean profile without reviews looks thin. Reviews without asks stall. Posts without a clean profile look odd. They belong together.',
-  proofAfter:
-    'One sprint: profile cleaned, ask habit set, posting started. List price for the bundle, not three separate projects fighting your calendar.',
-  painHeading: 'Piecemeal local work never finishes',
-  painLines: [
-    'You fixed categories last year and never touched reviews.',
-    'You asked for reviews once, then stopped.',
-    'Posts happen only when someone remembers.',
-    'Each vendor sells one slice and leaves the rest broken.',
-  ],
-  bridgeHeading: 'One local sprint, three connected jobs',
-  bridgeBody:
-    'Profile Fix scope, Review Engine habit, and a posting kickoff banked together. Coming soon as a single list price.',
-  bridgeGaugeCaption: 'Clean. Ask. Stay visible.',
-  benefits: [
-    {title: 'One delivery window', text: 'Fewer kickoffs, one access pass, one handoff.'},
-    {title: 'Maps looks coherent', text: 'Details, social proof, and updates finally match.'},
-    {title: 'Clear next steps', text: 'Booking or Missed-Call becomes the obvious follow-on.'},
-    {title: 'List price honesty', text: 'Bundle pricing beats buying the three jobs as strangers.'},
-  ],
-  processSteps: [
-    {label: 'Access', text: 'Profile, review paths, and brand voice in one brief.'},
-    {label: 'Build', text: 'Profile cleanup, ask system, posting bank.'},
-    {label: 'Handoff', text: 'Who owns asks, who posts, what to check monthly.'},
-  ],
-  stackItems: [
-    {title: 'Google Profile Fix', text: 'Categories, details, photos guidance, basics cleaned.'},
-    {title: 'Review Engine core', text: 'Ask habit, QR or link path, reply starters.'},
-    {title: 'Posting kickoff', text: 'Cadence plus a short starter bank.'},
-    {title: 'Local checklist', text: 'Monthly five-minute check so it does not rot.'},
-  ],
-  scopeLine: 'One location. Coming soon. Multi-location quoted.',
-  price: '$2,900',
-  priceLead: 'Bundle list price. Coming soon.',
-  guarantee:
-    'When this goes live: the three scoped pieces are delivered, or we keep working at no extra cost until they are.',
-  priceAnchor: 'Less than buying the three jobs as separate projects with three kickoffs.',
-  faqs: [comingSoonFaq],
-  finalHeading: 'Make Maps tell one clear story',
-  finalLine: 'Profile, reviews, posts. One sprint. Coming soon.',
-})
-
 export const CONVERSION_PASS_COPY = makeDraftCopy({
   eyebrow: 'Fixed price · Three to five days · Coming soon',
   h1Generic: 'Your site can be fast and still fail to ask for the enquiry',
@@ -1122,7 +1074,6 @@ export const WEBSITE_HOOK_COPY = makeDraftCopy({
 })
 
 export const DRAFT_COPY_BY_SLUG: Record<string, FunnelProductCopy> = {
-  'local-pack': LOCAL_PACK_COPY,
   'conversion-pass': CONVERSION_PASS_COPY,
   'onpage-search': ONPAGE_SEARCH_COPY,
   'schema-faq': SCHEMA_FAQ_COPY,

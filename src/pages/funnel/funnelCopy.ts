@@ -68,6 +68,7 @@ export type FunnelProductCopy = {
     | 'client-finder'
     | 'enquiry-reply'
     | 'profile-posting'
+    | 'local-pack'
     | 'draft'
 }
 
@@ -2419,9 +2420,139 @@ export const PROFILE_POSTING_COPY: FunnelProductCopy = {
   proofKind: 'profile-posting',
 }
 
+/** Bundle: Profile Fix + Review Engine + Profile Posting. Not local SEO. */
+export const LOCAL_PACK_COPY: FunnelProductCopy = {
+  eyebrow: 'Bundle · One sprint · One location · $400 under buying separate',
+  h1Generic: 'Your Google listing needs a clean profile, a review habit, and posts that keep showing up',
+  h1Personal: (b: string) =>
+    `${b}, your Google listing needs a clean profile, a review habit, and posts that keep showing up`,
+  sub: 'Local Pack is three jobs in one delivery: Google Profile Fix, Review Engine, and Profile Posting. Not local SEO. Not rankings work. The front door on Maps, cleaned, asking for reviews, and posting on a rhythm you can keep.',
+  ctaLabel: 'Get the Local Pack · $2,400',
+  proofLabel: 'The picture',
+  proofHeadingLive: 'Maps trust is three jobs, not one',
+  proofHeadingGeneric: 'Maps trust is three jobs, not one',
+  proofLead: (b: string | null) =>
+    b
+      ? `${b} can look thin if the profile is messy, reviews stall, and the Updates tab goes quiet.`
+      : 'A listing looks thin if the profile is messy, reviews stall, and the Updates tab goes quiet.',
+  proofLeadGeneric:
+    'A listing looks thin if the profile is messy, reviews stall, and the Updates tab goes quiet. Buying those as three separate projects means three kickoffs and three handoffs.',
+  proofAfter:
+    'One sprint: profile cleaned, review ask wired, posting kit ready. One access pass. One handoff. Paid once at the bundle price.',
+  proofAfterGeneric:
+    'One sprint: profile cleaned, review ask wired, posting kit ready. One access pass. One handoff. Paid once at the bundle price.',
+  painLabel: 'What this is costing you',
+  painHeading: 'Piecemeal local work never finishes',
+  painLines: [
+    'You cleaned categories once, then never touched reviews.',
+    'You asked for reviews once, then the habit died.',
+    'Posts only happen when someone remembers and feels guilty.',
+    'Three separate buys mean three briefs, three access chats, and three chances to stall.',
+  ],
+  bridgeLabel: 'The fix',
+  bridgeHeading: 'One local sprint, three connected jobs',
+  bridgeBody:
+    'This is not SEO for suburbs, and it is not a rankings promise. It is the three Maps jobs that belong together: Google Profile Fix, Review Engine, and Profile Posting System, run as one delivery so your listing looks coherent. Bought separately today that is $2,800. The pack is $2,400.',
+  bridgeGaugeCaption: 'Clean profile. Review ask. Posts you can keep. One sprint.',
+  benefitsLabel: 'What changes for you',
+  benefitsHeading: 'One window, not three projects',
+  benefits: [
+    {
+      title: 'One kickoff',
+      text: 'One brief, one access pass, one delivery window instead of three separate starts.',
+    },
+    {
+      title: 'Maps looks coherent',
+      text: 'Details, social proof, and Updates finally match what the business actually is.',
+    },
+    {
+      title: 'Real products inside',
+      text: 'Full Profile Fix, full Review Engine, and the full Profile Posting kit. Not thin samples.',
+    },
+    {
+      title: 'Clear price',
+      text: '$2,400 once. That is $400 under buying the three doors separately at list price.',
+    },
+  ],
+  processLabel: 'How it runs',
+  processHeading: 'One sprint, then you own the habits',
+  processSteps: [
+    {
+      label: 'Access',
+      text: 'Profile access, how jobs get marked done, and who will hit publish.',
+    },
+    {
+      label: 'Build',
+      text: 'Profile cleanup, review ask and templates, posting cadence and starter bank.',
+    },
+    {
+      label: 'Handoff',
+      text: 'You approve. We leave who owns asks, who publishes, and a short monthly check.',
+    },
+  ],
+  stackLabel: 'Everything included',
+  stackHeading: 'Three live products, one price',
+  stackItems: [
+    {
+      title: 'Google Profile Fix',
+      text: 'Claim or recover if needed, categories, details, photos guidance, review link. Same scope as the $600 door.',
+    },
+    {
+      title: 'Review Engine',
+      text: 'Automatic ask after jobs, wording in your voice, QR and short link, reply templates. Same scope as the $1,100 door.',
+    },
+    {
+      title: 'Profile Posting System',
+      text: 'Cadence, templates in your voice, starter bank. You hit publish. Same scope as the $1,100 door.',
+    },
+    {
+      title: 'Local checklist',
+      text: 'A five-minute monthly check so profile, asks, and posts do not quietly rot.',
+    },
+  ],
+  scopeLine:
+    'One Google Business Profile / one location. Not local SEO, not ranking work, not multi-location. Extra locations quoted the same day.',
+  priceLabel: 'Investment',
+  price: '$2,400',
+  priceLead:
+    'Paid once for the three jobs together. Separate list prices today add to $2,800. The pack is $2,400.',
+  guarantee:
+    'Agreed Profile Fix, Review Engine, and Profile Posting scopes are delivered as bundled, or we keep working at no extra cost until they are.',
+  priceAnchor: 'One saved kickoff and $400 under buying the three doors alone.',
+  faqLabel: 'Objections',
+  faqHeading: 'Straight answers before you pay',
+  faqs: [
+    {
+      q: 'Is this local SEO or ranking work?',
+      a: 'No. This pack is profile cleanup, review asks, and posting. We do not promise map pack rankings or keyword positions in this product.',
+    },
+    {
+      q: 'What am I actually buying?',
+      a: 'The same three products we sell separately: Google Profile Fix, Review Engine, and Profile Posting System, delivered in one sprint with one access pass.',
+    },
+    {
+      q: 'Why not buy the three doors alone?',
+      a: 'You can. Separate list prices add to $2,800. The pack is $2,400 and removes two extra kickoffs.',
+    },
+    {
+      q: 'Do you post for us every week?',
+      a: 'No. Profile Posting in this pack is the kit: cadence, templates, and a starter bank. You hit publish unless you buy care later.',
+    },
+    {
+      q: 'Is this refundable?',
+      a: "There's no change-of-mind refund, because we start straight away. If the agreed scopes are not delivered, we keep working at no extra cost until they are.",
+    },
+  ],
+  finalLabel: 'Last step',
+  finalHeading: 'One sprint for the listing people actually open',
+  finalLine: 'Profile, reviews, posts. One price. Not SEO theatre.',
+  proofKind: 'local-pack',
+}
+
 import {DRAFT_COPY_BY_SLUG} from './funnelDraftProducts'
 
 export function funnelCopyForSlug(slug: string | undefined): FunnelProductCopy {
+  if (slug === 'local-pack') return LOCAL_PACK_COPY
   if (slug === 'enquiry-reply') return ENQUIRY_REPLY_COPY
   if (slug === 'profile-posting') return PROFILE_POSTING_COPY
   if (slug === 'missed-call') return MISSED_CALL_COPY

@@ -159,6 +159,13 @@ const PHASES_REVIEWS: {id: PhaseId; n: number; label: string}[] = [
   {id: 'done', n: 4, label: 'Done'},
 ]
 
+const PHASES_LOCAL: {id: PhaseId; n: number; label: string}[] = [
+  {id: 'about', n: 1, label: 'About you'},
+  {id: 'site', n: 2, label: 'Your listing'},
+  {id: 'access', n: 3, label: 'Access'},
+  {id: 'done', n: 4, label: 'Done'},
+]
+
 const PHASES_CRM: {id: PhaseId; n: number; label: string}[] = [
   {id: 'about', n: 1, label: 'About you'},
   {id: 'site', n: 2, label: 'Your system'},
@@ -214,6 +221,7 @@ function phaseForStep(
     | 'profile-posting'
     | 'enquiry-reply'
     | 'reviews'
+    | 'local-pack'
     | 'crm-rescue'
     | 'booking'
     | 'landing-page'
@@ -254,6 +262,17 @@ function phaseForStep(
   }
   if (kind === 'reviews') {
     if (step === 'profileUrl' || step === 'profileStatus' || step === 'reviewJob') return 'site'
+    return 'access'
+  }
+  if (kind === 'local-pack') {
+    if (
+      step === 'profileUrl' ||
+      step === 'profileStatus' ||
+      step === 'reviewJob' ||
+      step === 'whoPublishes'
+    ) {
+      return 'site'
+    }
     return 'access'
   }
   if (kind === 'crm-rescue') {
@@ -1236,6 +1255,40 @@ const POSTING_PROFILE_STATUS_OPTIONS: typeof GOOGLE_PROFILE_STATUS_OPTIONS =
     }
   })
 
+/** Local Pack: status blurbs framed around the whole pack, not just posting. */
+const LOCAL_PACK_PROFILE_STATUS_OPTIONS: typeof GOOGLE_PROFILE_STATUS_OPTIONS =
+  GOOGLE_PROFILE_STATUS_OPTIONS.map((opt) => {
+    switch (opt.id) {
+      case 'claimed-me':
+        return {
+          ...opt,
+          blurb: 'You can already open Business Profile. The pack can start straight away.',
+        }
+      case 'unclaimed':
+        return {
+          ...opt,
+          blurb: 'Nobody owns it yet. Claim comes before the profile, review, and posting work.',
+        }
+      case 'claimed-other':
+        return {
+          ...opt,
+          blurb: 'Ex-staff or old agency holds it. Recovery comes before the pack starts.',
+        }
+      case 'suspended':
+        return {
+          ...opt,
+          blurb: 'Google locked it. We assess recovery before the pack starts.',
+        }
+      case 'unsure':
+        return {
+          ...opt,
+          blurb: 'Fine. We will sort claim vs invite once we see the listing.',
+        }
+      default:
+        return opt
+    }
+  })
+
 /** Reviews: access depends on profile status, then how jobs get marked complete. */
 function reviewsAccessOptionsForStatus(
   status: ProfileStatusId | null,
@@ -1321,6 +1374,14 @@ function reviewsAccessOptionsForStatus(
         },
       ]
   }
+}
+
+/** Local Pack: same access shape as Profile Posting, since the pack starts with the same listing state. */
+function localPackAccessOptionsForStatus(
+  status: ProfileStatusId | null,
+  who: WhoPublishesId | null,
+) {
+  return postingAccessOptionsForStatus(status, who)
 }
 
 const REVIEW_JOB_OPTIONS: {
@@ -2770,6 +2831,7 @@ const FunnelAccessPage: React.FC = () => {
   const isProfilePosting = product === 'profile-posting'
   const isEnquiryReply = product === 'enquiry-reply'
   const isReviews = product === 'reviews'
+  const isLocalPack = product === 'local-pack'
   const isCrmRescue = product === 'crm-rescue'
   const isBooking = product === 'booking'
   const isSearchFix = product === 'search-fix'
@@ -2782,6 +2844,7 @@ const FunnelAccessPage: React.FC = () => {
   const usesPostingWizard = isProfilePosting
   const usesEnquiryWizard = isEnquiryReply
   const usesReviewsWizard = isReviews
+  const usesLocalPackWizard = isLocalPack
   const productKind:
     | 'speed'
     | 'missed-call'
@@ -2789,6 +2852,7 @@ const FunnelAccessPage: React.FC = () => {
     | 'profile-posting'
     | 'enquiry-reply'
     | 'reviews'
+    | 'local-pack'
     | 'crm-rescue'
     | 'booking'
     | 'landing-page'
@@ -2805,7 +2869,9 @@ const FunnelAccessPage: React.FC = () => {
             ? 'enquiry-reply'
             : usesReviewsWizard
               ? 'reviews'
-              : isCrmRescue
+              : usesLocalPackWizard
+                ? 'local-pack'
+                : isCrmRescue
                 ? 'crm-rescue'
                 : isBooking
                   ? 'booking'
@@ -2828,7 +2894,9 @@ const FunnelAccessPage: React.FC = () => {
           ? PHASES_ENQUIRY
           : usesReviewsWizard
             ? PHASES_REVIEWS
-            : isCrmRescue
+            : usesLocalPackWizard
+              ? PHASES_LOCAL
+              : isCrmRescue
               ? PHASES_CRM
               : isBooking
                 ? PHASES_BOOKING
@@ -2925,6 +2993,23 @@ const FunnelAccessPage: React.FC = () => {
       ]
       if (profileStatus === 'claimed-me') steps.push('reviewJob')
       steps.push('access', 'accessDetail', 'notes', 'done')
+      return steps
+    }
+    if (usesLocalPackWizard) {
+      const steps: StepId[] = [
+        'product',
+        'name',
+        'email',
+        'business',
+        'profileUrl',
+        'profileStatus',
+      ]
+      if (profileStatus === 'claimed-me') {
+        steps.push('reviewJob', 'whoPublishes', 'access', 'accessDetail')
+      } else {
+        steps.push('access', 'accessDetail', 'whoPublishes')
+      }
+      steps.push('notes', 'done')
       return steps
     }
     if (isCrmRescue) {
@@ -3050,6 +3135,7 @@ const FunnelAccessPage: React.FC = () => {
     isProfilePosting,
     isEnquiryReply,
     isReviews,
+    usesLocalPackWizard,
     profileStatus,
     isCrmRescue,
     isBooking,
@@ -3093,7 +3179,9 @@ const FunnelAccessPage: React.FC = () => {
       ? googleAccessOptionsForStatus(profileStatus)
       : usesReviewsWizard
         ? reviewsAccessOptionsForStatus(profileStatus, reviewJob)
-        : isCrmRescue
+        : usesLocalPackWizard
+          ? localPackAccessOptionsForStatus(profileStatus, whoPublishes)
+          : isCrmRescue
           ? crmAccessOptionsForSystem(crmSystem)
           : isBooking
             ? bookingAccessOptionsForWhere(bookingWhere, bookingTool)
@@ -3106,7 +3194,9 @@ const FunnelAccessPage: React.FC = () => {
   const postingWhoOptions = whoPublishesOptionsForStatus(profileStatus)
   const postingStatusOptions = usesPostingWizard
     ? POSTING_PROFILE_STATUS_OPTIONS
-    : GOOGLE_PROFILE_STATUS_OPTIONS
+    : usesLocalPackWizard
+      ? LOCAL_PACK_PROFILE_STATUS_OPTIONS
+      : GOOGLE_PROFILE_STATUS_OPTIONS
   const enquiryRouteOptions = enquiryRouteOptionsForChannels(enquiryChannels)
 
   function goNext(from: StepId) {
@@ -3153,6 +3243,15 @@ const FunnelAccessPage: React.FC = () => {
       }
     } else if (usesReviewsWizard) {
       if (!profileStatus) {
+        setError('Something is missing. Use Back to check your answers.')
+        return
+      }
+      if (profileStatus === 'claimed-me' && !reviewJob) {
+        setError('Something is missing. Use Back to check your answers.')
+        return
+      }
+    } else if (usesLocalPackWizard) {
+      if (!profileStatus || !whoPublishes) {
         setError('Something is missing. Use Back to check your answers.')
         return
       }
@@ -3288,6 +3387,20 @@ const FunnelAccessPage: React.FC = () => {
               accessDetail: accessDetail.trim(),
               notes: notes.trim(),
             }
+          : usesLocalPackWizard
+            ? {
+                product,
+                name: name.trim(),
+                email: email.trim(),
+                business: business.trim(),
+                profileUrl: profileUrl.trim(),
+                profileStatus: profileStatus!,
+                reviewJob: profileStatus === 'claimed-me' ? reviewJob! : '',
+                whoPublishes: whoPublishes!,
+                accessPath,
+                accessDetail: accessDetail.trim(),
+                notes: notes.trim(),
+              }
           : isCrmRescue
           ? {
               product,
@@ -3516,7 +3629,7 @@ const FunnelAccessPage: React.FC = () => {
         setStep(id === 'claimed-me' ? 'whoPublishes' : 'access')
         return
       }
-      if (usesReviewsWizard) {
+      if (usesReviewsWizard || usesLocalPackWizard) {
         setStep(id === 'claimed-me' ? 'reviewJob' : 'access')
         return
       }
@@ -3544,6 +3657,12 @@ const FunnelAccessPage: React.FC = () => {
         }
         // unsure: access already done, accessDetail next
         setStep('accessDetail')
+        return
+      }
+      if (usesLocalPackWizard) {
+        // claimed-me: reviewJob already picked, access next. Other statuses ask
+        // whoPublishes after accessDetail, so notes is next.
+        setStep(profileStatus === 'claimed-me' ? 'access' : 'notes')
         return
       }
       goNext('whoPublishes')
@@ -3866,7 +3985,7 @@ const FunnelAccessPage: React.FC = () => {
             {step === 'profileStatus' ? (
               <>
                 <QuestionTitle>
-                  {usesPostingWizard ? (
+                  {usesPostingWizard || usesLocalPackWizard ? (
                     <>
                       What is the <span style={{color: RED}}>listing</span> status?
                     </>
@@ -3879,7 +3998,9 @@ const FunnelAccessPage: React.FC = () => {
                 <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
                   {usesPostingWizard
                     ? 'This decides whether we claim, recover, or invite before the posting kit. Hover a card, then Select.'
-                    : 'Hover a card, then Select. Not sure is fine.'}
+                    : usesLocalPackWizard
+                      ? 'This decides whether we claim, recover, or invite before the pack starts. Hover a card, then Select.'
+                      : 'Hover a card, then Select. Not sure is fine.'}
                 </p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
                   {postingStatusOptions.map((opt) => (
@@ -4994,7 +5115,7 @@ const FunnelAccessPage: React.FC = () => {
             {step === 'access' ? (
               <>
                 <QuestionTitle>
-                  {usesPostingWizard ? (
+                  {usesPostingWizard || usesLocalPackWizard ? (
                     profileStatus === 'unclaimed' ? (
                       <>
                         How do we <span style={{color: RED}}>claim</span> it?
@@ -5047,6 +5168,16 @@ const FunnelAccessPage: React.FC = () => {
                           : profileStatus === 'claimed-me' && whoPublishes === 'staff'
                             ? 'You manage it. Invite us so we can hand the kit to you and your publisher.'
                             : 'Hover, then Select. Pick whatever is easiest for you.'
+                    : usesLocalPackWizard
+                      ? profileStatus === 'unclaimed'
+                        ? 'The listing is unclaimed. Pick claim with us, or a short call first.'
+                        : profileStatus === 'claimed-other'
+                          ? 'Someone else holds it. Recovery or a call. The pack waits until you control it.'
+                          : profileStatus === 'suspended'
+                            ? 'No profile, review, or posting work until Google allows it. Assess with us, or call first.'
+                            : profileStatus === 'claimed-me' && whoPublishes === 'staff'
+                              ? 'You manage it. Invite us so we can hand the pack to you and your publisher.'
+                              : 'Hover, then Select. Pick whatever is easiest for you.'
                     : usesEnquiryWizard
                       ? enquiryRoute === 'crm'
                         ? 'The real message lands in your CRM. Pick CRM invite, form tool access if needed, or a short call.'
@@ -5101,7 +5232,11 @@ const FunnelAccessPage: React.FC = () => {
                           : accessPath === 'crm'
                             ? 'Which CRM, and whether calls already log there.'
                             : 'Best times to call, or anything that usually trips people up.'
-                    : usesGoogleWizard || usesPostingWizard || usesReviewsWizard || usesEnquiryWizard
+                    : usesGoogleWizard ||
+                        usesPostingWizard ||
+                        usesReviewsWizard ||
+                        usesLocalPackWizard ||
+                        usesEnquiryWizard
                       ? accessPath === 'invite'
                         ? 'The Google account email that can add managers, or say you will send the invite shortly.'
                         : accessPath === 'claim'
