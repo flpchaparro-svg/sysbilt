@@ -1103,121 +1103,191 @@ const ENQUIRY_REPLY_VISUALS = [
   EnquiryNextStepVisual,
 ]
 
-/** Profile Posting: posts going live — cards light up one after another. */
+/** Profile Posting: a real week with spaced post days, not every day. */
 function ProfilePostLiveVisual({reduce}: VisualProps) {
+  // Mon–Sun: post on Mon, Wed, Fri only (capacity rhythm).
+  const days = [
+    {label: 'M', post: true},
+    {label: 'T', post: false},
+    {label: 'W', post: true},
+    {label: 'T', post: false},
+    {label: 'F', post: true},
+    {label: 'S', post: false},
+    {label: 'S', post: false},
+  ]
   return (
-    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col justify-center gap-1.5 px-3">
-      {[0, 1, 2].map((i) => (
-        <motion.div
-          key={i}
-          className="flex items-center gap-2 rounded-sm border px-2 py-1.5 shrink-0"
-          style={{borderColor: `${FUNNEL_COLOURS.ink}12`, backgroundColor: '#fff'}}
-          initial={reduce ? false : {opacity: 0.3, x: -8}}
-          whileInView={{opacity: 1, x: 0, borderColor: colors.teal, backgroundColor: `${colors.teal}12`}}
-          viewport={{once: true}}
-          transition={{delay: reduce ? 0 : 0.12 + i * 0.22, type: 'spring', stiffness: 380, damping: 22}}
-        >
-          <div className="h-4 w-4 rounded-[2px] shrink-0" style={{backgroundColor: `${colors.teal}55`}} />
-          <div className="flex-1 space-y-1">
-            <div className="h-1 w-4/5 rounded-sm" style={{backgroundColor: `${FUNNEL_COLOURS.ink}14`}} />
-            <div className="h-1 w-1/2 rounded-sm" style={{backgroundColor: `${FUNNEL_COLOURS.ink}0A`}} />
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Your week</span>
+        <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
+          3 posts
+        </span>
+      </div>
+      <div className="flex-1 flex items-end justify-between gap-1 px-2.5 pb-3 pt-2">
+        {days.map((d, i) => (
+          <div key={`${d.label}-${i}`} className="flex-1 flex flex-col items-center gap-1.5 min-w-0">
+            <motion.div
+              className="w-full rounded-sm"
+              style={{
+                height: d.post ? 36 : 10,
+                backgroundColor: d.post ? `${colors.teal}28` : `${FUNNEL_COLOURS.ink}08`,
+                border: d.post ? `1px solid ${colors.teal}` : '1px solid transparent',
+              }}
+              initial={reduce || !d.post ? false : {scaleY: 0.2, opacity: 0.3}}
+              whileInView={d.post ? {scaleY: 1, opacity: 1} : undefined}
+              viewport={{once: true}}
+              transition={{delay: reduce ? 0 : 0.12 + i * 0.08, type: 'spring', stiffness: 340, damping: 20}}
+            />
+            <span className="font-mono text-[7px] uppercase tracking-wide text-dark/40">{d.label}</span>
           </div>
-          <motion.span
-            className="h-1.5 w-1.5 rounded-full shrink-0"
-            style={{backgroundColor: colors.teal}}
-            animate={reduce ? undefined : {opacity: [1, 0.4, 1]}}
-            transition={{duration: 1.1, repeat: Infinity, delay: i * 0.2}}
-          />
-        </motion.div>
-      ))}
-    </div>
-  )
-}
-
-/** Profile Posting: blank page becomes filled templates. */
-function ProfileTemplatesReadyVisual({reduce}: VisualProps) {
-  return (
-    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex items-center justify-center">
-      <div className="grid grid-cols-4 gap-1.5 p-3">
-        {Array.from({length: 4}).map((_, i) => (
-          <motion.div
-            key={i}
-            className="h-10 w-10 rounded-sm border"
-            style={{borderColor: `${FUNNEL_COLOURS.ink}18`, backgroundColor: '#fff'}}
-            initial={reduce ? false : {borderStyle: 'dashed'}}
-            whileInView={{
-              borderColor: [`${FUNNEL_COLOURS.ink}18`, `${FUNNEL_COLOURS.gold}90`, `${FUNNEL_COLOURS.gold}90`],
-              backgroundColor: ['#fff', `${FUNNEL_COLOURS.gold}1E`, `${FUNNEL_COLOURS.gold}1E`],
-            }}
-            viewport={{once: true}}
-            transition={{delay: reduce ? 0 : 0.1 + i * 0.16, duration: 0.4}}
-          />
         ))}
       </div>
     </div>
   )
 }
 
-/** Profile Posting: an old offer card fades, this week's card slides into its place. */
-function ProfileOfferFreshVisual({reduce}: VisualProps) {
+/** Profile Posting: four named template shapes fill in. */
+function ProfileTemplatesReadyVisual({reduce}: VisualProps) {
+  const templates = [
+    {label: 'Offer', bars: [0.9, 0.45]},
+    {label: 'Proof', bars: [0.7, 0.55]},
+    {label: 'FAQ', bars: [0.55, 0.8]},
+    {label: 'Season', bars: [0.8, 0.35]},
+  ]
   return (
-    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col justify-center px-3 gap-2">
-      <motion.div
-        className="relative h-8 rounded-sm border"
-        style={{borderColor: `${FUNNEL_COLOURS.ink}12`, backgroundColor: colors.cream}}
-        initial={reduce ? false : {opacity: 0.55}}
-        whileInView={{opacity: 0.35}}
-        viewport={{once: true}}
-      >
-        <div
-          className="absolute inset-x-2.5 top-1/2 h-px -translate-y-1/2"
-          style={{backgroundColor: `${FUNNEL_COLOURS.ink}30`, transform: 'translateY(-50%) rotate(-4deg)'}}
-        />
-      </motion.div>
-      <motion.div
-        className="h-8 rounded-sm border flex items-center gap-2 px-2"
-        style={{borderColor: colors.teal, backgroundColor: `${colors.teal}14`}}
-        initial={reduce ? false : {opacity: 0, x: 10}}
-        whileInView={{opacity: 1, x: 0}}
-        viewport={{once: true}}
-        transition={{delay: reduce ? 0 : 0.25, type: 'spring', stiffness: 360}}
-      >
-        <div className="h-3 w-3 rounded-full shrink-0" style={{backgroundColor: colors.teal}} />
-        <div className="flex-1 h-1.5 rounded-sm" style={{backgroundColor: `${colors.teal}45`}} />
-      </motion.div>
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Template set</span>
+      </div>
+      <div className="flex-1 grid grid-cols-4 gap-1.5 p-2.5">
+        {templates.map((t, i) => (
+          <motion.div
+            key={t.label}
+            className="rounded-sm border flex flex-col px-1.5 py-1.5 min-h-0"
+            style={{borderColor: `${FUNNEL_COLOURS.ink}14`, backgroundColor: '#fff'}}
+            initial={reduce ? false : {opacity: 0.35, y: 8}}
+            whileInView={{
+              opacity: 1,
+              y: 0,
+              borderColor: `${FUNNEL_COLOURS.gold}90`,
+              backgroundColor: `${FUNNEL_COLOURS.gold}14`,
+            }}
+            viewport={{once: true}}
+            transition={{delay: reduce ? 0 : 0.1 + i * 0.14, duration: 0.35}}
+          >
+            <span className="font-mono text-[6px] font-bold uppercase tracking-wide text-dark/55 mb-1.5">
+              {t.label}
+            </span>
+            <div className="mt-auto space-y-1">
+              {t.bars.map((w, bi) => (
+                <div
+                  key={bi}
+                  className="h-1 rounded-sm"
+                  style={{
+                    width: `${w * 100}%`,
+                    backgroundColor: `${FUNNEL_COLOURS.ink}22`,
+                  }}
+                />
+              ))}
+            </div>
+          </motion.div>
+        ))}
+      </div>
     </div>
   )
 }
 
-/** Profile Posting: a simple two-node chain — cadence handing off to the content system. */
+/** Profile Posting: weeks of ready posts stack into a bank. */
+function ProfileOfferFreshVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Starter bank</span>
+        <motion.span
+          className="font-mono text-[7px] font-bold uppercase tracking-wide"
+          style={{color: colors.teal}}
+          initial={reduce ? false : {opacity: 0}}
+          whileInView={{opacity: 1}}
+          viewport={{once: true}}
+          transition={{delay: reduce ? 0 : 0.7}}
+        >
+          Ready
+        </motion.span>
+      </div>
+      <div className="flex-1 flex flex-col justify-center gap-1.5 px-3 py-2">
+        {[0, 1, 2, 3].map((i) => (
+          <motion.div
+            key={i}
+            className="flex items-center gap-2 rounded-sm border px-2 py-1"
+            style={{borderColor: `${FUNNEL_COLOURS.ink}12`, backgroundColor: '#fff'}}
+            initial={reduce ? false : {opacity: 0, x: 18}}
+            whileInView={{
+              opacity: 1,
+              x: 0,
+              borderColor: colors.teal,
+              backgroundColor: `${colors.teal}12`,
+            }}
+            viewport={{once: true}}
+            transition={{delay: reduce ? 0 : 0.1 + i * 0.12, type: 'spring', stiffness: 360, damping: 22}}
+          >
+            <span
+              className="font-mono text-[7px] font-bold tabular-nums shrink-0"
+              style={{color: colors.teal}}
+            >
+              W{i + 1}
+            </span>
+            <div className="flex-1 h-1 rounded-sm" style={{backgroundColor: `${colors.teal}40`}} />
+            <div className="h-1.5 w-1.5 rounded-full shrink-0" style={{backgroundColor: colors.teal}} />
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** Profile Posting: you publish now; care month stays optional. */
 function ProfilePostingNextStepVisual({reduce}: VisualProps) {
   return (
-    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex items-center justify-center gap-3">
-      <motion.div
-        className="h-9 w-9 rounded-full border-2 flex items-center justify-center"
-        style={{borderColor: colors.teal, backgroundColor: `${colors.teal}14`}}
-        initial={reduce ? false : {scale: 0.85}}
-        whileInView={{scale: 1}}
-        viewport={{once: true}}
-      >
-        <span className="h-2.5 w-2.5 rounded-full" style={{backgroundColor: colors.teal}} />
-      </motion.div>
-      <motion.div
-        className="h-px w-8"
-        style={{backgroundColor: `${FUNNEL_COLOURS.ink}20`}}
-        initial={reduce ? false : {scaleX: 0}}
-        whileInView={{scaleX: 1}}
-        viewport={{once: true}}
-        transition={{delay: reduce ? 0 : 0.2, duration: 0.4}}
-      />
-      <motion.div
-        className="h-9 w-9 rounded-full border-2 border-dashed flex items-center justify-center"
-        style={{borderColor: `${FUNNEL_COLOURS.gold}90`}}
-        animate={reduce ? undefined : {scale: [1, 1.12, 1]}}
-        transition={{duration: 1.4, repeat: Infinity, delay: 0.5}}
-      >
-        <span className="h-2.5 w-2.5 rounded-full" style={{backgroundColor: `${FUNNEL_COLOURS.gold}90`}} />
-      </motion.div>
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Who posts</span>
+      </div>
+      <div className="flex-1 flex items-center gap-2.5 px-3 py-2.5">
+        <motion.div
+          className="flex-1 rounded-sm border-2 px-2.5 py-3 flex flex-col items-center justify-center gap-1.5"
+          style={{borderColor: colors.teal, backgroundColor: `${colors.teal}14`}}
+          initial={reduce ? false : {scale: 0.92, opacity: 0.5}}
+          whileInView={{scale: 1, opacity: 1}}
+          viewport={{once: true}}
+          transition={{type: 'spring', stiffness: 360, damping: 20}}
+        >
+          <motion.span
+            className="h-2.5 w-2.5 rounded-full"
+            style={{backgroundColor: colors.teal}}
+            animate={reduce ? undefined : {scale: [1, 1.2, 1]}}
+            transition={{duration: 1.3, repeat: Infinity}}
+          />
+          <span className="font-mono text-[8px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
+            You
+          </span>
+          <span className="font-mono text-[6px] uppercase tracking-wide text-dark/45">Publish</span>
+        </motion.div>
+        <motion.div
+          className="flex-1 rounded-sm border border-dashed px-2.5 py-3 flex flex-col items-center justify-center gap-1.5"
+          style={{borderColor: `${FUNNEL_COLOURS.gold}80`, backgroundColor: `${FUNNEL_COLOURS.gold}0A`}}
+          initial={reduce ? false : {opacity: 0.35}}
+          whileInView={{opacity: 0.85}}
+          viewport={{once: true}}
+          transition={{delay: reduce ? 0 : 0.35}}
+        >
+          <span
+            className="h-2.5 w-2.5 rounded-full border-2 border-dashed"
+            style={{borderColor: `${FUNNEL_COLOURS.gold}90`}}
+          />
+          <span className="font-mono text-[8px] font-bold uppercase tracking-wide text-dark/45">Care</span>
+          <span className="font-mono text-[6px] uppercase tracking-wide text-dark/35">Later</span>
+        </motion.div>
+      </div>
     </div>
   )
 }

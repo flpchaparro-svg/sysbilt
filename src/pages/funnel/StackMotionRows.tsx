@@ -1916,114 +1916,126 @@ const ENQUIRY_REPLY_STACK_VISUALS = [
   EnquiryTestPackStackVisual,
 ]
 
-/** Profile Posting: weekly cadence — dots light up one per week. */
+/** Profile Posting: week strip with 3 spaced posts. */
 function PostingCadenceStackVisual({reduce, play}: VisualProps) {
   const go = play || reduce
+  const days = [true, false, true, false, true, false, false]
   return (
-    <div className="w-full h-[72px] border border-dark/12 bg-cream px-3 flex items-center justify-center gap-2.5">
-      {Array.from({length: 4}).map((_, i) => (
-        <React.Fragment key={i}>
-          <motion.span
-            className="h-3 w-3 rounded-full shrink-0"
-            style={{backgroundColor: `${FUNNEL_COLOURS.ink}10`}}
-            animate={go ? {backgroundColor: [`${FUNNEL_COLOURS.ink}10`, colors.teal, colors.teal]} : undefined}
-            transition={{duration: 0.3, delay: reduce ? 0 : i * 0.28}}
+    <div className="w-full min-h-[72px] border border-dark/12 bg-cream px-3 py-2.5 flex flex-col justify-center gap-1.5">
+      <div className="flex items-center justify-between">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/40">Your week</span>
+        <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
+          3 posts
+        </span>
+      </div>
+      <div className="flex items-end gap-1 h-7">
+        {days.map((post, i) => (
+          <motion.div
+            key={i}
+            className="flex-1 rounded-[2px]"
+            style={{
+              height: post ? '100%' : '28%',
+              backgroundColor: post ? colors.teal : `${FUNNEL_COLOURS.ink}12`,
+            }}
+            animate={go && post ? {opacity: [0.4, 1]} : undefined}
+            transition={{delay: reduce ? 0 : i * 0.08, duration: 0.3}}
           />
-          {i < 3 ? (
-            <div className="h-px flex-1 max-w-6" style={{backgroundColor: `${FUNNEL_COLOURS.ink}12`}} />
-          ) : null}
-        </React.Fragment>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** Profile Posting: Offer / Proof / FAQ / Season templates. */
+function TemplateSetStackVisual({reduce, play}: VisualProps) {
+  const go = play && !reduce
+  const labels = ['Offer', 'Proof', 'FAQ', 'Season']
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-2.5 py-2.5 grid grid-cols-4 gap-1.5">
+      {labels.map((label, i) => (
+        <motion.div
+          key={label}
+          className="rounded-sm border flex flex-col items-center justify-center gap-1 px-1 py-2"
+          style={{borderColor: `${FUNNEL_COLOURS.ink}14`, backgroundColor: '#fff'}}
+          animate={
+            go
+              ? {
+                  borderColor: `${FUNNEL_COLOURS.accent}80`,
+                  backgroundColor: `${FUNNEL_COLOURS.accent}14`,
+                }
+              : undefined
+          }
+          transition={{delay: i * 0.12, duration: 0.35}}
+        >
+          <div className="h-1 w-4/5 rounded-sm" style={{backgroundColor: `${FUNNEL_COLOURS.ink}18`}} />
+          <div className="h-1 w-1/2 rounded-sm" style={{backgroundColor: `${FUNNEL_COLOURS.ink}12`}} />
+          <span className="font-mono text-[6px] font-bold uppercase tracking-wide text-dark/50 mt-0.5">
+            {label}
+          </span>
+        </motion.div>
       ))}
     </div>
   )
 }
 
-/** Profile Posting: blank framed cards fill in as templates go ready. */
-function TemplateSetStackVisual({reduce, play}: VisualProps) {
-  const go = play && !reduce
-  return (
-    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex items-center justify-center">
-      <div className="grid grid-cols-4 gap-1.5">
-        {Array.from({length: 4}).map((_, i) => (
-          <motion.div
-            key={i}
-            className="h-9 w-9 rounded-sm border"
-            style={{borderColor: `${FUNNEL_COLOURS.ink}18`, backgroundColor: '#fff'}}
-            animate={
-              go
-                ? {
-                    borderColor: [`${FUNNEL_COLOURS.ink}18`, `${FUNNEL_COLOURS.accent}80`, `${FUNNEL_COLOURS.accent}80`],
-                    backgroundColor: ['#fff', `${FUNNEL_COLOURS.accent}14`, `${FUNNEL_COLOURS.accent}14`],
-                  }
-                : undefined
-            }
-            transition={{delay: i * 0.12, duration: 0.35}}
-          />
-        ))}
-      </div>
-    </div>
-  )
-}
-
-/** Profile Posting: starter bank of posts fills the grid. */
+/** Profile Posting: weeks of ready posts fill the bank. */
 function StarterBankStackVisual({reduce, play}: VisualProps) {
   const go = play && !reduce
   return (
-    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex items-center justify-center">
-      <div className="grid grid-cols-4 gap-1.5">
-        {Array.from({length: 8}).map((_, i) => (
-          <motion.div
-            key={i}
-            className="aspect-square w-8 rounded-sm relative overflow-hidden"
-            style={{backgroundColor: `${FUNNEL_COLOURS.ink}10`}}
-            initial={{opacity: 0, scale: 0.9}}
-            animate={
-              go
-                ? {opacity: 1, scale: 1, backgroundColor: `${FUNNEL_COLOURS.goldDeep}22`}
-                : undefined
-            }
-            transition={{delay: i * 0.06, type: 'spring', stiffness: 360, damping: 18}}
-          />
-        ))}
-      </div>
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-2.5 space-y-1.5">
+      {[0, 1, 2, 3].map((i) => (
+        <motion.div
+          key={i}
+          className="flex items-center gap-2 rounded-sm border px-2 py-1"
+          style={{borderColor: `${FUNNEL_COLOURS.ink}12`, backgroundColor: '#fff'}}
+          initial={{opacity: 0, x: 12}}
+          animate={
+            go
+              ? {
+                  opacity: 1,
+                  x: 0,
+                  borderColor: colors.teal,
+                  backgroundColor: `${colors.teal}12`,
+                }
+              : undefined
+          }
+          transition={{delay: i * 0.1, type: 'spring', stiffness: 360, damping: 20}}
+        >
+          <span className="font-mono text-[7px] font-bold tabular-nums" style={{color: colors.teal}}>
+            W{i + 1}
+          </span>
+          <div className="flex-1 h-1 rounded-sm" style={{backgroundColor: `${colors.teal}35`}} />
+        </motion.div>
+      ))}
     </div>
   )
 }
 
-/** Profile Posting: a short chain of nodes lights up, ending on the handover. */
+/** Profile Posting: you publish; care stays optional. */
 function HandoverNotesStackVisual({reduce, play}: VisualProps) {
   const go = play || reduce
   return (
-    <div className="w-full h-[72px] border border-dark/20 bg-white px-3 flex items-center justify-center gap-1.5">
-      {Array.from({length: 4}).map((_, i) => {
-        const isLast = i === 3
-        return (
-          <React.Fragment key={i}>
-            <motion.span
-              className="h-2.5 w-2.5 rounded-full shrink-0"
-              style={{
-                backgroundColor: isLast ? 'transparent' : `${FUNNEL_COLOURS.ink}10`,
-                border: isLast ? `2px solid ${FUNNEL_COLOURS.goldDeep}90` : 'none',
-              }}
-              animate={
-                go
-                  ? isLast
-                    ? {scale: [1, 1.35, 1]}
-                    : {backgroundColor: [`${FUNNEL_COLOURS.ink}10`, 'rgba(197,160,89,0.85)', 'rgba(197,160,89,0.85)']}
-                  : undefined
-              }
-              transition={
-                isLast
-                  ? {duration: 1.2, repeat: Infinity, delay: 0.6}
-                  : {duration: 0.3, delay: reduce ? 0 : i * 0.16}
-              }
-            />
-            {i < 3 ? (
-              <div className="h-px flex-1 max-w-5" style={{backgroundColor: 'rgba(26,26,26,0.14)'}} />
-            ) : null}
-          </React.Fragment>
-        )
-      })}
+    <div className="w-full min-h-[72px] border border-dark/20 bg-white px-3 py-2.5 flex items-center gap-2">
+      <motion.div
+        className="flex-1 rounded-sm border-2 px-2 py-2 flex flex-col items-center gap-0.5"
+        style={{borderColor: colors.teal, backgroundColor: `${colors.teal}14`}}
+        animate={go ? {scale: [1, 1.03, 1]} : undefined}
+        transition={{duration: 1.4, repeat: Infinity}}
+      >
+        <span className="font-mono text-[8px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
+          You
+        </span>
+        <span className="font-mono text-[6px] uppercase tracking-wide text-dark/45">Publish</span>
+      </motion.div>
+      <motion.div
+        className="flex-1 rounded-sm border border-dashed px-2 py-2 flex flex-col items-center gap-0.5"
+        style={{borderColor: `${FUNNEL_COLOURS.gold}80`}}
+        animate={go ? {opacity: [0.45, 0.85, 0.45]} : undefined}
+        transition={{duration: 2, repeat: Infinity}}
+      >
+        <span className="font-mono text-[8px] font-bold uppercase tracking-wide text-dark/45">Care</span>
+        <span className="font-mono text-[6px] uppercase tracking-wide text-dark/35">Later</span>
+      </motion.div>
     </div>
   )
 }
