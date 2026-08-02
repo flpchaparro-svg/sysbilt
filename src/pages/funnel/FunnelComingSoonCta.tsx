@@ -1,15 +1,20 @@
 import React from 'react'
 import {FUNNEL_COLOURS} from './funnelTheme'
 
-/** Non-clickable CTA for Coming Soon draft pages. No Stripe, no form. */
+/**
+ * Non-clickable CTA while payment is not wired.
+ * Use the real product CTA label. Keep the note quiet and factual.
+ */
 export function FunnelComingSoonCta({
   label = 'Coming soon',
   size = 'md',
   theme = 'light',
+  note = 'Payment is not wired on this page yet. The list price above is the locked price.',
 }: {
   label?: string
   size?: 'md' | 'lg' | 'xl' | 'final'
   theme?: 'light' | 'dark'
+  note?: string
 }) {
   const sizeClass =
     size === 'final'
@@ -38,7 +43,7 @@ export function FunnelComingSoonCta({
         className="font-sans text-sm leading-relaxed max-w-md"
         style={{color: onDark ? `${FUNNEL_COLOURS.onInk}70` : FUNNEL_COLOURS.muted}}
       >
-        Draft for review only. Not for sale yet. No payment link and no form wired.
+        {note}
       </p>
     </div>
   )

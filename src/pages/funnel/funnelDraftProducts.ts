@@ -87,15 +87,26 @@ const comingSoonFaq: FunnelFaq = {
 }
 
 export const PROFILE_MESSAGING_COPY: FunnelProductCopy = {
-  ...makeDraftCopy({
-  eyebrow: 'Fixed price · One to two days · Coming soon',
+  eyebrow: 'Fixed price · One to two days · You keep the keys',
   h1Generic: 'People message your Google profile. Right now nobody answers in time',
+  h1Personal: (b: string) =>
+    `${b}, people message your Google profile. Right now nobody answers in time`,
   sub: 'Messaging is on for many profiles, or it should be. Without hours, canned replies, and a handoff, enquiries die in the thread. We switch it on properly and leave you rules you can keep.',
-  proofHeading: 'A channel you already have, unused',
-  proofLead:
+  ctaLabel: 'Set up messaging · $900',
+  proofLabel: 'The picture',
+  proofHeadingLive: 'A channel you already have, unused',
+  proofHeadingGeneric: 'A channel you already have, unused',
+  proofLead: (b: string | null) =>
+    b
+      ? `Someone finds ${b} on Maps, taps Message, and waits. If the reply is slow or never comes, they book the next clinic down the street.`
+      : 'Someone finds you on Maps, taps Message, and waits. If the reply is slow or never comes, they book the next clinic down the street.',
+  proofLeadGeneric:
     'Someone finds you on Maps, taps Message, and waits. If the reply is slow or never comes, they book the next clinic down the street.',
   proofAfter:
     'We turn messaging into a calm intake: open hours, first reply, and who gets the alert when a human must take over.',
+  proofAfterGeneric:
+    'We turn messaging into a calm intake: open hours, first reply, and who gets the alert when a human must take over.',
+  painLabel: 'What this is costing you',
   painHeading: 'You look open. You feel closed',
   painLines: [
     'Maps traffic looks fine. The thread sits unread while you are with a patient.',
@@ -103,11 +114,14 @@ export const PROFILE_MESSAGING_COPY: FunnelProductCopy = {
     'You never know which messages became bookings and which vanished.',
     'Competitors with a simple auto-ack feel more available than you are.',
   ],
+  bridgeLabel: 'The fix',
   bridgeHeading: 'Messaging on, hours set, replies ready',
   bridgeBody:
-    "This isn't a custom chatbot inside Google, and it isn't a promise that every thread books itself. It's Profile Messaging set up properly: availability, canned replies, and a clear path to your phone or inbox. Coming soon.",
+    "This is not a custom chatbot inside Google, and it is not a promise that every thread books itself. It is Profile Messaging set up properly: availability, canned replies, and a clear path to your phone or inbox.",
   bridgeGaugeCaption:
     'Google Messaging has limits. We use what it allows well, then route the rest to a human fast.',
+  benefitsLabel: 'What you get',
+  benefitsHeading: 'Clear for the company',
   benefits: [
     {
       title: 'Enquiries get a first answer',
@@ -126,37 +140,64 @@ export const PROFILE_MESSAGING_COPY: FunnelProductCopy = {
       text: 'When a human must step in, the alert lands where you already work.',
     },
   ],
+  processLabel: 'How it runs',
+  processHeading: 'A short, clear path',
   processSteps: [
     {label: 'Day 1', text: 'Access, current settings audit, hours and reply bank drafted.'},
     {label: 'Day 2', text: 'Messaging live, test threads, handoff checked with your team.'},
     {label: 'Handoff', text: 'Short guide: what to edit, what to leave alone, who owns the inbox.'},
   ],
+  stackLabel: 'Everything included',
+  stackHeading: 'One price, the full job',
   stackItems: [
-    {title: 'Messaging enabled and checked', text: 'On the profile you already own, with settings that match how you work.'},
-    {title: 'Hours and availability', text: 'Honest windows so you are not flooded when nobody is watching.'},
-    {title: 'Canned reply pack', text: 'First reply, after-hours, and common questions in your voice.'},
-    {title: 'Handoff path', text: 'Where alerts go, and when a human must take the thread.'},
+    {
+      title: 'Messaging enabled and checked',
+      text: 'On the profile you already own, with settings that match how you work.',
+    },
+    {
+      title: 'Hours and availability',
+      text: 'Honest windows so you are not flooded when nobody is watching.',
+    },
+    {
+      title: 'Canned reply pack',
+      text: 'First reply, after-hours, and common questions in your voice.',
+    },
+    {
+      title: 'Handoff path',
+      text: 'Where alerts go, and when a human must take the thread.',
+    },
   ],
-  scopeLine: 'One Google Business Profile. Coming soon. Complex multi-location setups get a same-day quote.',
+  scopeLine:
+    'One Google Business Profile. Complex multi-location setups get a same-day quote so the fixed price stays honest.',
+  priceLabel: 'Investment',
   price: '$900',
-  priceLead: 'Paid once when this opens. Fixed scope. This offer is coming soon.',
+  priceLead: 'Paid once, and we start. No quotes, no meetings, no scope creep.',
   guarantee:
-    'When this goes live: messaging settings and the agreed reply pack are delivered as scoped, or we keep working at no extra cost until they are.',
+    'Our promise: messaging settings and the agreed reply pack are delivered as scoped, or we keep working at no extra cost until they are.',
   priceAnchor: 'Cheaper than losing one booked job that sat unread in Maps.',
+  faqLabel: 'Objections',
+  faqHeading: 'Straight answers before you pay',
   faqs: [
-    comingSoonFaq,
     {
       q: 'Is this an AI that talks forever inside Google?',
-      a: 'No. Google Messaging is limited. We set it up well and hand hard questions to a human. For full FAQ chat, see Site Chat FAQ Bot on your own website.',
+      a: 'No. Google Messaging is limited. We set it up well and hand hard questions to a human. For full FAQ chat on your own website, see Site Chat FAQ Bot.',
     },
     {
       q: 'Do I need Profile Fix first?',
       a: 'Helpful, not mandatory. A messy profile still gets messaging, but cleaning categories and details first usually pays for itself.',
     },
+    {
+      q: 'Will this work on my profile?',
+      a: 'Most Australian Business Profiles can use messaging. If Google blocks it for your category or setup, we tell you early and refund what we could not do.',
+    },
+    {
+      q: 'Is this refundable?',
+      a: 'There is no change-of-mind refund, because we start straight away. If the agreed settings and reply pack are not delivered, we keep working at no extra cost until they are.',
+    },
   ],
+  finalLabel: 'Last step',
   finalHeading: 'Stop looking open while threads go quiet',
-  finalLine: 'Messaging on. Hours honest. First reply ready. Coming soon.',
-}),
+  finalLine: 'Messaging on. Hours honest. First reply ready. Paid once.',
   proofKind: 'profile-messaging',
 }
 
