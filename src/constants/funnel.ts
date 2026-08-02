@@ -174,6 +174,7 @@ export const FUNNEL_OUTBOUND_CODES: ReadonlySet<string> = new Set([
   'landing-page',
   'ai-phone',
   'crm-rescue',
+  'profile-posting',
 ])
 
 export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
@@ -216,6 +217,16 @@ export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
     lane: 'outbound',
     section: 'outbound',
     href: '/go/reviews',
+  },
+  {
+    code: 'profile-posting',
+    title: 'Profile Posting System',
+    price: '$1,100',
+    blurb: 'Cadence, templates, and a starter bank. You hit publish.',
+    status: 'live',
+    lane: 'outbound',
+    section: 'outbound',
+    href: '/go/profile-posting',
   },
   {
     code: 'search-fix',
@@ -306,16 +317,6 @@ export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
     lane: 'soon',
     section: 'draft-local',
     href: '/go/enquiry-reply',
-  },
-  {
-    code: 'profile-posting',
-    title: 'Profile Posting System',
-    price: '$1,600',
-    blurb: 'Cadence, templates, and a bank of posts so the profile stays alive.',
-    status: 'soon',
-    lane: 'soon',
-    section: 'draft-local',
-    href: '/go/profile-posting',
   },
   {
     code: 'qa-review-desk',

@@ -2293,56 +2293,56 @@ export const ENQUIRY_REPLY_COPY: FunnelProductCopy = {
 }
 
 export const PROFILE_POSTING_COPY: FunnelProductCopy = {
-  eyebrow: 'Fixed price setup · Optional monthly care · One profile',
-  h1Generic: 'A Google profile that never posts looks closed, even when you are busy',
+  eyebrow: 'Fixed price · Setup kit · You hit publish',
+  h1Generic: 'Your Google profile looks closed when the Updates tab stays empty',
   h1Personal: (b: string) =>
-    `${b}, a Google profile that never posts looks closed, even when you are busy`,
-  sub: 'Google Business Profile rewards posts with visibility, and a quiet Updates tab reads as a business that slowed down. We build the cadence, templates, and a starter bank of ready posts so the profile stops going quiet for months at a time.',
-  ctaLabel: 'Set up posting · $1,600',
+    `${b}, your Google profile looks closed when the Updates tab stays empty`,
+  sub: "This is a posting kit for one Google Business Profile: how often to post, templates in your voice, and a bank of posts ready to publish. You hit publish. We don't schedule it for you in this product.",
+  ctaLabel: 'Set up posting · $1,100',
   proofLabel: 'The picture',
-  proofHeadingLive: 'Silence reads as neglect',
-  proofHeadingGeneric: 'Silence reads as neglect',
+  proofHeadingLive: 'An empty Updates tab reads as neglect',
+  proofHeadingGeneric: 'An empty Updates tab reads as neglect',
   proofLead: (b: string | null) =>
     b
-      ? `${b}'s Google profile takes photos and reviews today. Nobody is feeding it new posts.`
-      : 'Your Google profile takes photos and reviews today. Nobody is feeding it new posts.',
+      ? `${b} shows photos and reviews. The Updates feed has nothing new.`
+      : 'Your listing shows photos and reviews. The Updates feed has nothing new.',
   proofLeadGeneric:
-    'Your Google profile takes photos and reviews today. Nobody is feeding it new posts, and every month without an update quietly tells people the business slowed down.',
+    'Your listing shows photos and reviews. The Updates feed has nothing new, so people quietly assume the business slowed down.',
   proofAfter:
-    "The fix isn't a chatbot or fake engagement. It's a posting cadence, templates in your voice, and a starter bank of posts ready before we hand it over.",
+    "We leave you a kit you can run: cadence, templates, and weeks of posts already written. Publishing stays with you unless you buy care later.",
   proofAfterGeneric:
-    "The fix isn't a chatbot or fake engagement. It's a posting cadence, templates in your voice, and a starter bank of posts ready before we hand it over.",
+    "We leave you a kit you can run: cadence, templates, and weeks of posts already written. Publishing stays with you unless you buy care later.",
   painLabel: 'What this is costing you',
   painHeading: 'You meant to post, then the week ate you',
   painLines: [
-    'The last update sat there so long, half your offers have already changed.',
-    'Nobody owns posting, so it only happens when someone feels guilty about it.',
-    'Competitors post weekly and look busier, even on the weeks you are busier.',
-    'Reviews keep landing, but there is no rhythm of proof sitting between them.',
+    'The last update is so old that half your offers have already changed.',
+    'Nobody owns posting, so it only happens when someone feels guilty.',
+    'The clinic next door posts weekly and looks busier than you, even when you are busier.',
+    'Reviews keep landing, but nothing fresh sits between them.',
   ],
   bridgeLabel: 'The fix',
-  bridgeHeading: 'A posting system you can run, or we can run for you',
+  bridgeHeading: 'A posting kit, not a posting retainer',
   bridgeBody:
-    "This isn't us replying to messages or seeding questions on your profile. Those sit inside separate Google tools and behave differently to posts, and we are not promising either here. What we build is the posting side: categories, templates in your voice, and a starter bank ready to publish. An optional care month keeps it fed if you would rather not touch it.",
-  bridgeGaugeCaption: 'Setup once. Publish on a rhythm you can actually keep.',
-  benefitsLabel: 'What changes for you',
-  benefitsHeading: 'Outcomes, not jargon',
+    "We're not running your calendar in this product, and we're not promising messages or Q&A. You get a clear cadence, templates in your voice, and a starter bank ready to publish. Optional monthly care is separate if you later want us to keep feeding it.",
+  bridgeGaugeCaption: 'Setup once. You publish from the bank.',
+  benefitsLabel: 'What you get',
+  benefitsHeading: 'Clear for the company',
   benefits: [
     {
-      title: 'The profile looks alive',
-      text: 'Regular posts signal you are open, active, and paying attention.',
+      title: 'A rhythm you can keep',
+      text: 'How often to post, matched to real capacity, not an influencer schedule.',
     },
     {
-      title: 'Less blank-page stress',
-      text: 'Templates and a bank remove the weekly invent-from-nothing problem.',
+      title: 'Templates in your voice',
+      text: 'Offer, proof, FAQ, and seasonal shapes so you are not inventing from nothing each week.',
     },
     {
-      title: 'Offers stay current',
-      text: 'Hours, services, and seasonal notes have somewhere to land.',
+      title: 'A starter bank',
+      text: 'Four to eight weeks of posts drafted and ready before we hand over.',
     },
     {
-      title: 'Ready for the wider system',
-      text: 'Clean cadence and templates make Content System an easy next step if you want every channel fed.',
+      title: 'You stay in control',
+      text: 'You publish. Care month is optional later if you want us to feed the bank.',
     },
   ],
   processLabel: 'How it runs',
@@ -2350,73 +2350,72 @@ export const PROFILE_POSTING_COPY: FunnelProductCopy = {
   processSteps: [
     {
       label: 'Brief',
-      text: 'Voice, offers, and what you are and are not allowed to say in public.',
+      text: 'Voice, offers, and what you will and will not say in public.',
     },
     {
       label: 'Build',
-      text: 'Cadence, templates, categories, and a starter bank of posts.',
+      text: 'Cadence, templates, and the starter bank.',
     },
     {
-      label: 'Prove',
-      text: 'You watch the first posts go live and approve the rhythm going forward.',
+      label: 'Handoff',
+      text: 'You approve the kit. First publish is yours, with a short how-to.',
     },
   ],
   stackLabel: 'Everything included',
-  stackHeading: 'One price, the full job',
+  stackHeading: 'One price, the full kit',
   stackItems: [
     {
       title: 'Posting cadence',
-      text: 'A realistic rhythm for your capacity, not an influencer schedule.',
+      text: 'A realistic rhythm for your week.',
     },
     {
       title: 'Template set',
-      text: 'Offer, proof, FAQ, and seasonal shapes written in your voice.',
+      text: 'Offer, proof, FAQ, and seasonal shapes in your voice.',
     },
     {
       title: 'Starter bank',
-      text: 'Four to eight weeks of posts drafted and ready to publish.',
+      text: 'Four to eight weeks of posts ready to publish.',
     },
     {
       title: 'Handover notes',
-      text: 'How to keep the rhythm yourself, or add optional care later.',
+      text: 'How to keep the rhythm yourself, and when care month is worth adding.',
     },
   ],
   scopeLine:
-    'One Google Business Profile. Setup covers cadence, templates, and the agreed starter bank. Optional monthly care is quoted separately when you want it.',
+    'One Google Business Profile. Setup is the kit only. We do not schedule posts for you in this price. Optional monthly care is quoted separately.',
   priceLabel: 'Investment',
-  price: '$1,600 setup',
-  priceLead:
-    'Fixed once your categories and voice are confirmed. This is the locked list price for the scope above.',
+  price: '$1,100',
+  priceLead: 'Paid once for the kit. No monthly fee unless you choose care later.',
   guarantee:
-    'When this goes live: agreed cadence, templates, and starter bank are delivered, or we keep working at no extra cost until they are.',
-  priceAnchor: 'Cheaper than looking closed next to a competitor who posts every week.',
+    'Agreed cadence, templates, and starter bank are delivered as scoped, or we keep working at no extra cost until they are.',
+  priceAnchor: 'Less than looking closed next to a competitor who posts every week.',
   faqLabel: 'Objections',
   faqHeading: 'Straight answers before you pay',
   faqs: [
     {
-      q: 'Can I pay for this today?',
-      a: "Not on this page yet. Payment isn't wired here, and the price above is the locked list price for when it opens. Reply to any SYSBILT email if you want it scoped sooner.",
+      q: 'Do you post and schedule for us every week?',
+      a: 'Not in this product. Setup leaves you the cadence, templates, and bank. You hit publish. Optional care month is separate if you want us to keep feeding it.',
     },
     {
-      q: 'Will this reply to messages or seed Q&A on my profile?',
-      a: 'No. Messages and Q&A sit inside separate Google tools and behave differently to posts. This product is the posting cadence, templates, and starter bank only.',
+      q: 'Is this messages or Q&A on Google?',
+      a: 'No. This is posts on the Updates tab only.',
     },
     {
       q: 'How is this different from Google Profile Fix?',
-      a: 'Google Profile Fix cleans up claim, categories, photos, and your review link. This is what keeps the profile looking active afterwards: posts on a rhythm.',
+      a: 'Profile Fix cleans claim, categories, photos, and the review link. This kit is what keeps the Updates feed from going quiet afterwards.',
     },
     {
       q: 'How is this different from Content System?',
-      a: 'Content System runs every channel every month. This is one Google feature, posts, set up once, with an optional care month if you want us to keep feeding it.',
+      a: 'Content System feeds every channel every month. This is one Google profile, set up once.',
     },
     {
-      q: 'Will you post for us every week?',
-      a: 'Only if you take the optional care month. Setup alone leaves you able to publish yourselves from the starter bank.',
+      q: 'Is this refundable?',
+      a: "There's no change-of-mind refund, because we start straight away. If the agreed kit isn't delivered, we keep working at no extra cost until it is.",
     },
   ],
   finalLabel: 'Last step',
-  finalHeading: 'Look open on Maps, not frozen in time',
-  finalLine: 'Cadence, templates, and a bank of posts ready to publish.',
+  finalHeading: 'A kit you can publish from, not a promise we post forever',
+  finalLine: 'Cadence, templates, starter bank. You hit publish. Paid once.',
   proofKind: 'profile-posting',
 }
 

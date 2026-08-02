@@ -9,6 +9,7 @@ const PRODUCT_CODES = new Set([
   'speed-fix',
   'missed-call',
   'google-profile',
+  'profile-posting',
   'reviews',
   'search-fix',
   'booking',
@@ -23,6 +24,7 @@ const PRODUCT_LABELS: Record<string, string> = {
   'speed-fix': 'Website Speed Fix',
   'missed-call': 'Missed-Call Text-Back',
   'google-profile': 'Google Profile Fix',
+  'profile-posting': 'Profile Posting System',
   reviews: 'Review Engine',
   'search-fix': 'Search Visibility Fix',
   booking: 'Booking System',
@@ -37,6 +39,7 @@ const PRODUCT_AMOUNTS: Record<string, string> = {
   'speed-fix': '1200',
   'missed-call': '750',
   'google-profile': '600',
+  'profile-posting': '1100',
   reviews: '1100',
   'search-fix': '1400',
   booking: '1500',
@@ -95,6 +98,8 @@ const GOOGLE_PROFILE_STATUS = new Set([
   'unsure',
 ]);
 const GOOGLE_PROFILE_ACCESS = new Set(['invite', 'call', 'claim', 'recover']);
+const WHO_PUBLISHES = new Set(['owner', 'staff', 'care-later', 'unsure']);
+const PROFILE_POSTING_ACCESS = new Set(['invite', 'call', 'claim', 'recover']);
 const REVIEW_JOBS = new Set(['sms', 'email', 'software', 'manual', 'unsure']);
 const REVIEWS_ACCESS = new Set(['invite', 'call', 'claim', 'recover', 'provider', 'crm']);
 const PLATFORMS = new Set([
@@ -133,6 +138,7 @@ type Body = {
   phoneSetup?: unknown;
   profileUrl?: unknown;
   profileStatus?: unknown;
+  whoPublishes?: unknown;
   reviewJob?: unknown;
   crmSystem?: unknown;
   leadSource?: unknown;
@@ -463,6 +469,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const phoneSetup = str(body.phoneSetup, 40);
   const profileUrl = str(body.profileUrl, 500);
   const profileStatus = str(body.profileStatus, 40);
+  const whoPublishes = str(body.whoPublishes, 40);
   const reviewJob = str(body.reviewJob, 40);
   const crmSystem = str(body.crmSystem, 40);
   const leadSource = str(body.leadSource, 40);
@@ -508,6 +515,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
 
   const isMissedCall = product === 'missed-call' || product === 'ai-phone';
   const isGoogleProfile = product === 'google-profile';
+  const isProfilePosting = product === 'profile-posting';
   const isReviews = product === 'reviews';
   const isCrmRescue = product === 'crm-rescue';
   const isBooking = product === 'booking';
@@ -533,6 +541,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     }
     if (!GOOGLE_PROFILE_STATUS.has(profileStatus) || !GOOGLE_PROFILE_ACCESS.has(accessPath)) {
       res.status(400).json({ error: 'Invalid profile status or access path' });
+      return;
+    }
+  } else if (isProfilePosting) {
+    if (profileUrl.length < 3) {
+      res.status(400).json({ error: 'Please enter your Google profile link or exact listing name.' });
+      return;
+    }
+    if (!GOOGLE_PROFILE_STATUS.has(profileStatus) || !PROFILE_POSTING_ACCESS.has(accessPath)) {
+      res.status(400).json({ error: 'Invalid profile status or access path' });
+      return;
+    }
+    if (!WHO_PUBLISHES.has(whoPublishes)) {
+      res.status(400).json({ error: 'Invalid who-publishes answer' });
       return;
     }
   } else if (isReviews) {
@@ -659,6 +680,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         ]
           .filter(Boolean)
           .join('\n')
+      : isProfilePosting
+        ? [
+            `Funnel access form — ${product}`,
+            `Business: ${business}`,
+            `Profile: ${profileUrl}`,
+            `Profile status: ${profileStatus}`,
+            `Who publishes: ${whoPublishes}`,
+            `Access path: ${accessPath}`,
+            accessDetail ? `Access notes:\n${accessDetail}` : null,
+            notes ? `Other notes:\n${notes}` : null,
+            `Submitted: ${new Date().toISOString()}`,
+          ]
+            .filter(Boolean)
+            .join('\n')
       : isReviews
         ? [
             `Funnel access form — ${product}`,
@@ -800,6 +835,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     phoneSetup,
     profileUrl,
     profileStatus,
+    whoPublishes,
     reviewJob,
     crmSystem,
     leadSource,
@@ -919,17 +955,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           ? `Phone: ${phone} · Setup: ${phoneSetup}`
           : isGoogleProfile
             ? `Profile: ${profileUrl.slice(0, 80)} · Status: ${profileStatus}`
-            : isReviews
-              ? `Profile: ${profileUrl.slice(0, 80)} · Status: ${profileStatus}${reviewJob ? ` · Job: ${reviewJob}` : ''}`
-              : isCrmRescue
-                ? `CRM: ${crmSystem} · Leads: ${leadSource} · Goal: ${crmGoal}`
-                : isBooking
-                  ? `Tool: ${bookingTool} · Books: ${bookingWhat} · Surfaces: ${bookingWhere}`
-                  : website,
-        isMissedCall || isGoogleProfile || isReviews || isCrmRescue || isBooking
+            : isProfilePosting
+              ? `Profile: ${profileUrl.slice(0, 80)} · Status: ${profileStatus} · Publishes: ${whoPublishes}`
+              : isReviews
+                ? `Profile: ${profileUrl.slice(0, 80)} · Status: ${profileStatus}${reviewJob ? ` · Job: ${reviewJob}` : ''}`
+                : isCrmRescue
+                  ? `CRM: ${crmSystem} · Leads: ${leadSource} · Goal: ${crmGoal}`
+                  : isBooking
+                    ? `Tool: ${bookingTool} · Books: ${bookingWhat} · Surfaces: ${bookingWhere}`
+                    : website,
+        isMissedCall || isGoogleProfile || isProfilePosting || isReviews || isCrmRescue || isBooking
           ? `Access: ${accessPath}`
           : `Platform: ${platform} · Access: ${accessPath}`,
-        !isMissedCall && !isGoogleProfile && !isReviews && !isCrmRescue && !isBooking && sameProvider !== 'yes'
+        !isMissedCall &&
+        !isGoogleProfile &&
+        !isProfilePosting &&
+        !isReviews &&
+        !isCrmRescue &&
+        !isBooking &&
+        sameProvider !== 'yes'
           ? `Domain/hosting same: ${sameProvider}${domainProvider ? ` · Domain: ${domainProvider}` : ''}${hostingProvider ? ` · Host: ${hostingProvider}` : ''}`
           : null,
         (isCrmRescue || isBooking) && websiteUrl ? `Website: ${websiteUrl}` : null,

@@ -51,6 +51,7 @@ import {
   type ProfileStatusId,
   type ReviewJobId,
   type SameProviderId,
+  type WhoPublishesId,
 } from './funnelAccessTypes'
 
 const SCHEDULER_URL = 'https://meetings-ap1.hubspot.com/felipe-chaparro'
@@ -73,6 +74,7 @@ type StepId =
   | 'phoneSetup'
   | 'profileUrl'
   | 'profileStatus'
+  | 'whoPublishes'
   | 'reviewJob'
   | 'crmSystem'
   | 'leadSource'
@@ -126,6 +128,13 @@ const PHASES_MISSED: {id: PhaseId; n: number; label: string}[] = [
 ]
 
 const PHASES_GOOGLE: {id: PhaseId; n: number; label: string}[] = [
+  {id: 'about', n: 1, label: 'About you'},
+  {id: 'site', n: 2, label: 'Your profile'},
+  {id: 'access', n: 3, label: 'Access'},
+  {id: 'done', n: 4, label: 'Done'},
+]
+
+const PHASES_POSTING: {id: PhaseId; n: number; label: string}[] = [
   {id: 'about', n: 1, label: 'About you'},
   {id: 'site', n: 2, label: 'Your profile'},
   {id: 'access', n: 3, label: 'Access'},
@@ -191,6 +200,7 @@ function phaseForStep(
     | 'speed'
     | 'missed-call'
     | 'google-profile'
+    | 'profile-posting'
     | 'reviews'
     | 'crm-rescue'
     | 'booking'
@@ -214,6 +224,10 @@ function phaseForStep(
   }
   if (kind === 'google-profile') {
     if (step === 'profileUrl' || step === 'profileStatus') return 'site'
+    return 'access'
+  }
+  if (kind === 'profile-posting') {
+    if (step === 'profileUrl' || step === 'profileStatus' || step === 'whoPublishes') return 'site'
     return 'access'
   }
   if (kind === 'reviews') {
@@ -927,6 +941,40 @@ function googleAccessOptionsForStatus(status: ProfileStatusId | null) {
       ]
   }
 }
+
+const WHO_PUBLISHES_OPTIONS: {
+  id: WhoPublishesId
+  label: string
+  blurb: string
+  icon: React.ReactNode
+  unsure?: boolean
+}[] = [
+  {
+    id: 'owner',
+    label: 'I will publish',
+    blurb: 'You hit publish yourself once the cadence and templates are ready.',
+    icon: <Check className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'staff',
+    label: 'Someone on the team',
+    blurb: 'A staff member publishes from the calendar and the starter bank.',
+    icon: <Users className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'care-later',
+    label: 'We may want care later',
+    blurb: 'You start solo, then hand posting to us as an add-on down the track.',
+    icon: <Calendar className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'unsure',
+    label: 'Not sure',
+    blurb: 'Fine. We will help you decide once the system is set up.',
+    icon: null,
+    unsure: true,
+  },
+]
 
 /** Reviews: access depends on profile status, then how jobs get marked complete. */
 function reviewsAccessOptionsForStatus(
@@ -1973,6 +2021,11 @@ function helpForStep(step: StepId, opts?: {isAiPhone?: boolean}): HelpBlock {
           'Quick call: we walk through it together in about five minutes',
         ],
       }
+    case 'whoPublishes':
+      return {
+        title: 'Who hits publish',
+        body: 'This decides who needs the calendar and templates day to day. Pick the closest match. We can adjust later.',
+      }
     case 'accessDetail':
       return {
         title: 'Access notes',
@@ -2218,6 +2271,7 @@ const FunnelAccessPage: React.FC = () => {
   const [profileUrl, setProfileUrl] = useState('')
   const [profileStatus, setProfileStatus] = useState<ProfileStatusId | null>(null)
   const [reviewJob, setReviewJob] = useState<ReviewJobId | null>(null)
+  const [whoPublishes, setWhoPublishes] = useState<WhoPublishesId | null>(null)
   const [websiteUrl, setWebsiteUrl] = useState('')
   const [crmSystem, setCrmSystem] = useState<CrmSystemId | null>(null)
   const [leadSource, setLeadSource] = useState<CrmLeadSourceId | null>(null)
@@ -2268,6 +2322,7 @@ const FunnelAccessPage: React.FC = () => {
   const isMissedCall = product === 'missed-call'
   const isAiPhone = product === 'ai-phone'
   const isGoogleProfile = product === 'google-profile'
+  const isProfilePosting = product === 'profile-posting'
   const isReviews = product === 'reviews'
   const isCrmRescue = product === 'crm-rescue'
   const isBooking = product === 'booking'
@@ -2278,11 +2333,13 @@ const FunnelAccessPage: React.FC = () => {
   const isContentSystem = product === 'content-system'
   const usesMissedWizard = isMissedCall || isAiPhone
   const usesGoogleWizard = isGoogleProfile
+  const usesPostingWizard = isProfilePosting
   const usesReviewsWizard = isReviews
   const productKind:
     | 'speed'
     | 'missed-call'
     | 'google-profile'
+    | 'profile-posting'
     | 'reviews'
     | 'crm-rescue'
     | 'booking'
@@ -2294,40 +2351,44 @@ const FunnelAccessPage: React.FC = () => {
       ? 'missed-call'
       : usesGoogleWizard
         ? 'google-profile'
-        : usesReviewsWizard
-          ? 'reviews'
-          : isCrmRescue
-            ? 'crm-rescue'
-            : isBooking
-              ? 'booking'
-              : isLandingPage
-                ? 'landing-page'
-                : isTeamAi
-                  ? 'team-ai'
-                  : isChangePack
-                    ? 'change-pack'
-                    : isContentSystem
-                      ? 'content-system'
-                      : 'speed'
+        : usesPostingWizard
+          ? 'profile-posting'
+          : usesReviewsWizard
+            ? 'reviews'
+            : isCrmRescue
+              ? 'crm-rescue'
+              : isBooking
+                ? 'booking'
+                : isLandingPage
+                  ? 'landing-page'
+                  : isTeamAi
+                    ? 'team-ai'
+                    : isChangePack
+                      ? 'change-pack'
+                      : isContentSystem
+                        ? 'content-system'
+                        : 'speed'
   const phases = usesMissedWizard
     ? PHASES_MISSED
     : usesGoogleWizard
       ? PHASES_GOOGLE
-      : usesReviewsWizard
-        ? PHASES_REVIEWS
-        : isCrmRescue
-          ? PHASES_CRM
-          : isBooking
-            ? PHASES_BOOKING
-            : isLandingPage
-              ? PHASES_LANDING
-              : isTeamAi
-                ? PHASES_TEAM
-                : isChangePack
-                  ? PHASES_CHANGE
-                  : isContentSystem
-                    ? PHASES_CONTENT
-                    : PHASES_SPEED
+      : usesPostingWizard
+        ? PHASES_POSTING
+        : usesReviewsWizard
+          ? PHASES_REVIEWS
+          : isCrmRescue
+            ? PHASES_CRM
+            : isBooking
+              ? PHASES_BOOKING
+              : isLandingPage
+                ? PHASES_LANDING
+                : isTeamAi
+                  ? PHASES_TEAM
+                  : isChangePack
+                    ? PHASES_CHANGE
+                    : isContentSystem
+                      ? PHASES_CONTENT
+                      : PHASES_SPEED
 
   const stepOrder = useMemo((): StepId[] => {
     // Always show the product picker first so buyers see their purchase highlighted
@@ -2354,6 +2415,21 @@ const FunnelAccessPage: React.FC = () => {
         'business',
         'profileUrl',
         'profileStatus',
+        'access',
+        'accessDetail',
+        'notes',
+        'done',
+      ]
+    }
+    if (usesPostingWizard) {
+      return [
+        'product',
+        'name',
+        'email',
+        'business',
+        'profileUrl',
+        'profileStatus',
+        'whoPublishes',
         'access',
         'accessDetail',
         'notes',
@@ -2493,6 +2569,7 @@ const FunnelAccessPage: React.FC = () => {
     isMissedCall,
     isAiPhone,
     isGoogleProfile,
+    isProfilePosting,
     isReviews,
     profileStatus,
     isCrmRescue,
@@ -2529,7 +2606,7 @@ const FunnelAccessPage: React.FC = () => {
     ? isAiPhone
       ? aiPhoneAccessOptionsForSetup(phoneSetup)
       : missedCallAccessOptionsForSetup(phoneSetup)
-    : usesGoogleWizard
+    : usesGoogleWizard || usesPostingWizard
       ? googleAccessOptionsForStatus(profileStatus)
       : usesReviewsWizard
         ? reviewsAccessOptionsForStatus(profileStatus, reviewJob)
@@ -2572,6 +2649,11 @@ const FunnelAccessPage: React.FC = () => {
       }
     } else if (usesGoogleWizard) {
       if (!profileStatus) {
+        setError('Something is missing. Use Back to check your answers.')
+        return
+      }
+    } else if (usesPostingWizard) {
+      if (!profileStatus || !whoPublishes) {
         setError('Something is missing. Use Back to check your answers.')
         return
       }
@@ -2673,6 +2755,19 @@ const FunnelAccessPage: React.FC = () => {
             accessDetail: accessDetail.trim(),
             notes: notes.trim(),
           }
+        : usesPostingWizard
+          ? {
+              product,
+              name: name.trim(),
+              email: email.trim(),
+              business: business.trim(),
+              profileUrl: profileUrl.trim(),
+              profileStatus: profileStatus!,
+              whoPublishes: whoPublishes!,
+              accessPath,
+              accessDetail: accessDetail.trim(),
+              notes: notes.trim(),
+            }
         : usesReviewsWizard
           ? {
               product,
@@ -2908,6 +3003,12 @@ const FunnelAccessPage: React.FC = () => {
     setReviewJob(null)
     setAccessPath(null)
     window.setTimeout(() => goNext('profileStatus'), 200)
+  }
+
+  function selectWhoPublishes(id: WhoPublishesId) {
+    setWhoPublishes(id)
+    setAccessPath(null)
+    window.setTimeout(() => goNext('whoPublishes'), 200)
   }
 
   function selectReviewJob(id: ReviewJobId) {
@@ -3224,6 +3325,31 @@ const FunnelAccessPage: React.FC = () => {
                       <SelectCard
                         selected={profileStatus === opt.id}
                         onSelect={() => selectProfileStatus(opt.id)}
+                        title={opt.label}
+                        blurb={opt.blurb}
+                        icon={opt.icon}
+                        unsure={opt.unsure}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : null}
+
+            {step === 'whoPublishes' ? (
+              <>
+                <QuestionTitle>
+                  Who will hit <span style={{color: RED}}>publish</span>?
+                </QuestionTitle>
+                <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
+                  This decides who needs the calendar and templates. Hover a card, then Select.
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+                  {WHO_PUBLISHES_OPTIONS.map((opt) => (
+                    <div key={opt.id}>
+                      <SelectCard
+                        selected={whoPublishes === opt.id}
+                        onSelect={() => selectWhoPublishes(opt.id)}
                         title={opt.label}
                         blurb={opt.blurb}
                         icon={opt.icon}
@@ -4276,7 +4402,7 @@ const FunnelAccessPage: React.FC = () => {
                           : accessPath === 'crm'
                             ? 'Which CRM, and whether calls already log there.'
                             : 'Best times to call, or anything that usually trips people up.'
-                    : usesGoogleWizard || usesReviewsWizard
+                    : usesGoogleWizard || usesPostingWizard || usesReviewsWizard
                       ? accessPath === 'invite'
                         ? 'The Google account email that can add managers, or say you will send the invite shortly.'
                         : accessPath === 'claim'

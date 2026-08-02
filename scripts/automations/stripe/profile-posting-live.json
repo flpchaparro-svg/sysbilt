@@ -1,0 +1,14 @@
+{
+  "createdAt": "2026-08-02T10:33:00.000Z",
+  "mode": "live",
+  "note": "Profile Posting System · $1,100 live Payment Link. After pay → thanks?p=profile-posting → access wizard. Never use buy.stripe.com/test_ on this page.",
+  "product": {
+    "code": "profile-posting",
+    "name": "Profile Posting System",
+    "productId": "prod_UzwaMH1VwW68xY",
+    "priceId": "price_1Tzwhh7kQC0CB85zYpqCONoI",
+    "paymentLinkId": "plink_1Tzwiv7kQC0CB85z6rDQr742",
+    "paymentLinkUrl": "https://buy.stripe.com/3cI14hbKp7ji5Qaccr3gk0f",
+    "amountAud": 1100
+  }
+}

@@ -2,13 +2,7 @@ import React, {useRef} from 'react'
 import {motion, useInView, useReducedMotion} from 'framer-motion'
 import {FUNNEL_COLOURS} from './funnelTheme'
 
-const STEPS = [
-  {label: 'Cadence set', detail: 'A weekly rhythm you can keep'},
-  {label: 'Templates ready', detail: 'Offer, proof, FAQ, seasonal'},
-  {label: 'Bank loaded', detail: 'Weeks of posts ready to publish'},
-]
-
-/** Price-band mock: cadence and template bank once it is wired. */
+/** Once it's wired: cadence fills, templates go blank-to-ready, the bank grows. Minimal labels. */
 export function ProfilePostingDeliverableMock() {
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, {once: true, amount: 0.4})
@@ -29,50 +23,82 @@ export function ProfilePostingDeliverableMock() {
         style={{borderColor: `${FUNNEL_COLOURS.ink}14`, backgroundColor: '#fff'}}
       >
         <div
-          className="px-4 py-2.5 font-mono text-[9px] font-bold uppercase tracking-[0.2em]"
-          style={{backgroundColor: FUNNEL_COLOURS.ink, color: FUNNEL_COLOURS.onInk}}
+          className="px-4 py-2.5 flex items-center gap-1.5"
+          style={{backgroundColor: FUNNEL_COLOURS.ink}}
         >
-          Once it&apos;s wired
+          <span className="h-1.5 w-1.5 rounded-full" style={{backgroundColor: `${FUNNEL_COLOURS.onInk}55`}} />
+          <span className="h-1.5 w-1.5 rounded-full" style={{backgroundColor: `${FUNNEL_COLOURS.onInk}35`}} />
+          <span className="h-1.5 w-1.5 rounded-full" style={{backgroundColor: `${FUNNEL_COLOURS.onInk}20`}} />
+          <motion.span
+            className="ml-auto h-1.5 w-1.5 rounded-full"
+            style={{backgroundColor: '#1F7A4D'}}
+            animate={go ? {opacity: [0.4, 1, 0.4]} : {opacity: 0.8}}
+            transition={{duration: 1.4, repeat: Infinity}}
+          />
         </div>
-        <div className="p-5 space-y-3">
-          {STEPS.map((step, i) => (
-            <motion.div
-              key={step.label}
-              className="flex items-center gap-3"
-              initial={reduce ? false : {opacity: 0, x: -10}}
-              animate={go ? {opacity: 1, x: 0} : {opacity: 0.5, x: 0}}
-              transition={{delay: reduce ? 0 : 0.1 + i * 0.12, type: 'spring', stiffness: 360}}
-            >
-              <motion.span
-                className="h-2.5 w-2.5 rounded-full shrink-0"
-                style={{backgroundColor: '#1F7A4D'}}
+
+        <div className="p-5 space-y-4">
+          {/* beat 1: cadence — weekly ticks fill in */}
+          <div className="flex items-center gap-1.5">
+            {Array.from({length: 7}).map((_, i) => (
+              <motion.div
+                key={i}
+                className="h-6 flex-1 rounded-sm"
+                style={{backgroundColor: `${FUNNEL_COLOURS.ink}08`}}
+                animate={go ? {backgroundColor: [`${FUNNEL_COLOURS.ink}08`, FUNNEL_COLOURS.gold, FUNNEL_COLOURS.gold]} : undefined}
+                transition={{duration: 0.4, delay: reduce ? 0 : 0.15 + i * 0.09}}
+              />
+            ))}
+          </div>
+
+          {/* beat 2: templates — blank framed cards go ready */}
+          <div className="grid grid-cols-4 gap-1.5">
+            {Array.from({length: 4}).map((_, i) => (
+              <motion.div
+                key={i}
+                className="aspect-square rounded-md border"
+                style={{borderColor: `${FUNNEL_COLOURS.ink}18`, backgroundColor: '#fff'}}
+                initial={{borderStyle: 'dashed'}}
                 animate={
                   go
                     ? {
-                        scale: [1, 1.35, 1],
-                        boxShadow: [
-                          '0 0 0 0 rgba(31,122,77,0)',
-                          '0 0 0 4px rgba(31,122,77,0.25)',
-                          '0 0 0 0 rgba(31,122,77,0)',
-                        ],
+                        borderColor: [`${FUNNEL_COLOURS.ink}18`, `${FUNNEL_COLOURS.goldDeep}80`, `${FUNNEL_COLOURS.goldDeep}80`],
+                        backgroundColor: ['#fff', `${FUNNEL_COLOURS.gold}1C`, `${FUNNEL_COLOURS.gold}1C`],
                       }
                     : undefined
                 }
-                transition={{duration: 1.4, repeat: Infinity, delay: i * 0.28}}
+                transition={{duration: 0.4, delay: reduce ? 0 : 0.7 + i * 0.12}}
               />
-              <div className="min-w-0">
-                <p className="font-sans text-sm font-semibold" style={{color: FUNNEL_COLOURS.ink}}>
-                  {step.label}
-                </p>
-                <p
-                  className="font-mono text-[9px] uppercase tracking-wider"
-                  style={{color: FUNNEL_COLOURS.muted}}
-                >
-                  {step.detail}
-                </p>
-              </div>
-            </motion.div>
-          ))}
+            ))}
+          </div>
+
+          {/* beat 3: bank — a stack of post cards grows */}
+          <div className="relative h-12 flex items-end justify-center">
+            {Array.from({length: 5}).map((_, i) => (
+              <motion.div
+                key={i}
+                className="absolute w-16 h-9 rounded-md border"
+                style={{
+                  borderColor: `${FUNNEL_COLOURS.ink}14`,
+                  backgroundColor: '#fff',
+                  boxShadow: '0 3px 8px -4px rgba(14,28,47,0.25)',
+                  zIndex: i,
+                }}
+                initial={{opacity: 0, y: 10, x: (i - 2) * 2}}
+                animate={
+                  go
+                    ? {opacity: 1, y: -(i * 3), x: (i - 2) * 9, rotate: (i - 2) * 3.5}
+                    : undefined
+                }
+                transition={{delay: reduce ? 0 : 1.25 + i * 0.1, type: 'spring', stiffness: 320, damping: 22}}
+              >
+                <div
+                  className="absolute inset-1.5 rounded-sm"
+                  style={{backgroundColor: i % 2 === 0 ? `${FUNNEL_COLOURS.gold}25` : `${FUNNEL_COLOURS.ink}06`}}
+                />
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
     </motion.div>

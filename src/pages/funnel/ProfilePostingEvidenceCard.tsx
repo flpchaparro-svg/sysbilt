@@ -2,7 +2,16 @@ import React, {useRef} from 'react'
 import {motion, useInView, useReducedMotion} from 'framer-motion'
 import {FUNNEL_COLOURS} from './funnelTheme'
 
-/** Proof: a Google Business Profile with an empty update history, Maps-style panel. */
+function initialsOf(name?: string | null) {
+  const parts = (name || '').trim().split(/\s+/).filter(Boolean)
+  if (!parts.length) return null
+  return parts
+    .slice(0, 2)
+    .map((w) => w[0]?.toUpperCase())
+    .join('')
+}
+
+/** Proof: a Google Business Profile with an empty update history, Maps-style panel. Almost no words. */
 export function ProfilePostingEvidenceCard({
   business,
   lastPostMonth,
@@ -14,8 +23,10 @@ export function ProfilePostingEvidenceCard({
   const inView = useInView(ref, {amount: 0.35})
   const reduce = useReducedMotion()
   const go = !reduce && inView
-  const who = business?.trim() || 'Your business'
-  const staleLabel = lastPostMonth ? `Last post · ${lastPostMonth}` : 'Last post · over a year ago'
+  const initials = initialsOf(business)
+  void lastPostMonth
+
+  const TIMELINE_DOTS = 9
 
   return (
     <motion.div
@@ -27,59 +38,109 @@ export function ProfilePostingEvidenceCard({
       viewport={{once: true}}
       transition={{duration: 0.5, ease: [0.16, 1, 0.3, 1]}}
     >
+      {/* chrome */}
       <div
-        className="px-3 py-2 font-mono text-[9px] font-bold uppercase tracking-[0.2em] flex justify-between"
-        style={{backgroundColor: `${FUNNEL_COLOURS.ink}06`, color: FUNNEL_COLOURS.muted}}
+        className="px-3 py-2 flex items-center gap-1.5"
+        style={{backgroundColor: `${FUNNEL_COLOURS.ink}06`}}
       >
-        <span>{who} · Google Business Profile</span>
-        <motion.span
-          style={{color: FUNNEL_COLOURS.accent}}
-          animate={go ? {opacity: [0.45, 1, 0.45]} : undefined}
-          transition={{duration: 1.2, repeat: Infinity}}
-        >
-          No recent posts
-        </motion.span>
+        <span className="h-1.5 w-1.5 rounded-full" style={{backgroundColor: `${FUNNEL_COLOURS.accent}70`}} />
+        <span className="h-1.5 w-1.5 rounded-full" style={{backgroundColor: `${FUNNEL_COLOURS.gold}80`}} />
+        <span className="h-1.5 w-1.5 rounded-full" style={{backgroundColor: `${FUNNEL_COLOURS.ink}25`}} />
+        <div className="ml-auto flex items-center gap-1">
+          {Array.from({length: 5}).map((_, i) => (
+            <span
+              key={i}
+              className="h-1.5 w-1.5 rounded-full"
+              style={{backgroundColor: i < 4 ? FUNNEL_COLOURS.gold : `${FUNNEL_COLOURS.ink}18`}}
+            />
+          ))}
+        </div>
       </div>
-      <div className="p-4 md:p-5 space-y-3">
+
+      <div className="p-4 md:p-5 space-y-4">
+        {/* identity row */}
         <div className="flex gap-3 items-center">
           <div
-            className="h-12 w-12 rounded-lg shrink-0"
+            className="h-12 w-12 rounded-lg shrink-0 flex items-center justify-center"
             style={{backgroundColor: `${FUNNEL_COLOURS.ink}08`}}
-          />
-          <div className="min-w-0">
-            <p className="font-sans text-sm font-semibold" style={{color: FUNNEL_COLOURS.ink}}>
-              {who}
-            </p>
-            <p
-              className="font-mono text-[9px] uppercase tracking-wider mt-1"
-              style={{color: FUNNEL_COLOURS.muted}}
-            >
-              Photos · Reviews · Hours
-            </p>
+          >
+            {initials ? (
+              <span className="font-mono text-xs font-bold tracking-wide" style={{color: FUNNEL_COLOURS.steel}}>
+                {initials}
+              </span>
+            ) : (
+              <div className="h-4 w-6 rounded-[2px]" style={{backgroundColor: `${FUNNEL_COLOURS.ink}18`}} />
+            )}
+          </div>
+          <div className="flex-1 min-w-0 space-y-1.5">
+            <div className="h-2.5 w-2/5 rounded-sm" style={{backgroundColor: `${FUNNEL_COLOURS.ink}12`}} />
+            <div className="h-1.5 w-1/3 rounded-sm" style={{backgroundColor: `${FUNNEL_COLOURS.ink}08`}} />
           </div>
         </div>
+
+        {/* updates feed: empty dashed slots */}
         <div
-          className="rounded-lg border px-3 py-2.5"
-          style={{borderColor: `${FUNNEL_COLOURS.ink}10`, backgroundColor: `${FUNNEL_COLOURS.ink}04`}}
+          className="relative rounded-lg border border-dashed px-3 py-3 space-y-2"
+          style={{borderColor: `${FUNNEL_COLOURS.ink}20`, backgroundColor: `${FUNNEL_COLOURS.ink}03`}}
         >
-          <p
-            className="font-mono text-[9px] uppercase tracking-wider"
-            style={{color: FUNNEL_COLOURS.muted}}
+          <span
+            className="absolute top-2 right-2.5 font-mono text-[8px] uppercase tracking-[0.14em]"
+            style={{color: `${FUNNEL_COLOURS.ink}30`}}
           >
-            Updates tab
-          </p>
-          <p className="mt-1 font-sans text-sm" style={{color: FUNNEL_COLOURS.ink}}>
-            Nothing posted this month, or the month before that.
-          </p>
+            Empty
+          </span>
+          {[0, 1, 2].map((i) => (
+            <motion.div
+              key={i}
+              className="flex items-center gap-2 rounded-md border border-dashed px-2 py-2"
+              style={{borderColor: `${FUNNEL_COLOURS.ink}16`}}
+              animate={go ? {opacity: [0.25, 0.55, 0.25]} : {opacity: 0.35}}
+              transition={{duration: 2.2, repeat: Infinity, delay: i * 0.35, ease: 'easeInOut'}}
+            >
+              <div className="h-6 w-6 rounded shrink-0" style={{backgroundColor: `${FUNNEL_COLOURS.ink}0A`}} />
+              <div className="flex-1 space-y-1">
+                <div className="h-1.5 w-3/4 rounded-sm" style={{backgroundColor: `${FUNNEL_COLOURS.ink}0C`}} />
+                <div className="h-1.5 w-1/2 rounded-sm" style={{backgroundColor: `${FUNNEL_COLOURS.ink}08`}} />
+              </div>
+            </motion.div>
+          ))}
         </div>
-        <motion.p
-          className="font-mono text-[10px] font-bold uppercase tracking-[0.16em]"
-          style={{color: FUNNEL_COLOURS.accent}}
-          animate={go ? {x: [0, 3, 0]} : undefined}
-          transition={{duration: 1.4, repeat: Infinity}}
-        >
-          {staleLabel}
-        </motion.p>
+
+        {/* staleness timeline: last post far back, silence to today */}
+        <div className="flex items-center gap-1.5 pt-1">
+          {Array.from({length: TIMELINE_DOTS}).map((_, i) => {
+            const isLast = i === TIMELINE_DOTS - 1
+            const isFirst = i === 0
+            return (
+              <React.Fragment key={i}>
+                <motion.span
+                  className="h-1.5 w-1.5 rounded-full shrink-0"
+                  style={{
+                    backgroundColor: isFirst ? FUNNEL_COLOURS.goldDeep : 'transparent',
+                    border: isFirst ? 'none' : `1px solid ${FUNNEL_COLOURS.ink}20`,
+                  }}
+                  animate={
+                    isLast && go
+                      ? {
+                          scale: [1, 1.6, 1],
+                          boxShadow: [
+                            `0 0 0 0 ${FUNNEL_COLOURS.accent}00`,
+                            `0 0 0 4px ${FUNNEL_COLOURS.accent}30`,
+                            `0 0 0 0 ${FUNNEL_COLOURS.accent}00`,
+                          ],
+                          borderColor: FUNNEL_COLOURS.accent,
+                        }
+                      : undefined
+                  }
+                  transition={{duration: 1.6, repeat: Infinity}}
+                />
+                {i < TIMELINE_DOTS - 1 ? (
+                  <div className="h-px flex-1" style={{backgroundColor: `${FUNNEL_COLOURS.ink}10`}} />
+                ) : null}
+              </React.Fragment>
+            )
+          })}
+        </div>
       </div>
     </motion.div>
   )
