@@ -1376,12 +1376,83 @@ function reviewsAccessOptionsForStatus(
   }
 }
 
-/** Local Pack: same access shape as Profile Posting, since the pack starts with the same listing state. */
+/**
+ * Local Pack access: listing path from Profile Posting / Profile Fix, plus Review Engine
+ * tool paths (SMS/email provider or job software) when the buyer already manages the listing.
+ */
 function localPackAccessOptionsForStatus(
   status: ProfileStatusId | null,
   who: WhoPublishesId | null,
+  job: ReviewJobId | null,
 ) {
-  return postingAccessOptionsForStatus(status, who)
+  const listing = postingAccessOptionsForStatus(status, who).map((opt) => {
+    if (opt.id === 'invite') {
+      return {
+        ...opt,
+        blurb:
+          who === 'staff'
+            ? 'Invite us as manager so we can clean the profile, wire reviews, and hand the posting kit to you and your publisher.'
+            : who === 'care-later'
+              ? 'Invite us as manager for profile, reviews, and the posting kit. Care month, if you want it, is separate later.'
+              : who === 'unsure'
+                ? 'If you can already open Business Profile, invite us as manager for the whole pack.'
+                : 'Add us as a manager so we can clean the profile, wire the review ask, and set the posting kit. No password sharing.',
+      }
+    }
+    if (opt.id === 'call') {
+      return {
+        ...opt,
+        blurb:
+          status === 'claimed-me'
+            ? 'Walk through manager invite, the review ask path, and who hits publish. About five minutes.'
+            : opt.blurb.includes('posting')
+              ? opt.blurb.replace(/posting kit/gi, 'pack').replace(/posts/gi, 'the pack')
+              : opt.blurb,
+      }
+    }
+    if (opt.id === 'claim') {
+      return {
+        ...opt,
+        blurb: 'Nobody owns it yet. We claim it together, then run profile, reviews, and posting.',
+      }
+    }
+    if (opt.id === 'recover') {
+      return {
+        ...opt,
+        label: status === 'suspended' ? 'Assess the suspension' : 'Recover ownership',
+        blurb:
+          status === 'suspended'
+            ? 'We open the case with you. No profile, review, or posting work until Google will allow it.'
+            : 'We start Google recovery. The pack waits until you control the listing.',
+      }
+    }
+    return opt
+  })
+
+  if (status !== 'claimed-me') return listing
+
+  const smsProvider = {
+    id: 'provider' as AccessPathId,
+    label: 'SMS / email tool',
+    blurb: 'The tool that already texts or emails customers after a job. We need it for the review ask.',
+    icon: <Server className="w-full h-full" strokeWidth={1.25} />,
+  }
+  const crm = {
+    id: 'crm' as AccessPathId,
+    label: 'Job software login',
+    blurb: 'CRM, job management, or booking tool where jobs get marked done. That is the review trigger.',
+    icon: <Building2 className="w-full h-full" strokeWidth={1.25} />,
+  }
+
+  const invite = listing.find((o) => o.id === 'invite')
+  const call = listing.find((o) => o.id === 'call')
+  if (!invite || !call) return listing
+
+  if (job === 'sms' || job === 'email') return [invite, smsProvider, call]
+  if (job === 'software') return [invite, crm, call]
+  if (job === 'unsure') return [call, invite, smsProvider]
+  // manual: listing access is enough for the ask templates
+  return [invite, call]
 }
 
 const REVIEW_JOB_OPTIONS: {
@@ -3180,7 +3251,7 @@ const FunnelAccessPage: React.FC = () => {
       : usesReviewsWizard
         ? reviewsAccessOptionsForStatus(profileStatus, reviewJob)
         : usesLocalPackWizard
-          ? localPackAccessOptionsForStatus(profileStatus, whoPublishes)
+          ? localPackAccessOptionsForStatus(profileStatus, whoPublishes, reviewJob)
           : isCrmRescue
           ? crmAccessOptionsForSystem(crmSystem)
           : isBooking
@@ -5129,9 +5200,19 @@ const FunnelAccessPage: React.FC = () => {
                         How do we handle the <span style={{color: RED}}>suspension</span>?
                       </>
                     ) : profileStatus === 'claimed-me' ? (
-                      <>
-                        How do we get <span style={{color: RED}}>manager</span> access?
-                      </>
+                      usesLocalPackWizard &&
+                      (reviewJob === 'sms' ||
+                        reviewJob === 'email' ||
+                        reviewJob === 'software' ||
+                        reviewJob === 'unsure') ? (
+                        <>
+                          How do we get <span style={{color: RED}}>in</span> for the pack?
+                        </>
+                      ) : (
+                        <>
+                          How do we get <span style={{color: RED}}>manager</span> access?
+                        </>
+                      )
                     ) : (
                       <>
                         How should we get <span style={{color: RED}}>in</span>?
@@ -5175,9 +5256,14 @@ const FunnelAccessPage: React.FC = () => {
                           ? 'Someone else holds it. Recovery or a call. The pack waits until you control it.'
                           : profileStatus === 'suspended'
                             ? 'No profile, review, or posting work until Google allows it. Assess with us, or call first.'
-                            : profileStatus === 'claimed-me' && whoPublishes === 'staff'
-                              ? 'You manage it. Invite us so we can hand the pack to you and your publisher.'
-                              : 'Hover, then Select. Pick whatever is easiest for you.'
+                            : profileStatus === 'claimed-me' &&
+                                (reviewJob === 'sms' || reviewJob === 'email')
+                              ? 'We need Google manager access plus the SMS or email tool that fires after a job.'
+                              : profileStatus === 'claimed-me' && reviewJob === 'software'
+                                ? 'We need Google manager access plus the job software where work gets marked done.'
+                                : profileStatus === 'claimed-me' && whoPublishes === 'staff'
+                                  ? 'You manage it. Invite us so we can hand the pack to you and your publisher.'
+                                  : 'Hover, then Select. Pick whatever is easiest for you.'
                     : usesEnquiryWizard
                       ? enquiryRoute === 'crm'
                         ? 'The real message lands in your CRM. Pick CRM invite, form tool access if needed, or a short call.'
