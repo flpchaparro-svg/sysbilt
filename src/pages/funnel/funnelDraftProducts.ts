@@ -87,12 +87,12 @@ const comingSoonFaq: FunnelFaq = {
 }
 
 export const PROFILE_MESSAGING_COPY: FunnelProductCopy = {
-  eyebrow: 'Fixed price · One to two days · You keep the keys',
-  h1Generic: 'People message your Google profile. Right now nobody answers in time',
+  eyebrow: 'Parked · Not for sale · Google removed profile messaging',
+  h1Generic: 'People used to message your Google profile. That channel is gone',
   h1Personal: (b: string) =>
-    `${b}, people message your Google profile. Right now nobody answers in time`,
-  sub: 'Messaging is on for many profiles, or it should be. Without hours, canned replies, and a handoff, enquiries die in the thread. We switch it on properly and leave you rules you can keep.',
-  ctaLabel: 'Set up messaging · $900',
+    `${b}, people used to message your Google profile. That channel is gone`,
+  sub: 'Google removed Business Profile messaging in 2024. This page stays as a draft only. For the same leak, use Missed-Call Text-Back, Site Chat, or WhatsApp on channels that still exist.',
+  ctaLabel: 'Not for sale',
   proofLabel: 'The picture',
   proofHeadingLive: 'A channel you already have, unused',
   proofHeadingGeneric: 'A channel you already have, unused',
@@ -196,8 +196,8 @@ export const PROFILE_MESSAGING_COPY: FunnelProductCopy = {
     },
   ],
   finalLabel: 'Last step',
-  finalHeading: 'Stop looking open while threads go quiet',
-  finalLine: 'Messaging on. Hours honest. First reply ready. Paid once.',
+  finalHeading: 'This product is parked',
+  finalLine: 'Google removed profile messaging. Use Missed-Call, Site Chat, or WhatsApp instead.',
   proofKind: 'profile-messaging',
 }
 

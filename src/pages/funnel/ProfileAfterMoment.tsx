@@ -7,7 +7,7 @@ const AUDIT_ROWS = [
   {empty: 'Services empty', filled: 'Services filled'},
   {empty: 'Photos thin', filled: 'Photos live'},
   {empty: 'No review link', filled: 'Review link ready'},
-  {empty: 'Q and A off', filled: 'Q and A seeded'},
+  {empty: 'Website missing', filled: 'Website linked'},
 ]
 
 /**

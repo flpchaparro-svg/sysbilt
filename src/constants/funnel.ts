@@ -303,7 +303,7 @@ export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
     code: 'profile-messaging',
     title: 'Profile Messaging Setup',
     price: '$900',
-    blurb: 'Google messaging on, hours set, canned replies, clear handoff.',
+    blurb: 'Parked. Google removed profile messaging. Not for sale.',
     status: 'soon',
     lane: 'soon',
     section: 'draft-local',

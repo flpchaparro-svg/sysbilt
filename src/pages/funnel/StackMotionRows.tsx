@@ -336,7 +336,7 @@ function LiveProofVisual({reduce, play}: VisualProps) {
 
 /** Profile audit checklist ticking through. */
 function ProfileOverhaulBarVisual({reduce, play}: VisualProps) {
-  const rows = ['Claim', 'Categories', 'Photos', 'Q and A']
+  const rows = ['Claim', 'Categories', 'Photos', 'Review link']
   return (
     <div className="w-full h-[72px] border border-dark/20 bg-white px-3 py-2 flex flex-col justify-center gap-1">
       <div className="flex gap-1.5">

@@ -377,7 +377,7 @@ export const GOOGLE_PROFILE_COPY: FunnelProductCopy = {
   bridgeLabel: 'The fix',
   bridgeHeading: 'What we actually do',
   bridgeBody:
-    "This isn't Google Ads, website SEO, or a monthly posting retainer. It's a complete Google Business Profile overhaul on one location: claim or recover, categories and services filled, description that sells, photos sorted, review link ready, messaging and Q and A switched on. Ownership stays on your account. Two business days from access.",
+    "This isn't Google Ads, website SEO, or a monthly posting retainer. It's a complete Google Business Profile overhaul on one location: claim or recover, categories and services filled, description that sells, photos sorted, review link ready. Ownership stays on your account. Two business days from access.",
   bridgeGaugeCaption:
     'When we hand it over, the panel looks alive: complete categories, clear hours, a description that sells, a review path your customers can use, and the keys still in your name.',
   benefitsLabel: 'What changes for you',
@@ -409,7 +409,7 @@ export const GOOGLE_PROFILE_COPY: FunnelProductCopy = {
     },
     {
       label: 'Day 2',
-      text: 'Overhaul, review link, Q and A, hand over the guide and Systems Snapshot.',
+      text: 'Overhaul, review link, hand over the guide and Systems Snapshot.',
     },
   ],
   stackLabel: 'Everything included',
@@ -417,7 +417,7 @@ export const GOOGLE_PROFILE_COPY: FunnelProductCopy = {
   stackItems: [
     {
       title: 'Complete profile overhaul',
-      text: 'Claim or recover, categories, services, attributes, description, photos, messaging and Q and A, within two business days of access.',
+      text: 'Claim or recover, categories, services, attributes, description, photos, review link, within two business days of access.',
     },
     {
       title: 'Ownership locked to you',
@@ -2184,6 +2184,7 @@ export function funnelCopyForSlug(slug: string | undefined): FunnelProductCopy {
   if (slug === 'website' || slug === 'website-hook') return WEBSITE_COPY
   if (slug === 'geo') return GEO_COPY
   if (slug === 'client-finder') return CLIENT_FINDER_COPY
+  if (slug === 'profile-messaging') return DRAFT_COPY_BY_SLUG['profile-messaging']
   if (slug && DRAFT_COPY_BY_SLUG[slug]) return DRAFT_COPY_BY_SLUG[slug]
   return SPEED_FIX_COPY
 }

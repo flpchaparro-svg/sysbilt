@@ -44,7 +44,7 @@ const OUTBOUND_GROUPS: CatalogueGroup[] = [
   },
   {
     title: 'Google and local',
-    blurb: 'Profile, reviews, messaging, and staying visible on Maps.',
+    blurb: 'Profile, reviews, and staying visible on Maps.',
     codes: [
       'google-profile',
       'reviews',
