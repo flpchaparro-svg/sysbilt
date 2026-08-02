@@ -1711,7 +1711,7 @@ type HelpBlock = {
   links?: {label: string; href: string}[]
 }
 
-function helpForStep(step: StepId): HelpBlock {
+function helpForStep(step: StepId, opts?: {isAiPhone?: boolean}): HelpBlock {
   switch (step) {
     case 'product':
       return {
@@ -1750,7 +1750,9 @@ function helpForStep(step: StepId): HelpBlock {
     case 'phoneSetup':
       return {
         title: 'How the phone is set up',
-        body: 'This tells us how missed calls show up today. Hover a card, then Select. Not sure is fine.',
+        body: opts?.isAiPhone
+          ? 'This tells us how calls reach the number the voice agent will cover. Hover a card, then Select. Not sure is fine.'
+          : 'This tells us how missed calls show up today. Hover a card, then Select. Not sure is fine.',
       }
     case 'websiteUrl':
       return {
@@ -2500,7 +2502,7 @@ const FunnelAccessPage: React.FC = () => {
   const activePhase = phaseForStep(step, productKind)
 
   const firstStep: StepId = 'product'
-  const help = helpForStep(step)
+  const help = helpForStep(step, {isAiPhone})
   const liveProducts = useMemo(() => {
     const all = FUNNEL_PRODUCT_CATALOGUE.filter(
       (p) => p.status === 'live' && p.code !== 'website' && p.code !== 'website-hook',

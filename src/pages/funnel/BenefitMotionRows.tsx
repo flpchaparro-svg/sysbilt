@@ -732,12 +732,202 @@ function CrmFiveDayVisual({reduce}: VisualProps) {
   )
 }
 
+/** AI Phone: after hours, voice picks up. */
+function AiPhoneAnsweredVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+          Incoming · after hours
+        </span>
+        <motion.span
+          className="font-mono text-[7px] font-bold uppercase tracking-wide"
+          style={{color: colors.teal}}
+          animate={reduce ? undefined : {opacity: [0.45, 1, 0.45]}}
+          transition={{duration: 1.1, repeat: Infinity}}
+        >
+          Picked up
+        </motion.span>
+      </div>
+      <div className="flex-1 min-h-0 p-2 flex items-center gap-2">
+        <motion.div
+          className="h-10 w-10 rounded-full flex items-center justify-center shrink-0"
+          style={{backgroundColor: FUNNEL_COLOURS.accent}}
+          animate={reduce ? undefined : {scale: [1, 1.08, 1]}}
+          transition={{duration: 1.2, repeat: Infinity}}
+        >
+          <span className="font-serif text-sm" style={{color: FUNNEL_COLOURS.onInk}}>
+            ☎
+          </span>
+        </motion.div>
+        <motion.div
+          className="flex-1 min-w-0 rounded-sm border px-2 py-1.5"
+          style={{borderColor: `${colors.teal}55`, backgroundColor: `${colors.teal}12`}}
+          initial={reduce ? false : {opacity: 0, x: 10}}
+          whileInView={{opacity: 1, x: 0}}
+          viewport={{once: true}}
+          transition={{delay: reduce ? 0 : 0.25, type: 'spring', stiffness: 360}}
+        >
+          <p className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
+            Voice agent
+          </p>
+          <p className="font-sans text-[10px] text-dark/70 leading-tight">
+            Thanks for calling. How can I help?
+          </p>
+        </motion.div>
+      </div>
+    </div>
+  )
+}
+
+/** AI Phone: books, then hands off. */
+function AiPhoneBookHandoffVisual({reduce}: VisualProps) {
+  const steps = [
+    {label: 'Answered', ok: true},
+    {label: 'Booked', ok: true},
+    {label: 'Handoff', ok: true},
+  ]
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+          Call path
+        </span>
+      </div>
+      <div className="flex-1 min-h-0 flex items-stretch gap-1.5 p-2">
+        {steps.map((s, i) => (
+          <motion.div
+            key={s.label}
+            className="flex-1 min-w-0 rounded-sm border px-1 py-1.5 text-center flex flex-col items-center justify-center"
+            style={{borderColor: colors.teal, backgroundColor: `${colors.teal}14`}}
+            initial={reduce ? false : {opacity: 0, y: 10, scale: 0.92}}
+            whileInView={{opacity: 1, y: 0, scale: 1}}
+            viewport={{once: true}}
+            transition={{delay: reduce ? 0 : 0.12 + i * 0.18, type: 'spring', stiffness: 360}}
+          >
+            <p className="font-mono text-[7px] uppercase tracking-wide text-dark/55 leading-tight">
+              {s.label}
+            </p>
+            <motion.span
+              className="mt-1 inline-block h-1.5 w-1.5 rounded-full"
+              style={{backgroundColor: colors.teal}}
+              animate={reduce ? undefined : {scale: [1, 1.5, 1]}}
+              transition={{duration: 1.1, repeat: Infinity, delay: 0.4 + i * 0.2}}
+            />
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** AI Phone: agent lives on their vendor login. */
+function AiPhoneOwnedAccountVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+          Vendor account
+        </span>
+        <span className="font-mono text-[7px] font-bold uppercase tracking-wide text-gold-on-cream">
+          Yours
+        </span>
+      </div>
+      <div className="flex-1 min-h-0 p-2 flex flex-col justify-center gap-1.5">
+        <motion.div
+          className="rounded-sm border px-2 py-1.5 flex items-center justify-between"
+          style={{borderColor: colors.teal, backgroundColor: `${colors.teal}14`}}
+          initial={reduce ? false : {opacity: 0, y: 8}}
+          whileInView={{opacity: 1, y: 0}}
+          viewport={{once: true}}
+          transition={{type: 'spring', stiffness: 340}}
+        >
+          <span className="font-sans text-[10px] text-dark/75">Your Synthflow / Vapi login</span>
+          <motion.span
+            className="font-mono text-[7px] font-bold uppercase tracking-wide"
+            style={{color: colors.teal}}
+            animate={reduce ? undefined : {opacity: [0.5, 1, 0.5]}}
+            transition={{duration: 1.3, repeat: Infinity}}
+          >
+            Owned
+          </motion.span>
+        </motion.div>
+        <motion.p
+          className="font-mono text-[7px] uppercase tracking-[0.12em] text-dark/40 text-center"
+          initial={reduce ? false : {opacity: 0}}
+          whileInView={{opacity: 1}}
+          viewport={{once: true}}
+          transition={{delay: reduce ? 0 : 0.35}}
+        >
+          Not a SYSBILT monthly sub
+        </motion.p>
+      </div>
+    </div>
+  )
+}
+
+/** AI Phone: few business days to live test. */
+function AiPhoneFewDaysVisual({reduce}: VisualProps) {
+  const cells = [
+    {label: 'D1', sub: 'Access'},
+    {label: 'D2', sub: 'Build'},
+    {label: 'D3+', sub: 'Live test'},
+  ]
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+          Delivery
+        </span>
+        <motion.span
+          className="font-mono text-[7px] font-bold uppercase tracking-[0.12em] text-gold-on-cream"
+          animate={reduce ? undefined : {opacity: [0.55, 1, 0.55]}}
+          transition={{duration: 1.4, repeat: Infinity}}
+        >
+          A few days
+        </motion.span>
+      </div>
+      <div className="flex-1 min-h-0 grid grid-cols-3 gap-1 p-1.5">
+        {cells.map((c, i) => (
+          <motion.div
+            key={c.label}
+            className="border flex flex-col items-center justify-center min-h-0"
+            initial={
+              reduce
+                ? false
+                : {backgroundColor: colors.cream, borderColor: 'rgba(26,26,26,0.15)', y: 8}
+            }
+            whileInView={{
+              backgroundColor: `${colors.teal}18`,
+              borderColor: colors.teal,
+              y: 0,
+            }}
+            viewport={{once: true}}
+            transition={{delay: reduce ? 0 : 0.12 + i * 0.2, type: 'spring', stiffness: 340}}
+          >
+            <span className="font-serif text-sm text-dark leading-none">{c.label}</span>
+            <span className="mt-0.5 font-mono text-[6px] uppercase tracking-wide text-dark/45">
+              {c.sub}
+            </span>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 const SPEED_VISUALS = [FastBrowseVisual, RankRaceVisual, ProofEmailVisual, ThreeDayCalendarVisual]
 const MISSED_VISUALS = [
   StayWarmVisual,
   LoggedLeadVisual,
   TestSmsReceivedVisual,
   WithinThreeDaysVisual,
+]
+const AI_PHONE_VISUALS = [
+  AiPhoneAnsweredVisual,
+  AiPhoneBookHandoffVisual,
+  AiPhoneOwnedAccountVisual,
+  AiPhoneFewDaysVisual,
 ]
 const CRM_VISUALS = [
   CrmInstantReplyVisual,
@@ -2196,25 +2386,27 @@ export function BenefitMotionRows({
 }) {
   const reduce = useReducedMotion()
   const visuals =
-    variant === 'missed-call' || variant === 'ai-phone'
+    variant === 'missed-call'
       ? MISSED_VISUALS
-      : variant === 'reviews'
-        ? REVIEWS_VISUALS
-        : variant === 'google-profile'
-          ? PROFILE_VISUALS
-          : variant === 'search-fix'
-            ? SEARCH_VISUALS
-            : variant === 'website'
-              ? WEBSITE_VISUALS
-              : variant === 'landing-page'
-                ? LANDING_VISUALS
-                : variant === 'booking'
-                  ? BOOKING_VISUALS
-                  : variant === 'crm-rescue'
-                    ? CRM_VISUALS
-                    : variant === 'team-ai' || variant === 'change-pack' || variant === 'content-system'
-                      ? TEAM_AI_VISUALS
-                      : SPEED_VISUALS
+      : variant === 'ai-phone'
+        ? AI_PHONE_VISUALS
+        : variant === 'reviews'
+          ? REVIEWS_VISUALS
+          : variant === 'google-profile'
+            ? PROFILE_VISUALS
+            : variant === 'search-fix'
+              ? SEARCH_VISUALS
+              : variant === 'website'
+                ? WEBSITE_VISUALS
+                : variant === 'landing-page'
+                  ? LANDING_VISUALS
+                  : variant === 'booking'
+                    ? BOOKING_VISUALS
+                    : variant === 'crm-rescue'
+                      ? CRM_VISUALS
+                      : variant === 'team-ai' || variant === 'change-pack' || variant === 'content-system'
+                        ? TEAM_AI_VISUALS
+                        : SPEED_VISUALS
 
   return (
     <div className="space-y-10 md:space-y-12">

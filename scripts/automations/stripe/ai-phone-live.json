@@ -1,0 +1,14 @@
+{
+  "createdAt": "2026-08-02T06:10:00.000Z",
+  "mode": "live",
+  "note": "AI Phone Setup · live Payment Link. Product has description + marketing_features. After pay → https://sysbilt.com/go/thanks?p=ai-phone → AI phone access wizard. Never use buy.stripe.com/test_ on this page. Do not leave Sanity stripeUrl null (that soft-falls to unpaid access).",
+  "product": {
+    "code": "ai-phone",
+    "name": "AI Phone Setup",
+    "productId": "prod_UzsIWuKfvENNXE",
+    "priceId": "price_1TzsYO7kQC0CB85zFcVnTPli",
+    "paymentLinkId": "plink_1TzsYT7kQC0CB85z4RiCMutg",
+    "paymentLinkUrl": "https://buy.stripe.com/7sY3cp9Ch5badiC1xN3gk0d",
+    "amountAud": 1950
+  }
+}

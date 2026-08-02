@@ -97,6 +97,7 @@ import {SEARCH_FIX_STRIPE_URL} from '../../constants/searchFixStripe'
 import {REVIEWS_STRIPE_URL} from '../../constants/reviewsStripe'
 import {CRM_RESCUE_STRIPE_URL} from '../../constants/crmRescueStripe'
 import {LANDING_PAGE_STRIPE_URL} from '../../constants/landingStripe'
+import {AI_PHONE_STRIPE_URL} from '../../constants/aiPhoneStripe'
 import {funnelCopyForSlug} from './funnelCopy'
 import {
   FUNNEL_PRODUCT_LABELS,
@@ -402,7 +403,8 @@ const FunnelPage: React.FC = () => {
     (isSearchFix ? SEARCH_FIX_STRIPE_URL : undefined) ||
     (isReviews ? REVIEWS_STRIPE_URL : undefined) ||
     (isCrmRescue ? CRM_RESCUE_STRIPE_URL : undefined) ||
-    (isLandingPage ? LANDING_PAGE_STRIPE_URL : undefined)
+    (isLandingPage ? LANDING_PAGE_STRIPE_URL : undefined) ||
+    (isAiPhone ? AI_PHONE_STRIPE_URL : undefined)
   const sanityStripe = (doc?.stripeUrl || '').trim()
   const resolvedStripeUrl =
     sanityStripe && !sanityStripe.includes('buy.stripe.com/test_')

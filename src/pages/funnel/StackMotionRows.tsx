@@ -491,6 +491,136 @@ const SPEED_VISUALS = [
   AftercareStampVisual,
 ]
 
+/** AI Phone: voice agent on their vendor account. */
+function AiPhoneVendorStackVisual({reduce, play}: VisualProps) {
+  const go = play && !reduce
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex items-center gap-3 overflow-hidden">
+      <motion.div
+        className="h-10 w-10 rounded-sm border flex items-center justify-center shrink-0"
+        style={{borderColor: FUNNEL_COLOURS.accent, color: FUNNEL_COLOURS.accent}}
+        animate={go ? {scale: [1, 1.08, 1], rotate: [0, -3, 3, 0]} : undefined}
+        transition={{duration: 1.3, repeat: Infinity}}
+      >
+        <span className="font-mono text-[8px] font-bold uppercase tracking-wide">AI</span>
+      </motion.div>
+      <div className="min-w-0">
+        <p className="font-mono text-[8px] uppercase tracking-widest text-dark/45">Your vendor login</p>
+        <motion.p
+          className="font-sans text-[12px] text-dark/80"
+          initial={{opacity: 0, x: 6}}
+          animate={go ? {opacity: 1, x: 0} : {opacity: 1}}
+          transition={{delay: reduce ? 0 : 0.2, type: 'spring', stiffness: 340}}
+        >
+          Synthflow · Vapi · equivalent
+        </motion.p>
+      </div>
+    </div>
+  )
+}
+
+/** AI Phone: knowledge pack loaded. */
+function AiPhoneKnowledgeStackVisual({reduce, play}: VisualProps) {
+  const go = play && !reduce
+  const rows = ['Hours', 'FAQs', 'Tone', 'Booking rules']
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-2.5 space-y-1 overflow-hidden">
+      {rows.map((label, i) => (
+        <motion.div
+          key={label}
+          className="flex items-center justify-between border px-2 py-0.5"
+          initial={{opacity: 0.3, x: -6}}
+          animate={
+            go
+              ? {
+                  opacity: 1,
+                  x: 0,
+                  borderColor: FUNNEL_COLOURS.accent,
+                  backgroundColor: `${FUNNEL_COLOURS.accent}12`,
+                }
+              : undefined
+          }
+          transition={{delay: i * 0.12, type: 'spring', stiffness: 360}}
+        >
+          <span className="font-sans text-[11px] text-dark/75">{label}</span>
+          <span
+            className="font-mono text-[7px] font-bold uppercase tracking-wide"
+            style={{color: FUNNEL_COLOURS.accent}}
+          >
+            In
+          </span>
+        </motion.div>
+      ))}
+    </div>
+  )
+}
+
+/** AI Phone: calendar + CRM wired. */
+function AiPhoneWireStackVisual({reduce, play}: VisualProps) {
+  const go = play && !reduce
+  const rows = ['Calendar', 'CRM / inbox']
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex flex-col justify-center gap-1.5 overflow-hidden">
+      {rows.map((label, i) => (
+        <motion.div
+          key={label}
+          className="flex items-center justify-between border px-2 py-1.5"
+          initial={{opacity: 0.35}}
+          animate={
+            go
+              ? {
+                  opacity: 1,
+                  borderColor: FUNNEL_COLOURS.accent,
+                  backgroundColor: `${FUNNEL_COLOURS.accent}12`,
+                }
+              : undefined
+          }
+          transition={{delay: i * 0.22, duration: 0.3}}
+        >
+          <span className="font-sans text-[12px] text-dark/80">{label}</span>
+          <motion.span
+            className="font-mono text-[7px] font-bold uppercase tracking-wide"
+            style={{color: FUNNEL_COLOURS.accent}}
+            animate={go ? {opacity: [0.4, 1, 0.4]} : undefined}
+            transition={{duration: 1.1, repeat: Infinity, delay: 0.35 + i * 0.2}}
+          >
+            Wired
+          </motion.span>
+        </motion.div>
+      ))}
+    </div>
+  )
+}
+
+/** AI Phone: live test call proof. */
+function AiPhoneLiveProofStackVisual({reduce, play}: VisualProps) {
+  const go = play && !reduce
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex items-center gap-3 overflow-hidden">
+      <motion.div
+        className="font-serif text-2xl font-bold leading-none"
+        style={{color: FUNNEL_COLOURS.accent}}
+        animate={go ? {scale: [1, 1.1, 1]} : undefined}
+        transition={{duration: 1.2, repeat: Infinity}}
+      >
+        ☎
+      </motion.div>
+      <div className="min-w-0">
+        <p className="font-mono text-[8px] uppercase tracking-widest text-dark/45">Live test call</p>
+        <p className="font-sans text-[12px] text-dark/75 mt-0.5">You listen · then runbook + keys</p>
+      </div>
+    </div>
+  )
+}
+
+const AI_PHONE_STACK_VISUALS = [
+  AiPhoneVendorStackVisual,
+  AiPhoneKnowledgeStackVisual,
+  AiPhoneWireStackVisual,
+  AiPhoneLiveProofStackVisual,
+  AftercareStampVisual,
+]
+
 const MISSED_VISUALS = [
   TextBackTriggerVisual,
   YourWordsVisual,
@@ -1827,25 +1957,27 @@ export function StackMotionRows({
 }) {
   const reduce = useReducedMotion()
   const visuals: Array<(p: VisualProps) => React.ReactElement> =
-    variant === 'missed-call' || variant === 'ai-phone'
+    variant === 'missed-call'
       ? MISSED_VISUALS
-      : variant === 'reviews'
-        ? REVIEWS_STACK_VISUALS
-        : variant === 'google-profile'
-          ? PROFILE_STACK_VISUALS
-          : variant === 'search-fix'
-            ? SEARCH_STACK_VISUALS
-            : variant === 'website'
-              ? WEBSITE_STACK_VISUALS
-              : variant === 'landing-page'
-                ? LANDING_STACK_VISUALS
-                : variant === 'booking'
-                  ? BOOKING_STACK_VISUALS
-                  : variant === 'crm-rescue'
-                    ? CRM_STACK_VISUALS
-                    : variant === 'team-ai' || variant === 'change-pack' || variant === 'content-system'
-                      ? TEAM_AI_STACK_VISUALS
-                      : SPEED_VISUALS
+      : variant === 'ai-phone'
+        ? AI_PHONE_STACK_VISUALS
+        : variant === 'reviews'
+          ? REVIEWS_STACK_VISUALS
+          : variant === 'google-profile'
+            ? PROFILE_STACK_VISUALS
+            : variant === 'search-fix'
+              ? SEARCH_STACK_VISUALS
+              : variant === 'website'
+                ? WEBSITE_STACK_VISUALS
+                : variant === 'landing-page'
+                  ? LANDING_STACK_VISUALS
+                  : variant === 'booking'
+                    ? BOOKING_STACK_VISUALS
+                    : variant === 'crm-rescue'
+                      ? CRM_STACK_VISUALS
+                      : variant === 'team-ai' || variant === 'change-pack' || variant === 'content-system'
+                        ? TEAM_AI_STACK_VISUALS
+                        : SPEED_VISUALS
 
   return (
     <ul className="space-y-10 md:space-y-12">
