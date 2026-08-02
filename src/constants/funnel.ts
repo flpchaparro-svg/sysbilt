@@ -282,7 +282,7 @@ export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
   {
     code: 'change-pack',
     title: 'Change Pack',
-    price: 'From $6,000',
+    price: '$6,000',
     blurb: 'Training for a new system or AI rollout, built before day one.',
     status: 'live',
     lane: 'warm',

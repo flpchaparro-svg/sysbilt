@@ -1,0 +1,14 @@
+{
+  "createdAt": "2026-08-02T06:46:00.000Z",
+  "mode": "live",
+  "note": "Change Pack · live Payment Link. Product has description + marketing_features. After pay → https://sysbilt.com/go/thanks?p=change-pack → Change Pack access wizard. Never use buy.stripe.com/test_ on this page. Do not leave Sanity stripeUrl null (that soft-falls to unpaid access).",
+  "product": {
+    "code": "change-pack",
+    "name": "Change Pack",
+    "productId": "prod_UzswPKvJoES0VU",
+    "priceId": "price_1TztAV7kQC0CB85zDh9r2A5Z",
+    "paymentLinkId": "plink_1TztAa7kQC0CB85zZmSnsoAR",
+    "paymentLinkUrl": "https://buy.stripe.com/aFa9AN6q55bacey2BR3gk0e",
+    "amountAud": 6000
+  }
+}
