@@ -67,6 +67,7 @@ export type FunnelProductCopy = {
     | 'geo'
     | 'client-finder'
     | 'enquiry-reply'
+    | 'profile-posting'
     | 'draft'
 }
 
@@ -2291,10 +2292,139 @@ export const ENQUIRY_REPLY_COPY: FunnelProductCopy = {
   proofKind: 'enquiry-reply',
 }
 
+export const PROFILE_POSTING_COPY: FunnelProductCopy = {
+  eyebrow: 'Fixed price setup · Optional monthly care · One profile',
+  h1Generic: 'A Google profile that never posts looks closed, even when you are busy',
+  h1Personal: (b: string) =>
+    `${b}, a Google profile that never posts looks closed, even when you are busy`,
+  sub: 'Google Business Profile rewards posts with visibility, and a quiet Updates tab reads as a business that slowed down. We build the cadence, templates, and a starter bank of ready posts so the profile stops going quiet for months at a time.',
+  ctaLabel: 'Set up posting · $1,600',
+  proofLabel: 'The picture',
+  proofHeadingLive: 'Silence reads as neglect',
+  proofHeadingGeneric: 'Silence reads as neglect',
+  proofLead: (b: string | null) =>
+    b
+      ? `${b}'s Google profile takes photos and reviews today. Nobody is feeding it new posts.`
+      : 'Your Google profile takes photos and reviews today. Nobody is feeding it new posts.',
+  proofLeadGeneric:
+    'Your Google profile takes photos and reviews today. Nobody is feeding it new posts, and every month without an update quietly tells people the business slowed down.',
+  proofAfter:
+    "The fix isn't a chatbot or fake engagement. It's a posting cadence, templates in your voice, and a starter bank of posts ready before we hand it over.",
+  proofAfterGeneric:
+    "The fix isn't a chatbot or fake engagement. It's a posting cadence, templates in your voice, and a starter bank of posts ready before we hand it over.",
+  painLabel: 'What this is costing you',
+  painHeading: 'You meant to post, then the week ate you',
+  painLines: [
+    'The last update sat there so long, half your offers have already changed.',
+    'Nobody owns posting, so it only happens when someone feels guilty about it.',
+    'Competitors post weekly and look busier, even on the weeks you are busier.',
+    'Reviews keep landing, but there is no rhythm of proof sitting between them.',
+  ],
+  bridgeLabel: 'The fix',
+  bridgeHeading: 'A posting system you can run, or we can run for you',
+  bridgeBody:
+    "This isn't us replying to messages or seeding questions on your profile. Those sit inside separate Google tools and behave differently to posts, and we are not promising either here. What we build is the posting side: categories, templates in your voice, and a starter bank ready to publish. An optional care month keeps it fed if you would rather not touch it.",
+  bridgeGaugeCaption: 'Setup once. Publish on a rhythm you can actually keep.',
+  benefitsLabel: 'What changes for you',
+  benefitsHeading: 'Outcomes, not jargon',
+  benefits: [
+    {
+      title: 'The profile looks alive',
+      text: 'Regular posts signal you are open, active, and paying attention.',
+    },
+    {
+      title: 'Less blank-page stress',
+      text: 'Templates and a bank remove the weekly invent-from-nothing problem.',
+    },
+    {
+      title: 'Offers stay current',
+      text: 'Hours, services, and seasonal notes have somewhere to land.',
+    },
+    {
+      title: 'Ready for the wider system',
+      text: 'Clean cadence and templates make Content System an easy next step if you want every channel fed.',
+    },
+  ],
+  processLabel: 'How it runs',
+  processHeading: 'A short, clear build',
+  processSteps: [
+    {
+      label: 'Brief',
+      text: 'Voice, offers, and what you are and are not allowed to say in public.',
+    },
+    {
+      label: 'Build',
+      text: 'Cadence, templates, categories, and a starter bank of posts.',
+    },
+    {
+      label: 'Prove',
+      text: 'You watch the first posts go live and approve the rhythm going forward.',
+    },
+  ],
+  stackLabel: 'Everything included',
+  stackHeading: 'One price, the full job',
+  stackItems: [
+    {
+      title: 'Posting cadence',
+      text: 'A realistic rhythm for your capacity, not an influencer schedule.',
+    },
+    {
+      title: 'Template set',
+      text: 'Offer, proof, FAQ, and seasonal shapes written in your voice.',
+    },
+    {
+      title: 'Starter bank',
+      text: 'Four to eight weeks of posts drafted and ready to publish.',
+    },
+    {
+      title: 'Handover notes',
+      text: 'How to keep the rhythm yourself, or add optional care later.',
+    },
+  ],
+  scopeLine:
+    'One Google Business Profile. Setup covers cadence, templates, and the agreed starter bank. Optional monthly care is quoted separately when you want it.',
+  priceLabel: 'Investment',
+  price: '$1,600 setup',
+  priceLead:
+    'Fixed once your categories and voice are confirmed. This is the locked list price for the scope above.',
+  guarantee:
+    'When this goes live: agreed cadence, templates, and starter bank are delivered, or we keep working at no extra cost until they are.',
+  priceAnchor: 'Cheaper than looking closed next to a competitor who posts every week.',
+  faqLabel: 'Objections',
+  faqHeading: 'Straight answers before you pay',
+  faqs: [
+    {
+      q: 'Can I pay for this today?',
+      a: "Not on this page yet. Payment isn't wired here, and the price above is the locked list price for when it opens. Reply to any SYSBILT email if you want it scoped sooner.",
+    },
+    {
+      q: 'Will this reply to messages or seed Q&A on my profile?',
+      a: 'No. Messages and Q&A sit inside separate Google tools and behave differently to posts. This product is the posting cadence, templates, and starter bank only.',
+    },
+    {
+      q: 'How is this different from Google Profile Fix?',
+      a: 'Google Profile Fix cleans up claim, categories, photos, and your review link. This is what keeps the profile looking active afterwards: posts on a rhythm.',
+    },
+    {
+      q: 'How is this different from Content System?',
+      a: 'Content System runs every channel every month. This is one Google feature, posts, set up once, with an optional care month if you want us to keep feeding it.',
+    },
+    {
+      q: 'Will you post for us every week?',
+      a: 'Only if you take the optional care month. Setup alone leaves you able to publish yourselves from the starter bank.',
+    },
+  ],
+  finalLabel: 'Last step',
+  finalHeading: 'Look open on Maps, not frozen in time',
+  finalLine: 'Cadence, templates, and a bank of posts ready to publish.',
+  proofKind: 'profile-posting',
+}
+
 import {DRAFT_COPY_BY_SLUG} from './funnelDraftProducts'
 
 export function funnelCopyForSlug(slug: string | undefined): FunnelProductCopy {
   if (slug === 'enquiry-reply') return ENQUIRY_REPLY_COPY
+  if (slug === 'profile-posting') return PROFILE_POSTING_COPY
   if (slug === 'missed-call') return MISSED_CALL_COPY
   if (slug === 'google-profile') return GOOGLE_PROFILE_COPY
   if (slug === 'search-fix') return SEARCH_FIX_COPY

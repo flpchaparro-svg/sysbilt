@@ -311,7 +311,7 @@ export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
     code: 'profile-posting',
     title: 'Profile Posting System',
     price: '$1,600',
-    blurb: 'Cadence, templates, and a bank of posts so the profile stays alive. Draft.',
+    blurb: 'Cadence, templates, and a bank of posts so the profile stays alive.',
     status: 'soon',
     lane: 'soon',
     section: 'draft-local',

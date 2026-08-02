@@ -1916,6 +1916,144 @@ const ENQUIRY_REPLY_STACK_VISUALS = [
   EnquiryTestPackStackVisual,
 ]
 
+/** Profile Posting: weekly cadence bar fills. */
+function PostingCadenceStackVisual({reduce, play}: VisualProps) {
+  return (
+    <div className="w-full h-[72px] border border-dark/12 bg-cream px-3 py-2.5 flex flex-col justify-center">
+      <div className="flex justify-between mb-1.5 font-mono text-[8px] uppercase tracking-[0.14em] text-dark/40">
+        <span>Week 1</span>
+        <span>Week 4</span>
+      </div>
+      <div className="h-2.5 w-full bg-dark/8 overflow-hidden">
+        <motion.div
+          className="h-full bg-teal"
+          initial={{width: '0%'}}
+          animate={{width: play || reduce ? '100%' : '0%'}}
+          transition={reduce ? {duration: 0} : {duration: 1.8, ease: [0.16, 1, 0.3, 1]}}
+        />
+      </div>
+      <p className="mt-1.5 font-mono text-[7px] uppercase tracking-widest text-dark/45">
+        Same rhythm every week
+      </p>
+    </div>
+  )
+}
+
+/** Profile Posting: template categories loaded and ready. */
+function TemplateSetStackVisual({reduce, play}: VisualProps) {
+  const go = play && !reduce
+  const rows = ['Offer', 'Proof', 'FAQ', 'Seasonal']
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-2.5 space-y-1 overflow-hidden">
+      {rows.map((label, i) => (
+        <motion.div
+          key={label}
+          className="flex items-center justify-between border px-2 py-0.5"
+          initial={{opacity: 0.3, x: -6}}
+          animate={
+            go
+              ? {
+                  opacity: 1,
+                  x: 0,
+                  borderColor: FUNNEL_COLOURS.accent,
+                  backgroundColor: `${FUNNEL_COLOURS.accent}12`,
+                }
+              : undefined
+          }
+          transition={{delay: i * 0.12, type: 'spring', stiffness: 360}}
+        >
+          <span className="font-sans text-[11px] text-dark/75">{label}</span>
+          <span
+            className="font-mono text-[7px] font-bold uppercase tracking-wide"
+            style={{color: FUNNEL_COLOURS.accent}}
+          >
+            Ready
+          </span>
+        </motion.div>
+      ))}
+    </div>
+  )
+}
+
+/** Profile Posting: starter bank of posts fills the grid. */
+function StarterBankStackVisual({reduce, play}: VisualProps) {
+  const go = play && !reduce
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3">
+      <p className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/40 mb-2">
+        Starter bank
+      </p>
+      <div className="grid grid-cols-4 gap-1.5">
+        {Array.from({length: 8}).map((_, i) => (
+          <motion.div
+            key={i}
+            className="aspect-square rounded-sm relative overflow-hidden"
+            style={{backgroundColor: `${FUNNEL_COLOURS.ink}10`}}
+            initial={{opacity: 0, scale: 0.9}}
+            animate={go ? {opacity: 1, scale: 1} : undefined}
+            transition={{delay: i * 0.05, type: 'spring', stiffness: 360, damping: 18}}
+          >
+            <motion.span
+              className="absolute bottom-0.5 left-0.5 right-0.5 font-mono text-[6px] font-bold uppercase tracking-wider text-center"
+              style={{color: FUNNEL_COLOURS.goldDeep}}
+              animate={go ? {opacity: [0.5, 1, 0.5]} : undefined}
+              transition={{duration: 1.2, repeat: Infinity, delay: i * 0.06}}
+            >
+              Ready
+            </motion.span>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** Profile Posting: handover checklist ticks through. */
+function HandoverNotesStackVisual({reduce, play}: VisualProps) {
+  const rows = ['Cadence', 'Templates', 'Bank', 'Handover']
+  return (
+    <div className="w-full h-[72px] border border-dark/20 bg-white px-3 py-2 flex flex-col justify-center gap-1">
+      <div className="flex gap-1.5">
+        {rows.map((label, i) => (
+          <motion.div
+            key={label}
+            className="flex-1 border px-1 py-1 text-center bg-cream"
+            style={{borderColor: 'rgba(26,26,26,0.18)'}}
+            initial={{opacity: 0.35}}
+            animate={{
+              opacity: play || reduce ? 1 : 0.35,
+              borderColor:
+                play || reduce ? 'rgba(168,132,63,0.85)' : 'rgba(26,26,26,0.18)',
+              backgroundColor:
+                play || reduce ? 'rgba(197,160,89,0.22)' : '#FFF2EC',
+            }}
+            transition={
+              reduce ? {duration: 0} : {delay: play ? i * 0.16 : 0, duration: 0.3}
+            }
+          >
+            <p className="font-mono text-[7px] uppercase tracking-wider text-dark/60">{label}</p>
+            <motion.p
+              className="font-mono text-[9px] font-bold text-gold-on-cream"
+              initial={{opacity: 0}}
+              animate={{opacity: play || reduce ? 1 : 0}}
+              transition={{delay: play ? 0.2 + i * 0.16 : 0}}
+            >
+              ✓
+            </motion.p>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+const PROFILE_POSTING_STACK_VISUALS = [
+  PostingCadenceStackVisual,
+  TemplateSetStackVisual,
+  StarterBankStackVisual,
+  HandoverNotesStackVisual,
+]
+
 /** Team AI: half-day remote session. */
 function TeamHalfDayStackVisual({reduce, play}: VisualProps) {
   const go = play && !reduce
@@ -2406,6 +2544,7 @@ export function StackMotionRows({
     | 'booking'
     | 'website'
     | 'enquiry-reply'
+    | 'profile-posting'
 }) {
   const reduce = useReducedMotion()
   const visuals: Array<(p: VisualProps) => React.ReactElement> =
@@ -2429,7 +2568,9 @@ export function StackMotionRows({
                       ? CRM_STACK_VISUALS
                       : variant === 'enquiry-reply'
                         ? ENQUIRY_REPLY_STACK_VISUALS
-                        : variant === 'change-pack'
+                        : variant === 'profile-posting'
+                          ? PROFILE_POSTING_STACK_VISUALS
+                          : variant === 'change-pack'
                           ? CHANGE_PACK_STACK_VISUALS
                           : variant === 'content-system'
                             ? CONTENT_SYSTEM_STACK_VISUALS

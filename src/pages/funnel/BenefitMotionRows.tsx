@@ -1103,6 +1103,153 @@ const ENQUIRY_REPLY_VISUALS = [
   EnquiryNextStepVisual,
 ]
 
+/** Profile Posting: recent weeks all show a live post. */
+function ProfilePostLiveVisual({reduce}: VisualProps) {
+  const rows = ['This week', 'Last week', 'Two weeks ago']
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2">
+        <span className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/40">
+          Update history
+        </span>
+      </div>
+      <div className="flex-1 min-h-0 p-1.5 flex flex-col justify-center gap-1">
+        {rows.map((label, i) => (
+          <motion.div
+            key={label}
+            className="flex items-center justify-between rounded-sm border px-2 py-1 shrink-0"
+            style={{borderColor: colors.teal, backgroundColor: `${colors.teal}14`}}
+            initial={reduce ? false : {opacity: 0, x: -10, scale: 0.96}}
+            whileInView={{opacity: 1, x: 0, scale: 1}}
+            viewport={{once: true}}
+            transition={{delay: reduce ? 0 : 0.1 + i * 0.14, type: 'spring', stiffness: 380, damping: 20}}
+          >
+            <span className="font-sans text-[10px] text-dark/75 truncate pr-2">{label} · posted</span>
+            <motion.span
+              className="font-mono text-[7px] font-bold uppercase tracking-wide shrink-0"
+              style={{color: colors.teal}}
+              animate={reduce ? undefined : {opacity: [1, 0.5, 1]}}
+              transition={{duration: 1.1, repeat: Infinity, ease: 'easeInOut', delay: i * 0.15}}
+            >
+              Live
+            </motion.span>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** Profile Posting: template categories ready in the bank. */
+function ProfileTemplatesReadyVisual({reduce}: VisualProps) {
+  const chips = ['Offer', 'Proof', 'FAQ', 'Seasonal']
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col justify-center px-3">
+      <p className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/40 mb-2 text-center">
+        Template bank
+      </p>
+      <div className="flex flex-wrap gap-1.5 justify-center">
+        {chips.map((label, i) => (
+          <motion.span
+            key={label}
+            className="font-mono text-[9px] uppercase tracking-wider px-2 py-1.5 border rounded-sm"
+            style={{
+              borderColor: `${FUNNEL_COLOURS.gold}88`,
+              backgroundColor: `${FUNNEL_COLOURS.gold}18`,
+              color: FUNNEL_COLOURS.ink,
+            }}
+            initial={reduce ? false : {opacity: 0, y: 6, scale: 0.9}}
+            whileInView={{opacity: 1, y: 0, scale: 1}}
+            viewport={{once: true}}
+            transition={{delay: reduce ? 0 : 0.08 + i * 0.1, type: 'spring', stiffness: 360}}
+          >
+            {label}
+          </motion.span>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** Profile Posting: an old offer retired, this week's post takes its place. */
+function ProfileOfferFreshVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col justify-center px-3 gap-1.5">
+      <motion.div
+        className="rounded-sm border px-2.5 py-1.5"
+        style={{borderColor: 'rgba(26,26,26,0.14)', backgroundColor: colors.cream}}
+        initial={reduce ? false : {opacity: 0.6}}
+        whileInView={{opacity: 0.5}}
+        viewport={{once: true}}
+      >
+        <p className="font-mono text-[7px] uppercase tracking-widest text-dark/40">Old offer</p>
+        <p className="font-sans text-[10px] line-through text-dark/50">Summer special, ended months ago</p>
+      </motion.div>
+      <motion.div
+        className="rounded-sm border px-2.5 py-1.5"
+        style={{borderColor: colors.teal, backgroundColor: `${colors.teal}14`}}
+        initial={reduce ? false : {opacity: 0, x: 8}}
+        whileInView={{opacity: 1, x: 0}}
+        viewport={{once: true}}
+        transition={{delay: reduce ? 0 : 0.2, type: 'spring', stiffness: 360}}
+      >
+        <p className="font-mono text-[7px] uppercase tracking-widest" style={{color: colors.teal}}>
+          This week&apos;s post
+        </p>
+        <p className="font-sans text-[10px] text-dark/80">Current hours and this month&apos;s offer</p>
+      </motion.div>
+    </div>
+  )
+}
+
+/** Profile Posting: clean cadence sets up Content System as the next step. */
+function ProfilePostingNextStepVisual({reduce}: VisualProps) {
+  const steps = ['Profile Posting', 'Content System']
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col justify-center">
+      <p className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/40 mb-2 text-center">
+        Ready when you are
+      </p>
+      <div className="flex items-center justify-center gap-1 px-2">
+        {steps.map((s, i) => (
+          <React.Fragment key={s}>
+            <motion.span
+              className="font-mono text-[8px] uppercase tracking-wider px-2 py-1 border text-center"
+              style={
+                i === 0
+                  ? {borderColor: colors.teal, backgroundColor: `${colors.teal}18`, color: 'inherit'}
+                  : {borderColor: 'rgba(26,26,26,0.15)', backgroundColor: '#fff', opacity: 0.5}
+              }
+              initial={reduce ? false : {opacity: 0, scale: 0.92}}
+              whileInView={{opacity: i === 0 ? 1 : 0.5, scale: 1}}
+              viewport={{once: true}}
+              transition={{delay: reduce ? 0 : i * 0.16, duration: 0.35}}
+            >
+              {s}
+            </motion.span>
+            {i < steps.length - 1 && (
+              <motion.span
+                className="font-mono text-[9px] text-dark/25"
+                animate={reduce ? undefined : {opacity: [0.15, 1, 0.15], x: [0, 2, 0]}}
+                transition={{delay: 0.12 + i * 0.18, duration: 0.9, repeat: Infinity}}
+              >
+                →
+              </motion.span>
+            )}
+          </React.Fragment>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+const PROFILE_POSTING_VISUALS = [
+  ProfilePostLiveVisual,
+  ProfileTemplatesReadyVisual,
+  ProfileOfferFreshVisual,
+  ProfilePostingNextStepVisual,
+]
+
 /** Team AI: whole team shares the same setup. */
 function TeamSharedSetupVisual({reduce}: VisualProps) {
   const seats = ['You', 'Sales', 'Ops', 'Admin']
@@ -2885,6 +3032,7 @@ export function BenefitMotionRows({
     | 'booking'
     | 'website'
     | 'enquiry-reply'
+    | 'profile-posting'
 }) {
   const reduce = useReducedMotion()
   const visuals =
@@ -2908,7 +3056,9 @@ export function BenefitMotionRows({
                       ? CRM_VISUALS
                       : variant === 'enquiry-reply'
                         ? ENQUIRY_REPLY_VISUALS
-                        : variant === 'change-pack'
+                        : variant === 'profile-posting'
+                          ? PROFILE_POSTING_VISUALS
+                          : variant === 'change-pack'
                           ? CHANGE_PACK_VISUALS
                           : variant === 'content-system'
                             ? CONTENT_SYSTEM_VISUALS

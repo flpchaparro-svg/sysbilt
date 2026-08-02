@@ -73,6 +73,10 @@ import {EnquiryReplyEvidenceCard} from './EnquiryReplyEvidenceCard'
 import {EnquiryReplyLeakPair} from './EnquiryReplyLeakPair'
 import {EnquiryReplyPainCards} from './EnquiryReplyPainCards'
 import {EnquiryReplyDeliverableMock} from './EnquiryReplyDeliverableMock'
+import {ProfilePostingEvidenceCard} from './ProfilePostingEvidenceCard'
+import {ProfilePostingLeakPair} from './ProfilePostingLeakPair'
+import {ProfilePostingPainCards} from './ProfilePostingPainCards'
+import {ProfilePostingDeliverableMock} from './ProfilePostingDeliverableMock'
 import {WebsiteEvidenceCard, type WebsiteEvidence} from './WebsiteEvidenceCard'
 import {WebsiteLeakPair} from './WebsiteLeakPair'
 import {WebsiteUnknownsCentrepiece} from './WebsiteUnknownsCentrepiece'
@@ -253,10 +257,11 @@ const FunnelPage: React.FC = () => {
   const isSpeed = proofKind === 'speed'
   const isWebsite = proofKind === 'website'
   const isEnquiryReply = proofKind === 'enquiry-reply'
+  const isProfilePosting = proofKind === 'profile-posting'
   const isDraftSoon =
     proofKind === 'geo' || proofKind === 'client-finder' || proofKind === 'draft'
   /** Visual drafts and priced-but-not-wired products that are not buyable yet. */
-  const usesComingSoonCta = isDraftSoon || isEnquiryReply
+  const usesComingSoonCta = isDraftSoon || isEnquiryReply || isProfilePosting
   const lastPostMonth = useMemo(() => sanitiseLastPostMonth(params.get('m')), [params])
   const yourReviews = useMemo(() => parseReviewCount(params.get('n')), [params])
   const theirReviews = useMemo(() => parseReviewCount(params.get('r')), [params])
@@ -274,19 +279,21 @@ const FunnelPage: React.FC = () => {
               ? 'crm-rescue'
               : isEnquiryReply
                 ? 'enquiry-reply'
-                : isTeamAi
-                  ? 'team-ai'
-                  : isChangePack
-                    ? 'change-pack'
-                    : isContentSystem
-                      ? 'content-system'
-                      : isReviews
-                          ? 'reviews'
-                          : isAiPhone
-                            ? 'ai-phone'
-                            : isBooking
-                              ? 'booking'
-                              : 'speed'
+                : isProfilePosting
+                  ? 'profile-posting'
+                  : isTeamAi
+                    ? 'team-ai'
+                    : isChangePack
+                      ? 'change-pack'
+                      : isContentSystem
+                        ? 'content-system'
+                        : isReviews
+                            ? 'reviews'
+                            : isAiPhone
+                              ? 'ai-phone'
+                              : isBooking
+                                ? 'booking'
+                                : 'speed'
   const calculatorVariant = isSpeed
     ? 'speed'
     : isMissedCall
@@ -586,6 +593,7 @@ const FunnelPage: React.FC = () => {
               isGoogleProfile ||
               isMissedCall ||
               isEnquiryReply ||
+              isProfilePosting ||
               isDraftSoon
                 ? 'max-w-3xl'
                 : 'max-w-5xl'
@@ -617,6 +625,9 @@ const FunnelPage: React.FC = () => {
             {isLandingPage ? <AdEvidenceMoment evidence={adEvidence} /> : null}
             {isCrmRescue ? <CrmEnquiryEvidenceCard evidence={crmEvidence} /> : null}
             {isEnquiryReply ? <EnquiryReplyEvidenceCard business={business} /> : null}
+            {isProfilePosting ? (
+              <ProfilePostingEvidenceCard business={business} lastPostMonth={lastPostMonth} />
+            ) : null}
             {isTeamAi ? <TeamRecognitionCards /> : null}
             {isChangePack ? <ChangeRiskRegisterCard business={business} /> : null}
             {isContentSystem ? (
@@ -670,6 +681,7 @@ const FunnelPage: React.FC = () => {
                     isLandingPage ||
                     isCrmRescue ||
                     isEnquiryReply ||
+                    isProfilePosting ||
                     isTeamAi ||
                     isChangePack ||
                     isContentSystem ||
@@ -861,6 +873,42 @@ const FunnelPage: React.FC = () => {
                     </p>
                   </Reveal>
                   <EnquiryReplyLeakPair />
+                </section>
+              </>
+            ) : isProfilePosting ? (
+              <>
+                <Reveal delay={0.08} y={12}>
+                  <p
+                    className="mt-6 font-sans text-base md:text-lg leading-relaxed max-w-2xl"
+                    style={{color: FUNNEL_COLOURS.muted}}
+                  >
+                    {COPY.proofAfterGeneric}
+                  </p>
+                </Reveal>
+                <section className="mt-12 md:mt-14">
+                  <Reveal y={10}>
+                    <SectionLabel>The leak</SectionLabel>
+                  </Reveal>
+                  <Reveal delay={0.06} y={14}>
+                    <h3
+                      className="font-serif font-bold text-2xl md:text-3xl tracking-tight mb-4 max-w-2xl"
+                      style={{color: FUNNEL_COLOURS.ink}}
+                    >
+                      A quiet profile still looks closed
+                    </h3>
+                  </Reveal>
+                  <Reveal delay={0.1} y={10}>
+                    <p
+                      className="font-sans text-base md:text-lg leading-relaxed max-w-2xl mb-2"
+                      style={{color: FUNNEL_COLOURS.muted}}
+                    >
+                      The listing is claimed and the categories are set, so it looks finished at a
+                      glance. Then someone taps the Updates tab and finds nothing recent, while the
+                      business down the road posted three times this week. Nobody lied about being
+                      open. The profile just never said so.
+                    </p>
+                  </Reveal>
+                  <ProfilePostingLeakPair />
                 </section>
               </>
             ) : isTeamAi ? (
@@ -1099,6 +1147,8 @@ const FunnelPage: React.FC = () => {
                 <CrmPainCards />
               ) : isEnquiryReply ? (
                 <EnquiryReplyPainCards />
+              ) : isProfilePosting ? (
+                <ProfilePostingPainCards />
               ) : isTeamAi ? (
                 <TeamPainCards />
               ) : isChangePack ? (
@@ -1179,6 +1229,7 @@ const FunnelPage: React.FC = () => {
                 <CrmFixedThreadMock />
               </div>
             ) : isEnquiryReply ||
+              isProfilePosting ||
               isTeamAi ||
               isChangePack ||
               isContentSystem ||
@@ -1352,6 +1403,8 @@ const FunnelPage: React.FC = () => {
                   <CrmFixedThreadMock />
                 ) : isEnquiryReply ? (
                   <EnquiryReplyDeliverableMock />
+                ) : isProfilePosting ? (
+                  <ProfilePostingDeliverableMock />
                 ) : isTeamAi ? (
                   <TeamSessionDeliverableMock />
                 ) : isChangePack ? (

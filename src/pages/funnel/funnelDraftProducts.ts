@@ -86,60 +86,6 @@ const comingSoonFaq: FunnelFaq = {
   a: 'Not yet. This page is a draft for review. When it opens, you will get a clear buy path or a short scope form. Until then, treat the price as the intended list price.',
 }
 
-export const PROFILE_POSTING_COPY = makeDraftCopy({
-  eyebrow: 'Fixed price setup · Optional monthly · Coming soon',
-  h1Generic: 'A Google profile that never posts looks closed, even when you are busy',
-  sub: 'Posts are how Maps proves you are alive. We build the cadence, templates, and a bank of ready posts so the profile does not go quiet for months.',
-  proofHeading: 'Silence reads as neglect',
-  proofLead:
-    'People compare you to the clinic that posted last week. Empty update history feels like a business that stopped trying.',
-  proofAfter:
-    'You leave with a posting system: what to say, how often, and a stack of posts ready to publish.',
-  painHeading: 'You meant to post. Then the week ate you',
-  painLines: [
-    'The last update was a Christmas graphic from two years ago.',
-    'Nobody owns posting, so it only happens when someone feels guilty.',
-    'Offers and hours change, but the profile still says the old story.',
-    'Reviews arrive, but there is no rhythm of proof between them.',
-  ],
-  bridgeHeading: 'A posting machine you can keep, or we can feed',
-  bridgeBody:
-    "This isn't us pretending to be your full content agency forever unless you choose a care month. It's a system: categories, templates, and a starter bank. Optional monthly care keeps it fed. Coming soon.",
-  bridgeGaugeCaption: 'Setup once. Publish on a rhythm you can actually keep.',
-  benefits: [
-    {title: 'The profile looks alive', text: 'Regular posts signal you are open and paying attention.'},
-    {title: 'Less blank-page stress', text: 'Templates and a bank remove the weekly invent-from-nothing problem.'},
-    {title: 'Offers stay current', text: 'Hours, services, and seasonal notes have a place to land.'},
-    {title: 'Path into Content System', text: 'If you need every channel fed, this plugs into the wider machine later.'},
-  ],
-  processSteps: [
-    {label: 'Brief', text: 'Voice, offers, and what you are allowed to say in public.'},
-    {label: 'Build', text: 'Cadence, templates, categories, and a starter bank of posts.'},
-    {label: 'Train', text: 'Fifteen minutes with whoever will publish, or we set care month rules.'},
-  ],
-  stackItems: [
-    {title: 'Posting cadence', text: 'A realistic rhythm for your capacity, not an influencer schedule.'},
-    {title: 'Template set', text: 'Offer, proof, FAQ, and seasonal shapes in your voice.'},
-    {title: 'Starter bank', text: 'Four to eight weeks of posts drafted and ready.'},
-    {title: 'Optional care', text: 'Monthly feed priced separately when you do not want to publish yourselves.'},
-  ],
-  scopeLine: 'One profile. Setup $1,600. Optional care from $490/mo when offered. Coming soon.',
-  price: '$1,600 setup',
-  priceLead: 'Setup is one-off. Monthly care is optional and quoted when this opens.',
-  guarantee:
-    'When this goes live: cadence, templates, and the agreed starter bank are delivered, or we keep working at no extra cost until they are.',
-  priceAnchor: 'Cheaper than looking abandoned next to a competitor who posts weekly.',
-  faqs: [
-    comingSoonFaq,
-    {
-      q: 'Will you post for us every week?',
-      a: 'Only if you take the optional care month. Setup alone leaves you able to publish yourselves.',
-    },
-  ],
-  finalHeading: 'Look open on Maps, not frozen in time',
-  finalLine: 'Cadence, templates, and a bank of posts. Coming soon.',
-})
-
 export const QA_REVIEW_DESK_COPY = makeDraftCopy({
   eyebrow: 'Fixed price · Two days · Coming soon',
   h1Generic: 'Reviews and questions arrive. Your replies still feel improvised',
@@ -1224,7 +1170,6 @@ export const WEBSITE_HOOK_COPY = makeDraftCopy({
 })
 
 export const DRAFT_COPY_BY_SLUG: Record<string, FunnelProductCopy> = {
-  'profile-posting': PROFILE_POSTING_COPY,
   'qa-review-desk': QA_REVIEW_DESK_COPY,
   'local-pack': LOCAL_PACK_COPY,
   'conversion-pass': CONVERSION_PASS_COPY,
