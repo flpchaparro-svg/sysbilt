@@ -936,6 +936,173 @@ const CRM_VISUALS = [
   CrmFiveDayVisual,
 ]
 
+/** Enquiry Reply: form enquiry answered in seconds. */
+function EnquiryAckInSecondsVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+          Website form
+        </span>
+        <motion.span
+          className="font-mono text-[7px] font-bold uppercase tracking-wide text-gold-on-cream"
+          animate={reduce ? undefined : {opacity: [0.55, 1, 0.55]}}
+          transition={{duration: 1.4, repeat: Infinity}}
+        >
+          Auto-ack
+        </motion.span>
+      </div>
+      <div className="flex-1 min-h-0 p-2 flex flex-col justify-center gap-1.5">
+        <motion.div
+          className="rounded-sm border border-dark/10 bg-cream px-2 py-1 shrink-0"
+          initial={reduce ? false : {opacity: 0, x: -14, scale: 0.96}}
+          whileInView={{opacity: 1, x: 0, scale: 1}}
+          viewport={{once: true}}
+          transition={{type: 'spring', stiffness: 380, damping: 22}}
+        >
+          <p className="font-mono text-[7px] text-dark/40">Enquiry</p>
+          <p className="font-sans text-[10px] text-dark/70 leading-tight">Submitted · just now</p>
+        </motion.div>
+        <motion.div
+          className="rounded-sm border px-2 py-1 shrink-0"
+          style={{borderColor: `${colors.teal}55`, backgroundColor: `${colors.teal}12`}}
+          initial={reduce ? false : {opacity: 0, y: 10, scale: 0.92}}
+          whileInView={{opacity: 1, y: 0, scale: 1}}
+          viewport={{once: true}}
+          transition={{delay: reduce ? 0 : 0.35, type: 'spring', stiffness: 420, damping: 18}}
+        >
+          <motion.p
+            className="font-mono text-[7px] font-bold uppercase tracking-wide"
+            style={{color: colors.teal}}
+            animate={reduce ? undefined : {scale: [1, 1.04, 1]}}
+            transition={{duration: 1.1, repeat: Infinity, delay: 0.6}}
+          >
+            Acknowledged · 4s
+          </motion.p>
+          <p className="font-sans text-[10px] text-dark/65 leading-tight">
+            Thanks, we have this and will follow up shortly.
+          </p>
+        </motion.div>
+      </div>
+    </div>
+  )
+}
+
+/** Enquiry Reply: everything routes to one owned inbox. */
+function EnquiryOneInboxVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2">
+        <span className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/40">Routes to</span>
+      </div>
+      <div className="flex-1 min-h-0 p-1.5 flex flex-col justify-center gap-1">
+        {[
+          {who: 'Enquiries · one inbox', ok: true},
+          {who: 'Personal mobile', ok: false},
+          {who: 'Second staff app', ok: false},
+        ].map((row, i) => (
+          <motion.div
+            key={row.who}
+            className="flex items-center justify-between rounded-sm border px-2 py-1 shrink-0"
+            style={
+              row.ok
+                ? {borderColor: colors.teal, backgroundColor: `${colors.teal}14`}
+                : {borderColor: 'rgba(26,26,26,0.12)', backgroundColor: colors.cream}
+            }
+            initial={reduce ? false : {opacity: 0, x: row.ok ? -10 : 10, scale: 0.96}}
+            whileInView={{opacity: row.ok ? 1 : 0.4, x: 0, scale: 1}}
+            viewport={{once: true}}
+            transition={{delay: reduce ? 0 : 0.1 + i * 0.14, type: 'spring', stiffness: 380, damping: 20}}
+          >
+            <span className="font-sans text-[10px] text-dark/75 truncate pr-2">{row.who}</span>
+            {row.ok ? (
+              <motion.span
+                className="font-mono text-[7px] font-bold uppercase tracking-wide shrink-0"
+                style={{color: colors.teal}}
+                animate={reduce ? undefined : {opacity: [1, 0.35, 1], scale: [1, 1.14, 1]}}
+                transition={{duration: 0.8, repeat: Infinity, ease: 'easeInOut'}}
+              >
+                Watched
+              </motion.span>
+            ) : null}
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** Enquiry Reply: reply wording stays in your voice. */
+function EnquiryYourWordsVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col justify-center px-3">
+      <motion.div
+        className="max-w-[92%] rounded-2xl rounded-bl-sm px-3 py-2"
+        style={{backgroundColor: FUNNEL_COLOURS.ink, color: FUNNEL_COLOURS.onInk}}
+        initial={reduce ? false : {opacity: 0, y: 8}}
+        whileInView={{opacity: 1, y: 0}}
+        viewport={{once: true}}
+        transition={{duration: 0.4}}
+      >
+        <p className="font-mono text-[7px] uppercase tracking-widest mb-0.5 opacity-60">
+          Your words, not a script
+        </p>
+        <p className="font-sans text-[11px] leading-snug">
+          Thanks for reaching out, we have this and someone will follow up shortly.
+        </p>
+      </motion.div>
+    </div>
+  )
+}
+
+/** Enquiry Reply: clean routing sets up the next system. */
+function EnquiryNextStepVisual({reduce}: VisualProps) {
+  const steps = ['Enquiry Reply', 'Missed-Call', 'CRM Rescue']
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col justify-center">
+      <p className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/40 mb-2 text-center">
+        Ready when you are
+      </p>
+      <div className="flex items-center justify-center gap-1 px-2">
+        {steps.map((s, i) => (
+          <React.Fragment key={s}>
+            <motion.span
+              className="font-mono text-[8px] uppercase tracking-wider px-2 py-1 border text-center"
+              style={
+                i === 0
+                  ? {borderColor: colors.teal, backgroundColor: `${colors.teal}18`, color: 'inherit'}
+                  : {borderColor: 'rgba(26,26,26,0.15)', backgroundColor: '#fff', opacity: 0.5}
+              }
+              initial={reduce ? false : {opacity: 0, scale: 0.92}}
+              whileInView={{opacity: i === 0 ? 1 : 0.5, scale: 1}}
+              viewport={{once: true}}
+              transition={{delay: reduce ? 0 : i * 0.16, duration: 0.35}}
+            >
+              {s}
+            </motion.span>
+            {i < steps.length - 1 && (
+              <motion.span
+                className="font-mono text-[9px] text-dark/25"
+                animate={reduce ? undefined : {opacity: [0.15, 1, 0.15], x: [0, 2, 0]}}
+                transition={{delay: 0.12 + i * 0.18, duration: 0.9, repeat: Infinity}}
+              >
+                →
+              </motion.span>
+            )}
+          </React.Fragment>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+const ENQUIRY_REPLY_VISUALS = [
+  EnquiryAckInSecondsVisual,
+  EnquiryOneInboxVisual,
+  EnquiryYourWordsVisual,
+  EnquiryNextStepVisual,
+]
+
 /** Team AI: whole team shares the same setup. */
 function TeamSharedSetupVisual({reduce}: VisualProps) {
   const seats = ['You', 'Sales', 'Ops', 'Admin']
@@ -1444,155 +1611,6 @@ const CONTENT_SYSTEM_VISUALS = [
   ContentSoundsLikeYouVisual,
   ContentOneHourVisual,
   ContentReportVisual,
-]
-
-/** Profile Messaging: first answer lands. */
-function ProfileMsgFirstAnswerVisual({reduce}: VisualProps) {
-  return (
-    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
-      <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
-          Maps thread
-        </span>
-        <motion.span
-          className="font-mono text-[7px] font-bold uppercase tracking-wide"
-          style={{color: colors.teal}}
-          animate={reduce ? undefined : {opacity: [0.5, 1, 0.5]}}
-          transition={{duration: 1.2, repeat: Infinity}}
-        >
-          Replied
-        </motion.span>
-      </div>
-      <div className="flex-1 min-h-0 p-2 flex flex-col justify-center gap-1.5">
-        <div className="rounded-sm border border-dark/10 bg-cream px-2 py-1 self-start max-w-[90%]">
-          <span className="font-sans text-[10px] text-dark/55">Do you have a slot?</span>
-        </div>
-        <motion.div
-          className="rounded-sm border px-2 py-1.5 self-end max-w-[90%]"
-          style={{borderColor: `${colors.teal}55`, backgroundColor: `${colors.teal}12`}}
-          initial={reduce ? false : {opacity: 0, y: 8}}
-          whileInView={{opacity: 1, y: 0}}
-          viewport={{once: true}}
-          transition={{delay: reduce ? 0 : 0.2, type: 'spring', stiffness: 380}}
-        >
-          <p className="font-sans text-[10px] text-dark/75 leading-tight">Thanks. We will get back shortly.</p>
-        </motion.div>
-      </div>
-    </div>
-  )
-}
-
-/** Profile Messaging: hours match reality. */
-function ProfileMsgHoursVisual({reduce}: VisualProps) {
-  const rows = [
-    {label: 'Mon–Fri', tag: 'Open'},
-    {label: 'Sat morning', tag: 'Open'},
-    {label: 'Night', tag: 'Closed'},
-  ]
-  return (
-    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
-      <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
-          Availability
-        </span>
-      </div>
-      <div className="flex-1 min-h-0 p-2 space-y-1">
-        {rows.map((row, i) => (
-          <motion.div
-            key={row.label}
-            className="rounded-sm border px-2 py-1 flex items-center justify-between"
-            style={{
-              borderColor: row.tag === 'Closed' ? `${FUNNEL_COLOURS.ink}12` : `${colors.teal}44`,
-              backgroundColor: row.tag === 'Closed' ? colors.cream : `${colors.teal}10`,
-            }}
-            initial={reduce ? false : {opacity: 0, x: -8}}
-            whileInView={{opacity: 1, x: 0}}
-            viewport={{once: true}}
-            transition={{delay: reduce ? 0 : 0.1 + i * 0.1}}
-          >
-            <span className="font-sans text-[10px] text-dark/75">{row.label}</span>
-            <span
-              className="font-mono text-[7px] font-bold uppercase"
-              style={{color: row.tag === 'Closed' ? FUNNEL_COLOURS.muted : colors.teal}}
-            >
-              {row.tag}
-            </span>
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-/** Profile Messaging: one shared voice. */
-function ProfileMsgSharedVoiceVisual({reduce}: VisualProps) {
-  return (
-    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
-      <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
-          Reply bank
-        </span>
-      </div>
-      <div className="flex-1 min-h-0 p-2 space-y-1">
-        {['First reply', 'After hours', 'Common questions'].map((label, i) => (
-          <motion.div
-            key={label}
-            className="rounded-sm border px-2 py-1 flex items-center justify-between"
-            style={{borderColor: `${colors.teal}44`, backgroundColor: `${colors.teal}10`}}
-            initial={reduce ? false : {opacity: 0, x: -8}}
-            whileInView={{opacity: 1, x: 0}}
-            viewport={{once: true}}
-            transition={{delay: reduce ? 0 : 0.1 + i * 0.12}}
-          >
-            <span className="font-sans text-[10px] text-dark/75">{label}</span>
-            <span className="font-mono text-[7px] font-bold uppercase" style={{color: colors.teal}}>
-              Ready
-            </span>
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-/** Profile Messaging: handoff alert. */
-function ProfileMsgHandoffVisual({reduce}: VisualProps) {
-  return (
-    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
-      <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
-          Human needed
-        </span>
-        <motion.span
-          className="font-mono text-[7px] font-bold uppercase tracking-wide text-gold-on-cream"
-          animate={reduce ? undefined : {opacity: [0.5, 1, 0.5]}}
-          transition={{duration: 1.1, repeat: Infinity}}
-        >
-          Alert
-        </motion.span>
-      </div>
-      <div className="flex-1 min-h-0 p-2 flex items-center gap-2">
-        <motion.div
-          className="font-mono text-[10px] font-bold uppercase tracking-wider px-2 py-1.5 text-white"
-          style={{backgroundColor: '#1F7A4D'}}
-          animate={reduce ? undefined : {scale: [1, 1.05, 1]}}
-          transition={{duration: 1.3, repeat: Infinity}}
-        >
-          Phone
-        </motion.div>
-        <p className="font-sans text-[11px] text-dark/70 leading-snug">
-          Lands where you already work
-        </p>
-      </div>
-    </div>
-  )
-}
-
-const PROFILE_MESSAGING_VISUALS = [
-  ProfileMsgFirstAnswerVisual,
-  ProfileMsgHoursVisual,
-  ProfileMsgSharedVoiceVisual,
-  ProfileMsgHandoffVisual,
 ]
 
 const TEAM_AI_VISUALS = [
@@ -2862,11 +2880,11 @@ export function BenefitMotionRows({
     | 'team-ai'
     | 'change-pack'
     | 'content-system'
-    | 'profile-messaging'
     | 'reviews'
     | 'ai-phone'
     | 'booking'
     | 'website'
+    | 'enquiry-reply'
 }) {
   const reduce = useReducedMotion()
   const visuals =
@@ -2888,15 +2906,15 @@ export function BenefitMotionRows({
                     ? BOOKING_VISUALS
                     : variant === 'crm-rescue'
                       ? CRM_VISUALS
-                      : variant === 'change-pack'
-                        ? CHANGE_PACK_VISUALS
-                        : variant === 'content-system'
-                          ? CONTENT_SYSTEM_VISUALS
-                          : variant === 'profile-messaging'
-                            ? PROFILE_MESSAGING_VISUALS
+                      : variant === 'enquiry-reply'
+                        ? ENQUIRY_REPLY_VISUALS
+                        : variant === 'change-pack'
+                          ? CHANGE_PACK_VISUALS
+                          : variant === 'content-system'
+                            ? CONTENT_SYSTEM_VISUALS
                             : variant === 'team-ai'
-                              ? TEAM_AI_VISUALS
-                              : SPEED_VISUALS
+                                ? TEAM_AI_VISUALS
+                                : SPEED_VISUALS
 
   return (
     <div className="space-y-10 md:space-y-12">

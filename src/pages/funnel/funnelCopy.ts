@@ -66,7 +66,7 @@ export type FunnelProductCopy = {
     | 'website'
     | 'geo'
     | 'client-finder'
-    | 'profile-messaging'
+    | 'enquiry-reply'
     | 'draft'
 }
 
@@ -2167,9 +2167,134 @@ export const CLIENT_FINDER_COPY: FunnelProductCopy = {
   proofKind: 'client-finder',
 }
 
+export const ENQUIRY_REPLY_COPY: FunnelProductCopy = {
+  eyebrow: 'Fixed price · Two to three days · One shared inbox',
+  h1Generic: 'The enquiry sits unread while they tap through to the next result',
+  h1Personal: (b: string) =>
+    `${b}, the enquiry sits unread while they tap through to the next result`,
+  sub: 'Website forms and email are where people actually ask you things. We wire an instant, on-brand acknowledgement the moment they land, then route the real message to the one inbox your team watches.',
+  ctaLabel: 'Wire enquiry reply · $1,250',
+  proofLabel: 'The picture',
+  proofHeadingLive: 'Speed of reply is the whole product',
+  proofHeadingGeneric: 'Speed of reply is the whole product',
+  proofLead: (b: string | null) =>
+    b
+      ? `${b}'s contact form and inbox both take enquiries today. Neither one replies straight away.`
+      : 'Your contact form and inbox both take enquiries today. Neither one replies straight away.',
+  proofLeadGeneric:
+    'Website forms and email both take enquiries today. Neither one replies straight away, and the person on the other end has no way to know the message even arrived.',
+  proofAfter:
+    "The fix isn't a chatbot pretending to be a person. It's a calm acknowledgement in seconds, then the real message routed to whoever actually answers it.",
+  proofAfterGeneric:
+    "The fix isn't a chatbot pretending to be a person. It's a calm acknowledgement in seconds, then the real message routed to whoever actually answers it.",
+  painLabel: 'What this is costing you',
+  painHeading: 'Enquiries land. Nobody owns the first minute',
+  painLines: [
+    'The website form emails an inbox nobody checks until the end of the day.',
+    'Email and the contact form live in separate places, so nothing gets a consistent first reply.',
+    'The customer hears nothing back and assumes you are too busy, or closed.',
+    'Whoever is free writes the reply, so tone and facts change depending on who was around.',
+  ],
+  bridgeLabel: 'The fix',
+  bridgeHeading: 'An instant reply, then a clean handoff',
+  bridgeBody:
+    "This isn't a full CRM rebuild and it isn't a phone system. It's the first reply on your written channels, website forms and email, plus a second intake if you already run one. The moment someone enquires, they get a calm, on-brand acknowledgement, and the real message routes to the one inbox or phone your team already watches.",
+  bridgeGaugeCaption:
+    'Seconds for the acknowledgement. Minutes for a person once the message lands where it should.',
+  benefitsLabel: 'What changes for you',
+  benefitsHeading: 'Outcomes, not jargon',
+  benefits: [
+    {
+      title: 'They hear from you in seconds',
+      text: 'The acknowledgement buys you time without ever looking closed or slow to respond.',
+    },
+    {
+      title: 'One inbox, not five',
+      text: 'Forms and email stop scattering across different apps. Your team watches one place.',
+    },
+    {
+      title: 'Tone stays yours',
+      text: 'The reply reads like your business wrote it, not a generic script.',
+    },
+    {
+      title: 'Ready for the next step',
+      text: 'Clean routing makes Missed-Call Text-Back or CRM Rescue easier to add later.',
+    },
+  ],
+  processLabel: 'How it runs',
+  processHeading: 'A short, clear build',
+  processSteps: [
+    {
+      label: 'Map',
+      text: 'Which channels matter, who should see the real message, and where it lands.',
+    },
+    {
+      label: 'Build',
+      text: 'Acknowledgement wording and routing, tested on each channel in scope.',
+    },
+    {
+      label: 'Prove',
+      text: 'You send a real enquiry. We watch it arrive where it should, in seconds.',
+    },
+  ],
+  stackLabel: 'Everything included',
+  stackHeading: 'One price, the full job',
+  stackItems: [
+    {
+      title: 'Channel scope',
+      text: 'Website forms and email in the fixed price, plus one extra intake channel if you already use one.',
+    },
+    {
+      title: 'Acknowledgement templates',
+      text: 'On-brand first reply for open hours and after hours.',
+    },
+    {
+      title: 'Routing',
+      text: 'Email, SMS alert, or a CRM field, matched to what you already run.',
+    },
+    {
+      title: 'Test pack',
+      text: 'A short checklist so your team can re-test after staff or channel changes.',
+    },
+  ],
+  scopeLine:
+    'Website forms and email, plus one extra channel you already use. Extra channels quoted the same day.',
+  priceLabel: 'Investment',
+  price: '$1,250',
+  priceLead: 'Fixed once your channels are confirmed. This is the locked list price for the scope above.',
+  guarantee:
+    'When this goes live: agreed channels send the acknowledgement and land in the agreed place, or we keep working at no extra cost until they do.',
+  priceAnchor: 'One recovered enquiry usually covers this.',
+  faqLabel: 'Objections',
+  faqHeading: 'Straight answers before you pay',
+  faqs: [
+    {
+      q: 'Can I pay for this today?',
+      a: "Not on this page yet. Payment isn't wired here, and the price above is the locked list price for when it opens. Reply to any SYSBILT email if you want it scoped sooner.",
+    },
+    {
+      q: 'Does this cover Google Business Profile messages?',
+      a: "No. Profile chat sits inside Google's own tools and behaves differently to a form or inbox. This product covers written enquiries: your website form and email.",
+    },
+    {
+      q: 'How is this different from Missed-Call Text-Back?',
+      a: 'Missed-Call catches phone calls you did not answer. This catches written enquiries, forms and email, so the two work well side by side.',
+    },
+    {
+      q: 'How is this different from CRM Rescue?',
+      a: 'CRM Rescue rebuilds the whole catch-and-chase system inside your CRM. This is smaller: the first reply, and the route into wherever you already work.',
+    },
+  ],
+  finalLabel: 'Last step',
+  finalHeading: 'Be the first reply they get',
+  finalLine: 'An acknowledgement in seconds. The real message in one inbox your team actually watches.',
+  proofKind: 'enquiry-reply',
+}
+
 import {DRAFT_COPY_BY_SLUG} from './funnelDraftProducts'
 
 export function funnelCopyForSlug(slug: string | undefined): FunnelProductCopy {
+  if (slug === 'enquiry-reply') return ENQUIRY_REPLY_COPY
   if (slug === 'missed-call') return MISSED_CALL_COPY
   if (slug === 'google-profile') return GOOGLE_PROFILE_COPY
   if (slug === 'search-fix') return SEARCH_FIX_COPY
@@ -2184,7 +2309,6 @@ export function funnelCopyForSlug(slug: string | undefined): FunnelProductCopy {
   if (slug === 'website' || slug === 'website-hook') return WEBSITE_COPY
   if (slug === 'geo') return GEO_COPY
   if (slug === 'client-finder') return CLIENT_FINDER_COPY
-  if (slug === 'profile-messaging') return DRAFT_COPY_BY_SLUG['profile-messaging']
   if (slug && DRAFT_COPY_BY_SLUG[slug]) return DRAFT_COPY_BY_SLUG[slug]
   return SPEED_FIX_COPY
 }

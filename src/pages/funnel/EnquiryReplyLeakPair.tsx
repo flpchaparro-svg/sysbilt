@@ -2,8 +2,8 @@ import React, {useRef} from 'react'
 import {motion, useInView, useReducedMotion} from 'framer-motion'
 import {FUNNEL_COLOURS} from './funnelTheme'
 
-/** Leak: unread Maps thread vs first reply + handoff. */
-export function ProfileMessagingLeakPair() {
+/** Leak: a buried enquiry vs an instant acknowledgement plus a clean route. */
+export function EnquiryReplyLeakPair() {
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, {amount: 0.3})
   const reduce = useReducedMotion()
@@ -26,14 +26,14 @@ export function ProfileMessagingLeakPair() {
           className="px-3 py-2 font-mono text-[9px] font-bold uppercase tracking-[0.2em]"
           style={{color: FUNNEL_COLOURS.accent, backgroundColor: `${FUNNEL_COLOURS.accent}12`}}
         >
-          Today · Maps message
+          Today · form and inbox
         </div>
         <div className="p-4 md:p-5 space-y-2">
           {[
-            {label: 'Customer taps Message', hot: false},
-            {label: 'Thread sits unread', hot: true},
-            {label: 'They book next door', hot: false},
-          ].map((row, i) => (
+            {label: 'Form submitted', hot: false},
+            {label: 'Sits unread in the inbox', hot: true},
+            {label: 'They message the next business', hot: false},
+          ].map((row) => (
             <motion.div
               key={row.label}
               className="rounded-lg px-3 py-2.5 font-mono text-[10px] uppercase tracking-wider"
@@ -49,7 +49,7 @@ export function ProfileMessagingLeakPair() {
               transition={
                 row.hot
                   ? {duration: 1.35, repeat: Infinity, delay: 0.15}
-                  : {delay: i * 0.08, duration: 0.35}
+                  : {duration: 0.35}
               }
             >
               {row.label}
@@ -79,9 +79,14 @@ export function ProfileMessagingLeakPair() {
             whileInView={{opacity: 1, y: 0}}
             viewport={{once: true}}
           >
-            <p className="font-mono text-[8px] uppercase tracking-wider text-dark/45">First reply</p>
+            <p
+              className="font-mono text-[8px] uppercase tracking-wider"
+              style={{color: `${FUNNEL_COLOURS.ink}45`}}
+            >
+              First reply · seconds
+            </p>
             <p className="mt-1 font-sans text-sm" style={{color: FUNNEL_COLOURS.ink}}>
-              Thanks for messaging. We will get back shortly.
+              Thanks for reaching out. We have this and someone will follow up shortly.
             </p>
           </motion.div>
           <motion.span
@@ -90,7 +95,7 @@ export function ProfileMessagingLeakPair() {
             animate={go ? {scale: [1, 1.06, 1]} : undefined}
             transition={{duration: 1.2, repeat: Infinity}}
           >
-            Alert · your phone
+            Routed · one inbox
           </motion.span>
         </div>
       </div>

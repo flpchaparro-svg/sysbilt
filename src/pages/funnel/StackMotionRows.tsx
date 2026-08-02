@@ -1754,6 +1754,168 @@ const CRM_STACK_VISUALS = [
   AftercareStampVisual,
 ]
 
+/** Enquiry Reply: channel scope, form and email in the fixed price. */
+function EnquiryChannelScopeStackVisual({reduce, play}: VisualProps) {
+  const go = play && !reduce
+  const channels = ['Website form', 'Email']
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-2.5 space-y-1.5 overflow-hidden">
+      {channels.map((label, i) => (
+        <motion.div
+          key={label}
+          className="flex items-center justify-between border px-2 py-1"
+          initial={{opacity: 0.3, x: -8, borderColor: 'rgba(26,26,26,0.12)'}}
+          animate={
+            go
+              ? {
+                  opacity: 1,
+                  x: 0,
+                  borderColor: FUNNEL_COLOURS.accent,
+                  backgroundColor: `${FUNNEL_COLOURS.accent}12`,
+                }
+              : undefined
+          }
+          transition={{delay: i * 0.22, type: 'spring', stiffness: 360, damping: 20}}
+        >
+          <span className="font-sans text-[11px] text-dark/75">{label}</span>
+          <motion.span
+            className="font-mono text-[7px] font-bold uppercase tracking-wide"
+            style={{color: FUNNEL_COLOURS.accent}}
+            animate={go ? {opacity: [0.45, 1, 0.45], scale: [1, 1.12, 1]} : undefined}
+            transition={{duration: 1.1, repeat: Infinity, delay: 0.4 + i * 0.22}}
+          >
+            In scope
+          </motion.span>
+        </motion.div>
+      ))}
+    </div>
+  )
+}
+
+/** Enquiry Reply: open hours and after hours templates ready. */
+function EnquiryAckTemplatesStackVisual({reduce, play}: VisualProps) {
+  const go = play && !reduce
+  const rows = ['Open hours', 'After hours']
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex flex-col justify-center gap-1.5 overflow-hidden">
+      {rows.map((label, i) => (
+        <motion.div
+          key={label}
+          className="flex items-center justify-between border px-2 py-1.5"
+          initial={{opacity: 0.35}}
+          animate={
+            go
+              ? {
+                  opacity: 1,
+                  borderColor: FUNNEL_COLOURS.accent,
+                  backgroundColor: `${FUNNEL_COLOURS.accent}12`,
+                }
+              : undefined
+          }
+          transition={{delay: i * 0.22, duration: 0.3}}
+        >
+          <span className="font-sans text-[12px] text-dark/80">{label}</span>
+          <motion.span
+            className="font-mono text-[7px] font-bold uppercase tracking-wide"
+            style={{color: FUNNEL_COLOURS.accent}}
+            animate={go ? {opacity: [0.4, 1, 0.4]} : undefined}
+            transition={{duration: 1.1, repeat: Infinity, delay: 0.35 + i * 0.2}}
+          >
+            Ready
+          </motion.span>
+        </motion.div>
+      ))}
+    </div>
+  )
+}
+
+/** Enquiry Reply: routing option lights up against the alternatives. */
+function EnquiryRoutingStackVisual({reduce, play}: VisualProps) {
+  const go = play && !reduce
+  const options = [
+    {label: 'Email', ok: true},
+    {label: 'SMS alert', ok: false},
+    {label: 'CRM field', ok: false},
+  ]
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex items-center gap-1.5 overflow-hidden">
+      {options.map((opt, i) => (
+        <motion.div
+          key={opt.label}
+          className="flex-1 min-w-0 rounded-sm border px-1.5 py-2 text-center"
+          style={{
+            borderColor: opt.ok ? FUNNEL_COLOURS.accent : 'rgba(26,26,26,0.15)',
+            backgroundColor: opt.ok ? `${FUNNEL_COLOURS.accent}14` : '#fff',
+          }}
+          initial={reduce ? false : {opacity: 0.4, y: 8}}
+          animate={go ? {opacity: opt.ok ? 1 : 0.45, y: 0} : {opacity: opt.ok ? 1 : 0.45, y: 0}}
+          transition={{delay: reduce ? 0 : i * 0.14, duration: 0.35}}
+        >
+          <p className="font-mono text-[8px] uppercase tracking-wide text-dark/60 leading-tight">
+            {opt.label}
+          </p>
+          {opt.ok ? (
+            <motion.p
+              className="mt-1 font-mono text-[7px] font-bold uppercase tracking-wide"
+              style={{color: FUNNEL_COLOURS.accent}}
+              animate={go ? {opacity: [0.5, 1, 0.5]} : undefined}
+              transition={{duration: 1.1, repeat: Infinity}}
+            >
+              Matched
+            </motion.p>
+          ) : null}
+        </motion.div>
+      ))}
+    </div>
+  )
+}
+
+/** Enquiry Reply: test checklist ticking through. */
+function EnquiryTestPackStackVisual({reduce, play}: VisualProps) {
+  const rows = ['Form fires', 'Ack arrives', 'Routed', 'Alert lands']
+  return (
+    <div className="w-full h-[72px] border border-dark/20 bg-white px-3 py-2 flex flex-col justify-center gap-1">
+      <div className="flex gap-1.5">
+        {rows.map((label, i) => (
+          <motion.div
+            key={label}
+            className="flex-1 border px-1 py-1 text-center bg-cream"
+            style={{borderColor: 'rgba(26,26,26,0.18)'}}
+            initial={{opacity: 0.35}}
+            animate={{
+              opacity: play || reduce ? 1 : 0.35,
+              borderColor:
+                play || reduce ? 'rgba(168,132,63,0.85)' : 'rgba(26,26,26,0.18)',
+              backgroundColor:
+                play || reduce ? 'rgba(197,160,89,0.22)' : '#FFF2EC',
+            }}
+            transition={
+              reduce ? {duration: 0} : {delay: play ? i * 0.18 : 0, duration: 0.3}
+            }
+          >
+            <p className="font-mono text-[7px] uppercase tracking-wider text-dark/60">{label}</p>
+            <motion.p
+              className="font-mono text-[9px] font-bold text-gold-on-cream"
+              initial={{opacity: 0}}
+              animate={{opacity: play || reduce ? 1 : 0}}
+              transition={{delay: play ? 0.2 + i * 0.18 : 0}}
+            >
+              ✓
+            </motion.p>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+const ENQUIRY_REPLY_STACK_VISUALS = [
+  EnquiryChannelScopeStackVisual,
+  EnquiryAckTemplatesStackVisual,
+  EnquiryRoutingStackVisual,
+  EnquiryTestPackStackVisual,
+]
+
 /** Team AI: half-day remote session. */
 function TeamHalfDayStackVisual({reduce, play}: VisualProps) {
   const go = play && !reduce
@@ -2153,134 +2315,6 @@ const CONTENT_SYSTEM_STACK_VISUALS = [
   SnapshotStackVisual,
 ]
 
-/** Profile Messaging stack frames. */
-function ProfileMsgEnabledStackVisual({reduce, play}: VisualProps) {
-  const go = play && !reduce
-  return (
-    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex flex-col justify-center overflow-hidden">
-      <p className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/40 mb-2">
-        Messaging
-      </p>
-      <motion.div
-        className="border px-2.5 py-2 flex items-center justify-between"
-        initial={{borderColor: 'rgba(26,26,26,0.12)', backgroundColor: '#fff'}}
-        animate={
-          go
-            ? {
-                borderColor: FUNNEL_COLOURS.accent,
-                backgroundColor: `${FUNNEL_COLOURS.accent}12`,
-              }
-            : undefined
-        }
-        transition={{duration: 0.35}}
-      >
-        <span className="font-sans text-[12px] text-dark/80">On your profile</span>
-        <motion.span
-          className="font-mono text-[7px] font-bold uppercase tracking-wide"
-          style={{color: FUNNEL_COLOURS.accent}}
-          animate={go ? {opacity: [0.45, 1, 0.45]} : undefined}
-          transition={{duration: 1.1, repeat: Infinity}}
-        >
-          Checked
-        </motion.span>
-      </motion.div>
-    </div>
-  )
-}
-
-function ProfileMsgHoursStackVisual({reduce, play}: VisualProps) {
-  const go = play && !reduce
-  return (
-    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex items-center gap-3 overflow-hidden">
-      <motion.div
-        className="font-serif text-2xl font-bold leading-none"
-        style={{color: FUNNEL_COLOURS.accent}}
-        animate={go ? {scale: [1, 1.06, 1]} : undefined}
-        transition={{duration: 1.5, repeat: Infinity}}
-      >
-        Hrs
-      </motion.div>
-      <div className="min-w-0">
-        <p className="font-mono text-[8px] uppercase tracking-widest text-dark/45">Availability</p>
-        <p className="font-sans text-[12px] text-dark/75 mt-0.5">Honest windows · no 2am flood</p>
-      </div>
-    </div>
-  )
-}
-
-function ProfileMsgCannedStackVisual({reduce, play}: VisualProps) {
-  const go = play && !reduce
-  const items = ['First reply', 'After hours', 'Common questions']
-  return (
-    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-2.5 space-y-1.5 overflow-hidden">
-      {items.map((label, i) => (
-        <motion.div
-          key={label}
-          className="flex items-center justify-between border px-2 py-1"
-          initial={{opacity: 0.35, borderColor: 'rgba(26,26,26,0.12)'}}
-          animate={
-            go
-              ? {
-                  opacity: 1,
-                  borderColor: FUNNEL_COLOURS.accent,
-                  backgroundColor: `${FUNNEL_COLOURS.accent}10`,
-                }
-              : undefined
-          }
-          transition={{delay: i * 0.2, duration: 0.3}}
-        >
-          <span className="font-sans text-[11px] text-dark/75">{label}</span>
-          <span
-            className="font-mono text-[7px] font-bold uppercase tracking-wide"
-            style={{color: FUNNEL_COLOURS.accent}}
-          >
-            In
-          </span>
-        </motion.div>
-      ))}
-    </div>
-  )
-}
-
-function ProfileMsgHandoffStackVisual({reduce, play}: VisualProps) {
-  const go = play && !reduce
-  return (
-    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-3 flex flex-col justify-center overflow-hidden">
-      <p className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/40 mb-2">
-        Handoff
-      </p>
-      <motion.div
-        className="border px-2.5 py-2 flex items-center justify-between"
-        initial={{borderColor: 'rgba(26,26,26,0.12)', backgroundColor: '#fff'}}
-        animate={
-          go
-            ? {
-                borderColor: FUNNEL_COLOURS.accent,
-                backgroundColor: `${FUNNEL_COLOURS.accent}12`,
-              }
-            : undefined
-        }
-        transition={{duration: 0.35}}
-      >
-        <span className="font-sans text-[12px] text-dark/80">When a human must take it</span>
-        <span
-          className="font-mono text-[7px] font-bold uppercase tracking-wide"
-          style={{color: FUNNEL_COLOURS.accent}}
-        >
-          Alert
-        </span>
-      </motion.div>
-    </div>
-  )
-}
-
-const PROFILE_MESSAGING_STACK_VISUALS = [
-  ProfileMsgEnabledStackVisual,
-  ProfileMsgHoursStackVisual,
-  ProfileMsgCannedStackVisual,
-  ProfileMsgHandoffStackVisual,
-]
-
 const TEAM_AI_STACK_VISUALS = [
   TeamHalfDayStackVisual,
   TeamWorkspaceStackVisual,
@@ -2367,11 +2401,11 @@ export function StackMotionRows({
     | 'team-ai'
     | 'change-pack'
     | 'content-system'
-    | 'profile-messaging'
     | 'reviews'
     | 'ai-phone'
     | 'booking'
     | 'website'
+    | 'enquiry-reply'
 }) {
   const reduce = useReducedMotion()
   const visuals: Array<(p: VisualProps) => React.ReactElement> =
@@ -2393,15 +2427,15 @@ export function StackMotionRows({
                     ? BOOKING_STACK_VISUALS
                     : variant === 'crm-rescue'
                       ? CRM_STACK_VISUALS
-                      : variant === 'change-pack'
-                        ? CHANGE_PACK_STACK_VISUALS
-                        : variant === 'content-system'
-                          ? CONTENT_SYSTEM_STACK_VISUALS
-                          : variant === 'profile-messaging'
-                            ? PROFILE_MESSAGING_STACK_VISUALS
+                      : variant === 'enquiry-reply'
+                        ? ENQUIRY_REPLY_STACK_VISUALS
+                        : variant === 'change-pack'
+                          ? CHANGE_PACK_STACK_VISUALS
+                          : variant === 'content-system'
+                            ? CONTENT_SYSTEM_STACK_VISUALS
                             : variant === 'team-ai'
-                              ? TEAM_AI_STACK_VISUALS
-                              : SPEED_VISUALS
+                                ? TEAM_AI_STACK_VISUALS
+                                : SPEED_VISUALS
 
   return (
     <ul className="space-y-10 md:space-y-12">
