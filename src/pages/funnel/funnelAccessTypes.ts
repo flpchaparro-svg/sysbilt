@@ -109,6 +109,8 @@ export type FunnelAccessPayload = {
   conversionServiceB?: string
   conversionAsk?: ConversionAskId | ''
   conversionOffer?: string
+  onpageUrls?: string
+  onpageQueries?: string
   websiteUrl?: string
   teamSize?: string
   teamTools?: string

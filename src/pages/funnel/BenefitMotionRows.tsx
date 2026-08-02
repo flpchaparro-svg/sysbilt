@@ -1604,6 +1604,141 @@ const CONVERSION_PASS_VISUALS = [
   ConversionMobileCheckedVisual,
 ]
 
+/** On-Page Search Pack: a vague title and H1 resolve into clear, specific lines. */
+function OnpageTitleClearVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Priority page</span>
+      </div>
+      <div className="flex-1 flex flex-col items-center justify-center gap-2 px-4">
+        <motion.div
+          className="h-2 rounded-sm"
+          style={{backgroundColor: colors.teal}}
+          initial={reduce ? false : {width: '38%', opacity: 0.4}}
+          whileInView={{width: '82%', opacity: 1}}
+          viewport={{once: true}}
+          transition={{duration: 0.5, ease: [0.16, 1, 0.3, 1]}}
+        />
+        <motion.div
+          className="h-1.5 rounded-sm"
+          style={{backgroundColor: `${colors.teal}50`}}
+          initial={reduce ? false : {width: '30%', opacity: 0.3}}
+          whileInView={{width: '55%', opacity: 0.8}}
+          viewport={{once: true}}
+          transition={{duration: 0.45, delay: 0.15, ease: [0.16, 1, 0.3, 1]}}
+        />
+      </div>
+    </div>
+  )
+}
+
+/** On-Page Search Pack: a fixed, locked list of priority URLs, not an open-ended one. */
+function OnpagePriorityListVisual({reduce}: VisualProps) {
+  const urls = ['/services/renovations', '/services/repairs', '/contact']
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Priority URLs</span>
+      </div>
+      <div className="flex-1 flex flex-col items-center justify-center gap-1.5 px-3">
+        {urls.map((url, i) => (
+          <motion.div
+            key={url}
+            className="flex items-center justify-between w-full max-w-[150px] rounded-sm border px-2 py-1"
+            style={{borderColor: `${colors.teal}30`, backgroundColor: '#fff'}}
+            initial={reduce ? false : {opacity: 0, x: -8}}
+            whileInView={{opacity: 1, x: 0}}
+            viewport={{once: true}}
+            transition={{delay: reduce ? 0 : i * 0.12}}
+          >
+            <span className="font-mono text-[6px] uppercase tracking-wide text-dark/45">{url}</span>
+            <span className="font-mono text-[6px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
+              Locked
+            </span>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** On-Page Search Pack: pairs with Speed Fix, technical health plus readable substance. */
+function OnpageSpeedPairVisual({reduce}: VisualProps) {
+  const blocks = [
+    {label: 'Speed Fix', detail: 'Technical health'},
+    {label: 'On-page', detail: 'Readable substance'},
+  ]
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Paired</span>
+      </div>
+      <div className="flex-1 flex flex-col justify-center gap-1.5 px-3 py-2">
+        {blocks.map((b, i) => (
+          <motion.div
+            key={b.label}
+            className="rounded-sm border px-2 py-1.5"
+            style={{borderColor: `${colors.teal}30`, backgroundColor: `${colors.teal}0C`}}
+            initial={reduce ? false : {opacity: 0, y: 8}}
+            whileInView={{opacity: 1, y: 0}}
+            viewport={{once: true}}
+            transition={{delay: reduce ? 0 : i * 0.15}}
+          >
+            <p className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
+              {b.label}
+            </p>
+            <p className="font-mono text-[6px] uppercase tracking-wide text-dark/45">{b.detail}</p>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** On-Page Search Pack: clean pages bridge straight into GEO. */
+function OnpageGeoBridgeVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex items-center justify-center gap-3">
+      <div
+        className="rounded-sm border px-2.5 py-2"
+        style={{borderColor: `${colors.teal}30`, backgroundColor: `${colors.teal}0C`}}
+      >
+        <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
+          On-page
+        </span>
+      </div>
+      <motion.span
+        className="font-mono text-[10px]"
+        style={{color: colors.teal}}
+        initial={reduce ? false : {opacity: 0, x: -4}}
+        whileInView={{opacity: 1, x: 0}}
+        viewport={{once: true}}
+        transition={{delay: reduce ? 0 : 0.25}}
+      >
+        →
+      </motion.span>
+      <motion.div
+        className="rounded-sm px-2.5 py-2"
+        style={{backgroundColor: colors.teal}}
+        initial={reduce ? false : {opacity: 0, scale: 0.85}}
+        whileInView={{opacity: 1, scale: 1}}
+        viewport={{once: true}}
+        transition={{delay: reduce ? 0 : 0.45, type: 'spring', stiffness: 340, damping: 22}}
+      >
+        <span className="font-mono text-[7px] font-bold uppercase tracking-wide text-white">GEO</span>
+      </motion.div>
+    </div>
+  )
+}
+
+const ONPAGE_SEARCH_VISUALS = [
+  OnpageTitleClearVisual,
+  OnpagePriorityListVisual,
+  OnpageSpeedPairVisual,
+  OnpageGeoBridgeVisual,
+]
+
 /** Team AI: whole team shares the same setup. */
 function TeamSharedSetupVisual({reduce}: VisualProps) {
   const seats = ['You', 'Sales', 'Ops', 'Admin']
@@ -3389,6 +3524,7 @@ export function BenefitMotionRows({
     | 'profile-posting'
     | 'local-pack'
     | 'conversion-pass'
+    | 'onpage-search'
 }) {
   const reduce = useReducedMotion()
   const visuals =
@@ -3418,6 +3554,8 @@ export function BenefitMotionRows({
                             ? LOCAL_PACK_VISUALS
                           : variant === 'conversion-pass'
                             ? CONVERSION_PASS_VISUALS
+                          : variant === 'onpage-search'
+                            ? ONPAGE_SEARCH_VISUALS
                           : variant === 'change-pack'
                           ? CHANGE_PACK_VISUALS
                           : variant === 'content-system'

@@ -176,6 +176,7 @@ export const FUNNEL_OUTBOUND_CODES: ReadonlySet<string> = new Set([
   'enquiry-reply',
   'local-pack',
   'conversion-pass',
+  'onpage-search',
 ])
 
 export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
@@ -343,10 +344,10 @@ export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
     code: 'onpage-search',
     title: 'On-Page Search Pack',
     price: '$1,900',
-    blurb: 'Titles, headings, links, and thin pages fixed on priority URLs. Draft.',
-    status: 'soon',
-    lane: 'soon',
-    section: 'draft-after-site',
+    blurb: 'Titles, headings, links, and thin pages fixed on up to eight priority URLs.',
+    status: 'live',
+    lane: 'outbound',
+    section: 'outbound',
     href: '/go/onpage-search',
   },
   {

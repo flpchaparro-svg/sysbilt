@@ -1,0 +1,14 @@
+{
+  "createdAt": "2026-08-02T12:45:00.000Z",
+  "mode": "live",
+  "note": "On-Page Search Pack · $1,900 live Payment Link. Up to eight priority URLs. After pay → thanks?p=onpage-search → access wizard.",
+  "product": {
+    "code": "onpage-search",
+    "name": "On-Page Search Pack",
+    "productId": "prod_UzyfVXXrxIc1sq",
+    "priceId": "price_1Tzyi67kQC0CB85zqRteDhLS",
+    "paymentLinkId": "plink_1Tzyu37kQC0CB85zOC0fAb1C",
+    "paymentLinkUrl": "https://buy.stripe.com/5kQ8wJ3dT1YYa6qekz3gk0k",
+    "amountAud": 1900
+  }
+}

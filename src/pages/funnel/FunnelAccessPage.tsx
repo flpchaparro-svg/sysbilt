@@ -95,6 +95,8 @@ type StepId =
   | 'conversionServiceB'
   | 'conversionAsk'
   | 'conversionOffer'
+  | 'onpageUrls'
+  | 'onpageQueries'
   | 'sessionFormat'
   | 'teamSize'
   | 'teamTools'
@@ -199,6 +201,13 @@ const PHASES_CONVERSION: {id: PhaseId; n: number; label: string}[] = [
   {id: 'done', n: 4, label: 'Done'},
 ]
 
+const PHASES_ONPAGE: {id: PhaseId; n: number; label: string}[] = [
+  {id: 'about', n: 1, label: 'About you'},
+  {id: 'site', n: 2, label: 'Your pages'},
+  {id: 'access', n: 3, label: 'Access'},
+  {id: 'done', n: 4, label: 'Done'},
+]
+
 const PHASES_TEAM: {id: PhaseId; n: number; label: string}[] = [
   {id: 'about', n: 1, label: 'About you'},
   {id: 'site', n: 2, label: 'Your work'},
@@ -238,6 +247,7 @@ function phaseForStep(
     | 'booking'
     | 'landing-page'
     | 'conversion-pass'
+    | 'onpage-search'
     | 'team-ai'
     | 'change-pack'
     | 'content-system',
@@ -332,6 +342,20 @@ function phaseForStep(
       step === 'conversionServiceB' ||
       step === 'conversionAsk' ||
       step === 'conversionOffer' ||
+      step === 'website' ||
+      step === 'platform' ||
+      step === 'provider' ||
+      step === 'domainProvider' ||
+      step === 'hostingProvider'
+    ) {
+      return 'site'
+    }
+    return 'access'
+  }
+  if (kind === 'onpage-search') {
+    if (
+      step === 'onpageUrls' ||
+      step === 'onpageQueries' ||
       step === 'website' ||
       step === 'platform' ||
       step === 'provider' ||
@@ -2374,6 +2398,18 @@ function isValidWebsite(value: string): boolean {
   return /^(https?:\/\/)?([a-z0-9-]+\.)+[a-z]{2,}(\/[^\s]*)?$/i.test(t)
 }
 
+function onpageUrlLines(value: string): string[] {
+  return value
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
+}
+
+function isValidOnpageUrls(value: string): boolean {
+  const lines = onpageUrlLines(value)
+  return lines.length >= 2 && lines.length <= 8
+}
+
 function isValidBusiness(value: string): boolean {
   return value.trim().length >= 2
 }
@@ -2588,6 +2624,16 @@ function helpForStep(step: StepId, opts?: {isAiPhone?: boolean}): HelpBlock {
       return {
         title: 'The one-line offer',
         body: 'The single sentence a visitor should believe after reading. We build the headlines and proof around this line.',
+      }
+    case 'onpageUrls':
+      return {
+        title: 'Which priority URLs',
+        body: 'One URL or path per line. Up to eight. Home and main services first. This locks the scope so the job ends.',
+      }
+    case 'onpageQueries':
+      return {
+        title: 'What people should find these pages for',
+        body: 'Services and suburbs people actually type, not guesses about search volume. A short honest list is enough.',
       }
     case 'website':
       return {
@@ -2935,6 +2981,8 @@ const FunnelAccessPage: React.FC = () => {
   const [conversionServiceB, setConversionServiceB] = useState('')
   const [conversionAsk, setConversionAsk] = useState<ConversionAskId | null>(null)
   const [conversionOffer, setConversionOffer] = useState('')
+  const [onpageUrls, setOnpageUrls] = useState('')
+  const [onpageQueries, setOnpageQueries] = useState('')
   const [sessionFormat, setSessionFormat] = useState<'remote' | 'onsite' | null>(
     initialSessionFormat,
   )
@@ -2983,6 +3031,7 @@ const FunnelAccessPage: React.FC = () => {
   const isSearchFix = product === 'search-fix'
   const isLandingPage = product === 'landing-page'
   const isConversionPass = product === 'conversion-pass'
+  const isOnpageSearch = product === 'onpage-search'
   const isTeamAi = product === 'team-ai'
   const isChangePack = product === 'change-pack'
   const isContentSystem = product === 'content-system'
@@ -2993,6 +3042,7 @@ const FunnelAccessPage: React.FC = () => {
   const usesReviewsWizard = isReviews
   const usesLocalPackWizard = isLocalPack
   const usesConversionWizard = isConversionPass
+  const usesOnpageWizard = isOnpageSearch
   const productKind:
     | 'speed'
     | 'missed-call'
@@ -3005,6 +3055,7 @@ const FunnelAccessPage: React.FC = () => {
     | 'booking'
     | 'landing-page'
     | 'conversion-pass'
+    | 'onpage-search'
     | 'team-ai'
     | 'change-pack'
     | 'content-system' =
@@ -3028,13 +3079,15 @@ const FunnelAccessPage: React.FC = () => {
                     ? 'landing-page'
                     : usesConversionWizard
                       ? 'conversion-pass'
-                      : isTeamAi
-                        ? 'team-ai'
-                        : isChangePack
-                          ? 'change-pack'
-                          : isContentSystem
-                            ? 'content-system'
-                            : 'speed'
+                      : usesOnpageWizard
+                        ? 'onpage-search'
+                        : isTeamAi
+                          ? 'team-ai'
+                          : isChangePack
+                            ? 'change-pack'
+                            : isContentSystem
+                              ? 'content-system'
+                              : 'speed'
   const phases = usesMissedWizard
     ? PHASES_MISSED
     : usesGoogleWizard
@@ -3055,7 +3108,9 @@ const FunnelAccessPage: React.FC = () => {
                   ? PHASES_LANDING
                   : usesConversionWizard
                     ? PHASES_CONVERSION
-                    : isTeamAi
+                    : usesOnpageWizard
+                      ? PHASES_ONPAGE
+                      : isTeamAi
                       ? PHASES_TEAM
                       : isChangePack
                         ? PHASES_CHANGE
@@ -3242,6 +3297,22 @@ const FunnelAccessPage: React.FC = () => {
       )
       return base
     }
+    if (usesOnpageWizard) {
+      const base: StepId[] = [
+        'product',
+        'name',
+        'email',
+        'business',
+        'website',
+        'platform',
+        'provider',
+      ]
+      if (sameProvider === 'no') {
+        base.push('domainProvider', 'hostingProvider')
+      }
+      base.push('onpageUrls', 'onpageQueries', 'access', 'accessDetail', 'notes', 'done')
+      return base
+    }
     if (isTeamAi) {
       const teamSteps: StepId[] = [
         'product',
@@ -3319,6 +3390,7 @@ const FunnelAccessPage: React.FC = () => {
     isBooking,
     isLandingPage,
     usesConversionWizard,
+    usesOnpageWizard,
     isSearchFix,
     isTeamAi,
     isChangePack,
@@ -3366,7 +3438,7 @@ const FunnelAccessPage: React.FC = () => {
             ? bookingAccessOptionsForWhere(bookingWhere, bookingTool)
             : isLandingPage
               ? landingAccessOptionsForAds(landingAds, platform)
-              : isSearchFix
+              : isSearchFix || isOnpageSearch
                 ? searchAccessOptionsForPlatform(platform)
                 : siteAccessOptionsForPlatform(platform)
 
@@ -3469,6 +3541,17 @@ const FunnelAccessPage: React.FC = () => {
         conversionServiceB.trim().length < 2 ||
         !conversionAsk ||
         conversionOffer.trim().length < 8
+      ) {
+        setError('Something is missing. Use Back to check your answers.')
+        return
+      }
+    } else if (usesOnpageWizard) {
+      if (
+        !isValidWebsite(website) ||
+        !platform ||
+        !sameProvider ||
+        !isValidOnpageUrls(onpageUrls) ||
+        onpageQueries.trim().length < 8
       ) {
         setError('Something is missing. Use Back to check your answers.')
         return
@@ -3655,6 +3738,23 @@ const FunnelAccessPage: React.FC = () => {
                 conversionServiceB: conversionServiceB.trim(),
                 conversionAsk: conversionAsk!,
                 conversionOffer: conversionOffer.trim(),
+                accessPath,
+                accessDetail: accessDetail.trim(),
+                notes: notes.trim(),
+              }
+          : usesOnpageWizard
+            ? {
+                product,
+                name: name.trim(),
+                email: email.trim(),
+                business: business.trim(),
+                website: website.trim(),
+                platform: platform!,
+                sameProvider: sameProvider!,
+                domainProvider: domainProvider.trim(),
+                hostingProvider: hostingProvider.trim(),
+                onpageUrls: onpageUrlLines(onpageUrls).join('\n'),
+                onpageQueries: onpageQueries.trim(),
                 accessPath,
                 accessDetail: accessDetail.trim(),
                 notes: notes.trim(),
@@ -3908,8 +4008,15 @@ const FunnelAccessPage: React.FC = () => {
   function selectProvider(id: SameProviderId) {
     setSameProvider(id)
     window.setTimeout(() => {
-      if (id === 'no') setStep('domainProvider')
-      else setStep('access')
+      if (id === 'no') {
+        setStep('domainProvider')
+      } else if (usesConversionWizard) {
+        setStep('conversionServiceA')
+      } else if (usesOnpageWizard) {
+        setStep('onpageUrls')
+      } else {
+        setStep('access')
+      }
     }, 200)
   }
 
@@ -4621,6 +4728,32 @@ const FunnelAccessPage: React.FC = () => {
                 multiline
                 disabled={conversionOffer.trim().length < 8}
                 onNext={() => goNext('conversionOffer')}
+              />
+            ) : null}
+
+            {step === 'onpageUrls' ? (
+              <OneField
+                title="Which priority URLs?"
+                hint="One URL or path per line. Up to eight. Home and main services first."
+                value={onpageUrls}
+                onChange={setOnpageUrls}
+                placeholder={'/\n/services/kitchens\n/services/bathrooms\n/contact'}
+                multiline
+                disabled={!isValidOnpageUrls(onpageUrls)}
+                onNext={() => goNext('onpageUrls')}
+              />
+            ) : null}
+
+            {step === 'onpageQueries' ? (
+              <OneField
+                title="What should these pages be findable for?"
+                hint="Services and suburbs people actually type. A short list is fine."
+                value={onpageQueries}
+                onChange={setOnpageQueries}
+                placeholder="e.g. kitchen renovations Parramatta, bathroom renovation cost…"
+                multiline
+                disabled={onpageQueries.trim().length < 8}
+                onNext={() => goNext('onpageQueries')}
               />
             ) : null}
 

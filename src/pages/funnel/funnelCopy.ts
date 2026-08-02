@@ -70,6 +70,7 @@ export type FunnelProductCopy = {
     | 'profile-posting'
     | 'local-pack'
     | 'conversion-pass'
+    | 'onpage-search'
     | 'draft'
 }
 
@@ -2678,9 +2679,138 @@ export const CONVERSION_PASS_COPY: FunnelProductCopy = {
   proofKind: 'conversion-pass',
 }
 
+/** Titles, headings, links, and thin-page lifts on priority URLs. Not a retainer. */
+export const ONPAGE_SEARCH_COPY: FunnelProductCopy = {
+  eyebrow: 'Fixed price · About a week · Up to eight URLs',
+  h1Generic: 'Fast pages still lose if Google cannot understand what they are about',
+  h1Personal: (b: string) =>
+    `${b}, fast pages still lose if Google cannot understand what they are about`,
+  sub: 'We fix titles, headings, internal links, and thin priority pages so search has something solid to rank. Not a six-month SEO retainer. Up to eight URLs on one site.',
+  ctaLabel: 'Fix my on-page search · $1,900',
+  proofLabel: 'The picture',
+  proofHeadingLive: 'Findable beats pretty-and-lost',
+  proofHeadingGeneric: 'Findable beats pretty-and-lost',
+  proofLead: (b: string | null) =>
+    b
+      ? `${b} can load quickly and still say nothing Google can trust.`
+      : 'A page can load quickly and still say nothing Google can trust.',
+  proofLeadGeneric:
+    'A page can load quickly and still say nothing Google can trust. Thin copy and vague titles bury you under clearer competitors.',
+  proofAfter:
+    'Priority URLs get honest titles, headings, and links that match how people search for you.',
+  proofAfterGeneric:
+    'Priority URLs get honest titles, headings, and links that match how people search for you.',
+  painLabel: 'What this is costing you',
+  painHeading: 'You fixed speed. Search still shrugs',
+  painLines: [
+    'Titles are brand-first and keyword-blind.',
+    'Service pages repeat the same paragraph with a different H1.',
+    'Internal links wander or are missing.',
+    'You are paying for traffic tools while the pages themselves are thin.',
+  ],
+  bridgeLabel: 'The fix',
+  bridgeHeading: 'On-page work on the URLs that matter',
+  bridgeBody:
+    'This is not link buying and it is not a content factory. It is on-page clarity for up to eight priority pages: titles, headings, internal links, and careful lifts where a page is too thin.',
+  bridgeGaugeCaption: 'Titles, headings, links, thin-page fixes.',
+  benefitsLabel: 'What changes for you',
+  benefitsHeading: 'Pages that say what they are',
+  benefits: [
+    {
+      title: 'Pages say what they are',
+      text: 'Search and humans both get a clearer signal.',
+    },
+    {
+      title: 'Priority list, not infinite',
+      text: 'Up to eight URLs, locked at kickoff, so the job ends.',
+    },
+    {
+      title: 'Plays with Speed Fix',
+      text: 'Technical health plus readable substance.',
+    },
+    {
+      title: 'Bridge to GEO',
+      text: 'Clean pages make FAQ and schema work easier next.',
+    },
+  ],
+  processLabel: 'How it runs',
+  processHeading: 'Select, fix, check',
+  processSteps: [
+    {
+      label: 'Select',
+      text: 'Agree the priority URL list and the queries that matter.',
+    },
+    {
+      label: 'Fix',
+      text: 'Titles, headings, internal links, thin sections.',
+    },
+    {
+      label: 'Check',
+      text: 'Plain before/after notes you can keep.',
+    },
+  ],
+  stackLabel: 'Everything included',
+  stackHeading: 'What ships on the scoped URLs',
+  stackItems: [
+    {
+      title: 'Priority URL set',
+      text: 'Up to eight URLs agreed at kickoff.',
+    },
+    {
+      title: 'Title and heading pass',
+      text: 'Clear, honest, not stuffed.',
+    },
+    {
+      title: 'Internal links',
+      text: 'Paths between services, proof, and contact.',
+    },
+    {
+      title: 'Thin-page lifts',
+      text: 'Where a page needs real substance, we add it carefully.',
+    },
+  ],
+  scopeLine:
+    'Up to eight priority URLs on one site. Extra URLs quoted the same day. Not link building, not a monthly SEO retainer, not Conversion Pass (that rewrites for humans and CTAs).',
+  priceLabel: 'Investment',
+  price: '$1,900',
+  priceLead: 'Paid once when the URL list locks at kickoff.',
+  guarantee:
+    'Agreed on-page fixes ship on the scoped URLs, or we keep working at no extra cost until they do.',
+  priceAnchor: 'A focused pack, not an open retainer.',
+  faqLabel: 'Objections',
+  faqHeading: 'Straight answers before you pay',
+  faqs: [
+    {
+      q: 'Is this the same as Search Visibility Fix?',
+      a: 'No. Search Visibility Fix is about indexing and technical findability. This pack is titles, headings, links, and thin copy on pages that already exist.',
+    },
+    {
+      q: 'Is this Conversion Pass?',
+      a: 'No. Conversion Pass rewrites home, contact, and services so people enquire. This pack makes priority pages clearer for search.',
+    },
+    {
+      q: 'Do you buy links or run a monthly SEO retainer?',
+      a: 'No. Fixed on-page work on up to eight URLs, then we hand off.',
+    },
+    {
+      q: 'What if I need more than eight URLs?',
+      a: 'We quote extras the same day. The $1,900 lock is eight priority pages.',
+    },
+    {
+      q: 'Is this refundable?',
+      a: "There's no change-of-mind refund, because we start straight away. If the agreed fixes are not delivered, we keep working at no extra cost until they are.",
+    },
+  ],
+  finalLabel: 'Last step',
+  finalHeading: 'Give search something solid to hold',
+  finalLine: 'Priority pages, clear signals. Paid once.',
+  proofKind: 'onpage-search',
+}
+
 import {DRAFT_COPY_BY_SLUG} from './funnelDraftProducts'
 
 export function funnelCopyForSlug(slug: string | undefined): FunnelProductCopy {
+  if (slug === 'onpage-search') return ONPAGE_SEARCH_COPY
   if (slug === 'conversion-pass') return CONVERSION_PASS_COPY
   if (slug === 'local-pack') return LOCAL_PACK_COPY
   if (slug === 'enquiry-reply') return ENQUIRY_REPLY_COPY

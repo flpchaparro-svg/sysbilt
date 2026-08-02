@@ -86,54 +86,6 @@ const comingSoonFaq: FunnelFaq = {
   a: 'Not yet. This page is a draft for review. When it opens, you will get a clear buy path or a short scope form. Until then, treat the price as the intended list price.',
 }
 
-export const ONPAGE_SEARCH_COPY = makeDraftCopy({
-  eyebrow: 'Fixed price · About a week · Coming soon',
-  h1Generic: 'Fast pages still lose if Google cannot understand what they are about',
-  sub: 'We fix titles, headings, internal links, and thin priority pages so search has something solid to rank. Not a six-month SEO retainer.',
-  proofHeading: 'Findable beats pretty-and-lost',
-  proofLead:
-    'A page can load quickly and still say nothing Google can trust. Thin copy and vague titles bury you under clearer competitors.',
-  proofAfter:
-    'Priority URLs get honest titles, headings, and links that match how people search for you.',
-  painHeading: 'You fixed speed. Search still shrugs',
-  painLines: [
-    'Titles are brand-first and keyword-blind.',
-    'Service pages repeat the same paragraph with a different H1.',
-    'Internal links wander or missing.',
-    'You are paying for traffic tools while the pages themselves are thin.',
-  ],
-  bridgeHeading: 'On-page work on the URLs that matter',
-  bridgeBody:
-    "This isn't link buying and it isn't a content factory. It's on-page clarity for a set of priority pages. Coming soon.",
-  bridgeGaugeCaption: 'Titles, headings, links, thin-page fixes.',
-  benefits: [
-    {title: 'Pages say what they are', text: 'Search and humans both get a clearer signal.'},
-    {title: 'Priority list, not infinite', text: 'We scope URLs so the job ends.'},
-    {title: 'Plays with Speed Fix', text: 'Technical health plus readable substance.'},
-    {title: 'Bridge to GEO', text: 'Clean pages make FAQ and schema work easier next.'},
-  ],
-  processSteps: [
-    {label: 'Select', text: 'Agree the priority URL list and the queries that matter.'},
-    {label: 'Fix', text: 'Titles, headings, internal links, thin sections.'},
-    {label: 'Check', text: 'Plain before/after notes you can keep.'},
-  ],
-  stackItems: [
-    {title: 'Priority URL set', text: 'Fixed count agreed at kickoff.'},
-    {title: 'Title and heading pass', text: 'Clear, honest, not stuffed.'},
-    {title: 'Internal links', text: 'Paths between services, proof, and contact.'},
-    {title: 'Thin-page lifts', text: 'Where a page needs real substance, we add it carefully.'},
-  ],
-  scopeLine: 'Priority URL set fixed at kickoff. Coming soon.',
-  price: '$1,900',
-  priceLead: 'Fixed once the URL list locks. Coming soon.',
-  guarantee:
-    'When this goes live: agreed on-page fixes ship on the scoped URLs, or we keep working at no extra cost until they do.',
-  priceAnchor: 'A focused pack, not an open retainer.',
-  faqs: [comingSoonFaq],
-  finalHeading: 'Give search something solid to hold',
-  finalLine: 'Priority pages, clear signals. Coming soon.',
-})
-
 export const SCHEMA_FAQ_COPY = makeDraftCopy({
   eyebrow: 'Fixed price · A few days · Coming soon',
   h1Generic: 'If AI answers and search cannot cite you, they invent someone else',
@@ -1020,7 +972,6 @@ export const WEBSITE_HOOK_COPY = makeDraftCopy({
 })
 
 export const DRAFT_COPY_BY_SLUG: Record<string, FunnelProductCopy> = {
-  'onpage-search': ONPAGE_SEARCH_COPY,
   'schema-faq': SCHEMA_FAQ_COPY,
   'tracking-forms': TRACKING_FORMS_COPY,
   'site-chat': SITE_CHAT_COPY,

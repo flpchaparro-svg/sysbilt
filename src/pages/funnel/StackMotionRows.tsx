@@ -2416,6 +2416,133 @@ const CONVERSION_PASS_STACK_VISUALS = [
   ConversionMobileCheckedStackVisual,
 ]
 
+/** On-Page Search Pack: a vague title and H1 resolve into clear, specific lines. */
+function OnpageTitleClearStackVisual({reduce, play}: VisualProps) {
+  const go = play || reduce
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-2.5 flex flex-col gap-2">
+      <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/40">Priority page</span>
+      <div className="flex-1 flex flex-col justify-center gap-2">
+        <motion.div
+          className="h-2 rounded-sm"
+          style={{backgroundColor: colors.teal}}
+          initial={reduce ? false : {width: '38%', opacity: 0.4}}
+          animate={go ? {width: '82%', opacity: 1} : {width: '38%', opacity: 0.4}}
+          transition={{duration: 0.45, ease: [0.16, 1, 0.3, 1]}}
+        />
+        <motion.div
+          className="h-1.5 rounded-sm"
+          style={{backgroundColor: `${colors.teal}50`}}
+          initial={reduce ? false : {width: '30%', opacity: 0.3}}
+          animate={go ? {width: '55%', opacity: 0.8} : {width: '30%', opacity: 0.3}}
+          transition={{duration: 0.4, delay: reduce ? 0 : 0.15, ease: [0.16, 1, 0.3, 1]}}
+        />
+      </div>
+    </div>
+  )
+}
+
+/** On-Page Search Pack: a fixed, locked list of priority URLs, not an open-ended one. */
+function OnpagePriorityListStackVisual({reduce, play}: VisualProps) {
+  const go = play || reduce
+  const urls = ['/services/renovations', '/services/repairs', '/contact']
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-2.5 flex flex-col gap-1.5">
+      <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/40">Priority URLs</span>
+      <div className="space-y-1 flex-1">
+        {urls.map((url, i) => (
+          <motion.div
+            key={url}
+            className="flex items-center justify-between rounded-sm border px-2 py-1"
+            style={{borderColor: `${colors.teal}30`, backgroundColor: '#fff'}}
+            initial={reduce ? false : {opacity: 0.35, x: 8}}
+            animate={go ? {opacity: 1, x: 0} : {opacity: 0.35, x: 8}}
+            transition={{delay: reduce ? 0 : i * 0.1, type: 'spring', stiffness: 360, damping: 22}}
+          >
+            <span className="font-mono text-[7px] uppercase tracking-wide text-dark/55">{url}</span>
+            <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
+              Locked
+            </span>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** On-Page Search Pack: pairs with Speed Fix, technical health plus readable substance. */
+function OnpageSpeedPairStackVisual({reduce, play}: VisualProps) {
+  const go = play || reduce
+  const blocks = [
+    {label: 'Speed Fix', detail: 'Technical health'},
+    {label: 'On-page', detail: 'Readable substance'},
+  ]
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-2.5 flex flex-col gap-1.5">
+      <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/40">Paired</span>
+      <div className="space-y-1.5 flex-1">
+        {blocks.map((b, i) => (
+          <motion.div
+            key={b.label}
+            className="rounded-sm border px-2 py-1"
+            style={{borderColor: `${colors.teal}30`, backgroundColor: `${colors.teal}0C`}}
+            initial={reduce ? false : {opacity: 0.35, y: 6}}
+            animate={go ? {opacity: 1, y: 0} : {opacity: 0.35, y: 6}}
+            transition={{delay: reduce ? 0 : i * 0.14, duration: 0.35}}
+          >
+            <p className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
+              {b.label}
+            </p>
+            <p className="font-mono text-[6px] uppercase tracking-wide text-dark/45">{b.detail}</p>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** On-Page Search Pack: clean pages bridge straight into GEO. */
+function OnpageGeoBridgeStackVisual({reduce, play}: VisualProps) {
+  const go = play || reduce
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-2.5 flex items-center gap-3">
+      <div
+        className="rounded-sm border px-2.5 py-2"
+        style={{borderColor: `${colors.teal}30`, backgroundColor: `${colors.teal}0C`}}
+      >
+        <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
+          On-page
+        </span>
+      </div>
+      <motion.span
+        className="font-mono text-[10px]"
+        style={{color: colors.teal}}
+        initial={reduce ? false : {opacity: 0, x: -4}}
+        animate={go ? {opacity: 1, x: 0} : {opacity: 0, x: -4}}
+        transition={{delay: reduce ? 0 : 0.2}}
+      >
+        →
+      </motion.span>
+      <motion.div
+        className="rounded-sm px-2.5 py-2"
+        style={{backgroundColor: colors.teal}}
+        initial={reduce ? false : {opacity: 0, scale: 0.85}}
+        animate={go ? {opacity: 1, scale: 1} : {opacity: 0, scale: 0.85}}
+        transition={{delay: reduce ? 0 : 0.4, type: 'spring', stiffness: 340, damping: 22}}
+      >
+        <span className="font-mono text-[7px] font-bold uppercase tracking-wide text-white">GEO</span>
+      </motion.div>
+    </div>
+  )
+}
+
+const ONPAGE_SEARCH_STACK_VISUALS = [
+  OnpageTitleClearStackVisual,
+  OnpagePriorityListStackVisual,
+  OnpageSpeedPairStackVisual,
+  OnpageGeoBridgeStackVisual,
+]
+
 /** Team AI: half-day remote session. */
 function TeamHalfDayStackVisual({reduce, play}: VisualProps) {
   const go = play && !reduce
@@ -2909,6 +3036,7 @@ export function StackMotionRows({
     | 'profile-posting'
     | 'local-pack'
     | 'conversion-pass'
+    | 'onpage-search'
 }) {
   const reduce = useReducedMotion()
   const visuals: Array<(p: VisualProps) => React.ReactElement> =
@@ -2938,6 +3066,8 @@ export function StackMotionRows({
                             ? LOCAL_PACK_STACK_VISUALS
                           : variant === 'conversion-pass'
                             ? CONVERSION_PASS_STACK_VISUALS
+                          : variant === 'onpage-search'
+                            ? ONPAGE_SEARCH_STACK_VISUALS
                           : variant === 'change-pack'
                           ? CHANGE_PACK_STACK_VISUALS
                           : variant === 'content-system'

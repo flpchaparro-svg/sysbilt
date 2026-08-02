@@ -22,6 +22,7 @@ const PRODUCT_CODES = new Set([
   'change-pack',
   'content-system',
   'conversion-pass',
+  'onpage-search',
 ]);
 const PRODUCT_LABELS: Record<string, string> = {
   'speed-fix': 'Website Speed Fix',
@@ -40,6 +41,7 @@ const PRODUCT_LABELS: Record<string, string> = {
   'change-pack': 'Change Pack',
   'content-system': 'Content System',
   'conversion-pass': 'Conversion Pass',
+  'onpage-search': 'On-Page Search Pack',
 };
 const PRODUCT_AMOUNTS: Record<string, string> = {
   'speed-fix': '1200',
@@ -59,6 +61,7 @@ const PRODUCT_AMOUNTS: Record<string, string> = {
   'change-pack': '6000',
   'content-system': '3400',
   'conversion-pass': '1400',
+  'onpage-search': '1900',
 };
 const CRM_SYSTEMS = new Set([
   'hubspot',
@@ -170,6 +173,8 @@ type Body = {
   conversionServiceB?: unknown;
   conversionAsk?: unknown;
   conversionOffer?: unknown;
+  onpageUrls?: unknown;
+  onpageQueries?: unknown;
   websiteUrl?: unknown;
   teamSize?: unknown;
   teamTools?: unknown;
@@ -193,6 +198,13 @@ type Body = {
 function str(v: unknown, max = 500): string {
   if (typeof v !== 'string') return '';
   return v.trim().slice(0, max);
+}
+
+function onpageUrlLines(value: string): string[] {
+  return value
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean);
 }
 
 function cors(res: VercelResponse): void {
@@ -507,6 +519,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const conversionServiceB = str(body.conversionServiceB, 200);
   const conversionAsk = str(body.conversionAsk, 40);
   const conversionOffer = str(body.conversionOffer, 4000);
+  const onpageUrls = str(body.onpageUrls, 2000);
+  const onpageQueries = str(body.onpageQueries, 2000);
   const websiteUrl = str(body.websiteUrl, 400);
   const teamSize = str(body.teamSize, 40);
   const teamTools = str(body.teamTools, 2000);
@@ -549,6 +563,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const isBooking = product === 'booking';
   const isLandingPage = product === 'landing-page';
   const isConversionPass = product === 'conversion-pass';
+  const isOnpageSearch = product === 'onpage-search';
   const isTeamAi = product === 'team-ai';
   const isChangePack = product === 'change-pack';
   const isContentSystem = product === 'content-system';
@@ -679,6 +694,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     }
     if (conversionOffer.length < 8) {
       res.status(400).json({ error: 'Missing the one-line offer' });
+      return;
+    }
+  } else if (isOnpageSearch) {
+    if (website.length < 4) {
+      res.status(400).json({ error: 'Missing website' });
+      return;
+    }
+    if (!PLATFORMS.has(platform) || !SAME.has(sameProvider) || !ACCESS.has(accessPath)) {
+      res.status(400).json({ error: 'Invalid platform, provider, or access path' });
+      return;
+    }
+    const urlLines = onpageUrlLines(onpageUrls);
+    if (urlLines.length < 2 || urlLines.length > 8) {
+      res.status(400).json({ error: 'List two to eight priority URLs' });
+      return;
+    }
+    if (onpageQueries.length < 8) {
+      res.status(400).json({ error: 'Missing what these pages should be findable for' });
       return;
     }
   } else if (isTeamAi) {
@@ -883,6 +916,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
             ]
               .filter(Boolean)
               .join('\n')
+        : isOnpageSearch
+          ? [
+              `Funnel access form — ${product}`,
+              `Business: ${business}`,
+              `Website: ${website}`,
+              `Priority URLs:\n${onpageUrlLines(onpageUrls)
+                .map((line) => `- ${line}`)
+                .join('\n')}`,
+              `Findable for:\n${onpageQueries}`,
+              `Platform: ${platform}`,
+              `Domain + hosting same provider: ${sameProvider}`,
+              domainProvider ? `Domain provider: ${domainProvider}` : null,
+              hostingProvider ? `Hosting provider: ${hostingProvider}` : null,
+              `Access path: ${accessPath}`,
+              accessDetail ? `Access notes:\n${accessDetail}` : null,
+              notes ? `Other notes:\n${notes}` : null,
+              `Submitted: ${new Date().toISOString()}`,
+            ]
+              .filter(Boolean)
+              .join('\n')
         : isTeamAi
           ? [
               `Funnel access form — ${product}`,
@@ -978,6 +1031,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     conversionServiceB,
     conversionAsk,
     conversionOffer,
+    onpageUrls: onpageUrls || undefined,
+    onpageQueries: onpageQueries || undefined,
     websiteUrl,
     teamSize,
     teamTools,
@@ -1100,7 +1155,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
                       ? `Tool: ${bookingTool} · Books: ${bookingWhat} · Surfaces: ${bookingWhere}`
                       : isConversionPass
                         ? `${website} · Pages: ${conversionServiceA}, ${conversionServiceB} · Ask: ${conversionAsk}`
-                        : website,
+                        : isOnpageSearch
+                          ? `${website} · URLs: ${onpageUrlLines(onpageUrls).length} · Findable for: ${onpageQueries.slice(0, 80)}`
+                          : website,
         isMissedCall ||
         isGoogleProfile ||
         isProfilePosting ||
