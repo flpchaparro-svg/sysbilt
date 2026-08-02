@@ -42,7 +42,7 @@ const PRODUCT_AMOUNTS: Record<string, string> = {
   'missed-call': '750',
   'google-profile': '600',
   'profile-posting': '1100',
-  'enquiry-reply': '1250',
+  'enquiry-reply': '350',
   reviews: '1100',
   'search-fix': '1400',
   booking: '1500',

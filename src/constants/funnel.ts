@@ -312,7 +312,7 @@ export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
   {
     code: 'enquiry-reply',
     title: 'Enquiry Auto-Reply',
-    price: '$1,250',
+    price: '$350',
     blurb: 'Instant acknowledgement on website forms and email, routed to one inbox.',
     status: 'live',
     lane: 'outbound',

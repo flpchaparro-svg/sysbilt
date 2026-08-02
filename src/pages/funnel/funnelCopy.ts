@@ -2174,7 +2174,7 @@ export const ENQUIRY_REPLY_COPY: FunnelProductCopy = {
   h1Personal: (b: string) =>
     `${b}, the enquiry sits unread while they tap through to the next result`,
   sub: 'Website forms and email are where people actually ask you things. We wire an instant, on-brand acknowledgement the moment they land, then route the real message to the one inbox your team watches.',
-  ctaLabel: 'Wire enquiry reply · $1,250',
+  ctaLabel: 'Wire enquiry reply · $350',
   proofLabel: 'The picture',
   proofHeadingLive: 'Speed of reply is the whole product',
   proofHeadingGeneric: 'Speed of reply is the whole product',
@@ -2261,11 +2261,11 @@ export const ENQUIRY_REPLY_COPY: FunnelProductCopy = {
   scopeLine:
     'Website forms and email, plus one extra channel you already use. Extra channels quoted the same day.',
   priceLabel: 'Investment',
-  price: '$1,250',
-  priceLead: 'Fixed once your channels are confirmed. This is the locked list price for the scope above.',
+  price: '$350',
+  priceLead: 'Paid once for the acknowledgement and routing setup on the channels above.',
   guarantee:
     'When this goes live: agreed channels send the acknowledgement and land in the agreed place, or we keep working at no extra cost until they do.',
-  priceAnchor: 'One recovered enquiry usually covers this.',
+  priceAnchor: 'A small setup fee for the first reply, not a CRM rebuild.',
   faqLabel: 'Objections',
   faqHeading: 'Straight answers before you pay',
   faqs: [
