@@ -1745,6 +1745,144 @@ const ONPAGE_SEARCH_VISUALS = [
   OnpageGeoBridgeVisual,
 ]
 
+/** Schema and FAQ Pack: a dashed empty question resolves into a plain answer. */
+function SchemaFaqQuestionsAnsweredVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">FAQ</span>
+      </div>
+      <div className="flex-1 flex flex-col justify-center gap-2 px-3">
+        <motion.div
+          className="rounded-sm border border-dashed px-2 py-1.5"
+          style={{borderColor: `${FUNNEL_COLOURS.ink}28`}}
+          initial={reduce ? false : {opacity: 0.5}}
+          whileInView={{opacity: 0.2}}
+          viewport={{once: true}}
+        >
+          <p className="font-mono text-[6px] uppercase tracking-wide text-dark/40">Q ···</p>
+        </motion.div>
+        <motion.div
+          className="rounded-sm border px-2 py-1.5"
+          style={{borderColor: `${colors.teal}40`, backgroundColor: `${colors.teal}0C`}}
+          initial={reduce ? false : {opacity: 0, y: 6}}
+          whileInView={{opacity: 1, y: 0}}
+          viewport={{once: true}}
+          transition={{delay: reduce ? 0 : 0.2}}
+        >
+          <p className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
+            Answered, plain
+          </p>
+        </motion.div>
+      </div>
+    </div>
+  )
+}
+
+/** Schema and FAQ Pack: an FAQ page bridges straight into valid schema markup. */
+function SchemaFaqSchemaProperVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex items-center justify-center gap-3">
+      <div
+        className="rounded-sm border px-2.5 py-2"
+        style={{borderColor: `${colors.teal}30`, backgroundColor: `${colors.teal}0C`}}
+      >
+        <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
+          FAQ page
+        </span>
+      </div>
+      <motion.span
+        className="font-mono text-[10px]"
+        style={{color: colors.teal}}
+        initial={reduce ? false : {opacity: 0, x: -4}}
+        whileInView={{opacity: 1, x: 0}}
+        viewport={{once: true}}
+        transition={{delay: reduce ? 0 : 0.25}}
+      >
+        →
+      </motion.span>
+      <motion.div
+        className="rounded-sm px-2.5 py-2"
+        style={{backgroundColor: colors.teal}}
+        initial={reduce ? false : {opacity: 0, scale: 0.85}}
+        whileInView={{opacity: 1, scale: 1}}
+        viewport={{once: true}}
+        transition={{delay: reduce ? 0 : 0.45, type: 'spring', stiffness: 340, damping: 22}}
+      >
+        <span className="font-mono text-[7px] font-bold uppercase tracking-wide text-white">Schema</span>
+      </motion.div>
+    </div>
+  )
+}
+
+/** Schema and FAQ Pack: the same page read by visitors and by AI tools. */
+function SchemaFaqHumansToolsVisual({reduce}: VisualProps) {
+  const readers = ['Visitors', 'AI tools']
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">One FAQ page</span>
+      </div>
+      <div className="flex-1 flex flex-col items-center justify-center gap-1.5 px-3">
+        {readers.map((reader, i) => (
+          <motion.div
+            key={reader}
+            className="flex items-center justify-between w-full max-w-[150px] rounded-sm border px-2 py-1"
+            style={{borderColor: `${colors.teal}30`, backgroundColor: '#fff'}}
+            initial={reduce ? false : {opacity: 0, x: -8}}
+            whileInView={{opacity: 1, x: 0}}
+            viewport={{once: true}}
+            transition={{delay: reduce ? 0 : i * 0.12}}
+          >
+            <span className="font-mono text-[6px] uppercase tracking-wide text-dark/45">{reader}</span>
+            <span className="font-mono text-[6px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
+              Reads it
+            </span>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** Schema and FAQ Pack: the last question answered right before the decision. */
+function SchemaFaqNearDecisionVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Last question</span>
+      </div>
+      <div className="flex-1 flex flex-col items-center justify-center gap-2 px-4">
+        <motion.div
+          className="h-2 rounded-sm"
+          style={{backgroundColor: colors.teal}}
+          initial={reduce ? false : {width: '40%', opacity: 0.4}}
+          whileInView={{width: '80%', opacity: 1}}
+          viewport={{once: true}}
+          transition={{duration: 0.5, ease: [0.16, 1, 0.3, 1]}}
+        />
+        <motion.div
+          className="rounded-sm px-2.5 py-1"
+          style={{backgroundColor: colors.teal}}
+          initial={reduce ? false : {opacity: 0, scale: 0.85}}
+          whileInView={{opacity: 1, scale: 1}}
+          viewport={{once: true}}
+          transition={{delay: reduce ? 0 : 0.3, type: 'spring', stiffness: 340, damping: 22}}
+        >
+          <span className="font-mono text-[7px] font-bold uppercase tracking-wide text-white">Ready to book</span>
+        </motion.div>
+      </div>
+    </div>
+  )
+}
+
+const SCHEMA_FAQ_VISUALS = [
+  SchemaFaqQuestionsAnsweredVisual,
+  SchemaFaqSchemaProperVisual,
+  SchemaFaqHumansToolsVisual,
+  SchemaFaqNearDecisionVisual,
+]
+
 /** Team AI: whole team shares the same setup. */
 function TeamSharedSetupVisual({reduce}: VisualProps) {
   const seats = ['You', 'Sales', 'Ops', 'Admin']
@@ -3531,6 +3669,7 @@ export function BenefitMotionRows({
     | 'local-pack'
     | 'conversion-pass'
     | 'onpage-search'
+    | 'schema-faq'
 }) {
   const reduce = useReducedMotion()
   const visuals =
@@ -3562,6 +3701,8 @@ export function BenefitMotionRows({
                             ? CONVERSION_PASS_VISUALS
                           : variant === 'onpage-search'
                             ? ONPAGE_SEARCH_VISUALS
+                          : variant === 'schema-faq'
+                            ? SCHEMA_FAQ_VISUALS
                           : variant === 'change-pack'
                           ? CHANGE_PACK_VISUALS
                           : variant === 'content-system'

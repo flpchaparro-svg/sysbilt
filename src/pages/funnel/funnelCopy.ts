@@ -71,6 +71,7 @@ export type FunnelProductCopy = {
     | 'local-pack'
     | 'conversion-pass'
     | 'onpage-search'
+    | 'schema-faq'
     | 'draft'
 }
 
@@ -2811,9 +2812,142 @@ export const ONPAGE_SEARCH_COPY: FunnelProductCopy = {
   proofKind: 'onpage-search',
 }
 
+/** Plain FAQs on key services plus FAQ schema. Not a GEO promise. */
+export const SCHEMA_FAQ_COPY: FunnelProductCopy = {
+  eyebrow: 'Fixed price · A few days · Up to three services',
+  h1Generic: 'If search and AI answers cannot cite you, they invent someone else',
+  h1Personal: (b: string) =>
+    `${b}, if search and AI answers cannot cite you, they invent someone else`,
+  sub: 'Thin service pages give Google and chat tools nothing safe to quote. We write plain FAQs on key services and add FAQ schema (structured Q&A markup) so humans and machines both get honest answers. Not a guarantee any AI picks you.',
+  ctaLabel: 'Fix my FAQs and schema · $1,200',
+  proofLabel: 'The picture',
+  proofHeadingLive: 'Citeable beats vague',
+  proofHeadingGeneric: 'Citeable beats vague',
+  proofLead: (b: string | null) =>
+    b
+      ? `${b} can look finished and still answer nothing a customer would ask at 10pm.`
+      : 'A site can look finished and still answer nothing a customer would ask at 10pm.',
+  proofLeadGeneric:
+    'Thin service pages give ChatGPT and Google nothing safe to quote. Clear Q&A is how you become nameable.',
+  proofAfter:
+    'Key services get real questions, real answers, and markup that matches what is on the page.',
+  proofAfterGeneric:
+    'Key services get real questions, real answers, and markup that matches what is on the page.',
+  painLabel: 'What this is costing you',
+  painHeading: 'You exist. The machines skip you',
+  painLines: [
+    'Competitors with boring-but-clear FAQs get mentioned. You do not.',
+    'Your site answers nothing people ask after hours.',
+    'Schema was never added, or it was added wrong.',
+    'You keep hearing about AI search while the real gap is missing facts.',
+  ],
+  bridgeLabel: 'The fix',
+  bridgeHeading: 'FAQ substance plus markup',
+  bridgeBody:
+    'This is not fake citations and it is not a promise any AI will pick you. It is practical FAQ content in your voice, placed where visitors read, with schema that matches the visible text.',
+  bridgeGaugeCaption: 'Plain answers. Valid markup. No spam.',
+  benefitsLabel: 'What changes for you',
+  benefitsHeading: 'Answers people and tools can use',
+  benefits: [
+    {
+      title: 'Questions answered on your site',
+      text: 'Humans and tools both benefit.',
+    },
+    {
+      title: 'Schema done properly',
+      text: 'Markup that matches the visible content.',
+    },
+    {
+      title: 'Humans and tools both read it',
+      text: 'The same FAQs help a visitor at night and a search snippet by day.',
+    },
+    {
+      title: 'Near the decision',
+      text: 'FAQs sit by the service, not in a forgotten footer.',
+    },
+  ],
+  processLabel: 'How it runs',
+  processHeading: 'Choose, write, mark up',
+  processSteps: [
+    {
+      label: 'Choose',
+      text: 'Which services and which real questions.',
+    },
+    {
+      label: 'Write',
+      text: 'Answers in your voice, approved by you.',
+    },
+    {
+      label: 'Mark up',
+      text: 'FAQ schema where it earns its place, then validate.',
+    },
+  ],
+  stackLabel: 'Everything included',
+  stackHeading: 'What ships on the scoped services',
+  stackItems: [
+    {
+      title: 'FAQ set',
+      text: 'Up to three services, up to eight FAQs each.',
+    },
+    {
+      title: 'On-page placement',
+      text: 'Where visitors actually read.',
+    },
+    {
+      title: 'Schema',
+      text: 'Structured Q&A markup aligned to the text.',
+    },
+    {
+      title: 'Validation note',
+      text: 'What we checked and what to leave alone.',
+    },
+  ],
+  scopeLine:
+    'Up to three service pages, up to eight FAQs each, on one site. Extra services quoted the same day. Not Site Chat, not On-Page Search titles, not a GEO retainer.',
+  priceLabel: 'Investment',
+  price: '$1,200',
+  priceLead: 'Paid once when the service list locks at kickoff.',
+  guarantee:
+    'Agreed FAQs and schema ship as scoped, or we keep working at no extra cost until they do.',
+  priceAnchor: 'Smaller than a full GEO project, same direction of travel.',
+  faqLabel: 'Objections',
+  faqHeading: 'Straight answers before you pay',
+  faqs: [
+    {
+      q: 'Is this a guarantee AI tools will mention us?',
+      a: 'No. We make you citeable. Whether any tool picks you still depends on the wider web.',
+    },
+    {
+      q: 'Is this On-Page Search Pack?',
+      a: 'No. On-Page Search is titles, headings, and links. This pack is FAQ content plus schema.',
+    },
+    {
+      q: 'Is this Site Chat?',
+      a: 'No. Site Chat is a live bot. This pack puts answers on the page with markup.',
+    },
+    {
+      q: 'Do I need Conversion Pass or On-Page Search first?',
+      a: 'No. This pack stands alone. Those are useful separate jobs when you want clearer CTAs or titles.',
+    },
+    {
+      q: 'What if I need more than three services?',
+      a: 'We quote extras the same day. The $1,200 lock is three services and up to eight FAQs each.',
+    },
+    {
+      q: 'Is this refundable?',
+      a: "There's no change-of-mind refund, because we start straight away. If the agreed FAQs and schema are not delivered, we keep working at no extra cost until they are.",
+    },
+  ],
+  finalLabel: 'Last step',
+  finalHeading: 'Become something tools can quote',
+  finalLine: 'FAQs and schema on key services. Paid once.',
+  proofKind: 'schema-faq',
+}
+
 import {DRAFT_COPY_BY_SLUG} from './funnelDraftProducts'
 
 export function funnelCopyForSlug(slug: string | undefined): FunnelProductCopy {
+  if (slug === 'schema-faq') return SCHEMA_FAQ_COPY
   if (slug === 'onpage-search') return ONPAGE_SEARCH_COPY
   if (slug === 'conversion-pass') return CONVERSION_PASS_COPY
   if (slug === 'local-pack') return LOCAL_PACK_COPY

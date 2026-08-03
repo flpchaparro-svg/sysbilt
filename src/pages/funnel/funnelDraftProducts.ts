@@ -86,54 +86,6 @@ const comingSoonFaq: FunnelFaq = {
   a: 'Not yet. This page is a draft for review. When it opens, you will get a clear buy path or a short scope form. Until then, treat the price as the intended list price.',
 }
 
-export const SCHEMA_FAQ_COPY = makeDraftCopy({
-  eyebrow: 'Fixed price · A few days · Coming soon',
-  h1Generic: 'If AI answers and search cannot cite you, they invent someone else',
-  sub: 'We write plain FAQs on key services and add FAQ schema (structured Q&A markup) so search and AI tools have something honest to read.',
-  proofHeading: 'Citeable beats vague',
-  proofLead:
-    'Thin service pages give ChatGPT and Google nothing safe to quote. Clear Q&A is how you become nameable.',
-  proofAfter:
-    'Key services get real questions, real answers, and markup where it helps.',
-  painHeading: 'You exist. The machines skip you',
-  painLines: [
-    'Competitors with boring-but-clear FAQs get mentioned. You do not.',
-    'Your site answers nothing a patient would ask at 10pm.',
-    'Schema was never added, or it was added wrong.',
-    'GEO feels mystical when the real gap is missing facts.',
-  ],
-  bridgeHeading: 'FAQ substance plus markup',
-  bridgeBody:
-    "This isn't fake citations and it isn't a guarantee any AI picks you. It's practical FAQ content and schema on scoped pages. Coming soon.",
-  bridgeGaugeCaption: 'Plain answers. Valid markup. No spam.',
-  benefits: [
-    {title: 'Questions answered on your site', text: 'Humans and tools both benefit.'},
-    {title: 'Schema done properly', text: 'Markup that matches the visible content.'},
-    {title: 'Entry to GEO', text: 'A lighter step before a full AI Search Visibility job.'},
-    {title: 'Supports Conversion Pass', text: 'FAQs sit near the decision, not in a forgotten footer.'},
-  ],
-  processSteps: [
-    {label: 'Choose', text: 'Which services and which real questions.'},
-    {label: 'Write', text: 'Answers in your voice, approved by you.'},
-    {label: 'Mark up', text: 'FAQ schema where it earns its place, then validate.'},
-  ],
-  stackItems: [
-    {title: 'FAQ set', text: 'Scoped services, honest answers.'},
-    {title: 'On-page placement', text: 'Where visitors actually read.'},
-    {title: 'Schema', text: 'Structured Q&A markup aligned to the text.'},
-    {title: 'Validation note', text: 'What we checked and what to leave alone.'},
-  ],
-  scopeLine: 'Scoped services. Coming soon.',
-  price: '$1,200',
-  priceLead: 'Fixed once services lock. Coming soon.',
-  guarantee:
-    'When this goes live: agreed FAQs and schema ship as scoped, or we keep working at no extra cost until they do.',
-  priceAnchor: 'Smaller than a full GEO project, same direction of travel.',
-  faqs: [comingSoonFaq],
-  finalHeading: 'Become something tools can quote',
-  finalLine: 'FAQs and schema on key services. Coming soon.',
-})
-
 export const TRACKING_FORMS_COPY = makeDraftCopy({
   eyebrow: 'Fixed price · Two days · Coming soon',
   h1Generic: 'If you cannot see the enquiry, you cannot improve the site',
@@ -972,7 +924,6 @@ export const WEBSITE_HOOK_COPY = makeDraftCopy({
 })
 
 export const DRAFT_COPY_BY_SLUG: Record<string, FunnelProductCopy> = {
-  'schema-faq': SCHEMA_FAQ_COPY,
   'tracking-forms': TRACKING_FORMS_COPY,
   'site-chat': SITE_CHAT_COPY,
   'media-clean': MEDIA_CLEAN_COPY,

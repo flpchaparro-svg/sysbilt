@@ -89,6 +89,10 @@ import {OnpageEvidenceCard} from './OnpageEvidenceCard'
 import {OnpageLeakPair} from './OnpageLeakPair'
 import {OnpagePainCards} from './OnpagePainCards'
 import {OnpageDeliverableMock} from './OnpageDeliverableMock'
+import {SchemaFaqEvidenceCard} from './SchemaFaqEvidenceCard'
+import {SchemaFaqLeakPair} from './SchemaFaqLeakPair'
+import {SchemaFaqPainCards} from './SchemaFaqPainCards'
+import {SchemaFaqDeliverableMock} from './SchemaFaqDeliverableMock'
 import {WebsiteEvidenceCard, type WebsiteEvidence} from './WebsiteEvidenceCard'
 import {WebsiteLeakPair} from './WebsiteLeakPair'
 import {WebsiteUnknownsCentrepiece} from './WebsiteUnknownsCentrepiece'
@@ -123,6 +127,7 @@ import {ENQUIRY_REPLY_STRIPE_URL} from '../../constants/enquiryReplyStripe'
 import {LOCAL_PACK_STRIPE_URL} from '../../constants/localPackStripe'
 import {CONVERSION_PASS_STRIPE_URL} from '../../constants/conversionPassStripe'
 import {ONPAGE_SEARCH_STRIPE_URL} from '../../constants/onpageSearchStripe'
+import {SCHEMA_FAQ_STRIPE_URL} from '../../constants/schemaFaqStripe'
 import {teamAiPriceOptions} from '../../constants/teamAiStripe'
 import {funnelCopyForSlug} from './funnelCopy'
 import {
@@ -278,6 +283,7 @@ const FunnelPage: React.FC = () => {
   const isLocalPack = proofKind === 'local-pack'
   const isConversionPass = proofKind === 'conversion-pass'
   const isOnpageSearch = proofKind === 'onpage-search'
+  const isSchemaFaq = proofKind === 'schema-faq'
   const isDraftSoon =
     proofKind === 'geo' || proofKind === 'client-finder' || proofKind === 'draft'
   /** Visual drafts and priced-but-not-wired products that are not buyable yet. */
@@ -307,6 +313,8 @@ const FunnelPage: React.FC = () => {
                       ? 'conversion-pass'
                       : isOnpageSearch
                         ? 'onpage-search'
+                        : isSchemaFaq
+                          ? 'schema-faq'
                         : isTeamAi
                     ? 'team-ai'
                     : isChangePack
@@ -454,6 +462,7 @@ const FunnelPage: React.FC = () => {
     (isLocalPack ? LOCAL_PACK_STRIPE_URL : undefined) ||
     (isConversionPass ? CONVERSION_PASS_STRIPE_URL : undefined) ||
     (isOnpageSearch ? ONPAGE_SEARCH_STRIPE_URL : undefined) ||
+    (isSchemaFaq ? SCHEMA_FAQ_STRIPE_URL : undefined) ||
     (isEnquiryReply ? ENQUIRY_REPLY_STRIPE_URL : undefined)
   const sanityStripe = (doc?.stripeUrl || '').trim()
   const resolvedStripeUrl =
@@ -630,6 +639,7 @@ const FunnelPage: React.FC = () => {
               isLocalPack ||
               isConversionPass ||
               isOnpageSearch ||
+              isSchemaFaq ||
               isDraftSoon
                 ? 'max-w-3xl'
                 : 'max-w-5xl'
@@ -667,6 +677,7 @@ const FunnelPage: React.FC = () => {
             {isLocalPack ? <LocalPackEvidenceCard business={business} /> : null}
             {isConversionPass ? <ConversionEvidenceCard business={business} /> : null}
             {isOnpageSearch ? <OnpageEvidenceCard business={business} /> : null}
+            {isSchemaFaq ? <SchemaFaqEvidenceCard business={business} /> : null}
             {isTeamAi ? <TeamRecognitionCards /> : null}
             {isChangePack ? <ChangeRiskRegisterCard business={business} /> : null}
             {isContentSystem ? (
@@ -724,6 +735,7 @@ const FunnelPage: React.FC = () => {
                     isLocalPack ||
                     isConversionPass ||
                     isOnpageSearch ||
+                    isSchemaFaq ||
                     isTeamAi ||
                     isChangePack ||
                     isContentSystem ||
@@ -1060,6 +1072,42 @@ const FunnelPage: React.FC = () => {
                   <OnpageLeakPair />
                 </section>
               </>
+            ) : isSchemaFaq ? (
+              <>
+                <Reveal delay={0.08} y={12}>
+                  <p
+                    className="mt-6 font-sans text-base md:text-lg leading-relaxed max-w-2xl"
+                    style={{color: FUNNEL_COLOURS.muted}}
+                  >
+                    {COPY.proofAfterGeneric}
+                  </p>
+                </Reveal>
+                <section className="mt-12 md:mt-14">
+                  <Reveal y={10}>
+                    <SectionLabel>The leak</SectionLabel>
+                  </Reveal>
+                  <Reveal delay={0.06} y={14}>
+                    <h3
+                      className="font-serif font-bold text-2xl md:text-3xl tracking-tight mb-4 max-w-2xl"
+                      style={{color: FUNNEL_COLOURS.ink}}
+                    >
+                      Nothing on the page means nothing tools can quote
+                    </h3>
+                  </Reveal>
+                  <Reveal delay={0.1} y={10}>
+                    <p
+                      className="font-sans text-base md:text-lg leading-relaxed max-w-2xl mb-2"
+                      style={{color: FUNNEL_COLOURS.muted}}
+                    >
+                      The service page looks finished. There is no plain answer to the questions
+                      people ask after hours, and no markup that matches real Q and A. Competitors
+                      with boring-but-clear FAQs get mentioned. You stay invisible to the tools that
+                      invent answers.
+                    </p>
+                  </Reveal>
+                  <SchemaFaqLeakPair />
+                </section>
+              </>
             ) : isTeamAi ? (
               <section className="mt-12 md:mt-14">
                 <Reveal y={10}>
@@ -1304,6 +1352,8 @@ const FunnelPage: React.FC = () => {
                 <ConversionPainCards />
               ) : isOnpageSearch ? (
                 <OnpagePainCards />
+              ) : isSchemaFaq ? (
+                <SchemaFaqPainCards />
               ) : isTeamAi ? (
                 <TeamPainCards />
               ) : isChangePack ? (
@@ -1388,6 +1438,7 @@ const FunnelPage: React.FC = () => {
               isLocalPack ||
               isConversionPass ||
               isOnpageSearch ||
+              isSchemaFaq ||
               isTeamAi ||
               isChangePack ||
               isContentSystem ||
@@ -1569,6 +1620,8 @@ const FunnelPage: React.FC = () => {
                   <ConversionDeliverableMock />
                 ) : isOnpageSearch ? (
                   <OnpageDeliverableMock />
+                ) : isSchemaFaq ? (
+                  <SchemaFaqDeliverableMock />
                 ) : isTeamAi ? (
                   <TeamSessionDeliverableMock />
                 ) : isChangePack ? (

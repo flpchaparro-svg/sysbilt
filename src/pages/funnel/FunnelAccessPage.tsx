@@ -97,6 +97,8 @@ type StepId =
   | 'conversionOffer'
   | 'onpageUrls'
   | 'onpageQueries'
+  | 'schemaServices'
+  | 'schemaQuestions'
   | 'sessionFormat'
   | 'teamSize'
   | 'teamTools'
@@ -208,6 +210,13 @@ const PHASES_ONPAGE: {id: PhaseId; n: number; label: string}[] = [
   {id: 'done', n: 4, label: 'Done'},
 ]
 
+const PHASES_SCHEMA_FAQ: {id: PhaseId; n: number; label: string}[] = [
+  {id: 'about', n: 1, label: 'About you'},
+  {id: 'site', n: 2, label: 'Your services'},
+  {id: 'access', n: 3, label: 'Access'},
+  {id: 'done', n: 4, label: 'Done'},
+]
+
 const PHASES_TEAM: {id: PhaseId; n: number; label: string}[] = [
   {id: 'about', n: 1, label: 'About you'},
   {id: 'site', n: 2, label: 'Your work'},
@@ -248,6 +257,7 @@ function phaseForStep(
     | 'landing-page'
     | 'conversion-pass'
     | 'onpage-search'
+    | 'schema-faq'
     | 'team-ai'
     | 'change-pack'
     | 'content-system',
@@ -356,6 +366,20 @@ function phaseForStep(
     if (
       step === 'onpageUrls' ||
       step === 'onpageQueries' ||
+      step === 'website' ||
+      step === 'platform' ||
+      step === 'provider' ||
+      step === 'domainProvider' ||
+      step === 'hostingProvider'
+    ) {
+      return 'site'
+    }
+    return 'access'
+  }
+  if (kind === 'schema-faq') {
+    if (
+      step === 'schemaServices' ||
+      step === 'schemaQuestions' ||
       step === 'website' ||
       step === 'platform' ||
       step === 'provider' ||
@@ -2410,6 +2434,18 @@ function isValidOnpageUrls(value: string): boolean {
   return lines.length >= 2 && lines.length <= 8
 }
 
+function schemaServiceLines(value: string): string[] {
+  return value
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
+}
+
+function isValidSchemaServices(value: string): boolean {
+  const lines = schemaServiceLines(value)
+  return lines.length >= 1 && lines.length <= 3
+}
+
 function isValidBusiness(value: string): boolean {
   return value.trim().length >= 2
 }
@@ -2634,6 +2670,16 @@ function helpForStep(step: StepId, opts?: {isAiPhone?: boolean}): HelpBlock {
       return {
         title: 'What people should find these pages for',
         body: 'Services and suburbs people actually type, not guesses about search volume. A short honest list is enough.',
+      }
+    case 'schemaServices':
+      return {
+        title: 'Which services get FAQs',
+        body: 'One service name or URL per line. Up to three. This locks the scope so the job ends.',
+      }
+    case 'schemaQuestions':
+      return {
+        title: 'What people ask you most',
+        body: 'The questions that come by phone, email, or after hours. A short honest list is enough.',
       }
     case 'website':
       return {
@@ -2983,6 +3029,8 @@ const FunnelAccessPage: React.FC = () => {
   const [conversionOffer, setConversionOffer] = useState('')
   const [onpageUrls, setOnpageUrls] = useState('')
   const [onpageQueries, setOnpageQueries] = useState('')
+  const [schemaServices, setSchemaServices] = useState('')
+  const [schemaQuestions, setSchemaQuestions] = useState('')
   const [sessionFormat, setSessionFormat] = useState<'remote' | 'onsite' | null>(
     initialSessionFormat,
   )
@@ -3032,6 +3080,7 @@ const FunnelAccessPage: React.FC = () => {
   const isLandingPage = product === 'landing-page'
   const isConversionPass = product === 'conversion-pass'
   const isOnpageSearch = product === 'onpage-search'
+  const isSchemaFaq = product === 'schema-faq'
   const isTeamAi = product === 'team-ai'
   const isChangePack = product === 'change-pack'
   const isContentSystem = product === 'content-system'
@@ -3043,6 +3092,7 @@ const FunnelAccessPage: React.FC = () => {
   const usesLocalPackWizard = isLocalPack
   const usesConversionWizard = isConversionPass
   const usesOnpageWizard = isOnpageSearch
+  const usesSchemaFaqWizard = isSchemaFaq
   const productKind:
     | 'speed'
     | 'missed-call'
@@ -3056,6 +3106,7 @@ const FunnelAccessPage: React.FC = () => {
     | 'landing-page'
     | 'conversion-pass'
     | 'onpage-search'
+    | 'schema-faq'
     | 'team-ai'
     | 'change-pack'
     | 'content-system' =
@@ -3081,13 +3132,15 @@ const FunnelAccessPage: React.FC = () => {
                       ? 'conversion-pass'
                       : usesOnpageWizard
                         ? 'onpage-search'
-                        : isTeamAi
-                          ? 'team-ai'
-                          : isChangePack
-                            ? 'change-pack'
-                            : isContentSystem
-                              ? 'content-system'
-                              : 'speed'
+                        : usesSchemaFaqWizard
+                          ? 'schema-faq'
+                          : isTeamAi
+                            ? 'team-ai'
+                            : isChangePack
+                              ? 'change-pack'
+                              : isContentSystem
+                                ? 'content-system'
+                                : 'speed'
   const phases = usesMissedWizard
     ? PHASES_MISSED
     : usesGoogleWizard
@@ -3110,13 +3163,15 @@ const FunnelAccessPage: React.FC = () => {
                     ? PHASES_CONVERSION
                     : usesOnpageWizard
                       ? PHASES_ONPAGE
-                      : isTeamAi
-                      ? PHASES_TEAM
-                      : isChangePack
-                        ? PHASES_CHANGE
-                        : isContentSystem
-                          ? PHASES_CONTENT
-                          : PHASES_SPEED
+                      : usesSchemaFaqWizard
+                        ? PHASES_SCHEMA_FAQ
+                        : isTeamAi
+                        ? PHASES_TEAM
+                        : isChangePack
+                          ? PHASES_CHANGE
+                          : isContentSystem
+                            ? PHASES_CONTENT
+                            : PHASES_SPEED
 
   const stepOrder = useMemo((): StepId[] => {
     // Always show the product picker first so buyers see their purchase highlighted
@@ -3313,6 +3368,22 @@ const FunnelAccessPage: React.FC = () => {
       base.push('onpageUrls', 'onpageQueries', 'access', 'accessDetail', 'notes', 'done')
       return base
     }
+    if (usesSchemaFaqWizard) {
+      const base: StepId[] = [
+        'product',
+        'name',
+        'email',
+        'business',
+        'website',
+        'platform',
+        'provider',
+      ]
+      if (sameProvider === 'no') {
+        base.push('domainProvider', 'hostingProvider')
+      }
+      base.push('schemaServices', 'schemaQuestions', 'access', 'accessDetail', 'notes', 'done')
+      return base
+    }
     if (isTeamAi) {
       const teamSteps: StepId[] = [
         'product',
@@ -3391,6 +3462,7 @@ const FunnelAccessPage: React.FC = () => {
     isLandingPage,
     usesConversionWizard,
     usesOnpageWizard,
+    usesSchemaFaqWizard,
     isSearchFix,
     isTeamAi,
     isChangePack,
@@ -3552,6 +3624,17 @@ const FunnelAccessPage: React.FC = () => {
         !sameProvider ||
         !isValidOnpageUrls(onpageUrls) ||
         onpageQueries.trim().length < 8
+      ) {
+        setError('Something is missing. Use Back to check your answers.')
+        return
+      }
+    } else if (usesSchemaFaqWizard) {
+      if (
+        !isValidWebsite(website) ||
+        !platform ||
+        !sameProvider ||
+        !isValidSchemaServices(schemaServices) ||
+        schemaQuestions.trim().length < 8
       ) {
         setError('Something is missing. Use Back to check your answers.')
         return
@@ -3759,7 +3842,24 @@ const FunnelAccessPage: React.FC = () => {
                 accessDetail: accessDetail.trim(),
                 notes: notes.trim(),
               }
-          : isTeamAi
+          : usesSchemaFaqWizard
+            ? {
+                product,
+                name: name.trim(),
+                email: email.trim(),
+                business: business.trim(),
+                website: website.trim(),
+                platform: platform!,
+                sameProvider: sameProvider!,
+                domainProvider: domainProvider.trim(),
+                hostingProvider: hostingProvider.trim(),
+                schemaServices: schemaServiceLines(schemaServices).join('\n'),
+                schemaQuestions: schemaQuestions.trim(),
+                accessPath,
+                accessDetail: accessDetail.trim(),
+                notes: notes.trim(),
+              }
+            : isTeamAi
             ? {
                 product,
                 name: name.trim(),
@@ -4014,6 +4114,8 @@ const FunnelAccessPage: React.FC = () => {
         setStep('conversionServiceA')
       } else if (usesOnpageWizard) {
         setStep('onpageUrls')
+      } else if (usesSchemaFaqWizard) {
+        setStep('schemaServices')
       } else {
         setStep('access')
       }
@@ -4754,6 +4856,32 @@ const FunnelAccessPage: React.FC = () => {
                 multiline
                 disabled={onpageQueries.trim().length < 8}
                 onNext={() => goNext('onpageQueries')}
+              />
+            ) : null}
+
+            {step === 'schemaServices' ? (
+              <OneField
+                title="Which services get FAQs?"
+                hint="One service name or URL per line. Up to three. Home FAQs are not the focus unless a service lives there."
+                value={schemaServices}
+                onChange={setSchemaServices}
+                placeholder={'Kitchen renovations\nBathroom renovations\n/services/kitchens'}
+                multiline
+                disabled={!isValidSchemaServices(schemaServices)}
+                onNext={() => goNext('schemaServices')}
+              />
+            ) : null}
+
+            {step === 'schemaQuestions' ? (
+              <OneField
+                title="What do people ask you most?"
+                hint="The questions that come by phone, email, or after hours. A short list is fine."
+                value={schemaQuestions}
+                onChange={setSchemaQuestions}
+                placeholder="e.g. How long does a kitchen renovation take? Do you offer fixed quotes?"
+                multiline
+                disabled={schemaQuestions.trim().length < 8}
+                onNext={() => goNext('schemaQuestions')}
               />
             ) : null}
 

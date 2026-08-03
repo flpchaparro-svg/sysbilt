@@ -2548,6 +2548,130 @@ const ONPAGE_SEARCH_STACK_VISUALS = [
   OnpageGeoBridgeStackVisual,
 ]
 
+/** Schema and FAQ Pack: a dashed empty question resolves into a plain answer. */
+function SchemaFaqQuestionsAnsweredStackVisual({reduce, play}: VisualProps) {
+  const go = play || reduce
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-2.5 flex flex-col gap-1.5">
+      <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/40">FAQ</span>
+      <motion.div
+        className="rounded-sm border border-dashed px-2 py-1"
+        style={{borderColor: `${FUNNEL_COLOURS.ink}28`}}
+        initial={reduce ? false : {opacity: 0.5}}
+        animate={go ? {opacity: 0.2} : {opacity: 0.5}}
+      >
+        <p className="font-mono text-[6px] uppercase tracking-wide text-dark/40">Q ···</p>
+      </motion.div>
+      <motion.div
+        className="rounded-sm border px-2 py-1"
+        style={{borderColor: `${colors.teal}40`, backgroundColor: `${colors.teal}0C`}}
+        initial={reduce ? false : {opacity: 0, y: 4}}
+        animate={go ? {opacity: 1, y: 0} : {opacity: 0, y: 4}}
+        transition={{delay: reduce ? 0 : 0.2}}
+      >
+        <p className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
+          Answered, plain
+        </p>
+      </motion.div>
+    </div>
+  )
+}
+
+/** Schema and FAQ Pack: an FAQ page bridges straight into valid schema markup. */
+function SchemaFaqSchemaProperStackVisual({reduce, play}: VisualProps) {
+  const go = play || reduce
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-2.5 flex items-center gap-3">
+      <div
+        className="rounded-sm border px-2.5 py-2"
+        style={{borderColor: `${colors.teal}30`, backgroundColor: `${colors.teal}0C`}}
+      >
+        <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
+          FAQ page
+        </span>
+      </div>
+      <motion.span
+        className="font-mono text-[10px]"
+        style={{color: colors.teal}}
+        initial={reduce ? false : {opacity: 0, x: -4}}
+        animate={go ? {opacity: 1, x: 0} : {opacity: 0, x: -4}}
+        transition={{delay: reduce ? 0 : 0.2}}
+      >
+        →
+      </motion.span>
+      <motion.div
+        className="rounded-sm px-2.5 py-2"
+        style={{backgroundColor: colors.teal}}
+        initial={reduce ? false : {opacity: 0, scale: 0.85}}
+        animate={go ? {opacity: 1, scale: 1} : {opacity: 0, scale: 0.85}}
+        transition={{delay: reduce ? 0 : 0.4, type: 'spring', stiffness: 340, damping: 22}}
+      >
+        <span className="font-mono text-[7px] font-bold uppercase tracking-wide text-white">Schema</span>
+      </motion.div>
+    </div>
+  )
+}
+
+/** Schema and FAQ Pack: the same page read by visitors and by AI tools. */
+function SchemaFaqHumansToolsStackVisual({reduce, play}: VisualProps) {
+  const go = play || reduce
+  const readers = ['Visitors', 'AI tools']
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-2.5 flex flex-col gap-1.5">
+      <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/40">One FAQ page</span>
+      <div className="space-y-1 flex-1">
+        {readers.map((reader, i) => (
+          <motion.div
+            key={reader}
+            className="flex items-center justify-between rounded-sm border px-2 py-1"
+            style={{borderColor: `${colors.teal}30`, backgroundColor: '#fff'}}
+            initial={reduce ? false : {opacity: 0.35, x: 8}}
+            animate={go ? {opacity: 1, x: 0} : {opacity: 0.35, x: 8}}
+            transition={{delay: reduce ? 0 : i * 0.1, type: 'spring', stiffness: 360, damping: 22}}
+          >
+            <span className="font-mono text-[7px] uppercase tracking-wide text-dark/55">{reader}</span>
+            <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
+              Reads it
+            </span>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** Schema and FAQ Pack: the last question answered right before the decision. */
+function SchemaFaqNearDecisionStackVisual({reduce, play}: VisualProps) {
+  const go = play || reduce
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-2.5 flex items-center gap-3">
+      <motion.div
+        className="h-2 flex-1 rounded-sm"
+        style={{backgroundColor: colors.teal, transformOrigin: 'left'}}
+        initial={reduce ? false : {scaleX: 0.5, opacity: 0.4}}
+        animate={go ? {scaleX: 1, opacity: 1} : {scaleX: 0.5, opacity: 0.4}}
+        transition={{duration: 0.45, ease: [0.16, 1, 0.3, 1]}}
+      />
+      <motion.div
+        className="rounded-sm px-2.5 py-1.5 shrink-0"
+        style={{backgroundColor: colors.teal}}
+        initial={reduce ? false : {opacity: 0, scale: 0.85}}
+        animate={go ? {opacity: 1, scale: 1} : {opacity: 0, scale: 0.85}}
+        transition={{delay: reduce ? 0 : 0.3, type: 'spring', stiffness: 340, damping: 22}}
+      >
+        <span className="font-mono text-[7px] font-bold uppercase tracking-wide text-white">Ready to book</span>
+      </motion.div>
+    </div>
+  )
+}
+
+const SCHEMA_FAQ_STACK_VISUALS = [
+  SchemaFaqQuestionsAnsweredStackVisual,
+  SchemaFaqSchemaProperStackVisual,
+  SchemaFaqHumansToolsStackVisual,
+  SchemaFaqNearDecisionStackVisual,
+]
+
 /** Team AI: half-day remote session. */
 function TeamHalfDayStackVisual({reduce, play}: VisualProps) {
   const go = play && !reduce
@@ -3042,6 +3166,7 @@ export function StackMotionRows({
     | 'local-pack'
     | 'conversion-pass'
     | 'onpage-search'
+    | 'schema-faq'
 }) {
   const reduce = useReducedMotion()
   const visuals: Array<(p: VisualProps) => React.ReactElement> =
@@ -3073,6 +3198,8 @@ export function StackMotionRows({
                             ? CONVERSION_PASS_STACK_VISUALS
                           : variant === 'onpage-search'
                             ? ONPAGE_SEARCH_STACK_VISUALS
+                          : variant === 'schema-faq'
+                            ? SCHEMA_FAQ_STACK_VISUALS
                           : variant === 'change-pack'
                           ? CHANGE_PACK_STACK_VISUALS
                           : variant === 'content-system'

@@ -177,6 +177,7 @@ export const FUNNEL_OUTBOUND_CODES: ReadonlySet<string> = new Set([
   'local-pack',
   'conversion-pass',
   'onpage-search',
+  'schema-faq',
 ])
 
 export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
@@ -354,10 +355,10 @@ export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
     code: 'schema-faq',
     title: 'Schema and FAQ Pack',
     price: '$1,200',
-    blurb: 'Clear FAQs and markup search and AI tools can read. Draft.',
-    status: 'soon',
-    lane: 'soon',
-    section: 'draft-after-site',
+    blurb: 'Clear FAQs and markup search and AI tools can read.',
+    status: 'live',
+    lane: 'outbound',
+    section: 'outbound',
     href: '/go/schema-faq',
   },
   {
