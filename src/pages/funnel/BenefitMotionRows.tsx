@@ -3997,6 +3997,7 @@ export function BenefitMotionRows({
     | 'onpage-search'
     | 'schema-faq'
     | 'tracking-forms'
+    | 'site-chat'
 }) {
   const reduce = useReducedMotion()
   const visuals =
