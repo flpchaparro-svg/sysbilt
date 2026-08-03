@@ -101,6 +101,10 @@ import {SiteChatEvidenceCard} from './SiteChatEvidenceCard'
 import {SiteChatLeakPair} from './SiteChatLeakPair'
 import {SiteChatPainCards} from './SiteChatPainCards'
 import {SiteChatDeliverableMock} from './SiteChatDeliverableMock'
+import {MediaCleanEvidenceCard} from './MediaCleanEvidenceCard'
+import {MediaCleanLeakPair} from './MediaCleanLeakPair'
+import {MediaCleanPainCards} from './MediaCleanPainCards'
+import {MediaCleanDeliverableMock} from './MediaCleanDeliverableMock'
 import {WebsiteEvidenceCard, type WebsiteEvidence} from './WebsiteEvidenceCard'
 import {WebsiteLeakPair} from './WebsiteLeakPair'
 import {WebsiteUnknownsCentrepiece} from './WebsiteUnknownsCentrepiece'
@@ -138,6 +142,7 @@ import {ONPAGE_SEARCH_STRIPE_URL} from '../../constants/onpageSearchStripe'
 import {SCHEMA_FAQ_STRIPE_URL} from '../../constants/schemaFaqStripe'
 import {TRACKING_FORMS_STRIPE_URL} from '../../constants/trackingFormsStripe'
 import {SITE_CHAT_STRIPE_URL} from '../../constants/siteChatStripe'
+import {MEDIA_CLEAN_STRIPE_URL} from '../../constants/mediaCleanStripe'
 import {teamAiPriceOptions} from '../../constants/teamAiStripe'
 import {funnelCopyForSlug} from './funnelCopy'
 import {
@@ -296,6 +301,7 @@ const FunnelPage: React.FC = () => {
   const isSchemaFaq = proofKind === 'schema-faq'
   const isTrackingForms = proofKind === 'tracking-forms'
   const isSiteChat = proofKind === 'site-chat'
+  const isMediaClean = proofKind === 'media-clean'
   const isDraftSoon =
     proofKind === 'geo' || proofKind === 'client-finder' || proofKind === 'draft'
   /** Visual drafts and priced-but-not-wired products that are not buyable yet. */
@@ -331,6 +337,8 @@ const FunnelPage: React.FC = () => {
                             ? 'tracking-forms'
                           : isSiteChat
                             ? 'site-chat'
+                          : isMediaClean
+                            ? 'media-clean'
                         : isTeamAi
                     ? 'team-ai'
                     : isChangePack
@@ -481,6 +489,7 @@ const FunnelPage: React.FC = () => {
     (isSchemaFaq ? SCHEMA_FAQ_STRIPE_URL : undefined) ||
     (isTrackingForms ? TRACKING_FORMS_STRIPE_URL : undefined) ||
     (isSiteChat ? SITE_CHAT_STRIPE_URL : undefined) ||
+    (isMediaClean ? MEDIA_CLEAN_STRIPE_URL : undefined) ||
     (isEnquiryReply ? ENQUIRY_REPLY_STRIPE_URL : undefined)
   const sanityStripe = (doc?.stripeUrl || '').trim()
   const resolvedStripeUrl =
@@ -660,6 +669,7 @@ const FunnelPage: React.FC = () => {
               isSchemaFaq ||
               isTrackingForms ||
               isSiteChat ||
+              isMediaClean ||
               isDraftSoon
                 ? 'max-w-3xl'
                 : 'max-w-5xl'
@@ -700,6 +710,7 @@ const FunnelPage: React.FC = () => {
             {isSchemaFaq ? <SchemaFaqEvidenceCard business={business} /> : null}
             {isTrackingForms ? <TrackingFormsEvidenceCard business={business} /> : null}
             {isSiteChat ? <SiteChatEvidenceCard business={business} /> : null}
+            {isMediaClean ? <MediaCleanEvidenceCard business={business} /> : null}
             {isTeamAi ? <TeamRecognitionCards /> : null}
             {isChangePack ? <ChangeRiskRegisterCard business={business} /> : null}
             {isContentSystem ? (
@@ -760,6 +771,7 @@ const FunnelPage: React.FC = () => {
                     isSchemaFaq ||
                     isTrackingForms ||
                     isSiteChat ||
+                    isMediaClean ||
                     isTeamAi ||
                     isChangePack ||
                     isContentSystem ||
@@ -1201,6 +1213,40 @@ const FunnelPage: React.FC = () => {
                   <SiteChatLeakPair />
                 </section>
               </>
+            ) : isMediaClean ? (
+              <>
+                <Reveal delay={0.08} y={12}>
+                  <p
+                    className="mt-6 font-sans text-base md:text-lg leading-relaxed max-w-2xl"
+                    style={{color: FUNNEL_COLOURS.muted}}
+                  >
+                    {COPY.proofAfterGeneric}
+                  </p>
+                </Reveal>
+                <section className="mt-12 md:mt-14">
+                  <Reveal y={10}>
+                    <SectionLabel>The leak</SectionLabel>
+                  </Reveal>
+                  <Reveal delay={0.06} y={14}>
+                    <h3
+                      className="font-serif font-bold text-2xl md:text-3xl tracking-tight mb-4 max-w-2xl"
+                      style={{color: FUNNEL_COLOURS.ink}}
+                    >
+                      Fat files quietly undo the win
+                    </h3>
+                  </Reveal>
+                  <Reveal delay={0.1} y={10}>
+                    <p
+                      className="font-sans text-base md:text-lg leading-relaxed max-w-2xl mb-2"
+                      style={{color: FUNNEL_COLOURS.muted}}
+                    >
+                      The page looks finished. Phone photos and banners still crush mobile load.
+                      Speed slips while nobody notices which files did it.
+                    </p>
+                  </Reveal>
+                  <MediaCleanLeakPair />
+                </section>
+              </>
             ) : isTeamAi ? (
               <section className="mt-12 md:mt-14">
                 <Reveal y={10}>
@@ -1451,6 +1497,8 @@ const FunnelPage: React.FC = () => {
                 <TrackingFormsPainCards />
               ) : isSiteChat ? (
                 <SiteChatPainCards />
+              ) : isMediaClean ? (
+                <MediaCleanPainCards />
               ) : isTeamAi ? (
                 <TeamPainCards />
               ) : isChangePack ? (
@@ -1538,6 +1586,7 @@ const FunnelPage: React.FC = () => {
               isSchemaFaq ||
               isTrackingForms ||
               isSiteChat ||
+              isMediaClean ||
               isTeamAi ||
               isChangePack ||
               isContentSystem ||
@@ -1725,6 +1774,8 @@ const FunnelPage: React.FC = () => {
                   <TrackingFormsDeliverableMock />
                 ) : isSiteChat ? (
                   <SiteChatDeliverableMock />
+                ) : isMediaClean ? (
+                  <MediaCleanDeliverableMock />
                 ) : isTeamAi ? (
                   <TeamSessionDeliverableMock />
                 ) : isChangePack ? (

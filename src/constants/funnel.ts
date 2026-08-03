@@ -180,6 +180,7 @@ export const FUNNEL_OUTBOUND_CODES: ReadonlySet<string> = new Set([
   'schema-faq',
   'tracking-forms',
   'site-chat',
+  'media-clean',
 ])
 
 export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
@@ -387,10 +388,10 @@ export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
     code: 'media-clean',
     title: 'Image and Media Clean',
     price: '$650',
-    blurb: 'Heavy images and files cleaned beyond the speed job. Draft.',
-    status: 'soon',
-    lane: 'soon',
-    section: 'draft-after-site',
+    blurb: 'Heavy images cleaned on scoped pages, plus a plain upload guide.',
+    status: 'live',
+    lane: 'outbound',
+    section: 'outbound',
     href: '/go/media-clean',
   },
   {

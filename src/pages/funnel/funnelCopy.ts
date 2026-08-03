@@ -74,6 +74,7 @@ export type FunnelProductCopy = {
     | 'schema-faq'
     | 'tracking-forms'
     | 'site-chat'
+    | 'media-clean'
     | 'draft'
 }
 
@@ -3212,9 +3213,137 @@ export const SITE_CHAT_COPY: FunnelProductCopy = {
   proofKind: 'site-chat',
 }
 
+export const MEDIA_CLEAN_COPY: FunnelProductCopy = {
+  eyebrow: 'Fixed price · One to two days · One site',
+  h1Generic: 'Heavy images keep slowing the site after the main speed job',
+  h1Personal: (b: string) =>
+    `${b}, heavy images keep slowing the site after the main speed job`,
+  sub: 'We compress, replace, and tidy media on scoped pages or folders, then leave a plain upload rule so the win does not quietly reverse.',
+  ctaLabel: 'Clean my media · $650',
+  proofLabel: 'The picture',
+  proofHeadingLive: 'Fat files undo the speed win',
+  proofHeadingGeneric: 'Fat files undo the speed win',
+  proofLead: (b: string | null) =>
+    b
+      ? `${b} can look finished and still ship phone photos that crush mobile load.`
+      : 'A site can look finished and still ship phone photos that crush mobile load.',
+  proofLeadGeneric:
+    'A beautiful photo at the wrong size undoes part of a speed win. Galleries and blogs are the usual culprits.',
+  proofAfter:
+    'Scoped media cleaned, with a short rule for what you upload next.',
+  proofAfterGeneric:
+    'Scoped media cleaned, with a short rule for what you upload next.',
+  painLabel: 'What this is costing you',
+  painHeading: 'The score slipped again',
+  painLines: [
+    'Someone uploaded full-resolution phone photos.',
+    'A plugin gallery loads everything at once.',
+    'Speed Fix helped, then marketing added banners.',
+    'You do not know which files are safe to crush.',
+  ],
+  bridgeLabel: 'The fix',
+  bridgeHeading: 'A focused media clean',
+  bridgeBody:
+    'This is not a redesign and it is not an infinite media project. It is hygiene on up to eight pages or two folders, then a one-page upload guide for your team.',
+  bridgeGaugeCaption: 'Lighter files. Same story.',
+  benefitsLabel: 'What changes for you',
+  benefitsHeading: 'Protect the speed win',
+  benefits: [
+    {
+      title: 'Protect the speed win',
+      text: 'Stop quiet regressions from new uploads.',
+    },
+    {
+      title: 'Clear upload rules',
+      text: 'Your team knows what size to use next.',
+    },
+    {
+      title: 'Small job, clear end',
+      text: 'Scoped pages or folders, not infinite.',
+    },
+    {
+      title: 'Works after Speed Fix',
+      text: 'Useful when leftovers remain, or weight crept back.',
+    },
+  ],
+  processLabel: 'How it runs',
+  processHeading: 'Find, clean, leave a rule',
+  processSteps: [
+    {
+      label: 'Find',
+      text: 'Heaviest offenders on the scoped pages or folders.',
+    },
+    {
+      label: 'Clean',
+      text: 'Compress, resize, replace where needed.',
+    },
+    {
+      label: 'Rule',
+      text: 'One-page upload guide for your team.',
+    },
+  ],
+  stackLabel: 'Everything included',
+  stackHeading: 'What ships in the clean',
+  stackItems: [
+    {
+      title: 'Media audit',
+      text: 'What is costing you on the scoped set.',
+    },
+    {
+      title: 'Clean pass',
+      text: 'Heavy files compressed or replaced.',
+    },
+    {
+      title: 'Upload guide',
+      text: 'Plain rules so it does not bounce back.',
+    },
+    {
+      title: 'Scope lock',
+      text: 'Up to eight pages or two folders at kickoff.',
+    },
+  ],
+  scopeLine:
+    'One site. Up to eight pages or two folders, chosen at kickoff. Not Website Speed Fix, not a full redesign, not endless gallery cleanup.',
+  priceLabel: 'Investment',
+  price: '$650',
+  priceLead: 'Paid once when the page or folder list locks at kickoff.',
+  guarantee:
+    'Scoped media is cleaned as agreed, or we keep working at no extra cost until it is.',
+  priceAnchor: 'Smaller than another full speed job when the leak is only media.',
+  faqLabel: 'Objections',
+  faqHeading: 'Straight answers before you pay',
+  faqs: [
+    {
+      q: 'Is this Website Speed Fix?',
+      a: 'No. Speed Fix is the full speed overhaul. This pack is media only on a scoped set of pages or folders.',
+    },
+    {
+      q: 'Do I need Speed Fix first?',
+      a: 'No. It pairs well after Speed Fix, and it also stands alone when the problem is clearly heavy images.',
+    },
+    {
+      q: 'What if I need more than eight pages?',
+      a: 'We quote extras the same day. The $650 lock is eight pages or two folders.',
+    },
+    {
+      q: 'Will you rebuild my galleries?',
+      a: 'No. We clean weight and leave upload rules. Gallery redesign is a different job.',
+    },
+    {
+      q: 'Is this refundable?',
+      a: "There's no change-of-mind refund, because we start straight away. If the agreed media clean is not delivered, we keep working at no extra cost until it is.",
+    },
+  ],
+  finalLabel: 'Last step',
+  finalHeading: 'Keep the site light after the win',
+  finalLine: 'Media cleaned. Upload rules left behind. Paid once.',
+  proofKind: 'media-clean',
+}
+
 import {DRAFT_COPY_BY_SLUG} from './funnelDraftProducts'
 
 export function funnelCopyForSlug(slug: string | undefined): FunnelProductCopy {
+  if (slug === 'media-clean') return MEDIA_CLEAN_COPY
   if (slug === 'site-chat') return SITE_CHAT_COPY
   if (slug === 'tracking-forms') return TRACKING_FORMS_COPY
   if (slug === 'schema-faq') return SCHEMA_FAQ_COPY

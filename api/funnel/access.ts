@@ -26,6 +26,7 @@ const PRODUCT_CODES = new Set([
   'schema-faq',
   'tracking-forms',
   'site-chat',
+  'media-clean',
 ]);
 const PRODUCT_LABELS: Record<string, string> = {
   'speed-fix': 'Website Speed Fix',
@@ -48,6 +49,7 @@ const PRODUCT_LABELS: Record<string, string> = {
   'schema-faq': 'Schema and FAQ Pack',
   'tracking-forms': 'Tracking and Forms Pack',
   'site-chat': 'Site AI Chat',
+  'media-clean': 'Image and Media Clean',
 };
 const PRODUCT_AMOUNTS: Record<string, string> = {
   'speed-fix': '1200',
@@ -71,6 +73,7 @@ const PRODUCT_AMOUNTS: Record<string, string> = {
   'schema-faq': '1200',
   'tracking-forms': '950',
   'site-chat': '950',
+  'media-clean': '650',
 };
 const CRM_SYSTEMS = new Set([
   'hubspot',
@@ -191,6 +194,7 @@ type Body = {
   trackingDestinations?: unknown;
   chatTopics?: unknown;
   chatHandoff?: unknown;
+  mediaTargets?: unknown;
   websiteUrl?: unknown;
   teamSize?: unknown;
   teamTools?: unknown;
@@ -551,6 +555,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const trackingDestinations = str(body.trackingDestinations, 2000);
   const chatTopics = str(body.chatTopics, 4000);
   const chatHandoff = str(body.chatHandoff, 2000);
+  const mediaTargets = str(body.mediaTargets, 4000);
   const websiteUrl = str(body.websiteUrl, 400);
   const teamSize = str(body.teamSize, 40);
   const teamTools = str(body.teamTools, 2000);
@@ -597,6 +602,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const isSchemaFaq = product === 'schema-faq';
   const isTrackingForms = product === 'tracking-forms';
   const isSiteChat = product === 'site-chat';
+  const isMediaClean = product === 'media-clean';
   const isTeamAi = product === 'team-ai';
   const isChangePack = product === 'change-pack';
   const isContentSystem = product === 'content-system';
@@ -801,6 +807,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     }
     if (chatHandoff.length < 8) {
       res.status(400).json({ error: 'Missing handoff destination' });
+      return;
+    }
+  } else if (isMediaClean) {
+    if (website.length < 4) {
+      res.status(400).json({ error: 'Missing website' });
+      return;
+    }
+    if (!PLATFORMS.has(platform) || !SAME.has(sameProvider) || !ACCESS.has(accessPath)) {
+      res.status(400).json({ error: 'Invalid platform, provider, or access path' });
+      return;
+    }
+    if (mediaTargets.length < 8) {
+      res.status(400).json({ error: 'Missing pages or folders to clean' });
       return;
     }
   } else if (isTeamAi) {
@@ -1082,6 +1101,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
             ]
               .filter(Boolean)
               .join('\n')
+        : isMediaClean
+          ? [
+              `Funnel access form — ${product}`,
+              `Business: ${business}`,
+              `Website: ${website}`,
+              `Pages / folders:\n${mediaTargets}`,
+              `Platform: ${platform}`,
+              `Domain + hosting same provider: ${sameProvider}`,
+              domainProvider ? `Domain provider: ${domainProvider}` : null,
+              hostingProvider ? `Hosting provider: ${hostingProvider}` : null,
+              `Access path: ${accessPath}`,
+              accessDetail ? `Access notes:\n${accessDetail}` : null,
+              notes ? `Other notes:\n${notes}` : null,
+              `Submitted: ${new Date().toISOString()}`,
+            ]
+              .filter(Boolean)
+              .join('\n')
         : isTeamAi
           ? [
               `Funnel access form — ${product}`,
@@ -1186,6 +1222,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     trackingDestinations: trackingDestinations || undefined,
     chatTopics: chatTopics || undefined,
     chatHandoff: chatHandoff || undefined,
+    mediaTargets: mediaTargets || undefined,
     websiteUrl,
     teamSize,
     teamTools,
@@ -1316,6 +1353,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
                               ? `${website} · Status: ${trackingStatus} · Actions: ${trackingActions.slice(0, 60)}`
                             : isSiteChat
                               ? `${website} · Topics: ${chatTopics.slice(0, 60)} · Handoff: ${chatHandoff.slice(0, 40)}`
+                            : isMediaClean
+                              ? `${website} · Scope: ${mediaTargets.slice(0, 80)}`
                             : website,
         isMissedCall ||
         isGoogleProfile ||

@@ -2208,6 +2208,95 @@ const SITE_CHAT_VISUALS = [
   SiteChatOptionalCareVisual,
 ]
 
+/** Media Clean: protect the speed win. */
+function MediaCleanProtectVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Weight</span>
+        <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>Down</span>
+      </div>
+      <div className="flex-1 flex items-center justify-center gap-2 px-2.5">
+        <motion.div className="flex-1 rounded-md border px-2 py-2 text-center" style={{borderColor: `${FUNNEL_COLOURS.accent}40`, backgroundColor: `${FUNNEL_COLOURS.accent}0A`}} initial={reduce ? false : {opacity: 0, x: -6}} whileInView={{opacity: 1, x: 0}} viewport={{once: true}}>
+          <p className="font-mono text-[6px] uppercase tracking-wide mb-1" style={{color: FUNNEL_COLOURS.accent}}>Before</p>
+          <p className="font-sans text-[8px] font-semibold" style={{color: FUNNEL_COLOURS.ink}}>4.8 MB</p>
+        </motion.div>
+        <motion.span className="font-mono text-[9px] font-bold" style={{color: colors.teal}} initial={reduce ? false : {opacity: 0}} whileInView={{opacity: 1}} viewport={{once: true}} transition={{delay: 0.15}}>→</motion.span>
+        <motion.div className="flex-1 rounded-md px-2 py-2 text-center" style={{backgroundColor: colors.teal}} initial={reduce ? false : {opacity: 0, x: 6}} whileInView={{opacity: 1, x: 0}} viewport={{once: true}} transition={{delay: 0.2}}>
+          <p className="font-mono text-[6px] uppercase tracking-wide text-white/70 mb-1">After</p>
+          <p className="font-mono text-[8px] font-bold text-white">180 KB</p>
+        </motion.div>
+      </div>
+    </div>
+  )
+}
+
+/** Media Clean: upload rules. */
+function MediaCleanUploadRulesVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Upload guide</span>
+      </div>
+      <div className="flex-1 flex flex-col items-center justify-center gap-1.5 px-2.5">
+        {['Max width set', 'WebP preferred'].map((label, i) => (
+          <motion.div key={label} className="w-full flex items-center justify-between rounded-md border px-2.5 py-1.5" style={{borderColor: `${colors.teal}35`, backgroundColor: `${colors.teal}08`}} initial={reduce ? false : {opacity: 0, y: 6}} whileInView={{opacity: 1, y: 0}} viewport={{once: true}} transition={{delay: reduce ? 0 : i * 0.12}}>
+            <span className="font-sans text-[9px] font-semibold" style={{color: FUNNEL_COLOURS.ink}}>{label}</span>
+            <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>Rule</span>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** Media Clean: scoped job. */
+function MediaCleanScopedVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Scope</span>
+        <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>Locked</span>
+      </div>
+      <div className="flex-1 flex flex-col items-center justify-center gap-1.5 px-2.5">
+        <motion.div className="w-full rounded-md border px-2 py-1.5" style={{borderColor: `${colors.teal}40`, backgroundColor: `${colors.teal}0C`}} initial={reduce ? false : {opacity: 0, y: 4}} whileInView={{opacity: 1, y: 0}} viewport={{once: true}}>
+          <p className="font-sans text-[8px] font-semibold" style={{color: FUNNEL_COLOURS.ink}}>Up to 8 pages</p>
+        </motion.div>
+        <motion.div className="w-full rounded-md border px-2 py-1.5 text-center" style={{borderColor: `${FUNNEL_COLOURS.ink}18`}} initial={reduce ? false : {opacity: 0, y: 4}} whileInView={{opacity: 1, y: 0}} viewport={{once: true}} transition={{delay: 0.15}}>
+          <p className="font-mono text-[8px] font-bold uppercase tracking-wide" style={{color: FUNNEL_COLOURS.steel}}>or 2 folders</p>
+        </motion.div>
+      </div>
+    </div>
+  )
+}
+
+/** Media Clean: after Speed Fix. */
+function MediaCleanAfterSpeedVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">After Speed Fix</span>
+      </div>
+      <div className="flex-1 flex flex-col items-center justify-center gap-1.5 px-3">
+        <motion.div className="w-full rounded-sm border px-2 py-1.5 flex items-center gap-1.5" style={{borderColor: `${colors.teal}40`, backgroundColor: `${colors.teal}0C`}} initial={reduce ? false : {opacity: 0, y: 4}} whileInView={{opacity: 1, y: 0}} viewport={{once: true}}>
+          <span className="font-mono text-[7px] font-bold" style={{color: colors.teal}}>SPEED</span>
+          <span className="font-sans text-[8px]" style={{color: FUNNEL_COLOURS.ink}}>Core win kept</span>
+        </motion.div>
+        <motion.div className="w-full rounded-sm py-1.5 text-center" style={{backgroundColor: FUNNEL_COLOURS.accent}} initial={reduce ? false : {opacity: 0, y: 4}} whileInView={{opacity: 1, y: 0}} viewport={{once: true}} transition={{delay: 0.2}}>
+          <span className="font-mono text-[8px] font-bold uppercase tracking-wide text-white">Media leftovers cleaned</span>
+        </motion.div>
+      </div>
+    </div>
+  )
+}
+
+const MEDIA_CLEAN_VISUALS = [
+  MediaCleanProtectVisual,
+  MediaCleanUploadRulesVisual,
+  MediaCleanScopedVisual,
+  MediaCleanAfterSpeedVisual,
+]
+
 
 /** Team AI: whole team shares the same setup. */
 function TeamSharedSetupVisual({reduce}: VisualProps) {
@@ -3998,6 +4087,7 @@ export function BenefitMotionRows({
     | 'schema-faq'
     | 'tracking-forms'
     | 'site-chat'
+    | 'media-clean'
 }) {
   const reduce = useReducedMotion()
   const visuals =
@@ -4035,6 +4125,8 @@ export function BenefitMotionRows({
                                     ? TRACKING_FORMS_VISUALS
                                     : variant === 'site-chat'
                                       ? SITE_CHAT_VISUALS
+                                    : variant === 'media-clean'
+                                      ? MEDIA_CLEAN_VISUALS
                                     : variant === 'team-ai'
                                       ? TEAM_AI_VISUALS
                                       : variant === 'change-pack'

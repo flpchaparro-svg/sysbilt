@@ -2942,6 +2942,87 @@ const SITE_CHAT_STACK_VISUALS = [
   SiteChatGuardrailsStackVisual,
 ]
 
+function MediaCleanAuditStackVisual({reduce, play}: VisualProps) {
+  const go = play || reduce
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white flex flex-col">
+      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Media audit</span>
+      </div>
+      <div className="flex-1 flex flex-col justify-center gap-1 px-2.5 py-2">
+        {['hero.jpg · 4.8 MB', 'banner.png · 3.1 MB'].map((label, i) => (
+          <motion.div key={label} className="flex items-center justify-between rounded-md border px-2 py-1" style={{borderColor: `${colors.teal}35`, backgroundColor: `${colors.teal}08`}} initial={reduce ? false : {opacity: 0, y: 4}} animate={go ? {opacity: 1, y: 0} : {opacity: 0.35}} transition={{delay: reduce ? 0 : i * 0.1}}>
+            <span className="font-sans text-[8px] font-semibold truncate" style={{color: FUNNEL_COLOURS.ink}}>{label}</span>
+            <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>Flag</span>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function MediaCleanPassStackVisual({reduce, play}: VisualProps) {
+  const go = play || reduce
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white flex flex-col">
+      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Clean pass</span>
+      </div>
+      <div className="flex-1 flex items-center justify-center gap-1.5 px-2.5">
+        <motion.div className="flex-1 rounded-md border px-2 py-1.5 text-center" style={{borderColor: `${FUNNEL_COLOURS.ink}20`}} initial={reduce ? false : {opacity: 0, x: -4}} animate={go ? {opacity: 1, x: 0} : {opacity: 0.4}}>
+          <p className="font-sans text-[8px] font-semibold" style={{color: FUNNEL_COLOURS.ink}}>Fat</p>
+        </motion.div>
+        <span className="font-mono text-[9px] font-bold" style={{color: colors.teal}}>→</span>
+        <motion.div className="flex-1 rounded-md px-2 py-1.5 text-center" style={{backgroundColor: colors.teal}} initial={reduce ? false : {opacity: 0, x: 4}} animate={go ? {opacity: 1, x: 0} : {opacity: 0.4}} transition={{delay: reduce ? 0 : 0.15}}>
+          <p className="font-mono text-[8px] font-bold text-white">Light</p>
+        </motion.div>
+      </div>
+    </div>
+  )
+}
+
+function MediaCleanGuideStackVisual({reduce, play}: VisualProps) {
+  const go = play || reduce
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white flex flex-col">
+      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Upload guide</span>
+      </div>
+      <div className="flex-1 flex items-center px-2.5">
+        <motion.div className="w-full rounded-md border px-2 py-1.5" style={{borderColor: `${colors.teal}40`, backgroundColor: `${colors.teal}0C`}} initial={reduce ? false : {opacity: 0, y: 4}} animate={go ? {opacity: 1, y: 0} : {opacity: 0.4}}>
+          <p className="font-mono text-[7px] font-bold" style={{color: colors.teal}}>ONE PAGE</p>
+          <p className="font-sans text-[8px]" style={{color: FUNNEL_COLOURS.ink}}>Plain rules for the team</p>
+        </motion.div>
+      </div>
+    </div>
+  )
+}
+
+function MediaCleanScopeStackVisual({reduce, play}: VisualProps) {
+  const go = play || reduce
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white flex flex-col">
+      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Scope lock</span>
+      </div>
+      <div className="flex-1 flex flex-col justify-center gap-1 px-2.5 py-2">
+        {['Up to 8 pages', 'or 2 folders'].map((label, i) => (
+          <motion.div key={label} className="rounded-md border px-2 py-1 text-center" style={{borderColor: `${colors.teal}35`, backgroundColor: `${colors.teal}08`}} initial={reduce ? false : {opacity: 0, y: 4}} animate={go ? {opacity: 1, y: 0} : {opacity: 0.35}} transition={{delay: reduce ? 0 : i * 0.1}}>
+            <span className="font-sans text-[8px] font-semibold" style={{color: FUNNEL_COLOURS.ink}}>{label}</span>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+const MEDIA_CLEAN_STACK_VISUALS = [
+  MediaCleanAuditStackVisual,
+  MediaCleanPassStackVisual,
+  MediaCleanGuideStackVisual,
+  MediaCleanScopeStackVisual,
+]
+
 
 /** Team AI: half-day remote session. */
 function TeamHalfDayStackVisual({reduce, play}: VisualProps) {
@@ -3440,6 +3521,7 @@ export function StackMotionRows({
     | 'schema-faq'
     | 'tracking-forms'
     | 'site-chat'
+    | 'media-clean'
 }) {
   const reduce = useReducedMotion()
   const visuals: Array<(p: VisualProps) => React.ReactElement> =
@@ -3477,6 +3559,8 @@ export function StackMotionRows({
                                     ? TRACKING_FORMS_STACK_VISUALS
                                     : variant === 'site-chat'
                                       ? SITE_CHAT_STACK_VISUALS
+                                    : variant === 'media-clean'
+                                      ? MEDIA_CLEAN_STACK_VISUALS
                                     : variant === 'change-pack'
                                       ? CHANGE_PACK_STACK_VISUALS
                                       : variant === 'content-system'

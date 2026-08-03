@@ -104,6 +104,7 @@ type StepId =
   | 'trackingDestinations'
   | 'chatTopics'
   | 'chatHandoff'
+  | 'mediaTargets'
   | 'sessionFormat'
   | 'teamSize'
   | 'teamTools'
@@ -236,6 +237,13 @@ const PHASES_SITE_CHAT: {id: PhaseId; n: number; label: string}[] = [
   {id: 'done', n: 4, label: 'Done'},
 ]
 
+const PHASES_MEDIA_CLEAN: {id: PhaseId; n: number; label: string}[] = [
+  {id: 'about', n: 1, label: 'About you'},
+  {id: 'site', n: 2, label: 'Your media'},
+  {id: 'access', n: 3, label: 'Access'},
+  {id: 'done', n: 4, label: 'Done'},
+]
+
 const PHASES_TEAM: {id: PhaseId; n: number; label: string}[] = [
   {id: 'about', n: 1, label: 'About you'},
   {id: 'site', n: 2, label: 'Your work'},
@@ -279,6 +287,7 @@ function phaseForStep(
     | 'schema-faq'
     | 'tracking-forms'
     | 'site-chat'
+    | 'media-clean'
     | 'team-ai'
     | 'change-pack'
     | 'content-system',
@@ -430,6 +439,19 @@ function phaseForStep(
     if (
       step === 'chatTopics' ||
       step === 'chatHandoff' ||
+      step === 'website' ||
+      step === 'platform' ||
+      step === 'provider' ||
+      step === 'domainProvider' ||
+      step === 'hostingProvider'
+    ) {
+      return 'site'
+    }
+    return 'access'
+  }
+  if (kind === 'media-clean') {
+    if (
+      step === 'mediaTargets' ||
       step === 'website' ||
       step === 'platform' ||
       step === 'provider' ||
@@ -958,6 +980,41 @@ const LANDING_TRACKING_OPTIONS: {
     id: 'none',
     label: 'Nothing yet',
     blurb: 'We wire tracking as part of the build.',
+    icon: <Server className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'unsure',
+    label: 'Not sure',
+    blurb: 'Fine. We will check the site and set what is missing.',
+    icon: null,
+    unsure: true,
+  },
+]
+
+
+const TRACKING_STATUS_OPTIONS: {
+  id: 'ga4' | 'gtm' | 'none' | 'unsure'
+  label: string
+  blurb: string
+  icon: React.ReactNode
+  unsure?: boolean
+}[] = [
+  {
+    id: 'ga4',
+    label: 'GA4 only',
+    blurb: 'Google Analytics 4 is on the site.',
+    icon: <Globe2 className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'gtm',
+    label: 'Tag Manager',
+    blurb: 'GTM is installed, with or without GA4.',
+    icon: <Box className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'none',
+    label: 'Nothing yet',
+    blurb: 'No GA4 or Tag Manager that you know of.',
     icon: <Server className="w-full h-full" strokeWidth={1.25} />,
   },
   {
@@ -2756,6 +2813,11 @@ function helpForStep(step: StepId, opts?: {isAiPhone?: boolean}): HelpBlock {
         title: 'Where should handoff go',
         body: 'Email, SMS, or the inbox a human actually watches when the chat escalates.',
       }
+    case 'mediaTargets':
+      return {
+        title: 'Which pages or folders',
+        body: 'Up to eight pages, or two media folders. Paths or plain names are fine. This locks the $650 scope at kickoff.',
+      }
     case 'website':
       return {
         title: 'Which site we are fixing',
@@ -3111,6 +3173,7 @@ const FunnelAccessPage: React.FC = () => {
   const [trackingDestinations, setTrackingDestinations] = useState('')
   const [chatTopics, setChatTopics] = useState('')
   const [chatHandoff, setChatHandoff] = useState('')
+  const [mediaTargets, setMediaTargets] = useState('')
   const [sessionFormat, setSessionFormat] = useState<'remote' | 'onsite' | null>(
     initialSessionFormat,
   )
@@ -3163,6 +3226,7 @@ const FunnelAccessPage: React.FC = () => {
   const isSchemaFaq = product === 'schema-faq'
   const isTrackingForms = product === 'tracking-forms'
   const isSiteChat = product === 'site-chat'
+  const isMediaClean = product === 'media-clean'
   const isTeamAi = product === 'team-ai'
   const isChangePack = product === 'change-pack'
   const isContentSystem = product === 'content-system'
@@ -3177,6 +3241,7 @@ const FunnelAccessPage: React.FC = () => {
   const usesSchemaFaqWizard = isSchemaFaq
   const usesTrackingFormsWizard = isTrackingForms
   const usesSiteChatWizard = isSiteChat
+  const usesMediaCleanWizard = isMediaClean
   const productKind:
     | 'speed'
     | 'missed-call'
@@ -3193,6 +3258,7 @@ const FunnelAccessPage: React.FC = () => {
     | 'schema-faq'
     | 'tracking-forms'
     | 'site-chat'
+    | 'media-clean'
     | 'team-ai'
     | 'change-pack'
     | 'content-system' =
@@ -3224,6 +3290,8 @@ const FunnelAccessPage: React.FC = () => {
                             ? 'tracking-forms'
                           : usesSiteChatWizard
                             ? 'site-chat'
+                          : usesMediaCleanWizard
+                            ? 'media-clean'
                           : isTeamAi
                             ? 'team-ai'
                             : isChangePack
@@ -3259,6 +3327,8 @@ const FunnelAccessPage: React.FC = () => {
                           ? PHASES_TRACKING_FORMS
                         : usesSiteChatWizard
                           ? PHASES_SITE_CHAT
+                        : usesMediaCleanWizard
+                          ? PHASES_MEDIA_CLEAN
                         : isTeamAi
                         ? PHASES_TEAM
                         : isChangePack
@@ -3508,6 +3578,22 @@ const FunnelAccessPage: React.FC = () => {
         base.push('domainProvider', 'hostingProvider')
       }
       base.push('chatTopics', 'chatHandoff', 'access', 'accessDetail', 'notes', 'done')
+      return base
+    }
+    if (usesMediaCleanWizard) {
+      const base: StepId[] = [
+        'product',
+        'name',
+        'email',
+        'business',
+        'website',
+        'platform',
+        'provider',
+      ]
+      if (sameProvider === 'no') {
+        base.push('domainProvider', 'hostingProvider')
+      }
+      base.push('mediaTargets', 'access', 'accessDetail', 'notes', 'done')
       return base
     }
     if (isTeamAi) {
@@ -3790,6 +3876,16 @@ const FunnelAccessPage: React.FC = () => {
         setError('Something is missing. Use Back to check your answers.')
         return
       }
+    } else if (usesMediaCleanWizard) {
+      if (
+        !isValidWebsite(website) ||
+        !platform ||
+        !sameProvider ||
+        mediaTargets.trim().length < 8
+      ) {
+        setError('Something is missing. Use Back to check your answers.')
+        return
+      }
     } else if (isTeamAi) {
       const toolsOk = teamTools.length >= 1 || teamToolsOther.trim().length >= 2
       const tasksOk = timeEaters.length >= 1 || timeEatersOther.trim().length >= 2
@@ -4041,6 +4137,22 @@ const FunnelAccessPage: React.FC = () => {
                 hostingProvider: hostingProvider.trim(),
                 chatTopics: chatTopics.trim(),
                 chatHandoff: chatHandoff.trim(),
+                accessPath,
+                accessDetail: accessDetail.trim(),
+                notes: notes.trim(),
+              }
+          : usesMediaCleanWizard
+            ? {
+                product,
+                name: name.trim(),
+                email: email.trim(),
+                business: business.trim(),
+                website: website.trim(),
+                platform: platform!,
+                sameProvider: sameProvider!,
+                domainProvider: domainProvider.trim(),
+                hostingProvider: hostingProvider.trim(),
+                mediaTargets: mediaTargets.trim(),
                 accessPath,
                 accessDetail: accessDetail.trim(),
                 notes: notes.trim(),
@@ -4306,6 +4418,8 @@ const FunnelAccessPage: React.FC = () => {
         setStep('trackingStatus')
       } else if (usesSiteChatWizard) {
         setStep('chatTopics')
+      } else if (usesMediaCleanWizard) {
+        setStep('mediaTargets')
       } else {
         setStep('access')
       }
@@ -5072,6 +5186,99 @@ const FunnelAccessPage: React.FC = () => {
                 multiline
                 disabled={schemaQuestions.trim().length < 8}
                 onNext={() => goNext('schemaQuestions')}
+              />
+            ) : null}
+
+            {step === 'trackingStatus' ? (
+              <>
+                <QuestionTitle>
+                  What tracking is on the site <span style={{color: RED}}>today</span>?
+                </QuestionTitle>
+                <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
+                  GA4, Tag Manager, nothing, or not sure. Honest answers save time.
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+                  {TRACKING_STATUS_OPTIONS.map((opt) => (
+                    <div key={opt.id}>
+                      <SelectCard
+                        selected={trackingStatus === opt.id}
+                        onSelect={() => {
+                          setTrackingStatus(opt.id)
+                          goNext('trackingStatus')
+                        }}
+                        title={opt.label}
+                        blurb={opt.blurb}
+                        icon={opt.icon}
+                        unsure={opt.unsure}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : null}
+
+            {step === 'trackingActions' ? (
+              <OneField
+                title="Which actions matter"
+                hint="Form submit, call click, book, and similar. Up to five primary conversions."
+                value={trackingActions}
+                onChange={setTrackingActions}
+                placeholder="e.g. Contact form submit, Call click, Book a consult"
+                multiline
+                disabled={trackingActions.trim().length < 8}
+                onNext={() => goNext('trackingActions')}
+              />
+            ) : null}
+
+            {step === 'trackingDestinations' ? (
+              <OneField
+                title="Where should leads land"
+                hint="The inbox or CRM that still gets watched. Up to three forms."
+                value={trackingDestinations}
+                onChange={setTrackingDestinations}
+                placeholder="e.g. hello@… inbox, HubSpot form, /contact form to sales@"
+                multiline
+                disabled={trackingDestinations.trim().length < 8}
+                onNext={() => goNext('trackingDestinations')}
+              />
+            ) : null}
+
+            {step === 'chatTopics' ? (
+              <OneField
+                title="What people ask you most"
+                hint="Hours, services, suburbs, how to book. Up to twenty FAQs. A short honest list is enough."
+                value={chatTopics}
+                onChange={setChatTopics}
+                placeholder="e.g. Are you open Saturdays? Do you cover the North Shore? How do we book?"
+                multiline
+                disabled={chatTopics.trim().length < 8}
+                onNext={() => goNext('chatTopics')}
+              />
+            ) : null}
+
+            {step === 'chatHandoff' ? (
+              <OneField
+                title="Where should handoff go"
+                hint="Email, SMS, or the inbox a human actually watches when the chat escalates."
+                value={chatHandoff}
+                onChange={setChatHandoff}
+                placeholder="e.g. SMS to 04…, or hello@… watched by the owner"
+                multiline
+                disabled={chatHandoff.trim().length < 8}
+                onNext={() => goNext('chatHandoff')}
+              />
+            ) : null}
+
+            {step === 'mediaTargets' ? (
+              <OneField
+                title="Which pages or folders"
+                hint="One path or folder per line. Up to eight pages, or two media folders. This locks the $650 scope."
+                value={mediaTargets}
+                onChange={setMediaTargets}
+                placeholder={'/\n/services/kitchens\n/gallery\nwp-content/uploads/2024'}
+                multiline
+                disabled={mediaTargets.trim().length < 8}
+                onNext={() => goNext('mediaTargets')}
               />
             ) : null}
 
