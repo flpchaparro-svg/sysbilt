@@ -2548,90 +2548,116 @@ const ONPAGE_SEARCH_STACK_VISUALS = [
   OnpageGeoBridgeStackVisual,
 ]
 
-/** Schema and FAQ Pack: a dashed empty question resolves into a plain answer. */
+/** Schema FAQ stack: mini accordion with Q badge and answer. */
 function SchemaFaqQuestionsAnsweredStackVisual({reduce, play}: VisualProps) {
   const go = play || reduce
   return (
-    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-2.5 flex flex-col gap-1.5">
-      <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/40">FAQ</span>
-      <motion.div
-        className="rounded-sm border border-dashed px-2 py-1"
-        style={{borderColor: `${FUNNEL_COLOURS.ink}28`}}
-        initial={reduce ? false : {opacity: 0.5}}
-        animate={go ? {opacity: 0.2} : {opacity: 0.5}}
-      >
-        <p className="font-mono text-[6px] uppercase tracking-wide text-dark/40">Q ···</p>
-      </motion.div>
-      <motion.div
-        className="rounded-sm border px-2 py-1"
-        style={{borderColor: `${colors.teal}40`, backgroundColor: `${colors.teal}0C`}}
-        initial={reduce ? false : {opacity: 0, y: 4}}
-        animate={go ? {opacity: 1, y: 0} : {opacity: 0, y: 4}}
-        transition={{delay: reduce ? 0 : 0.2}}
-      >
-        <p className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
-          Answered, plain
-        </p>
-      </motion.div>
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white flex flex-col">
+      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">FAQ set</span>
+        <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
+          Up to 8
+        </span>
+      </div>
+      <div className="flex-1 flex items-center px-2.5 py-2">
+        <motion.div
+          className="w-full rounded-md border px-2 py-1.5"
+          style={{borderColor: `${colors.teal}45`, backgroundColor: `${colors.teal}0A`}}
+          initial={reduce ? false : {opacity: 0, y: 4}}
+          animate={go ? {opacity: 1, y: 0} : {opacity: 0.4, y: 4}}
+          transition={{duration: 0.35}}
+        >
+          <div className="flex items-center gap-1.5">
+            <span
+              className="h-4 w-4 rounded-full flex items-center justify-center font-mono text-[7px] font-bold shrink-0"
+              style={{backgroundColor: `${colors.teal}28`, color: colors.teal}}
+            >
+              Q
+            </span>
+            <span className="font-sans text-[8px] font-semibold truncate" style={{color: FUNNEL_COLOURS.ink}}>
+              Do you cover emergencies?
+            </span>
+          </div>
+          <p className="pl-5 mt-0.5 font-sans text-[7px] leading-snug" style={{color: FUNNEL_COLOURS.steel}}>
+            Yes, same day in our area.
+          </p>
+        </motion.div>
+      </div>
     </div>
   )
 }
 
-/** Schema and FAQ Pack: an FAQ page bridges straight into valid schema markup. */
+/** Schema FAQ stack: on-page Q+A equals schema markup. */
 function SchemaFaqSchemaProperStackVisual({reduce, play}: VisualProps) {
   const go = play || reduce
   return (
-    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-2.5 flex items-center gap-3">
-      <div
-        className="rounded-sm border px-2.5 py-2"
-        style={{borderColor: `${colors.teal}30`, backgroundColor: `${colors.teal}0C`}}
-      >
-        <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
-          FAQ page
-        </span>
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white flex flex-col">
+      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">On-page placement</span>
       </div>
-      <motion.span
-        className="font-mono text-[10px]"
-        style={{color: colors.teal}}
-        initial={reduce ? false : {opacity: 0, x: -4}}
-        animate={go ? {opacity: 1, x: 0} : {opacity: 0, x: -4}}
-        transition={{delay: reduce ? 0 : 0.2}}
-      >
-        →
-      </motion.span>
-      <motion.div
-        className="rounded-sm px-2.5 py-2"
-        style={{backgroundColor: colors.teal}}
-        initial={reduce ? false : {opacity: 0, scale: 0.85}}
-        animate={go ? {opacity: 1, scale: 1} : {opacity: 0, scale: 0.85}}
-        transition={{delay: reduce ? 0 : 0.4, type: 'spring', stiffness: 340, damping: 22}}
-      >
-        <span className="font-mono text-[7px] font-bold uppercase tracking-wide text-white">Schema</span>
-      </motion.div>
+      <div className="flex-1 flex items-center justify-center gap-1.5 px-2.5">
+        <motion.div
+          className="flex-1 rounded-md border px-2 py-1.5 text-center"
+          style={{borderColor: `${FUNNEL_COLOURS.ink}20`, backgroundColor: '#fff'}}
+          initial={reduce ? false : {opacity: 0, x: -4}}
+          animate={go ? {opacity: 1, x: 0} : {opacity: 0.4}}
+        >
+          <p className="font-mono text-[6px] uppercase tracking-wide text-dark/45 mb-0.5">On page</p>
+          <p className="font-sans text-[8px] font-semibold" style={{color: FUNNEL_COLOURS.ink}}>
+            FAQ block
+          </p>
+        </motion.div>
+        <motion.span
+          className="font-mono text-[9px] font-bold"
+          style={{color: colors.teal}}
+          initial={reduce ? false : {opacity: 0}}
+          animate={go ? {opacity: 1} : {opacity: 0}}
+          transition={{delay: reduce ? 0 : 0.15}}
+        >
+          =
+        </motion.span>
+        <motion.div
+          className="flex-1 rounded-md px-2 py-1.5 text-center"
+          style={{backgroundColor: colors.teal}}
+          initial={reduce ? false : {opacity: 0, x: 4}}
+          animate={go ? {opacity: 1, x: 0} : {opacity: 0.4}}
+          transition={{delay: reduce ? 0 : 0.2}}
+        >
+          <p className="font-mono text-[6px] uppercase tracking-wide text-white/70 mb-0.5">Markup</p>
+          <p className="font-mono text-[8px] font-bold text-white">Schema</p>
+        </motion.div>
+      </div>
     </div>
   )
 }
 
-/** Schema and FAQ Pack: the same page read by visitors and by AI tools. */
+/** Schema FAQ stack: visitor and AI both get the same answers. */
 function SchemaFaqHumansToolsStackVisual({reduce, play}: VisualProps) {
   const go = play || reduce
-  const readers = ['Visitors', 'AI tools']
+  const readers = [
+    {label: 'Visitor', detail: 'Reads it'},
+    {label: 'Search / AI', detail: 'Can cite it'},
+  ]
   return (
-    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-2.5 flex flex-col gap-1.5">
-      <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/40">One FAQ page</span>
-      <div className="space-y-1 flex-1">
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white flex flex-col">
+      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Same answers</span>
+      </div>
+      <div className="flex-1 flex flex-col justify-center gap-1 px-2.5 py-2">
         {readers.map((reader, i) => (
           <motion.div
-            key={reader}
-            className="flex items-center justify-between rounded-sm border px-2 py-1"
-            style={{borderColor: `${colors.teal}30`, backgroundColor: '#fff'}}
-            initial={reduce ? false : {opacity: 0.35, x: 8}}
-            animate={go ? {opacity: 1, x: 0} : {opacity: 0.35, x: 8}}
-            transition={{delay: reduce ? 0 : i * 0.1, type: 'spring', stiffness: 360, damping: 22}}
+            key={reader.label}
+            className="flex items-center justify-between rounded-md border px-2 py-1"
+            style={{borderColor: `${colors.teal}35`, backgroundColor: `${colors.teal}08`}}
+            initial={reduce ? false : {opacity: 0, y: 4}}
+            animate={go ? {opacity: 1, y: 0} : {opacity: 0.35}}
+            transition={{delay: reduce ? 0 : i * 0.1}}
           >
-            <span className="font-mono text-[7px] uppercase tracking-wide text-dark/55">{reader}</span>
+            <span className="font-sans text-[8px] font-semibold" style={{color: FUNNEL_COLOURS.ink}}>
+              {reader.label}
+            </span>
             <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
-              Reads it
+              {reader.detail}
             </span>
           </motion.div>
         ))}
@@ -2640,27 +2666,38 @@ function SchemaFaqHumansToolsStackVisual({reduce, play}: VisualProps) {
   )
 }
 
-/** Schema and FAQ Pack: the last question answered right before the decision. */
+/** Schema FAQ stack: FAQ sits above the enquire CTA. */
 function SchemaFaqNearDecisionStackVisual({reduce, play}: VisualProps) {
   const go = play || reduce
   return (
-    <div className="w-full min-h-[88px] border border-dark/15 bg-white px-3 py-2.5 flex items-center gap-3">
-      <motion.div
-        className="h-2 flex-1 rounded-sm"
-        style={{backgroundColor: colors.teal, transformOrigin: 'left'}}
-        initial={reduce ? false : {scaleX: 0.5, opacity: 0.4}}
-        animate={go ? {scaleX: 1, opacity: 1} : {scaleX: 0.5, opacity: 0.4}}
-        transition={{duration: 0.45, ease: [0.16, 1, 0.3, 1]}}
-      />
-      <motion.div
-        className="rounded-sm px-2.5 py-1.5 shrink-0"
-        style={{backgroundColor: colors.teal}}
-        initial={reduce ? false : {opacity: 0, scale: 0.85}}
-        animate={go ? {opacity: 1, scale: 1} : {opacity: 0, scale: 0.85}}
-        transition={{delay: reduce ? 0 : 0.3, type: 'spring', stiffness: 340, damping: 22}}
-      >
-        <span className="font-mono text-[7px] font-bold uppercase tracking-wide text-white">Ready to book</span>
-      </motion.div>
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white flex flex-col">
+      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Near the ask</span>
+      </div>
+      <div className="flex-1 flex flex-col items-center justify-center gap-1.5 px-2.5 py-2">
+        <motion.div
+          className="w-full rounded-sm border px-2 py-1 flex items-center gap-1.5"
+          style={{borderColor: `${colors.teal}40`, backgroundColor: `${colors.teal}0C`}}
+          initial={reduce ? false : {opacity: 0, y: 3}}
+          animate={go ? {opacity: 1, y: 0} : {opacity: 0.4}}
+        >
+          <span className="font-mono text-[7px] font-bold" style={{color: colors.teal}}>
+            FAQ
+          </span>
+          <span className="font-sans text-[8px]" style={{color: FUNNEL_COLOURS.ink}}>
+            Common questions
+          </span>
+        </motion.div>
+        <motion.div
+          className="w-full rounded-sm py-1 text-center"
+          style={{backgroundColor: FUNNEL_COLOURS.accent}}
+          initial={reduce ? false : {opacity: 0, y: 3}}
+          animate={go ? {opacity: 1, y: 0} : {opacity: 0.4}}
+          transition={{delay: reduce ? 0 : 0.15}}
+        >
+          <span className="font-mono text-[7px] font-bold uppercase tracking-wide text-white">Enquire</span>
+        </motion.div>
+      </div>
     </div>
   )
 }
