@@ -105,6 +105,18 @@ type StepId =
   | 'chatTopics'
   | 'chatHandoff'
   | 'mediaTargets'
+  | 'a11yPages'
+  | 'whatsappGoals'
+  | 'dmChannels'
+  | 'quoteTools'
+  | 'noshowTools'
+  | 'intakePurpose'
+  | 'inboxTools'
+  | 'sopJobs'
+  | 'dashMetrics'
+  | 'bundleNotes'
+  | 'geoTopics'
+  | 'finderIcp'
   | 'sessionFormat'
   | 'teamSize'
   | 'teamTools'
@@ -244,6 +256,13 @@ const PHASES_MEDIA_CLEAN: {id: PhaseId; n: number; label: string}[] = [
   {id: 'done', n: 4, label: 'Done'},
 ]
 
+const PHASES_BATCH: {id: PhaseId; n: number; label: string}[] = [
+  {id: 'about', n: 1, label: 'About you'},
+  {id: 'site', n: 2, label: 'Your scope'},
+  {id: 'access', n: 3, label: 'Access'},
+  {id: 'done', n: 4, label: 'Done'},
+]
+
 const PHASES_TEAM: {id: PhaseId; n: number; label: string}[] = [
   {id: 'about', n: 1, label: 'About you'},
   {id: 'site', n: 2, label: 'Your work'},
@@ -288,6 +307,20 @@ function phaseForStep(
     | 'tracking-forms'
     | 'site-chat'
     | 'media-clean'
+    | 'a11y-pass'
+    | 'whatsapp-setup'
+    | 'dm-reply'
+    | 'quote-followup'
+    | 'noshow-rescue'
+    | 'intake-forms'
+    | 'inbox-triage'
+    | 'sop-playbook'
+    | 'dashboard-lite'
+    | 'bundle-clinic'
+    | 'bundle-speed-next'
+    | 'bundle-front-door'
+    | 'geo'
+    | 'client-finder'
     | 'team-ai'
     | 'change-pack'
     | 'content-system',
@@ -452,6 +485,45 @@ function phaseForStep(
   if (kind === 'media-clean') {
     if (
       step === 'mediaTargets' ||
+      step === 'website' ||
+      step === 'platform' ||
+      step === 'provider' ||
+      step === 'domainProvider' ||
+      step === 'hostingProvider'
+    ) {
+      return 'site'
+    }
+    return 'access'
+  }
+  if (
+    kind === 'a11y-pass' ||
+    kind === 'whatsapp-setup' ||
+    kind === 'dm-reply' ||
+    kind === 'quote-followup' ||
+    kind === 'noshow-rescue' ||
+    kind === 'intake-forms' ||
+    kind === 'inbox-triage' ||
+    kind === 'sop-playbook' ||
+    kind === 'dashboard-lite' ||
+    kind === 'bundle-clinic' ||
+    kind === 'bundle-speed-next' ||
+    kind === 'bundle-front-door' ||
+    kind === 'geo' ||
+    kind === 'client-finder'
+  ) {
+    if (
+      step === 'a11yPages' ||
+      step === 'whatsappGoals' ||
+      step === 'dmChannels' ||
+      step === 'quoteTools' ||
+      step === 'noshowTools' ||
+      step === 'intakePurpose' ||
+      step === 'inboxTools' ||
+      step === 'sopJobs' ||
+      step === 'dashMetrics' ||
+      step === 'bundleNotes' ||
+      step === 'geoTopics' ||
+      step === 'finderIcp' ||
       step === 'website' ||
       step === 'platform' ||
       step === 'provider' ||
@@ -2818,6 +2890,66 @@ function helpForStep(step: StepId, opts?: {isAiPhone?: boolean}): HelpBlock {
         title: 'Which pages or folders',
         body: 'Up to eight pages, or two media folders. Paths or plain names are fine. This locks the $650 scope at kickoff.',
       }
+    case 'a11yPages':
+      return {
+        title: 'Which pages matter most',
+        body: 'Priority pages for the access pass. Paths or plain names are fine.',
+      }
+    case 'whatsappGoals':
+      return {
+        title: 'What should WhatsApp handle',
+        body: 'Labels, quick replies, and how messages should route. A short list is enough.',
+      }
+    case 'dmChannels':
+      return {
+        title: 'Which channels and what to answer',
+        body: 'Instagram, Facebook, and the questions people ask most.',
+      }
+    case 'quoteTools':
+      return {
+        title: 'Where quotes live today',
+        body: 'Tool or spreadsheet, and how follow-up works now.',
+      }
+    case 'noshowTools':
+      return {
+        title: 'Booking tool and reminder gaps',
+        body: 'What you use today and where reminders fail.',
+      }
+    case 'intakePurpose':
+      return {
+        title: 'What intake should capture',
+        body: 'Purpose, key fields, and where answers should land.',
+      }
+    case 'inboxTools':
+      return {
+        title: 'Inbox and tools in play',
+        body: 'Email or CRM, and what burns the most time.',
+      }
+    case 'sopJobs':
+      return {
+        title: 'Which jobs to turn into playbooks',
+        body: 'Real repeating work the team does every week.',
+      }
+    case 'dashMetrics':
+      return {
+        title: 'Metrics you need on one screen',
+        body: 'Leads, bookings, ads, reviews. What you check every week.',
+      }
+    case 'bundleNotes':
+      return {
+        title: 'Scope notes for this bundle',
+        body: 'Location, quirks, and anything we should know before kickoff.',
+      }
+    case 'geoTopics':
+      return {
+        title: 'Topics AI should know you for',
+        body: 'Services, suburbs, and proof points tools should cite.',
+      }
+    case 'finderIcp':
+      return {
+        title: 'Who you want to find',
+        body: 'Ideal customer, geography, and who to exclude.',
+      }
     case 'website':
       return {
         title: 'Which site we are fixing',
@@ -3174,6 +3306,7 @@ const FunnelAccessPage: React.FC = () => {
   const [chatTopics, setChatTopics] = useState('')
   const [chatHandoff, setChatHandoff] = useState('')
   const [mediaTargets, setMediaTargets] = useState('')
+  const [scopeText, setScopeText] = useState('')
   const [sessionFormat, setSessionFormat] = useState<'remote' | 'onsite' | null>(
     initialSessionFormat,
   )
@@ -3227,6 +3360,61 @@ const FunnelAccessPage: React.FC = () => {
   const isTrackingForms = product === 'tracking-forms'
   const isSiteChat = product === 'site-chat'
   const isMediaClean = product === 'media-clean'
+  const isA11yPass = product === 'a11y-pass'
+  const isWhatsappSetup = product === 'whatsapp-setup'
+  const isDmReply = product === 'dm-reply'
+  const isQuoteFollowup = product === 'quote-followup'
+  const isNoshowRescue = product === 'noshow-rescue'
+  const isIntakeForms = product === 'intake-forms'
+  const isInboxTriage = product === 'inbox-triage'
+  const isSopPlaybook = product === 'sop-playbook'
+  const isDashboardLite = product === 'dashboard-lite'
+  const isBundleClinic = product === 'bundle-clinic'
+  const isBundleSpeedNext = product === 'bundle-speed-next'
+  const isBundleFrontDoor = product === 'bundle-front-door'
+  const isGeo = product === 'geo'
+  const isClientFinder = product === 'client-finder'
+  const usesBatchWizard =
+    isA11yPass ||
+    isWhatsappSetup ||
+    isDmReply ||
+    isQuoteFollowup ||
+    isNoshowRescue ||
+    isIntakeForms ||
+    isInboxTriage ||
+    isSopPlaybook ||
+    isDashboardLite ||
+    isBundleClinic ||
+    isBundleSpeedNext ||
+    isBundleFrontDoor ||
+    isGeo ||
+    isClientFinder
+  const batchScopeField: StepId | null =
+    isA11yPass
+      ? 'a11yPages'
+      : isWhatsappSetup
+        ? 'whatsappGoals'
+        : isDmReply
+          ? 'dmChannels'
+          : isQuoteFollowup
+            ? 'quoteTools'
+            : isNoshowRescue
+              ? 'noshowTools'
+              : isIntakeForms
+                ? 'intakePurpose'
+                : isInboxTriage
+                  ? 'inboxTools'
+                  : isSopPlaybook
+                    ? 'sopJobs'
+                    : isDashboardLite
+                      ? 'dashMetrics'
+                      : isBundleClinic || isBundleSpeedNext || isBundleFrontDoor
+                        ? 'bundleNotes'
+                        : isGeo
+                          ? 'geoTopics'
+                          : isClientFinder
+                            ? 'finderIcp'
+                            : null
   const isTeamAi = product === 'team-ai'
   const isChangePack = product === 'change-pack'
   const isContentSystem = product === 'content-system'
@@ -3259,6 +3447,20 @@ const FunnelAccessPage: React.FC = () => {
     | 'tracking-forms'
     | 'site-chat'
     | 'media-clean'
+    | 'a11y-pass'
+    | 'whatsapp-setup'
+    | 'dm-reply'
+    | 'quote-followup'
+    | 'noshow-rescue'
+    | 'intake-forms'
+    | 'inbox-triage'
+    | 'sop-playbook'
+    | 'dashboard-lite'
+    | 'bundle-clinic'
+    | 'bundle-speed-next'
+    | 'bundle-front-door'
+    | 'geo'
+    | 'client-finder'
     | 'team-ai'
     | 'change-pack'
     | 'content-system' =
@@ -3292,6 +3494,8 @@ const FunnelAccessPage: React.FC = () => {
                             ? 'site-chat'
                           : usesMediaCleanWizard
                             ? 'media-clean'
+                          : usesBatchWizard && product
+                            ? (product as typeof productKind)
                           : isTeamAi
                             ? 'team-ai'
                             : isChangePack
@@ -3329,6 +3533,8 @@ const FunnelAccessPage: React.FC = () => {
                           ? PHASES_SITE_CHAT
                         : usesMediaCleanWizard
                           ? PHASES_MEDIA_CLEAN
+                        : usesBatchWizard
+                          ? PHASES_BATCH
                         : isTeamAi
                         ? PHASES_TEAM
                         : isChangePack
@@ -3594,6 +3800,22 @@ const FunnelAccessPage: React.FC = () => {
         base.push('domainProvider', 'hostingProvider')
       }
       base.push('mediaTargets', 'access', 'accessDetail', 'notes', 'done')
+      return base
+    }
+    if (usesBatchWizard && batchScopeField) {
+      const base: StepId[] = [
+        'product',
+        'name',
+        'email',
+        'business',
+        'website',
+        'platform',
+        'provider',
+      ]
+      if (sameProvider === 'no') {
+        base.push('domainProvider', 'hostingProvider')
+      }
+      base.push(batchScopeField, 'access', 'accessDetail', 'notes', 'done')
       return base
     }
     if (isTeamAi) {
@@ -3886,6 +4108,16 @@ const FunnelAccessPage: React.FC = () => {
         setError('Something is missing. Use Back to check your answers.')
         return
       }
+    } else if (usesBatchWizard) {
+      if (
+        !isValidWebsite(website) ||
+        !platform ||
+        !sameProvider ||
+        scopeText.trim().length < 8
+      ) {
+        setError('Something is missing. Use Back to check your answers.')
+        return
+      }
     } else if (isTeamAi) {
       const toolsOk = teamTools.length >= 1 || teamToolsOther.trim().length >= 2
       const tasksOk = timeEaters.length >= 1 || timeEatersOther.trim().length >= 2
@@ -4157,6 +4389,22 @@ const FunnelAccessPage: React.FC = () => {
                 accessDetail: accessDetail.trim(),
                 notes: notes.trim(),
               }
+          : usesBatchWizard && batchScopeField
+            ? ({
+                product,
+                name: name.trim(),
+                email: email.trim(),
+                business: business.trim(),
+                website: website.trim(),
+                platform: platform!,
+                sameProvider: sameProvider!,
+                domainProvider: domainProvider.trim(),
+                hostingProvider: hostingProvider.trim(),
+                [batchScopeField]: scopeText.trim(),
+                accessPath,
+                accessDetail: accessDetail.trim(),
+                notes: notes.trim(),
+              } as FunnelAccessPayload)
             : isTeamAi
             ? {
                 product,
@@ -4420,6 +4668,8 @@ const FunnelAccessPage: React.FC = () => {
         setStep('chatTopics')
       } else if (usesMediaCleanWizard) {
         setStep('mediaTargets')
+      } else if (usesBatchWizard && batchScopeField) {
+        setStep(batchScopeField)
       } else {
         setStep('access')
       }
@@ -5281,6 +5531,92 @@ const FunnelAccessPage: React.FC = () => {
                 onNext={() => goNext('mediaTargets')}
               />
             ) : null}
+
+            {usesBatchWizard && batchScopeField && step === batchScopeField ? (
+              <OneField
+                title={
+                  batchScopeField === 'a11yPages'
+                    ? 'Which pages matter most'
+                    : batchScopeField === 'whatsappGoals'
+                      ? 'What should WhatsApp handle'
+                      : batchScopeField === 'dmChannels'
+                        ? 'Which channels and what to answer'
+                        : batchScopeField === 'quoteTools'
+                          ? 'Where quotes live today'
+                          : batchScopeField === 'noshowTools'
+                            ? 'Booking tool and reminder gaps'
+                            : batchScopeField === 'intakePurpose'
+                              ? 'What intake should capture'
+                              : batchScopeField === 'inboxTools'
+                                ? 'Inbox and tools in play'
+                                : batchScopeField === 'sopJobs'
+                                  ? 'Which jobs to turn into playbooks'
+                                  : batchScopeField === 'dashMetrics'
+                                    ? 'Metrics you need on one screen'
+                                    : batchScopeField === 'bundleNotes'
+                                      ? 'Scope notes for this bundle'
+                                      : batchScopeField === 'geoTopics'
+                                        ? 'Topics AI should know you for'
+                                        : 'Who you want to find'
+                }
+                hint={
+                  batchScopeField === 'a11yPages'
+                    ? 'Priority pages for the access pass. Paths or plain names are fine.'
+                    : batchScopeField === 'whatsappGoals'
+                      ? 'Labels, quick replies, and how messages should route. A short list is enough.'
+                      : batchScopeField === 'dmChannels'
+                        ? 'Instagram, Facebook, and the questions people ask most.'
+                        : batchScopeField === 'quoteTools'
+                          ? 'Tool or spreadsheet, and how follow-up works now.'
+                          : batchScopeField === 'noshowTools'
+                            ? 'What you use today and where reminders fail.'
+                            : batchScopeField === 'intakePurpose'
+                              ? 'Purpose, key fields, and where answers should land.'
+                              : batchScopeField === 'inboxTools'
+                                ? 'Email or CRM, and what burns the most time.'
+                                : batchScopeField === 'sopJobs'
+                                  ? 'Real repeating work the team does every week.'
+                                  : batchScopeField === 'dashMetrics'
+                                    ? 'Leads, bookings, ads, reviews. What you check every week.'
+                                    : batchScopeField === 'bundleNotes'
+                                      ? 'Location, quirks, and anything we should know before kickoff.'
+                                      : batchScopeField === 'geoTopics'
+                                        ? 'Services, suburbs, and proof points tools should cite.'
+                                        : 'Ideal customer, geography, and who to exclude.'
+                }
+                value={scopeText}
+                onChange={setScopeText}
+                placeholder={
+                  batchScopeField === 'a11yPages'
+                    ? '/\n/contact\n/book'
+                    : batchScopeField === 'whatsappGoals'
+                      ? 'e.g. New enquiries, after-hours, booking link'
+                      : batchScopeField === 'dmChannels'
+                        ? 'e.g. IG + FB. Hours, pricing, how to book'
+                        : batchScopeField === 'quoteTools'
+                          ? 'e.g. HubSpot deals, PDF by email, no chase'
+                          : batchScopeField === 'noshowTools'
+                            ? 'e.g. Fresha, SMS day-before only'
+                            : batchScopeField === 'intakePurpose'
+                              ? 'e.g. New patient form into HubSpot'
+                              : batchScopeField === 'inboxTools'
+                                ? 'e.g. Gmail + HubSpot, quotes and referrals'
+                                : batchScopeField === 'sopJobs'
+                                  ? 'e.g. Quote replies, onboarding checklist'
+                                  : batchScopeField === 'dashMetrics'
+                                    ? 'e.g. Weekly leads, booked jobs, ad spend'
+                                    : batchScopeField === 'bundleNotes'
+                                      ? 'e.g. One clinic location, two phone lines'
+                                      : batchScopeField === 'geoTopics'
+                                        ? 'e.g. Kitchen reno, Inner West, 12 years'
+                                        : 'e.g. Clinic owners, Sydney, no chains'
+                }
+                multiline
+                disabled={scopeText.trim().length < 8}
+                onNext={() => goNext(batchScopeField)}
+              />
+            ) : null}
+
 
             {step === 'bookingTool' ? (
               <>

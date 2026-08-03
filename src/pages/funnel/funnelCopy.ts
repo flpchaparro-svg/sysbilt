@@ -75,6 +75,20 @@ export type FunnelProductCopy = {
     | 'tracking-forms'
     | 'site-chat'
     | 'media-clean'
+    | 'a11y-pass'
+    | 'whatsapp-setup'
+    | 'dm-reply'
+    | 'quote-followup'
+    | 'noshow-rescue'
+    | 'intake-forms'
+    | 'inbox-triage'
+    | 'sop-playbook'
+    | 'dashboard-lite'
+    | 'bundle-clinic'
+    | 'bundle-speed-next'
+    | 'bundle-front-door'
+    | 'geo'
+    | 'client-finder'
     | 'draft'
 }
 
@@ -3340,9 +3354,37 @@ export const MEDIA_CLEAN_COPY: FunnelProductCopy = {
   proofKind: 'media-clean',
 }
 
+import {A11Y_PASS_COPY as A11Y_PASS_LIVE} from './liveCopy/a11y-pass'
+import {WHATSAPP_SETUP_COPY as WHATSAPP_SETUP_LIVE} from './liveCopy/whatsapp-setup'
+import {DM_REPLY_COPY as DM_REPLY_LIVE} from './liveCopy/dm-reply'
+import {QUOTE_FOLLOWUP_LIVE_COPY as QUOTE_FOLLOWUP_LIVE} from './liveCopy/quote-followup'
+import {NOSHOW_RESCUE_LIVE_COPY as NOSHOW_RESCUE_LIVE} from './liveCopy/noshow-rescue'
+import {INTAKE_FORMS_LIVE_COPY as INTAKE_FORMS_LIVE} from './liveCopy/intake-forms'
+import {INBOX_TRIAGE_LIVE_COPY as INBOX_TRIAGE_LIVE} from './liveCopy/inbox-triage'
+import {SOP_PLAYBOOK_LIVE_COPY as SOP_PLAYBOOK_LIVE} from './liveCopy/sop-playbook'
+import {DASHBOARD_LITE_LIVE_COPY as DASHBOARD_LITE_LIVE} from './liveCopy/dashboard-lite'
+import {BUNDLE_CLINIC_LIVE_COPY as BUNDLE_CLINIC_LIVE} from './liveCopy/bundle-clinic'
+import {BUNDLE_SPEED_NEXT_LIVE_COPY as BUNDLE_SPEED_NEXT_LIVE} from './liveCopy/bundle-speed-next'
+import {BUNDLE_FRONT_DOOR_LIVE_COPY as BUNDLE_FRONT_DOOR_LIVE} from './liveCopy/bundle-front-door'
+import {GEO_LIVE_COPY} from './liveCopy/geo'
+import {CLIENT_FINDER_LIVE_COPY} from './liveCopy/client-finder'
 import {DRAFT_COPY_BY_SLUG} from './funnelDraftProducts'
 
 export function funnelCopyForSlug(slug: string | undefined): FunnelProductCopy {
+  if (slug === 'a11y-pass') return A11Y_PASS_LIVE
+  if (slug === 'whatsapp-setup') return WHATSAPP_SETUP_LIVE
+  if (slug === 'dm-reply') return DM_REPLY_LIVE
+  if (slug === 'quote-followup') return QUOTE_FOLLOWUP_LIVE
+  if (slug === 'noshow-rescue') return NOSHOW_RESCUE_LIVE
+  if (slug === 'intake-forms') return INTAKE_FORMS_LIVE
+  if (slug === 'inbox-triage') return INBOX_TRIAGE_LIVE
+  if (slug === 'sop-playbook') return SOP_PLAYBOOK_LIVE
+  if (slug === 'dashboard-lite') return DASHBOARD_LITE_LIVE
+  if (slug === 'bundle-clinic') return BUNDLE_CLINIC_LIVE
+  if (slug === 'bundle-speed-next') return BUNDLE_SPEED_NEXT_LIVE
+  if (slug === 'bundle-front-door') return BUNDLE_FRONT_DOOR_LIVE
+  if (slug === 'geo') return GEO_LIVE_COPY
+  if (slug === 'client-finder') return CLIENT_FINDER_LIVE_COPY
   if (slug === 'media-clean') return MEDIA_CLEAN_COPY
   if (slug === 'site-chat') return SITE_CHAT_COPY
   if (slug === 'tracking-forms') return TRACKING_FORMS_COPY
@@ -3364,8 +3406,6 @@ export function funnelCopyForSlug(slug: string | undefined): FunnelProductCopy {
   if (slug === 'ai-phone') return AI_PHONE_COPY
   if (slug === 'booking') return BOOKING_COPY
   if (slug === 'website' || slug === 'website-hook') return WEBSITE_COPY
-  if (slug === 'geo') return GEO_COPY
-  if (slug === 'client-finder') return CLIENT_FINDER_COPY
   if (slug && DRAFT_COPY_BY_SLUG[slug]) return DRAFT_COPY_BY_SLUG[slug]
   return SPEED_FIX_COPY
 }

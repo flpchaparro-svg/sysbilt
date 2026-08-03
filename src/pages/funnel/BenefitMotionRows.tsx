@@ -2,6 +2,20 @@ import React from 'react'
 import {motion, useReducedMotion} from 'framer-motion'
 import {colors} from '../../constants/theme'
 import {FUNNEL_COLOURS} from './funnelTheme'
+import {A11Y_PASS_BENEFIT_VISUALS} from './liveCopy/a11y-pass-motion'
+import {WHATSAPP_SETUP_BENEFIT_VISUALS} from './liveCopy/whatsapp-setup-motion'
+import {DM_REPLY_BENEFIT_VISUALS} from './liveCopy/dm-reply-motion'
+import {BENEFIT_VISUALS as QUOTE_FOLLOWUP_BENEFIT_VISUALS} from './liveCopy/quote-followup-motion'
+import {BENEFIT_VISUALS as NOSHOW_RESCUE_BENEFIT_VISUALS} from './liveCopy/noshow-rescue-motion'
+import {BENEFIT_VISUALS as INTAKE_FORMS_BENEFIT_VISUALS} from './liveCopy/intake-forms-motion'
+import {INBOX_TRIAGE_BENEFIT_VISUALS} from './liveCopy/inbox-triage-motion'
+import {SOP_PLAYBOOK_BENEFIT_VISUALS} from './liveCopy/sop-playbook-motion'
+import {DASHBOARD_LITE_BENEFIT_VISUALS} from './liveCopy/dashboard-lite-motion'
+import {BUNDLE_CLINIC_BENEFIT_VISUALS} from './liveCopy/bundle-clinic-motion'
+import {BUNDLE_SPEED_NEXT_BENEFIT_VISUALS} from './liveCopy/bundle-speed-next-motion'
+import {BUNDLE_FRONT_DOOR_BENEFIT_VISUALS} from './liveCopy/bundle-front-door-motion'
+import {BENEFIT_VISUALS as GEO_BENEFIT_VISUALS} from './liveCopy/geo-motion'
+import {BENEFIT_VISUALS as CLIENT_FINDER_BENEFIT_VISUALS} from './liveCopy/client-finder-motion'
 
 type VisualProps = {reduce: boolean | null}
 
@@ -4088,6 +4102,20 @@ export function BenefitMotionRows({
     | 'tracking-forms'
     | 'site-chat'
     | 'media-clean'
+    | 'a11y-pass'
+    | 'whatsapp-setup'
+    | 'dm-reply'
+    | 'quote-followup'
+    | 'noshow-rescue'
+    | 'intake-forms'
+    | 'inbox-triage'
+    | 'sop-playbook'
+    | 'dashboard-lite'
+    | 'bundle-clinic'
+    | 'bundle-speed-next'
+    | 'bundle-front-door'
+    | 'geo'
+    | 'client-finder'
 }) {
   const reduce = useReducedMotion()
   const visuals =
@@ -4127,6 +4155,34 @@ export function BenefitMotionRows({
                                       ? SITE_CHAT_VISUALS
                                     : variant === 'media-clean'
                                       ? MEDIA_CLEAN_VISUALS
+                                    : variant === 'a11y-pass'
+                                      ? A11Y_PASS_BENEFIT_VISUALS
+                                    : variant === 'whatsapp-setup'
+                                      ? WHATSAPP_SETUP_BENEFIT_VISUALS
+                                    : variant === 'dm-reply'
+                                      ? DM_REPLY_BENEFIT_VISUALS
+                                    : variant === 'quote-followup'
+                                      ? QUOTE_FOLLOWUP_BENEFIT_VISUALS
+                                    : variant === 'noshow-rescue'
+                                      ? NOSHOW_RESCUE_BENEFIT_VISUALS
+                                    : variant === 'intake-forms'
+                                      ? INTAKE_FORMS_BENEFIT_VISUALS
+                                    : variant === 'inbox-triage'
+                                      ? INBOX_TRIAGE_BENEFIT_VISUALS
+                                    : variant === 'sop-playbook'
+                                      ? SOP_PLAYBOOK_BENEFIT_VISUALS
+                                    : variant === 'dashboard-lite'
+                                      ? DASHBOARD_LITE_BENEFIT_VISUALS
+                                    : variant === 'bundle-clinic'
+                                      ? BUNDLE_CLINIC_BENEFIT_VISUALS
+                                    : variant === 'bundle-speed-next'
+                                      ? BUNDLE_SPEED_NEXT_BENEFIT_VISUALS
+                                    : variant === 'bundle-front-door'
+                                      ? BUNDLE_FRONT_DOOR_BENEFIT_VISUALS
+                                    : variant === 'geo'
+                                      ? GEO_BENEFIT_VISUALS
+                                    : variant === 'client-finder'
+                                      ? CLIENT_FINDER_BENEFIT_VISUALS
                                     : variant === 'team-ai'
                                       ? TEAM_AI_VISUALS
                                       : variant === 'change-pack'

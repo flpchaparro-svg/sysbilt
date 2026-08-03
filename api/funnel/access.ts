@@ -27,6 +27,20 @@ const PRODUCT_CODES = new Set([
   'tracking-forms',
   'site-chat',
   'media-clean',
+  'a11y-pass',
+  'whatsapp-setup',
+  'dm-reply',
+  'quote-followup',
+  'noshow-rescue',
+  'intake-forms',
+  'inbox-triage',
+  'sop-playbook',
+  'dashboard-lite',
+  'bundle-clinic',
+  'bundle-speed-next',
+  'bundle-front-door',
+  'geo',
+  'client-finder',
 ]);
 const PRODUCT_LABELS: Record<string, string> = {
   'speed-fix': 'Website Speed Fix',
@@ -50,6 +64,20 @@ const PRODUCT_LABELS: Record<string, string> = {
   'tracking-forms': 'Tracking and Forms Pack',
   'site-chat': 'Site AI Chat',
   'media-clean': 'Image and Media Clean',
+  'a11y-pass': 'Accessibility Quick Pass',
+  'whatsapp-setup': 'WhatsApp Business Setup',
+  'dm-reply': 'DM Reply System',
+  'quote-followup': 'Quote Follow-Up Autopilot',
+  'noshow-rescue': 'No-Show Rescue',
+  'intake-forms': 'Intake Form Pack',
+  'inbox-triage': 'Inbox Triage Assistant',
+  'sop-playbook': 'SOP to AI Playbook',
+  'dashboard-lite': 'Dashboard Lite',
+  'bundle-clinic': 'Clinic Capture Bundle',
+  'bundle-speed-next': 'Speed Next Bundle',
+  'bundle-front-door': 'Front Door Bundle',
+  'geo': 'AI Search Visibility',
+  'client-finder': 'Client Finder Sprint',
 };
 const PRODUCT_AMOUNTS: Record<string, string> = {
   'speed-fix': '1200',
@@ -74,6 +102,20 @@ const PRODUCT_AMOUNTS: Record<string, string> = {
   'tracking-forms': '950',
   'site-chat': '950',
   'media-clean': '650',
+  'a11y-pass': '1100',
+  'whatsapp-setup': '950',
+  'dm-reply': '1100',
+  'quote-followup': '1450',
+  'noshow-rescue': '750',
+  'intake-forms': '1200',
+  'inbox-triage': '2200',
+  'sop-playbook': '2400',
+  'dashboard-lite': '2600',
+  'bundle-clinic': '2200',
+  'bundle-speed-next': '2400',
+  'bundle-front-door': '3400',
+  'geo': '2200',
+  'client-finder': '2800',
 };
 const CRM_SYSTEMS = new Set([
   'hubspot',
@@ -195,6 +237,18 @@ type Body = {
   chatTopics?: unknown;
   chatHandoff?: unknown;
   mediaTargets?: unknown;
+  a11yPages?: unknown;
+  whatsappGoals?: unknown;
+  dmChannels?: unknown;
+  quoteTools?: unknown;
+  noshowTools?: unknown;
+  intakePurpose?: unknown;
+  inboxTools?: unknown;
+  sopJobs?: unknown;
+  dashMetrics?: unknown;
+  bundleNotes?: unknown;
+  geoTopics?: unknown;
+  finderIcp?: unknown;
   websiteUrl?: unknown;
   teamSize?: unknown;
   teamTools?: unknown;
@@ -556,6 +610,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const chatTopics = str(body.chatTopics, 4000);
   const chatHandoff = str(body.chatHandoff, 2000);
   const mediaTargets = str(body.mediaTargets, 4000);
+  const a11yPages = str(body.a11yPages, 4000);
+  const whatsappGoals = str(body.whatsappGoals, 4000);
+  const dmChannels = str(body.dmChannels, 4000);
+  const quoteTools = str(body.quoteTools, 4000);
+  const noshowTools = str(body.noshowTools, 4000);
+  const intakePurpose = str(body.intakePurpose, 4000);
+  const inboxTools = str(body.inboxTools, 4000);
+  const sopJobs = str(body.sopJobs, 4000);
+  const dashMetrics = str(body.dashMetrics, 4000);
+  const bundleNotes = str(body.bundleNotes, 4000);
+  const geoTopics = str(body.geoTopics, 4000);
+  const finderIcp = str(body.finderIcp, 4000);
   const websiteUrl = str(body.websiteUrl, 400);
   const teamSize = str(body.teamSize, 40);
   const teamTools = str(body.teamTools, 2000);
@@ -603,6 +669,35 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const isTrackingForms = product === 'tracking-forms';
   const isSiteChat = product === 'site-chat';
   const isMediaClean = product === 'media-clean';
+  const isA11yPass = product === 'a11y-pass';
+  const isWhatsappSetup = product === 'whatsapp-setup';
+  const isDmReply = product === 'dm-reply';
+  const isQuoteFollowup = product === 'quote-followup';
+  const isNoshowRescue = product === 'noshow-rescue';
+  const isIntakeForms = product === 'intake-forms';
+  const isInboxTriage = product === 'inbox-triage';
+  const isSopPlaybook = product === 'sop-playbook';
+  const isDashboardLite = product === 'dashboard-lite';
+  const isBundleClinic = product === 'bundle-clinic';
+  const isBundleSpeedNext = product === 'bundle-speed-next';
+  const isBundleFrontDoor = product === 'bundle-front-door';
+  const isGeo = product === 'geo';
+  const isClientFinder = product === 'client-finder';
+  const isBatchScoped =
+    isA11yPass ||
+    isWhatsappSetup ||
+    isDmReply ||
+    isQuoteFollowup ||
+    isNoshowRescue ||
+    isIntakeForms ||
+    isInboxTriage ||
+    isSopPlaybook ||
+    isDashboardLite ||
+    isBundleClinic ||
+    isBundleSpeedNext ||
+    isBundleFrontDoor ||
+    isGeo ||
+    isClientFinder;
   const isTeamAi = product === 'team-ai';
   const isChangePack = product === 'change-pack';
   const isContentSystem = product === 'content-system';
@@ -820,6 +915,33 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     }
     if (mediaTargets.length < 8) {
       res.status(400).json({ error: 'Missing pages or folders to clean' });
+      return;
+    }
+  } else if (isBatchScoped) {
+    if (website.length < 4) {
+      res.status(400).json({ error: 'Missing website' });
+      return;
+    }
+    if (!PLATFORMS.has(platform) || !SAME.has(sameProvider) || !ACCESS.has(accessPath)) {
+      res.status(400).json({ error: 'Invalid platform, provider, or access path' });
+      return;
+    }
+    const scopeVal =
+      (isA11yPass && a11yPages) ||
+      (isWhatsappSetup && whatsappGoals) ||
+      (isDmReply && dmChannels) ||
+      (isQuoteFollowup && quoteTools) ||
+      (isNoshowRescue && noshowTools) ||
+      (isIntakeForms && intakePurpose) ||
+      (isInboxTriage && inboxTools) ||
+      (isSopPlaybook && sopJobs) ||
+      (isDashboardLite && dashMetrics) ||
+      ((isBundleClinic || isBundleSpeedNext || isBundleFrontDoor) && bundleNotes) ||
+      (isGeo && geoTopics) ||
+      (isClientFinder && finderIcp) ||
+      '';
+    if (String(scopeVal).length < 8) {
+      res.status(400).json({ error: 'Missing scope details' });
       return;
     }
   } else if (isTeamAi) {
@@ -1118,6 +1240,37 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
             ]
               .filter(Boolean)
               .join('\n')
+        : isBatchScoped
+          ? [
+              `Funnel access form — ${product}`,
+              `Business: ${business}`,
+              `Website: ${website}`,
+              `Scope:\n${
+                a11yPages ||
+                whatsappGoals ||
+                dmChannels ||
+                quoteTools ||
+                noshowTools ||
+                intakePurpose ||
+                inboxTools ||
+                sopJobs ||
+                dashMetrics ||
+                bundleNotes ||
+                geoTopics ||
+                finderIcp ||
+                ''
+              }`,
+              `Platform: ${platform}`,
+              `Domain + hosting same provider: ${sameProvider}`,
+              domainProvider ? `Domain provider: ${domainProvider}` : null,
+              hostingProvider ? `Hosting provider: ${hostingProvider}` : null,
+              `Access path: ${accessPath}`,
+              accessDetail ? `Access notes:\n${accessDetail}` : null,
+              notes ? `Other notes:\n${notes}` : null,
+              `Submitted: ${new Date().toISOString()}`,
+            ]
+              .filter(Boolean)
+              .join('\n')
         : isTeamAi
           ? [
               `Funnel access form — ${product}`,
@@ -1223,6 +1376,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     chatTopics: chatTopics || undefined,
     chatHandoff: chatHandoff || undefined,
     mediaTargets: mediaTargets || undefined,
+    a11yPages: a11yPages || undefined,
+    whatsappGoals: whatsappGoals || undefined,
+    dmChannels: dmChannels || undefined,
+    quoteTools: quoteTools || undefined,
+    noshowTools: noshowTools || undefined,
+    intakePurpose: intakePurpose || undefined,
+    inboxTools: inboxTools || undefined,
+    sopJobs: sopJobs || undefined,
+    dashMetrics: dashMetrics || undefined,
+    bundleNotes: bundleNotes || undefined,
+    geoTopics: geoTopics || undefined,
+    finderIcp: finderIcp || undefined,
     websiteUrl,
     teamSize,
     teamTools,
@@ -1355,6 +1520,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
                               ? `${website} · Topics: ${chatTopics.slice(0, 60)} · Handoff: ${chatHandoff.slice(0, 40)}`
                             : isMediaClean
                               ? `${website} · Scope: ${mediaTargets.slice(0, 80)}`
+                            : isBatchScoped
+                              ? `${website} · Scope: ${(
+                                  a11yPages ||
+                                  whatsappGoals ||
+                                  dmChannels ||
+                                  quoteTools ||
+                                  noshowTools ||
+                                  intakePurpose ||
+                                  inboxTools ||
+                                  sopJobs ||
+                                  dashMetrics ||
+                                  bundleNotes ||
+                                  geoTopics ||
+                                  finderIcp ||
+                                  ''
+                                ).slice(0, 80)}`
                             : website,
         isMissedCall ||
         isGoogleProfile ||

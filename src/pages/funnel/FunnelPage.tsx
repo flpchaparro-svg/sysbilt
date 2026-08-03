@@ -105,6 +105,62 @@ import {MediaCleanEvidenceCard} from './MediaCleanEvidenceCard'
 import {MediaCleanLeakPair} from './MediaCleanLeakPair'
 import {MediaCleanPainCards} from './MediaCleanPainCards'
 import {MediaCleanDeliverableMock} from './MediaCleanDeliverableMock'
+import {A11yPassEvidenceCard} from './A11yPassEvidenceCard'
+import {A11yPassLeakPair} from './A11yPassLeakPair'
+import {A11yPassPainCards} from './A11yPassPainCards'
+import {A11yPassDeliverableMock} from './A11yPassDeliverableMock'
+import {WhatsappSetupEvidenceCard} from './WhatsappSetupEvidenceCard'
+import {WhatsappSetupLeakPair} from './WhatsappSetupLeakPair'
+import {WhatsappSetupPainCards} from './WhatsappSetupPainCards'
+import {WhatsappSetupDeliverableMock} from './WhatsappSetupDeliverableMock'
+import {DmReplyEvidenceCard} from './DmReplyEvidenceCard'
+import {DmReplyLeakPair} from './DmReplyLeakPair'
+import {DmReplyPainCards} from './DmReplyPainCards'
+import {DmReplyDeliverableMock} from './DmReplyDeliverableMock'
+import {QuoteFollowupEvidenceCard} from './QuoteFollowupEvidenceCard'
+import {QuoteFollowupLeakPair} from './QuoteFollowupLeakPair'
+import {QuoteFollowupPainCards} from './QuoteFollowupPainCards'
+import {QuoteFollowupDeliverableMock} from './QuoteFollowupDeliverableMock'
+import {NoshowRescueEvidenceCard} from './NoshowRescueEvidenceCard'
+import {NoshowRescueLeakPair} from './NoshowRescueLeakPair'
+import {NoshowRescuePainCards} from './NoshowRescuePainCards'
+import {NoshowRescueDeliverableMock} from './NoshowRescueDeliverableMock'
+import {IntakeFormsEvidenceCard} from './IntakeFormsEvidenceCard'
+import {IntakeFormsLeakPair} from './IntakeFormsLeakPair'
+import {IntakeFormsPainCards} from './IntakeFormsPainCards'
+import {IntakeFormsDeliverableMock} from './IntakeFormsDeliverableMock'
+import {InboxTriageEvidenceCard} from './InboxTriageEvidenceCard'
+import {InboxTriageLeakPair} from './InboxTriageLeakPair'
+import {InboxTriagePainCards} from './InboxTriagePainCards'
+import {InboxTriageDeliverableMock} from './InboxTriageDeliverableMock'
+import {SopPlaybookEvidenceCard} from './SopPlaybookEvidenceCard'
+import {SopPlaybookLeakPair} from './SopPlaybookLeakPair'
+import {SopPlaybookPainCards} from './SopPlaybookPainCards'
+import {SopPlaybookDeliverableMock} from './SopPlaybookDeliverableMock'
+import {DashboardLiteEvidenceCard} from './DashboardLiteEvidenceCard'
+import {DashboardLiteLeakPair} from './DashboardLiteLeakPair'
+import {DashboardLitePainCards} from './DashboardLitePainCards'
+import {DashboardLiteDeliverableMock} from './DashboardLiteDeliverableMock'
+import {BundleClinicEvidenceCard} from './BundleClinicEvidenceCard'
+import {BundleClinicLeakPair} from './BundleClinicLeakPair'
+import {BundleClinicPainCards} from './BundleClinicPainCards'
+import {BundleClinicDeliverableMock} from './BundleClinicDeliverableMock'
+import {BundleSpeedNextEvidenceCard} from './BundleSpeedNextEvidenceCard'
+import {BundleSpeedNextLeakPair} from './BundleSpeedNextLeakPair'
+import {BundleSpeedNextPainCards} from './BundleSpeedNextPainCards'
+import {BundleSpeedNextDeliverableMock} from './BundleSpeedNextDeliverableMock'
+import {BundleFrontDoorEvidenceCard} from './BundleFrontDoorEvidenceCard'
+import {BundleFrontDoorLeakPair} from './BundleFrontDoorLeakPair'
+import {BundleFrontDoorPainCards} from './BundleFrontDoorPainCards'
+import {BundleFrontDoorDeliverableMock} from './BundleFrontDoorDeliverableMock'
+import {GeoEvidenceCard} from './GeoEvidenceCard'
+import {GeoLeakPair} from './GeoLeakPair'
+import {GeoPainCards} from './GeoPainCards'
+import {GeoDeliverableMock} from './GeoDeliverableMock'
+import {ClientFinderEvidenceCard} from './ClientFinderEvidenceCard'
+import {ClientFinderLeakPair} from './ClientFinderLeakPair'
+import {ClientFinderPainCards} from './ClientFinderPainCards'
+import {ClientFinderDeliverableMock} from './ClientFinderDeliverableMock'
 import {WebsiteEvidenceCard, type WebsiteEvidence} from './WebsiteEvidenceCard'
 import {WebsiteLeakPair} from './WebsiteLeakPair'
 import {WebsiteUnknownsCentrepiece} from './WebsiteUnknownsCentrepiece'
@@ -143,6 +199,20 @@ import {SCHEMA_FAQ_STRIPE_URL} from '../../constants/schemaFaqStripe'
 import {TRACKING_FORMS_STRIPE_URL} from '../../constants/trackingFormsStripe'
 import {SITE_CHAT_STRIPE_URL} from '../../constants/siteChatStripe'
 import {MEDIA_CLEAN_STRIPE_URL} from '../../constants/mediaCleanStripe'
+import {A11Y_PASS_STRIPE_URL} from '../../constants/a11yPassStripe'
+import {WHATSAPP_SETUP_STRIPE_URL} from '../../constants/whatsappSetupStripe'
+import {DM_REPLY_STRIPE_URL} from '../../constants/dmReplyStripe'
+import {QUOTE_FOLLOWUP_STRIPE_URL} from '../../constants/quoteFollowupStripe'
+import {NOSHOW_RESCUE_STRIPE_URL} from '../../constants/noshowRescueStripe'
+import {INTAKE_FORMS_STRIPE_URL} from '../../constants/intakeFormsStripe'
+import {INBOX_TRIAGE_STRIPE_URL} from '../../constants/inboxTriageStripe'
+import {SOP_PLAYBOOK_STRIPE_URL} from '../../constants/sopPlaybookStripe'
+import {DASHBOARD_LITE_STRIPE_URL} from '../../constants/dashboardLiteStripe'
+import {BUNDLE_CLINIC_STRIPE_URL} from '../../constants/bundleClinicStripe'
+import {BUNDLE_SPEED_NEXT_STRIPE_URL} from '../../constants/bundleSpeedNextStripe'
+import {BUNDLE_FRONT_DOOR_STRIPE_URL} from '../../constants/bundleFrontDoorStripe'
+import {GEO_STRIPE_URL} from '../../constants/geoStripe'
+import {CLIENT_FINDER_STRIPE_URL} from '../../constants/clientFinderStripe'
 import {teamAiPriceOptions} from '../../constants/teamAiStripe'
 import {funnelCopyForSlug} from './funnelCopy'
 import {
@@ -302,8 +372,21 @@ const FunnelPage: React.FC = () => {
   const isTrackingForms = proofKind === 'tracking-forms'
   const isSiteChat = proofKind === 'site-chat'
   const isMediaClean = proofKind === 'media-clean'
-  const isDraftSoon =
-    proofKind === 'geo' || proofKind === 'client-finder' || proofKind === 'draft'
+  const isA11yPass = proofKind === 'a11y-pass'
+  const isWhatsappSetup = proofKind === 'whatsapp-setup'
+  const isDmReply = proofKind === 'dm-reply'
+  const isQuoteFollowup = proofKind === 'quote-followup'
+  const isNoshowRescue = proofKind === 'noshow-rescue'
+  const isIntakeForms = proofKind === 'intake-forms'
+  const isInboxTriage = proofKind === 'inbox-triage'
+  const isSopPlaybook = proofKind === 'sop-playbook'
+  const isDashboardLite = proofKind === 'dashboard-lite'
+  const isBundleClinic = proofKind === 'bundle-clinic'
+  const isBundleSpeedNext = proofKind === 'bundle-speed-next'
+  const isBundleFrontDoor = proofKind === 'bundle-front-door'
+  const isGeo = proofKind === 'geo'
+  const isClientFinder = proofKind === 'client-finder'
+  const isDraftSoon = proofKind === 'draft'
   /** Visual drafts and priced-but-not-wired products that are not buyable yet. */
   const usesComingSoonCta = isDraftSoon
   const lastPostMonth = useMemo(() => sanitiseLastPostMonth(params.get('m')), [params])
@@ -339,6 +422,34 @@ const FunnelPage: React.FC = () => {
                             ? 'site-chat'
                           : isMediaClean
                             ? 'media-clean'
+                          : isA11yPass
+                            ? 'a11y-pass'
+                          : isWhatsappSetup
+                            ? 'whatsapp-setup'
+                          : isDmReply
+                            ? 'dm-reply'
+                          : isQuoteFollowup
+                            ? 'quote-followup'
+                          : isNoshowRescue
+                            ? 'noshow-rescue'
+                          : isIntakeForms
+                            ? 'intake-forms'
+                          : isInboxTriage
+                            ? 'inbox-triage'
+                          : isSopPlaybook
+                            ? 'sop-playbook'
+                          : isDashboardLite
+                            ? 'dashboard-lite'
+                          : isBundleClinic
+                            ? 'bundle-clinic'
+                          : isBundleSpeedNext
+                            ? 'bundle-speed-next'
+                          : isBundleFrontDoor
+                            ? 'bundle-front-door'
+                          : isGeo
+                            ? 'geo'
+                          : isClientFinder
+                            ? 'client-finder'
                         : isTeamAi
                     ? 'team-ai'
                     : isChangePack
@@ -490,6 +601,20 @@ const FunnelPage: React.FC = () => {
     (isTrackingForms ? TRACKING_FORMS_STRIPE_URL : undefined) ||
     (isSiteChat ? SITE_CHAT_STRIPE_URL : undefined) ||
     (isMediaClean ? MEDIA_CLEAN_STRIPE_URL : undefined) ||
+    (isA11yPass ? A11Y_PASS_STRIPE_URL : undefined) ||
+    (isWhatsappSetup ? WHATSAPP_SETUP_STRIPE_URL : undefined) ||
+    (isDmReply ? DM_REPLY_STRIPE_URL : undefined) ||
+    (isQuoteFollowup ? QUOTE_FOLLOWUP_STRIPE_URL : undefined) ||
+    (isNoshowRescue ? NOSHOW_RESCUE_STRIPE_URL : undefined) ||
+    (isIntakeForms ? INTAKE_FORMS_STRIPE_URL : undefined) ||
+    (isInboxTriage ? INBOX_TRIAGE_STRIPE_URL : undefined) ||
+    (isSopPlaybook ? SOP_PLAYBOOK_STRIPE_URL : undefined) ||
+    (isDashboardLite ? DASHBOARD_LITE_STRIPE_URL : undefined) ||
+    (isBundleClinic ? BUNDLE_CLINIC_STRIPE_URL : undefined) ||
+    (isBundleSpeedNext ? BUNDLE_SPEED_NEXT_STRIPE_URL : undefined) ||
+    (isBundleFrontDoor ? BUNDLE_FRONT_DOOR_STRIPE_URL : undefined) ||
+    (isGeo ? GEO_STRIPE_URL : undefined) ||
+    (isClientFinder ? CLIENT_FINDER_STRIPE_URL : undefined) ||
     (isEnquiryReply ? ENQUIRY_REPLY_STRIPE_URL : undefined)
   const sanityStripe = (doc?.stripeUrl || '').trim()
   const resolvedStripeUrl =
@@ -670,6 +795,20 @@ const FunnelPage: React.FC = () => {
               isTrackingForms ||
               isSiteChat ||
               isMediaClean ||
+              isA11yPass ||
+              isWhatsappSetup ||
+              isDmReply ||
+              isQuoteFollowup ||
+              isNoshowRescue ||
+              isIntakeForms ||
+              isInboxTriage ||
+              isSopPlaybook ||
+              isDashboardLite ||
+              isBundleClinic ||
+              isBundleSpeedNext ||
+              isBundleFrontDoor ||
+              isGeo ||
+              isClientFinder ||
               isDraftSoon
                 ? 'max-w-3xl'
                 : 'max-w-5xl'
@@ -711,6 +850,20 @@ const FunnelPage: React.FC = () => {
             {isTrackingForms ? <TrackingFormsEvidenceCard business={business} /> : null}
             {isSiteChat ? <SiteChatEvidenceCard business={business} /> : null}
             {isMediaClean ? <MediaCleanEvidenceCard business={business} /> : null}
+            {isA11yPass ? <A11yPassEvidenceCard business={business} /> : null}
+            {isWhatsappSetup ? <WhatsappSetupEvidenceCard business={business} /> : null}
+            {isDmReply ? <DmReplyEvidenceCard business={business} /> : null}
+            {isQuoteFollowup ? <QuoteFollowupEvidenceCard business={business} /> : null}
+            {isNoshowRescue ? <NoshowRescueEvidenceCard business={business} /> : null}
+            {isIntakeForms ? <IntakeFormsEvidenceCard business={business} /> : null}
+            {isInboxTriage ? <InboxTriageEvidenceCard business={business} /> : null}
+            {isSopPlaybook ? <SopPlaybookEvidenceCard business={business} /> : null}
+            {isDashboardLite ? <DashboardLiteEvidenceCard business={business} /> : null}
+            {isBundleClinic ? <BundleClinicEvidenceCard business={business} /> : null}
+            {isBundleSpeedNext ? <BundleSpeedNextEvidenceCard business={business} /> : null}
+            {isBundleFrontDoor ? <BundleFrontDoorEvidenceCard business={business} /> : null}
+            {isGeo ? <GeoEvidenceCard business={business} /> : null}
+            {isClientFinder ? <ClientFinderEvidenceCard business={business} /> : null}
             {isTeamAi ? <TeamRecognitionCards /> : null}
             {isChangePack ? <ChangeRiskRegisterCard business={business} /> : null}
             {isContentSystem ? (
@@ -772,6 +925,20 @@ const FunnelPage: React.FC = () => {
                     isTrackingForms ||
                     isSiteChat ||
                     isMediaClean ||
+                    isA11yPass ||
+                    isWhatsappSetup ||
+                    isDmReply ||
+                    isQuoteFollowup ||
+                    isNoshowRescue ||
+                    isIntakeForms ||
+                    isInboxTriage ||
+                    isSopPlaybook ||
+                    isDashboardLite ||
+                    isBundleClinic ||
+                    isBundleSpeedNext ||
+                    isBundleFrontDoor ||
+                    isGeo ||
+                    isClientFinder ||
                     isTeamAi ||
                     isChangePack ||
                     isContentSystem ||
@@ -1247,6 +1414,468 @@ const FunnelPage: React.FC = () => {
                   <MediaCleanLeakPair />
                 </section>
               </>
+            ) : isA11yPass ? (
+              <>
+                <Reveal delay={0.08} y={12}>
+                  <p
+                    className="mt-6 font-sans text-base md:text-lg leading-relaxed max-w-2xl"
+                    style={{color: FUNNEL_COLOURS.muted}}
+                  >
+                    {COPY.proofAfterGeneric}
+                  </p>
+                </Reveal>
+                <section className="mt-12 md:mt-14">
+                  <Reveal y={10}>
+                    <SectionLabel>The leak</SectionLabel>
+                  </Reveal>
+                  <Reveal delay={0.06} y={14}>
+                    <h3
+                      className="font-serif font-bold text-2xl md:text-3xl tracking-tight mb-4 max-w-2xl"
+                      style={{color: FUNNEL_COLOURS.ink}}
+                    >
+                      Access gaps quietly kill enquiries
+                    </h3>
+                  </Reveal>
+                  <Reveal delay={0.1} y={10}>
+                    <p
+                      className="font-sans text-base md:text-lg leading-relaxed max-w-2xl mb-2"
+                      style={{color: FUNNEL_COLOURS.muted}}
+                    >
+                      Low contrast, missing labels, and broken keyboard paths remove customers you never hear from.
+                    </p>
+                  </Reveal>
+                  <A11yPassLeakPair />
+                </section>
+              </>
+            ) : isWhatsappSetup ? (
+              <>
+                <Reveal delay={0.08} y={12}>
+                  <p
+                    className="mt-6 font-sans text-base md:text-lg leading-relaxed max-w-2xl"
+                    style={{color: FUNNEL_COLOURS.muted}}
+                  >
+                    {COPY.proofAfterGeneric}
+                  </p>
+                </Reveal>
+                <section className="mt-12 md:mt-14">
+                  <Reveal y={10}>
+                    <SectionLabel>The leak</SectionLabel>
+                  </Reveal>
+                  <Reveal delay={0.06} y={14}>
+                    <h3
+                      className="font-serif font-bold text-2xl md:text-3xl tracking-tight mb-4 max-w-2xl"
+                      style={{color: FUNNEL_COLOURS.ink}}
+                    >
+                      Personal chat does not scale
+                    </h3>
+                  </Reveal>
+                  <Reveal delay={0.1} y={10}>
+                    <p
+                      className="font-sans text-base md:text-lg leading-relaxed max-w-2xl mb-2"
+                      style={{color: FUNNEL_COLOURS.muted}}
+                    >
+                      Enquiries land in one phone, labels are missing, and nobody owns the handoff.
+                    </p>
+                  </Reveal>
+                  <WhatsappSetupLeakPair />
+                </section>
+              </>
+            ) : isDmReply ? (
+              <>
+                <Reveal delay={0.08} y={12}>
+                  <p
+                    className="mt-6 font-sans text-base md:text-lg leading-relaxed max-w-2xl"
+                    style={{color: FUNNEL_COLOURS.muted}}
+                  >
+                    {COPY.proofAfterGeneric}
+                  </p>
+                </Reveal>
+                <section className="mt-12 md:mt-14">
+                  <Reveal y={10}>
+                    <SectionLabel>The leak</SectionLabel>
+                  </Reveal>
+                  <Reveal delay={0.06} y={14}>
+                    <h3
+                      className="font-serif font-bold text-2xl md:text-3xl tracking-tight mb-4 max-w-2xl"
+                      style={{color: FUNNEL_COLOURS.ink}}
+                    >
+                      DMs die in the request folder
+                    </h3>
+                  </Reveal>
+                  <Reveal delay={0.1} y={10}>
+                    <p
+                      className="font-sans text-base md:text-lg leading-relaxed max-w-2xl mb-2"
+                      style={{color: FUNNEL_COLOURS.muted}}
+                    >
+                      Instagram and Facebook ask the same questions. Nobody answers fast enough to keep them.
+                    </p>
+                  </Reveal>
+                  <DmReplyLeakPair />
+                </section>
+              </>
+            ) : isQuoteFollowup ? (
+              <>
+                <Reveal delay={0.08} y={12}>
+                  <p
+                    className="mt-6 font-sans text-base md:text-lg leading-relaxed max-w-2xl"
+                    style={{color: FUNNEL_COLOURS.muted}}
+                  >
+                    {COPY.proofAfterGeneric}
+                  </p>
+                </Reveal>
+                <section className="mt-12 md:mt-14">
+                  <Reveal y={10}>
+                    <SectionLabel>The leak</SectionLabel>
+                  </Reveal>
+                  <Reveal delay={0.06} y={14}>
+                    <h3
+                      className="font-serif font-bold text-2xl md:text-3xl tracking-tight mb-4 max-w-2xl"
+                      style={{color: FUNNEL_COLOURS.ink}}
+                    >
+                      Quiet quotes stay quiet
+                    </h3>
+                  </Reveal>
+                  <Reveal delay={0.1} y={10}>
+                    <p
+                      className="font-sans text-base md:text-lg leading-relaxed max-w-2xl mb-2"
+                      style={{color: FUNNEL_COLOURS.muted}}
+                    >
+                      The PDF goes out. Follow-up depends on memory. Warm work cools in a spreadsheet.
+                    </p>
+                  </Reveal>
+                  <QuoteFollowupLeakPair />
+                </section>
+              </>
+            ) : isNoshowRescue ? (
+              <>
+                <Reveal delay={0.08} y={12}>
+                  <p
+                    className="mt-6 font-sans text-base md:text-lg leading-relaxed max-w-2xl"
+                    style={{color: FUNNEL_COLOURS.muted}}
+                  >
+                    {COPY.proofAfterGeneric}
+                  </p>
+                </Reveal>
+                <section className="mt-12 md:mt-14">
+                  <Reveal y={10}>
+                    <SectionLabel>The leak</SectionLabel>
+                  </Reveal>
+                  <Reveal delay={0.06} y={14}>
+                    <h3
+                      className="font-serif font-bold text-2xl md:text-3xl tracking-tight mb-4 max-w-2xl"
+                      style={{color: FUNNEL_COLOURS.ink}}
+                    >
+                      Empty chairs stay empty
+                    </h3>
+                  </Reveal>
+                  <Reveal delay={0.1} y={10}>
+                    <p
+                      className="font-sans text-base md:text-lg leading-relaxed max-w-2xl mb-2"
+                      style={{color: FUNNEL_COLOURS.muted}}
+                    >
+                      Reminders are thin or late, and there is no simple path back onto the calendar.
+                    </p>
+                  </Reveal>
+                  <NoshowRescueLeakPair />
+                </section>
+              </>
+            ) : isIntakeForms ? (
+              <>
+                <Reveal delay={0.08} y={12}>
+                  <p
+                    className="mt-6 font-sans text-base md:text-lg leading-relaxed max-w-2xl"
+                    style={{color: FUNNEL_COLOURS.muted}}
+                  >
+                    {COPY.proofAfterGeneric}
+                  </p>
+                </Reveal>
+                <section className="mt-12 md:mt-14">
+                  <Reveal y={10}>
+                    <SectionLabel>The leak</SectionLabel>
+                  </Reveal>
+                  <Reveal delay={0.06} y={14}>
+                    <h3
+                      className="font-serif font-bold text-2xl md:text-3xl tracking-tight mb-4 max-w-2xl"
+                      style={{color: FUNNEL_COLOURS.ink}}
+                    >
+                      Messy intake slows the first visit
+                    </h3>
+                  </Reveal>
+                  <Reveal delay={0.1} y={10}>
+                    <p
+                      className="font-sans text-base md:text-lg leading-relaxed max-w-2xl mb-2"
+                      style={{color: FUNNEL_COLOURS.muted}}
+                    >
+                      Paper, email threads, and half-filled forms waste the first appointment.
+                    </p>
+                  </Reveal>
+                  <IntakeFormsLeakPair />
+                </section>
+              </>
+            ) : isInboxTriage ? (
+              <>
+                <Reveal delay={0.08} y={12}>
+                  <p
+                    className="mt-6 font-sans text-base md:text-lg leading-relaxed max-w-2xl"
+                    style={{color: FUNNEL_COLOURS.muted}}
+                  >
+                    {COPY.proofAfterGeneric}
+                  </p>
+                </Reveal>
+                <section className="mt-12 md:mt-14">
+                  <Reveal y={10}>
+                    <SectionLabel>The leak</SectionLabel>
+                  </Reveal>
+                  <Reveal delay={0.06} y={14}>
+                    <h3
+                      className="font-serif font-bold text-2xl md:text-3xl tracking-tight mb-4 max-w-2xl"
+                      style={{color: FUNNEL_COLOURS.ink}}
+                    >
+                      The inbox owns the day
+                    </h3>
+                  </Reveal>
+                  <Reveal delay={0.1} y={10}>
+                    <p
+                      className="font-sans text-base md:text-lg leading-relaxed max-w-2xl mb-2"
+                      style={{color: FUNNEL_COLOURS.muted}}
+                    >
+                      Everything lands in one place with no rules, so urgent work waits behind noise.
+                    </p>
+                  </Reveal>
+                  <InboxTriageLeakPair />
+                </section>
+              </>
+            ) : isSopPlaybook ? (
+              <>
+                <Reveal delay={0.08} y={12}>
+                  <p
+                    className="mt-6 font-sans text-base md:text-lg leading-relaxed max-w-2xl"
+                    style={{color: FUNNEL_COLOURS.muted}}
+                  >
+                    {COPY.proofAfterGeneric}
+                  </p>
+                </Reveal>
+                <section className="mt-12 md:mt-14">
+                  <Reveal y={10}>
+                    <SectionLabel>The leak</SectionLabel>
+                  </Reveal>
+                  <Reveal delay={0.06} y={14}>
+                    <h3
+                      className="font-serif font-bold text-2xl md:text-3xl tracking-tight mb-4 max-w-2xl"
+                      style={{color: FUNNEL_COLOURS.ink}}
+                    >
+                      Know-how stuck in one head
+                    </h3>
+                  </Reveal>
+                  <Reveal delay={0.1} y={10}>
+                    <p
+                      className="font-sans text-base md:text-lg leading-relaxed max-w-2xl mb-2"
+                      style={{color: FUNNEL_COLOURS.muted}}
+                    >
+                      Repeating jobs live in someone's memory. The team reinvents the steps every week.
+                    </p>
+                  </Reveal>
+                  <SopPlaybookLeakPair />
+                </section>
+              </>
+            ) : isDashboardLite ? (
+              <>
+                <Reveal delay={0.08} y={12}>
+                  <p
+                    className="mt-6 font-sans text-base md:text-lg leading-relaxed max-w-2xl"
+                    style={{color: FUNNEL_COLOURS.muted}}
+                  >
+                    {COPY.proofAfterGeneric}
+                  </p>
+                </Reveal>
+                <section className="mt-12 md:mt-14">
+                  <Reveal y={10}>
+                    <SectionLabel>The leak</SectionLabel>
+                  </Reveal>
+                  <Reveal delay={0.06} y={14}>
+                    <h3
+                      className="font-serif font-bold text-2xl md:text-3xl tracking-tight mb-4 max-w-2xl"
+                      style={{color: FUNNEL_COLOURS.ink}}
+                    >
+                      Scattered numbers slow decisions
+                    </h3>
+                  </Reveal>
+                  <Reveal delay={0.1} y={10}>
+                    <p
+                      className="font-sans text-base md:text-lg leading-relaxed max-w-2xl mb-2"
+                      style={{color: FUNNEL_COLOURS.muted}}
+                    >
+                      Leads, bookings, reviews, and ads sit in different tools. You guess instead of decide.
+                    </p>
+                  </Reveal>
+                  <DashboardLiteLeakPair />
+                </section>
+              </>
+            ) : isBundleClinic ? (
+              <>
+                <Reveal delay={0.08} y={12}>
+                  <p
+                    className="mt-6 font-sans text-base md:text-lg leading-relaxed max-w-2xl"
+                    style={{color: FUNNEL_COLOURS.muted}}
+                  >
+                    {COPY.proofAfterGeneric}
+                  </p>
+                </Reveal>
+                <section className="mt-12 md:mt-14">
+                  <Reveal y={10}>
+                    <SectionLabel>The leak</SectionLabel>
+                  </Reveal>
+                  <Reveal delay={0.06} y={14}>
+                    <h3
+                      className="font-serif font-bold text-2xl md:text-3xl tracking-tight mb-4 max-w-2xl"
+                      style={{color: FUNNEL_COLOURS.ink}}
+                    >
+                      Three leaks at the front door
+                    </h3>
+                  </Reveal>
+                  <Reveal delay={0.1} y={10}>
+                    <p
+                      className="font-sans text-base md:text-lg leading-relaxed max-w-2xl mb-2"
+                      style={{color: FUNNEL_COLOURS.muted}}
+                    >
+                      Thin profile, quiet reviews, and missed calls feel separate. They are one capture problem.
+                    </p>
+                  </Reveal>
+                  <BundleClinicLeakPair />
+                </section>
+              </>
+            ) : isBundleSpeedNext ? (
+              <>
+                <Reveal delay={0.08} y={12}>
+                  <p
+                    className="mt-6 font-sans text-base md:text-lg leading-relaxed max-w-2xl"
+                    style={{color: FUNNEL_COLOURS.muted}}
+                  >
+                    {COPY.proofAfterGeneric}
+                  </p>
+                </Reveal>
+                <section className="mt-12 md:mt-14">
+                  <Reveal y={10}>
+                    <SectionLabel>The leak</SectionLabel>
+                  </Reveal>
+                  <Reveal delay={0.06} y={14}>
+                    <h3
+                      className="font-serif font-bold text-2xl md:text-3xl tracking-tight mb-4 max-w-2xl"
+                      style={{color: FUNNEL_COLOURS.ink}}
+                    >
+                      Fast without the ask still loses
+                    </h3>
+                  </Reveal>
+                  <Reveal delay={0.1} y={10}>
+                    <p
+                      className="font-sans text-base md:text-lg leading-relaxed max-w-2xl mb-2"
+                      style={{color: FUNNEL_COLOURS.muted}}
+                    >
+                      Speed is fixed, then the page still does not ask clearly, and you cannot see what landed.
+                    </p>
+                  </Reveal>
+                  <BundleSpeedNextLeakPair />
+                </section>
+              </>
+            ) : isBundleFrontDoor ? (
+              <>
+                <Reveal delay={0.08} y={12}>
+                  <p
+                    className="mt-6 font-sans text-base md:text-lg leading-relaxed max-w-2xl"
+                    style={{color: FUNNEL_COLOURS.muted}}
+                  >
+                    {COPY.proofAfterGeneric}
+                  </p>
+                </Reveal>
+                <section className="mt-12 md:mt-14">
+                  <Reveal y={10}>
+                    <SectionLabel>The leak</SectionLabel>
+                  </Reveal>
+                  <Reveal delay={0.06} y={14}>
+                    <h3
+                      className="font-serif font-bold text-2xl md:text-3xl tracking-tight mb-4 max-w-2xl"
+                      style={{color: FUNNEL_COLOURS.ink}}
+                    >
+                      Demand with nowhere to land
+                    </h3>
+                  </Reveal>
+                  <Reveal delay={0.1} y={10}>
+                    <p
+                      className="font-sans text-base md:text-lg leading-relaxed max-w-2xl mb-2"
+                      style={{color: FUNNEL_COLOURS.muted}}
+                    >
+                      Profile and reviews pull people in. Booking and the phone path still drop them.
+                    </p>
+                  </Reveal>
+                  <BundleFrontDoorLeakPair />
+                </section>
+              </>
+            ) : isGeo ? (
+              <>
+                <Reveal delay={0.08} y={12}>
+                  <p
+                    className="mt-6 font-sans text-base md:text-lg leading-relaxed max-w-2xl"
+                    style={{color: FUNNEL_COLOURS.muted}}
+                  >
+                    {COPY.proofAfterGeneric}
+                  </p>
+                </Reveal>
+                <section className="mt-12 md:mt-14">
+                  <Reveal y={10}>
+                    <SectionLabel>The leak</SectionLabel>
+                  </Reveal>
+                  <Reveal delay={0.06} y={14}>
+                    <h3
+                      className="font-serif font-bold text-2xl md:text-3xl tracking-tight mb-4 max-w-2xl"
+                      style={{color: FUNNEL_COLOURS.ink}}
+                    >
+                      AI answers without you
+                    </h3>
+                  </Reveal>
+                  <Reveal delay={0.1} y={10}>
+                    <p
+                      className="font-sans text-base md:text-lg leading-relaxed max-w-2xl mb-2"
+                      style={{color: FUNNEL_COLOURS.muted}}
+                    >
+                      People ask tools, not only ten blue links. Thin pages leave you out of the answer.
+                    </p>
+                  </Reveal>
+                  <GeoLeakPair />
+                </section>
+              </>
+            ) : isClientFinder ? (
+              <>
+                <Reveal delay={0.08} y={12}>
+                  <p
+                    className="mt-6 font-sans text-base md:text-lg leading-relaxed max-w-2xl"
+                    style={{color: FUNNEL_COLOURS.muted}}
+                  >
+                    {COPY.proofAfterGeneric}
+                  </p>
+                </Reveal>
+                <section className="mt-12 md:mt-14">
+                  <Reveal y={10}>
+                    <SectionLabel>The leak</SectionLabel>
+                  </Reveal>
+                  <Reveal delay={0.06} y={14}>
+                    <h3
+                      className="font-serif font-bold text-2xl md:text-3xl tracking-tight mb-4 max-w-2xl"
+                      style={{color: FUNNEL_COLOURS.ink}}
+                    >
+                      Hope is not a prospect list
+                    </h3>
+                  </Reveal>
+                  <Reveal delay={0.1} y={10}>
+                    <p
+                      className="font-sans text-base md:text-lg leading-relaxed max-w-2xl mb-2"
+                      style={{color: FUNNEL_COLOURS.muted}}
+                    >
+                      Outreach without a clear ICP burns time. You need a short list and a plan, not spam.
+                    </p>
+                  </Reveal>
+                  <ClientFinderLeakPair />
+                </section>
+              </>
             ) : isTeamAi ? (
               <section className="mt-12 md:mt-14">
                 <Reveal y={10}>
@@ -1499,6 +2128,34 @@ const FunnelPage: React.FC = () => {
                 <SiteChatPainCards />
               ) : isMediaClean ? (
                 <MediaCleanPainCards />
+              ) : isA11yPass ? (
+                <A11yPassPainCards />
+              ) : isWhatsappSetup ? (
+                <WhatsappSetupPainCards />
+              ) : isDmReply ? (
+                <DmReplyPainCards />
+              ) : isQuoteFollowup ? (
+                <QuoteFollowupPainCards />
+              ) : isNoshowRescue ? (
+                <NoshowRescuePainCards />
+              ) : isIntakeForms ? (
+                <IntakeFormsPainCards />
+              ) : isInboxTriage ? (
+                <InboxTriagePainCards />
+              ) : isSopPlaybook ? (
+                <SopPlaybookPainCards />
+              ) : isDashboardLite ? (
+                <DashboardLitePainCards />
+              ) : isBundleClinic ? (
+                <BundleClinicPainCards />
+              ) : isBundleSpeedNext ? (
+                <BundleSpeedNextPainCards />
+              ) : isBundleFrontDoor ? (
+                <BundleFrontDoorPainCards />
+              ) : isGeo ? (
+                <GeoPainCards />
+              ) : isClientFinder ? (
+                <ClientFinderPainCards />
               ) : isTeamAi ? (
                 <TeamPainCards />
               ) : isChangePack ? (
@@ -1587,6 +2244,20 @@ const FunnelPage: React.FC = () => {
               isTrackingForms ||
               isSiteChat ||
               isMediaClean ||
+              isA11yPass ||
+              isWhatsappSetup ||
+              isDmReply ||
+              isQuoteFollowup ||
+              isNoshowRescue ||
+              isIntakeForms ||
+              isInboxTriage ||
+              isSopPlaybook ||
+              isDashboardLite ||
+              isBundleClinic ||
+              isBundleSpeedNext ||
+              isBundleFrontDoor ||
+              isGeo ||
+              isClientFinder ||
               isTeamAi ||
               isChangePack ||
               isContentSystem ||
@@ -1776,6 +2447,34 @@ const FunnelPage: React.FC = () => {
                   <SiteChatDeliverableMock />
                 ) : isMediaClean ? (
                   <MediaCleanDeliverableMock />
+                ) : isA11yPass ? (
+                  <A11yPassDeliverableMock />
+                ) : isWhatsappSetup ? (
+                  <WhatsappSetupDeliverableMock />
+                ) : isDmReply ? (
+                  <DmReplyDeliverableMock />
+                ) : isQuoteFollowup ? (
+                  <QuoteFollowupDeliverableMock />
+                ) : isNoshowRescue ? (
+                  <NoshowRescueDeliverableMock />
+                ) : isIntakeForms ? (
+                  <IntakeFormsDeliverableMock />
+                ) : isInboxTriage ? (
+                  <InboxTriageDeliverableMock />
+                ) : isSopPlaybook ? (
+                  <SopPlaybookDeliverableMock />
+                ) : isDashboardLite ? (
+                  <DashboardLiteDeliverableMock />
+                ) : isBundleClinic ? (
+                  <BundleClinicDeliverableMock />
+                ) : isBundleSpeedNext ? (
+                  <BundleSpeedNextDeliverableMock />
+                ) : isBundleFrontDoor ? (
+                  <BundleFrontDoorDeliverableMock />
+                ) : isGeo ? (
+                  <GeoDeliverableMock />
+                ) : isClientFinder ? (
+                  <ClientFinderDeliverableMock />
                 ) : isTeamAi ? (
                   <TeamSessionDeliverableMock />
                 ) : isChangePack ? (

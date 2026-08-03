@@ -119,6 +119,18 @@ export type FunnelAccessPayload = {
   chatTopics?: string
   chatHandoff?: string
   mediaTargets?: string
+  a11yPages?: string
+  whatsappGoals?: string
+  dmChannels?: string
+  quoteTools?: string
+  noshowTools?: string
+  intakePurpose?: string
+  inboxTools?: string
+  sopJobs?: string
+  dashMetrics?: string
+  bundleNotes?: string
+  geoTopics?: string
+  finderIcp?: string
   websiteUrl?: string
   teamSize?: string
   teamTools?: string

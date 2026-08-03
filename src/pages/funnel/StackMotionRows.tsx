@@ -2,6 +2,20 @@ import React from 'react'
 import {motion, useInView, useReducedMotion} from 'framer-motion'
 import {colors} from '../../constants/theme'
 import {FUNNEL_COLOURS} from './funnelTheme'
+import {A11Y_PASS_STACK_VISUALS} from './liveCopy/a11y-pass-motion'
+import {WHATSAPP_SETUP_STACK_VISUALS} from './liveCopy/whatsapp-setup-motion'
+import {DM_REPLY_STACK_VISUALS} from './liveCopy/dm-reply-motion'
+import {STACK_VISUALS as QUOTE_FOLLOWUP_STACK_VISUALS} from './liveCopy/quote-followup-motion'
+import {STACK_VISUALS as NOSHOW_RESCUE_STACK_VISUALS} from './liveCopy/noshow-rescue-motion'
+import {STACK_VISUALS as INTAKE_FORMS_STACK_VISUALS} from './liveCopy/intake-forms-motion'
+import {INBOX_TRIAGE_STACK_VISUALS} from './liveCopy/inbox-triage-motion'
+import {SOP_PLAYBOOK_STACK_VISUALS} from './liveCopy/sop-playbook-motion'
+import {DASHBOARD_LITE_STACK_VISUALS} from './liveCopy/dashboard-lite-motion'
+import {BUNDLE_CLINIC_STACK_VISUALS} from './liveCopy/bundle-clinic-motion'
+import {BUNDLE_SPEED_NEXT_STACK_VISUALS} from './liveCopy/bundle-speed-next-motion'
+import {BUNDLE_FRONT_DOOR_STACK_VISUALS} from './liveCopy/bundle-front-door-motion'
+import {STACK_VISUALS as GEO_STACK_VISUALS} from './liveCopy/geo-motion'
+import {STACK_VISUALS as CLIENT_FINDER_STACK_VISUALS} from './liveCopy/client-finder-motion'
 
 type VisualProps = {reduce: boolean | null; play: boolean}
 
@@ -3522,6 +3536,20 @@ export function StackMotionRows({
     | 'tracking-forms'
     | 'site-chat'
     | 'media-clean'
+    | 'a11y-pass'
+    | 'whatsapp-setup'
+    | 'dm-reply'
+    | 'quote-followup'
+    | 'noshow-rescue'
+    | 'intake-forms'
+    | 'inbox-triage'
+    | 'sop-playbook'
+    | 'dashboard-lite'
+    | 'bundle-clinic'
+    | 'bundle-speed-next'
+    | 'bundle-front-door'
+    | 'geo'
+    | 'client-finder'
 }) {
   const reduce = useReducedMotion()
   const visuals: Array<(p: VisualProps) => React.ReactElement> =
@@ -3561,6 +3589,34 @@ export function StackMotionRows({
                                       ? SITE_CHAT_STACK_VISUALS
                                     : variant === 'media-clean'
                                       ? MEDIA_CLEAN_STACK_VISUALS
+                                    : variant === 'a11y-pass'
+                                      ? A11Y_PASS_STACK_VISUALS
+                                    : variant === 'whatsapp-setup'
+                                      ? WHATSAPP_SETUP_STACK_VISUALS
+                                    : variant === 'dm-reply'
+                                      ? DM_REPLY_STACK_VISUALS
+                                    : variant === 'quote-followup'
+                                      ? QUOTE_FOLLOWUP_STACK_VISUALS
+                                    : variant === 'noshow-rescue'
+                                      ? NOSHOW_RESCUE_STACK_VISUALS
+                                    : variant === 'intake-forms'
+                                      ? INTAKE_FORMS_STACK_VISUALS
+                                    : variant === 'inbox-triage'
+                                      ? INBOX_TRIAGE_STACK_VISUALS
+                                    : variant === 'sop-playbook'
+                                      ? SOP_PLAYBOOK_STACK_VISUALS
+                                    : variant === 'dashboard-lite'
+                                      ? DASHBOARD_LITE_STACK_VISUALS
+                                    : variant === 'bundle-clinic'
+                                      ? BUNDLE_CLINIC_STACK_VISUALS
+                                    : variant === 'bundle-speed-next'
+                                      ? BUNDLE_SPEED_NEXT_STACK_VISUALS
+                                    : variant === 'bundle-front-door'
+                                      ? BUNDLE_FRONT_DOOR_STACK_VISUALS
+                                    : variant === 'geo'
+                                      ? GEO_STACK_VISUALS
+                                    : variant === 'client-finder'
+                                      ? CLIENT_FINDER_STACK_VISUALS
                                     : variant === 'change-pack'
                                       ? CHANGE_PACK_STACK_VISUALS
                                       : variant === 'content-system'
