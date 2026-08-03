@@ -2682,26 +2682,26 @@ export const CONVERSION_PASS_COPY: FunnelProductCopy = {
 /** Titles, headings, links, and thin-page lifts on priority URLs. Not a retainer. */
 export const ONPAGE_SEARCH_COPY: FunnelProductCopy = {
   eyebrow: 'Fixed price · About a week · Up to eight URLs',
-  h1Generic: 'Fast pages still lose if Google cannot understand what they are about',
+  h1Generic: 'Your pages look finished and still say almost nothing Google can trust',
   h1Personal: (b: string) =>
-    `${b}, fast pages still lose if Google cannot understand what they are about`,
-  sub: 'We fix titles, headings, internal links, and thin priority pages so search has something solid to rank. Not a six-month SEO retainer. Up to eight URLs on one site.',
+    `${b}, your pages look finished and still say almost nothing Google can trust`,
+  sub: 'Vague titles, thin service copy, and missing links bury you under clearer competitors. We fix titles, headings, internal links, and thin priority pages so search has something solid to rank. Not a six-month SEO retainer. Up to eight URLs on one site.',
   ctaLabel: 'Fix my on-page search · $1,900',
   proofLabel: 'The picture',
-  proofHeadingLive: 'Findable beats pretty-and-lost',
-  proofHeadingGeneric: 'Findable beats pretty-and-lost',
+  proofHeadingLive: 'Messy pages lose to clearer ones',
+  proofHeadingGeneric: 'Messy pages lose to clearer ones',
   proofLead: (b: string | null) =>
     b
-      ? `${b} can load quickly and still say nothing Google can trust.`
-      : 'A page can load quickly and still say nothing Google can trust.',
+      ? `${b} can look polished and still leave Google guessing what each page is for.`
+      : 'A site can look polished and still leave Google guessing what each page is for.',
   proofLeadGeneric:
-    'A page can load quickly and still say nothing Google can trust. Thin copy and vague titles bury you under clearer competitors.',
+    'Brand-only titles, interchangeable service pages, and dead-end links leave search nothing solid to hold. Clearer competitors win the click.',
   proofAfter:
     'Priority URLs get honest titles, headings, and links that match how people search for you.',
   proofAfterGeneric:
     'Priority URLs get honest titles, headings, and links that match how people search for you.',
   painLabel: 'What this is costing you',
-  painHeading: 'You fixed speed. Search still shrugs',
+  painHeading: 'The pages are messy. Search shrugs',
   painLines: [
     'Titles are brand-first and keyword-blind.',
     'Service pages repeat the same paragraph with a different H1.',
@@ -2725,8 +2725,8 @@ export const ONPAGE_SEARCH_COPY: FunnelProductCopy = {
       text: 'Up to eight URLs, locked at kickoff, so the job ends.',
     },
     {
-      title: 'Plays with Speed Fix',
-      text: 'Technical health plus readable substance.',
+      title: 'Honest, not stuffed',
+      text: 'Titles and headings that match the page, without keyword spam.',
     },
     {
       title: 'Bridge to GEO',
@@ -2795,6 +2795,10 @@ export const ONPAGE_SEARCH_COPY: FunnelProductCopy = {
     {
       q: 'What if I need more than eight URLs?',
       a: 'We quote extras the same day. The $1,900 lock is eight priority pages.',
+    },
+    {
+      q: 'Do I need Website Speed Fix first?',
+      a: 'No. This pack stands alone. If the site is already slow, Speed Fix is a useful separate job, not a requirement here.',
     },
     {
       q: 'Is this refundable?',

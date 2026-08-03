@@ -1663,34 +1663,40 @@ function OnpagePriorityListVisual({reduce}: VisualProps) {
   )
 }
 
-/** On-Page Search Pack: pairs with Speed Fix, technical health plus readable substance. */
-function OnpageSpeedPairVisual({reduce}: VisualProps) {
-  const blocks = [
-    {label: 'Speed Fix', detail: 'Technical health'},
-    {label: 'On-page', detail: 'Readable substance'},
-  ]
+/** On-Page Search Pack: titles and headings stay honest, not stuffed. */
+function OnpageHonestNotStuffedVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
-      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Paired</span>
+      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Title tag</span>
+        <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
+          Honest
+        </span>
       </div>
-      <div className="flex-1 flex flex-col justify-center gap-1.5 px-3 py-2">
-        {blocks.map((b, i) => (
-          <motion.div
-            key={b.label}
-            className="rounded-sm border px-2 py-1.5"
-            style={{borderColor: `${colors.teal}30`, backgroundColor: `${colors.teal}0C`}}
-            initial={reduce ? false : {opacity: 0, y: 8}}
-            whileInView={{opacity: 1, y: 0}}
-            viewport={{once: true}}
-            transition={{delay: reduce ? 0 : i * 0.15}}
-          >
-            <p className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
-              {b.label}
-            </p>
-            <p className="font-mono text-[6px] uppercase tracking-wide text-dark/45">{b.detail}</p>
-          </motion.div>
-        ))}
+      <div className="flex-1 flex flex-col justify-center gap-2 px-3">
+        <motion.div
+          className="rounded-sm border border-dashed px-2 py-1.5 opacity-40"
+          style={{borderColor: `${FUNNEL_COLOURS.ink}28`}}
+          initial={reduce ? false : {opacity: 0.55}}
+          whileInView={{opacity: 0.25}}
+          viewport={{once: true}}
+        >
+          <p className="font-mono text-[6px] uppercase tracking-wide text-dark/40 line-through">
+            keyword · keyword · keyword
+          </p>
+        </motion.div>
+        <motion.div
+          className="rounded-sm border px-2 py-1.5"
+          style={{borderColor: `${colors.teal}40`, backgroundColor: `${colors.teal}0C`}}
+          initial={reduce ? false : {opacity: 0, y: 6}}
+          whileInView={{opacity: 1, y: 0}}
+          viewport={{once: true}}
+          transition={{delay: reduce ? 0 : 0.2}}
+        >
+          <p className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
+            Service · suburb · you
+          </p>
+        </motion.div>
       </div>
     </div>
   )
@@ -1735,7 +1741,7 @@ function OnpageGeoBridgeVisual({reduce}: VisualProps) {
 const ONPAGE_SEARCH_VISUALS = [
   OnpageTitleClearVisual,
   OnpagePriorityListVisual,
-  OnpageSpeedPairVisual,
+  OnpageHonestNotStuffedVisual,
   OnpageGeoBridgeVisual,
 ]
 

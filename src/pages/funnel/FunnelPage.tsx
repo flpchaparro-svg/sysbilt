@@ -1054,7 +1054,7 @@ const FunnelPage: React.FC = () => {
                     >
                       The page loads. The brand name is in the title. Google still cannot tell what
                       the page is actually about, and internal links never connect the service to
-                      proof or contact. You paid for speed and traffic tools. The pages stayed thin.
+                      proof or contact. The site looks finished. The pages stay thin.
                     </p>
                   </Reveal>
                   <OnpageLeakPair />
