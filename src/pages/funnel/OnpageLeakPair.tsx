@@ -35,7 +35,7 @@ export function OnpageLeakPair() {
         >
           Thin signal
         </div>
-        <div className="p-4 md:p-5 flex flex-col items-center gap-3">
+        <div className="p-4 md:p-5 flex flex-col items-center gap-3 min-h-[148px]">
           <div
             className="w-full max-w-[220px] rounded-md border border-dashed px-3 py-2.5 text-center"
             style={{borderColor: `${FUNNEL_COLOURS.ink}22`}}
@@ -53,14 +53,14 @@ export function OnpageLeakPair() {
           <motion.div
             className="h-2.5 w-3/5 rounded-sm border border-dashed"
             style={{borderColor: `${FUNNEL_COLOURS.accent}45`}}
-            animate={go ? {opacity: [0.35, 0.7, 0.35]} : {opacity: 0.5}}
-            transition={{duration: 2.6, repeat: Infinity, ease: 'easeInOut'}}
+            animate={go ? {opacity: [0.35, 0.65, 0.35]} : {opacity: 0.5}}
+            transition={{duration: 2.8, repeat: Infinity, ease: 'easeInOut'}}
           />
           <div className="flex items-center gap-1.5 w-full max-w-[220px] justify-center">
             {[0, 1, 2].map((i) => (
               <div
                 key={i}
-                className="h-2 flex-1 rounded-sm border border-dashed"
+                className="h-6 flex-1 rounded-sm border border-dashed"
                 style={{borderColor: `${FUNNEL_COLOURS.ink}18`}}
               />
             ))}
@@ -74,7 +74,7 @@ export function OnpageLeakPair() {
         </div>
       </div>
 
-      {/* Clear signal: filled title, a real H1, internal links wired in */}
+      {/* Clear signal: title → heading → links, staged once */}
       <div
         className="rounded-xl overflow-hidden border"
         style={{borderColor: `${FUNNEL_COLOURS.goldDeep}55`, backgroundColor: FUNNEL_COLOURS.surface}}
@@ -93,13 +93,13 @@ export function OnpageLeakPair() {
             transition={{duration: 1.6, repeat: Infinity, ease: 'easeInOut'}}
           />
         </div>
-        <div className="p-4 md:p-5 flex flex-col items-center gap-3">
+        <div className="p-4 md:p-5 flex flex-col items-center gap-2.5 min-h-[148px]">
           <motion.div
             className="w-full max-w-[220px] rounded-md px-3 py-2.5 text-center"
             style={{backgroundColor: `${FUNNEL_COLOURS.gold}18`, border: `1px solid ${FUNNEL_COLOURS.goldDeep}55`}}
-            initial={reduce ? false : {opacity: 0, scale: 0.92}}
-            animate={go ? {opacity: 1, scale: 1} : {opacity: 0.85, scale: 0.96}}
-            transition={{delay: 0.15, type: 'spring', stiffness: 320, damping: 22}}
+            initial={reduce ? false : {opacity: 0, y: 8}}
+            animate={go || reduce ? {opacity: 1, y: 0} : {opacity: 0.5, y: 4}}
+            transition={{delay: 0.1, duration: 0.4, ease: EASE}}
           >
             <p className="font-mono text-[7px] uppercase tracking-wide mb-1" style={{color: FUNNEL_COLOURS.goldDeep}}>
               Title
@@ -108,22 +108,45 @@ export function OnpageLeakPair() {
               Service + suburb
             </p>
           </motion.div>
+
+          {/* short connector stem */}
+          <motion.div
+            className="w-px h-3 origin-top"
+            style={{backgroundColor: `${FUNNEL_COLOURS.goldDeep}55`}}
+            initial={reduce ? false : {scaleY: 0, opacity: 0}}
+            animate={go || reduce ? {scaleY: 1, opacity: 1} : {scaleY: 0, opacity: 0}}
+            transition={{delay: 0.28, duration: 0.3, ease: EASE}}
+          />
+
           <motion.div
             className="h-2.5 rounded-sm"
-            style={{backgroundColor: FUNNEL_COLOURS.goldDeep}}
-            initial={reduce ? false : {width: '35%', opacity: 0.4}}
-            animate={go ? {width: '60%', opacity: 1} : {width: '35%', opacity: 0.4}}
-            transition={{duration: 0.45, delay: 0.35, ease: EASE}}
+            style={{backgroundColor: FUNNEL_COLOURS.goldDeep, width: '60%'}}
+            initial={reduce ? false : {opacity: 0, scaleX: 0.4}}
+            animate={go || reduce ? {opacity: 1, scaleX: 1} : {opacity: 0.4, scaleX: 0.4}}
+            transition={{duration: 0.4, delay: 0.38, ease: EASE}}
           />
+
+          <motion.div
+            className="w-px h-3 origin-top"
+            style={{backgroundColor: `${FUNNEL_COLOURS.goldDeep}55`}}
+            initial={reduce ? false : {scaleY: 0, opacity: 0}}
+            animate={go || reduce ? {scaleY: 1, opacity: 1} : {scaleY: 0, opacity: 0}}
+            transition={{delay: 0.52, duration: 0.3, ease: EASE}}
+          />
+
           <div className="flex items-center gap-1.5 w-full max-w-[220px] justify-center">
             {['Services', 'Proof', 'Contact'].map((label, i) => (
               <motion.span
                 key={label}
-                className="flex-1 rounded-sm border px-1 py-1 text-center font-mono text-[6px] uppercase tracking-wide"
-                style={{borderColor: `${FUNNEL_COLOURS.goldDeep}40`, color: FUNNEL_COLOURS.goldDeep}}
+                className="flex-1 rounded-sm border px-1 py-1.5 text-center font-mono text-[6px] uppercase tracking-wide"
+                style={{
+                  borderColor: `${FUNNEL_COLOURS.goldDeep}55`,
+                  color: FUNNEL_COLOURS.goldDeep,
+                  backgroundColor: `${FUNNEL_COLOURS.gold}10`,
+                }}
                 initial={reduce ? false : {opacity: 0, y: 6}}
-                animate={go ? {opacity: 1, y: 0} : {opacity: 0.4, y: 0}}
-                transition={{delay: reduce ? 0 : 0.5 + i * 0.12, duration: 0.35}}
+                animate={go || reduce ? {opacity: 1, y: 0} : {opacity: 0.35, y: 0}}
+                transition={{delay: reduce ? 0 : 0.6 + i * 0.1, duration: 0.35, ease: EASE}}
               >
                 {label}
               </motion.span>

@@ -120,80 +120,83 @@ export function OnpagePainCards() {
         )}
       </Card>
 
-      {/* 03: three nodes drift with no line ever completing between them */}
+      {/* 03: three page nodes with dashed links that never quite finish */}
       <Card index="03" title="Internal links wander">
         {({play, reduce}) => {
-          const labels = ['Home', 'Service', 'Contact']
-          const positions = [
-            {left: '10%', top: '20%'},
-            {left: '54%', top: '48%'},
-            {left: '20%', top: '70%'},
+          // Shared viewBox coords so lines meet node centres. Nodes stay put.
+          const nodes = [
+            {id: 'Home', cx: 36, cy: 30, labelY: 52},
+            {id: 'Service', cx: 152, cy: 48, labelY: 70},
+            {id: 'Contact', cx: 58, cy: 88, labelY: 110},
+          ] as const
+          const box = 22
+          const links = [
+            {d: `M ${nodes[0].cx} ${nodes[0].cy} L ${nodes[1].cx} ${nodes[1].cy}`, delay: 0},
+            {d: `M ${nodes[1].cx} ${nodes[1].cy} L ${nodes[2].cx} ${nodes[2].cy}`, delay: 0.55},
+            {d: `M ${nodes[0].cx} ${nodes[0].cy} L ${nodes[2].cx} ${nodes[2].cy}`, delay: 1.1},
           ]
+
           return (
-            <div className="relative h-[108px]">
-              <svg className="absolute inset-0 h-full w-full" aria-hidden viewBox="0 0 100 100" preserveAspectRatio="none">
-                <motion.path
-                  d="M 16 26 L 58 52"
-                  fill="none"
-                  stroke={FUNNEL_COLOURS.accent}
-                  strokeWidth={1.1}
-                  strokeDasharray="3 3"
-                  vectorEffect="non-scaling-stroke"
-                  initial={reduce ? false : {pathLength: 0, opacity: 0}}
-                  animate={
-                    play
-                      ? {pathLength: [0, 0.6, 0], opacity: [0, 0.55, 0]}
-                      : reduce
-                        ? {pathLength: 0.3, opacity: 0.3}
-                        : {pathLength: 0, opacity: 0}
-                  }
-                  transition={{duration: 3.2, repeat: Infinity, ease: 'easeInOut'}}
-                />
-                <motion.path
-                  d="M 58 52 L 24 68"
-                  fill="none"
-                  stroke={FUNNEL_COLOURS.accent}
-                  strokeWidth={1.1}
-                  strokeDasharray="3 3"
-                  vectorEffect="non-scaling-stroke"
-                  initial={reduce ? false : {pathLength: 0, opacity: 0}}
-                  animate={
-                    play
-                      ? {pathLength: [0, 0.5, 0], opacity: [0, 0.5, 0]}
-                      : reduce
-                        ? {pathLength: 0.25, opacity: 0.25}
-                        : {pathLength: 0, opacity: 0}
-                  }
-                  transition={{duration: 3.6, repeat: Infinity, ease: 'easeInOut', delay: 0.6}}
-                />
-              </svg>
-              {labels.map((label, i) => (
-                <motion.div
-                  key={label}
-                  className="absolute flex flex-col items-center gap-1.5"
-                  style={{...positions[i], opacity: 0.6}}
-                  animate={
-                    play
-                      ? {
-                          x: [0, i % 2 === 0 ? -5 : 6, 0],
-                          y: [0, i === 1 ? -6 : 5, 0],
-                        }
-                      : undefined
-                  }
-                  transition={{duration: 4 + i * 0.5, repeat: Infinity, ease: 'easeInOut'}}
-                >
-                  <div
-                    className="h-7 w-7 rounded-md border border-dashed"
-                    style={{borderColor: `${FUNNEL_COLOURS.ink}28`, backgroundColor: `${FUNNEL_COLOURS.ink}05`}}
+            <div className="relative w-full">
+              <svg
+                className="w-full h-[120px]"
+                viewBox="0 0 200 120"
+                preserveAspectRatio="xMidYMid meet"
+                aria-hidden
+              >
+                {links.map((link, i) => (
+                  <motion.path
+                    key={i}
+                    d={link.d}
+                    fill="none"
+                    stroke={FUNNEL_COLOURS.accent}
+                    strokeWidth={1.25}
+                    strokeDasharray="4 4"
+                    strokeLinecap="round"
+                    initial={reduce ? false : {pathLength: 0, opacity: 0}}
+                    animate={
+                      play
+                        ? {pathLength: [0, 0.72, 0], opacity: [0, 0.7, 0]}
+                        : reduce
+                          ? {pathLength: 0.4, opacity: 0.35}
+                          : {pathLength: 0, opacity: 0}
+                    }
+                    transition={{
+                      duration: 2.8,
+                      repeat: Infinity,
+                      ease: 'easeInOut',
+                      delay: link.delay,
+                    }}
                   />
-                  <span
-                    className="font-mono text-[6px] uppercase tracking-wide"
-                    style={{color: `${FUNNEL_COLOURS.ink}55`}}
-                  >
-                    {label}
-                  </span>
-                </motion.div>
-              ))}
+                ))}
+                {nodes.map((n, i) => (
+                  <g key={n.id}>
+                    <motion.rect
+                      x={n.cx - box / 2}
+                      y={n.cy - box / 2}
+                      width={box}
+                      height={box}
+                      rx={4}
+                      fill={`${FUNNEL_COLOURS.ink}06`}
+                      stroke={`${FUNNEL_COLOURS.ink}30`}
+                      strokeWidth={1}
+                      strokeDasharray="3 2"
+                      initial={reduce ? false : {opacity: 0}}
+                      animate={play || reduce ? {opacity: 1} : {opacity: 0.45}}
+                      transition={{delay: reduce ? 0 : 0.08 + i * 0.1, duration: 0.35, ease: EASE}}
+                    />
+                    <text
+                      x={n.cx}
+                      y={n.labelY}
+                      textAnchor="middle"
+                      fill={`${FUNNEL_COLOURS.ink}55`}
+                      style={{fontSize: 7, letterSpacing: '0.06em', fontFamily: 'ui-monospace, monospace'}}
+                    >
+                      {n.id.toUpperCase()}
+                    </text>
+                  </g>
+                ))}
+              </svg>
             </div>
           )
         }}
