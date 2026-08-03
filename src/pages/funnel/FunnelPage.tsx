@@ -93,6 +93,10 @@ import {SchemaFaqEvidenceCard} from './SchemaFaqEvidenceCard'
 import {SchemaFaqLeakPair} from './SchemaFaqLeakPair'
 import {SchemaFaqPainCards} from './SchemaFaqPainCards'
 import {SchemaFaqDeliverableMock} from './SchemaFaqDeliverableMock'
+import {TrackingFormsEvidenceCard} from './TrackingFormsEvidenceCard'
+import {TrackingFormsLeakPair} from './TrackingFormsLeakPair'
+import {TrackingFormsPainCards} from './TrackingFormsPainCards'
+import {TrackingFormsDeliverableMock} from './TrackingFormsDeliverableMock'
 import {WebsiteEvidenceCard, type WebsiteEvidence} from './WebsiteEvidenceCard'
 import {WebsiteLeakPair} from './WebsiteLeakPair'
 import {WebsiteUnknownsCentrepiece} from './WebsiteUnknownsCentrepiece'
@@ -128,6 +132,7 @@ import {LOCAL_PACK_STRIPE_URL} from '../../constants/localPackStripe'
 import {CONVERSION_PASS_STRIPE_URL} from '../../constants/conversionPassStripe'
 import {ONPAGE_SEARCH_STRIPE_URL} from '../../constants/onpageSearchStripe'
 import {SCHEMA_FAQ_STRIPE_URL} from '../../constants/schemaFaqStripe'
+import {TRACKING_FORMS_STRIPE_URL} from '../../constants/trackingFormsStripe'
 import {teamAiPriceOptions} from '../../constants/teamAiStripe'
 import {funnelCopyForSlug} from './funnelCopy'
 import {
@@ -284,6 +289,7 @@ const FunnelPage: React.FC = () => {
   const isConversionPass = proofKind === 'conversion-pass'
   const isOnpageSearch = proofKind === 'onpage-search'
   const isSchemaFaq = proofKind === 'schema-faq'
+  const isTrackingForms = proofKind === 'tracking-forms'
   const isDraftSoon =
     proofKind === 'geo' || proofKind === 'client-finder' || proofKind === 'draft'
   /** Visual drafts and priced-but-not-wired products that are not buyable yet. */
@@ -315,6 +321,8 @@ const FunnelPage: React.FC = () => {
                         ? 'onpage-search'
                         : isSchemaFaq
                           ? 'schema-faq'
+                          : isTrackingForms
+                            ? 'tracking-forms'
                         : isTeamAi
                     ? 'team-ai'
                     : isChangePack
@@ -463,6 +471,7 @@ const FunnelPage: React.FC = () => {
     (isConversionPass ? CONVERSION_PASS_STRIPE_URL : undefined) ||
     (isOnpageSearch ? ONPAGE_SEARCH_STRIPE_URL : undefined) ||
     (isSchemaFaq ? SCHEMA_FAQ_STRIPE_URL : undefined) ||
+    (isTrackingForms ? TRACKING_FORMS_STRIPE_URL : undefined) ||
     (isEnquiryReply ? ENQUIRY_REPLY_STRIPE_URL : undefined)
   const sanityStripe = (doc?.stripeUrl || '').trim()
   const resolvedStripeUrl =
@@ -640,6 +649,7 @@ const FunnelPage: React.FC = () => {
               isConversionPass ||
               isOnpageSearch ||
               isSchemaFaq ||
+              isTrackingForms ||
               isDraftSoon
                 ? 'max-w-3xl'
                 : 'max-w-5xl'
@@ -678,6 +688,7 @@ const FunnelPage: React.FC = () => {
             {isConversionPass ? <ConversionEvidenceCard business={business} /> : null}
             {isOnpageSearch ? <OnpageEvidenceCard business={business} /> : null}
             {isSchemaFaq ? <SchemaFaqEvidenceCard business={business} /> : null}
+            {isTrackingForms ? <TrackingFormsEvidenceCard business={business} /> : null}
             {isTeamAi ? <TeamRecognitionCards /> : null}
             {isChangePack ? <ChangeRiskRegisterCard business={business} /> : null}
             {isContentSystem ? (
@@ -736,6 +747,7 @@ const FunnelPage: React.FC = () => {
                     isConversionPass ||
                     isOnpageSearch ||
                     isSchemaFaq ||
+                    isTrackingForms ||
                     isTeamAi ||
                     isChangePack ||
                     isContentSystem ||
@@ -1108,6 +1120,41 @@ const FunnelPage: React.FC = () => {
                   <SchemaFaqLeakPair />
                 </section>
               </>
+            ) : isTrackingForms ? (
+              <>
+                <Reveal delay={0.08} y={12}>
+                  <p
+                    className="mt-6 font-sans text-base md:text-lg leading-relaxed max-w-2xl"
+                    style={{color: FUNNEL_COLOURS.muted}}
+                  >
+                    {COPY.proofAfterGeneric}
+                  </p>
+                </Reveal>
+                <section className="mt-12 md:mt-14">
+                  <Reveal y={10}>
+                    <SectionLabel>The leak</SectionLabel>
+                  </Reveal>
+                  <Reveal delay={0.06} y={14}>
+                    <h3
+                      className="font-serif font-bold text-2xl md:text-3xl tracking-tight mb-4 max-w-2xl"
+                      style={{color: FUNNEL_COLOURS.ink}}
+                    >
+                      Spend without a trail is just guessing
+                    </h3>
+                  </Reveal>
+                  <Reveal delay={0.1} y={10}>
+                    <p
+                      className="font-sans text-base md:text-lg leading-relaxed max-w-2xl mb-2"
+                      style={{color: FUNNEL_COLOURS.muted}}
+                    >
+                      The form looks finished. The click looks busy. Without events and a live
+                      destination, you cannot tell which page produced the enquiry or whether the
+                      lead reached anyone who still works there.
+                    </p>
+                  </Reveal>
+                  <TrackingFormsLeakPair />
+                </section>
+              </>
             ) : isTeamAi ? (
               <section className="mt-12 md:mt-14">
                 <Reveal y={10}>
@@ -1354,6 +1401,8 @@ const FunnelPage: React.FC = () => {
                 <OnpagePainCards />
               ) : isSchemaFaq ? (
                 <SchemaFaqPainCards />
+              ) : isTrackingForms ? (
+                <TrackingFormsPainCards />
               ) : isTeamAi ? (
                 <TeamPainCards />
               ) : isChangePack ? (
@@ -1439,6 +1488,7 @@ const FunnelPage: React.FC = () => {
               isConversionPass ||
               isOnpageSearch ||
               isSchemaFaq ||
+              isTrackingForms ||
               isTeamAi ||
               isChangePack ||
               isContentSystem ||
@@ -1622,6 +1672,8 @@ const FunnelPage: React.FC = () => {
                   <OnpageDeliverableMock />
                 ) : isSchemaFaq ? (
                   <SchemaFaqDeliverableMock />
+                ) : isTrackingForms ? (
+                  <TrackingFormsDeliverableMock />
                 ) : isTeamAi ? (
                   <TeamSessionDeliverableMock />
                 ) : isChangePack ? (

@@ -113,6 +113,9 @@ export type FunnelAccessPayload = {
   onpageQueries?: string
   schemaServices?: string
   schemaQuestions?: string
+  trackingStatus?: string
+  trackingActions?: string
+  trackingDestinations?: string
   websiteUrl?: string
   teamSize?: string
   teamTools?: string

@@ -1909,6 +1909,168 @@ const SCHEMA_FAQ_VISUALS = [
   SchemaFaqNearDecisionVisual,
 ]
 
+/** Tracking Forms: a primary event lights up after a click. */
+function TrackingEventSetVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Event set</span>
+        <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
+          Up to 5
+        </span>
+      </div>
+      <div className="flex-1 flex flex-col items-center justify-center gap-1.5 px-2.5">
+        {['Form submit', 'Call click', 'Book tap'].map((label, i) => (
+          <motion.div
+            key={label}
+            className="w-full flex items-center justify-between rounded-md border px-2.5 py-1"
+            style={{borderColor: `${colors.teal}35`, backgroundColor: `${colors.teal}08`}}
+            initial={reduce ? false : {opacity: 0, y: 4}}
+            whileInView={{opacity: 1, y: 0}}
+            viewport={{once: true}}
+            transition={{delay: reduce ? 0 : i * 0.1}}
+          >
+            <span className="font-sans text-[8px] font-semibold" style={{color: FUNNEL_COLOURS.ink}}>
+              {label}
+            </span>
+            <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
+              Fires
+            </span>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** Tracking Forms: form destination lands in the right inbox. */
+function TrackingFormDestVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Destination</span>
+      </div>
+      <div className="flex-1 flex items-center justify-center gap-2 px-2.5">
+        <motion.div
+          className="flex-1 rounded-md border px-2 py-2 text-center"
+          style={{borderColor: `${FUNNEL_COLOURS.ink}18`, backgroundColor: '#fff'}}
+          initial={reduce ? false : {opacity: 0, x: -6}}
+          whileInView={{opacity: 1, x: 0}}
+          viewport={{once: true}}
+        >
+          <p className="font-mono text-[6px] uppercase tracking-wide text-dark/45 mb-1">Form</p>
+          <p className="font-sans text-[8px] font-semibold" style={{color: FUNNEL_COLOURS.ink}}>
+            Contact
+          </p>
+        </motion.div>
+        <motion.span
+          className="font-mono text-[9px] font-bold"
+          style={{color: colors.teal}}
+          initial={reduce ? false : {opacity: 0}}
+          whileInView={{opacity: 1}}
+          viewport={{once: true}}
+          transition={{delay: 0.15}}
+        >
+          →
+        </motion.span>
+        <motion.div
+          className="flex-1 rounded-md px-2 py-2 text-center"
+          style={{backgroundColor: colors.teal}}
+          initial={reduce ? false : {opacity: 0, x: 6}}
+          whileInView={{opacity: 1, x: 0}}
+          viewport={{once: true}}
+          transition={{delay: 0.2}}
+        >
+          <p className="font-mono text-[6px] uppercase tracking-wide text-white/70 mb-1">Inbox</p>
+          <p className="font-mono text-[8px] font-bold text-white">Live team</p>
+        </motion.div>
+      </div>
+    </div>
+  )
+}
+
+/** Tracking Forms: plain weekly watchlist. */
+function TrackingWatchlistVisual({reduce}: VisualProps) {
+  const rows = [
+    {label: 'Form events', detail: 'Weekly'},
+    {label: 'Call clicks', detail: 'Weekly'},
+  ]
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Watchlist</span>
+      </div>
+      <div className="flex-1 flex flex-col items-center justify-center gap-1.5 px-2.5">
+        {rows.map((r, i) => (
+          <motion.div
+            key={r.label}
+            className="w-full flex items-center justify-between rounded-md border px-2.5 py-1.5"
+            style={{borderColor: `${colors.teal}35`, backgroundColor: `${colors.teal}08`}}
+            initial={reduce ? false : {opacity: 0, y: 6}}
+            whileInView={{opacity: 1, y: 0}}
+            viewport={{once: true}}
+            transition={{delay: reduce ? 0 : i * 0.12}}
+          >
+            <span className="font-sans text-[9px] font-semibold" style={{color: FUNNEL_COLOURS.ink}}>
+              {r.label}
+            </span>
+            <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
+              {r.detail}
+            </span>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** Tracking Forms: a test event lands correctly. */
+function TrackingTestProofVisual({reduce}: VisualProps) {
+  return (
+    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Test proof</span>
+        <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
+          Pass
+        </span>
+      </div>
+      <div className="flex-1 flex flex-col items-center justify-center gap-1.5 px-3">
+        <motion.div
+          className="w-full rounded-sm border px-2 py-1.5 flex items-center gap-1.5"
+          style={{borderColor: `${colors.teal}40`, backgroundColor: `${colors.teal}0C`}}
+          initial={reduce ? false : {opacity: 0, y: 4}}
+          whileInView={{opacity: 1, y: 0}}
+          viewport={{once: true}}
+        >
+          <span className="font-mono text-[7px] font-bold" style={{color: colors.teal}}>
+            TEST
+          </span>
+          <span className="font-sans text-[8px]" style={{color: FUNNEL_COLOURS.ink}}>
+            generate_lead
+          </span>
+        </motion.div>
+        <motion.div
+          className="w-full rounded-sm py-1.5 text-center"
+          style={{backgroundColor: FUNNEL_COLOURS.accent}}
+          initial={reduce ? false : {opacity: 0, y: 4}}
+          whileInView={{opacity: 1, y: 0}}
+          viewport={{once: true}}
+          transition={{delay: 0.2}}
+        >
+          <span className="font-mono text-[8px] font-bold uppercase tracking-wide text-white">Seen in GA4</span>
+        </motion.div>
+      </div>
+    </div>
+  )
+}
+
+const TRACKING_FORMS_VISUALS = [
+  TrackingEventSetVisual,
+  TrackingFormDestVisual,
+  TrackingWatchlistVisual,
+  TrackingTestProofVisual,
+]
+
 /** Team AI: whole team shares the same setup. */
 function TeamSharedSetupVisual({reduce}: VisualProps) {
   const seats = ['You', 'Sales', 'Ops', 'Admin']
@@ -3696,6 +3858,7 @@ export function BenefitMotionRows({
     | 'conversion-pass'
     | 'onpage-search'
     | 'schema-faq'
+    | 'tracking-forms'
 }) {
   const reduce = useReducedMotion()
   const visuals =
@@ -3723,19 +3886,21 @@ export function BenefitMotionRows({
                           ? PROFILE_POSTING_VISUALS
                           : variant === 'local-pack'
                             ? LOCAL_PACK_VISUALS
-                          : variant === 'conversion-pass'
-                            ? CONVERSION_PASS_VISUALS
-                          : variant === 'onpage-search'
-                            ? ONPAGE_SEARCH_VISUALS
-                          : variant === 'schema-faq'
-                            ? SCHEMA_FAQ_VISUALS
-                          : variant === 'change-pack'
-                          ? CHANGE_PACK_VISUALS
-                          : variant === 'content-system'
-                            ? CONTENT_SYSTEM_VISUALS
-                            : variant === 'team-ai'
-                                ? TEAM_AI_VISUALS
-                                : SPEED_VISUALS
+                            : variant === 'conversion-pass'
+                              ? CONVERSION_PASS_VISUALS
+                              : variant === 'onpage-search'
+                                ? ONPAGE_SEARCH_VISUALS
+                                : variant === 'schema-faq'
+                                  ? SCHEMA_FAQ_VISUALS
+                                  : variant === 'tracking-forms'
+                                    ? TRACKING_FORMS_VISUALS
+                                    : variant === 'team-ai'
+                                      ? TEAM_AI_VISUALS
+                                      : variant === 'change-pack'
+                                        ? CHANGE_PACK_VISUALS
+                                        : variant === 'content-system'
+                                          ? CONTENT_SYSTEM_VISUALS
+                                          : SPEED_VISUALS
 
   return (
     <div className="space-y-10 md:space-y-12">

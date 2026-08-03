@@ -178,6 +178,7 @@ export const FUNNEL_OUTBOUND_CODES: ReadonlySet<string> = new Set([
   'conversion-pass',
   'onpage-search',
   'schema-faq',
+  'tracking-forms',
 ])
 
 export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
@@ -365,10 +366,10 @@ export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
     code: 'tracking-forms',
     title: 'Tracking and Forms Pack',
     price: '$950',
-    blurb: 'Events, form destinations, and a simple conversion view. Draft.',
-    status: 'soon',
-    lane: 'soon',
-    section: 'draft-after-site',
+    blurb: 'Primary events, form destinations, and a plain weekly watchlist.',
+    status: 'live',
+    lane: 'outbound',
+    section: 'outbound',
     href: '/go/tracking-forms',
   },
   {

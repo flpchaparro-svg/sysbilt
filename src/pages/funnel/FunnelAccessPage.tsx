@@ -99,6 +99,9 @@ type StepId =
   | 'onpageQueries'
   | 'schemaServices'
   | 'schemaQuestions'
+  | 'trackingStatus'
+  | 'trackingActions'
+  | 'trackingDestinations'
   | 'sessionFormat'
   | 'teamSize'
   | 'teamTools'
@@ -217,6 +220,13 @@ const PHASES_SCHEMA_FAQ: {id: PhaseId; n: number; label: string}[] = [
   {id: 'done', n: 4, label: 'Done'},
 ]
 
+const PHASES_TRACKING_FORMS: {id: PhaseId; n: number; label: string}[] = [
+  {id: 'about', n: 1, label: 'About you'},
+  {id: 'site', n: 2, label: 'Your tracking'},
+  {id: 'access', n: 3, label: 'Access'},
+  {id: 'done', n: 4, label: 'Done'},
+]
+
 const PHASES_TEAM: {id: PhaseId; n: number; label: string}[] = [
   {id: 'about', n: 1, label: 'About you'},
   {id: 'site', n: 2, label: 'Your work'},
@@ -258,6 +268,7 @@ function phaseForStep(
     | 'conversion-pass'
     | 'onpage-search'
     | 'schema-faq'
+    | 'tracking-forms'
     | 'team-ai'
     | 'change-pack'
     | 'content-system',
@@ -380,6 +391,21 @@ function phaseForStep(
     if (
       step === 'schemaServices' ||
       step === 'schemaQuestions' ||
+      step === 'website' ||
+      step === 'platform' ||
+      step === 'provider' ||
+      step === 'domainProvider' ||
+      step === 'hostingProvider'
+    ) {
+      return 'site'
+    }
+    return 'access'
+  }
+  if (kind === 'tracking-forms') {
+    if (
+      step === 'trackingStatus' ||
+      step === 'trackingActions' ||
+      step === 'trackingDestinations' ||
       step === 'website' ||
       step === 'platform' ||
       step === 'provider' ||
@@ -2681,6 +2707,21 @@ function helpForStep(step: StepId, opts?: {isAiPhone?: boolean}): HelpBlock {
         title: 'What people ask you most',
         body: 'The questions that come by phone, email, or after hours. A short honest list is enough.',
       }
+    case 'trackingStatus':
+      return {
+        title: 'What tracking you already have',
+        body: 'GA4, Tag Manager, nothing, or not sure. Honest answers save time.',
+      }
+    case 'trackingActions':
+      return {
+        title: 'Which actions matter',
+        body: 'Form submit, call click, book, and similar. Up to five primary conversions.',
+      }
+    case 'trackingDestinations':
+      return {
+        title: 'Where leads should land',
+        body: 'The inbox or CRM that still gets watched. Up to three forms.',
+      }
     case 'website':
       return {
         title: 'Which site we are fixing',
@@ -3031,6 +3072,9 @@ const FunnelAccessPage: React.FC = () => {
   const [onpageQueries, setOnpageQueries] = useState('')
   const [schemaServices, setSchemaServices] = useState('')
   const [schemaQuestions, setSchemaQuestions] = useState('')
+  const [trackingStatus, setTrackingStatus] = useState<'ga4' | 'gtm' | 'none' | 'unsure' | null>(null)
+  const [trackingActions, setTrackingActions] = useState('')
+  const [trackingDestinations, setTrackingDestinations] = useState('')
   const [sessionFormat, setSessionFormat] = useState<'remote' | 'onsite' | null>(
     initialSessionFormat,
   )
@@ -3081,6 +3125,7 @@ const FunnelAccessPage: React.FC = () => {
   const isConversionPass = product === 'conversion-pass'
   const isOnpageSearch = product === 'onpage-search'
   const isSchemaFaq = product === 'schema-faq'
+  const isTrackingForms = product === 'tracking-forms'
   const isTeamAi = product === 'team-ai'
   const isChangePack = product === 'change-pack'
   const isContentSystem = product === 'content-system'
@@ -3093,6 +3138,7 @@ const FunnelAccessPage: React.FC = () => {
   const usesConversionWizard = isConversionPass
   const usesOnpageWizard = isOnpageSearch
   const usesSchemaFaqWizard = isSchemaFaq
+  const usesTrackingFormsWizard = isTrackingForms
   const productKind:
     | 'speed'
     | 'missed-call'
@@ -3107,6 +3153,7 @@ const FunnelAccessPage: React.FC = () => {
     | 'conversion-pass'
     | 'onpage-search'
     | 'schema-faq'
+    | 'tracking-forms'
     | 'team-ai'
     | 'change-pack'
     | 'content-system' =
@@ -3134,6 +3181,8 @@ const FunnelAccessPage: React.FC = () => {
                         ? 'onpage-search'
                         : usesSchemaFaqWizard
                           ? 'schema-faq'
+                          : usesTrackingFormsWizard
+                            ? 'tracking-forms'
                           : isTeamAi
                             ? 'team-ai'
                             : isChangePack
@@ -3165,6 +3214,8 @@ const FunnelAccessPage: React.FC = () => {
                       ? PHASES_ONPAGE
                       : usesSchemaFaqWizard
                         ? PHASES_SCHEMA_FAQ
+                        : usesTrackingFormsWizard
+                          ? PHASES_TRACKING_FORMS
                         : isTeamAi
                         ? PHASES_TEAM
                         : isChangePack
@@ -3384,6 +3435,22 @@ const FunnelAccessPage: React.FC = () => {
       base.push('schemaServices', 'schemaQuestions', 'access', 'accessDetail', 'notes', 'done')
       return base
     }
+    if (usesTrackingFormsWizard) {
+      const base: StepId[] = [
+        'product',
+        'name',
+        'email',
+        'business',
+        'website',
+        'platform',
+        'provider',
+      ]
+      if (sameProvider === 'no') {
+        base.push('domainProvider', 'hostingProvider')
+      }
+      base.push('trackingStatus', 'trackingActions', 'trackingDestinations', 'access', 'accessDetail', 'notes', 'done')
+      return base
+    }
     if (isTeamAi) {
       const teamSteps: StepId[] = [
         'product',
@@ -3463,6 +3530,7 @@ const FunnelAccessPage: React.FC = () => {
     usesConversionWizard,
     usesOnpageWizard,
     usesSchemaFaqWizard,
+    usesTrackingFormsWizard,
     isSearchFix,
     isTeamAi,
     isChangePack,
@@ -3635,6 +3703,18 @@ const FunnelAccessPage: React.FC = () => {
         !sameProvider ||
         !isValidSchemaServices(schemaServices) ||
         schemaQuestions.trim().length < 8
+      ) {
+        setError('Something is missing. Use Back to check your answers.')
+        return
+      }
+    } else if (usesTrackingFormsWizard) {
+      if (
+        !isValidWebsite(website) ||
+        !platform ||
+        !sameProvider ||
+        !trackingStatus ||
+        trackingActions.trim().length < 8 ||
+        trackingDestinations.trim().length < 8
       ) {
         setError('Something is missing. Use Back to check your answers.')
         return
@@ -3855,6 +3935,24 @@ const FunnelAccessPage: React.FC = () => {
                 hostingProvider: hostingProvider.trim(),
                 schemaServices: schemaServiceLines(schemaServices).join('\n'),
                 schemaQuestions: schemaQuestions.trim(),
+                accessPath,
+                accessDetail: accessDetail.trim(),
+                notes: notes.trim(),
+              }
+          : usesTrackingFormsWizard
+            ? {
+                product,
+                name: name.trim(),
+                email: email.trim(),
+                business: business.trim(),
+                website: website.trim(),
+                platform: platform!,
+                sameProvider: sameProvider!,
+                domainProvider: domainProvider.trim(),
+                hostingProvider: hostingProvider.trim(),
+                trackingStatus: trackingStatus!,
+                trackingActions: trackingActions.trim(),
+                trackingDestinations: trackingDestinations.trim(),
                 accessPath,
                 accessDetail: accessDetail.trim(),
                 notes: notes.trim(),
@@ -4116,6 +4214,8 @@ const FunnelAccessPage: React.FC = () => {
         setStep('onpageUrls')
       } else if (usesSchemaFaqWizard) {
         setStep('schemaServices')
+      } else if (usesTrackingFormsWizard) {
+        setStep('trackingStatus')
       } else {
         setStep('access')
       }

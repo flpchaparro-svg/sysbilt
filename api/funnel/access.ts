@@ -24,6 +24,7 @@ const PRODUCT_CODES = new Set([
   'conversion-pass',
   'onpage-search',
   'schema-faq',
+  'tracking-forms',
 ]);
 const PRODUCT_LABELS: Record<string, string> = {
   'speed-fix': 'Website Speed Fix',
@@ -44,6 +45,7 @@ const PRODUCT_LABELS: Record<string, string> = {
   'conversion-pass': 'Conversion Pass',
   'onpage-search': 'On-Page Search Pack',
   'schema-faq': 'Schema and FAQ Pack',
+  'tracking-forms': 'Tracking and Forms Pack',
 };
 const PRODUCT_AMOUNTS: Record<string, string> = {
   'speed-fix': '1200',
@@ -65,6 +67,7 @@ const PRODUCT_AMOUNTS: Record<string, string> = {
   'conversion-pass': '1400',
   'onpage-search': '1900',
   'schema-faq': '1200',
+  'tracking-forms': '950',
 };
 const CRM_SYSTEMS = new Set([
   'hubspot',
@@ -180,6 +183,9 @@ type Body = {
   onpageQueries?: unknown;
   schemaServices?: unknown;
   schemaQuestions?: unknown;
+  trackingStatus?: unknown;
+  trackingActions?: unknown;
+  trackingDestinations?: unknown;
   websiteUrl?: unknown;
   teamSize?: unknown;
   teamTools?: unknown;
@@ -535,6 +541,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const onpageQueries = str(body.onpageQueries, 2000);
   const schemaServices = str(body.schemaServices, 800);
   const schemaQuestions = str(body.schemaQuestions, 4000);
+  const trackingStatus = str(body.trackingStatus, 40);
+  const trackingActions = str(body.trackingActions, 2000);
+  const trackingDestinations = str(body.trackingDestinations, 2000);
   const websiteUrl = str(body.websiteUrl, 400);
   const teamSize = str(body.teamSize, 40);
   const teamTools = str(body.teamTools, 2000);
@@ -579,6 +588,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const isConversionPass = product === 'conversion-pass';
   const isOnpageSearch = product === 'onpage-search';
   const isSchemaFaq = product === 'schema-faq';
+  const isTrackingForms = product === 'tracking-forms';
   const isTeamAi = product === 'team-ai';
   const isChangePack = product === 'change-pack';
   const isContentSystem = product === 'content-system';
@@ -745,6 +755,27 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     }
     if (schemaQuestions.length < 8) {
       res.status(400).json({ error: 'Missing the common questions you hear' });
+      return;
+    }
+  } else if (isTrackingForms) {
+    if (website.length < 4) {
+      res.status(400).json({ error: 'Missing website' });
+      return;
+    }
+    if (!PLATFORMS.has(platform) || !SAME.has(sameProvider) || !ACCESS.has(accessPath)) {
+      res.status(400).json({ error: 'Invalid platform, provider, or access path' });
+      return;
+    }
+    if (!['ga4', 'gtm', 'none', 'unsure'].includes(trackingStatus)) {
+      res.status(400).json({ error: 'Invalid tracking status' });
+      return;
+    }
+    if (trackingActions.length < 8) {
+      res.status(400).json({ error: 'Missing the actions that matter' });
+      return;
+    }
+    if (trackingDestinations.length < 8) {
+      res.status(400).json({ error: 'Missing where leads should land' });
       return;
     }
   } else if (isTeamAi) {
@@ -989,6 +1020,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
             ]
               .filter(Boolean)
               .join('\n')
+        : isTrackingForms
+          ? [
+              `Funnel access form — ${product}`,
+              `Business: ${business}`,
+              `Website: ${website}`,
+              `Tracking status: ${trackingStatus}`,
+              `Actions that matter:\n${trackingActions}`,
+              `Lead destinations:\n${trackingDestinations}`,
+              `Platform: ${platform}`,
+              `Domain + hosting same provider: ${sameProvider}`,
+              domainProvider ? `Domain provider: ${domainProvider}` : null,
+              hostingProvider ? `Hosting provider: ${hostingProvider}` : null,
+              `Access path: ${accessPath}`,
+              accessDetail ? `Access notes:\n${accessDetail}` : null,
+              notes ? `Other notes:\n${notes}` : null,
+              `Submitted: ${new Date().toISOString()}`,
+            ]
+              .filter(Boolean)
+              .join('\n')
         : isTeamAi
           ? [
               `Funnel access form — ${product}`,
@@ -1088,6 +1138,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     onpageQueries: onpageQueries || undefined,
     schemaServices: schemaServices || undefined,
     schemaQuestions: schemaQuestions || undefined,
+    trackingStatus: trackingStatus || undefined,
+    trackingActions: trackingActions || undefined,
+    trackingDestinations: trackingDestinations || undefined,
     websiteUrl,
     teamSize,
     teamTools,
@@ -1214,6 +1267,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
                           ? `${website} · URLs: ${onpageUrlLines(onpageUrls).length} · Findable for: ${onpageQueries.slice(0, 80)}`
                           : isSchemaFaq
                             ? `${website} · Services: ${schemaServiceLines(schemaServices).join(', ').slice(0, 80)} · Questions: ${schemaQuestions.slice(0, 80)}`
+                            : isTrackingForms
+                              ? `${website} · Status: ${trackingStatus} · Actions: ${trackingActions.slice(0, 60)}`
                             : website,
         isMissedCall ||
         isGoogleProfile ||

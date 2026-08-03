@@ -72,6 +72,7 @@ export type FunnelProductCopy = {
     | 'conversion-pass'
     | 'onpage-search'
     | 'schema-faq'
+    | 'tracking-forms'
     | 'draft'
 }
 
@@ -2944,9 +2945,141 @@ export const SCHEMA_FAQ_COPY: FunnelProductCopy = {
   proofKind: 'schema-faq',
 }
 
+export const TRACKING_FORMS_COPY: FunnelProductCopy = {
+  eyebrow: 'Fixed price · About two days · One site',
+  h1Generic: 'If you cannot see the enquiry, you cannot improve the site',
+  h1Personal: (b: string) =>
+    `${b}, if you cannot see the enquiry, you cannot improve the site`,
+  sub: 'We wire primary conversion events, fix where forms land, and leave you a plain watchlist so you know what happened after the click. Not a vanity dashboard. Not a full analytics rebuild.',
+  ctaLabel: 'Wire my tracking · $950',
+  proofLabel: 'The picture',
+  proofHeadingLive: 'Click, then fog',
+  proofHeadingGeneric: 'Click, then fog',
+  proofLead: (b: string | null) =>
+    b
+      ? `${b} can spend on speed and ads and still not know which page produced the last enquiry.`
+      : 'A site can spend on speed and ads and still not know which page produced the last enquiry.',
+  proofLeadGeneric:
+    'Forms go to the wrong inbox. Events never fire. You argue from vibes while the lead trail stays dark.',
+  proofAfter:
+    'Key actions fire cleanly, forms land where they should, and you get a short map of what to watch each week.',
+  proofAfterGeneric:
+    'Key actions fire cleanly, forms land where they should, and you get a short map of what to watch each week.',
+  painLabel: 'What this is costing you',
+  painHeading: 'Money in. Fog out',
+  painLines: [
+    'You do not know which page produced the last enquiry.',
+    'Forms email someone who left the company.',
+    'Ads and speed work cannot be judged.',
+    'GA4 was installed once and never checked.',
+  ],
+  bridgeLabel: 'The fix',
+  bridgeHeading: 'Tracking and forms that tell the truth',
+  bridgeBody:
+    'This is not a full analytics rebuild and it is not a BI project. It is the minimum honest signal: primary events, correct destinations, and a simple view of what to check.',
+  bridgeGaugeCaption: 'See the enquiry. Then improve.',
+  benefitsLabel: 'What changes for you',
+  benefitsHeading: 'Signal you can act on',
+  benefits: [
+    {
+      title: 'Proof for the work',
+      text: 'You can see whether Speed Fix or ads moved anything.',
+    },
+    {
+      title: 'Forms stop disappearing',
+      text: 'Destinations match the people who still work there.',
+    },
+    {
+      title: 'Light, not heavy',
+      text: 'Enough signal to decide, not a dashboard theatre.',
+    },
+    {
+      title: 'Ready for CRM later',
+      text: 'Clean events make a later CRM job easier.',
+    },
+  ],
+  processLabel: 'How it runs',
+  processHeading: 'Inventory, wire, verify',
+  processSteps: [
+    {
+      label: 'Inventory',
+      text: 'Forms, buttons, and where leads should go.',
+    },
+    {
+      label: 'Wire',
+      text: 'Events and destinations on the scoped actions.',
+    },
+    {
+      label: 'Verify',
+      text: 'Test submissions and a one-page watchlist.',
+    },
+  ],
+  stackLabel: 'Everything included',
+  stackHeading: 'What ships on one site',
+  stackItems: [
+    {
+      title: 'Event set',
+      text: 'Up to five primary conversions only.',
+    },
+    {
+      title: 'Form destinations',
+      text: 'Up to three forms, correct inboxes or CRM fields.',
+    },
+    {
+      title: 'Watchlist',
+      text: 'What to check weekly in plain language.',
+    },
+    {
+      title: 'Test proof',
+      text: 'We show you a test event landing correctly.',
+    },
+  ],
+  scopeLine:
+    'One site. Up to five primary events and up to three forms. GA4 checked, GTM only if needed. Not heatmaps, not call tracking as a product, not CRM Rescue, not a full analytics rebuild.',
+  priceLabel: 'Investment',
+  price: '$950',
+  priceLead: 'Paid once when the action list locks at kickoff.',
+  guarantee:
+    'Scoped events and destinations work in testing, or we keep working at no extra cost until they do.',
+  priceAnchor: 'Cheaper than another month of spend you cannot measure.',
+  faqLabel: 'Objections',
+  faqHeading: 'Straight answers before you pay',
+  faqs: [
+    {
+      q: 'Is this a full GA4 rebuild?',
+      a: 'No. We wire the primary conversions that matter and leave you a plain watchlist. Heavy dashboards are a different job.',
+    },
+    {
+      q: 'Do you fix Meta and Google ads pixels?',
+      a: 'Only when they sit on the same primary actions we already scoped. Full ad-account setup is separate.',
+    },
+    {
+      q: 'Is this Enquiry Auto-Reply?',
+      a: 'No. Enquiry Auto-Reply acknowledges written enquiries. This pack makes sure you can see the enquiry happened and that forms reach the right place.',
+    },
+    {
+      q: 'Is this CRM Rescue?',
+      a: 'No. Clean events make CRM easier later. This pack stops at events, destinations, and the watchlist.',
+    },
+    {
+      q: 'What if I need more than five events or three forms?',
+      a: 'We quote extras the same day. The $950 lock is five primary events and three forms on one site.',
+    },
+    {
+      q: 'Is this refundable?',
+      a: "There's no change-of-mind refund, because we start straight away. If the agreed events and destinations are not delivered, we keep working at no extra cost until they are.",
+    },
+  ],
+  finalLabel: 'Last step',
+  finalHeading: 'See the enquiry, then improve',
+  finalLine: 'Events, forms, a simple watchlist. Paid once.',
+  proofKind: 'tracking-forms',
+}
+
 import {DRAFT_COPY_BY_SLUG} from './funnelDraftProducts'
 
 export function funnelCopyForSlug(slug: string | undefined): FunnelProductCopy {
+  if (slug === 'tracking-forms') return TRACKING_FORMS_COPY
   if (slug === 'schema-faq') return SCHEMA_FAQ_COPY
   if (slug === 'onpage-search') return ONPAGE_SEARCH_COPY
   if (slug === 'conversion-pass') return CONVERSION_PASS_COPY
