@@ -97,6 +97,10 @@ import {TrackingFormsEvidenceCard} from './TrackingFormsEvidenceCard'
 import {TrackingFormsLeakPair} from './TrackingFormsLeakPair'
 import {TrackingFormsPainCards} from './TrackingFormsPainCards'
 import {TrackingFormsDeliverableMock} from './TrackingFormsDeliverableMock'
+import {SiteChatEvidenceCard} from './SiteChatEvidenceCard'
+import {SiteChatLeakPair} from './SiteChatLeakPair'
+import {SiteChatPainCards} from './SiteChatPainCards'
+import {SiteChatDeliverableMock} from './SiteChatDeliverableMock'
 import {WebsiteEvidenceCard, type WebsiteEvidence} from './WebsiteEvidenceCard'
 import {WebsiteLeakPair} from './WebsiteLeakPair'
 import {WebsiteUnknownsCentrepiece} from './WebsiteUnknownsCentrepiece'
@@ -133,6 +137,7 @@ import {CONVERSION_PASS_STRIPE_URL} from '../../constants/conversionPassStripe'
 import {ONPAGE_SEARCH_STRIPE_URL} from '../../constants/onpageSearchStripe'
 import {SCHEMA_FAQ_STRIPE_URL} from '../../constants/schemaFaqStripe'
 import {TRACKING_FORMS_STRIPE_URL} from '../../constants/trackingFormsStripe'
+import {SITE_CHAT_STRIPE_URL} from '../../constants/siteChatStripe'
 import {teamAiPriceOptions} from '../../constants/teamAiStripe'
 import {funnelCopyForSlug} from './funnelCopy'
 import {
@@ -290,6 +295,7 @@ const FunnelPage: React.FC = () => {
   const isOnpageSearch = proofKind === 'onpage-search'
   const isSchemaFaq = proofKind === 'schema-faq'
   const isTrackingForms = proofKind === 'tracking-forms'
+  const isSiteChat = proofKind === 'site-chat'
   const isDraftSoon =
     proofKind === 'geo' || proofKind === 'client-finder' || proofKind === 'draft'
   /** Visual drafts and priced-but-not-wired products that are not buyable yet. */
@@ -323,6 +329,8 @@ const FunnelPage: React.FC = () => {
                           ? 'schema-faq'
                           : isTrackingForms
                             ? 'tracking-forms'
+                          : isSiteChat
+                            ? 'site-chat'
                         : isTeamAi
                     ? 'team-ai'
                     : isChangePack
@@ -472,6 +480,7 @@ const FunnelPage: React.FC = () => {
     (isOnpageSearch ? ONPAGE_SEARCH_STRIPE_URL : undefined) ||
     (isSchemaFaq ? SCHEMA_FAQ_STRIPE_URL : undefined) ||
     (isTrackingForms ? TRACKING_FORMS_STRIPE_URL : undefined) ||
+    (isSiteChat ? SITE_CHAT_STRIPE_URL : undefined) ||
     (isEnquiryReply ? ENQUIRY_REPLY_STRIPE_URL : undefined)
   const sanityStripe = (doc?.stripeUrl || '').trim()
   const resolvedStripeUrl =
@@ -650,6 +659,7 @@ const FunnelPage: React.FC = () => {
               isOnpageSearch ||
               isSchemaFaq ||
               isTrackingForms ||
+              isSiteChat ||
               isDraftSoon
                 ? 'max-w-3xl'
                 : 'max-w-5xl'
@@ -689,6 +699,7 @@ const FunnelPage: React.FC = () => {
             {isOnpageSearch ? <OnpageEvidenceCard business={business} /> : null}
             {isSchemaFaq ? <SchemaFaqEvidenceCard business={business} /> : null}
             {isTrackingForms ? <TrackingFormsEvidenceCard business={business} /> : null}
+            {isSiteChat ? <SiteChatEvidenceCard business={business} /> : null}
             {isTeamAi ? <TeamRecognitionCards /> : null}
             {isChangePack ? <ChangeRiskRegisterCard business={business} /> : null}
             {isContentSystem ? (
@@ -748,6 +759,7 @@ const FunnelPage: React.FC = () => {
                     isOnpageSearch ||
                     isSchemaFaq ||
                     isTrackingForms ||
+                    isSiteChat ||
                     isTeamAi ||
                     isChangePack ||
                     isContentSystem ||
@@ -1155,6 +1167,40 @@ const FunnelPage: React.FC = () => {
                   <TrackingFormsLeakPair />
                 </section>
               </>
+            ) : isSiteChat ? (
+              <>
+                <Reveal delay={0.08} y={12}>
+                  <p
+                    className="mt-6 font-sans text-base md:text-lg leading-relaxed max-w-2xl"
+                    style={{color: FUNNEL_COLOURS.muted}}
+                  >
+                    {COPY.proofAfterGeneric}
+                  </p>
+                </Reveal>
+                <section className="mt-12 md:mt-14">
+                  <Reveal y={10}>
+                    <SectionLabel>The leak</SectionLabel>
+                  </Reveal>
+                  <Reveal delay={0.06} y={14}>
+                    <h3
+                      className="font-serif font-bold text-2xl md:text-3xl tracking-tight mb-4 max-w-2xl"
+                      style={{color: FUNNEL_COLOURS.ink}}
+                    >
+                      Silence loses them. Loose AI burns you
+                    </h3>
+                  </Reveal>
+                  <Reveal delay={0.1} y={10}>
+                    <p
+                      className="font-sans text-base md:text-lg leading-relaxed max-w-2xl mb-2"
+                      style={{color: FUNNEL_COLOURS.muted}}
+                    >
+                      After hours, nobody answers. Or a generic widget invents a fee. Either way the
+                      visitor leaves, and your brand takes the hit.
+                    </p>
+                  </Reveal>
+                  <SiteChatLeakPair />
+                </section>
+              </>
             ) : isTeamAi ? (
               <section className="mt-12 md:mt-14">
                 <Reveal y={10}>
@@ -1403,6 +1449,8 @@ const FunnelPage: React.FC = () => {
                 <SchemaFaqPainCards />
               ) : isTrackingForms ? (
                 <TrackingFormsPainCards />
+              ) : isSiteChat ? (
+                <SiteChatPainCards />
               ) : isTeamAi ? (
                 <TeamPainCards />
               ) : isChangePack ? (
@@ -1489,6 +1537,7 @@ const FunnelPage: React.FC = () => {
               isOnpageSearch ||
               isSchemaFaq ||
               isTrackingForms ||
+              isSiteChat ||
               isTeamAi ||
               isChangePack ||
               isContentSystem ||
@@ -1674,6 +1723,8 @@ const FunnelPage: React.FC = () => {
                   <SchemaFaqDeliverableMock />
                 ) : isTrackingForms ? (
                   <TrackingFormsDeliverableMock />
+                ) : isSiteChat ? (
+                  <SiteChatDeliverableMock />
                 ) : isTeamAi ? (
                   <TeamSessionDeliverableMock />
                 ) : isChangePack ? (

@@ -129,7 +129,7 @@ export const FUNNEL_PRODUCT_LABELS: Record<FunnelProductCode, string> = {
   'onpage-search': 'On-Page Search Pack',
   'schema-faq': 'Schema and FAQ Pack',
   'tracking-forms': 'Tracking and Forms Pack',
-  'site-chat': 'Site Chat FAQ Bot',
+  'site-chat': 'Site AI Chat',
   'media-clean': 'Image and Media Clean',
   'a11y-pass': 'Accessibility Quick Pass',
   'whatsapp-setup': 'WhatsApp Business Setup',
@@ -179,6 +179,7 @@ export const FUNNEL_OUTBOUND_CODES: ReadonlySet<string> = new Set([
   'onpage-search',
   'schema-faq',
   'tracking-forms',
+  'site-chat',
 ])
 
 export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
@@ -374,12 +375,12 @@ export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
   },
   {
     code: 'site-chat',
-    title: 'Site Chat FAQ Bot',
-    price: '$1,850',
-    blurb: 'Branded chat on your site that answers FAQs and hands off to a human. Draft.',
-    status: 'soon',
-    lane: 'soon',
-    section: 'draft-after-site',
+    title: 'Site AI Chat',
+    price: '$950',
+    blurb: 'Branded AI chat on your site: approved FAQs, human handoff, tight leash.',
+    status: 'live',
+    lane: 'outbound',
+    section: 'outbound',
     href: '/go/site-chat',
   },
   {

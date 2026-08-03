@@ -102,6 +102,8 @@ type StepId =
   | 'trackingStatus'
   | 'trackingActions'
   | 'trackingDestinations'
+  | 'chatTopics'
+  | 'chatHandoff'
   | 'sessionFormat'
   | 'teamSize'
   | 'teamTools'
@@ -227,6 +229,13 @@ const PHASES_TRACKING_FORMS: {id: PhaseId; n: number; label: string}[] = [
   {id: 'done', n: 4, label: 'Done'},
 ]
 
+const PHASES_SITE_CHAT: {id: PhaseId; n: number; label: string}[] = [
+  {id: 'about', n: 1, label: 'About you'},
+  {id: 'site', n: 2, label: 'Your chat'},
+  {id: 'access', n: 3, label: 'Access'},
+  {id: 'done', n: 4, label: 'Done'},
+]
+
 const PHASES_TEAM: {id: PhaseId; n: number; label: string}[] = [
   {id: 'about', n: 1, label: 'About you'},
   {id: 'site', n: 2, label: 'Your work'},
@@ -269,6 +278,7 @@ function phaseForStep(
     | 'onpage-search'
     | 'schema-faq'
     | 'tracking-forms'
+    | 'site-chat'
     | 'team-ai'
     | 'change-pack'
     | 'content-system',
@@ -406,6 +416,20 @@ function phaseForStep(
       step === 'trackingStatus' ||
       step === 'trackingActions' ||
       step === 'trackingDestinations' ||
+      step === 'website' ||
+      step === 'platform' ||
+      step === 'provider' ||
+      step === 'domainProvider' ||
+      step === 'hostingProvider'
+    ) {
+      return 'site'
+    }
+    return 'access'
+  }
+  if (kind === 'site-chat') {
+    if (
+      step === 'chatTopics' ||
+      step === 'chatHandoff' ||
       step === 'website' ||
       step === 'platform' ||
       step === 'provider' ||
@@ -2722,6 +2746,16 @@ function helpForStep(step: StepId, opts?: {isAiPhone?: boolean}): HelpBlock {
         title: 'Where leads should land',
         body: 'The inbox or CRM that still gets watched. Up to three forms.',
       }
+    case 'chatTopics':
+      return {
+        title: 'What people ask you most',
+        body: 'Hours, services, suburbs, how to book. Up to twenty FAQs. A short honest list is enough.',
+      }
+    case 'chatHandoff':
+      return {
+        title: 'Where should handoff go',
+        body: 'Email, SMS, or the inbox a human actually watches when the chat escalates.',
+      }
     case 'website':
       return {
         title: 'Which site we are fixing',
@@ -3075,6 +3109,8 @@ const FunnelAccessPage: React.FC = () => {
   const [trackingStatus, setTrackingStatus] = useState<'ga4' | 'gtm' | 'none' | 'unsure' | null>(null)
   const [trackingActions, setTrackingActions] = useState('')
   const [trackingDestinations, setTrackingDestinations] = useState('')
+  const [chatTopics, setChatTopics] = useState('')
+  const [chatHandoff, setChatHandoff] = useState('')
   const [sessionFormat, setSessionFormat] = useState<'remote' | 'onsite' | null>(
     initialSessionFormat,
   )
@@ -3126,6 +3162,7 @@ const FunnelAccessPage: React.FC = () => {
   const isOnpageSearch = product === 'onpage-search'
   const isSchemaFaq = product === 'schema-faq'
   const isTrackingForms = product === 'tracking-forms'
+  const isSiteChat = product === 'site-chat'
   const isTeamAi = product === 'team-ai'
   const isChangePack = product === 'change-pack'
   const isContentSystem = product === 'content-system'
@@ -3139,6 +3176,7 @@ const FunnelAccessPage: React.FC = () => {
   const usesOnpageWizard = isOnpageSearch
   const usesSchemaFaqWizard = isSchemaFaq
   const usesTrackingFormsWizard = isTrackingForms
+  const usesSiteChatWizard = isSiteChat
   const productKind:
     | 'speed'
     | 'missed-call'
@@ -3154,6 +3192,7 @@ const FunnelAccessPage: React.FC = () => {
     | 'onpage-search'
     | 'schema-faq'
     | 'tracking-forms'
+    | 'site-chat'
     | 'team-ai'
     | 'change-pack'
     | 'content-system' =
@@ -3183,6 +3222,8 @@ const FunnelAccessPage: React.FC = () => {
                           ? 'schema-faq'
                           : usesTrackingFormsWizard
                             ? 'tracking-forms'
+                          : usesSiteChatWizard
+                            ? 'site-chat'
                           : isTeamAi
                             ? 'team-ai'
                             : isChangePack
@@ -3216,6 +3257,8 @@ const FunnelAccessPage: React.FC = () => {
                         ? PHASES_SCHEMA_FAQ
                         : usesTrackingFormsWizard
                           ? PHASES_TRACKING_FORMS
+                        : usesSiteChatWizard
+                          ? PHASES_SITE_CHAT
                         : isTeamAi
                         ? PHASES_TEAM
                         : isChangePack
@@ -3451,6 +3494,22 @@ const FunnelAccessPage: React.FC = () => {
       base.push('trackingStatus', 'trackingActions', 'trackingDestinations', 'access', 'accessDetail', 'notes', 'done')
       return base
     }
+    if (usesSiteChatWizard) {
+      const base: StepId[] = [
+        'product',
+        'name',
+        'email',
+        'business',
+        'website',
+        'platform',
+        'provider',
+      ]
+      if (sameProvider === 'no') {
+        base.push('domainProvider', 'hostingProvider')
+      }
+      base.push('chatTopics', 'chatHandoff', 'access', 'accessDetail', 'notes', 'done')
+      return base
+    }
     if (isTeamAi) {
       const teamSteps: StepId[] = [
         'product',
@@ -3531,6 +3590,7 @@ const FunnelAccessPage: React.FC = () => {
     usesOnpageWizard,
     usesSchemaFaqWizard,
     usesTrackingFormsWizard,
+    usesSiteChatWizard,
     isSearchFix,
     isTeamAi,
     isChangePack,
@@ -3715,6 +3775,17 @@ const FunnelAccessPage: React.FC = () => {
         !trackingStatus ||
         trackingActions.trim().length < 8 ||
         trackingDestinations.trim().length < 8
+      ) {
+        setError('Something is missing. Use Back to check your answers.')
+        return
+      }
+    } else if (usesSiteChatWizard) {
+      if (
+        !isValidWebsite(website) ||
+        !platform ||
+        !sameProvider ||
+        chatTopics.trim().length < 8 ||
+        chatHandoff.trim().length < 8
       ) {
         setError('Something is missing. Use Back to check your answers.')
         return
@@ -3953,6 +4024,23 @@ const FunnelAccessPage: React.FC = () => {
                 trackingStatus: trackingStatus!,
                 trackingActions: trackingActions.trim(),
                 trackingDestinations: trackingDestinations.trim(),
+                accessPath,
+                accessDetail: accessDetail.trim(),
+                notes: notes.trim(),
+              }
+          : usesSiteChatWizard
+            ? {
+                product,
+                name: name.trim(),
+                email: email.trim(),
+                business: business.trim(),
+                website: website.trim(),
+                platform: platform!,
+                sameProvider: sameProvider!,
+                domainProvider: domainProvider.trim(),
+                hostingProvider: hostingProvider.trim(),
+                chatTopics: chatTopics.trim(),
+                chatHandoff: chatHandoff.trim(),
                 accessPath,
                 accessDetail: accessDetail.trim(),
                 notes: notes.trim(),
@@ -4216,6 +4304,8 @@ const FunnelAccessPage: React.FC = () => {
         setStep('schemaServices')
       } else if (usesTrackingFormsWizard) {
         setStep('trackingStatus')
+      } else if (usesSiteChatWizard) {
+        setStep('chatTopics')
       } else {
         setStep('access')
       }

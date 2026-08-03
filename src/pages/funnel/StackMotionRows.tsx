@@ -2861,6 +2861,88 @@ const TRACKING_FORMS_STACK_VISUALS = [
   TrackingTestProofStackVisual,
 ]
 
+/** Site AI Chat stack: FAQ answered in chat. */
+function SiteChatCommonQuestionsStackVisual({reduce, play}: VisualProps) {
+  const go = play || reduce
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white flex flex-col">
+      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Approved FAQ set</span>
+        <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>Up to 20</span>
+      </div>
+      <div className="flex-1 flex flex-col justify-center gap-1 px-2.5 py-2">
+        <motion.div className="rounded-md border px-2 py-1" style={{borderColor: `${colors.teal}35`, backgroundColor: `${colors.teal}08`}} initial={reduce ? false : {opacity: 0, y: 4}} animate={go ? {opacity: 1, y: 0} : {opacity: 0.35}}>
+          <p className="font-sans text-[8px] font-semibold" style={{color: FUNNEL_COLOURS.ink}}>Q and A signed off</p>
+        </motion.div>
+      </div>
+    </div>
+  )
+}
+
+function SiteChatUiStackVisual({reduce, play}: VisualProps) {
+  const go = play || reduce
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white flex flex-col">
+      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Chat UI</span>
+      </div>
+      <div className="flex-1 flex items-center justify-center px-2.5">
+        <motion.div className="w-full rounded-md border px-2 py-2" style={{borderColor: `${colors.teal}40`, backgroundColor: `${colors.teal}0C`}} initial={reduce ? false : {opacity: 0, y: 4}} animate={go ? {opacity: 1, y: 0} : {opacity: 0.4}}>
+          <p className="font-mono text-[7px] font-bold" style={{color: colors.teal}}>On your domain</p>
+          <p className="font-sans text-[8px]" style={{color: FUNNEL_COLOURS.ink}}>Branded bubble, mobile-ready</p>
+        </motion.div>
+      </div>
+    </div>
+  )
+}
+
+function SiteChatHandoffStackVisual({reduce, play}: VisualProps) {
+  const go = play || reduce
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white flex flex-col">
+      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Handoff rules</span>
+      </div>
+      <div className="flex-1 flex items-center justify-center gap-1.5 px-2.5">
+        <motion.div className="flex-1 rounded-md border px-2 py-1.5 text-center" style={{borderColor: `${FUNNEL_COLOURS.ink}20`}} initial={reduce ? false : {opacity: 0, x: -4}} animate={go ? {opacity: 1, x: 0} : {opacity: 0.4}}>
+          <p className="font-sans text-[8px] font-semibold" style={{color: FUNNEL_COLOURS.ink}}>Chat</p>
+        </motion.div>
+        <span className="font-mono text-[9px] font-bold" style={{color: colors.teal}}>→</span>
+        <motion.div className="flex-1 rounded-md px-2 py-1.5 text-center" style={{backgroundColor: colors.teal}} initial={reduce ? false : {opacity: 0, x: 4}} animate={go ? {opacity: 1, x: 0} : {opacity: 0.4}} transition={{delay: reduce ? 0 : 0.15}}>
+          <p className="font-mono text-[8px] font-bold text-white">Human</p>
+        </motion.div>
+      </div>
+    </div>
+  )
+}
+
+function SiteChatGuardrailsStackVisual({reduce, play}: VisualProps) {
+  const go = play || reduce
+  return (
+    <div className="w-full min-h-[88px] border border-dark/15 bg-white flex flex-col">
+      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Guardrails</span>
+      </div>
+      <div className="flex-1 flex flex-col justify-center gap-1 px-2.5 py-2">
+        {['No inventing prices', 'No clinical advice'].map((label, i) => (
+          <motion.div key={label} className="flex items-center justify-between rounded-md border px-2 py-1" style={{borderColor: `${colors.teal}35`, backgroundColor: `${colors.teal}08`}} initial={reduce ? false : {opacity: 0, y: 4}} animate={go ? {opacity: 1, y: 0} : {opacity: 0.35}} transition={{delay: reduce ? 0 : i * 0.1}}>
+            <span className="font-sans text-[8px] font-semibold" style={{color: FUNNEL_COLOURS.ink}}>{label}</span>
+            <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>Banned</span>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+const SITE_CHAT_STACK_VISUALS = [
+  SiteChatCommonQuestionsStackVisual,
+  SiteChatUiStackVisual,
+  SiteChatHandoffStackVisual,
+  SiteChatGuardrailsStackVisual,
+]
+
+
 /** Team AI: half-day remote session. */
 function TeamHalfDayStackVisual({reduce, play}: VisualProps) {
   const go = play && !reduce
@@ -3357,6 +3439,7 @@ export function StackMotionRows({
     | 'onpage-search'
     | 'schema-faq'
     | 'tracking-forms'
+    | 'site-chat'
 }) {
   const reduce = useReducedMotion()
   const visuals: Array<(p: VisualProps) => React.ReactElement> =
@@ -3392,6 +3475,8 @@ export function StackMotionRows({
                                   ? SCHEMA_FAQ_STACK_VISUALS
                                   : variant === 'tracking-forms'
                                     ? TRACKING_FORMS_STACK_VISUALS
+                                    : variant === 'site-chat'
+                                      ? SITE_CHAT_STACK_VISUALS
                                     : variant === 'change-pack'
                                       ? CHANGE_PACK_STACK_VISUALS
                                       : variant === 'content-system'

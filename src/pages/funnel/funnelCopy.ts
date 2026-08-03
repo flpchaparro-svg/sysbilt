@@ -73,6 +73,7 @@ export type FunnelProductCopy = {
     | 'onpage-search'
     | 'schema-faq'
     | 'tracking-forms'
+    | 'site-chat'
     | 'draft'
 }
 
@@ -3076,9 +3077,145 @@ export const TRACKING_FORMS_COPY: FunnelProductCopy = {
   proofKind: 'tracking-forms',
 }
 
+export const SITE_CHAT_COPY: FunnelProductCopy = {
+  eyebrow: 'Fixed price · About a week · One site',
+  h1Generic: 'A site chat that answers the usual questions and knows when to shut up',
+  h1Personal: (b: string) =>
+    `${b}, a site chat that answers the usual questions and knows when to shut up`,
+  sub: 'Branded AI chat on your website: hours, services, location, next step. Hands off to a human when the question is real work. Not a toy that invents prices.',
+  ctaLabel: 'Add AI chat · $950',
+  proofLabel: 'The picture',
+  proofHeadingLive: 'Answer, then hand off',
+  proofHeadingGeneric: 'Answer, then hand off',
+  proofLead: (b: string | null) =>
+    b
+      ? `${b} can lose night browsers to silence, or worse, to a bot that invents fees.`
+      : 'A site can lose night browsers to silence, or worse, to a bot that invents fees.',
+  proofLeadGeneric:
+    'People browse at night. If nothing answers, they leave. If a bad bot invents fees, you earn a dispute.',
+  proofAfter:
+    'A small brain trained on your approved FAQs, with a clear handoff and a tight leash on what it may say.',
+  proofAfterGeneric:
+    'A small brain trained on your approved FAQs, with a clear handoff and a tight leash on what it may say.',
+  painLabel: 'What this is costing you',
+  painHeading: 'Phone-tag for questions a page should answer',
+  painLines: [
+    'Reception repeats the same five answers all day.',
+    'After-hours browsers bounce.',
+    'Generic chat widgets sound nothing like you.',
+    'You fear AI making up prices or clinical claims.',
+  ],
+  bridgeLabel: 'The fix',
+  bridgeHeading: 'AI chat with a human door',
+  bridgeBody:
+    'This is not an unsupervised agent running your business. It is branded AI chat limited to FAQs you approve, with handoff when the question needs a person.',
+  bridgeGaugeCaption: 'Answer the usual. Escalate the rest.',
+  benefitsLabel: 'What changes for you',
+  benefitsHeading: 'Common questions handled. Real work escalated',
+  benefits: [
+    {
+      title: 'Common questions handled',
+      text: 'Hours, parking, what you offer, how to enquire.',
+    },
+    {
+      title: 'Handoff when needed',
+      text: 'Real intent reaches a human without theatre.',
+    },
+    {
+      title: 'On-brand',
+      text: 'Voice and limits you approve before it goes live.',
+    },
+    {
+      title: 'Optional Care later',
+      text: 'After setup, you can keep FAQ and prompt refresh with us, or run it yourself. Your call.',
+    },
+  ],
+  processLabel: 'How it runs',
+  processHeading: 'Approve, install, hand off',
+  processSteps: [
+    {
+      label: 'FAQ brain',
+      text: 'Approve what it may say. Ban what it must never say.',
+    },
+    {
+      label: 'Install',
+      text: 'On your site, branded, mobile-friendly.',
+    },
+    {
+      label: 'Handoff',
+      text: 'Alert path tested. Escape hatch obvious.',
+    },
+  ],
+  stackLabel: 'Everything included',
+  stackHeading: 'What ships on one site',
+  stackItems: [
+    {
+      title: 'Approved FAQ set',
+      text: 'Up to twenty Q and As you sign off before go-live.',
+    },
+    {
+      title: 'Chat UI',
+      text: 'On your domain, not a random third-party look.',
+    },
+    {
+      title: 'Handoff rules',
+      text: 'When to stop answering and call a human.',
+    },
+    {
+      title: 'Guardrails',
+      text: 'No inventing prices or clinical advice.',
+    },
+  ],
+  scopeLine:
+    'One site. Up to twenty approved FAQs, branded AI chat, handoff, and guardrails. Not AI Phone, not Schema FAQ markup, not a qualify-and-book CRM agent. Optional Care after setup is available if you want ongoing refresh. Setup price is fixed either way.',
+  priceLabel: 'Investment',
+  price: '$950',
+  priceLead: 'Paid once when the FAQ list locks at kickoff.',
+  guarantee:
+    'Chat answers the approved FAQ set and hands off as scoped, or we keep working at no extra cost until it does.',
+  priceAnchor: 'Reception time back on questions a page should own.',
+  faqLabel: 'Objections',
+  faqHeading: 'Straight answers before you pay',
+  faqs: [
+    {
+      q: 'Is this a generic Tidio-style widget?',
+      a: 'No. We build branded AI chat on your site, trained on FAQs you approve, with handoff and a tight leash. Setup is fixed. Ongoing Care is optional later if you want it.',
+    },
+    {
+      q: 'Will it invent prices or medical claims?',
+      a: 'No. Guardrails ban inventing prices and clinical advice. If it cannot answer safely, it hands off.',
+    },
+    {
+      q: 'Will it book appointments alone?',
+      a: 'Only if you also have Booking System or a path we can point to. Chat itself does not invent calendar slots.',
+    },
+    {
+      q: 'Is this Schema and FAQ Pack?',
+      a: 'No. Schema FAQ puts answers on the page with markup. This product is a live chat bubble.',
+    },
+    {
+      q: 'Is this AI Phone?',
+      a: 'No. AI Phone is voice on the phone. This is chat on the website.',
+    },
+    {
+      q: 'Do I have to buy Care?',
+      a: 'No. Setup stands alone. Care is optional after the chat is live, only if you want ongoing FAQ and prompt refresh.',
+    },
+    {
+      q: 'Is this refundable?',
+      a: "There's no change-of-mind refund, because we start straight away. If the agreed chat and handoff are not delivered, we keep working at no extra cost until they are.",
+    },
+  ],
+  finalLabel: 'Last step',
+  finalHeading: 'Answer the usual without inventing the rest',
+  finalLine: 'AI chat, human door, tight leash. Paid once.',
+  proofKind: 'site-chat',
+}
+
 import {DRAFT_COPY_BY_SLUG} from './funnelDraftProducts'
 
 export function funnelCopyForSlug(slug: string | undefined): FunnelProductCopy {
+  if (slug === 'site-chat') return SITE_CHAT_COPY
   if (slug === 'tracking-forms') return TRACKING_FORMS_COPY
   if (slug === 'schema-faq') return SCHEMA_FAQ_COPY
   if (slug === 'onpage-search') return ONPAGE_SEARCH_COPY

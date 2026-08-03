@@ -116,6 +116,8 @@ export type FunnelAccessPayload = {
   trackingStatus?: string
   trackingActions?: string
   trackingDestinations?: string
+  chatTopics?: string
+  chatHandoff?: string
   websiteUrl?: string
   teamSize?: string
   teamTools?: string
