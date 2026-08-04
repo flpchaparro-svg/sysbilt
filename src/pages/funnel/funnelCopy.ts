@@ -370,9 +370,9 @@ export const MISSED_CALL_COPY: FunnelProductCopy = {
 
 export const GOOGLE_PROFILE_COPY: FunnelProductCopy = {
   eyebrow: 'Fixed price, two business days, you keep the keys',
-  h1Generic: "Your Google profile is the first thing customers see. Right now it's working against you.",
+  h1Generic: "Your Google profile is the first thing customers see, and right now it's working against you",
   h1Personal: (b: string) =>
-    `${b}, your Google profile is the first thing customers see. Right now it's working against you.`,
+    `${b}, your Google profile is the first thing customers see, and right now it's working against you`,
   sub: "Before anyone visits your website, they see your Google Business Profile: the map listing, the photos, the reviews, the hours. When it's thin or half-claimed, people quietly pick the business next to you that looks alive.",
   ctaLabel: 'Fix my profile, $600',
   proofLabel: 'The front door',
@@ -389,7 +389,7 @@ export const GOOGLE_PROFILE_COPY: FunnelProductCopy = {
   proofAfterGeneric:
     "That panel is often the highest-traffic page you own, and the one nobody looks after. This fix is two business days of proper attention, not a retainer.",
   painLabel: 'What this is costing you',
-  painHeading: "Google is already showing customers a version of your business. Nobody's managing it.",
+  painHeading: "Google is already showing customers a version of your business, and nobody's managing it",
   painLines: [
     'Most profiles were claimed once, years ago, and never touched again. Missing services, old hours, three phone photos, categories Google guessed.',
     'Doing it yourself someday costs you every day it waits, because the profile is deciding calls right now.',
@@ -470,6 +470,10 @@ export const GOOGLE_PROFILE_COPY: FunnelProductCopy = {
   faqLabel: 'Objections',
   faqHeading: 'Straight answers before you buy',
   faqs: [
+    {
+      q: 'Why is this only $600?',
+      a: 'Because it is two focused days on one listing and we have done it enough times to be quick. It is deliberately the cheapest door we sell. Most people start here, see that we did what we said, and decide about the rest afterwards.',
+    },
     {
       q: 'Do you need my Google login?',
       a: 'No. Google lets you add us as a manager without sharing your password, and we walk you through it in two minutes. Ownership stays with you.',
@@ -606,7 +610,7 @@ export const SEARCH_FIX_COPY: FunnelProductCopy = {
     },
   ],
   scopeLine:
-    'Getting seen again costs less than one of the clients invisibility is already costing you.',
+    'One site, one Search Console property. We clear what is blocking Google and watch the recrawl for 30 days. Manual penalties and content strategy are a different job, and we tell you straight if that is what you are actually looking at.',
   priceLabel: 'Investment',
   price: '$1,400',
   priceLead: 'Paid once, and we start. No quotes, no meetings, no scope creep.',
@@ -617,6 +621,10 @@ export const SEARCH_FIX_COPY: FunnelProductCopy = {
   faqLabel: 'Objections',
   faqHeading: 'Straight answers before you buy',
   faqs: [
+    {
+      q: 'Why is this cheaper than an SEO agency?',
+      a: 'Because this is a rescue with an end, not a monthly programme. An agency would put you on a retainer and reach this in month two. We find what is blocking Google, clear it, resubmit the site and watch the recrawl for 30 days. Then we are finished.',
+    },
     {
       q: 'Is this refundable?',
       a: "There's no change-of-mind refund, because we start straight away. What you have instead is stronger: if the blocked pages aren't returning through the 30-day watch, we keep working at no extra cost until they are.",
@@ -745,7 +753,8 @@ export const LANDING_PAGE_COPY: FunnelProductCopy = {
       text: 'Including one round of copy tweaks after real traffic hits it.',
     },
   ],
-  scopeLine: "You're already paying for the clicks. This is the difference between renting them and keeping them.",
+  scopeLine:
+    'One landing page on your own domain, matched to one offer. Extra pages or extra offers are quoted the same day. Running the ad account itself is not included.',
   priceLabel: 'Investment',
   price: '$1,800',
   priceLead: 'Paid once, and we start. No quotes, no meetings, no scope creep.',
@@ -756,6 +765,10 @@ export const LANDING_PAGE_COPY: FunnelProductCopy = {
   faqLabel: 'Objections',
   faqHeading: 'Straight answers before you buy',
   faqs: [
+    {
+      q: 'Why not put this money into more ads?',
+      a: 'Because the clicks are not the problem. Doubling the spend into a page that never asks for the enquiry just doubles what you waste. Fix where they land once, and every campaign after this one works harder for the same money.',
+    },
     {
       q: 'Is this refundable?',
       a: "No change-of-mind refund, because we start straight away. Instead: if the page isn't converting the way a matched page should, we keep tuning at no extra cost until it is.",
@@ -884,7 +897,8 @@ export const CRM_RESCUE_COPY: FunnelProductCopy = {
       text: 'While it beds in.',
     },
   ],
-  scopeLine: "That's about two of the clients silence is already costing you, paid once.",
+  scopeLine:
+    'One business, one lead system, on whichever CRM you already use. Missed-call text-back is folded in. Extra pipelines, multi-brand setups and custom software builds get a same-day quote so the fixed price stays honest.',
   priceLabel: 'Investment',
   price: '$2,800',
   priceLead: 'Paid once, and we start. Fill the access form, we audit what you have, then we call you when we have what we need.',
@@ -894,6 +908,10 @@ export const CRM_RESCUE_COPY: FunnelProductCopy = {
   faqLabel: 'Objections',
   faqHeading: 'Straight answers before you buy',
   faqs: [
+    {
+      q: 'Why not hire someone to chase leads instead?',
+      a: 'One person doing this costs you more than this within a month, and they still go home at five. We rebuild the system once so every enquiry lands somewhere owned, alerts a phone in seconds and chases itself. After that it runs whether anyone remembers or not.',
+    },
     {
       q: 'We already have a CRM.',
       a: "Most of our rescues do. The system isn't the problem, the setup is. We rescue what you have before we'd ever suggest replacing it.",
@@ -1017,17 +1035,23 @@ export const TEAM_AI_COPY: FunnelProductCopy = {
       text: "The one-page read on your wider systems, plus the one thing we'd fix next.",
     },
   ],
-  scopeLine: 'One afternoon, priced under a week of one salary, for hours back across the whole team.',
+  scopeLine:
+    'One session, up to 12 people, run on your own real work. Bigger teams split into two sessions, quoted fairly, so the fixed price stays honest.',
   priceLabel: 'Investment',
   price: 'From $1,950',
   priceLead:
     'Remote $1,950 or face-to-face in Sydney $2,400. Paid once. Fill the prep form with a date range at least two weeks out. We confirm a tentative day once we understand your work.',
   guarantee:
     "Our promise: if the team doesn't leave with working prompts and a setup they'll actually use, we come back and run it again at no extra cost.",
-  priceAnchor: 'One afternoon, priced under a week of one salary, for hours back across the whole team.',
+  priceAnchor:
+    "Work out what half a day of your team costs, then work out what they lose in a week to jobs an AI does in a minute. This is one afternoon, paid once, and the hours come back every week after it.",
   faqLabel: 'Objections',
   faqHeading: 'Straight answers before you buy',
   faqs: [
+    {
+      q: 'Why not just let people work AI out themselves?',
+      a: 'Because they already are, unevenly, quietly, and with no agreement about what client information should never go near it. You are paying for that today. This turns it into one shared way of working, on your real jobs, with rules everybody has actually read.',
+    },
     {
       q: 'Is this refundable?',
       a: "No change-of-mind refund. Instead: if the team doesn't leave with working prompts and a setup they'll use, we run it again free.",
@@ -1167,10 +1191,15 @@ export const CHANGE_PACK_COPY: FunnelProductCopy = {
     'Fixed once scoped. The form and the call set the system, the headcount, the date, and which pieces you need. You get the number in writing the same day.',
   guarantee:
     'Our promise: the pack ships before your go-live date, complete, or we keep building at no extra cost until it is.',
-  priceAnchor: 'Priced against the project it protects, not the hours of recording.',
+  priceAnchor:
+    'Put it beside what the system itself cost. A rollout people quietly refuse to use writes off that whole budget, and you normally find out in month three when the old spreadsheets are still open. This is a fraction of the project, spent on the one part that decides whether any of it works.',
   faqLabel: 'Objections',
   faqHeading: 'Straight answers before you book',
   faqs: [
+    {
+      q: 'Why does this start at $6,000?',
+      a: 'Because it is built for your system rather than bought off a shelf. We learn how the work actually changes, record the how-tos on your screens, write the desk sheets, run the live session and come back at 30 days. You get the fixed number in writing at the scoping call, which costs nothing.',
+    },
     {
       q: 'What systems is this for?',
       a: 'Any go-live where people must work differently: CRM, AI tools, rostering, accounts, ops software, or a merge of two ways of working. If it has a Monday and a confused team, it fits.',
@@ -1303,10 +1332,15 @@ export const CONTENT_SYSTEM_COPY: FunnelProductCopy = {
     'Most people take the scoping form and the 15-minute call first. If you already know, pay the setup and we book your kickoff recording.',
   guarantee:
     'Our promise: if a month of content does not sound like you, we redo it at no extra cost until it does.',
-  priceAnchor: 'One hour of your month, against every customer who checks you out before they call.',
+  priceAnchor:
+    'A part-time marketing hire costs more than this every month, before super and leave, and still needs briefing, directing and covering when they are away. This costs you one recorded hour a month and nothing else, and you can pause it whenever you like.',
   faqLabel: 'Objections',
   faqHeading: 'Straight answers before you book',
   faqs: [
+    {
+      q: 'Why not hire someone or use an agency?',
+      a: 'A junior marketing hire costs more per month than this once you count super, leave and the hours you spend directing them. An agency costs about the same and never quite sounds like you. Here you talk for an hour, a person makes the work, and you approve one batch.',
+    },
     {
       q: 'What do you need from me each month?',
       a: 'One recorded hour, talking about jobs, questions customers ask, and opinions on your industry. We handle everything after that.',
@@ -1438,7 +1472,7 @@ export const REVIEWS_COPY: FunnelProductCopy = {
     },
   ],
   scopeLine:
-    'Real customers only. We never post fake reviews, buy stars, or game Google. The engine asks. Your customers decide.',
+    'One business, one review path, real customers only. We never post fake reviews, buy stars, or game Google. The engine asks, your customers decide. Extra locations are quoted the same day so the fixed price stays honest.',
   priceLabel: 'Investment',
   price: '$1,100',
   priceLead: 'Paid once, and we start. No quotes, no meetings, no scope creep.',
@@ -1449,6 +1483,10 @@ export const REVIEWS_COPY: FunnelProductCopy = {
   faqLabel: 'Objections',
   faqHeading: 'Straight answers before you buy',
   faqs: [
+    {
+      q: 'Why not just ask customers ourselves?',
+      a: 'You already meant to, and that is exactly the point. Asking is not the hard part, remembering at the end of a long job is. This builds the ask into what already happens, in wording you approved, so it fires without anyone having to think about it.',
+    },
     {
       q: 'Do you post reviews for us?',
       a: 'No. We never post fake reviews, buy stars, or write reviews pretending to be customers. We build the ask. Real people leave real reviews.',
@@ -1735,6 +1773,10 @@ export const BOOKING_COPY: FunnelProductCopy = {
   faqHeading: 'Straight answers before you buy',
   faqs: [
     {
+      q: 'Why pay for this when booking tools are free?',
+      a: 'The tool is the cheap part, and it is usually already sitting there unused. The work is wiring it to your real calendar and hours, putting Book now where ready customers actually look, and getting confirmations and reminders firing so the slots stay filled.',
+    },
+    {
       q: 'Which booking tool do you use?',
       a: 'Whatever you already have, if it can sync a real calendar. HubSpot Meetings and Calendly are common. If you have nothing, we pick the lightest option that fits and explain the monthly cost in plain English before we lock it in.',
     },
@@ -1866,7 +1908,7 @@ export const WEBSITE_COPY: FunnelProductCopy = {
     'Page count, form and care inclusions are written down before we build. Extra work is quoted, never assumed. If what we agreed is not delivered as scoped, we keep working at no extra cost until it is.',
   priceAnchor:
     "You're buying a professional front door and someone else holding the technical end, not a five thousand dollar science project.",
-  faqLabel: 'Straight answers',
+  faqLabel: 'Objections',
   faqHeading: 'Straight answers before you buy',
   faqs: [
     {
@@ -2944,7 +2986,7 @@ export const SCHEMA_FAQ_COPY: FunnelProductCopy = {
     },
   ],
   scopeLine:
-    'Up to three service pages, up to eight FAQs each, on one site. Extra services quoted the same day. Not Site Chat, not On-Page Search titles, not a GEO retainer.',
+    'Up to three service pages, up to eight questions each, on one site. Extra services quoted the same day. Not Site AI Chat, not the On-Page Search title work, and not an ongoing AI visibility retainer.',
   priceLabel: 'Investment',
   price: '$1,200',
   priceLead: 'Paid once, and we start. No quotes, no meetings, no scope creep.',
@@ -3081,7 +3123,7 @@ export const TRACKING_FORMS_COPY: FunnelProductCopy = {
     },
   ],
   scopeLine:
-    'One site. Up to five primary events and up to three forms. GA4 checked, GTM only if needed. Not heatmaps, not call tracking as a product, not CRM Rescue, not a full analytics rebuild.',
+    'One site. Up to five main actions and up to three forms. We check your Google Analytics, and only touch tag manager if the job needs it. Not heatmaps, not call tracking, not CRM Rescue, not a full analytics rebuild.',
   priceLabel: 'Investment',
   price: '$950',
   priceLead: 'Paid once, and we start. No quotes, no meetings, no scope creep.',

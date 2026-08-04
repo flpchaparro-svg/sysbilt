@@ -71,12 +71,12 @@ const OUTBOUND_GROUPS: CatalogueGroup[] = [
   },
   {
     title: 'Bundles',
-    blurb: 'Combined scopes at a list price.',
+    blurb: 'Related jobs booked together, with one handover instead of three.',
     codes: ['bundle-clinic', 'bundle-speed-next', 'bundle-front-door'],
   },
   {
     title: 'Promotions',
-    blurb: 'Entry hooks and commercial experiments. Draft only.',
+    blurb: 'Limited offers and easier ways in. Still being built.',
     codes: ['website-hook'],
   },
 ]
@@ -251,14 +251,14 @@ const FunnelHomePage: React.FC = () => {
               [
                 {
                   id: 'outbound' as const,
-                  label: 'Outbound doors',
-                  hint: 'Cold email and buy paths',
+                  label: 'Buy today',
+                  hint: 'Fixed price, paid online',
                   activeColor: FUNNEL_COLOURS.accent,
                 },
                 {
                   id: 'warm' as const,
-                  label: 'Warm scoping',
-                  hint: 'Call or qualify first',
+                  label: 'Scoped on a call',
+                  hint: 'Price fixed before you commit',
                   activeColor: FUNNEL_COLOURS.goldDeep,
                 },
               ] as const
@@ -288,8 +288,8 @@ const FunnelHomePage: React.FC = () => {
             style={{color: FUNNEL_COLOURS.muted}}
           >
             {tab === 'outbound'
-              ? 'Cold doors and related drafts, grouped by service. Grey cards are drafts, not for sale yet.'
-              : 'Warm work that starts with a call or short scope. Grey cards are drafts, not for sale yet.'}
+              ? 'Every job here has one price and one scope, written down before you pay. Grey cards are still being built and are not for sale yet.'
+              : 'These start with a short call so the price fits your business, and you get that number in writing before you commit. Grey cards are still being built and are not for sale yet.'}
           </p>
         </Reveal>
 

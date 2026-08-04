@@ -3139,7 +3139,7 @@ const TEAM_FORMAT_OPTIONS = [
   },
   {
     id: 'onsite' as const,
-    label: 'Face-to-face · Sydney',
+    label: 'Face-to-face in Sydney',
     blurb: 'Same session, in person. We come to you in Sydney.',
   },
 ] as const
@@ -3193,7 +3193,7 @@ const TEAM_SENSITIVE_OPTIONS = [
   {id: 'payroll', label: 'Payroll / HR'},
   {id: 'financial', label: 'Financials / bank'},
   {id: 'passwords', label: 'Passwords / logins'},
-  {id: 'unsure', label: 'Not sure yet · cover it all'},
+  {id: 'unsure', label: 'Not sure yet, cover it all'},
 ] as const
 
 const TEAM_TIMING_OPTIONS = [
@@ -7042,7 +7042,7 @@ const FunnelAccessPage: React.FC = () => {
                 hint="Paste the ad copy, the offer, or the one sentence a visitor should believe. Include price or deadline if it matters."
                 value={landingOffer}
                 onChange={setLandingOffer}
-                placeholder="e.g. Free kitchen design consult this month · book online…"
+                placeholder="e.g. Free kitchen design consult this month, book online…"
                 multiline
                 disabled={landingOffer.trim().length < 8}
                 onNext={() => goNext('landingOffer')}
