@@ -89,6 +89,8 @@ export type SopHomeId =
   | 'docs'
   | 'other'
   | 'unsure'
+/** Which mail tool holds the Inbox Triage mailbox. */
+export type InboxMailId = 'gmail' | 'outlook' | 'shared' | 'other' | 'unsure'
 
 export type FunnelAccessPayload = {
   product: FunnelProductCode
@@ -145,7 +147,9 @@ export type FunnelAccessPayload = {
   intakeDest?: IntakeDestId | ''
   intakePurpose?: string
   noshowTools?: string
+  inboxMail?: InboxMailId | ''
   inboxTools?: string
+  inboxOwner?: string
   sopJobs?: string
   sopExpert?: string
   sopTools?: string

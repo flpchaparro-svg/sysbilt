@@ -61,6 +61,7 @@ import {
   type QuoteToolId,
   type IntakeDestId,
   type SopHomeId,
+  type InboxMailId,
 } from './funnelAccessTypes'
 
 const SCHEDULER_URL = 'https://meetings-ap1.hubspot.com/felipe-chaparro'
@@ -121,7 +122,9 @@ type StepId =
   | 'intakeDest'
   | 'intakePurpose'
   | 'noshowTools'
+  | 'inboxMail'
   | 'inboxTools'
+  | 'inboxOwner'
   | 'sopJobs'
   | 'sopExpert'
   | 'sopTools'
@@ -307,6 +310,13 @@ const PHASES_INTAKE: {id: PhaseId; n: number; label: string}[] = [
 const PHASES_SOP: {id: PhaseId; n: number; label: string}[] = [
   {id: 'about', n: 1, label: 'About you'},
   {id: 'site', n: 2, label: 'Your jobs'},
+  {id: 'access', n: 3, label: 'Access'},
+  {id: 'done', n: 4, label: 'Done'},
+]
+
+const PHASES_INBOX: {id: PhaseId; n: number; label: string}[] = [
+  {id: 'about', n: 1, label: 'About you'},
+  {id: 'site', n: 2, label: 'Your mailbox'},
   {id: 'access', n: 3, label: 'Access'},
   {id: 'done', n: 4, label: 'Done'},
 ]
@@ -618,6 +628,12 @@ function phaseForStep(
     }
     return 'access'
   }
+  if (kind === 'inbox-triage') {
+    if (step === 'inboxMail' || step === 'inboxTools' || step === 'inboxOwner') {
+      return 'site'
+    }
+    return 'access'
+  }
   if (kind === 'bundle-clinic') {
     if (
       step === 'profileUrl' ||
@@ -648,7 +664,6 @@ function phaseForStep(
   if (
     kind === 'a11y-pass' ||
     kind === 'noshow-rescue' ||
-    kind === 'inbox-triage' ||
     kind === 'dashboard-lite' ||
     kind === 'geo' ||
     kind === 'client-finder'
@@ -656,7 +671,6 @@ function phaseForStep(
     if (
       step === 'a11yPages' ||
       step === 'noshowTools' ||
-      step === 'inboxTools' ||
       step === 'dashMetrics' ||
       step === 'bundleNotes' ||
       step === 'geoTopics' ||
@@ -1406,6 +1420,79 @@ function sopAccessOptionsForHome(home: SopHomeId | null) {
       return [call, share, tool]
   }
 }
+
+/** Inbox Triage: access follows the mail tool for one mailbox. */
+function inboxAccessOptionsForMail(mail: InboxMailId | null) {
+  const share = {
+    id: 'invite' as AccessPathId,
+    label: 'Share the mailbox',
+    blurb: 'Delegate or share the Gmail, Outlook, or shared inbox so we can set rules and draft helpers.',
+    icon: <Users className="w-full h-full" strokeWidth={1.25} />,
+  }
+  const tool = {
+    id: 'provider' as AccessPathId,
+    label: 'Mail login',
+    blurb: 'Temporary login into the mail tool for that one mailbox. Do not send passwords in this form.',
+    icon: <Mail className="w-full h-full" strokeWidth={1.25} />,
+  }
+  const call = {
+    id: 'call' as AccessPathId,
+    label: 'Quick access call',
+    blurb: 'We walk through the mailbox, who owns replies, and how to get in. About ten minutes.',
+    icon: <Phone className="w-full h-full" strokeWidth={1.25} />,
+  }
+  switch (mail) {
+    case 'gmail':
+    case 'outlook':
+    case 'shared':
+      return [share, call]
+    case 'other':
+      return [share, tool, call]
+    case 'unsure':
+    default:
+      return [call, share, tool]
+  }
+}
+
+const INBOX_MAIL_OPTIONS: {
+  id: InboxMailId
+  label: string
+  blurb: string
+  icon: React.ReactNode
+  unsure?: boolean
+}[] = [
+  {
+    id: 'gmail',
+    label: 'Gmail / Google Workspace',
+    blurb: 'A Google mailbox the owner or team already opens every day.',
+    icon: <Mail className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'outlook',
+    label: 'Outlook / Microsoft 365',
+    blurb: 'Outlook or Exchange for the primary inbox in scope.',
+    icon: <Mail className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'shared',
+    label: 'Shared inbox',
+    blurb: 'info@, bookings@, or another address several people watch.',
+    icon: <Users className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'other',
+    label: 'Other mail tool',
+    blurb: 'Apple Mail, Fastmail, Zoho, or something else.',
+    icon: <Server className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'unsure',
+    label: 'Not sure',
+    blurb: 'We will lock the mail tool on the access call.',
+    icon: <Sparkles className="w-full h-full" strokeWidth={1.25} />,
+    unsure: true,
+  },
+]
 
 /** Intake Form Pack: access cards follow where submissions should land. */
 function intakeAccessOptionsForDest(dest: IntakeDestId | null) {
@@ -3329,6 +3416,7 @@ function helpForStep(
     isQuoteFollowup?: boolean
     isIntakeForms?: boolean
     isSopPlaybook?: boolean
+    isInboxTriage?: boolean
     isBundleClinic?: boolean
     isBundleSpeedNext?: boolean
     isBundleFrontDoor?: boolean
@@ -3353,6 +3441,8 @@ function helpForStep(
             ? 'A few plain questions about you and the intake path so we can begin. No tech degree needed. If a later step feels unclear, open Help again.'
           : opts?.isSopPlaybook
             ? 'A few plain questions about the jobs to document, who knows them today, and where playbooks should live. No tech degree needed. If a later step feels unclear, open Help again.'
+          : opts?.isInboxTriage
+            ? 'A few plain questions about the mailbox, what burns time, and who owns replies. No tech degree needed. If a later step feels unclear, open Help again.'
           : opts?.isBundleClinic
             ? 'A few plain questions about you, your Google listing, and the clinic phone so we can begin. No tech degree needed. If a later step feels unclear, open Help again.'
           : opts?.isBundleSpeedNext
@@ -3389,6 +3479,12 @@ function helpForStep(
                 'About you: name, email, business',
                 'Your jobs: which work to document, who knows it, tools, playbook home',
                 'Access: share the workspace or a short call',
+              ]
+          : opts?.isInboxTriage
+            ? [
+                'About you: name, email, business',
+                'Your mailbox: mail tool, what burns time, who owns replies',
+                'Access: share the mailbox or a short call',
               ]
           : opts?.isBundleClinic
             ? [
@@ -3714,10 +3810,24 @@ function helpForStep(
         title: 'Booking tool and reminder gaps',
         body: 'What you use today and where reminders fail.',
       }
+    case 'inboxMail':
+      return {
+        title: 'Which mail tool holds the mailbox',
+        body: opts?.isInboxTriage
+          ? 'One primary mailbox or shared inbox. Gmail, Outlook, a shared address, or another tool. Not sure is fine.'
+          : 'The mail tool for the inbox in scope.',
+      }
     case 'inboxTools':
       return {
-        title: 'Inbox and tools in play',
-        body: 'Email or CRM, and what burns the most time.',
+        title: 'What burns the most time',
+        body: opts?.isInboxTriage
+          ? 'Types of mail that pile up, and the replies you rewrite every week. A short list is enough. This locks the one-mailbox scope at kickoff.'
+          : 'Email or CRM, and what burns the most time.',
+      }
+    case 'inboxOwner':
+      return {
+        title: 'Who owns replies',
+        body: 'The person who decides what goes out from this mailbox. Name and role is enough.',
       }
     case 'sopJobs':
       return {
@@ -3846,6 +3956,8 @@ function helpForStep(
             ? 'This bundle needs Google listing access, the review ask path, and Book now access on the calendar and site or Maps. Pick the easiest option. A short call can cover it.'
           : opts?.isSopPlaybook
             ? 'We need a way to reach the expert, watch how the job is done, and leave playbooks where the team will find them. Pick the easiest option.'
+          : opts?.isInboxTriage
+            ? 'We need a way into the one mailbox in scope so we can set rules and draft helpers. Pick the easiest option. A short call is fine.'
           : 'Pick the easiest path for you. We never need more access than the job requires. Hover a card for a short explanation, then Select.',
         steps: opts?.isBundleClinic
           ? [
@@ -3860,6 +3972,12 @@ function helpForStep(
                 'Claim or recover: if the listing is not yours yet',
                 'Website access: if Book now lives on the site',
                 'Quick call: we walk Maps, reviews, and Book now together',
+              ]
+          : opts?.isInboxTriage
+            ? [
+                'Share the mailbox: delegate or shared access',
+                'Mail login: temporary access if share is awkward',
+                'Quick call: we walk the mailbox and ownership together',
               ]
           : opts?.isSopPlaybook
             ? [
@@ -3883,6 +4001,8 @@ function helpForStep(
             ? 'Anything that helps us reach Maps manager, the review ask tool, and Book now without a chase. Do not put passwords in this form if you would rather send them by email.'
           : opts?.isSopPlaybook
             ? 'Anything that helps us reach the expert and the playbook home without a chase. Do not put passwords in this form if you would rather send them by email.'
+          : opts?.isInboxTriage
+            ? 'Anything that helps us reach the mailbox without a chase. Do not put passwords in this form if you would rather send them by email.'
           : 'Anything that helps us log in without a chase. Do not put passwords in this form if you would rather send them by email.',
         steps: opts?.isBundleClinic
           ? [
@@ -4144,6 +4264,8 @@ const FunnelAccessPage: React.FC = () => {
   const [dmPlatform, setDmPlatform] = useState<DmPlatformId | null>(null)
   const [quoteTool, setQuoteTool] = useState<QuoteToolId | null>(null)
   const [intakeDest, setIntakeDest] = useState<IntakeDestId | null>(null)
+  const [inboxMail, setInboxMail] = useState<InboxMailId | null>(null)
+  const [inboxOwner, setInboxOwner] = useState('')
   const [sopExpert, setSopExpert] = useState('')
   const [sopTools, setSopTools] = useState('')
   const [sopHome, setSopHome] = useState<SopHomeId | null>(null)
@@ -4249,7 +4371,6 @@ const FunnelAccessPage: React.FC = () => {
   const usesBatchWizard =
     isA11yPass ||
     isNoshowRescue ||
-    isInboxTriage ||
     isDashboardLite ||
     isGeo ||
     isClientFinder
@@ -4258,9 +4379,7 @@ const FunnelAccessPage: React.FC = () => {
       ? 'a11yPages'
       : isNoshowRescue
         ? 'noshowTools'
-        : isInboxTriage
-          ? 'inboxTools'
-          : isDashboardLite
+        : isDashboardLite
             ? 'dashMetrics'
             : isGeo
               ? 'geoTopics'
@@ -4281,6 +4400,7 @@ const FunnelAccessPage: React.FC = () => {
   const usesQuoteWizard = isQuoteFollowup
   const usesIntakeWizard = isIntakeForms
   const usesSopWizard = isSopPlaybook
+  const usesInboxWizard = isInboxTriage
   const usesClinicWizard = isBundleClinic
   const usesSpeedNextWizard = isBundleSpeedNext
   const usesFrontDoorWizard = isBundleFrontDoor
@@ -4366,6 +4486,8 @@ const FunnelAccessPage: React.FC = () => {
                             ? 'intake-forms'
                           : usesSopWizard
                             ? 'sop-playbook'
+                          : usesInboxWizard
+                            ? 'inbox-triage'
                           : usesClinicWizard
                             ? 'bundle-clinic'
                           : usesFrontDoorWizard
@@ -4421,6 +4543,8 @@ const FunnelAccessPage: React.FC = () => {
                           ? PHASES_INTAKE
                         : usesSopWizard
                           ? PHASES_SOP
+                        : usesInboxWizard
+                          ? PHASES_INBOX
                         : usesClinicWizard
                           ? PHASES_CLINIC_BUNDLE
                         : usesFrontDoorWizard
@@ -4795,6 +4919,21 @@ const FunnelAccessPage: React.FC = () => {
         'done',
       ]
     }
+    if (usesInboxWizard) {
+      return [
+        'product',
+        'name',
+        'email',
+        'business',
+        'inboxMail',
+        'inboxTools',
+        'inboxOwner',
+        'access',
+        'accessDetail',
+        'notes',
+        'done',
+      ]
+    }
     if (usesClinicWizard) {
       const steps: StepId[] = [
         'product',
@@ -4936,6 +5075,7 @@ const FunnelAccessPage: React.FC = () => {
     usesQuoteWizard,
     usesIntakeWizard,
     usesSopWizard,
+    usesInboxWizard,
     usesClinicWizard,
     usesFrontDoorWizard,
     usesBatchWizard,
@@ -4963,6 +5103,7 @@ const FunnelAccessPage: React.FC = () => {
     isQuoteFollowup,
     isIntakeForms,
     isSopPlaybook,
+    isInboxTriage,
     isBundleClinic,
     isBundleSpeedNext,
     isBundleFrontDoor,
@@ -4991,6 +5132,8 @@ const FunnelAccessPage: React.FC = () => {
         ? intakeAccessOptionsForDest(intakeDest)
       : usesSopWizard
         ? sopAccessOptionsForHome(sopHome)
+      : usesInboxWizard
+        ? inboxAccessOptionsForMail(inboxMail)
       : usesClinicWizard
         ? clinicBundleAccessOptions(profileStatus, phoneSetup)
       : usesFrontDoorWizard
@@ -5077,6 +5220,11 @@ const FunnelAccessPage: React.FC = () => {
         sopTools.trim().length < 4 ||
         !sopHome
       ) {
+        setError('Something is missing. Use Back to check your answers.')
+        return
+      }
+    } else if (usesInboxWizard) {
+      if (!inboxMail || scopeText.trim().length < 8 || inboxOwner.trim().length < 2) {
         setError('Something is missing. Use Back to check your answers.')
         return
       }
@@ -5373,6 +5521,19 @@ const FunnelAccessPage: React.FC = () => {
             sopExpert: sopExpert.trim(),
             sopTools: sopTools.trim(),
             sopHome: sopHome!,
+            accessPath,
+            accessDetail: accessDetail.trim(),
+            notes: notes.trim(),
+          }
+      : usesInboxWizard
+        ? {
+            product,
+            name: name.trim(),
+            email: email.trim(),
+            business: business.trim(),
+            inboxMail: inboxMail!,
+            inboxTools: scopeText.trim(),
+            inboxOwner: inboxOwner.trim(),
             accessPath,
             accessDetail: accessDetail.trim(),
             notes: notes.trim(),
@@ -5862,6 +6023,12 @@ const FunnelAccessPage: React.FC = () => {
     setSopHome(id)
     setAccessPath(null)
     window.setTimeout(() => goNext('sopHome'), 200)
+  }
+
+  function selectInboxMail(id: InboxMailId) {
+    setInboxMail(id)
+    setAccessPath(null)
+    window.setTimeout(() => goNext('inboxMail'), 200)
   }
 
   function selectProfileStatus(id: ProfileStatusId) {
@@ -6462,6 +6629,56 @@ const FunnelAccessPage: React.FC = () => {
                   ))}
                 </div>
               </>
+            ) : null}
+
+            {usesInboxWizard && step === 'inboxMail' ? (
+              <>
+                <QuestionTitle>
+                  Which mail tool holds the <span style={{color: RED}}>mailbox</span>?
+                </QuestionTitle>
+                <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
+                  One primary mailbox or shared inbox. Hover a card, then Select. Not sure is fine.
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+                  {INBOX_MAIL_OPTIONS.map((opt) => (
+                    <div key={opt.id}>
+                      <SelectCard
+                        selected={inboxMail === opt.id}
+                        onSelect={() => selectInboxMail(opt.id)}
+                        title={opt.label}
+                        blurb={opt.blurb}
+                        icon={opt.icon}
+                        unsure={opt.unsure}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : null}
+
+            {usesInboxWizard && step === 'inboxTools' ? (
+              <OneField
+                title="What burns the most time?"
+                hint="Types of mail that pile up, and the replies you rewrite every week. A short list is enough."
+                value={scopeText}
+                onChange={setScopeText}
+                placeholder={'e.g. Quote replies\nReferral thank-yous\nSupplier noise under client mail'}
+                multiline
+                disabled={scopeText.trim().length < 8}
+                onNext={() => goNext('inboxTools')}
+              />
+            ) : null}
+
+            {usesInboxWizard && step === 'inboxOwner' ? (
+              <OneField
+                title="Who owns replies from this mailbox?"
+                hint="The person who decides what goes out. Name and role is enough."
+                value={inboxOwner}
+                onChange={setInboxOwner}
+                placeholder="e.g. Alex Chen, owner"
+                disabled={inboxOwner.trim().length < 2}
+                onNext={() => goNext('inboxOwner')}
+              />
             ) : null}
 
             {step === 'profileUrl' ? (
@@ -7089,9 +7306,7 @@ const FunnelAccessPage: React.FC = () => {
                     ? 'Which pages matter most'
                     : batchScopeField === 'noshowTools'
                       ? 'Booking tool and reminder gaps'
-                      : batchScopeField === 'inboxTools'
-                        ? 'Inbox and tools in play'
-                        : batchScopeField === 'dashMetrics'
+                      : batchScopeField === 'dashMetrics'
                           ? 'Metrics you need on one screen'
                           : batchScopeField === 'geoTopics'
                             ? 'Topics AI should know you for'
@@ -7102,9 +7317,7 @@ const FunnelAccessPage: React.FC = () => {
                     ? 'Priority pages for the access pass. Paths or plain names are fine.'
                     : batchScopeField === 'noshowTools'
                       ? 'What you use today and where reminders fail.'
-                      : batchScopeField === 'inboxTools'
-                        ? 'Email or CRM, and what burns the most time.'
-                        : batchScopeField === 'dashMetrics'
+                      : batchScopeField === 'dashMetrics'
                           ? 'Leads, bookings, ads, reviews. What you check every week.'
                           : batchScopeField === 'geoTopics'
                             ? 'Services, suburbs, and proof points tools should cite.'
@@ -7117,9 +7330,7 @@ const FunnelAccessPage: React.FC = () => {
                     ? '/\n/contact\n/book'
                     : batchScopeField === 'noshowTools'
                       ? 'e.g. Fresha, SMS day-before only'
-                      : batchScopeField === 'inboxTools'
-                        ? 'e.g. Gmail + HubSpot, quotes and referrals'
-                        : batchScopeField === 'dashMetrics'
+                      : batchScopeField === 'dashMetrics'
                           ? 'e.g. Weekly leads, booked jobs, ad spend'
                           : batchScopeField === 'geoTopics'
                             ? 'e.g. Kitchen reno, Inner West, 12 years'
@@ -7964,6 +8175,10 @@ const FunnelAccessPage: React.FC = () => {
                     <>
                       How should we reach the <span style={{color: RED}}>jobs and playbook home</span>?
                     </>
+                  ) : usesInboxWizard ? (
+                    <>
+                      How should we reach the <span style={{color: RED}}>mailbox</span>?
+                    </>
                   ) : usesClinicWizard ? (
                     profileStatus === 'unclaimed' ? (
                       <>
@@ -8048,6 +8263,8 @@ const FunnelAccessPage: React.FC = () => {
                       ? 'CRM invite, form tool login, inbox or sheet share, or a short call. Pick whatever is easiest.'
                     : usesSopWizard
                       ? 'Share the playbook workspace, give a temporary tool login if we must watch the job software, or a short call covering the expert and the jobs. Pick whatever is easiest.'
+                    : usesInboxWizard
+                      ? 'Share or delegate the mailbox, give a temporary mail login if share is awkward, or a short call covering ownership and how we get in. Pick whatever is easiest.'
                     : usesClinicWizard
                       ? profileStatus === 'unclaimed'
                         ? 'We need a path to claim the Google listing, plus how we reach the missed-call SMS setup. Or a short call covering both.'
@@ -8132,6 +8349,12 @@ const FunnelAccessPage: React.FC = () => {
                         : accessPath === 'provider'
                           ? 'Job tool name and login URL, or say you will email credentials separately.'
                           : 'Best times to call the expert, or anything that usually trips capture interviews.'
+                    : usesInboxWizard
+                      ? accessPath === 'invite'
+                        ? 'Mailbox address to share, and the email to invite. Or say you will send the share shortly.'
+                        : accessPath === 'provider'
+                          ? 'Mail tool name and login URL, or say you will email access separately. Do not put passwords here.'
+                          : 'Best times to call, or anything that usually trips mailbox access.'
                     : usesFrontDoorWizard
                       ? accessPath === 'invite'
                         ? 'Google account email for manager invite, plus the calendar email to share for Book now.'

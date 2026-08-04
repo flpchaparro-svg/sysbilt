@@ -167,6 +167,8 @@ const INTAKE_DEST = new Set(['crm', 'email', 'sheets', 'other', 'unsure']);
 const INTAKE_ACCESS = new Set(['invite', 'crm', 'provider', 'form-provider', 'call']);
 const SOP_HOME = new Set(['drive', 'notion', 'confluence', 'docs', 'other', 'unsure']);
 const SOP_ACCESS = new Set(['invite', 'provider', 'call']);
+const INBOX_MAIL = new Set(['gmail', 'outlook', 'shared', 'other', 'unsure']);
+const INBOX_ACCESS = new Set(['invite', 'provider', 'call']);
 const GOOGLE_PROFILE_STATUS = new Set([
   'unclaimed',
   'claimed-me',
@@ -276,7 +278,9 @@ type Body = {
   noshowTools?: unknown;
   intakeDest?: unknown;
   intakePurpose?: unknown;
+  inboxMail?: unknown;
   inboxTools?: unknown;
+  inboxOwner?: unknown;
   sopJobs?: unknown;
   sopExpert?: unknown;
   sopTools?: unknown;
@@ -656,7 +660,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const noshowTools = str(body.noshowTools, 4000);
   const intakeDest = str(body.intakeDest, 40);
   const intakePurpose = str(body.intakePurpose, 4000);
+  const inboxMail = str(body.inboxMail, 40);
   const inboxTools = str(body.inboxTools, 4000);
+  const inboxOwner = str(body.inboxOwner, 400);
   const sopJobs = str(body.sopJobs, 4000);
   const sopExpert = str(body.sopExpert, 400);
   const sopTools = str(body.sopTools, 4000);
@@ -729,7 +735,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const isBatchScoped =
     isA11yPass ||
     isNoshowRescue ||
-    isInboxTriage ||
     isDashboardLite ||
     isGeo ||
     isClientFinder;
@@ -1060,6 +1065,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       res.status(400).json({ error: 'Invalid playbook home or access path' });
       return;
     }
+  } else if (isInboxTriage) {
+    if (!INBOX_MAIL.has(inboxMail) || !INBOX_ACCESS.has(accessPath)) {
+      res.status(400).json({ error: 'Invalid mail tool or access path' });
+      return;
+    }
+    if (inboxTools.length < 8) {
+      res.status(400).json({ error: 'Missing what burns time in the inbox' });
+      return;
+    }
+    if (inboxOwner.length < 2) {
+      res.status(400).json({ error: 'Missing who owns replies' });
+      return;
+    }
   } else if (isBundleClinic) {
     const cleanPhone = phone.replace(/\s+/g, '');
     if (profileUrl.length < 3) {
@@ -1098,7 +1116,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     const scopeVal =
       (isA11yPass && a11yPages) ||
       (isNoshowRescue && noshowTools) ||
-      (isInboxTriage && inboxTools) ||
       (isDashboardLite && dashMetrics) ||
       (isGeo && geoTopics) ||
       (isClientFinder && finderIcp) ||
@@ -1512,6 +1529,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
             ]
               .filter(Boolean)
               .join('\n')
+        : isInboxTriage
+          ? [
+              `Funnel access form — ${product}`,
+              `Business: ${business}`,
+              `Mail tool: ${inboxMail}`,
+              `What burns time:\n${inboxTools}`,
+              `Who owns replies: ${inboxOwner}`,
+              `Access path: ${accessPath}`,
+              accessDetail ? `Access notes:\n${accessDetail}` : null,
+              notes ? `Other notes:\n${notes}` : null,
+              `Submitted: ${new Date().toISOString()}`,
+            ]
+              .filter(Boolean)
+              .join('\n')
         : isBundleClinic
           ? [
               `Funnel access form — ${product}`,
@@ -1537,7 +1568,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
               `Scope:\n${
                 a11yPages ||
                 noshowTools ||
-                inboxTools ||
                 dashMetrics ||
                 bundleNotes ||
                 geoTopics ||
@@ -1670,7 +1700,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     noshowTools: noshowTools || undefined,
     intakeDest: intakeDest || undefined,
     intakePurpose: intakePurpose || undefined,
+    inboxMail: inboxMail || undefined,
     inboxTools: inboxTools || undefined,
+    inboxOwner: inboxOwner || undefined,
     sopJobs: sopJobs || undefined,
     sopExpert: sopExpert || undefined,
     sopTools: sopTools || undefined,
@@ -1825,13 +1857,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
                               ? `Intake: ${intakeDest} · ${intakePurpose.slice(0, 60)}`
                             : isSopPlaybook
                               ? `Jobs: ${sopJobs.slice(0, 50)} · Expert: ${sopExpert.slice(0, 40)} · Home: ${sopHome}`
+                            : isInboxTriage
+                              ? `Mail: ${inboxMail} · Owner: ${inboxOwner.slice(0, 40)} · ${inboxTools.slice(0, 50)}`
                             : isBundleClinic
                               ? `Profile: ${profileUrl.slice(0, 60)} · ${profileStatus} · Phone: ${phone}${reviewJob ? ` · Visit: ${reviewJob}` : ''}`
                             : isBatchScoped
                               ? `${website} · Scope: ${(
                                   a11yPages ||
                                   noshowTools ||
-                                  inboxTools ||
                                   dashMetrics ||
                                   bundleNotes ||
                                   geoTopics ||
@@ -1849,7 +1882,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         isBooking ||
         isBundleClinic ||
         isBundleFrontDoor ||
-        isSopPlaybook
+        isSopPlaybook ||
+        isInboxTriage
           ? `Access: ${accessPath}`
           : `Platform: ${platform} · Access: ${accessPath}`,
         !isMissedCall &&
@@ -1863,6 +1897,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         !isBundleClinic &&
         !isBundleFrontDoor &&
         !isSopPlaybook &&
+        !isInboxTriage &&
         sameProvider !== 'yes'
           ? `Domain/hosting same: ${sameProvider}${domainProvider ? ` · Domain: ${domainProvider}` : ''}${hostingProvider ? ` · Host: ${hostingProvider}` : ''}`
           : null,
