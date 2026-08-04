@@ -26,6 +26,7 @@ const FunnelThanksPage = lazy(() => import('./pages/funnel/FunnelThanksPage'));
 const FunnelAccessPage = lazy(() => import('./pages/funnel/FunnelAccessPage'));
 const WebsiteWizardPage = lazy(() => import('./pages/funnel/WebsiteWizardPage'));
 const WebsiteAgreementPage = lazy(() => import('./pages/funnel/WebsiteAgreementPage'));
+const QuoteCaptureDemoPage = lazy(() => import('./pages/demo/quoteCapture/QuoteCaptureDemoPage'));
 const BlogPage = lazy(() => import('./pages/BlogPage'));
 const BlogPostPage = lazy(() => import('./pages/BlogPostPage'));
 const NewsPage = lazy(() => import('./pages/NewsPage'));
@@ -181,12 +182,14 @@ const App: React.FC = () => {
     location.pathname === '/go' ||
     location.pathname === '/go/thanks' ||
     location.pathname.startsWith('/go/');
+  const isDemoRoute = location.pathname.startsWith('/demo/');
   const hideChrome =
     location.pathname === '/contact' ||
     location.pathname.startsWith('/proposal/') ||
     location.pathname.startsWith('/agreement/') ||
     location.pathname.startsWith('/reports/') ||
-    isFunnelRoute;
+    isFunnelRoute ||
+    isDemoRoute;
 
   return (
     <HelmetProvider>
@@ -269,6 +272,7 @@ const App: React.FC = () => {
                     <Route path="/go/website/wizard" element={<WebsiteWizardPage />} />
                     <Route path="/go" element={<FunnelHomePage />} />
                     <Route path="/go/:slug" element={<FunnelPage />} />
+                    <Route path="/demo/quote-capture" element={<QuoteCaptureDemoPage />} />
 
                     <Route path="*" element={<NotFoundPage onNavigate={handleGlobalNavigate} />} />
                   </Routes>
@@ -282,7 +286,7 @@ const App: React.FC = () => {
           )}
           <Modal service={selectedService} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
           <CookieBanner />
-          {!isFunnelRoute && <HelpDock />}
+          {!isFunnelRoute && !isDemoRoute && <HelpDock />}
         </div>
       </LazyMotion>
     </HelmetProvider>
