@@ -5,72 +5,73 @@ import type {FunnelProductCopy} from '../funnelCopy'
  * Written for a first-time reader who has never seen the individual product pages.
  */
 export const BUNDLE_CLINIC_LIVE_COPY = {
-  eyebrow: 'Bundle · One location · One sprint',
-  h1Generic: 'Profile, reviews, and missed-call text-back for clinics that lose people at the door',
+  eyebrow: 'Three jobs, one sprint, one location',
+  h1Generic:
+    'People are looking for a clinic like yours today. Three small gaps send them next door',
   h1Personal: (b: string) =>
-    `${b}, profile, reviews, and missed-call text-back for clinics that lose people at the door`,
-  sub: 'Three capture jobs in one sprint: we clean your Google listing, set a review ask that keeps firing, and text people back when a call rings out. One kickoff. List price below buying the three apart.',
-  ctaLabel: 'Buy Clinic Bundle · $2,200',
-  proofLabel: 'The picture',
-  proofHeadingLive: 'Local demand dies in small gaps',
-  proofHeadingGeneric: 'Local demand dies in small gaps',
+    `${b}, people are looking for a clinic like yours today, and three small gaps send them next door`,
+  sub: 'Your Google listing looks half finished, your reviews stopped two years ago, and the calls that ring out never get answered. We close all three in one sprint: the listing cleaned up, a review ask that keeps firing after every visit, and an automatic text back when a call goes unanswered. One kickoff, one location.',
+  ctaLabel: 'Buy the Clinic Bundle, $2,200',
+  proofLabel: 'The leak',
+  proofHeadingLive: 'Three leaks that feel separate and are not',
+  proofHeadingGeneric: 'Three leaks that feel separate and are not',
   proofLead: (b: string | null) =>
     b
-      ? `${b} can look busy on Maps and still lose patients to a thin profile, quiet reviews, and unanswered calls.`
-      : 'Maps, trust, and the missed call are three leaks that feel separate and are not.',
+      ? `Someone searches for what ${b} does, finds a listing with the wrong hours and four old reviews, rings anyway, and gets voicemail. That is three chances to lose one patient, and you never hear about any of them.`
+      : 'Someone searches for what you do, finds a listing with the wrong hours and four old reviews, rings anyway, and gets voicemail. That is three chances to lose one patient, and you never hear about any of them.',
   proofLeadGeneric:
-    'Maps, trust, and the missed call are three leaks that feel separate and are not.',
+    'Someone searches for what you do, finds a listing with the wrong hours and four old reviews, rings anyway, and gets voicemail. That is three chances to lose one patient, and you never hear about any of them.',
   proofAfter:
-    'One sprint that cleans the listing, gets reviews moving, and catches missed calls with a text.',
+    'None of these is a big project. They stay broken because each one alone never feels urgent enough to start.',
   proofAfterGeneric:
-    'One sprint that cleans the listing, gets reviews moving, and catches missed calls with a text.',
+    'None of these is a big project. They stay broken because each one alone never feels urgent enough to start.',
   painLabel: 'What this is costing you',
-  painHeading: 'Patients leave without drama',
+  painHeading: 'Patients leave without any drama',
   painLines: [
-    'Your Google listing looks unfinished next to the clinic down the road.',
-    'Reviews stall because nobody asks after a visit.',
-    "Missed calls become the competitor's booking.",
-    'Buying three jobs apart means three kickoffs you do not have time for.',
+    'Your listing looks unfinished next to the clinic down the road, and people read that as how you run the place.',
+    'Reviews stalled, because asking after a visit depends on somebody remembering at the busiest moment of the day.',
+    'A call rings out at lunchtime and that patient books with whoever answers next.',
+    'Fixing them one at a time means three kickoffs you will never find time for.',
   ],
   bridgeLabel: 'The fix',
-  bridgeHeading: 'One capture bundle',
+  bridgeHeading: 'All three closed in one window',
   bridgeBody:
-    'We do three jobs in one delivery window. Clean the Google Business Profile so Maps looks finished. Install a review ask that fires after a visit. Send an SMS when a call rings out so the person can still book. One access chat. One handoff.',
-  bridgeGaugeCaption: 'Find. Trust. Catch the call.',
+    'We do the three jobs in one delivery window. We clean the Google Business Profile so Maps looks like a real clinic, with the right hours, services and photos. We put in a review ask that fires after a visit without staff having to remember. And we set up an automatic text when a call rings out, so the person can still book instead of ringing the clinic next door. One access handover, one handoff at the end.',
+  bridgeGaugeCaption: 'Found. Trusted. The missed call caught.',
   benefitsLabel: 'What changes for you',
   benefitsHeading: 'Outcomes you can feel in a week',
   benefits: [
     {
-      title: 'One access window',
-      text: 'Your team only hands over Maps and phone access once, not three times.',
+      title: 'Your team hands over access once',
+      text: 'Maps and phone access, one conversation, instead of three separate chases over three separate months.',
     },
     {
-      title: 'Coherent local story',
-      text: 'Listing, proof, and missed-call catch move together instead of drifting apart.',
+      title: 'The three jobs feed each other',
+      text: 'A clean listing gets found, fresh reviews make people call, and the text-back catches the calls you miss.',
     },
     {
-      title: 'Bundle list price',
-      text: '$2,200 vs $2,450 if you buy the three jobs as separate products.',
+      title: 'Less than buying them apart',
+      text: '$2,200 together, against $2,450 for the same three products bought separately.',
     },
     {
-      title: 'Natural next step',
-      text: 'Add Booking System later when you want a Book now button on the site.',
+      title: 'A clear next step, not a trap',
+      text: 'Booking System is the obvious job after this, when you want a Book now button. It is not bundled in and you are not committed to it.',
     },
   ],
   processLabel: 'How it runs',
-  processHeading: 'A short, clear path',
+  processHeading: 'Brief, build, hand over',
   processSteps: [
     {
       label: 'Brief',
-      text: 'We lock your Google listing, how reviews get asked, and which phone to watch.',
+      text: 'We lock your Google listing, how reviews get asked, and which phone number we watch.',
     },
     {
       label: 'Build',
-      text: 'Profile clean-up, review ask path, and missed-call SMS in one window.',
+      text: 'Profile clean-up, the review ask, and missed-call text-back, all inside one delivery window.',
     },
     {
-      label: 'Handoff',
-      text: 'Who owns review asks, who watches missed-call texts, and what to check monthly.',
+      label: 'Hand over',
+      text: 'Who owns review asks, who watches the text-backs, and the five minute monthly check.',
     },
   ],
   stackLabel: 'Everything included',
@@ -78,43 +79,48 @@ export const BUNDLE_CLINIC_LIVE_COPY = {
   stackItems: [
     {
       title: 'Google Profile Fix',
-      text: 'We clean categories, photos, hours, and the basics so your Maps listing looks finished and easy to trust.',
+      text: 'Categories, photos, hours, services and the basics cleaned up so your listing looks finished and easy to trust.',
     },
     {
       title: 'Review Engine',
-      text: 'A simple ask after a visit so new Google reviews keep arriving without staff remembering to chase.',
+      text: 'A simple ask after a visit, so new reviews keep arriving without staff having to remember to chase.',
     },
     {
       title: 'Missed-Call Text-Back',
-      text: 'When a call rings out, an automatic SMS goes back so the person can still book instead of ringing the clinic next door.',
+      text: 'When a call rings out, an automatic text goes back, so that patient can still book instead of ringing the clinic next door.',
     },
   ],
   scopeLine:
-    'One location. Google Profile Fix, Review Engine, and Missed-Call Text-Back as scoped at kickoff. Booking System is not included.',
+    'One location. Google Profile Fix, Review Engine and Missed-Call Text-Back as scoped at kickoff. Booking System is not included. Extra locations are quoted the same day so the fixed price stays honest.',
   priceLabel: 'Investment',
   price: '$2,200',
-  priceLead: 'Paid once when the three pieces lock at kickoff. Bundle list price.',
+  priceLead: 'Paid once, and we start. No quotes, no meetings, no scope creep.',
   guarantee:
-    'All three scoped pieces deliver, or we keep working at no extra cost until they do.',
-  priceAnchor: 'Below $600 + $1,100 + $750 if bought apart.',
+    'Our promise: all three scoped pieces are delivered and tested, or we keep working at no extra cost until they are.',
+  priceAnchor:
+    '$2,200 covers all three, which is $250 less than buying them apart and one access handover instead of three. Put that next to what a handful of extra patients a month is worth to the clinic, and it stops being a close call.',
   faqLabel: 'Objections',
-  faqHeading: 'Straight answers before you pay',
+  faqHeading: 'Straight answers before you buy',
   faqs: [
     {
-      q: 'What is included?',
-      a: 'Three jobs for one location: we clean your Google Business Profile, set a review ask that keeps firing after visits, and text people back when a call rings out. Scoped at kickoff.',
+      q: 'Why buy the bundle instead of the three products?',
+      a: 'Partly the $250, mostly the sequence. These three feed each other, so done together they land in the right order and your team hands over access once instead of three times.',
     },
     {
-      q: 'Is Booking System in this bundle?',
-      a: 'No. Booking is the natural next step when you want a Book now button. This pack covers find on Maps, trust from reviews, and catch the missed call.',
+      q: 'What exactly is included?',
+      a: 'Three jobs for one location: your Google Business Profile cleaned up, a review ask that keeps firing after visits, and an automatic text when a call rings out. All scoped at kickoff.',
     },
     {
-      q: 'Why buy the bundle instead of three products?',
-      a: 'One access window, one handoff, and $2,200 instead of $2,450 if you buy Google Profile Fix, Review Engine, and Missed-Call Text-Back apart.',
+      q: 'Is a booking button included?',
+      a: 'No. Booking System is the natural next job when you want a Book now button. This bundle covers being found, being trusted, and catching the missed call.',
+    },
+    {
+      q: 'Do you write fake reviews?',
+      a: 'Never. We ask real patients at the right moment and make it easy to say yes. What they write is up to them.',
     },
     {
       q: 'Is this only for clinics?',
-      a: 'It is built for clinics and similar appointment businesses that lose people on Maps, reviews, and missed calls. Ask if your setup fits.',
+      a: 'It is built for clinics and appointment businesses that lose people on Maps, reviews and missed calls. If that is you, it fits, whatever you call yourselves.',
     },
     {
       q: 'Is this refundable?',
@@ -123,6 +129,7 @@ export const BUNDLE_CLINIC_LIVE_COPY = {
   ],
   finalLabel: 'Last step',
   finalHeading: 'Stop losing patients at the front door',
-  finalLine: 'Clean listing, review asks, missed-call text-back. Paid once.',
+  finalLine:
+    'Pay once, hand over access once, and close all three gaps in a single sprint.',
   proofKind: 'bundle-clinic',
 } as FunnelProductCopy

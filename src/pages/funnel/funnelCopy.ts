@@ -93,12 +93,12 @@ export type FunnelProductCopy = {
 }
 
 export const SPEED_FIX_COPY: FunnelProductCopy = {
-  eyebrow: 'Fixed price · Three days · Measured result',
+  eyebrow: 'Fixed price, three days, a measured result',
   h1Generic: "Three days from now your site is fast, and Google's own score proves it",
   h1Personal: (b: string) =>
     `${b}, three days from now your site is fast, and Google's own score proves it`,
   sub: 'Slow pages lose people before they even appear, and Google ranks them lower for it. We fix it, then run the same public test again so you can watch the number change.',
-  ctaLabel: 'Fix my website · $1,200',
+  ctaLabel: 'Fix my website, $1,200',
   proofLabel: 'Your score',
   proofHeadingLive: 'This is you, right now',
   proofHeadingGeneric: 'We measure before we touch anything',
@@ -227,12 +227,12 @@ export const SPEED_FIX_COPY: FunnelProductCopy = {
 }
 
 export const MISSED_CALL_COPY: FunnelProductCopy = {
-  eyebrow: 'Fixed price · Days, not months · Live proof',
+  eyebrow: 'Fixed price, days not months, live proof',
   h1Generic: 'Every missed call gets a reply before they dial the next business',
   h1Personal: (b: string) =>
     `${b}, every missed call gets a reply before they dial the next business`,
   sub: 'When the phone rings out, they move on. We wire an automatic text-back so the lead stays yours, and we prove it on a live missed call before we hand it over.',
-  ctaLabel: 'Fix my missed calls · $750',
+  ctaLabel: 'Fix my missed calls, $750',
   proofLabel: 'The leak',
   proofHeadingLive: 'They called ready to say yes, and silence sent them elsewhere',
   proofHeadingGeneric: 'They called ready to say yes, and silence sent them elsewhere',
@@ -369,15 +369,15 @@ export const MISSED_CALL_COPY: FunnelProductCopy = {
 }
 
 export const GOOGLE_PROFILE_COPY: FunnelProductCopy = {
-  eyebrow: 'Fixed price · Two business days · You keep the keys',
+  eyebrow: 'Fixed price, two business days, you keep the keys',
   h1Generic: "Your Google profile is the first thing customers see. Right now it's working against you.",
   h1Personal: (b: string) =>
     `${b}, your Google profile is the first thing customers see. Right now it's working against you.`,
   sub: "Before anyone visits your website, they see your Google Business Profile: the map listing, the photos, the reviews, the hours. When it's thin or half-claimed, people quietly pick the business next to you that looks alive.",
-  ctaLabel: 'Fix my profile · $600',
+  ctaLabel: 'Fix my profile, $600',
   proofLabel: 'The front door',
-  proofHeadingLive: 'Search your name, then your best competitor. That gap is the job.',
-  proofHeadingGeneric: 'Search your name, then your best competitor. That gap is the job.',
+  proofHeadingLive: 'Search your name, then your best competitor. That gap is the job',
+  proofHeadingGeneric: 'Search your name, then your best competitor. That gap is the job',
   proofLead: (b: string | null) =>
     b
       ? `Before anyone opens ${b}'s website, they see the Google panel: map, photos, reviews, hours. When that panel looks unfinished, they call the listing that looks looked after.`
@@ -507,13 +507,13 @@ export const GOOGLE_PROFILE_COPY: FunnelProductCopy = {
 }
 
 export const SEARCH_FIX_COPY: FunnelProductCopy = {
-  eyebrow: "Fixed price · Three days · Google's own records",
+  eyebrow: "Fixed price, three days, checked against Google's own records",
   h1Generic:
     "Three days from now, Google can see your whole site again, and its own records prove it",
   h1Personal: (b: string) =>
     `Three days from now, Google can see ${b} again, and its own records prove it`,
   sub: "A page Google can't see doesn't exist to anyone searching for it. This is almost always one broken setting left behind by a redesign or a migration, and it's fixable fast, with the before and after in Google's own Search Console.",
-  ctaLabel: 'Fix my visibility · $1,400',
+  ctaLabel: 'Fix my visibility, $1,400',
   proofLabel: 'The evidence',
   proofHeadingLive: 'This is you, right now',
   proofHeadingGeneric: 'This is you, right now',
@@ -650,11 +650,11 @@ export const SEARCH_FIX_COPY: FunnelProductCopy = {
 }
 
 export const LANDING_PAGE_COPY: FunnelProductCopy = {
-  eyebrow: 'Fixed price · Live in two days · Your domain',
+  eyebrow: 'Fixed price, live in two days, on your own domain',
   h1Generic: "Your ads are working, the page they land on isn't",
   h1Personal: (b: string) => `${b}, your ads are working, the page they land on isn't`,
   sub: "You pay for every click, and right now those clicks land on a homepage built for everyone, which convinces almost no one. A dedicated page that repeats your ad's exact promise turns the same spend into more enquiries, live within two business days.",
-  ctaLabel: 'Build my page · $1,800',
+  ctaLabel: 'Build my page, $1,800',
   proofLabel: 'This is you, right now',
   proofHeadingLive: 'This is you, right now',
   proofHeadingGeneric: 'Try it now',
@@ -788,11 +788,11 @@ export const LANDING_PAGE_COPY: FunnelProductCopy = {
 }
 
 export const CRM_RESCUE_COPY: FunnelProductCopy = {
-  eyebrow: 'Fixed price · Working in five days · Your own system',
+  eyebrow: 'Fixed price, working in five days, in your own system',
   h1Generic: 'The enquiry that came through your website this week is still waiting',
   h1Personal: (b: string) => `${b}, we enquired through your website, and no one replied`,
   sub: "That's not an insult, it's the evidence that brought you here, and it's exactly how a real customer experienced your business. Enquiries are arriving. The system catching them is what's broken, and it's fixable in five days.",
-  ctaLabel: 'Rescue my leads · $2,800',
+  ctaLabel: 'Rescue my leads, $2,800',
   proofLabel: 'This is you, right now',
   proofHeadingLive: 'This is you, right now',
   proofHeadingGeneric: 'Try it now',
@@ -926,12 +926,12 @@ export const CRM_RESCUE_COPY: FunnelProductCopy = {
 }
 
 export const TEAM_AI_COPY: FunnelProductCopy = {
-  eyebrow: 'Half a day · Your real work · Up to 12 people',
+  eyebrow: 'Half a day, on your real work, up to 12 people',
   h1Generic: "Your team's already using AI, just badly, separately, and in secret",
   h1Personal: (b: string) =>
     `${b}, your team's already using AI, just badly, separately, and in secret`,
   sub: 'One person has a trick for quotes. Another pastes client details into a tool nobody approved. Most are watching from the side. Half a day fixes that: shared setup, your actual tasks, working prompts, and rules everyone understands.',
-  ctaLabel: 'Book the remote session · $1,950',
+  ctaLabel: 'Book the remote session, $1,950',
   proofLabel: 'Sound familiar',
   proofHeadingLive: 'Three roles in almost every team',
   proofHeadingGeneric: 'Three roles in almost every team',
@@ -1064,7 +1064,7 @@ export const TEAM_AI_COPY: FunnelProductCopy = {
 }
 
 export const CHANGE_PACK_COPY: FunnelProductCopy = {
-  eyebrow: 'New system or AI rollout · Built before day one · Fixed once scoped',
+  eyebrow: 'For a new system or AI rollout, built before day one',
   h1Generic: 'The software is ready. The team is not, and a slide deck will not fix that',
   h1Personal: (b: string) =>
     `${b}, the software is ready. The team is not, and a slide deck will not fix that`,
@@ -1096,7 +1096,7 @@ export const CHANGE_PACK_COPY: FunnelProductCopy = {
   bridgeGaugeCaption:
     'Audio explainers, screen how-tos, desk sheets, one live Q and A, one 30-day check-in.',
   benefitsLabel: 'What you get',
-  benefitsHeading: 'Clear for the company',
+  benefitsHeading: 'People actually use the thing you bought',
   benefits: [
     {
       title: 'Day one has a path, not a guess',
@@ -1204,7 +1204,7 @@ export const CHANGE_PACK_COPY: FunnelProductCopy = {
 }
 
 export const CONTENT_SYSTEM_COPY: FunnelProductCopy = {
-  eyebrow: 'One hour of your month · Every channel alive · No lock-in',
+  eyebrow: 'One hour of your month, every channel alive, no lock-in',
   h1Generic: "Your last post was months ago, and it's not because you're lazy",
   h1Personal: (b: string) =>
     `${b}, your last post was months ago, and it's not because you're lazy`,
@@ -1236,7 +1236,7 @@ export const CONTENT_SYSTEM_COPY: FunnelProductCopy = {
   bridgeGaugeCaption:
     'Setup builds the machine. The monthly keeps it running. Pause any time. Leave with 30 days notice. The brand system stays yours.',
   benefitsLabel: 'What you get',
-  benefitsHeading: 'Clear for the company',
+  benefitsHeading: 'You show up every month without touching it',
   benefits: [
     {
       title: 'You look as busy online as you are in real life',
@@ -1339,13 +1339,13 @@ export const CONTENT_SYSTEM_COPY: FunnelProductCopy = {
 }
 
 export const REVIEWS_COPY: FunnelProductCopy = {
-  eyebrow: 'Fixed price · Two to three days · Habit that asks',
+  eyebrow: 'Fixed price, two to three days, a habit that keeps asking',
   h1Generic:
     'You have fewer reviews than the business ranking above you, and no system closing the gap',
   h1Personal: (b: string) =>
     `${b}, you have fewer reviews than the business ranking above you`,
   sub: 'Star count is the first trust signal before the site loads. We wire an automatic ask after every job, write the wording in your voice, hand over QR and short link, and load response templates for good and bad reviews.',
-  ctaLabel: 'Fix my reviews · $1,100',
+  ctaLabel: 'Fix my reviews, $1,100',
   proofLabel: 'Sound familiar',
   proofHeadingLive: 'Your reviews vs theirs',
   proofHeadingGeneric: 'Your reviews vs theirs',
@@ -1482,12 +1482,12 @@ export const REVIEWS_COPY: FunnelProductCopy = {
 }
 
 export const AI_PHONE_COPY: FunnelProductCopy = {
-  eyebrow: 'Fixed price setup · Their account · Voice that books',
+  eyebrow: 'Fixed price setup, your account, a voice that books',
   h1Generic: 'After hours and mid-job, the call still gets answered',
   h1Personal: (b: string) =>
     `${b}, after hours and mid-job, the call still gets answered`,
   sub: "We do not sell you a monthly receptionist. We set up a voice agent on your own vendor account, load your knowledge, wire calendar and CRM, tune the voice, test live with you listening, and hand over the keys. You pay the vendor's monthly fee directly.",
-  ctaLabel: 'Set up my AI phone · $1,950',
+  ctaLabel: 'Set up my AI phone, $1,950',
   proofLabel: 'The leak',
   proofHeadingLive: 'They called after hours, and voicemail was the whole answer',
   proofHeadingGeneric: 'They called after hours, and voicemail was the whole answer',
@@ -1629,12 +1629,12 @@ export const AI_PHONE_COPY: FunnelProductCopy = {
 
 
 export const BOOKING_COPY: FunnelProductCopy = {
-  eyebrow: 'Fixed price · Two to three days · Book now that sticks',
+  eyebrow: 'Fixed price, two to three days, a Book now that sticks',
   h1Generic: 'Customers who want you right now still have to call and hope',
   h1Personal: (b: string) =>
     `${b}, customers who want you right now still have to call and hope`,
   sub: 'Phone tag, email chains, and DMs are how appointments still get made. No Book now on the site or Google panel. No-shows pile up because nothing reminds them. We wire online booking to your real calendar, with confirmations, reminders, and a no-show text sequence, then put Book now where people already look.',
-  ctaLabel: 'Fix my booking · $1,500',
+  ctaLabel: 'Fix my booking, $1,500',
   proofLabel: 'This is you, right now',
   proofHeadingLive: 'This is you, right now',
   proofHeadingGeneric: 'Try it now',
@@ -1767,12 +1767,12 @@ export const BOOKING_COPY: FunnelProductCopy = {
 }
 
 export const WEBSITE_COPY: FunnelProductCopy = {
-  eyebrow: 'Built by us · Hosted by us · About 14 days to live',
+  eyebrow: 'Built by us, hosted by us, live in about 14 days',
   h1Generic: 'A website that looks like your business, without the five thousand dollar headache',
   h1Personal: (b: string) =>
     `${b}, a website that looks like your business, without the five thousand dollar headache`,
   sub: 'If your site is missing, broken, or quietly embarrassing, the people who find you online just leave. We interview you, write it, build it, host it, and keep it running. You never touch a password, a plugin, or a design argument.',
-  ctaLabel: 'Start my site · from $120',
+  ctaLabel: 'Start my site, from $120',
   proofLabel: 'The evidence',
   proofHeadingLive: 'This is you, right now',
   proofHeadingGeneric: 'This is you, right now',
@@ -1840,15 +1840,15 @@ export const WEBSITE_COPY: FunnelProductCopy = {
   stackHeading: 'Three sizes, one care model',
   stackItems: [
     {
-      title: 'Brochure · $120/mo · today $120',
+      title: 'Brochure, $120 a month, $120 today',
       text: 'One strong page: who you are, what you do, hours, map, and a contact form to your email. Search basics set up. Privacy and terms when the plan needs them.',
     },
     {
-      title: 'Practice · $160/mo · today $160',
+      title: 'Practice, $160 a month, $160 today',
       text: 'Five to seven pages: room for services, about, and proof, plus the same form, hosting and care. Privacy and terms included. The sweet spot for most growing businesses.',
     },
     {
-      title: 'Full site · $190/mo · today $190',
+      title: 'Full site, $190 a month, $190 today',
       text: 'Nine to twelve pages when you need more room to explain the work. Same form, hosting, and care.',
     },
     {
@@ -1859,7 +1859,7 @@ export const WEBSITE_COPY: FunnelProductCopy = {
   scopeLine:
     'Twelve month minimum term from the day your site goes live, then month to month. Page count, form and care inclusions are written down before we build. Extra work is quoted, never assumed. Leave early and you pay the remaining months of the term. The site is yours to take: migration to your own hosting is a separate one-off fee quoted at the time.',
   priceLabel: 'Investment',
-  price: 'From $120 a month · pay $120 today to start',
+  price: 'From $120 a month, pay $120 today to start',
   priceLead:
     'Brochure $120/mo. Practice $160/mo. Full site $190/mo. Today you pay one month to start the build. When your site goes live, monthly autopay begins on that same amount. The twelve month term starts at go-live, not the day you pay to begin.',
   guarantee:
@@ -1914,7 +1914,7 @@ export const WEBSITE_COPY: FunnelProductCopy = {
 }
 
 export const GEO_COPY: FunnelProductCopy = {
-  eyebrow: 'AI answers · Citations · Coming soon',
+  eyebrow: 'Fixed price, scope agreed at kickoff',
   h1Generic:
     'Your competitors are starting to show up in AI answers. You are still only fighting for the old search page',
   h1Personal: (b: string) =>
@@ -2050,7 +2050,7 @@ export const GEO_COPY: FunnelProductCopy = {
 }
 
 export const CLIENT_FINDER_COPY: FunnelProductCopy = {
-  eyebrow: 'Curated list · Scripts · Plan · Coming soon',
+  eyebrow: 'One sprint, then the list is yours to keep',
   h1Generic:
     'Knowing who to call is half the work. Most teams skip straight to hoping',
   h1Personal: (b: string) =>
@@ -2190,12 +2190,12 @@ export const CLIENT_FINDER_COPY: FunnelProductCopy = {
 }
 
 export const ENQUIRY_REPLY_COPY: FunnelProductCopy = {
-  eyebrow: 'Fixed price · Two to three days · One shared inbox',
+  eyebrow: 'Fixed price, live in two to three days',
   h1Generic: 'The enquiry sits unread while they tap through to the next result',
   h1Personal: (b: string) =>
     `${b}, the enquiry sits unread while they tap through to the next result`,
   sub: 'Website forms and email are where people actually ask you things. We wire an instant, on-brand acknowledgement the moment they land, then route the real message to the one inbox your team watches.',
-  ctaLabel: 'Wire enquiry reply · $350',
+  ctaLabel: 'Wire enquiry reply, $350',
   proofLabel: 'The picture',
   proofHeadingLive: 'Speed of reply is the whole product',
   proofHeadingGeneric: 'Speed of reply is the whole product',
@@ -2224,7 +2224,7 @@ export const ENQUIRY_REPLY_COPY: FunnelProductCopy = {
   bridgeGaugeCaption:
     'Seconds for the acknowledgement. Minutes for a person once the message lands where it should.',
   benefitsLabel: 'What changes for you',
-  benefitsHeading: 'Outcomes, not jargon',
+  benefitsHeading: 'Nobody is left wondering if it arrived',
   benefits: [
     {
       title: 'They hear from you in seconds',
@@ -2283,13 +2283,18 @@ export const ENQUIRY_REPLY_COPY: FunnelProductCopy = {
     'Website forms and email, plus one extra channel you already use. Extra channels quoted the same day.',
   priceLabel: 'Investment',
   price: '$350',
-  priceLead: 'Paid once for the acknowledgement and routing setup on the channels above.',
+  priceLead: 'Paid once, and we start. No quotes, no meetings, no scope creep.',
   guarantee:
-    'When this goes live: agreed channels send the acknowledgement and land in the agreed place, or we keep working at no extra cost until they do.',
-  priceAnchor: 'A small setup fee for the first reply, not a CRM rebuild.',
+    'Our promise: the agreed channels send the acknowledgement and land in the right place, tested before handover, or we keep working at no extra cost until they do.',
+  priceAnchor:
+    'This is the cheapest thing we sell and usually the fastest to pay for itself. One enquiry that would otherwise have gone cold covers it, and every one after that is free.',
   faqLabel: 'Objections',
-  faqHeading: 'Straight answers before you pay',
+  faqHeading: 'Straight answers before you buy',
   faqs: [
+    {
+      q: 'Why is this only $350?',
+      a: 'Because it is a small, well-defined job we have done many times over. Two to three days, your forms and email, tested before handover. We would rather you buy this and come back than be sold something bigger you did not need.',
+    },
     {
       q: 'Does this cover Google Business Profile messages?',
       a: "No. Profile chat sits inside Google's own tools and behaves differently to a form or inbox. This product covers written enquiries: your website form and email.",
@@ -2314,12 +2319,12 @@ export const ENQUIRY_REPLY_COPY: FunnelProductCopy = {
 }
 
 export const PROFILE_POSTING_COPY: FunnelProductCopy = {
-  eyebrow: 'Fixed price · Setup kit · You hit publish',
+  eyebrow: 'Fixed price, a kit you publish from',
   h1Generic: 'Your Google profile looks closed when the Updates tab stays empty',
   h1Personal: (b: string) =>
     `${b}, your Google profile looks closed when the Updates tab stays empty`,
-  sub: "This is a posting kit for one Google Business Profile: how often to post, templates in your voice, and a bank of posts ready to publish. You hit publish. We don't schedule it for you in this product.",
-  ctaLabel: 'Set up posting · $1,100',
+  sub: "Somebody comparing you to the business down the road sees their last post was Tuesday and yours was eighteen months ago. This is the kit that fixes that: how often to post, templates written in your voice, and four to eight weeks of posts already drafted. You hit publish. We don't schedule it for you in this one.",
+  ctaLabel: 'Set up posting, $1,100',
   proofLabel: 'The picture',
   proofHeadingLive: 'An empty Updates tab reads as neglect',
   proofHeadingGeneric: 'An empty Updates tab reads as neglect',
@@ -2347,7 +2352,7 @@ export const PROFILE_POSTING_COPY: FunnelProductCopy = {
     "We're not running your calendar in this product, and we're not promising messages or Q&A. You get a clear cadence, templates in your voice, and a starter bank ready to publish. Optional monthly care is separate if you later want us to keep feeding it.",
   bridgeGaugeCaption: 'Setup once. You publish from the bank.',
   benefitsLabel: 'What you get',
-  benefitsHeading: 'Clear for the company',
+  benefitsHeading: 'A rhythm that survives a busy week',
   benefits: [
     {
       title: 'A rhythm you can keep',
@@ -2408,11 +2413,16 @@ export const PROFILE_POSTING_COPY: FunnelProductCopy = {
   price: '$1,100',
   priceLead: 'Paid once for the kit. No monthly fee unless you choose care later.',
   guarantee:
-    'Agreed cadence, templates, and starter bank are delivered as scoped, or we keep working at no extra cost until they are.',
-  priceAnchor: 'Less than looking closed next to a competitor who posts every week.',
+    'Our promise: the agreed rhythm, templates and starter bank are delivered, or we keep working at no extra cost until they are.',
+  priceAnchor:
+    'A monthly posting retainer costs more than this within three months, and the day you stop paying, the posting stops. This is the kit, once, and it keeps working for as long as you use it.',
   faqLabel: 'Objections',
-  faqHeading: 'Straight answers before you pay',
+  faqHeading: 'Straight answers before you buy',
   faqs: [
+    {
+      q: 'Why buy a kit instead of paying someone monthly?',
+      a: 'Because most of the cost in a posting retainer is deciding what to say, and that only needs doing properly once. You get the rhythm, the shapes and weeks of posts written. Pressing publish takes a couple of minutes a week.',
+    },
     {
       q: 'Do you post and schedule for us every week?',
       a: 'Not in this product. Setup leaves you the cadence, templates, and bank. You hit publish. Optional care month is separate if you want us to keep feeding it.',
@@ -2436,18 +2446,19 @@ export const PROFILE_POSTING_COPY: FunnelProductCopy = {
   ],
   finalLabel: 'Last step',
   finalHeading: 'A kit you can publish from, not a promise we post forever',
-  finalLine: 'Cadence, templates, starter bank. You hit publish. Paid once.',
+  finalLine:
+    'Pay once, approve the kit, and never open a blank posting box again.',
   proofKind: 'profile-posting',
 }
 
 /** Bundle: Profile Fix + Review Engine + Profile Posting. Not local SEO. */
 export const LOCAL_PACK_COPY: FunnelProductCopy = {
-  eyebrow: 'Bundle · One sprint · One location · $400 under buying separate',
+  eyebrow: 'Three jobs, one sprint, one location',
   h1Generic: 'Your Google listing needs a clean profile, a review habit, and posts that keep showing up',
   h1Personal: (b: string) =>
     `${b}, your Google listing needs a clean profile, a review habit, and posts that keep showing up`,
-  sub: 'Local Pack is three jobs in one delivery: Google Profile Fix, Review Engine, and Profile Posting. Not local SEO. Not rankings work. The front door on Maps, cleaned, asking for reviews, and posting on a rhythm you can keep.',
-  ctaLabel: 'Get the Local Pack · $2,400',
+  sub: 'Three jobs in one delivery: your listing cleaned up, a review ask that keeps firing after every job, and a posting kit so the Updates tab stops looking abandoned. This is not local SEO and it is not a rankings promise, it is the front door on Maps, done properly, for $400 less than buying the three apart.',
+  ctaLabel: 'Get the Local Pack, $2,400',
   proofLabel: 'The picture',
   proofHeadingLive: 'Maps trust is three jobs, not one',
   proofHeadingGeneric: 'Maps trust is three jobs, not one',
@@ -2534,13 +2545,13 @@ export const LOCAL_PACK_COPY: FunnelProductCopy = {
     'One Google Business Profile / one location. Not local SEO, not ranking work, not multi-location. Extra locations quoted the same day.',
   priceLabel: 'Investment',
   price: '$2,400',
-  priceLead:
-    'Paid once for the three jobs together. Separate list prices today add to $2,800. The pack is $2,400.',
+  priceLead: 'Paid once, and we start. No quotes, no meetings, no scope creep.',
   guarantee:
-    'Agreed Profile Fix, Review Engine, and Profile Posting scopes are delivered as bundled, or we keep working at no extra cost until they are.',
-  priceAnchor: 'One saved kickoff and $400 under buying the three doors alone.',
+    'Our promise: all three scoped pieces are delivered, or we keep working at no extra cost until they are.',
+  priceAnchor:
+    'Bought separately the same three jobs are $2,800 and three separate kickoffs, which in practice means the third one never happens. Together they are $2,400, one access handover, and a listing that finally looks like a business somebody runs.',
   faqLabel: 'Objections',
-  faqHeading: 'Straight answers before you pay',
+  faqHeading: 'Straight answers before you buy',
   faqs: [
     {
       q: 'Is this local SEO or ranking work?',
@@ -2565,18 +2576,19 @@ export const LOCAL_PACK_COPY: FunnelProductCopy = {
   ],
   finalLabel: 'Last step',
   finalHeading: 'One sprint for the listing people actually open',
-  finalLine: 'Profile, reviews, posts. One price. Not SEO theatre.',
+  finalLine:
+    'Pay once, hand over access once, and get the listing people actually open sorted in one sprint.',
   proofKind: 'local-pack',
 }
 
 /** Home, contact, up to two service pages rewritten so people enquire. Not a redesign. */
 export const CONVERSION_PASS_COPY: FunnelProductCopy = {
-  eyebrow: 'Fixed price · Three to five days · One site',
-  h1Generic: 'Your site can be fast and still fail to ask for the enquiry',
+  eyebrow: 'Fixed price, three to five days, four pages',
+  h1Generic: 'Your site can be fast and still never ask for the job',
   h1Personal: (b: string) =>
-    `${b}, your site can be fast and still fail to ask for the enquiry`,
-  sub: 'We rewrite home, contact, and up to two service pages so the offer is obvious, proof is visible, and the next step is hard to miss. Not a full redesign. Best after Website Speed Fix, while access is still open.',
-  ctaLabel: 'Fix my conversion · $1,400',
+    `${b}, your site can be fast and still never ask for the job`,
+  sub: 'Somebody lands, reads two paragraphs about your values, and still cannot tell what you do or what happens next. We rewrite the four pages that decide it, home, contact and up to two service pages, so the offer is obvious, the proof is visible, and the next step is impossible to miss. Same design, different words.',
+  ctaLabel: 'Fix my conversion, $1,400',
   proofLabel: 'The picture',
   proofHeadingLive: 'Speed without a clear ask still leaks',
   proofHeadingGeneric: 'Speed without a clear ask still leaks',
@@ -2608,19 +2620,19 @@ export const CONVERSION_PASS_COPY: FunnelProductCopy = {
   benefits: [
     {
       title: 'The ask is obvious',
-      text: 'Visitors know what to do next without hunting.',
+      text: 'People know what to do next without hunting for it, which is most of the battle.',
     },
     {
-      title: 'Proof sits where eyes go',
-      text: 'Reviews, outcomes, or credentials near the decision.',
+      title: 'Proof sits where the decision happens',
+      text: 'Reviews, results and credentials next to the button, not buried on an about page nobody opens.',
     },
     {
-      title: 'Mobile-first clarity',
-      text: 'The phone view is where most people decide.',
+      title: 'Judged on a phone first',
+      text: 'That is where most people decide, so that is where we check the work before it ships.',
     },
     {
-      title: 'Pairs with Speed Fix',
-      text: 'While the site is open, fix the words as well as the weight.',
+      title: 'Your traffic starts earning',
+      text: 'Everyone who already visits gets the clearer version, so the ads and search work you paid for stop being wasted.',
     },
   ],
   processLabel: 'How it runs',
@@ -2632,7 +2644,7 @@ export const CONVERSION_PASS_COPY: FunnelProductCopy = {
     },
     {
       label: 'Rewrite',
-      text: 'Headlines, sections, CTAs, and form labels on scoped pages.',
+      text: 'Headlines, sections, buttons and form labels on the pages we agreed.',
     },
     {
       label: 'Ship',
@@ -2644,35 +2656,40 @@ export const CONVERSION_PASS_COPY: FunnelProductCopy = {
   stackItems: [
     {
       title: 'Home rewrite',
-      text: 'Offer, proof, and primary CTA.',
+      text: 'What you do, who it is for, the proof, and one obvious next step.',
     },
     {
       title: 'Contact clarity',
-      text: 'Form and path that do not hide.',
+      text: 'A form and a path that do not make anyone hunt for them.',
     },
     {
       title: 'Up to two service pages',
-      text: 'Specific enough to sell without a novel.',
+      text: 'Specific enough to sell the job without turning into a novel.',
     },
     {
-      title: 'Mobile pass',
-      text: 'We judge the work on a phone first.',
+      title: 'Checked on a phone',
+      text: 'We judge the work on a phone first, because that is where most people decide.',
     },
   ],
   scopeLine:
     'Home, contact, up to two service pages on one site. Extra pages quoted the same day. Visual redesign is a different job.',
   priceLabel: 'Investment',
   price: '$1,400',
-  priceLead: 'Paid once for the scoped pages.',
+  priceLead: 'Paid once, and we start. No quotes, no meetings, no scope creep.',
   guarantee:
-    'Scoped pages ship with a clear offer and CTA as agreed, or we keep working at no extra cost until they do.',
-  priceAnchor: 'Cheaper than another month of ads into unclear pages.',
+    'Our promise: the agreed pages ship with a clear offer and an obvious next step, or we keep working at no extra cost until they do.',
+  priceAnchor:
+    'Put it next to a month of ad spend, or the cost of the traffic you already get. That money lands on these same pages either way. $1,400 makes them ask for the job, once, and every visitor after that gets the better version.',
   faqLabel: 'Objections',
-  faqHeading: 'Straight answers before you pay',
+  faqHeading: 'Straight answers before you buy',
   faqs: [
     {
+      q: 'Why is this cheaper than a redesign?',
+      a: 'Because we are not touching the design. A redesign bills you for layout and pictures. This is the words and the buttons on the four pages that decide whether somebody contacts you, which is usually where the actual problem is.',
+    },
+    {
       q: 'Do you redesign the whole site?',
-      a: 'No. Words, structure, and CTAs on priority pages. Visual redesign is a different job.',
+      a: 'No. The words, the structure and the buttons on the pages that matter. Visual redesign is a different job.',
     },
     {
       q: 'Is this SEO or title tags?',
@@ -2693,18 +2710,19 @@ export const CONVERSION_PASS_COPY: FunnelProductCopy = {
   ],
   finalLabel: 'Last step',
   finalHeading: 'Make the next step impossible to miss',
-  finalLine: 'Home, contact, key services. Clear ask. Paid once.',
+  finalLine:
+    'Pay once, and within a week the four pages that matter finally ask for the job.',
   proofKind: 'conversion-pass',
 }
 
 /** Titles, headings, links, and thin-page lifts on priority URLs. Not a retainer. */
 export const ONPAGE_SEARCH_COPY: FunnelProductCopy = {
-  eyebrow: 'Fixed price · About a week · Up to eight URLs',
+  eyebrow: 'Fixed price, about a week, up to eight pages',
   h1Generic: 'Your pages look finished and still say almost nothing Google can trust',
   h1Personal: (b: string) =>
     `${b}, your pages look finished and still say almost nothing Google can trust`,
-  sub: 'Vague titles, thin service copy, and missing links bury you under clearer competitors. We fix titles, headings, internal links, and thin priority pages so search has something solid to rank. Not a six-month SEO retainer. Up to eight URLs on one site.',
-  ctaLabel: 'Fix my on-page search · $1,900',
+  sub: 'Every page title starts with your business name, the service pages could be swapped without anyone noticing, and nothing links to anything. So a clearer competitor takes the click. We fix the titles, headings, internal links and thin pages on the eight that matter most. One job with an end, not a six-month retainer.',
+  ctaLabel: 'Fix my on-page search, $1,900',
   proofLabel: 'The picture',
   proofHeadingLive: 'Messy pages lose to clearer ones',
   proofHeadingGeneric: 'Messy pages lose to clearer ones',
@@ -2715,19 +2733,19 @@ export const ONPAGE_SEARCH_COPY: FunnelProductCopy = {
   proofLeadGeneric:
     'Brand-only titles, interchangeable service pages, and dead-end links leave search nothing solid to hold. Clearer competitors win the click.',
   proofAfter:
-    'Priority URLs get honest titles, headings, and links that match how people search for you.',
+    'The pages you pick get honest titles, headings and links that match how people actually search for what you do.',
   proofAfterGeneric:
-    'Priority URLs get honest titles, headings, and links that match how people search for you.',
+    'The pages you pick get honest titles, headings and links that match how people actually search for what you do.',
   painLabel: 'What this is costing you',
   painHeading: 'The pages are messy. Search shrugs',
   painLines: [
-    'Titles are brand-first and keyword-blind.',
-    'Service pages repeat the same paragraph with a different H1.',
-    'Internal links wander or are missing.',
-    'You are paying for traffic tools while the pages themselves are thin.',
+    'Every page title opens with your business name, which tells a searcher nothing about what they came for.',
+    'Your service pages repeat the same paragraph with a different heading on top.',
+    'Nothing links to anything, so people and search engines both hit dead ends.',
+    'You pay for tools that report on traffic while the pages themselves have almost nothing on them.',
   ],
   bridgeLabel: 'The fix',
-  bridgeHeading: 'On-page work on the URLs that matter',
+  bridgeHeading: 'On-page work on the pages that matter',
   bridgeBody:
     'This is not link buying and it is not a content factory. It is on-page clarity for up to eight priority pages: titles, headings, internal links, and careful lifts where a page is too thin.',
   bridgeGaugeCaption: 'Titles, headings, links, thin-page fixes.',
@@ -2735,20 +2753,20 @@ export const ONPAGE_SEARCH_COPY: FunnelProductCopy = {
   benefitsHeading: 'Pages that say what they are',
   benefits: [
     {
-      title: 'Pages say what they are',
-      text: 'Search and humans both get a clearer signal.',
+      title: 'Pages say what they actually are',
+      text: 'A searcher and a search engine both work out what the page is for within a second of arriving.',
     },
     {
-      title: 'Priority list, not infinite',
-      text: 'Up to eight URLs, locked at kickoff, so the job ends.',
+      title: 'A job that ends',
+      text: 'Eight pages agreed at kickoff, fixed, handed over. No monthly invoice arriving forever.',
     },
     {
       title: 'Honest, not stuffed',
-      text: 'Titles and headings that match the page, without keyword spam.',
+      text: 'Titles and headings that match what is on the page, so it reads like a business rather than keyword soup.',
     },
     {
-      title: 'Bridge to GEO',
-      text: 'Clean pages make FAQ and schema work easier next.',
+      title: 'Better ground for what comes next',
+      text: 'Clean pages make the FAQ and AI visibility work far more effective if you do it later.',
     },
   ],
   processLabel: 'How it runs',
@@ -2756,48 +2774,53 @@ export const ONPAGE_SEARCH_COPY: FunnelProductCopy = {
   processSteps: [
     {
       label: 'Select',
-      text: 'Agree the priority URL list and the queries that matter.',
+      text: 'We agree the page list and the searches that actually matter to your business.',
     },
     {
       label: 'Fix',
-      text: 'Titles, headings, internal links, thin sections.',
+      text: 'Titles, headings, internal links, and real substance where a page is too thin.',
     },
     {
       label: 'Check',
-      text: 'Plain before/after notes you can keep.',
+      text: 'A plain before and after note you can keep, so you know exactly what changed.',
     },
   ],
   stackLabel: 'Everything included',
-  stackHeading: 'What ships on the scoped URLs',
+  stackHeading: 'One price, the full pass, nothing extra to buy',
   stackItems: [
     {
-      title: 'Priority URL set',
-      text: 'Up to eight URLs agreed at kickoff.',
+      title: 'The page list',
+      text: 'Up to eight pages, agreed at kickoff, so the job has a clear end.',
     },
     {
-      title: 'Title and heading pass',
-      text: 'Clear, honest, not stuffed.',
+      title: 'Titles and headings',
+      text: 'Clear and honest, written for a person first, without the keyword stuffing.',
     },
     {
       title: 'Internal links',
-      text: 'Paths between services, proof, and contact.',
+      text: 'Proper paths between your services, your proof and your contact page, so nothing dead-ends.',
     },
     {
-      title: 'Thin-page lifts',
-      text: 'Where a page needs real substance, we add it carefully.',
+      title: 'Thin pages lifted',
+      text: 'Where a page has almost nothing on it, we add real substance rather than padding.',
     },
   ],
   scopeLine:
-    'Up to eight priority URLs on one site. Extra URLs quoted the same day. Not link building, not a monthly SEO retainer, not Conversion Pass (that rewrites for humans and CTAs).',
+    'Up to eight priority pages on one site. Extra pages quoted the same day. Not link building, not a monthly retainer, and not Conversion Pass, which rewrites the words and buttons for the people who already landed.',
   priceLabel: 'Investment',
   price: '$1,900',
-  priceLead: 'Paid once when the URL list locks at kickoff.',
+  priceLead: 'Paid once, and we start. No quotes, no meetings, no scope creep.',
   guarantee:
-    'Agreed on-page fixes ship on the scoped URLs, or we keep working at no extra cost until they do.',
-  priceAnchor: 'A focused pack, not an open retainer.',
+    'Our promise: the agreed on-page work ships on the pages we locked, or we keep working at no extra cost until it does.',
+  priceAnchor:
+    'An SEO retainer at fifteen hundred a month costs you more than this before the second invoice, and it never stops. This stops. Eight pages, fixed, handed over, and the work stays yours whether or not you ever hire anyone again.',
   faqLabel: 'Objections',
-  faqHeading: 'Straight answers before you pay',
+  faqHeading: 'Straight answers before you buy',
   faqs: [
+    {
+      q: 'Why buy this instead of an SEO retainer?',
+      a: 'Because the on-page work is a finite job, and most retainers spend the first three months doing exactly this while billing monthly. We do it once, show you what changed, and leave. If you want ongoing work after that, at least you are starting from clean pages.',
+    },
     {
       q: 'Is this the same as Search Visibility Fix?',
       a: 'No. Search Visibility Fix is about indexing and technical findability. This pack is titles, headings, links, and thin copy on pages that already exist.',
@@ -2811,8 +2834,8 @@ export const ONPAGE_SEARCH_COPY: FunnelProductCopy = {
       a: 'No. Fixed on-page work on up to eight URLs, then we hand off.',
     },
     {
-      q: 'What if I need more than eight URLs?',
-      a: 'We quote extras the same day. The $1,900 lock is eight priority pages.',
+      q: 'What if I need more than eight pages?',
+      a: 'We quote the extras the same day. The $1,900 covers eight priority pages, which keeps the fixed price honest.',
     },
     {
       q: 'Do I need Website Speed Fix first?',
@@ -2825,18 +2848,19 @@ export const ONPAGE_SEARCH_COPY: FunnelProductCopy = {
   ],
   finalLabel: 'Last step',
   finalHeading: 'Give search something solid to hold',
-  finalLine: 'Priority pages, clear signals. Paid once.',
+  finalLine:
+    'Pay once, pick the eight pages that matter, and stop losing clicks to businesses that were simply clearer.',
   proofKind: 'onpage-search',
 }
 
 /** Plain FAQs on key services plus FAQ schema. Not a GEO promise. */
 export const SCHEMA_FAQ_COPY: FunnelProductCopy = {
-  eyebrow: 'Fixed price · A few days · Up to three services',
-  h1Generic: 'If search and AI answers cannot cite you, they invent someone else',
+  eyebrow: 'Fixed price, a few days, up to three services',
+  h1Generic: 'If search and AI answers cannot quote you, they quote somebody else',
   h1Personal: (b: string) =>
-    `${b}, if search and AI answers cannot cite you, they invent someone else`,
-  sub: 'Thin service pages give Google and chat tools nothing safe to quote. We write plain FAQs on key services and add FAQ schema (structured Q&A markup) so humans and machines both get honest answers. Not a guarantee any AI picks you.',
-  ctaLabel: 'Fix my FAQs and schema · $1,200',
+    `${b}, if search and AI answers cannot quote you, they quote somebody else`,
+  sub: "Someone at ten at night wants to know what it costs, how long it takes, and whether you come to them. Your site does not say, so they ask a search engine and it names a competitor who did. We write the real questions and answers onto your key service pages, then add FAQ schema (the markup that lets search and AI tools read a question and answer properly).",
+  ctaLabel: 'Fix my FAQs and schema, $1,200',
   proofLabel: 'The picture',
   proofHeadingLive: 'Citeable beats vague',
   proofHeadingGeneric: 'Citeable beats vague',
@@ -2867,20 +2891,20 @@ export const SCHEMA_FAQ_COPY: FunnelProductCopy = {
   benefitsHeading: 'Answers people and tools can use',
   benefits: [
     {
-      title: 'Questions answered on your site',
-      text: 'Humans and tools both benefit.',
+      title: 'The awkward questions get answered',
+      text: 'Cost, timing, what is included, whether you cover their area. The ones people will not ring to ask.',
     },
     {
-      title: 'Schema done properly',
-      text: 'Markup that matches the visible content.',
+      title: 'Fewer time-wasting enquiries',
+      text: 'People who were never a fit work that out on the page, so the ones who do contact you are closer to buying.',
     },
     {
-      title: 'Humans and tools both read it',
-      text: 'The same FAQs help a visitor at night and a search snippet by day.',
+      title: 'Markup that actually matches',
+      text: 'The structured code says exactly what the page says, which is the part most sites get wrong.',
     },
     {
-      title: 'Near the decision',
-      text: 'FAQs sit by the service, not in a forgotten footer.',
+      title: 'Sat next to the decision',
+      text: 'The answers live on the service page where people are deciding, not in a footer nobody opens.',
     },
   ],
   processLabel: 'How it runs',
@@ -2923,13 +2947,18 @@ export const SCHEMA_FAQ_COPY: FunnelProductCopy = {
     'Up to three service pages, up to eight FAQs each, on one site. Extra services quoted the same day. Not Site Chat, not On-Page Search titles, not a GEO retainer.',
   priceLabel: 'Investment',
   price: '$1,200',
-  priceLead: 'Paid once when the service list locks at kickoff.',
+  priceLead: 'Paid once, and we start. No quotes, no meetings, no scope creep.',
   guarantee:
-    'Agreed FAQs and schema ship as scoped, or we keep working at no extra cost until they do.',
-  priceAnchor: 'Smaller than a full GEO project, same direction of travel.',
+    'Our promise: the agreed answers and markup ship on the pages we locked, or we keep working at no extra cost until they do.',
+  priceAnchor:
+    'Up to twenty-four proper answers written in your voice and marked up correctly, for less than most agencies charge to write one page. Every one of them keeps working at ten at night when nobody is in the office.',
   faqLabel: 'Objections',
-  faqHeading: 'Straight answers before you pay',
+  faqHeading: 'Straight answers before you buy',
   faqs: [
+    {
+      q: 'Why not just write the FAQs ourselves?',
+      a: 'You can, and plenty do. What usually happens is you write six vague ones, skip the awkward questions about price, and never add the markup, which is the part that lets search and AI tools use them. That is the bit we are actually selling.',
+    },
     {
       q: 'Is this a guarantee AI tools will mention us?',
       a: 'No. We make you citeable. Whether any tool picks you still depends on the wider web.',
@@ -2957,17 +2986,18 @@ export const SCHEMA_FAQ_COPY: FunnelProductCopy = {
   ],
   finalLabel: 'Last step',
   finalHeading: 'Become something tools can quote',
-  finalLine: 'FAQs and schema on key services. Paid once.',
+  finalLine:
+    'Pay once, pick three services, and let your site answer the questions people ask at ten at night.',
   proofKind: 'schema-faq',
 }
 
 export const TRACKING_FORMS_COPY: FunnelProductCopy = {
-  eyebrow: 'Fixed price · About two days · One site',
-  h1Generic: 'If you cannot see the enquiry, you cannot improve the site',
+  eyebrow: 'Fixed price, about two days, one site',
+  h1Generic: 'If you cannot see the enquiry, you are guessing about everything else',
   h1Personal: (b: string) =>
-    `${b}, if you cannot see the enquiry, you cannot improve the site`,
-  sub: 'We wire primary conversion events, fix where forms land, and leave you a plain watchlist so you know what happened after the click. Not a vanity dashboard. Not a full analytics rebuild.',
-  ctaLabel: 'Wire my tracking · $950',
+    `${b}, if you cannot see the enquiry, you are guessing about everything else`,
+  sub: 'You spend on ads, you pay to make the site faster, and nobody can tell you whether enquiries went up, because nothing was ever set up to count them. Meanwhile at least one form is emailing somebody who left last year. We wire the actions that matter, fix where forms land, and leave you a short list of what to check each week.',
+  ctaLabel: 'Wire my tracking, $950',
   proofLabel: 'The picture',
   proofHeadingLive: 'Click, then fog',
   proofHeadingGeneric: 'Click, then fog',
@@ -2984,10 +3014,10 @@ export const TRACKING_FORMS_COPY: FunnelProductCopy = {
   painLabel: 'What this is costing you',
   painHeading: 'Money in. Fog out',
   painLines: [
-    'You do not know which page produced the last enquiry.',
-    'Forms email someone who left the company.',
-    'Ads and speed work cannot be judged.',
-    'GA4 was installed once and never checked.',
+    'Nobody can tell you which page produced the last enquiry, so every decision after that is a guess.',
+    'At least one form quietly emails somebody who left the company, and you will find out months late.',
+    'You cannot judge the ads or the speed work, so you keep paying for both on faith.',
+    'Analytics was installed once, by somebody, and has never been opened since.',
   ],
   bridgeLabel: 'The fix',
   bridgeHeading: 'Tracking and forms that tell the truth',
@@ -2998,20 +3028,20 @@ export const TRACKING_FORMS_COPY: FunnelProductCopy = {
   benefitsHeading: 'Signal you can act on',
   benefits: [
     {
-      title: 'Proof for the work',
-      text: 'You can see whether Speed Fix or ads moved anything.',
+      title: 'You can prove what worked',
+      text: 'Whether the ads or the speed work moved anything stops being an argument and becomes a number.',
     },
     {
-      title: 'Forms stop disappearing',
-      text: 'Destinations match the people who still work there.',
+      title: 'Enquiries stop disappearing',
+      text: 'Every form goes to somebody who still works there, checked with a real test submission.',
     },
     {
-      title: 'Light, not heavy',
-      text: 'Enough signal to decide, not a dashboard theatre.',
+      title: 'Small enough to actually use',
+      text: 'A handful of numbers worth watching, not a dashboard nobody opens twice.',
     },
     {
-      title: 'Ready for CRM later',
-      text: 'Clean events make a later CRM job easier.',
+      title: 'Better ground for what comes next',
+      text: 'Clean signals make a CRM job or a dashboard far easier and cheaper later on.',
     },
   ],
   processLabel: 'How it runs',
@@ -3054,16 +3084,21 @@ export const TRACKING_FORMS_COPY: FunnelProductCopy = {
     'One site. Up to five primary events and up to three forms. GA4 checked, GTM only if needed. Not heatmaps, not call tracking as a product, not CRM Rescue, not a full analytics rebuild.',
   priceLabel: 'Investment',
   price: '$950',
-  priceLead: 'Paid once when the action list locks at kickoff.',
+  priceLead: 'Paid once, and we start. No quotes, no meetings, no scope creep.',
   guarantee:
-    'Scoped events and destinations work in testing, or we keep working at no extra cost until they do.',
-  priceAnchor: 'Cheaper than another month of spend you cannot measure.',
+    'Our promise: the agreed actions and form destinations work in a live test before handover, or we keep working at no extra cost until they do.',
+  priceAnchor:
+    'One form quietly emailing somebody who left costs you more than this in a fortnight. And every dollar you put into ads or a faster site is a guess until this is done, which makes it the cheapest thing you can buy before spending more.',
   faqLabel: 'Objections',
-  faqHeading: 'Straight answers before you pay',
+  faqHeading: 'Straight answers before you buy',
   faqs: [
     {
-      q: 'Is this a full GA4 rebuild?',
-      a: 'No. We wire the primary conversions that matter and leave you a plain watchlist. Heavy dashboards are a different job.',
+      q: 'Why is this only $950?',
+      a: 'Because it is two days on a site that already exists, and we do it often enough to be quick. It is deliberately small: the handful of actions that matter, done properly, rather than a rebuild you would never look at.',
+    },
+    {
+      q: 'Is this a full analytics rebuild?',
+      a: 'No. We wire the conversions that actually matter and leave you a short weekly watchlist. Heavy dashboards are a different job, and most businesses never need one.',
     },
     {
       q: 'Do you fix Meta and Google ads pixels?',
@@ -3088,17 +3123,18 @@ export const TRACKING_FORMS_COPY: FunnelProductCopy = {
   ],
   finalLabel: 'Last step',
   finalHeading: 'See the enquiry, then improve',
-  finalLine: 'Events, forms, a simple watchlist. Paid once.',
+  finalLine:
+    'Pay once, give it two days, and stop guessing whether anything you spend is working.',
   proofKind: 'tracking-forms',
 }
 
 export const SITE_CHAT_COPY: FunnelProductCopy = {
-  eyebrow: 'Fixed price · About a week · One site',
+  eyebrow: 'Fixed price, about a week, one site',
   h1Generic: 'A site chat that answers the usual questions and knows when to shut up',
   h1Personal: (b: string) =>
     `${b}, a site chat that answers the usual questions and knows when to shut up`,
-  sub: 'Branded AI chat on your website: hours, services, location, next step. Hands off to a human when the question is real work. Not a toy that invents prices.',
-  ctaLabel: 'Add AI chat · $950',
+  sub: 'Your reception gives the same five answers all day, and after hours nobody gives them at all. This is a chat on your website that handles hours, services, location and what happens next, using answers you wrote and approved. When the question is real work, it stops and hands over to a person. It cannot make up a price, because we never give it one to guess with.',
+  ctaLabel: 'Add AI chat, $950',
   proofLabel: 'The picture',
   proofHeadingLive: 'Answer, then hand off',
   proofHeadingGeneric: 'Answer, then hand off',
@@ -3115,10 +3151,10 @@ export const SITE_CHAT_COPY: FunnelProductCopy = {
   painLabel: 'What this is costing you',
   painHeading: 'Phone-tag for questions a page should answer',
   painLines: [
-    'Reception repeats the same five answers all day.',
-    'After-hours browsers bounce.',
-    'Generic chat widgets sound nothing like you.',
-    'You fear AI making up prices or clinical claims.',
+    'Your reception gives the same five answers all day, which is not what you pay them for.',
+    'People browsing at nine at night get nothing, so they go and ask somebody else.',
+    'Off-the-shelf chat widgets sound like a call centre in another country.',
+    'You have held off because a bot inventing a price or a health claim would be genuinely worse than nothing.',
   ],
   bridgeLabel: 'The fix',
   bridgeHeading: 'AI chat with a human door',
@@ -3129,16 +3165,16 @@ export const SITE_CHAT_COPY: FunnelProductCopy = {
   benefitsHeading: 'Common questions handled. Real work escalated',
   benefits: [
     {
-      title: 'Common questions handled',
-      text: 'Hours, parking, what you offer, how to enquire.',
+      title: 'The same five questions, handled',
+      text: 'Hours, parking, what you offer and how to get started, answered instantly at any hour.',
     },
     {
-      title: 'Handoff when needed',
-      text: 'Real intent reaches a human without theatre.',
+      title: 'Real enquiries reach a person',
+      text: 'When someone is actually ready to buy, the chat stops and hands them over instead of pretending.',
     },
     {
-      title: 'On-brand',
-      text: 'Voice and limits you approve before it goes live.',
+      title: 'It sounds like your business',
+      text: 'Every answer is written and approved by you before it goes live, in your words.',
     },
     {
       title: 'Optional Care later',
@@ -3185,15 +3221,20 @@ export const SITE_CHAT_COPY: FunnelProductCopy = {
     'One site. Up to twenty approved FAQs, branded AI chat, handoff, and guardrails. Not AI Phone, not Schema FAQ markup, not a qualify-and-book CRM agent. Optional Care after setup is available if you want ongoing refresh. Setup price is fixed either way.',
   priceLabel: 'Investment',
   price: '$950',
-  priceLead: 'Paid once when the FAQ list locks at kickoff.',
+  priceLead: 'Paid once, and we start. No quotes, no meetings, no scope creep.',
   guarantee:
-    'Chat answers the approved FAQ set and hands off as scoped, or we keep working at no extra cost until it does.',
-  priceAnchor: 'Reception time back on questions a page should own.',
+    'Our promise: the chat answers your approved questions and hands over as agreed, tested before go-live, or we keep working at no extra cost until it does.',
+  priceAnchor:
+    'Count the hours your front desk spends repeating opening times, then add the people who browse at night and get nothing back. This is a week of work, paid once, and it answers at three in the morning without being rostered on.',
   faqLabel: 'Objections',
-  faqHeading: 'Straight answers before you pay',
+  faqHeading: 'Straight answers before you buy',
   faqs: [
     {
-      q: 'Is this a generic Tidio-style widget?',
+      q: 'Why pay for this when chat widgets are cheap?',
+      a: 'The widget is the cheap part. What costs money is deciding what it may say, writing the answers in your voice, setting the point where it stops and fetches a person, and testing that it holds. That is the job here.',
+    },
+    {
+      q: 'Is this a generic off-the-shelf widget?',
       a: 'No. We build branded AI chat on your site, trained on FAQs you approve, with handoff and a tight leash. Setup is fixed. Ongoing Care is optional later if you want it.',
     },
     {
@@ -3223,17 +3264,18 @@ export const SITE_CHAT_COPY: FunnelProductCopy = {
   ],
   finalLabel: 'Last step',
   finalHeading: 'Answer the usual without inventing the rest',
-  finalLine: 'AI chat, human door, tight leash. Paid once.',
+  finalLine:
+    'Pay once, approve what it may say, and have the usual questions answered at any hour.',
   proofKind: 'site-chat',
 }
 
 export const MEDIA_CLEAN_COPY: FunnelProductCopy = {
-  eyebrow: 'Fixed price · One to two days · One site',
-  h1Generic: 'Heavy images keep slowing the site after the main speed job',
+  eyebrow: 'Fixed price, one to two days, one site',
+  h1Generic: 'Somebody uploaded photos straight off a phone and the site got slow again',
   h1Personal: (b: string) =>
-    `${b}, heavy images keep slowing the site after the main speed job`,
-  sub: 'We compress, replace, and tidy media on scoped pages or folders, then leave a plain upload rule so the win does not quietly reverse.',
-  ctaLabel: 'Clean my media · $650',
+    `${b}, somebody uploaded photos straight off a phone and the site got slow again`,
+  sub: 'A single full-size photo can weigh more than an entire page should. Add a gallery of them and a visitor on mobile data gives up before your site appears. We compress and replace the worst offenders on the pages you pick, then leave a one-page rule so the next person who uploads does not undo it.',
+  ctaLabel: 'Clean my media, $650',
   proofLabel: 'The picture',
   proofHeadingLive: 'Fat files undo the speed win',
   proofHeadingGeneric: 'Fat files undo the speed win',
@@ -3250,10 +3292,10 @@ export const MEDIA_CLEAN_COPY: FunnelProductCopy = {
   painLabel: 'What this is costing you',
   painHeading: 'The score slipped again',
   painLines: [
-    'Someone uploaded full-resolution phone photos.',
-    'A plugin gallery loads everything at once.',
-    'Speed Fix helped, then marketing added banners.',
-    'You do not know which files are safe to crush.',
+    'Somebody uploaded photos straight off a phone, at full size, because nothing told them not to.',
+    'A gallery loads every image at once, so the page crawls on a phone.',
+    'You paid to make the site fast, then new banners went up and it crept back.',
+    'Nobody knows which files are safe to compress, so nobody touches any of them.',
   ],
   bridgeLabel: 'The fix',
   bridgeHeading: 'A focused media clean',
@@ -3264,20 +3306,20 @@ export const MEDIA_CLEAN_COPY: FunnelProductCopy = {
   benefitsHeading: 'Protect the speed win',
   benefits: [
     {
-      title: 'Protect the speed win',
-      text: 'Stop quiet regressions from new uploads.',
+      title: 'The pages load properly again',
+      text: 'Especially on a phone on mobile data, which is where most people give up.',
     },
     {
-      title: 'Clear upload rules',
-      text: 'Your team knows what size to use next.',
+      title: 'It stops coming back',
+      text: 'Your team gets one plain rule for what size to upload, so the next photo does not undo the work.',
     },
     {
-      title: 'Small job, clear end',
-      text: 'Scoped pages or folders, not infinite.',
+      title: 'The photos still look right',
+      text: 'We compress and resize carefully. Nobody visiting the site will be able to tell, except that it arrives faster.',
     },
     {
-      title: 'Works after Speed Fix',
-      text: 'Useful when leftovers remain, or weight crept back.',
+      title: 'A small job with an end',
+      text: 'The pages or folders are agreed at kickoff, so it finishes in a day or two and stays finished.',
     },
   ],
   processLabel: 'How it runs',
@@ -3320,13 +3362,18 @@ export const MEDIA_CLEAN_COPY: FunnelProductCopy = {
     'One site. Up to eight pages or two folders, chosen at kickoff. Not Website Speed Fix, not a full redesign, not endless gallery cleanup.',
   priceLabel: 'Investment',
   price: '$650',
-  priceLead: 'Paid once when the page or folder list locks at kickoff.',
+  priceLead: 'Paid once, and we start. No quotes, no meetings, no scope creep.',
   guarantee:
-    'Scoped media is cleaned as agreed, or we keep working at no extra cost until it is.',
-  priceAnchor: 'Smaller than another full speed job when the leak is only media.',
+    'Our promise: the agreed pages are cleaned and lighter, or we keep working at no extra cost until they are.',
+  priceAnchor:
+    'This is the smallest job we sell, and when heavy images are the whole problem it is the only one you need. A day or two of work instead of a full speed overhaul, and the upload rule is what stops you buying either one again.',
   faqLabel: 'Objections',
-  faqHeading: 'Straight answers before you pay',
+  faqHeading: 'Straight answers before you buy',
   faqs: [
+    {
+      q: 'Why is this only $650?',
+      a: 'Because it is a day or two on a defined set of pages, and we would rather sell you the small job that fixes it than a full speed overhaul you did not need. If the problem turns out to be bigger than images, we tell you before you pay.',
+    },
     {
       q: 'Is this Website Speed Fix?',
       a: 'No. Speed Fix is the full speed overhaul. This pack is media only on a scoped set of pages or folders.',
@@ -3350,7 +3397,8 @@ export const MEDIA_CLEAN_COPY: FunnelProductCopy = {
   ],
   finalLabel: 'Last step',
   finalHeading: 'Keep the site light after the win',
-  finalLine: 'Media cleaned. Upload rules left behind. Paid once.',
+  finalLine:
+    'Pay once, pick the pages, and get them loading properly again within a day or two.',
   proofKind: 'media-clean',
 }
 

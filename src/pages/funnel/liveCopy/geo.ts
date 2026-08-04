@@ -2,13 +2,13 @@ import type {FunnelProductCopy} from '../funnelCopy'
 
 /** Live upgrade of GEO_COPY: buy-ready, no Coming soon. */
 export const GEO_LIVE_COPY: FunnelProductCopy = {
-  eyebrow: 'Fixed once scoped · AI answers · Citations',
+  eyebrow: 'Fixed price, scope agreed at kickoff',
   h1Generic:
-    'Your competitors are starting to show up in AI answers. You are still only fighting for the old search page',
+    "Your competitors are starting to show up in AI answers. You're still only fighting for the old search page",
   h1Personal: (b: string) =>
-    `${b}, your competitors are starting to show up in AI answers. You are still only fighting for the old search page`,
-  sub: "People ask ChatGPT, Perplexity, and Google's AI answers what to buy and who to call. If your pages are thin, messy, or hard to cite, those tools skip you. We structure facts, FAQs, and service pages so AI tools can name you. Not magic. Not fake reviews.",
-  ctaLabel: 'Start AI visibility · $2,200',
+    `${b}, your competitors are starting to show up in AI answers, and you're still only fighting for the old search page`,
+  sub: "A customer now asks ChatGPT or Google's AI answer who to call, and gets three names back. If your pages are thin, vague, or contradict each other, you're not one of them. We rewrite and structure your service pages, facts and FAQs so those tools have something solid to quote. No magic, no fake reviews, no guarantees anyone else pretends to make.",
+  ctaLabel: 'Start AI visibility, $2,200',
   proofLabel: 'The shift',
   proofHeadingLive: 'Ten blue links are not the whole game anymore',
   proofHeadingGeneric: 'Ten blue links are not the whole game anymore',
@@ -37,7 +37,7 @@ export const GEO_LIVE_COPY: FunnelProductCopy = {
   bridgeGaugeCaption:
     'Facts machines can cite. Pages humans still read. No magic ranking guarantee, no review games.',
   benefitsLabel: 'What changes for you',
-  benefitsHeading: 'Outcomes, not jargon',
+  benefitsHeading: 'A real chance of being the name that comes back',
   benefits: [
     {
       title: 'You have a shot in AI answers',
@@ -93,17 +93,21 @@ export const GEO_LIVE_COPY: FunnelProductCopy = {
     },
   ],
   scopeLine:
-    'Buy floor $2,200. Fixed once scoped. We do not sell fake reviews, bought citations, or guaranteed placement inside any AI product.',
+    'Fixed price, with the page and schema list agreed at kickoff. We do not sell fake reviews, bought citations, or guaranteed placement inside any AI product.',
   priceLabel: 'Investment',
   price: '$2,200',
-  priceLead: 'Paid once when the page and schema scope locks at kickoff.',
+  priceLead: 'Paid once, and we start. No quotes, no meetings, no scope creep.',
   guarantee:
-    'We deliver the scoped page and schema work. We do not guarantee that any AI product will cite you on a given day. If the agreed structural work is not delivered, we keep working at no extra cost until it is.',
+    'Our promise: the agreed page and schema work is delivered, or we keep working at no extra cost until it is. What we will not promise is that a particular AI product will name you on a particular day, because nobody controls that.',
   priceAnchor:
-    'About the cost of staying invisible while competitors become the default name in AI answers.',
+    'Put it beside what you already spend each year trying to rank on a page fewer people bother scrolling. This is the same job, aimed at where people are starting to ask instead, done once, on pages you own and keep.',
   faqLabel: 'Objections',
-  faqHeading: 'Straight answers before you pay',
+  faqHeading: 'Straight answers before you buy',
   faqs: [
+    {
+      q: 'Why does this cost $2,200?',
+      a: 'Because it is real writing and structural work across your service pages, not a plugin you install. Most of the cost is the part nobody enjoys: getting your facts straight, consistent and specific enough that a machine can quote them without guessing.',
+    },
     {
       q: 'Is this SEO?',
       a: 'It overlaps. Classic search still cares about clear pages and indexation. This job focuses on making your facts easy for generative tools to cite, not only ranking in ten blue links.',
@@ -125,8 +129,8 @@ export const GEO_LIVE_COPY: FunnelProductCopy = {
       a: 'No. We never post fake reviews, buy stars, or invent citations. Clear facts only.',
     },
     {
-      q: 'Can I buy this today?',
-      a: 'Yes. Fill the access form, we lock the page and schema scope at kickoff, then build from the $2,200 floor.',
+      q: 'How soon can we start?',
+      a: 'As soon as you pay. You fill in the access form, we agree the page and schema list at kickoff, and the work starts from there.',
     },
   ],
   finalLabel: 'Last step',

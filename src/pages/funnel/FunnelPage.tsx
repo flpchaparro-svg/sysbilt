@@ -635,8 +635,8 @@ const FunnelPage: React.FC = () => {
         : isChangePack || isContentSystem
           ? 'call'
           : doc?.ctaMode || 'buy',
-    // Authored labels already include price text. Only normalise a comma before $ into one middle dot.
-    ctaLabel: rawLabel.replace(/,\s*(?=\$)/, ' · ').replace(/\s*·\s*·\s*(?=\$)/, ' · '),
+    // Authored labels already include price text. Normalise any middle dot before $ into a comma.
+    ctaLabel: rawLabel.replace(/\s*·\s*(?=\$)/, ', ').replace(/,\s*,\s*(?=\$)/, ', '),
     stripeUrl: resolvedStripeUrl,
     quietLine: isWebsite
       ? 'Prefer to talk first? Book 15 minutes.'

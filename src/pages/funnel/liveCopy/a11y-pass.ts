@@ -1,99 +1,139 @@
 /**
- * Accessibility Quick Pass · live funnel copy.
+ * Accessibility Quick Pass live funnel copy.
  * Parent must extend FunnelProductCopy['proofKind'] with 'a11y-pass'.
  */
 import type {FunnelProductCopy} from '../funnelCopy'
 
 export const A11Y_PASS_COPY: FunnelProductCopy = {
-  eyebrow: 'Fixed price · A few days · Priority pages',
-  h1Generic: 'If people cannot use the site, they will not enquire',
+  eyebrow: 'Fixed price, done in a few days',
+  h1Generic: "Some people can't use your website, and they'll never tell you why",
   h1Personal: (b: string) =>
-    `${b}, if people cannot use the site, they will not enquire`,
-  sub: 'A focused accessibility pass on critical issues: contrast, labels, keyboard paths, and form clarity. Clinics and professional firms feel this in trust as much as compliance.',
-  ctaLabel: 'Fix access · $1,100',
-  proofLabel: 'The picture',
-  proofHeadingLive: 'Usability is a sales issue',
-  proofHeadingGeneric: 'Usability is a sales issue',
+    `${b}, some people can't use your website, and they'll never tell you why`,
+  sub: "Text too faint to read, forms that don't say what went wrong, buttons you can't reach without a mouse. People hit those and quietly leave. We fix the worst of it on the pages that matter most, so more of the people who arrive can actually get to the point of contacting you.",
+  ctaLabel: 'Fix access, $1,100',
+  proofLabel: 'The leak',
+  proofHeadingLive: 'The drop-off you never hear about',
+  proofHeadingGeneric: 'The drop-off you never hear about',
   proofLead: (b: string | null) =>
     b
-      ? `${b} can lose customers to low contrast, missing labels, and broken keyboard paths you never hear about.`
-      : 'Low contrast, missing labels, and broken keyboard paths quietly remove customers you never hear from.',
+      ? `Nobody emails ${b} to say the contact form rejected them without explaining why. They just close the tab and try the next business, and you record it as a quiet week.`
+      : 'Nobody emails you to say the contact form rejected them without explaining why. They just close the tab and try the next business, and you record it as a quiet week.',
   proofLeadGeneric:
-    'Low contrast, missing labels, and broken keyboard paths quietly remove customers you never hear from.',
+    'Nobody emails you to say the contact form rejected them without explaining why. They just close the tab and try the next business, and you record it as a quiet week.',
   proofAfter:
-    'Critical issues on scoped pages fixed, with a short list of what remains for a deeper audit if you want one later.',
+    'These are not exotic problems. They are faint text, unlabelled fields, and buttons that only work with a mouse, and they sit on the pages you most need working.',
   proofAfterGeneric:
-    'Critical issues on scoped pages fixed, with a short list of what remains for a deeper audit if you want one later.',
+    'These are not exotic problems. They are faint text, unlabelled fields, and buttons that only work with a mouse, and they sit on the pages you most need working.',
   painLabel: 'What this is costing you',
-  painHeading: 'Invisible drop-off',
+  painHeading: 'The quiet exits',
   painLines: [
-    'Forms fail screen readers.',
-    'Buttons look fine to you and invisible to someone else.',
-    'Mobile tap targets fight each other.',
-    'You only hear about it when a patient complains, if they bother.',
+    'Someone in reading glasses gives up on light grey text against a white background.',
+    'A form rejects an entry without saying which field is wrong, so they close the tab and stop trying.',
+    "A customer on a phone taps the wrong button twice and decides you're not worth the effort.",
+    'About one in five Australians lives with disability. Not one of them will email to tell you your site did not work.',
   ],
   bridgeLabel: 'The fix',
-  bridgeHeading: 'Critical fixes, not a legal certificate',
+  bridgeHeading: 'The blockers fixed, not a compliance certificate',
   bridgeBody:
-    "This isn't a full WCAG certification project. It's a quick pass on the worst blockers on priority pages.",
-  bridgeGaugeCaption: 'Clearer for more people. Better for everyone.',
+    "This isn't a WCAG certification project (WCAG is the international accessibility standard), and it isn't a redesign. It's a focused pass on the pages that matter most: contrast, form labels, error messages, keyboard paths and tap targets. We fix what blocks people, then hand you a plain list of what a deeper audit would cover if you ever want one.",
+  bridgeGaugeCaption:
+    'Clearer for the people who were struggling. Easier for everyone else.',
   benefitsLabel: 'What changes for you',
-  benefitsHeading: 'More people complete the path',
+  benefitsHeading: 'More people finish what they started',
   benefits: [
-    {title: 'Fewer quiet exits', text: 'More people can complete the path to enquire.'},
-    {title: 'Forms that make sense', text: 'Labels and errors humans can follow.'},
-    {title: 'Trust signal', text: 'Especially for clinics and professional services.'},
-    {title: 'Honest scope', text: 'Critical pass now. Deeper audit optional later.'},
+    {
+      title: 'More people reach the enquiry',
+      text: 'The path from landing on the page to contacting you stops breaking halfway through.',
+    },
+    {
+      title: 'Forms that explain themselves',
+      text: 'Clear labels and error messages, so people know what went wrong and can actually fix it.',
+    },
+    {
+      title: 'Trust, not just access',
+      text: 'For clinics and professional firms especially, a site that works for everyone reads as a business that pays attention.',
+    },
+    {
+      title: 'Honest boundaries',
+      text: 'A critical pass now, with a written list of what remains. No scare stories about lawsuits.',
+    },
   ],
   processLabel: 'How it runs',
   processHeading: 'Scan, fix, report',
   processSteps: [
-    {label: 'Scan', text: 'Critical issues on scoped pages.'},
-    {label: 'Fix', text: 'Contrast, labels, focus, form clarity.'},
-    {label: 'Report', text: 'What changed, what remains.'},
-  ],
-  stackLabel: 'Everything included',
-  stackHeading: 'What ships in the pass',
-  stackItems: [
-    {title: 'Critical issue list', text: 'Prioritised, plain language.'},
-    {title: 'Fix pass', text: 'On scoped pages.'},
-    {title: 'Remainder note', text: 'What a deeper audit would cover if you want it.'},
-    {title: 'Scope lock', text: 'Priority pages chosen at kickoff.'},
-  ],
-  scopeLine:
-    'Priority pages chosen at kickoff. Critical accessibility fixes only. Not a WCAG certification, not a full redesign.',
-  priceLabel: 'Investment',
-  price: '$1,100',
-  priceLead: 'Paid once when the page list locks at kickoff.',
-  guarantee:
-    'Agreed critical fixes ship on scoped pages, or we keep working at no extra cost until they do.',
-  priceAnchor: 'Trust and usability, not a certificate badge.',
-  faqLabel: 'Objections',
-  faqHeading: 'Straight answers before you pay',
-  faqs: [
     {
-      q: 'Is this a legal guarantee?',
-      a: 'No. It is practical critical fixes. Formal compliance audits are a different engagement.',
+      label: 'Scan',
+      text: 'We test your priority pages the way people actually use them, including with a keyboard and a screen reader.',
     },
     {
-      q: 'Is this a full WCAG audit?',
-      a: 'No. This is a focused pass on the worst blockers on priority pages. A deeper audit can follow if you want it.',
+      label: 'Fix',
+      text: 'Contrast, labels, focus order, error messages and tap targets, corrected on those pages.',
+    },
+    {
+      label: 'Report',
+      text: 'A plain-English note on what changed, and what a deeper audit would still cover.',
+    },
+  ],
+  stackLabel: 'Everything included',
+  stackHeading: 'One price, the full pass, nothing extra to buy',
+  stackItems: [
+    {
+      title: 'Critical issue list',
+      text: 'What is blocking people right now, ranked by how much it costs you, in plain language.',
+    },
+    {
+      title: 'The fix pass',
+      text: 'Contrast, labels, keyboard paths, error messages and tap targets on your priority pages.',
+    },
+    {
+      title: 'What remains',
+      text: 'An honest note on what a deeper audit would cover, so you can decide later without pressure.',
+    },
+    {
+      title: '14 days of aftercare',
+      text: 'If anything we touched misbehaves, we sort it, no charge.',
+    },
+  ],
+  scopeLine:
+    'Priority pages chosen at kickoff. Critical access fixes only. Not a formal WCAG certification, not a redesign. Extra pages are quoted the same day so the fixed price stays honest.',
+  priceLabel: 'Investment',
+  price: '$1,100',
+  priceLead: 'Paid once, and we start. No quotes, no meetings, no scope creep.',
+  guarantee:
+    'Our promise: the agreed critical fixes ship on the scoped pages, or we keep working at no extra cost until they do.',
+  priceAnchor:
+    "That's less than one client who gave up on your contact form. People who can't use the site don't complain, they just go somewhere that works. That happens every week. This happens once.",
+  faqLabel: 'Objections',
+  faqHeading: 'Straight answers before you buy',
+  faqs: [
+    {
+      q: 'Why is this cheaper than a full accessibility audit?',
+      a: "Because an audit tells you what's wrong and hands you a report to action. This fixes the worst of it on your priority pages and then tells you what's left. One job, fixed scope, no retainer.",
+    },
+    {
+      q: 'Is this a legal guarantee?',
+      a: 'No, and anyone selling you one is overselling. This is practical work on the things that block real people. Formal compliance sign-off is a different engagement, and we will say so plainly rather than sell you a badge.',
     },
     {
       q: 'Which pages are included?',
-      a: 'Priority pages locked at kickoff. We agree the list before work starts.',
+      a: 'The priority pages you pick at kickoff, usually home, contact, services and booking. We agree the list in writing before any work starts.',
     },
     {
       q: 'Will you redesign the site?',
-      a: 'No. We fix access blockers: contrast, labels, keyboard paths, and form clarity on the scoped set.',
+      a: 'No. Your design stays. We correct the things that stop people using it, which usually means nobody notices except the people who were struggling.',
+    },
+    {
+      q: 'Do I need Website Speed Fix first?',
+      a: 'No. This stands alone. If the site is also slow, that is a useful separate job, not a requirement here.',
     },
     {
       q: 'Is this refundable?',
-      a: "There's no change-of-mind refund, because we start straight away. If the agreed critical fixes are not delivered, we keep working at no extra cost until they are.",
+      a: "There's no change-of-mind refund, because we start straight away. If the agreed fixes are not delivered, we keep working at no extra cost until they are.",
     },
   ],
   finalLabel: 'Last step',
-  finalHeading: 'Let more people complete the path',
-  finalLine: 'Critical access fixes on priority pages. Paid once.',
+  finalHeading: 'Let more people finish what they started',
+  finalLine:
+    'Pay once, tell us the pages that matter, and we clear the blockers within a few days.',
   proofKind: 'a11y-pass' as FunnelProductCopy['proofKind'],
 }

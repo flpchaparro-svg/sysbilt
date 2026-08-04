@@ -5,59 +5,61 @@ import type {FunnelProductCopy} from '../funnelCopy'
  * Written for a first-time reader who has never seen the individual product pages.
  */
 export const BUNDLE_FRONT_DOOR_LIVE_COPY = {
-  eyebrow: 'Bundle · One location · Find, trust, book',
-  h1Generic: 'Profile, reviews, and booking so demand can land and book',
+  eyebrow: 'Three jobs, one window, one location',
+  h1Generic:
+    'They find you, they like the look of you, and then they have to ring during business hours',
   h1Personal: (b: string) =>
-    `${b}, profile, reviews, and booking so demand can land and book`,
-  sub: 'Three front-door jobs in one sprint: we clean your Google listing, set a review ask that keeps firing, and put Book now on the site or Maps so people can book without phone tag. One kickoff. One location.',
-  ctaLabel: 'Buy Front Door · $3,400',
-  proofLabel: 'The picture',
-  proofHeadingLive: 'Find, trust, book',
-  proofHeadingGeneric: 'Find, trust, book',
+    `${b}, they find you, they like the look of you, and then they have to ring during business hours`,
+  sub: 'Three jobs in one window: your Google listing cleaned up so you look like a real business on Maps, a review ask that keeps firing so the proof stays fresh, and a Book now button on your site and Maps wired to your calendar, so people can book at ten at night without playing phone tag.',
+  ctaLabel: 'Buy the Front Door bundle, $3,400',
+  proofLabel: 'The leak',
+  proofHeadingLive: 'Three locks on one door',
+  proofHeadingGeneric: 'Three locks on one door',
   proofLead: (b: string | null) =>
     b
-      ? `${b} can show up on Maps and still lose the booking to a thin profile, quiet reviews, and "call us".`
-      : 'Maps without trust is weak. Trust without booking still forces phone tag.',
+      ? `Someone decides tonight that ${b} is who they want. The listing is thin, the last review is from 2022, and the only way to book is to ring you tomorrow between nine and five. Most of them do not.`
+      : 'Someone decides tonight that you are who they want. The listing is thin, the last review is from 2022, and the only way to book is to ring tomorrow between nine and five. Most of them do not.',
   proofLeadGeneric:
-    'Maps without trust is weak. Trust without booking still forces phone tag.',
-  proofAfter: 'Local presence, a review habit, and Book now in one delivery story.',
+    'Someone decides tonight that you are who they want. The listing is thin, the last review is from 2022, and the only way to book is to ring tomorrow between nine and five. Most of them do not.',
+  proofAfter:
+    'Being found, being believed, and being able to book are one path, not three projects. Broken anywhere along it, the whole thing stops.',
   proofAfterGeneric:
-    'Local presence, a review habit, and Book now in one delivery story.',
+    'Being found, being believed, and being able to book are one path, not three projects. Broken anywhere along it, the whole thing stops.',
   painLabel: 'What this is costing you',
   painHeading: 'The front door has three locks',
   painLines: [
-    'Your Google listing looks unfinished next to the business down the road.',
-    'Reviews stall because nobody asks after a visit or job.',
-    'Booking is still "call us", so demand dies in phone tag.',
-    'Three separate projects never start together.',
+    'Your Google listing looks unfinished next to the business down the road, and people read that as how you run things.',
+    'Reviews stalled, because asking after a job depends on somebody remembering at the busiest moment of the day.',
+    'Booking still means ringing you, so anyone who decides after hours has to remember you tomorrow.',
+    'Three separate jobs means three kickoffs, so in practice none of them ever start.',
   ],
   bridgeLabel: 'The fix',
-  bridgeHeading: 'Front Door bundle',
+  bridgeHeading: 'The whole path opened in one window',
   bridgeBody:
-    'We do three jobs in one planned window. Clean the Google Business Profile so Maps looks finished. Install a review ask that fires after a visit or job. Put Book now on the site, Maps, or both so people can book without ringing. One access chat. One handoff.',
-  bridgeGaugeCaption: 'Seen. Trusted. Booked.',
+    'We do the three jobs in one planned window. We clean the Google Business Profile so Maps looks finished. We put in a review ask that fires after a visit or job without staff having to remember. And we put Book now on the site, on Maps, or both, wired to your calendar and tested end to end. One access conversation at the start, one handoff at the end.',
+  bridgeGaugeCaption: 'Seen. Believed. Booked without a phone call.',
   benefitsLabel: 'What changes for you',
   benefitsHeading: 'Outcomes you can feel at the door',
   benefits: [
     {
-      title: 'One story on the call',
-      text: 'Find on Maps, trust from reviews, book without phone tag. Easy to explain in one sentence.',
+      title: 'The whole path works, not one third of it',
+      text: 'Getting found is wasted if nobody trusts the reviews, and both are wasted if the only way to book is to ring you.',
     },
     {
-      title: 'One kickoff, three jobs',
-      text: '$3,400 in one window vs $600 + $1,100 + $1,500 with three separate access chases.',
+      title: 'Your team hands over access once',
+      text: 'Maps and calendar access in one conversation, instead of three separate chases over three separate months.',
     },
     {
-      title: 'Built for appointments',
-      text: 'Clinics and service businesses where people need a time on the calendar, not a brochure.',
+      title: 'People can book after hours',
+      text: 'The moment someone decides is usually the evening. A Book now button is the difference between that and a note they never act on.',
     },
     {
-      title: 'Natural next steps',
-      text: 'Add No-Show Rescue or AI Phone later once Book now is live. They are not in this bundle.',
+      title: 'Built for appointment businesses',
+      text: 'Clinics and service businesses where the goal is a time in the calendar, not a brochure download.',
     },
   ],
   processLabel: 'How it runs',
-  processHeading: 'A short, clear path',
+  processHeading: 'Access, build, go live',
   processSteps: [
     {
       label: 'Access',
@@ -65,11 +67,11 @@ export const BUNDLE_FRONT_DOOR_LIVE_COPY = {
     },
     {
       label: 'Build',
-      text: 'Profile clean-up, review ask path, and Book now on the surfaces you chose, in one planned window.',
+      text: 'Profile clean-up, the review ask, and Book now on the surfaces you chose, in one planned window.',
     },
     {
       label: 'Go live',
-      text: 'Book now tested end to end, plus who owns review asks and what to check monthly.',
+      text: 'A real test booking end to end with you watching, plus who owns reviews and what to check monthly.',
     },
   ],
   stackLabel: 'Everything included',
@@ -77,55 +79,52 @@ export const BUNDLE_FRONT_DOOR_LIVE_COPY = {
   stackItems: [
     {
       title: 'Google Profile Fix',
-      text: 'We clean categories, photos, hours, and the basics so your Maps listing looks finished and easy to trust.',
+      text: 'Categories, photos, hours, services and the basics cleaned up so your Maps listing looks finished and easy to trust.',
     },
     {
       title: 'Review Engine',
-      text: 'A simple ask after a visit or job so new Google reviews keep arriving without staff remembering to chase.',
+      text: 'A simple ask after a visit or job, so new reviews keep arriving without staff having to remember to chase.',
     },
     {
       title: 'Booking System',
-      text: 'Book now on the site, Google, or both, wired to your calendar so people can book without phone tag.',
+      text: 'Book now on the site, on Google, or both, wired to your calendar so people can pick a time without ringing anyone.',
     },
   ],
   scopeLine:
-    'One location, one calendar system. Google Profile Fix, Review Engine, and Booking System as scoped at kickoff.',
+    'One location, one calendar system. Google Profile Fix, Review Engine and Booking System as scoped at kickoff. Extra locations or staff calendars are quoted the same day so the fixed price stays honest.',
   priceLabel: 'Investment',
   price: '$3,400',
-  priceLead: 'Paid once when profile, review path, and calendar lock at kickoff. Bundle list price.',
+  priceLead: 'Paid once, and we start. No quotes, no meetings, no scope creep.',
   guarantee:
-    'All three scoped pieces deliver, or we keep working at no extra cost until they do.',
-  priceAnchor: 'One window instead of three kickoffs.',
+    'Our promise: all three scoped pieces are delivered, with a real test booking run end to end, or we keep working at no extra cost until they are.',
+  priceAnchor:
+    'Work out what one booking is worth to you, then count the evenings and weekends where the only option was to ring you tomorrow. Those go on happening every week. This is one window, paid once.',
   faqLabel: 'Objections',
-  faqHeading: 'Straight answers before you pay',
+  faqHeading: 'Straight answers before you buy',
   faqs: [
     {
-      q: 'What is included?',
-      a: 'Three jobs for one location: we clean your Google Business Profile, set a review ask that keeps firing, and put Book now on the site or Maps against one calendar system. Scoped at kickoff.',
+      q: 'Why buy the bundle instead of the three jobs?',
+      a: 'Because the three only pay off together, and the order matters. Bought separately it is three kickoffs, three access handovers, and usually months of drift between them, so you never see what the whole path does.',
     },
     {
-      q: 'What is Google Profile Fix?',
-      a: 'We clean the public listing: categories, photos, hours, and the basics so Maps looks finished. Not a full ads campaign.',
+      q: 'What exactly is included?',
+      a: 'Three jobs for one location: your Google Business Profile cleaned up, a review ask that keeps firing, and Book now on your site or Maps against one calendar. All scoped at kickoff.',
     },
     {
-      q: 'What is Review Engine?',
-      a: 'A simple ask after a visit or job so new Google reviews keep arriving. Not fake reviews.',
+      q: 'Will Book now work with our calendar?',
+      a: 'We wire it to the booking tool and calendar you already use where we can. If yours will not support it properly, we tell you before you pay rather than after.',
     },
     {
-      q: 'What is Booking System?',
-      a: 'Book now on the site, Google, or both, wired to your calendar so people can pick a time without phone tag.',
+      q: 'Do you write fake reviews?',
+      a: 'Never. We ask real customers at the right moment and make it easy to say yes. What they write is up to them.',
     },
     {
       q: 'Is this only for clinics?',
-      a: 'It fits clinics and any service business where appointments matter. Ask if your calendar setup fits.',
+      a: 'It fits clinics and any service business where the goal is a booked time. If people have to ring you to buy, this is your bundle.',
     },
     {
-      q: 'Why buy the bundle?',
-      a: 'One narrative, one access window, and $3,400 instead of three separate kickoffs at $600 + $1,100 + $1,500.',
-    },
-    {
-      q: 'What comes after?',
-      a: 'No-Show Rescue and AI Phone are common next steps once Book now is live. They are not in this bundle.',
+      q: 'What comes after this?',
+      a: 'No-Show Rescue and AI Phone Setup are the usual next jobs once Book now is live. Neither is in this bundle and neither is required.',
     },
     {
       q: 'Is this refundable?',
@@ -134,6 +133,7 @@ export const BUNDLE_FRONT_DOOR_LIVE_COPY = {
   ],
   finalLabel: 'Last step',
   finalHeading: 'Open the front door properly',
-  finalLine: 'Profile, reviews, booking. Paid once.',
+  finalLine:
+    'Pay once, hand over access once, and let people book you at ten at night.',
   proofKind: 'bundle-front-door',
 } as FunnelProductCopy

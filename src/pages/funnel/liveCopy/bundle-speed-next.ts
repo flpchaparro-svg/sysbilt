@@ -2,110 +2,117 @@ import type {FunnelProductCopy} from '../funnelCopy'
 
 /** Live copy for Speed Next Bundle. Wire via funnelCopyForSlug when ready. */
 export const BUNDLE_SPEED_NEXT_LIVE_COPY = {
-  eyebrow: 'Bundle · After Speed Fix · Same access window',
-  h1Generic: 'While the site is open: make pages convert and make results visible',
+  eyebrow: 'Two jobs, one window, while access is still open',
+  h1Generic: 'The site is fast now. It still never asks anyone to do anything',
   h1Personal: (b: string) =>
-    `${b}, while the site is open: make pages convert and make results visible`,
-  sub: 'Two follow-on jobs while site access is still warm: rewrite priority pages so the next step is obvious, and wire tracking plus forms so you can see when an enquiry lands. Natural finish after Website Speed Fix.',
-  ctaLabel: 'Buy Speed Next · $2,400',
-  proofLabel: 'The picture',
+    `${b}, the site is fast now, and it still never asks anyone to do anything`,
+  sub: 'Speed was the first half. The second half is the pages actually asking for the enquiry, and you being able to see when one lands. While we still have access to the site, we rewrite the pages that matter so the next step is obvious, then wire the tracking and forms so a real enquiry turns up where you can see it.',
+  ctaLabel: 'Buy Speed Next, $2,400',
+  proofLabel: 'The gap',
   proofHeadingLive: 'Fast is not finished',
   proofHeadingGeneric: 'Fast is not finished',
   proofLead: (b: string | null) =>
     b
-      ? `${b} can be quick and still leave people unsure what to do, with no clear signal that an enquiry landed.`
-      : 'Speed without a clear ask, and without measurement, leaves you wondering what changed.',
+      ? `${b} now loads quickly, and a visitor still reads two paragraphs about your values before finding anything that tells them what to do next. Then nobody can say whether enquiries went up, because nothing is counting them.`
+      : 'The site now loads quickly, and a visitor still reads two paragraphs about your values before finding anything that tells them what to do next. Then nobody can say whether enquiries went up, because nothing is counting them.',
   proofLeadGeneric:
-    'Speed without a clear ask, and without measurement, leaves you wondering what changed.',
-  proofAfter: 'Priority pages ask properly, and you can see enquiries land.',
-  proofAfterGeneric: 'Priority pages ask properly, and you can see enquiries land.',
+    'The site now loads quickly, and a visitor still reads two paragraphs about your values before finding anything that tells them what to do next. Then nobody can say whether enquiries went up, because nothing is counting them.',
+  proofAfter:
+    'Speed gets people to stay. The words get them to act. The tracking tells you whether any of it worked. All three or you are guessing.',
+  proofAfterGeneric:
+    'Speed gets people to stay. The words get them to act. The tracking tells you whether any of it worked. All three or you are guessing.',
   painLabel: 'What this is costing you',
   painHeading: 'You paid for speed and still argue about results',
   painLines: [
-    'Pages are quick and unclear.',
-    'Nobody knows if enquiries rose.',
-    'A second kickoff feels heavy.',
-    'Marketing wants proof you cannot show.',
+    'The pages load fast and still leave people unsure what they are meant to do next.',
+    'Nobody can tell you whether enquiries actually went up, because nothing was ever set up to count them.',
+    'Forms send to an inbox somebody left, or to nowhere at all, and you find out months later.',
+    'Booking a second kickoff feels like a whole project, so it quietly never happens.',
   ],
   bridgeLabel: 'The fix',
-  bridgeHeading: 'Speed Next bundle',
+  bridgeHeading: 'Clear ask, visible signal, same access window',
   bridgeBody:
-    'While site access is warm, we do two jobs in one window. We rewrite scoped pages so the ask is clear. We wire primary events and form destinations so you can see enquiries land. No second chase for passwords.',
-  bridgeGaugeCaption: 'Clear ask. Visible signal.',
+    'While we still have access to the site, we do two jobs in one window. First the words: we rewrite the pages you pick so the headline says what you do, and the next step is obvious without scrolling. Then the measurement: we wire the main actions and every form destination, then send a real test enquiry so you watch it arrive. No second hunt for passwords, no waiting on a new kickoff.',
+  bridgeGaugeCaption: 'The page asks properly. You can see the answer.',
   benefitsLabel: 'What changes for you',
   benefitsHeading: 'Outcomes you can point at',
   benefits: [
     {
-      title: 'Same open window',
-      text: 'We reuse the site access from Speed Fix, or any job where the site is already open.',
+      title: 'The page finally asks',
+      text: 'Headlines and buttons that say what to do next, on the pages that actually get traffic.',
     },
     {
-      title: 'Words and proof together',
-      text: 'Clearer pages and measurable enquiries ship in one pass, not two kickoffs.',
+      title: 'You can see enquiries land',
+      text: 'The main actions and every form destination wired up, then proved with a real test submission.',
     },
     {
-      title: 'Honest bundle price',
-      text: '$2,400 for both jobs in one window, vs $1,400 + $950 if you buy them apart.',
+      title: 'No second access chase',
+      text: 'We already have the site open, so nobody has to go hunting for logins again in three months.',
     },
     {
-      title: 'A story you can tell',
-      text: 'The site is fast, the ask is clear, and you can show when enquiries land.',
+      title: 'You find out if it worked',
+      text: 'Both jobs land together, so you get a clean read instead of two half-changes months apart.',
     },
   ],
   processLabel: 'How it runs',
-  processHeading: 'A short, clear path',
+  processHeading: 'Pages, signal, proof',
   processSteps: [
     {
       label: 'Pages',
-      text: 'We lock two service pages plus the main ask, then rewrite headlines and CTAs so the path to enquire is obvious.',
+      text: 'We lock two service pages plus the main ask, then rewrite headlines and buttons so the path to enquire is obvious.',
     },
     {
       label: 'Signal',
-      text: 'We wire the primary events and form destinations so a real enquiry shows up where you watch.',
+      text: 'We wire the main actions and form destinations so a real enquiry shows up where you actually look.',
     },
     {
-      label: 'Show',
-      text: 'Before/after note on the pages, plus a test enquiry so you see the signal fire.',
+      label: 'Proof',
+      text: 'A before and after note on the pages, plus a test enquiry you watch arrive.',
     },
   ],
   stackLabel: 'Everything included',
-  stackHeading: 'Two jobs that finish Speed Fix',
+  stackHeading: 'Two jobs that finish what Speed Fix started',
   stackItems: [
     {
       title: 'Conversion Pass',
-      text: 'We rewrite scoped pages so headlines, CTAs, and the path to enquire are clear. Not a full redesign.',
+      text: 'Headlines, buttons and the path to enquire rewritten on the pages you pick. Not a redesign, the same site saying something clearer.',
     },
     {
       title: 'Tracking and Forms Pack',
-      text: 'We set primary events, form destinations, and a plain watchlist so you can see whether enquiries landed.',
+      text: 'Your main actions and every form destination wired up, plus a short list of what to check each week, proved with a live test.',
     },
   ],
   scopeLine:
-    'Assumes site access similar to Speed Fix. Conversion Pass and Tracking and Forms Pack as scoped at kickoff.',
+    'Assumes site access like Website Speed Fix. Conversion Pass and Tracking and Forms Pack as scoped at kickoff. Extra pages, events or forms are quoted the same day so the fixed price stays honest.',
   priceLabel: 'Investment',
   price: '$2,400',
-  priceLead: 'Paid once when the page list and tracking scope lock at kickoff. Bundle list price.',
+  priceLead: 'Paid once, and we start. No quotes, no meetings, no scope creep.',
   guarantee:
-    'Both scoped pieces deliver, or we keep working at no extra cost until they do.',
-  priceAnchor: 'The finish after Speed Fix.',
+    'Our promise: both scoped pieces are delivered, with a test enquiry proved end to end, or we keep working at no extra cost until they are.',
+  priceAnchor:
+    'The point here is timing, not a discount. We already have access and we already know the site, so both jobs land in one window instead of two kickoffs months apart. It is also the only way to find out whether the speed work you already paid for earned anything.',
   faqLabel: 'Objections',
-  faqHeading: 'Straight answers before you pay',
+  faqHeading: 'Straight answers before you buy',
   faqs: [
     {
+      q: 'Why buy both together instead of one at a time?',
+      a: 'Because they answer the same question. Clearer pages should bring more enquiries, and the tracking is what tells you whether they did. Split them across months and you never get a clean read on either.',
+    },
+    {
       q: 'Do I need Website Speed Fix first?',
-      a: 'It pairs best right after Speed Fix while access is warm. It can also follow any job where we already have the site open and you want convert plus measure.',
+      a: 'It fits best straight after, while access is still warm. It also works after any job where we already have the site open and you want the pages to convert and the results to be visible.',
     },
     {
       q: 'What is Conversion Pass?',
-      a: 'Clearer asks on scoped pages: headlines, CTAs, and the path to enquire. Not a full redesign.',
+      a: 'A rewrite of the pages you pick: headlines, buttons and the path to enquire. Same design, clearer words, so people know what to do.',
     },
     {
-      q: 'What is Tracking and Forms Pack?',
-      a: 'Primary events, form destinations, and a plain watchlist so you can see whether enquiries landed.',
+      q: 'What is the Tracking and Forms Pack?',
+      a: 'Your main actions and form destinations wired up so enquiries are counted and land in the right inbox, plus a short weekly watchlist in plain English.',
     },
     {
-      q: 'Why buy the bundle?',
-      a: 'Same access window, one story, and both jobs scoped together for $2,400 instead of two separate kickoffs at $1,400 + $950.',
+      q: 'Will you redesign the site?',
+      a: 'No. The design stays. We change what the pages say and where the buttons take people.',
     },
     {
       q: 'Is this refundable?',
@@ -114,6 +121,7 @@ export const BUNDLE_SPEED_NEXT_LIVE_COPY = {
   ],
   finalLabel: 'Last step',
   finalHeading: 'Finish what Speed Fix started',
-  finalLine: 'Convert and measure. Paid once.',
+  finalLine:
+    'Pay once, while the site is still open, and get pages that ask plus numbers that answer.',
   proofKind: 'bundle-speed-next',
 } as FunnelProductCopy

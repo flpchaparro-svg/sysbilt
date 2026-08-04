@@ -2,98 +2,135 @@ import type {FunnelProductCopy} from '../funnelCopy'
 
 /** Live /go copy for Inbox Triage Assistant. Wired later via funnelCopyForSlug. */
 export const INBOX_TRIAGE_LIVE_COPY = {
-  eyebrow: 'Warm setup · About a week · One mailbox',
-  h1Generic: 'Your inbox is running the business instead of the other way around',
+  eyebrow: 'Fixed price, about a week, one mailbox',
+  h1Generic:
+    'You spend the first two hours of every day in an inbox that never gets smaller',
   h1Personal: (b: string) =>
-    `${b}, your inbox is running the business instead of the other way around`,
-  sub: 'Rules and draft-reply assistance so routine mail gets sorted and suggested answers appear for humans to send. You stay in charge of what goes out.',
-  ctaLabel: 'Fix my inbox · $2,200',
-  proofLabel: 'The picture',
-  proofHeadingLive: 'Triage before burnout',
-  proofHeadingGeneric: 'Triage before burnout',
+    `${b}, you spend the first two hours of every day in an inbox that never gets smaller`,
+  sub: "The client email that actually mattered is three screens down, under newsletters and supplier ads. The reply you're about to write is one you've written forty times already. We sort the mail into buckets that match how you really work, and have the repeat replies drafted and waiting. Nothing sends without you.",
+  ctaLabel: 'Fix my inbox, $2,200',
+  proofLabel: 'The leak',
+  proofHeadingLive: 'Email became the unpaid second job',
+  proofHeadingGeneric: 'Email became the unpaid second job',
   proofLead: (b: string | null) =>
     b
-      ? `${b} can bury important mail under newsletters while the same reply gets rewritten ten times.`
-      : 'Important mail sits under newsletters. Drafting the same reply ten times is not leadership.',
+      ? `Everything arriving at ${b} lands in one stream, so a customer about to spend money looks exactly like a software invoice and a newsletter nobody signed up for.`
+      : 'Everything lands in one stream, so a customer about to spend money looks exactly like a software invoice and a newsletter nobody signed up for.',
   proofLeadGeneric:
-    'Important mail sits under newsletters. Drafting the same reply ten times is not leadership.',
+    'Everything lands in one stream, so a customer about to spend money looks exactly like a software invoice and a newsletter nobody signed up for.',
   proofAfter:
-    'Labels or folders for the usual types, plus draft helpers for repetitive answers.',
+    'You are not slow at email. You are doing sorting work that a set of rules should have been doing for you, and rewriting answers you have already written.',
   proofAfterGeneric:
-    'Labels or folders for the usual types, plus draft helpers for repetitive answers.',
+    'You are not slow at email. You are doing sorting work that a set of rules should have been doing for you, and rewriting answers you have already written.',
   painLabel: 'What this is costing you',
-  painHeading: 'Email is the unpaid second job',
+  painHeading: 'The inbox is running your day',
   painLines: [
-    'Everything lands in one stream.',
-    'You rewrite the same paragraph daily.',
-    'Urgent client mail looks like noise.',
-    'Team inboxes have no shared rules.',
+    'Everything arrives in one pile, so a customer complaint looks the same as a supplier ad.',
+    "You rewrite the same paragraph most days from scratch, because that's quicker than finding the last one.",
+    'A client email gets read on your phone, mentally filed, and never actually answered.',
+    'The shared inbox has no rules, so either two people reply or nobody does.',
   ],
   bridgeLabel: 'The fix',
-  bridgeHeading: 'Triage rules plus draft help',
+  bridgeHeading: 'Sorting first, then the replies you keep rewriting',
   bridgeBody:
-    'Organisation first, then AI drafts you approve. Not autopilot sending. One primary mailbox or shared inbox, scoped at kickoff.',
-  bridgeGaugeCaption: 'Sort. Suggest. You send.',
+    "This isn't autopilot sending on your behalf, and it isn't a new email system to learn. We work inside the mail tool you already use. First the sorting: rules that put the usual kinds of mail where they belong, so what needs you is visible and the rest is out of the way. Then the drafts: for the messages you answer over and over, a reply is prepared and waiting. You read it, change what you want, and send it. Nothing leaves without a person.",
+  bridgeGaugeCaption: 'It sorts. It drafts. You still decide what goes out.',
   benefitsLabel: 'What changes for you',
-  benefitsHeading: 'Less hunting. Faster replies. You still decide',
+  benefitsHeading: 'Less hunting, faster replies, you still decide',
   benefits: [
-    {title: 'Less hunting', text: 'Mail lands in sensible buckets.'},
-    {title: 'Faster replies', text: 'Drafts for the repetitive ones.'},
     {
-      title: 'Human final say',
-      text: 'Nothing sends without you unless you explicitly choose that later.',
+      title: 'You can see what needs you',
+      text: 'Real customer mail stops looking identical to invoices, newsletters and supplier ads.',
     },
-    {title: 'Feeds Team AI', text: 'Same discipline as wider team prompts.'},
+    {
+      title: 'The repeat replies are already written',
+      text: 'The messages you answer forty times a year arrive with a draft ready to check and send.',
+    },
+    {
+      title: 'Nothing sends without a person',
+      text: 'Drafts wait for you. Silent auto-send stays off unless you deliberately ask for it later.',
+    },
+    {
+      title: 'Shared inboxes get rules',
+      text: 'Who answers what, written down, so two people stop replying to the same message.',
+    },
   ],
   processLabel: 'How it runs',
   processHeading: 'Map, rules, drafts',
   processSteps: [
-    {label: 'Map', text: 'Types of mail and what "done" means.'},
-    {label: 'Rules', text: 'Labels, filters, priorities.'},
-    {label: 'Drafts', text: 'Prompt pack for repetitive replies.'},
+    {
+      label: 'Map',
+      text: 'We go through a real week of mail and agree the handful of types that matter and what done looks like.',
+    },
+    {
+      label: 'Rules',
+      text: 'Labels, filters and priorities built inside the mail tool you already use.',
+    },
+    {
+      label: 'Drafts',
+      text: 'Prepared replies for the messages that repeat, written in your voice and tested on live mail.',
+    },
   ],
   stackLabel: 'Everything included',
-  stackHeading: 'What ships for one mailbox',
+  stackHeading: 'One price, the full setup, nothing extra to buy',
   stackItems: [
-    {title: 'Triage map', text: 'Categories that match your week.'},
-    {title: 'Rules setup', text: 'In the mail tool you already use.'},
-    {title: 'Draft prompt pack', text: 'For humans to run, not silent send.'},
-    {title: 'Team note', text: 'How shared inboxes stay clean.'},
+    {
+      title: 'Triage map',
+      text: 'The categories that actually match your week, agreed from a real inbox rather than a template.',
+    },
+    {
+      title: 'Rules setup',
+      text: 'Built in the mail tool you already use, so nobody has to learn a new system.',
+    },
+    {
+      title: 'Draft pack',
+      text: 'Prepared replies for the messages that repeat, ready for a person to check and send.',
+    },
+    {
+      title: 'Team note',
+      text: 'How a shared inbox stays clean, and who owns which type of mail.',
+    },
   ],
   scopeLine:
-    'One primary mailbox or shared inbox, locked at kickoff. Not a full CRM, not unsupervised auto-send, not a rewrite of every template you own.',
+    'One primary mailbox or shared inbox, locked at kickoff. Not a CRM, not unsupervised auto-send, not a rewrite of every template you own. Extra mailboxes are quoted the same day so the fixed price stays honest.',
   priceLabel: 'Investment',
   price: '$2,200',
-  priceLead: 'Paid once when mailbox scope locks at kickoff.',
+  priceLead: 'Paid once, and we start. No quotes, no meetings, no scope creep.',
   guarantee:
-    'Agreed rules and draft pack are in place, or we keep working at no extra cost until they are.',
-  priceAnchor: 'Hours back every week for the person who owns the inbox.',
+    'Our promise: the agreed rules and drafts are working on your real mailbox before handover, or we keep working at no extra cost until they are.',
+  priceAnchor:
+    "Two hours a day in the inbox, costed at what your time is genuinely worth, comes to more than this inside a month. That's every month, this year and next. This is a week of work, paid once.",
   faqLabel: 'Objections',
-  faqHeading: 'Straight answers before you pay',
+  faqHeading: 'Straight answers before you buy',
   faqs: [
     {
-      q: 'Will it send mail without me?',
-      a: 'No. Drafts are for humans to review and send. Autopilot send is only if you explicitly choose that later, and it is not the default.',
+      q: 'Why is this cheaper than hiring an assistant?',
+      a: "Because an assistant costs about this much every few weeks and still needs managing. This is a one-off setup on the mailbox you already have, and it keeps running after we've gone.",
     },
     {
-      q: 'Which mail tools do you support?',
-      a: 'We work in the mail tool you already use for that mailbox. Scope locks at kickoff so the rules match the real inbox.',
+      q: 'Will it send email without me?',
+      a: 'No. Drafts sit and wait for a person to read and send. Silent auto-send is off, and it only ever goes on if you deliberately ask for it later.',
     },
     {
-      q: 'Is this Team AI?',
-      a: 'No. This is inbox triage and draft help for one mailbox. Team AI is a wider shared prompt setup for the whole team.',
+      q: 'Do we have to change email providers?',
+      a: 'No. We build inside the mail tool you already use. If it cannot support what you need, we tell you before you pay.',
     },
     {
-      q: 'Can we cover every shared inbox?',
-      a: 'The $2,200 lock is one primary mailbox or shared inbox. Extra boxes are quoted the same day.',
+      q: 'Will the drafts sound like us?',
+      a: 'They are written from your existing replies and you approve them before go-live. Anything unusual never gets a draft, it just goes to you.',
+    },
+    {
+      q: 'How many mailboxes are included?',
+      a: 'One primary mailbox or shared inbox. Extra boxes are quoted the same day, which keeps the fixed price honest.',
     },
     {
       q: 'Is this refundable?',
-      a: "There's no change-of-mind refund, because we start straight away. If the agreed rules and draft pack are not delivered, we keep working at no extra cost until they are.",
+      a: "There's no change-of-mind refund, because we start straight away. If the agreed rules and drafts are not delivered, we keep working at no extra cost until they are.",
     },
   ],
   finalLabel: 'Last step',
-  finalHeading: 'Make email smaller',
-  finalLine: 'Triage rules and draft help. Paid once.',
+  finalHeading: 'Get the morning back',
+  finalLine:
+    'Pay once, give us one mailbox, and stop losing the first two hours of the day to sorting.',
   proofKind: 'inbox-triage',
 } as FunnelProductCopy

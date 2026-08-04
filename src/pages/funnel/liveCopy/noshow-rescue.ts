@@ -1,58 +1,59 @@
 /**
- * No-Show Rescue · live copy (local asset).
+ * No-Show Rescue live copy (local asset).
  * Wire into funnelCopyForSlug when the product goes live.
  */
 import type {FunnelProductCopy} from '../funnelCopy'
 
 export const NOSHOW_RESCUE_LIVE_COPY = {
-  eyebrow: 'Fixed price · Two days · One calendar system',
-  h1Generic: 'Empty chairs hurt more when the reminder never landed',
-  h1Personal: (b: string) =>
-    `${b}, empty chairs hurt more when the reminder never landed`,
-  sub: 'Reminders and a rebook path for no-shows, usually beside Booking System. Protect the calendar you already fought to fill.',
-  ctaLabel: 'Rescue no-shows · $750',
-  proofLabel: 'The picture',
-  proofHeadingLive: 'No-shows are a systems problem',
-  proofHeadingGeneric: 'No-shows are a systems problem',
+  eyebrow: 'Fixed price, live in two days',
+  h1Generic: 'An empty chair costs you the same as a full one',
+  h1Personal: (b: string) => `${b}, an empty chair costs you the same as a full one`,
+  sub: "Somebody books, then forgets, and you find out when the room stays empty. Either the reminder never went out, or it went out at a time nobody reads. We set up reminders that land when they'll actually be seen, plus a rebook path for the ones who miss, on the calendar you already use.",
+  ctaLabel: 'Rescue no-shows, $750',
+  proofLabel: 'The leak',
+  proofHeadingLive: 'A no-show is a process gap, not a bad customer',
+  proofHeadingGeneric: 'A no-show is a process gap, not a bad customer',
   proofLead: (b: string | null) =>
     b
-      ? `${b} can fill the diary and still lose the hour if the only reminder is hope.`
-      : 'People forget. Life happens. If your only reminder is hope, the chair stays empty.',
+      ? `${b} spends real money filling the diary, then loses the slot to somebody who genuinely forgot. You still pay the staff, the rent and the light bill for that hour.`
+      : 'You spend real money filling the diary, then lose the slot to somebody who genuinely forgot. You still pay the staff, the rent and the light bill for that hour.',
   proofLeadGeneric:
-    'People forget. Life happens. If your only reminder is hope, the chair stays empty.',
-  proofAfter: 'Reminder cadence plus a simple rebook path when they miss.',
-  proofAfterGeneric: 'Reminder cadence plus a simple rebook path when they miss.',
+    'You spend real money filling the diary, then lose the slot to somebody who genuinely forgot. You still pay the staff, the rent and the light bill for that hour.',
+  proofAfter:
+    'Most people who miss would happily come back. They just never get asked, because the miss ends in a sigh instead of a message.',
+  proofAfterGeneric:
+    'Most people who miss would happily come back. They just never get asked, because the miss ends in a sigh instead of a message.',
   painLabel: 'What this is costing you',
   painHeading: 'The gap in the day costs real money',
   painLines: [
-    'Reminders are manual or missing.',
-    'No-shows get a sigh, not a rebook link.',
-    'Staff scramble to fill gaps last minute.',
-    'You blame customers for a process gap.',
+    'Reminders are manual, so they go out when someone remembers rather than when they work.',
+    'A no-show ends in a sigh, so a customer who would gladly rebook never gets asked.',
+    'Staff lose the morning ringing around to fill a gap that was avoidable.',
+    'You end up blaming customers for something that is really a gap in the process.',
   ],
   bridgeLabel: 'The fix',
-  bridgeHeading: 'Remind, then recover',
+  bridgeHeading: 'Remind properly, then recover the ones who still miss',
   bridgeBody:
-    'Reminder messages and a rebook path on one calendar system. Best with Booking already live. Fit, build, and test with a dummy booking.',
-  bridgeGaugeCaption: 'Fewer empty chairs. Faster recovery.',
+    "This isn't a new booking system and it isn't a rebuild. It's reminders at the times that actually reduce misses, sent on the channel your customers already read, plus a rebook path for anyone who does not show. We build it on the calendar you already use and prove it with a dummy booking before you rely on it.",
+  bridgeGaugeCaption: 'Fewer empty chairs. Faster recovery on the ones you lose.',
   benefitsLabel: 'What changes for you',
-  benefitsHeading: 'Protect the chair you already booked',
+  benefitsHeading: 'Protect the chair you already paid to fill',
   benefits: [
     {
-      title: 'Fewer forgotten visits',
-      text: 'Reminders land before the appointment.',
+      title: 'Fewer forgotten appointments',
+      text: 'Reminders land at the times people actually read them, not whenever somebody got around to it.',
     },
     {
-      title: 'Rebook without shame',
-      text: 'A clear path when they miss.',
+      title: 'A miss becomes a rebook',
+      text: 'They get an easy way back in instead of an awkward silence, so the slot is not simply gone.',
     },
     {
-      title: 'Staff time back',
-      text: 'Less manual chasing.',
+      title: 'Staff stop ringing around',
+      text: 'The reminders run themselves, so the morning goes on the work rather than the phone.',
     },
     {
-      title: 'Protects Booking ROI',
-      text: 'The calendar system earns more when kept full.',
+      title: 'Your booking spend works harder',
+      text: 'Every dollar you put into filling the diary is worth more when the diary stays full.',
     },
   ],
   processLabel: 'How it runs',
@@ -60,63 +61,77 @@ export const NOSHOW_RESCUE_LIVE_COPY = {
   processSteps: [
     {
       label: 'Fit',
-      text: 'Your calendar tool and message channel.',
+      text: 'We check your calendar tool and the channel your customers actually read, usually text or email.',
     },
     {
       label: 'Build',
-      text: 'Reminder and rebook copy, timing.',
+      text: 'Reminder timing and wording you approve, plus the rebook path for anyone who misses.',
     },
     {
       label: 'Test',
-      text: 'A dummy booking proves the path.',
+      text: 'A dummy booking runs the whole path with you watching before a real customer sees it.',
     },
   ],
   stackLabel: 'Everything included',
-  stackHeading: 'What ships in the rescue',
+  stackHeading: 'One price, the full setup, nothing extra to buy',
   stackItems: [
     {
       title: 'Reminder set',
-      text: 'Timing you approve.',
+      text: 'Timing and wording you approve, on the channel your customers already read.',
     },
     {
       title: 'Rebook path',
-      text: 'Link or instruction that works.',
+      text: 'A link or instruction that actually works, so a miss can turn into next week.',
     },
     {
       title: 'Owner alert',
-      text: 'Optional ping when a slot frees late.',
+      text: 'An optional ping when a slot frees up late enough to be worth filling.',
+    },
+    {
+      title: 'Live test',
+      text: 'A dummy booking proves the whole path before you depend on it.',
     },
   ],
   scopeLine:
-    'One calendar system, chosen at kickoff. Not a full Booking System rebuild, not multi-location rollout, not endless message redesign after go-live.',
+    'One calendar system, chosen at kickoff. Not a full booking rebuild, not a multi-location rollout, not endless message redesign after go-live. Extra locations are quoted the same day so the fixed price stays honest.',
   priceLabel: 'Investment',
   price: '$750',
-  priceLead: 'Paid once when the calendar tool and message channel lock at kickoff.',
+  priceLead: 'Paid once, and we start. No quotes, no meetings, no scope creep.',
   guarantee:
-    'Reminders and rebook path work in testing, or we keep working at no extra cost until they do.',
-  priceAnchor: 'One recovered appointment can cover this.',
+    'Our promise: the reminders and the rebook path work in a live test before handover, or we keep working at no extra cost until they do.',
+  priceAnchor:
+    'One recovered appointment covers most of this. A couple a month covers it many times over. The gaps happen every week whether you fix this or not, and this is a two day job you pay for once.',
   faqLabel: 'Objections',
-  faqHeading: 'Straight answers before you pay',
+  faqHeading: 'Straight answers before you buy',
   faqs: [
     {
-      q: 'Do I need Booking System first?',
-      a: 'It pairs best when Booking is already live. If your calendar tool is solid, we can still wire reminders and rebook on that system.',
+      q: 'Why is this only $750?',
+      a: "Because it's a small job on a calendar you already have. We're not rebuilding your booking system, we're wiring the reminders and the rebook path that should have been there from the start. Small scope, small price, no monthly fee.",
     },
     {
-      q: 'Which channels do you use?',
-      a: 'Whatever you already use for client messages, usually SMS or email. We lock the channel at kickoff.',
+      q: 'Do I need a booking system first?',
+      a: 'It works best alongside one. If your current calendar tool is solid, we can still wire reminders and rebooking onto it. We check before you pay.',
     },
     {
-      q: 'Will this fill the slot automatically?',
-      a: 'No. It reminds, then offers a rebook path. Filling the gap still needs a person or your existing booking flow.',
+      q: 'Which channel do the reminders go out on?',
+      a: 'Whatever your customers already read, usually text or email. We lock the channel at kickoff so there are no surprise costs.',
+    },
+    {
+      q: 'Will it fill the empty slot for me?',
+      a: 'No, and nothing honestly can. It reminds people so fewer slots go empty, and gives the ones who miss an easy way to rebook. Filling a late gap still needs a person.',
+    },
+    {
+      q: 'Will customers find the reminders annoying?',
+      a: 'Not at the timing we use. You approve the wording and the schedule, and most people are relieved to be reminded.',
     },
     {
       q: 'Is this refundable?',
-      a: "There's no change-of-mind refund, because we start straight away. If reminders and rebook do not work in testing as scoped, we keep working at no extra cost until they do.",
+      a: "There's no change-of-mind refund, because we start straight away. If the reminders and rebook path do not work in testing, we keep working at no extra cost until they do.",
     },
   ],
   finalLabel: 'Last step',
-  finalHeading: 'Protect the chair you already booked',
-  finalLine: 'Reminders and rebook. Paid once.',
+  finalHeading: 'Protect the chair you already paid to fill',
+  finalLine:
+    'Pay once, tell us your calendar tool, and the reminders are live in about two days.',
   proofKind: 'noshow-rescue',
 } as FunnelProductCopy

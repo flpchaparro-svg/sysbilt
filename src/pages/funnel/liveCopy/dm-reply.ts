@@ -1,99 +1,140 @@
 /**
- * DM Reply System · live funnel copy.
+ * DM Reply System live funnel copy.
  * Parent must extend FunnelProductCopy['proofKind'] with 'dm-reply'.
  */
 import type {FunnelProductCopy} from '../funnelCopy'
 
 export const DM_REPLY_COPY: FunnelProductCopy = {
-  eyebrow: 'Fixed price · Two to three days · Meta DMs',
-  h1Generic: 'Instagram and Facebook DMs deserve the same first reply as your forms',
+  eyebrow: 'Fixed price, live in two to three days',
+  h1Generic:
+    'Three days from now, every Instagram and Facebook message gets an answer in seconds',
   h1Personal: (b: string) =>
-    `${b}, Instagram and Facebook DMs deserve the same first reply as your forms`,
-  sub: 'Quick replies and handoff rules for Meta DMs so social enquiries do not die in a personal inbox.',
-  ctaLabel: 'Fix my DMs · $1,100',
-  proofLabel: 'The picture',
-  proofHeadingLive: 'Social is an intake channel',
-  proofHeadingGeneric: 'Social is an intake channel',
+    `${b}, three days from now every Instagram and Facebook message gets an answer in seconds`,
+  sub: "Someone asks your price at nine at night. If your reply lands the next afternoon, they've already booked whoever answered first. We set up instant replies for the questions you get every week, and a clear rule for when a real person takes over.",
+  ctaLabel: 'Fix my DMs, $1,100',
+  proofLabel: 'The leak',
+  proofHeadingLive: 'Your busiest inbox is the one nobody staffs',
+  proofHeadingGeneric: 'Your busiest inbox is the one nobody staffs',
   proofLead: (b: string | null) =>
     b
-      ? `${b} can lose price and availability asks in DMs when slow or missing replies make the business look asleep.`
-      : 'People ask price and availability in DMs. Slow or missing replies feel like the business is asleep.',
+      ? `Someone messages ${b} asking about price or availability. It's the same question you answer on the phone all day, except this one waits until somebody remembers to open the app.`
+      : "Someone messages you asking about price or availability. It's the same question you answer on the phone all day, except this one waits until somebody remembers to open the app.",
   proofLeadGeneric:
-    'People ask price and availability in DMs. Slow or missing replies feel like the business is asleep.',
+    "Someone messages you asking about price or availability. It's the same question you answer on the phone all day, except this one waits until somebody remembers to open the app.",
   proofAfter:
-    'Quick replies live, escape to a human clear, ownership documented.',
+    'A message at nine at night gets an answer at nine at night. The ones that need you get flagged, and the rest are already handled.',
   proofAfterGeneric:
-    'Quick replies live, escape to a human clear, ownership documented.',
+    'A message at nine at night gets an answer at nine at night. The ones that need you get flagged, and the rest are already handled.',
   painLabel: 'What this is costing you',
-  painHeading: 'DMs are treated like hobbies',
+  painHeading: 'Social messages get treated like a hobby',
   painLines: [
-    'Only one person has the login.',
-    'Replies go out at midnight or not at all.',
-    'No record of what was promised.',
-    'Ads drive DMs into a black hole.',
+    "A customer messages your Instagram on a Sunday asking if you're open Monday. Nobody sees it until Tuesday.",
+    "One person has the login. When they're on holiday, the inbox just fills up.",
+    'Somebody quoted a price in a DM three months ago. Nobody remembers what it was, including the customer.',
+    'You pay for the ad that started the conversation, then let the conversation sit unread.',
   ],
   bridgeLabel: 'The fix',
-  bridgeHeading: 'DM desk with quick replies',
+  bridgeHeading: 'One setup on the inboxes you already own',
   bridgeBody:
-    'Meta quick replies, handoff, and a short desk. Not a full social agency.',
-  bridgeGaugeCaption: 'First reply fast. Human when needed.',
+    "This isn't a social media agency, a content retainer, or someone posting on your behalf. It's a one-off setup on the Instagram and Facebook inboxes you already have: instant answers for the questions that repeat, a rule for when a human steps in, and a written note of who watches which inbox. We test it with a live message before we hand it over.",
+  bridgeGaugeCaption:
+    'Answered in seconds. Handed to a person the moment it matters.',
   benefitsLabel: 'What changes for you',
-  benefitsHeading: 'Treat DMs like enquiries',
+  benefitsHeading: 'Your DMs start behaving like enquiries',
   benefits: [
-    {title: 'Ads stop leaking into silence', text: 'DM intent gets an ack.'},
-    {title: 'Shared ownership', text: 'Not one personal profile forever.'},
-    {title: 'Consistent answers', text: 'Approved lines for the usual asks.'},
-    {title: 'Path to CRM', text: 'Serious leads can move into your real system next.'},
+    {
+      title: 'Nobody waits until Tuesday',
+      text: "The usual questions get answered the moment they're asked, at any hour, including weekends.",
+    },
+    {
+      title: 'The business owns the channel',
+      text: "Not one staff member's personal login on one personal phone.",
+    },
+    {
+      title: 'The same answer every time',
+      text: 'Prices, hours and availability come out the way you approved them, not from memory at midnight.',
+    },
+    {
+      title: 'Real leads reach a person',
+      text: 'Anything that needs you gets flagged and handed over instead of queuing behind the easy questions.',
+    },
   ],
   processLabel: 'How it runs',
   processHeading: 'Access, build, test',
   processSteps: [
-    {label: 'Access', text: 'Page and inbox permissions.'},
-    {label: 'Build', text: 'Quick replies and handoff rules.'},
-    {label: 'Test', text: 'You send a DM. We watch the path.'},
+    {
+      label: 'Access',
+      text: 'You add us to the Page and inbox. Two minutes, and we never need your personal password.',
+    },
+    {
+      label: 'Build',
+      text: 'We write the replies for your most common questions and set the rules for when a human takes over.',
+    },
+    {
+      label: 'Test',
+      text: 'You send a real message from your own phone and watch the whole path before we hand it over.',
+    },
   ],
   stackLabel: 'Everything included',
-  stackHeading: 'What ships in the desk',
+  stackHeading: 'One price, the full setup, nothing extra to buy',
   stackItems: [
-    {title: 'Quick reply pack', text: 'Approved answers.'},
-    {title: 'Handoff rules', text: 'When a human must take it.'},
-    {title: 'Ownership note', text: 'Who watches which inbox.'},
-    {title: 'Path test', text: 'Live DM walkthrough before handoff.'},
+    {
+      title: 'Quick reply pack',
+      text: 'Approved answers for the questions you get every week, written in your words, not a robot script.',
+    },
+    {
+      title: 'Handoff rules',
+      text: 'What gets answered automatically and what gets pushed to a person, decided by you.',
+    },
+    {
+      title: 'Ownership note',
+      text: 'Who watches which inbox, so the setup survives holidays and staff changes.',
+    },
+    {
+      title: 'Live walkthrough',
+      text: 'We send a real message with you watching before we call it done.',
+    },
   ],
   scopeLine:
-    'Instagram and/or Facebook Page inbox as scoped at kickoff. Quick replies and handoff only. Not a full social agency, not content posting, not paid ads management.',
+    'Instagram, the Facebook Page inbox, or both, locked at kickoff. Quick replies and handoff only. Not content posting, not paid ads management, not a social agency retainer.',
   priceLabel: 'Investment',
   price: '$1,100',
-  priceLead: 'Paid once when channels lock at kickoff.',
+  priceLead: 'Paid once, and we start. No quotes, no meetings, no scope creep.',
   guarantee:
-    'Scoped quick replies and handoff work in testing, or we keep working at no extra cost until they do.',
-  priceAnchor: 'Protects paid social and organic DMs alike.',
+    "Our promise: we test the replies and the handoff on a live message before we hand it over. If they don't work the way we described, we keep working at no extra cost until they do.",
+  priceAnchor:
+    "That's about one job. The messages arrive whether you answer them or not, so every week you leave them sitting is a week you paid to start conversations you never finished. The silence charges you weekly. This charges you once.",
   faqLabel: 'Objections',
-  faqHeading: 'Straight answers before you pay',
+  faqHeading: 'Straight answers before you buy',
   faqs: [
     {
-      q: 'Is this a social media agency retainer?',
-      a: 'No. It is Meta DM quick replies, handoff rules, and ownership for the inboxes you scope.',
+      q: 'Why is this cheaper than a social media agency?',
+      a: "Because it's one setup with a fixed scope, not a monthly relationship. An agency charges you every month to keep answering. We build the answers once and hand them to you. We've done this enough times to make it repeatable, and you get the benefit of that.",
+    },
+    {
+      q: 'Will it sound like a robot?',
+      a: 'Only if you write like one. The replies use your words, you approve every line before it goes live, and anything beyond the usual questions goes to a person.',
     },
     {
       q: 'Do you post content for us?',
-      a: 'No. Profile Posting and content systems are separate products. This is the DM desk.',
+      a: 'No. This is the inbox, not the feed. Profile Posting System and Content System cover publishing.',
     },
     {
       q: 'Which platforms are included?',
-      a: 'Instagram and/or Facebook Page inbox as locked at kickoff.',
+      a: 'Instagram, the Facebook Page inbox, or both. You pick at kickoff and the price stays the same.',
     },
     {
-      q: 'Is this Enquiry Reply or Site Chat?',
-      a: 'No. Enquiry Reply covers form and email intake. Site Chat sits on your website. This covers Meta DMs.',
+      q: 'Is this Enquiry Auto-Reply or Site AI Chat?',
+      a: 'No. Enquiry Auto-Reply covers website forms and email. Site AI Chat sits on your website. This one covers Instagram and Facebook messages.',
     },
     {
       q: 'Is this refundable?',
-      a: "There's no change-of-mind refund, because we start straight away. If the scoped quick replies and handoff do not work in testing, we keep working at no extra cost until they do.",
+      a: "There's no change-of-mind refund, because we start straight away. What you have instead is stronger: if the replies and handoff don't work on a live test, we keep working at no extra cost until they do.",
     },
   ],
   finalLabel: 'Last step',
-  finalHeading: 'Treat DMs like enquiries',
-  finalLine: 'Quick replies, clear handoff. Paid once.',
+  finalHeading: 'Next message, they hear back in seconds',
+  finalLine:
+    'Pay once, add us to the Page, and we prove the replies on a live message before we hand it over.',
   proofKind: 'dm-reply' as FunnelProductCopy['proofKind'],
 }

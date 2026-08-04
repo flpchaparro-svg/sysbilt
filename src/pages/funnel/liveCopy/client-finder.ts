@@ -2,13 +2,13 @@ import type {FunnelProductCopy} from '../funnelCopy'
 
 /** Live upgrade of CLIENT_FINDER_COPY: buy-ready, no Coming soon. */
 export const CLIENT_FINDER_LIVE_COPY: FunnelProductCopy = {
-  eyebrow: 'Curated list · Scripts · Plan · One sprint',
+  eyebrow: 'One sprint, then the list is yours to keep',
   h1Generic:
     'Knowing who to call is half the work. Most teams skip straight to hoping',
   h1Personal: (b: string) =>
-    `${b}, knowing who to call is half the work. Most teams skip straight to hoping`,
-  sub: 'A one-time sprint: we lock who you should chase, hand you 50 to 100 named prospects that fit, write how to approach them, and leave a simple execution plan plus a short automation sketch. Not endless spam from us. Not a lead-gen retainer dressed up as a list.',
-  ctaLabel: 'Start Client Finder · $2,800',
+    `${b}, knowing who to call is half the work, and most teams skip straight to hoping`,
+  sub: "One sprint, and you finish it with a list of 50 to 100 named businesses worth your time, the words to approach them with, and an order to work through. Not a bought list of five thousand strangers, and not a monthly retainer that bills you for activity while nobody can say who's actually a fit.",
+  ctaLabel: 'Start Client Finder, $2,800',
   proofLabel: 'The gap',
   proofHeadingLive: 'Hope is not a prospecting system',
   proofHeadingGeneric: 'Hope is not a prospecting system',
@@ -19,9 +19,9 @@ export const CLIENT_FINDER_LIVE_COPY: FunnelProductCopy = {
   proofLeadGeneric:
     'Your team knows the work is good. The open question is who to call this month, and what to say without sounding like a bot.',
   proofAfter:
-    'ICP locked. Named list. Scripts. Calendar or booking path. A sketch of automation you can run yourself or ask us to build later.',
+    'You finish with a clear definition of who is worth chasing, the named list, the scripts, a path from reply to booking, and a short automation outline you can run yourself later.',
   proofAfterGeneric:
-    'ICP locked. Named list. Scripts. Calendar or booking path. A sketch of automation you can run yourself or ask us to build later.',
+    'You finish with a clear definition of who is worth chasing, the named list, the scripts, a path from reply to booking, and a short automation outline you can run yourself later.',
   painLabel: 'What this is costing you',
   painHeading: "You're busy, and the pipeline still depends on luck",
   painLines: [
@@ -35,13 +35,13 @@ export const CLIENT_FINDER_LIVE_COPY: FunnelProductCopy = {
   bridgeBody:
     "This isn't SYSBILT sending cold spam on your behalf, and it isn't a promise of booked appointments. It's a one-time sprint: lock your ICP (ideal customer profile: who is worth chasing), curate 50 to 100 named prospects that fit, write approach scripts, map a calendar or booking path, and leave a short automation sketch you can run or ask us to build later.",
   bridgeGaugeCaption:
-    'Named prospects. Honest scripts. A plan you own. No guaranteed meetings. No illegal scraping promises.',
+    'Named prospects. Honest scripts. A plan you own and keep.',
   benefitsLabel: 'What changes for you',
-  benefitsHeading: 'Outcomes, not jargon',
+  benefitsHeading: 'What you walk away holding',
   benefits: [
     {
       title: 'You know who to call',
-      text: '50 to 100 named prospects that match the ICP we locked with you, not a scraped dump.',
+      text: '50 to 100 named businesses that match the profile we agreed with you, not a scraped dump nobody would ring.',
     },
     {
       title: 'You know what to say',
@@ -97,17 +97,21 @@ export const CLIENT_FINDER_LIVE_COPY: FunnelProductCopy = {
     },
   ],
   scopeLine:
-    'Buy floor $2,800. One-time sprint. We do not guarantee appointments, promise illegal scraping, or sell SYSBILT cold-spamming on your behalf as the product.',
+    'Fixed price, one sprint, with who you are chasing agreed at kickoff. We do not guarantee appointments, promise dodgy scraping, or send cold outreach on your behalf as part of this.',
   priceLabel: 'Investment',
   price: '$2,800',
-  priceLead: 'Paid once when the ICP locks at kickoff.',
+  priceLead: 'Paid once, and we start. No quotes, no meetings, no scope creep.',
   guarantee:
-    'We deliver the scoped ICP, list, scripts, and plan. We do not guarantee meetings booked. If the agreed deliverables are not handed over as scoped, we keep working at no extra cost until they are.',
+    'Our promise: the agreed list, scripts and plan are handed over, or we keep working at no extra cost until they are. What we will not promise is meetings booked, because that depends on your offer and your follow-through.',
   priceAnchor:
-    'About the cost of another quiet month spent hoping the right people call you first.',
+    'Work out what one new client is worth to you over a year. If the list produces a single one, this has already paid for itself, and you keep the list, the scripts and the plan either way. The alternative is another quiet month hoping the right people ring you first.',
   faqLabel: 'Objections',
-  faqHeading: 'Straight answers before you pay',
+  faqHeading: 'Straight answers before you buy',
   faqs: [
+    {
+      q: 'Why is this $2,800 when I can buy a list for a hundred?',
+      a: 'Because the expensive part is the thinking, not the rows. Anyone will sell you five thousand scraped contacts, and you will not ring a single one of them. This is a short list of businesses that genuinely fit, with the words to approach them and an order to work through.',
+    },
     {
       q: 'Do you guarantee appointments?',
       a: 'No. We hand you who to contact and how. Whether they book depends on your offer, timing, and follow-through. Anyone selling guaranteed meetings from a list is overselling.',
@@ -129,8 +133,8 @@ export const CLIENT_FINDER_LIVE_COPY: FunnelProductCopy = {
       a: 'Typically 50 to 100 named rows that fit the ICP. Quality over dumping thousands of bad fits into a spreadsheet.',
     },
     {
-      q: 'Can I buy this today?',
-      a: 'Yes. Fill the access form, we lock the ICP at kickoff, then curate the list, write the scripts, and hand over the plan from the $2,800 floor.',
+      q: 'How soon can we start?',
+      a: 'As soon as you pay. You fill in the access form, we agree who you are chasing at kickoff, then curate the list, write the scripts and hand over the plan.',
     },
   ],
   finalLabel: 'Last step',
