@@ -165,6 +165,8 @@ const QUOTE_TOOL = new Set(['hubspot', 'pipedrive', 'sheets', 'email', 'other', 
 const QUOTE_ACCESS = new Set(['invite', 'crm', 'provider', 'call']);
 const INTAKE_DEST = new Set(['crm', 'email', 'sheets', 'other', 'unsure']);
 const INTAKE_ACCESS = new Set(['invite', 'crm', 'provider', 'form-provider', 'call']);
+const SOP_HOME = new Set(['drive', 'notion', 'confluence', 'docs', 'other', 'unsure']);
+const SOP_ACCESS = new Set(['invite', 'provider', 'call']);
 const GOOGLE_PROFILE_STATUS = new Set([
   'unclaimed',
   'claimed-me',
@@ -276,6 +278,9 @@ type Body = {
   intakePurpose?: unknown;
   inboxTools?: unknown;
   sopJobs?: unknown;
+  sopExpert?: unknown;
+  sopTools?: unknown;
+  sopHome?: unknown;
   dashMetrics?: unknown;
   bundleNotes?: unknown;
   geoTopics?: unknown;
@@ -653,6 +658,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const intakePurpose = str(body.intakePurpose, 4000);
   const inboxTools = str(body.inboxTools, 4000);
   const sopJobs = str(body.sopJobs, 4000);
+  const sopExpert = str(body.sopExpert, 400);
+  const sopTools = str(body.sopTools, 4000);
+  const sopHome = str(body.sopHome, 40);
   const dashMetrics = str(body.dashMetrics, 4000);
   const bundleNotes = str(body.bundleNotes, 4000);
   const geoTopics = str(body.geoTopics, 4000);
@@ -722,7 +730,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     isA11yPass ||
     isNoshowRescue ||
     isInboxTriage ||
-    isSopPlaybook ||
     isDashboardLite ||
     isGeo ||
     isClientFinder;
@@ -1036,6 +1043,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       res.status(400).json({ error: 'Missing what intake should capture' });
       return;
     }
+  } else if (isSopPlaybook) {
+    if (sopJobs.length < 8) {
+      res.status(400).json({ error: 'Missing which jobs to turn into playbooks' });
+      return;
+    }
+    if (sopExpert.length < 2) {
+      res.status(400).json({ error: 'Missing who knows these jobs today' });
+      return;
+    }
+    if (sopTools.length < 4) {
+      res.status(400).json({ error: 'Missing tools used for those jobs' });
+      return;
+    }
+    if (!SOP_HOME.has(sopHome) || !SOP_ACCESS.has(accessPath)) {
+      res.status(400).json({ error: 'Invalid playbook home or access path' });
+      return;
+    }
   } else if (isBundleClinic) {
     const cleanPhone = phone.replace(/\s+/g, '');
     if (profileUrl.length < 3) {
@@ -1075,7 +1099,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       (isA11yPass && a11yPages) ||
       (isNoshowRescue && noshowTools) ||
       (isInboxTriage && inboxTools) ||
-      (isSopPlaybook && sopJobs) ||
       (isDashboardLite && dashMetrics) ||
       (isGeo && geoTopics) ||
       (isClientFinder && finderIcp) ||
@@ -1474,6 +1497,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
             ]
               .filter(Boolean)
               .join('\n')
+        : isSopPlaybook
+          ? [
+              `Funnel access form — ${product}`,
+              `Business: ${business}`,
+              `Jobs to document:\n${sopJobs}`,
+              `Expert today: ${sopExpert}`,
+              `Tools used:\n${sopTools}`,
+              `Playbook home: ${sopHome}`,
+              `Access path: ${accessPath}`,
+              accessDetail ? `Access notes:\n${accessDetail}` : null,
+              notes ? `Other notes:\n${notes}` : null,
+              `Submitted: ${new Date().toISOString()}`,
+            ]
+              .filter(Boolean)
+              .join('\n')
         : isBundleClinic
           ? [
               `Funnel access form — ${product}`,
@@ -1500,7 +1538,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
                 a11yPages ||
                 noshowTools ||
                 inboxTools ||
-                sopJobs ||
                 dashMetrics ||
                 bundleNotes ||
                 geoTopics ||
@@ -1635,6 +1672,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     intakePurpose: intakePurpose || undefined,
     inboxTools: inboxTools || undefined,
     sopJobs: sopJobs || undefined,
+    sopExpert: sopExpert || undefined,
+    sopTools: sopTools || undefined,
+    sopHome: sopHome || undefined,
     dashMetrics: dashMetrics || undefined,
     bundleNotes: bundleNotes || undefined,
     geoTopics: geoTopics || undefined,
@@ -1783,6 +1823,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
                               ? `Quotes: ${quoteTool} · ${quoteTools.slice(0, 60)}`
                             : isIntakeForms
                               ? `Intake: ${intakeDest} · ${intakePurpose.slice(0, 60)}`
+                            : isSopPlaybook
+                              ? `Jobs: ${sopJobs.slice(0, 50)} · Expert: ${sopExpert.slice(0, 40)} · Home: ${sopHome}`
                             : isBundleClinic
                               ? `Profile: ${profileUrl.slice(0, 60)} · ${profileStatus} · Phone: ${phone}${reviewJob ? ` · Visit: ${reviewJob}` : ''}`
                             : isBatchScoped
@@ -1790,7 +1832,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
                                   a11yPages ||
                                   noshowTools ||
                                   inboxTools ||
-                                  sopJobs ||
                                   dashMetrics ||
                                   bundleNotes ||
                                   geoTopics ||
@@ -1807,7 +1848,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         isCrmRescue ||
         isBooking ||
         isBundleClinic ||
-        isBundleFrontDoor
+        isBundleFrontDoor ||
+        isSopPlaybook
           ? `Access: ${accessPath}`
           : `Platform: ${platform} · Access: ${accessPath}`,
         !isMissedCall &&
@@ -1820,6 +1862,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         !isBooking &&
         !isBundleClinic &&
         !isBundleFrontDoor &&
+        !isSopPlaybook &&
         sameProvider !== 'yes'
           ? `Domain/hosting same: ${sameProvider}${domainProvider ? ` · Domain: ${domainProvider}` : ''}${hostingProvider ? ` · Host: ${hostingProvider}` : ''}`
           : null,

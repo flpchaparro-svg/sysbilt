@@ -81,6 +81,14 @@ export type DmPlatformId = 'instagram' | 'facebook' | 'both' | 'unsure'
 export type QuoteToolId = 'hubspot' | 'pipedrive' | 'sheets' | 'email' | 'other' | 'unsure'
 /** Where Intake Form Pack submissions should land. */
 export type IntakeDestId = 'crm' | 'email' | 'sheets' | 'other' | 'unsure'
+/** Where finished SOP playbooks should live. */
+export type SopHomeId =
+  | 'drive'
+  | 'notion'
+  | 'confluence'
+  | 'docs'
+  | 'other'
+  | 'unsure'
 
 export type FunnelAccessPayload = {
   product: FunnelProductCode
@@ -139,6 +147,9 @@ export type FunnelAccessPayload = {
   noshowTools?: string
   inboxTools?: string
   sopJobs?: string
+  sopExpert?: string
+  sopTools?: string
+  sopHome?: SopHomeId | ''
   dashMetrics?: string
   bundleNotes?: string
   geoTopics?: string

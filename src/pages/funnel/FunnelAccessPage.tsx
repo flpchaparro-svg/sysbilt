@@ -60,6 +60,7 @@ import {
   type DmPlatformId,
   type QuoteToolId,
   type IntakeDestId,
+  type SopHomeId,
 } from './funnelAccessTypes'
 
 const SCHEDULER_URL = 'https://meetings-ap1.hubspot.com/felipe-chaparro'
@@ -122,6 +123,9 @@ type StepId =
   | 'noshowTools'
   | 'inboxTools'
   | 'sopJobs'
+  | 'sopExpert'
+  | 'sopTools'
+  | 'sopHome'
   | 'dashMetrics'
   | 'bundleNotes'
   | 'geoTopics'
@@ -296,6 +300,13 @@ const PHASES_QUOTE: {id: PhaseId; n: number; label: string}[] = [
 const PHASES_INTAKE: {id: PhaseId; n: number; label: string}[] = [
   {id: 'about', n: 1, label: 'About you'},
   {id: 'site', n: 2, label: 'Your intake'},
+  {id: 'access', n: 3, label: 'Access'},
+  {id: 'done', n: 4, label: 'Done'},
+]
+
+const PHASES_SOP: {id: PhaseId; n: number; label: string}[] = [
+  {id: 'about', n: 1, label: 'About you'},
+  {id: 'site', n: 2, label: 'Your jobs'},
   {id: 'access', n: 3, label: 'Access'},
   {id: 'done', n: 4, label: 'Done'},
 ]
@@ -596,6 +607,17 @@ function phaseForStep(
     }
     return 'access'
   }
+  if (kind === 'sop-playbook') {
+    if (
+      step === 'sopJobs' ||
+      step === 'sopExpert' ||
+      step === 'sopTools' ||
+      step === 'sopHome'
+    ) {
+      return 'site'
+    }
+    return 'access'
+  }
   if (kind === 'bundle-clinic') {
     if (
       step === 'profileUrl' ||
@@ -627,7 +649,6 @@ function phaseForStep(
     kind === 'a11y-pass' ||
     kind === 'noshow-rescue' ||
     kind === 'inbox-triage' ||
-    kind === 'sop-playbook' ||
     kind === 'dashboard-lite' ||
     kind === 'geo' ||
     kind === 'client-finder'
@@ -636,7 +657,6 @@ function phaseForStep(
       step === 'a11yPages' ||
       step === 'noshowTools' ||
       step === 'inboxTools' ||
-      step === 'sopJobs' ||
       step === 'dashMetrics' ||
       step === 'bundleNotes' ||
       step === 'geoTopics' ||
@@ -1306,6 +1326,86 @@ const INTAKE_DEST_OPTIONS: {
     unsure: true,
   },
 ]
+
+const SOP_HOME_OPTIONS: {
+  id: SopHomeId
+  label: string
+  blurb: string
+  icon: React.ReactNode
+  unsure?: boolean
+}[] = [
+  {
+    id: 'drive',
+    label: 'Google Drive',
+    blurb: 'Playbooks live as Docs or a shared folder the team already opens.',
+    icon: <Globe2 className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'notion',
+    label: 'Notion',
+    blurb: 'A Notion workspace or database the team already uses.',
+    icon: <LayoutTemplate className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'confluence',
+    label: 'Confluence',
+    blurb: 'Company wiki pages staff already search.',
+    icon: <FileText className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'docs',
+    label: 'Word / PDF folder',
+    blurb: 'Shared drive files, email attachments, or a simple folder.',
+    icon: <FileText className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'other',
+    label: 'Other tool',
+    blurb: 'ClickUp, Monday, SharePoint, or something else.',
+    icon: <Server className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'unsure',
+    label: 'Not sure',
+    blurb: 'We will pick the lightest home on the access call.',
+    icon: <Sparkles className="w-full h-full" strokeWidth={1.25} />,
+    unsure: true,
+  },
+]
+
+/** SOP to AI Playbook: access follows where finished playbooks should live. */
+function sopAccessOptionsForHome(home: SopHomeId | null) {
+  const share = {
+    id: 'invite' as AccessPathId,
+    label: 'Share the workspace',
+    blurb: 'Invite us to the Drive, Notion, Confluence, or folder where playbooks should live.',
+    icon: <Users className="w-full h-full" strokeWidth={1.25} />,
+  }
+  const tool = {
+    id: 'provider' as AccessPathId,
+    label: 'Tool login',
+    blurb: 'Temporary login or admin path into the job tools we need to watch while we capture the SOP.',
+    icon: <Server className="w-full h-full" strokeWidth={1.25} />,
+  }
+  const call = {
+    id: 'call' as AccessPathId,
+    label: 'Quick access call',
+    blurb: 'We walk through the jobs, the expert, and where playbooks should live. About ten minutes.',
+    icon: <Phone className="w-full h-full" strokeWidth={1.25} />,
+  }
+  switch (home) {
+    case 'drive':
+    case 'notion':
+    case 'confluence':
+      return [share, call]
+    case 'docs':
+    case 'other':
+      return [share, tool, call]
+    case 'unsure':
+    default:
+      return [call, share, tool]
+  }
+}
 
 /** Intake Form Pack: access cards follow where submissions should land. */
 function intakeAccessOptionsForDest(dest: IntakeDestId | null) {
@@ -3228,6 +3328,7 @@ function helpForStep(
     isDmReply?: boolean
     isQuoteFollowup?: boolean
     isIntakeForms?: boolean
+    isSopPlaybook?: boolean
     isBundleClinic?: boolean
     isBundleSpeedNext?: boolean
     isBundleFrontDoor?: boolean
@@ -3250,6 +3351,8 @@ function helpForStep(
             ? 'A few plain questions about you and your quote path so we can begin. No tech degree needed. If a later step feels unclear, open Help again.'
           : opts?.isIntakeForms
             ? 'A few plain questions about you and the intake path so we can begin. No tech degree needed. If a later step feels unclear, open Help again.'
+          : opts?.isSopPlaybook
+            ? 'A few plain questions about the jobs to document, who knows them today, and where playbooks should live. No tech degree needed. If a later step feels unclear, open Help again.'
           : opts?.isBundleClinic
             ? 'A few plain questions about you, your Google listing, and the clinic phone so we can begin. No tech degree needed. If a later step feels unclear, open Help again.'
           : opts?.isBundleSpeedNext
@@ -3280,6 +3383,12 @@ function helpForStep(
                 'About you: name, email, business',
                 'Your intake: where answers land, which fields matter',
                 'Access: the easiest way into that destination',
+              ]
+          : opts?.isSopPlaybook
+            ? [
+                'About you: name, email, business',
+                'Your jobs: which work to document, who knows it, tools, playbook home',
+                'Access: share the workspace or a short call',
               ]
           : opts?.isBundleClinic
             ? [
@@ -3613,7 +3722,24 @@ function helpForStep(
     case 'sopJobs':
       return {
         title: 'Which jobs to turn into playbooks',
-        body: 'Real repeating work the team does every week.',
+        body: opts?.isSopPlaybook
+          ? 'Real repeating work someone does every week. Name the jobs clearly. The count locks at kickoff.'
+          : 'Real repeating work the team does every week.',
+      }
+    case 'sopExpert':
+      return {
+        title: 'Who knows these jobs today',
+        body: 'The person whose head holds the proper way. Name and role is enough. We interview them to capture the SOP.',
+      }
+    case 'sopTools':
+      return {
+        title: 'Tools used for those jobs',
+        body: 'CRM, inbox, quote tool, design software, sheets. Anything the expert opens while doing the work.',
+      }
+    case 'sopHome':
+      return {
+        title: 'Where playbooks should live',
+        body: 'Drive, Notion, Confluence, a folder, or another tool the team already opens. Not sure is fine.',
       }
     case 'dashMetrics':
       return {
@@ -3718,6 +3844,8 @@ function helpForStep(
           ? 'This bundle needs Google listing access and a path into the missed-call SMS setup. Pick the easiest option. A short call can cover both.'
           : opts?.isBundleFrontDoor
             ? 'This bundle needs Google listing access, the review ask path, and Book now access on the calendar and site or Maps. Pick the easiest option. A short call can cover it.'
+          : opts?.isSopPlaybook
+            ? 'We need a way to reach the expert, watch how the job is done, and leave playbooks where the team will find them. Pick the easiest option.'
           : 'Pick the easiest path for you. We never need more access than the job requires. Hover a card for a short explanation, then Select.',
         steps: opts?.isBundleClinic
           ? [
@@ -3733,6 +3861,12 @@ function helpForStep(
                 'Website access: if Book now lives on the site',
                 'Quick call: we walk Maps, reviews, and Book now together',
               ]
+          : opts?.isSopPlaybook
+            ? [
+                'Share the workspace: Drive, Notion, Confluence, or folder',
+                'Tool login: only if we must watch the job software',
+                'Quick call: we lock jobs, expert, and playbook home together',
+              ]
           : [
               'Website admin: temporary admin user, or tell us how to request one',
               'Hosting panel: cPanel, Plesk, or your host dashboard',
@@ -3747,6 +3881,8 @@ function helpForStep(
           ? 'Anything that helps us reach Maps manager and the missed-call path without a chase. Do not put passwords in this form if you would rather send them by email.'
           : opts?.isBundleFrontDoor
             ? 'Anything that helps us reach Maps manager, the review ask tool, and Book now without a chase. Do not put passwords in this form if you would rather send them by email.'
+          : opts?.isSopPlaybook
+            ? 'Anything that helps us reach the expert and the playbook home without a chase. Do not put passwords in this form if you would rather send them by email.'
           : 'Anything that helps us log in without a chase. Do not put passwords in this form if you would rather send them by email.',
         steps: opts?.isBundleClinic
           ? [
@@ -3758,6 +3894,12 @@ function helpForStep(
             ? [
                 'Google account email that can add managers',
                 'Calendar email to share, and booking tool name if you have one',
+                'Best times for a short call if you chose that path',
+              ]
+          : opts?.isSopPlaybook
+            ? [
+                'Expert availability for a capture interview',
+                'Workspace or folder link if you already have one',
                 'Best times for a short call if you chose that path',
               ]
           : [
@@ -4002,6 +4144,9 @@ const FunnelAccessPage: React.FC = () => {
   const [dmPlatform, setDmPlatform] = useState<DmPlatformId | null>(null)
   const [quoteTool, setQuoteTool] = useState<QuoteToolId | null>(null)
   const [intakeDest, setIntakeDest] = useState<IntakeDestId | null>(null)
+  const [sopExpert, setSopExpert] = useState('')
+  const [sopTools, setSopTools] = useState('')
+  const [sopHome, setSopHome] = useState<SopHomeId | null>(null)
   const [profileUrl, setProfileUrl] = useState('')
   const [profileStatus, setProfileStatus] = useState<ProfileStatusId | null>(null)
   const [reviewJob, setReviewJob] = useState<ReviewJobId | null>(null)
@@ -4105,7 +4250,6 @@ const FunnelAccessPage: React.FC = () => {
     isA11yPass ||
     isNoshowRescue ||
     isInboxTriage ||
-    isSopPlaybook ||
     isDashboardLite ||
     isGeo ||
     isClientFinder
@@ -4116,15 +4260,13 @@ const FunnelAccessPage: React.FC = () => {
         ? 'noshowTools'
         : isInboxTriage
           ? 'inboxTools'
-          : isSopPlaybook
-            ? 'sopJobs'
-            : isDashboardLite
-              ? 'dashMetrics'
-              : isGeo
-                ? 'geoTopics'
-                : isClientFinder
-                  ? 'finderIcp'
-                  : null
+          : isDashboardLite
+            ? 'dashMetrics'
+            : isGeo
+              ? 'geoTopics'
+              : isClientFinder
+                ? 'finderIcp'
+                : null
   const isTeamAi = product === 'team-ai'
   const isChangePack = product === 'change-pack'
   const isContentSystem = product === 'content-system'
@@ -4138,6 +4280,7 @@ const FunnelAccessPage: React.FC = () => {
   const usesDmWizard = isDmReply
   const usesQuoteWizard = isQuoteFollowup
   const usesIntakeWizard = isIntakeForms
+  const usesSopWizard = isSopPlaybook
   const usesClinicWizard = isBundleClinic
   const usesSpeedNextWizard = isBundleSpeedNext
   const usesFrontDoorWizard = isBundleFrontDoor
@@ -4221,6 +4364,8 @@ const FunnelAccessPage: React.FC = () => {
                             ? 'quote-followup'
                           : usesIntakeWizard
                             ? 'intake-forms'
+                          : usesSopWizard
+                            ? 'sop-playbook'
                           : usesClinicWizard
                             ? 'bundle-clinic'
                           : usesFrontDoorWizard
@@ -4274,6 +4419,8 @@ const FunnelAccessPage: React.FC = () => {
                           ? PHASES_QUOTE
                         : usesIntakeWizard
                           ? PHASES_INTAKE
+                        : usesSopWizard
+                          ? PHASES_SOP
                         : usesClinicWizard
                           ? PHASES_CLINIC_BUNDLE
                         : usesFrontDoorWizard
@@ -4632,6 +4779,22 @@ const FunnelAccessPage: React.FC = () => {
         'done',
       ]
     }
+    if (usesSopWizard) {
+      return [
+        'product',
+        'name',
+        'email',
+        'business',
+        'sopJobs',
+        'sopExpert',
+        'sopTools',
+        'sopHome',
+        'access',
+        'accessDetail',
+        'notes',
+        'done',
+      ]
+    }
     if (usesClinicWizard) {
       const steps: StepId[] = [
         'product',
@@ -4772,6 +4935,7 @@ const FunnelAccessPage: React.FC = () => {
     usesDmWizard,
     usesQuoteWizard,
     usesIntakeWizard,
+    usesSopWizard,
     usesClinicWizard,
     usesFrontDoorWizard,
     usesBatchWizard,
@@ -4798,6 +4962,7 @@ const FunnelAccessPage: React.FC = () => {
     isDmReply,
     isQuoteFollowup,
     isIntakeForms,
+    isSopPlaybook,
     isBundleClinic,
     isBundleSpeedNext,
     isBundleFrontDoor,
@@ -4824,6 +4989,8 @@ const FunnelAccessPage: React.FC = () => {
         ? quoteAccessOptionsForTool(quoteTool)
       : usesIntakeWizard
         ? intakeAccessOptionsForDest(intakeDest)
+      : usesSopWizard
+        ? sopAccessOptionsForHome(sopHome)
       : usesClinicWizard
         ? clinicBundleAccessOptions(profileStatus, phoneSetup)
       : usesFrontDoorWizard
@@ -4900,6 +5067,16 @@ const FunnelAccessPage: React.FC = () => {
       }
     } else if (usesIntakeWizard) {
       if (!intakeDest || scopeText.trim().length < 8) {
+        setError('Something is missing. Use Back to check your answers.')
+        return
+      }
+    } else if (usesSopWizard) {
+      if (
+        scopeText.trim().length < 8 ||
+        sopExpert.trim().length < 2 ||
+        sopTools.trim().length < 4 ||
+        !sopHome
+      ) {
         setError('Something is missing. Use Back to check your answers.')
         return
       }
@@ -5182,6 +5359,20 @@ const FunnelAccessPage: React.FC = () => {
             business: business.trim(),
             intakeDest: intakeDest!,
             intakePurpose: scopeText.trim(),
+            accessPath,
+            accessDetail: accessDetail.trim(),
+            notes: notes.trim(),
+          }
+      : usesSopWizard
+        ? {
+            product,
+            name: name.trim(),
+            email: email.trim(),
+            business: business.trim(),
+            sopJobs: scopeText.trim(),
+            sopExpert: sopExpert.trim(),
+            sopTools: sopTools.trim(),
+            sopHome: sopHome!,
             accessPath,
             accessDetail: accessDetail.trim(),
             notes: notes.trim(),
@@ -5665,6 +5856,12 @@ const FunnelAccessPage: React.FC = () => {
     setIntakeDest(id)
     setAccessPath(null)
     window.setTimeout(() => goNext('intakeDest'), 200)
+  }
+
+  function selectSopHome(id: SopHomeId) {
+    setSopHome(id)
+    setAccessPath(null)
+    window.setTimeout(() => goNext('sopHome'), 200)
   }
 
   function selectProfileStatus(id: ProfileStatusId) {
@@ -6202,6 +6399,69 @@ const FunnelAccessPage: React.FC = () => {
                 disabled={scopeText.trim().length < 8}
                 onNext={() => goNext('intakePurpose')}
               />
+            ) : null}
+
+            {usesSopWizard && step === 'sopJobs' ? (
+              <OneField
+                title="Which jobs should become playbooks?"
+                hint="Real repeating work. One job per line if you can. The count locks at kickoff."
+                value={scopeText}
+                onChange={setScopeText}
+                placeholder={'e.g. Quote replies\nNew client onboarding checklist\nWeekly report for the owner'}
+                multiline
+                disabled={scopeText.trim().length < 8}
+                onNext={() => goNext('sopJobs')}
+              />
+            ) : null}
+
+            {usesSopWizard && step === 'sopExpert' ? (
+              <OneField
+                title="Who knows these jobs today?"
+                hint="The person whose head holds the proper way. Name and role is enough."
+                value={sopExpert}
+                onChange={setSopExpert}
+                placeholder="e.g. Sam Chen, operations lead"
+                disabled={sopExpert.trim().length < 2}
+                onNext={() => goNext('sopExpert')}
+              />
+            ) : null}
+
+            {usesSopWizard && step === 'sopTools' ? (
+              <OneField
+                title="Which tools do they use for those jobs?"
+                hint="CRM, inbox, quote tool, design software, sheets. A short list is enough."
+                value={sopTools}
+                onChange={setSopTools}
+                placeholder={'e.g. HubSpot\nGmail\nGoogle Docs\nCanva'}
+                multiline
+                disabled={sopTools.trim().length < 4}
+                onNext={() => goNext('sopTools')}
+              />
+            ) : null}
+
+            {usesSopWizard && step === 'sopHome' ? (
+              <>
+                <QuestionTitle>
+                  Where should finished playbooks <span style={{color: RED}}>live</span>?
+                </QuestionTitle>
+                <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
+                  Pick the home the team already opens. Hover a card, then Select. Not sure is fine.
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+                  {SOP_HOME_OPTIONS.map((opt) => (
+                    <div key={opt.id}>
+                      <SelectCard
+                        selected={sopHome === opt.id}
+                        onSelect={() => selectSopHome(opt.id)}
+                        title={opt.label}
+                        blurb={opt.blurb}
+                        icon={opt.icon}
+                        unsure={opt.unsure}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </>
             ) : null}
 
             {step === 'profileUrl' ? (
@@ -6831,13 +7091,11 @@ const FunnelAccessPage: React.FC = () => {
                       ? 'Booking tool and reminder gaps'
                       : batchScopeField === 'inboxTools'
                         ? 'Inbox and tools in play'
-                        : batchScopeField === 'sopJobs'
-                          ? 'Which jobs to turn into playbooks'
-                          : batchScopeField === 'dashMetrics'
-                            ? 'Metrics you need on one screen'
-                            : batchScopeField === 'geoTopics'
-                              ? 'Topics AI should know you for'
-                              : 'Who you want to find'
+                        : batchScopeField === 'dashMetrics'
+                          ? 'Metrics you need on one screen'
+                          : batchScopeField === 'geoTopics'
+                            ? 'Topics AI should know you for'
+                            : 'Who you want to find'
                 }
                 hint={
                   batchScopeField === 'a11yPages'
@@ -6846,13 +7104,11 @@ const FunnelAccessPage: React.FC = () => {
                       ? 'What you use today and where reminders fail.'
                       : batchScopeField === 'inboxTools'
                         ? 'Email or CRM, and what burns the most time.'
-                        : batchScopeField === 'sopJobs'
-                          ? 'Real repeating work the team does every week.'
-                          : batchScopeField === 'dashMetrics'
-                            ? 'Leads, bookings, ads, reviews. What you check every week.'
-                            : batchScopeField === 'geoTopics'
-                              ? 'Services, suburbs, and proof points tools should cite.'
-                              : 'Ideal customer, geography, and who to exclude.'
+                        : batchScopeField === 'dashMetrics'
+                          ? 'Leads, bookings, ads, reviews. What you check every week.'
+                          : batchScopeField === 'geoTopics'
+                            ? 'Services, suburbs, and proof points tools should cite.'
+                            : 'Ideal customer, geography, and who to exclude.'
                 }
                 value={scopeText}
                 onChange={setScopeText}
@@ -6863,13 +7119,11 @@ const FunnelAccessPage: React.FC = () => {
                       ? 'e.g. Fresha, SMS day-before only'
                       : batchScopeField === 'inboxTools'
                         ? 'e.g. Gmail + HubSpot, quotes and referrals'
-                        : batchScopeField === 'sopJobs'
-                          ? 'e.g. Quote replies, onboarding checklist'
-                          : batchScopeField === 'dashMetrics'
-                            ? 'e.g. Weekly leads, booked jobs, ad spend'
-                            : batchScopeField === 'geoTopics'
-                              ? 'e.g. Kitchen reno, Inner West, 12 years'
-                              : 'e.g. Clinic owners, Sydney, no chains'
+                        : batchScopeField === 'dashMetrics'
+                          ? 'e.g. Weekly leads, booked jobs, ad spend'
+                          : batchScopeField === 'geoTopics'
+                            ? 'e.g. Kitchen reno, Inner West, 12 years'
+                            : 'e.g. Clinic owners, Sydney, no chains'
                 }
                 multiline
                 disabled={scopeText.trim().length < 8}
@@ -7706,6 +7960,10 @@ const FunnelAccessPage: React.FC = () => {
                     <>
                       How should we wire the <span style={{color: RED}}>intake destination</span>?
                     </>
+                  ) : usesSopWizard ? (
+                    <>
+                      How should we reach the <span style={{color: RED}}>jobs and playbook home</span>?
+                    </>
                   ) : usesClinicWizard ? (
                     profileStatus === 'unclaimed' ? (
                       <>
@@ -7788,6 +8046,8 @@ const FunnelAccessPage: React.FC = () => {
                       ? 'CRM invite, sheet share, mailbox access, or a short call. Pick whatever is easiest.'
                     : usesIntakeWizard
                       ? 'CRM invite, form tool login, inbox or sheet share, or a short call. Pick whatever is easiest.'
+                    : usesSopWizard
+                      ? 'Share the playbook workspace, give a temporary tool login if we must watch the job software, or a short call covering the expert and the jobs. Pick whatever is easiest.'
                     : usesClinicWizard
                       ? profileStatus === 'unclaimed'
                         ? 'We need a path to claim the Google listing, plus how we reach the missed-call SMS setup. Or a short call covering both.'
@@ -7866,6 +8126,12 @@ const FunnelAccessPage: React.FC = () => {
                                 : accessPath === 'crm'
                                   ? 'Which CRM or booking tool logs calls today, and the email to invite.'
                                   : 'Best times to call, or anything that usually trips people up on Maps or the phone path.'
+                    : usesSopWizard
+                      ? accessPath === 'invite'
+                        ? 'Workspace or folder link, and the email to share with. Or say you will send the invite shortly.'
+                        : accessPath === 'provider'
+                          ? 'Job tool name and login URL, or say you will email credentials separately.'
+                          : 'Best times to call the expert, or anything that usually trips capture interviews.'
                     : usesFrontDoorWizard
                       ? accessPath === 'invite'
                         ? 'Google account email for manager invite, plus the calendar email to share for Book now.'
