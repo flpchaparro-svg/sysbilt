@@ -112,7 +112,7 @@ export function ProfilePostingLeakPair() {
           />
         </div>
 
-        <div className="px-4 md:px-5 pb-4 md:pb-5 h-[148px] overflow-hidden">
+        <div className="px-4 md:px-5 pb-4 md:pb-5 min-h-[176px] overflow-hidden">
           {go ? (
             <AlivePublishingFeed />
           ) : (
@@ -139,7 +139,7 @@ function AlivePublishingFeed() {
   }, [])
 
   return (
-    <div className="relative flex flex-col gap-2 pt-0.5 h-full overflow-hidden">
+    <div className="relative flex flex-col gap-2 pt-0.5 overflow-hidden">
       <AnimatePresence initial={false} mode="popLayout">
         {ids.map((id) => (
           <motion.div
