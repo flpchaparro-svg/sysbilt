@@ -1,7 +1,8 @@
 # SYSBILT — Services and Pricing Master
 
-**Version 2.2 / 2026 / Internal only. Not for client distribution.**
+**Version 2.3 / 2026 / Internal only. Not for client distribution.**
 
+> **What changed in v2.3.** Added **Quote Capture** (locked `/go` product), AI Concierge add-on, and basic quote-platform setup add-on. Product brief: `QUOTE_CAPTURE_BRIEF.md`.
 > **What changed in v2.2.** Four "Who it's for" and outcome lines reframed off trade wording ("tradies", "trades", "on the tools") onto the premium-operator standard in `BRAND_FACTS.md`. No prices, times, tools, tiers, or retainer figures changed.
 
 The single source of truth for what we sell, what it costs, how long it takes, and the tools behind it. Use it to scope a job, write a quote, or build a tax invoice. Prices were benchmarked against current Australian market rates in 2026 and set to a mid-premium position: not the cheapest, not the dearest, priced to the quality and speed of what we deliver.
@@ -164,6 +165,16 @@ Each pillar lists its main services (Tier 3) and its subtasks (Tier 4). Retainer
 - **Retainer:** Care ($150/mo) or Care + source tracking and hygiene ($300/mo).
 - **In-house pick:** HubSpot. **If they're already on:** Pipedrive or an industry-specific CRM we configure.
 
+**Quote Capture**
+*Dead contact form replaced by a real quote on the page.*
+- **Scope:** trade-or-service wizard on their site, locked rate card with maths, on-screen quotation + PDF, visitor email and SMS with payment link, owner alert, quote created in their Zoho (or equivalent) when connected. AI Concierge is a separate add-on on the same card. Out-of-catalogue jobs get a soft no with no lead spam. Full product rules in `QUOTE_CAPTURE_BRIEF.md`.
+- **Who it's for:** service businesses that quote for a living and still only have a name-email-message form (landscaping and similar first).
+- **The pain:** impatient buyers leave without a number; the owner never knows they were ready to pay.
+- **Time:** ~5–7 days after the rate-card call. **Setup:** **$2,800 locked** (AI Concierge +$600; basic Zoho/quote-platform setup +$100 if they have none).
+- **Retainer:** Care if they want light support; Ops/Care required if SYSBILT operates quotes ongoing.
+- **In-house pick:** custom embed + Stripe + Twilio/email + their Zoho. Sandbox and `/go/quote-capture` for the sell path.
+- **Private catalogue:** `/go/quote-capture` (planned). Demo: `/demo/quote-capture`.
+
 **Sales Pipeline Build**
 *See every deal and who's chasing it.*
 - **Scope:** a visual sales board with stage gating, probability weighting, deal-stage automation, and rep dashboards.
@@ -201,6 +212,8 @@ Each pillar lists its main services (Tier 3) and its subtasks (Tier 4). Retainer
 | **Sales Template & Snippet Pack** | A set of ready-to-send sales emails and replies | 1–2 days | $600 – $1,500 | CRM templates |
 | **Meeting / Booking Link Setup** | A booking link clients use to self-schedule | 1 day | $400 – $900 | HubSpot Meetings |
 | **Quote / Proposal Template** | A reusable branded quote or proposal that fills itself | 1–2 days | $700 – $1,800 | CRM / PandaDoc |
+| **Quote Capture — AI Concierge** | Chat path on the same locked rate card as Quote Capture | 1–2 days (after wizard exists) | **$600 locked** | Same embed + model with hard rate-card guardrails |
+| **Basic quote platform setup** | Zoho (or equivalent) quotes/invoices standing for a client with none | 0.5–1 day | **$100 locked** | Zoho Books / Zoho CRM quote module |
 | **Custom Fields & Properties** | The CRM shaped to how the business actually works | 1 day | $500 – $1,200 | HubSpot |
 | **Lead Source & UTM Tracking** | Every lead tagged with where it came from | 1–2 days | $600 – $1,500 | GTM + CRM |
 | **Inbox / WhatsApp Connection** | All channels landing in one shared inbox | 1 day | $500 – $1,200 | HubSpot / native connectors |
