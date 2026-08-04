@@ -59,6 +59,7 @@ import {
   type WhatsappStatusId,
   type DmPlatformId,
   type QuoteToolId,
+  type IntakeDestId,
 } from './funnelAccessTypes'
 
 const SCHEDULER_URL = 'https://meetings-ap1.hubspot.com/felipe-chaparro'
@@ -116,8 +117,9 @@ type StepId =
   | 'dmChannels'
   | 'quoteTool'
   | 'quoteTools'
-  | 'noshowTools'
+  | 'intakeDest'
   | 'intakePurpose'
+  | 'noshowTools'
   | 'inboxTools'
   | 'sopJobs'
   | 'dashMetrics'
@@ -280,6 +282,13 @@ const PHASES_DM: {id: PhaseId; n: number; label: string}[] = [
 const PHASES_QUOTE: {id: PhaseId; n: number; label: string}[] = [
   {id: 'about', n: 1, label: 'About you'},
   {id: 'site', n: 2, label: 'Your quotes'},
+  {id: 'access', n: 3, label: 'Access'},
+  {id: 'done', n: 4, label: 'Done'},
+]
+
+const PHASES_INTAKE: {id: PhaseId; n: number; label: string}[] = [
+  {id: 'about', n: 1, label: 'About you'},
+  {id: 'site', n: 2, label: 'Your intake'},
   {id: 'access', n: 3, label: 'Access'},
   {id: 'done', n: 4, label: 'Done'},
 ]
@@ -541,10 +550,15 @@ function phaseForStep(
     }
     return 'access'
   }
+  if (kind === 'intake-forms') {
+    if (step === 'intakeDest' || step === 'intakePurpose') {
+      return 'site'
+    }
+    return 'access'
+  }
   if (
     kind === 'a11y-pass' ||
     kind === 'noshow-rescue' ||
-    kind === 'intake-forms' ||
     kind === 'inbox-triage' ||
     kind === 'sop-playbook' ||
     kind === 'dashboard-lite' ||
@@ -557,7 +571,6 @@ function phaseForStep(
     if (
       step === 'a11yPages' ||
       step === 'noshowTools' ||
-      step === 'intakePurpose' ||
       step === 'inboxTools' ||
       step === 'sopJobs' ||
       step === 'dashMetrics' ||
@@ -1187,6 +1200,100 @@ function quoteAccessOptionsForTool(tool: QuoteToolId | null) {
     case 'unsure':
     default:
       return [call, crmInvite, mailbox]
+  }
+}
+
+const INTAKE_DEST_OPTIONS: {
+  id: IntakeDestId
+  label: string
+  blurb: string
+  icon: React.ReactNode
+  unsure?: boolean
+}[] = [
+  {
+    id: 'crm',
+    label: 'CRM',
+    blurb: 'Submissions should create or update a contact or deal.',
+    icon: <Server className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'email',
+    label: 'Structured email',
+    blurb: 'A clean inbox destination staff actually watch.',
+    icon: <Mail className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'sheets',
+    label: 'Spreadsheet',
+    blurb: 'Rows land in Google Sheets or Excel for now.',
+    icon: <FileText className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'other',
+    label: 'Other tool',
+    blurb: 'Practice software, job system, or something else.',
+    icon: <LayoutTemplate className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'unsure',
+    label: 'Not sure',
+    blurb: 'We will lock the destination on the access call.',
+    icon: <Sparkles className="w-full h-full" strokeWidth={1.25} />,
+    unsure: true,
+  },
+]
+
+/** Intake Form Pack: access cards follow where submissions should land. */
+function intakeAccessOptionsForDest(dest: IntakeDestId | null) {
+  const crmInvite = {
+    id: 'invite' as AccessPathId,
+    label: 'CRM invite',
+    blurb: 'Invite us so we can map fields into the right contact or deal properties.',
+    icon: <Users className="w-full h-full" strokeWidth={1.25} />,
+  }
+  const crmAdmin = {
+    id: 'crm' as AccessPathId,
+    label: 'CRM admin path',
+    blurb: 'Share a temporary admin or form-to-CRM path for the intake object.',
+    icon: <Server className="w-full h-full" strokeWidth={1.25} />,
+  }
+  const mailbox = {
+    id: 'provider' as AccessPathId,
+    label: 'Inbox access',
+    blurb: 'Share the mailbox or form tool that should receive structured submissions.',
+    icon: <Mail className="w-full h-full" strokeWidth={1.25} />,
+  }
+  const sheetShare = {
+    id: 'invite' as AccessPathId,
+    label: 'Sheet share',
+    blurb: 'Share the destination sheet with edit access, or a blank template we can wire.',
+    icon: <FileText className="w-full h-full" strokeWidth={1.25} />,
+  }
+  const formTool = {
+    id: 'form-provider' as AccessPathId,
+    label: 'Form tool login',
+    blurb: 'Typeform, Jotform, Gravity, or similar. Invite us or share a temporary admin path.',
+    icon: <LayoutTemplate className="w-full h-full" strokeWidth={1.25} />,
+  }
+  const call = {
+    id: 'call' as AccessPathId,
+    label: 'Quick access call',
+    blurb: 'We walk through fields and destination together. About five minutes.',
+    icon: <Phone className="w-full h-full" strokeWidth={1.25} />,
+  }
+
+  switch (dest) {
+    case 'crm':
+      return [crmInvite, crmAdmin, formTool, call]
+    case 'email':
+      return [mailbox, formTool, call]
+    case 'sheets':
+      return [sheetShare, formTool, call]
+    case 'other':
+      return [formTool, crmInvite, call]
+    case 'unsure':
+    default:
+      return [call, formTool, crmInvite]
   }
 }
 
@@ -2931,6 +3038,7 @@ function helpForStep(
     isWhatsappSetup?: boolean
     isDmReply?: boolean
     isQuoteFollowup?: boolean
+    isIntakeForms?: boolean
   },
 ): HelpBlock {
   switch (step) {
@@ -2948,6 +3056,8 @@ function helpForStep(
             ? 'A few plain questions about you and your Meta DMs so we can begin. No tech degree needed. If a later step feels unclear, open Help again.'
           : opts?.isQuoteFollowup
             ? 'A few plain questions about you and your quote path so we can begin. No tech degree needed. If a later step feels unclear, open Help again.'
+          : opts?.isIntakeForms
+            ? 'A few plain questions about you and the intake path so we can begin. No tech degree needed. If a later step feels unclear, open Help again.'
           : 'You are on a short access form. A few plain questions about you and your site so we can begin as soon as we can. No tech degree needed. If a later step feels unclear, open Help again and we will walk you through it.',
         steps: opts?.isWhatsappSetup
           ? [
@@ -2966,6 +3076,12 @@ function helpForStep(
                 'About you: name, email, business',
                 'Your quotes: where they live, how follow-up works now',
                 'Access: the easiest way into that tool',
+              ]
+          : opts?.isIntakeForms
+            ? [
+                'About you: name, email, business',
+                'Your intake: where answers land, which fields matter',
+                'Access: the easiest way into that destination',
               ]
           : [
               'About you: name, email, business',
@@ -3025,6 +3141,16 @@ function helpForStep(
       return {
         title: 'How follow-up works now',
         body: 'What happens after a quote goes out, and where the chase stalls. A short honest note is enough.',
+      }
+    case 'intakeDest':
+      return {
+        title: 'Where submissions should land',
+        body: 'CRM, structured email, a spreadsheet, or another tool. This locks the destination we wire.',
+      }
+    case 'intakePurpose':
+      return {
+        title: 'What intake should capture',
+        body: 'Purpose, key fields, and who reviews new submissions. A short list is enough.',
       }
     case 'phoneSetup':
       return {
@@ -3253,11 +3379,6 @@ function helpForStep(
       return {
         title: 'Booking tool and reminder gaps',
         body: 'What you use today and where reminders fail.',
-      }
-    case 'intakePurpose':
-      return {
-        title: 'What intake should capture',
-        body: 'Purpose, key fields, and where answers should land.',
       }
     case 'inboxTools':
       return {
@@ -3617,6 +3738,7 @@ const FunnelAccessPage: React.FC = () => {
   const [whatsappStatus, setWhatsappStatus] = useState<WhatsappStatusId | null>(null)
   const [dmPlatform, setDmPlatform] = useState<DmPlatformId | null>(null)
   const [quoteTool, setQuoteTool] = useState<QuoteToolId | null>(null)
+  const [intakeDest, setIntakeDest] = useState<IntakeDestId | null>(null)
   const [profileUrl, setProfileUrl] = useState('')
   const [profileStatus, setProfileStatus] = useState<ProfileStatusId | null>(null)
   const [reviewJob, setReviewJob] = useState<ReviewJobId | null>(null)
@@ -3719,7 +3841,6 @@ const FunnelAccessPage: React.FC = () => {
   const usesBatchWizard =
     isA11yPass ||
     isNoshowRescue ||
-    isIntakeForms ||
     isInboxTriage ||
     isSopPlaybook ||
     isDashboardLite ||
@@ -3733,21 +3854,19 @@ const FunnelAccessPage: React.FC = () => {
       ? 'a11yPages'
       : isNoshowRescue
         ? 'noshowTools'
-        : isIntakeForms
-          ? 'intakePurpose'
-          : isInboxTriage
-            ? 'inboxTools'
-            : isSopPlaybook
-              ? 'sopJobs'
-              : isDashboardLite
-                ? 'dashMetrics'
-                : isBundleClinic || isBundleSpeedNext || isBundleFrontDoor
-                  ? 'bundleNotes'
-                  : isGeo
-                    ? 'geoTopics'
-                    : isClientFinder
-                      ? 'finderIcp'
-                      : null
+        : isInboxTriage
+          ? 'inboxTools'
+          : isSopPlaybook
+            ? 'sopJobs'
+            : isDashboardLite
+              ? 'dashMetrics'
+              : isBundleClinic || isBundleSpeedNext || isBundleFrontDoor
+                ? 'bundleNotes'
+                : isGeo
+                  ? 'geoTopics'
+                  : isClientFinder
+                    ? 'finderIcp'
+                    : null
   const isTeamAi = product === 'team-ai'
   const isChangePack = product === 'change-pack'
   const isContentSystem = product === 'content-system'
@@ -3760,6 +3879,7 @@ const FunnelAccessPage: React.FC = () => {
   const usesWhatsappWizard = isWhatsappSetup
   const usesDmWizard = isDmReply
   const usesQuoteWizard = isQuoteFollowup
+  const usesIntakeWizard = isIntakeForms
   const usesConversionWizard = isConversionPass
   const usesOnpageWizard = isOnpageSearch
   const usesSchemaFaqWizard = isSchemaFaq
@@ -3836,6 +3956,8 @@ const FunnelAccessPage: React.FC = () => {
                             ? 'dm-reply'
                           : usesQuoteWizard
                             ? 'quote-followup'
+                          : usesIntakeWizard
+                            ? 'intake-forms'
                           : usesBatchWizard && product
                             ? (product as typeof productKind)
                           : isTeamAi
@@ -3881,6 +4003,8 @@ const FunnelAccessPage: React.FC = () => {
                           ? PHASES_DM
                         : usesQuoteWizard
                           ? PHASES_QUOTE
+                        : usesIntakeWizard
+                          ? PHASES_INTAKE
                         : usesBatchWizard
                           ? PHASES_BATCH
                         : isTeamAi
@@ -4193,6 +4317,20 @@ const FunnelAccessPage: React.FC = () => {
         'done',
       ]
     }
+    if (usesIntakeWizard) {
+      return [
+        'product',
+        'name',
+        'email',
+        'business',
+        'intakeDest',
+        'intakePurpose',
+        'access',
+        'accessDetail',
+        'notes',
+        'done',
+      ]
+    }
     if (usesBatchWizard && batchScopeField) {
       const base: StepId[] = [
         'product',
@@ -4294,6 +4432,7 @@ const FunnelAccessPage: React.FC = () => {
     usesWhatsappWizard,
     usesDmWizard,
     usesQuoteWizard,
+    usesIntakeWizard,
     usesBatchWizard,
     batchScopeField,
     isSearchFix,
@@ -4312,7 +4451,13 @@ const FunnelAccessPage: React.FC = () => {
   const activePhase = phaseForStep(step, productKind)
 
   const firstStep: StepId = 'product'
-  const help = helpForStep(step, {isAiPhone, isWhatsappSetup, isDmReply, isQuoteFollowup})
+  const help = helpForStep(step, {
+    isAiPhone,
+    isWhatsappSetup,
+    isDmReply,
+    isQuoteFollowup,
+    isIntakeForms,
+  })
   const liveProducts = useMemo(() => {
     const all = FUNNEL_PRODUCT_CATALOGUE.filter(
       (p) => p.status === 'live' && p.code !== 'website' && p.code !== 'website-hook',
@@ -4333,6 +4478,8 @@ const FunnelAccessPage: React.FC = () => {
         ? dmAccessOptionsForPlatform(dmPlatform)
       : usesQuoteWizard
         ? quoteAccessOptionsForTool(quoteTool)
+      : usesIntakeWizard
+        ? intakeAccessOptionsForDest(intakeDest)
       : usesPostingWizard
       ? postingAccessOptionsForStatus(profileStatus, whoPublishes)
       : usesEnquiryWizard
@@ -4400,6 +4547,11 @@ const FunnelAccessPage: React.FC = () => {
       }
     } else if (usesQuoteWizard) {
       if (!quoteTool || scopeText.trim().length < 8) {
+        setError('Something is missing. Use Back to check your answers.')
+        return
+      }
+    } else if (usesIntakeWizard) {
+      if (!intakeDest || scopeText.trim().length < 8) {
         setError('Something is missing. Use Back to check your answers.')
         return
       }
@@ -4624,6 +4776,18 @@ const FunnelAccessPage: React.FC = () => {
             business: business.trim(),
             quoteTool: quoteTool!,
             quoteTools: scopeText.trim(),
+            accessPath,
+            accessDetail: accessDetail.trim(),
+            notes: notes.trim(),
+          }
+      : usesIntakeWizard
+        ? {
+            product,
+            name: name.trim(),
+            email: email.trim(),
+            business: business.trim(),
+            intakeDest: intakeDest!,
+            intakePurpose: scopeText.trim(),
             accessPath,
             accessDetail: accessDetail.trim(),
             notes: notes.trim(),
@@ -5046,6 +5210,12 @@ const FunnelAccessPage: React.FC = () => {
     setQuoteTool(id)
     setAccessPath(null)
     window.setTimeout(() => goNext('quoteTool'), 200)
+  }
+
+  function selectIntakeDest(id: IntakeDestId) {
+    setIntakeDest(id)
+    setAccessPath(null)
+    window.setTimeout(() => goNext('intakeDest'), 200)
   }
 
   function selectProfileStatus(id: ProfileStatusId) {
@@ -5536,6 +5706,44 @@ const FunnelAccessPage: React.FC = () => {
                 multiline
                 disabled={scopeText.trim().length < 8}
                 onNext={() => goNext('quoteTools')}
+              />
+            ) : null}
+
+            {step === 'intakeDest' ? (
+              <>
+                <QuestionTitle>
+                  Where should <span style={{color: RED}}>submissions</span> land?
+                </QuestionTitle>
+                <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
+                  Hover a card, then Select. Not sure is fine.
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+                  {INTAKE_DEST_OPTIONS.map((opt) => (
+                    <div key={opt.id}>
+                      <SelectCard
+                        selected={intakeDest === opt.id}
+                        onSelect={() => selectIntakeDest(opt.id)}
+                        title={opt.label}
+                        blurb={opt.blurb}
+                        icon={opt.icon}
+                        unsure={opt.unsure}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : null}
+
+            {usesIntakeWizard && step === 'intakePurpose' ? (
+              <OneField
+                title="What intake should capture"
+                hint="Purpose, key fields, and who reviews new submissions. A short list is enough."
+                value={scopeText}
+                onChange={setScopeText}
+                placeholder={'e.g. New patient form\nName, phone, reason for visit\nOwner reviews daily'}
+                multiline
+                disabled={scopeText.trim().length < 8}
+                onNext={() => goNext('intakePurpose')}
               />
             ) : null}
 
@@ -6134,38 +6342,34 @@ const FunnelAccessPage: React.FC = () => {
                     ? 'Which pages matter most'
                     : batchScopeField === 'noshowTools'
                       ? 'Booking tool and reminder gaps'
-                      : batchScopeField === 'intakePurpose'
-                        ? 'What intake should capture'
-                        : batchScopeField === 'inboxTools'
-                          ? 'Inbox and tools in play'
-                          : batchScopeField === 'sopJobs'
-                            ? 'Which jobs to turn into playbooks'
-                            : batchScopeField === 'dashMetrics'
-                              ? 'Metrics you need on one screen'
-                              : batchScopeField === 'bundleNotes'
-                                ? 'Scope notes for this bundle'
-                                : batchScopeField === 'geoTopics'
-                                  ? 'Topics AI should know you for'
-                                  : 'Who you want to find'
+                      : batchScopeField === 'inboxTools'
+                        ? 'Inbox and tools in play'
+                        : batchScopeField === 'sopJobs'
+                          ? 'Which jobs to turn into playbooks'
+                          : batchScopeField === 'dashMetrics'
+                            ? 'Metrics you need on one screen'
+                            : batchScopeField === 'bundleNotes'
+                              ? 'Scope notes for this bundle'
+                              : batchScopeField === 'geoTopics'
+                                ? 'Topics AI should know you for'
+                                : 'Who you want to find'
                 }
                 hint={
                   batchScopeField === 'a11yPages'
                     ? 'Priority pages for the access pass. Paths or plain names are fine.'
                     : batchScopeField === 'noshowTools'
                       ? 'What you use today and where reminders fail.'
-                      : batchScopeField === 'intakePurpose'
-                        ? 'Purpose, key fields, and where answers should land.'
-                        : batchScopeField === 'inboxTools'
-                          ? 'Email or CRM, and what burns the most time.'
-                          : batchScopeField === 'sopJobs'
-                            ? 'Real repeating work the team does every week.'
-                            : batchScopeField === 'dashMetrics'
-                              ? 'Leads, bookings, ads, reviews. What you check every week.'
-                              : batchScopeField === 'bundleNotes'
-                                ? 'Location, quirks, and anything we should know before kickoff.'
-                                : batchScopeField === 'geoTopics'
-                                  ? 'Services, suburbs, and proof points tools should cite.'
-                                  : 'Ideal customer, geography, and who to exclude.'
+                      : batchScopeField === 'inboxTools'
+                        ? 'Email or CRM, and what burns the most time.'
+                        : batchScopeField === 'sopJobs'
+                          ? 'Real repeating work the team does every week.'
+                          : batchScopeField === 'dashMetrics'
+                            ? 'Leads, bookings, ads, reviews. What you check every week.'
+                            : batchScopeField === 'bundleNotes'
+                              ? 'Location, quirks, and anything we should know before kickoff.'
+                              : batchScopeField === 'geoTopics'
+                                ? 'Services, suburbs, and proof points tools should cite.'
+                                : 'Ideal customer, geography, and who to exclude.'
                 }
                 value={scopeText}
                 onChange={setScopeText}
@@ -6174,19 +6378,17 @@ const FunnelAccessPage: React.FC = () => {
                     ? '/\n/contact\n/book'
                     : batchScopeField === 'noshowTools'
                       ? 'e.g. Fresha, SMS day-before only'
-                      : batchScopeField === 'intakePurpose'
-                        ? 'e.g. New patient form into HubSpot'
-                        : batchScopeField === 'inboxTools'
-                          ? 'e.g. Gmail + HubSpot, quotes and referrals'
-                          : batchScopeField === 'sopJobs'
-                            ? 'e.g. Quote replies, onboarding checklist'
-                            : batchScopeField === 'dashMetrics'
-                              ? 'e.g. Weekly leads, booked jobs, ad spend'
-                              : batchScopeField === 'bundleNotes'
-                                ? 'e.g. One clinic location, two phone lines'
-                                : batchScopeField === 'geoTopics'
-                                  ? 'e.g. Kitchen reno, Inner West, 12 years'
-                                  : 'e.g. Clinic owners, Sydney, no chains'
+                      : batchScopeField === 'inboxTools'
+                        ? 'e.g. Gmail + HubSpot, quotes and referrals'
+                        : batchScopeField === 'sopJobs'
+                          ? 'e.g. Quote replies, onboarding checklist'
+                          : batchScopeField === 'dashMetrics'
+                            ? 'e.g. Weekly leads, booked jobs, ad spend'
+                            : batchScopeField === 'bundleNotes'
+                              ? 'e.g. One clinic location, two phone lines'
+                              : batchScopeField === 'geoTopics'
+                                ? 'e.g. Kitchen reno, Inner West, 12 years'
+                                : 'e.g. Clinic owners, Sydney, no chains'
                 }
                 multiline
                 disabled={scopeText.trim().length < 8}
@@ -7019,6 +7221,10 @@ const FunnelAccessPage: React.FC = () => {
                     <>
                       How should we reach the <span style={{color: RED}}>quote tool</span>?
                     </>
+                  ) : usesIntakeWizard ? (
+                    <>
+                      How should we wire the <span style={{color: RED}}>intake destination</span>?
+                    </>
                   ) : (
                     <>
                       How should we get <span style={{color: RED}}>in</span>?
@@ -7063,6 +7269,8 @@ const FunnelAccessPage: React.FC = () => {
                       ? 'Page or Instagram invite, Meta Business Manager, inbox admin, or a short call. Pick whatever is easiest.'
                     : usesQuoteWizard
                       ? 'CRM invite, sheet share, mailbox access, or a short call. Pick whatever is easiest.'
+                    : usesIntakeWizard
+                      ? 'CRM invite, form tool login, inbox or sheet share, or a short call. Pick whatever is easiest.'
                     : 'Hover, then Select. Pick whatever is easiest for you.'}
                 </p>
                 <div

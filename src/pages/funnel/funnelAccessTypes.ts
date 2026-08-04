@@ -79,6 +79,8 @@ export type WhatsappStatusId = 'personal' | 'business-app' | 'meta' | 'unsure'
 export type DmPlatformId = 'instagram' | 'facebook' | 'both' | 'unsure'
 /** Where quotes live before Quote Follow-Up Autopilot. */
 export type QuoteToolId = 'hubspot' | 'pipedrive' | 'sheets' | 'email' | 'other' | 'unsure'
+/** Where Intake Form Pack submissions should land. */
+export type IntakeDestId = 'crm' | 'email' | 'sheets' | 'other' | 'unsure'
 
 export type FunnelAccessPayload = {
   product: FunnelProductCode
@@ -132,8 +134,9 @@ export type FunnelAccessPayload = {
   dmChannels?: string
   quoteTool?: QuoteToolId | ''
   quoteTools?: string
-  noshowTools?: string
+  intakeDest?: IntakeDestId | ''
   intakePurpose?: string
+  noshowTools?: string
   inboxTools?: string
   sopJobs?: string
   dashMetrics?: string

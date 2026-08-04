@@ -163,6 +163,8 @@ const DM_PLATFORM = new Set(['instagram', 'facebook', 'both', 'unsure']);
 const DM_ACCESS = new Set(['invite', 'admin', 'provider', 'call']);
 const QUOTE_TOOL = new Set(['hubspot', 'pipedrive', 'sheets', 'email', 'other', 'unsure']);
 const QUOTE_ACCESS = new Set(['invite', 'crm', 'provider', 'call']);
+const INTAKE_DEST = new Set(['crm', 'email', 'sheets', 'other', 'unsure']);
+const INTAKE_ACCESS = new Set(['invite', 'crm', 'provider', 'form-provider', 'call']);
 const GOOGLE_PROFILE_STATUS = new Set([
   'unclaimed',
   'claimed-me',
@@ -698,7 +700,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const isBatchScoped =
     isA11yPass ||
     isNoshowRescue ||
-    isIntakeForms ||
     isInboxTriage ||
     isSopPlaybook ||
     isDashboardLite ||
@@ -958,6 +959,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       res.status(400).json({ error: 'Missing how follow-up works now' });
       return;
     }
+  } else if (isIntakeForms) {
+    if (!INTAKE_DEST.has(intakeDest) || !INTAKE_ACCESS.has(accessPath)) {
+      res.status(400).json({ error: 'Invalid intake destination or access path' });
+      return;
+    }
+    if (intakePurpose.length < 8) {
+      res.status(400).json({ error: 'Missing what intake should capture' });
+      return;
+    }
   } else if (isBatchScoped) {
     if (website.length < 4) {
       res.status(400).json({ error: 'Missing website' });
@@ -970,7 +980,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     const scopeVal =
       (isA11yPass && a11yPages) ||
       (isNoshowRescue && noshowTools) ||
-      (isIntakeForms && intakePurpose) ||
       (isInboxTriage && inboxTools) ||
       (isSopPlaybook && sopJobs) ||
       (isDashboardLite && dashMetrics) ||
@@ -1318,6 +1327,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
             ]
               .filter(Boolean)
               .join('\n')
+        : isIntakeForms
+          ? [
+              `Funnel access form — ${product}`,
+              `Business: ${business}`,
+              `Intake destination: ${intakeDest}`,
+              `What to capture:\n${intakePurpose}`,
+              `Access path: ${accessPath}`,
+              accessDetail ? `Access notes:\n${accessDetail}` : null,
+              notes ? `Other notes:\n${notes}` : null,
+              `Submitted: ${new Date().toISOString()}`,
+            ]
+              .filter(Boolean)
+              .join('\n')
         : isBatchScoped
           ? [
               `Funnel access form — ${product}`,
@@ -1326,7 +1348,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
               `Scope:\n${
                 a11yPages ||
                 noshowTools ||
-                intakePurpose ||
                 inboxTools ||
                 sopJobs ||
                 dashMetrics ||
@@ -1604,11 +1625,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
                               ? `DM: ${dmPlatform} · ${dmChannels.slice(0, 60)}`
                             : isQuoteFollowup
                               ? `Quotes: ${quoteTool} · ${quoteTools.slice(0, 60)}`
+                            : isIntakeForms
+                              ? `Intake: ${intakeDest} · ${intakePurpose.slice(0, 60)}`
                             : isBatchScoped
                               ? `${website} · Scope: ${(
                                   a11yPages ||
                                   noshowTools ||
-                                  intakePurpose ||
                                   inboxTools ||
                                   sopJobs ||
                                   dashMetrics ||
