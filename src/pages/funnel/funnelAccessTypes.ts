@@ -77,6 +77,8 @@ export type ConversionAskId = 'call' | 'form' | 'book'
 export type WhatsappStatusId = 'personal' | 'business-app' | 'meta' | 'unsure'
 /** Which Meta inboxes DM Reply covers. */
 export type DmPlatformId = 'instagram' | 'facebook' | 'both' | 'unsure'
+/** Where quotes live before Quote Follow-Up Autopilot. */
+export type QuoteToolId = 'hubspot' | 'pipedrive' | 'sheets' | 'email' | 'other' | 'unsure'
 
 export type FunnelAccessPayload = {
   product: FunnelProductCode
@@ -128,6 +130,7 @@ export type FunnelAccessPayload = {
   whatsappGoals?: string
   dmPlatform?: DmPlatformId | ''
   dmChannels?: string
+  quoteTool?: QuoteToolId | ''
   quoteTools?: string
   noshowTools?: string
   intakePurpose?: string

@@ -161,6 +161,8 @@ const WHATSAPP_STATUS = new Set(['personal', 'business-app', 'meta', 'unsure']);
 const WHATSAPP_ACCESS = new Set(['invite', 'admin', 'provider', 'call']);
 const DM_PLATFORM = new Set(['instagram', 'facebook', 'both', 'unsure']);
 const DM_ACCESS = new Set(['invite', 'admin', 'provider', 'call']);
+const QUOTE_TOOL = new Set(['hubspot', 'pipedrive', 'sheets', 'email', 'other', 'unsure']);
+const QUOTE_ACCESS = new Set(['invite', 'crm', 'provider', 'call']);
 const GOOGLE_PROFILE_STATUS = new Set([
   'unclaimed',
   'claimed-me',
@@ -246,6 +248,7 @@ type Body = {
   whatsappGoals?: unknown;
   dmPlatform?: unknown;
   dmChannels?: unknown;
+  quoteTool?: unknown;
   quoteTools?: unknown;
   noshowTools?: unknown;
   intakePurpose?: unknown;
@@ -621,6 +624,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const whatsappGoals = str(body.whatsappGoals, 4000);
   const dmPlatform = str(body.dmPlatform, 40);
   const dmChannels = str(body.dmChannels, 4000);
+  const quoteTool = str(body.quoteTool, 40);
   const quoteTools = str(body.quoteTools, 4000);
   const noshowTools = str(body.noshowTools, 4000);
   const intakePurpose = str(body.intakePurpose, 4000);
@@ -693,7 +697,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const isClientFinder = product === 'client-finder';
   const isBatchScoped =
     isA11yPass ||
-    isQuoteFollowup ||
     isNoshowRescue ||
     isIntakeForms ||
     isInboxTriage ||
@@ -946,6 +949,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       res.status(400).json({ error: 'Missing what DMs should answer' });
       return;
     }
+  } else if (isQuoteFollowup) {
+    if (!QUOTE_TOOL.has(quoteTool) || !QUOTE_ACCESS.has(accessPath)) {
+      res.status(400).json({ error: 'Invalid quote tool or access path' });
+      return;
+    }
+    if (quoteTools.length < 8) {
+      res.status(400).json({ error: 'Missing how follow-up works now' });
+      return;
+    }
   } else if (isBatchScoped) {
     if (website.length < 4) {
       res.status(400).json({ error: 'Missing website' });
@@ -957,7 +969,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     }
     const scopeVal =
       (isA11yPass && a11yPages) ||
-      (isQuoteFollowup && quoteTools) ||
       (isNoshowRescue && noshowTools) ||
       (isIntakeForms && intakePurpose) ||
       (isInboxTriage && inboxTools) ||
@@ -1294,6 +1305,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
             ]
               .filter(Boolean)
               .join('\n')
+        : isQuoteFollowup
+          ? [
+              `Funnel access form — ${product}`,
+              `Business: ${business}`,
+              `Quote tool: ${quoteTool}`,
+              `Follow-up today:\n${quoteTools}`,
+              `Access path: ${accessPath}`,
+              accessDetail ? `Access notes:\n${accessDetail}` : null,
+              notes ? `Other notes:\n${notes}` : null,
+              `Submitted: ${new Date().toISOString()}`,
+            ]
+              .filter(Boolean)
+              .join('\n')
         : isBatchScoped
           ? [
               `Funnel access form — ${product}`,
@@ -1301,7 +1325,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
               `Website: ${website}`,
               `Scope:\n${
                 a11yPages ||
-                quoteTools ||
                 noshowTools ||
                 intakePurpose ||
                 inboxTools ||
@@ -1433,6 +1456,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     whatsappGoals: whatsappGoals || undefined,
     dmPlatform: dmPlatform || undefined,
     dmChannels: dmChannels || undefined,
+    quoteTool: quoteTool || undefined,
     quoteTools: quoteTools || undefined,
     noshowTools: noshowTools || undefined,
     intakePurpose: intakePurpose || undefined,
@@ -1578,10 +1602,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
                               ? `WA: ${phone} · Status: ${whatsappStatus} · Goals: ${whatsappGoals.slice(0, 60)}`
                             : isDmReply
                               ? `DM: ${dmPlatform} · ${dmChannels.slice(0, 60)}`
+                            : isQuoteFollowup
+                              ? `Quotes: ${quoteTool} · ${quoteTools.slice(0, 60)}`
                             : isBatchScoped
                               ? `${website} · Scope: ${(
                                   a11yPages ||
-                                  quoteTools ||
                                   noshowTools ||
                                   intakePurpose ||
                                   inboxTools ||
