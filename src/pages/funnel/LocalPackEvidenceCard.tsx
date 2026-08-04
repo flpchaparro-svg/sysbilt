@@ -37,7 +37,7 @@ function ColumnFrame({
 /** Proof: three connected panels for the three jobs in the pack. Shape-first, almost no words. */
 export function LocalPackEvidenceCard({business}: {business?: string | null}) {
   const ref = useRef<HTMLDivElement>(null)
-  const inView = useInView(ref, {once: true, amount: 0.35})
+  const inView = useInView(ref, {amount: 0.35})
   const reduce = useReducedMotion()
   const go = !reduce && inView
   const initials = initialsOf(business)
@@ -83,11 +83,11 @@ export function LocalPackEvidenceCard({business}: {business?: string | null}) {
           <div className="flex items-center gap-2">
             <div
               className="h-8 w-8 rounded-md shrink-0"
-              style={{backgroundColor: `${FUNNEL_COLOURS.ink}24`}}
+              style={{backgroundColor: FUNNEL_COLOURS.mockFill}}
             />
             <div className="flex-1 space-y-1.5">
-              <div className="h-1.5 w-4/5 rounded-sm" style={{backgroundColor: `${FUNNEL_COLOURS.ink}12`}} />
-              <div className="h-1.5 w-1/2 rounded-sm" style={{backgroundColor: `${FUNNEL_COLOURS.ink}1C`}} />
+              <div className="h-1.5 w-4/5 rounded-sm" style={{backgroundColor: FUNNEL_COLOURS.mockBar}} />
+              <div className="h-1.5 w-1/2 rounded-sm" style={{backgroundColor: FUNNEL_COLOURS.mockFill}} />
             </div>
           </div>
           <div className="flex items-center gap-1.5">
@@ -154,7 +154,7 @@ export function LocalPackEvidenceCard({business}: {business?: string | null}) {
                 key={i}
                 className="h-2.5 rounded-sm"
                 style={{
-                  backgroundColor: i === 0 ? `${FUNNEL_COLOURS.goldDeep}30` : `${FUNNEL_COLOURS.ink}24`,
+                  backgroundColor: i === 0 ? `${FUNNEL_COLOURS.goldDeep}40` : FUNNEL_COLOURS.mockFill,
                   width: i === 0 ? '100%' : `${85 - i * 12}%`,
                 }}
                 initial={reduce ? false : {opacity: 0, x: 10}}
@@ -168,7 +168,7 @@ export function LocalPackEvidenceCard({business}: {business?: string | null}) {
               <motion.span
                 key={i}
                 className="h-1 flex-1 rounded-full"
-                style={{backgroundColor: i === 0 ? FUNNEL_COLOURS.goldDeep : `${FUNNEL_COLOURS.ink}12`}}
+                style={{backgroundColor: i === 0 ? FUNNEL_COLOURS.goldDeep : FUNNEL_COLOURS.mockBar}}
                 animate={i === 0 && go ? {opacity: [0.5, 1, 0.5]} : undefined}
                 transition={{duration: 1.6, repeat: Infinity}}
               />

@@ -1317,40 +1317,42 @@ const PROFILE_POSTING_VISUALS = [
 function LocalPackOneKickoffVisual({reduce}: VisualProps) {
   const labels = ['Profile', 'Reviews', 'Posts']
   return (
-    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+    <div className="relative h-[132px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
         <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Three briefs → one</span>
       </div>
-      <div className="flex-1 flex items-center justify-center gap-2 px-3">
-        {labels.map((label, i) => (
-          <motion.div
-            key={label}
-            className="rounded-sm border px-2 py-1.5 flex flex-col items-center gap-0.5"
-            style={{borderColor: `${colors.teal}55`, backgroundColor: `${colors.teal}0C`}}
-            initial={reduce ? false : {x: (i - 1) * 18, opacity: 0.5}}
-            whileInView={{x: 0, opacity: 1, borderColor: colors.teal, backgroundColor: `${colors.teal}14`}}
-            viewport={{once: true}}
-            transition={{delay: reduce ? 0 : 0.15 + i * 0.1, type: 'spring', stiffness: 340, damping: 22}}
-          >
-            <span className="h-1.5 w-1.5 rounded-full" style={{backgroundColor: colors.teal}} />
-            <span className="font-mono text-[6px] uppercase tracking-wide" style={{color: colors.teal}}>
-              {label}
-            </span>
-          </motion.div>
-        ))}
+      <div className="flex-1 flex flex-col justify-center gap-2 px-3 py-2 min-h-0">
+        <div className="flex items-center justify-center gap-2">
+          {labels.map((label, i) => (
+            <motion.div
+              key={label}
+              className="rounded-sm border px-2 py-1.5 flex flex-col items-center gap-0.5"
+              style={{borderColor: `${colors.teal}55`, backgroundColor: `${colors.teal}0C`}}
+              initial={reduce ? false : {x: (i - 1) * 18, opacity: 0.5}}
+              whileInView={{x: 0, opacity: 1, borderColor: colors.teal, backgroundColor: `${colors.teal}14`}}
+              viewport={{once: true}}
+              transition={{delay: reduce ? 0 : 0.15 + i * 0.1, type: 'spring', stiffness: 340, damping: 22}}
+            >
+              <span className="h-1.5 w-1.5 rounded-full" style={{backgroundColor: colors.teal}} />
+              <span className="font-mono text-[6px] uppercase tracking-wide" style={{color: colors.teal}}>
+                {label}
+              </span>
+            </motion.div>
+          ))}
+        </div>
+        <motion.div
+          className="rounded-sm border px-2 py-1 text-center"
+          style={{borderColor: colors.teal, backgroundColor: `${colors.teal}18`}}
+          initial={reduce ? false : {opacity: 0, y: 6}}
+          whileInView={{opacity: 1, y: 0}}
+          viewport={{once: true}}
+          transition={{delay: reduce ? 0 : 0.55}}
+        >
+          <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
+            One kickoff
+          </span>
+        </motion.div>
       </div>
-      <motion.div
-        className="mb-2 mx-3 rounded-sm border px-2 py-1 text-center"
-        style={{borderColor: colors.teal, backgroundColor: `${colors.teal}18`}}
-        initial={reduce ? false : {opacity: 0, y: 6}}
-        whileInView={{opacity: 1, y: 0}}
-        viewport={{once: true}}
-        transition={{delay: reduce ? 0 : 0.55}}
-      >
-        <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
-          One kickoff
-        </span>
-      </motion.div>
     </div>
   )
 }
@@ -1359,15 +1361,15 @@ function LocalPackOneKickoffVisual({reduce}: VisualProps) {
 function LocalPackCoherentMapVisual({reduce}: VisualProps) {
   const labels = ['Profile', 'Reviews', 'Posts']
   return (
-    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+    <div className="relative h-[132px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
         <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Maps listing</span>
       </div>
-      <div className="flex-1 flex flex-col items-center justify-center gap-1.5 px-3">
+      <div className="flex-1 flex flex-col items-center justify-center gap-2 px-3 py-2 min-h-0">
         {labels.map((label, i) => (
           <motion.div
             key={label}
-            className="flex items-center gap-2 w-full max-w-[150px]"
+            className="flex items-center gap-2 w-full max-w-[160px]"
             initial={reduce ? false : {opacity: 0.4}}
             whileInView={{opacity: 1}}
             viewport={{once: true}}
@@ -1395,11 +1397,11 @@ function LocalPackCoherentMapVisual({reduce}: VisualProps) {
 function LocalPackRealProductsVisual({reduce}: VisualProps) {
   const items = ['Profile Fix', 'Review Engine', 'Posting System']
   return (
-    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
+    <div className="relative h-[132px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
         <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Full scope, each one</span>
       </div>
-      <div className="flex-1 flex flex-col justify-center gap-1.5 px-3 py-2">
+      <div className="flex-1 flex flex-col justify-center gap-1.5 px-3 py-2 min-h-0">
         {items.map((label, i) => (
           <motion.div
             key={label}
@@ -1434,7 +1436,7 @@ function LocalPackRealProductsVisual({reduce}: VisualProps) {
 /** Local Pack: $2,800 separate crossed out, $2,400 bundle, $400 under. */
 function LocalPackClearPriceVisual({reduce}: VisualProps) {
   return (
-    <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col items-center justify-center gap-2">
+    <div className="relative h-[132px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col items-center justify-center gap-2">
       <div className="flex items-center gap-2.5">
         <motion.span
           className="font-mono text-xs text-dark/55 relative"
