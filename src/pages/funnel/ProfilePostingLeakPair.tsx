@@ -3,9 +3,9 @@ import {AnimatePresence, motion, useInView, useReducedMotion} from 'framer-motio
 import {FUNNEL_COLOURS} from './funnelTheme'
 
 const POST_TONES = [
-  `${FUNNEL_COLOURS.gold}38`,
-  `${FUNNEL_COLOURS.goldDeep}28`,
-  `${FUNNEL_COLOURS.ink}12`,
+  `${FUNNEL_COLOURS.gold}55`,
+  `${FUNNEL_COLOURS.goldDeep}40`,
+  FUNNEL_COLOURS.mockFill,
 ]
 
 /** One solid post row in the Alive feed. */
@@ -13,12 +13,12 @@ function AlivePostRow({tone}: {tone: string}) {
   return (
     <div
       className="flex items-center gap-2.5 rounded-lg border px-2.5 py-2 w-full"
-      style={{borderColor: `${FUNNEL_COLOURS.ink}12`, backgroundColor: '#fff'}}
+      style={{borderColor: FUNNEL_COLOURS.mockBorder, backgroundColor: '#fff'}}
     >
       <div className="h-7 w-7 rounded-md shrink-0" style={{backgroundColor: tone}} />
       <div className="flex-1 space-y-1.5 min-w-0">
-        <div className="h-1.5 w-4/5 rounded-sm" style={{backgroundColor: `${FUNNEL_COLOURS.ink}16`}} />
-        <div className="h-1.5 w-1/2 rounded-sm" style={{backgroundColor: `${FUNNEL_COLOURS.ink}0A`}} />
+        <div className="h-1.5 w-4/5 rounded-sm" style={{backgroundColor: FUNNEL_COLOURS.mockBar}} />
+        <div className="h-1.5 w-1/2 rounded-sm" style={{backgroundColor: FUNNEL_COLOURS.mockFill}} />
       </div>
       <div className="h-1.5 w-1.5 rounded-full shrink-0" style={{backgroundColor: '#1F7A4D'}} />
     </div>
@@ -44,7 +44,6 @@ export function ProfilePostingLeakPair() {
       viewport={{once: true, amount: 0.35}}
       transition={{duration: 0.55, ease: [0.16, 1, 0.3, 1]}}
     >
-      {/* Quiet: empty slots, frozen */}
       <div
         className="rounded-xl overflow-hidden border"
         style={{borderColor: `${FUNNEL_COLOURS.accent}40`, backgroundColor: FUNNEL_COLOURS.surface}}
@@ -61,20 +60,20 @@ export function ProfilePostingLeakPair() {
               <span
                 key={i}
                 className="h-1 w-1 rounded-full"
-                style={{backgroundColor: `${FUNNEL_COLOURS.ink}18`}}
+                style={{backgroundColor: FUNNEL_COLOURS.mockBar}}
               />
             ))}
           </div>
         </div>
         <div className="px-4 md:px-5 pb-4 md:pb-5 space-y-2.5">
-          <div className="flex items-center gap-2 mb-1 opacity-40">
+          <div className="flex items-center gap-2 mb-1">
             <div
               className="h-8 w-8 rounded-md border border-dashed shrink-0"
-              style={{borderColor: `${FUNNEL_COLOURS.ink}20`}}
+              style={{borderColor: FUNNEL_COLOURS.mockBorder, backgroundColor: FUNNEL_COLOURS.mockWash}}
             />
             <div className="flex-1 space-y-1.5">
-              <div className="h-2 w-2/5 rounded-sm" style={{backgroundColor: `${FUNNEL_COLOURS.ink}10`}} />
-              <div className="h-1.5 w-1/4 rounded-sm" style={{backgroundColor: `${FUNNEL_COLOURS.ink}08`}} />
+              <div className="h-2 w-2/5 rounded-sm" style={{backgroundColor: FUNNEL_COLOURS.mockBar}} />
+              <div className="h-1.5 w-1/4 rounded-sm" style={{backgroundColor: FUNNEL_COLOURS.mockFill}} />
             </div>
           </div>
           {[0, 1, 2].map((i) => (
@@ -82,16 +81,15 @@ export function ProfilePostingLeakPair() {
               key={i}
               className="h-9 rounded-lg border border-dashed"
               style={{
-                borderColor: `${FUNNEL_COLOURS.ink}14`,
-                backgroundColor: `${FUNNEL_COLOURS.ink}03`,
-                opacity: 0.45 - i * 0.08,
+                borderColor: FUNNEL_COLOURS.mockBorder,
+                backgroundColor: FUNNEL_COLOURS.mockWash,
+                opacity: 1 - i * 0.08,
               }}
             />
           ))}
         </div>
       </div>
 
-      {/* Alive: posts swipe in from the right, exit left */}
       <div
         className="rounded-xl overflow-hidden border"
         style={{
@@ -109,7 +107,7 @@ export function ProfilePostingLeakPair() {
           <motion.span
             className="h-1.5 w-1.5 rounded-full"
             style={{backgroundColor: '#1F7A4D'}}
-            animate={go ? {opacity: [0.35, 1, 0.35], scale: [1, 1.25, 1]} : {opacity: 0.7}}
+            animate={go ? {opacity: [0.55, 1, 0.55], scale: [1, 1.25, 1]} : {opacity: 0.85}}
             transition={{duration: 1.2, repeat: Infinity, ease: 'easeInOut'}}
           />
         </div>
@@ -133,7 +131,6 @@ export function ProfilePostingLeakPair() {
 /** New post slides in from the right; oldest exits left. Stack shifts down. */
 function AlivePublishingFeed() {
   const [seq, setSeq] = useState(3)
-  // Always show the three newest ids: [seq, seq-1, seq-2]
   const ids = [seq, seq - 1, seq - 2]
 
   useEffect(() => {

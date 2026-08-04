@@ -11,7 +11,7 @@ function ClientFinderWhoVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">List</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">List</span>
         <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
           50-100
         </span>
@@ -45,7 +45,7 @@ function ClientFinderScriptsVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Scripts</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Scripts</span>
       </div>
       <div className="flex-1 flex items-center justify-center gap-2 px-2.5">
         <motion.div
@@ -55,7 +55,7 @@ function ClientFinderScriptsVisual({reduce}: VisualProps) {
           whileInView={{opacity: 1, x: 0}}
           viewport={{once: true}}
         >
-          <p className="font-mono text-[6px] uppercase tracking-wide mb-1 text-dark/45">First</p>
+          <p className="font-mono text-[6px] uppercase tracking-wide mb-1 text-dark/55">First</p>
           <p className="font-sans text-[8px] font-semibold" style={{color: FUNNEL_COLOURS.ink}}>
             Touch
           </p>
@@ -91,7 +91,7 @@ function ClientFinderBookingVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Reply</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Reply</span>
         <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
           Book
         </span>
@@ -130,7 +130,7 @@ function ClientFinderSketchVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Sketch</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Sketch</span>
       </div>
       <div className="flex-1 flex flex-col items-center justify-center gap-1.5 px-3">
         <motion.div
@@ -176,7 +176,7 @@ function ClientFinderIcpStackVisual({reduce, play}: StackVisualProps) {
   return (
     <div className="w-full min-h-[88px] border border-dark/15 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">ICP</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">ICP</span>
       </div>
       <div className="flex-1 flex items-center px-2.5">
         <motion.div
@@ -202,7 +202,7 @@ function ClientFinderListStackVisual({reduce, play}: StackVisualProps) {
   return (
     <div className="w-full min-h-[88px] border border-dark/15 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Prospects</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Prospects</span>
       </div>
       <div className="flex-1 flex flex-col justify-center gap-1 px-2.5 py-2">
         {['Named rows', 'Curated fit'].map((label, i) => (
@@ -211,7 +211,7 @@ function ClientFinderListStackVisual({reduce, play}: StackVisualProps) {
             className="flex items-center justify-between rounded-md border px-2 py-1"
             style={{borderColor: `${colors.teal}35`, backgroundColor: `${colors.teal}08`}}
             initial={reduce ? false : {opacity: 0, y: 4}}
-            animate={go ? {opacity: 1, y: 0} : {opacity: 0.35}}
+            animate={go ? {opacity: 1, y: 0} : {opacity: 0.8}}
             transition={{delay: reduce ? 0 : i * 0.1}}
           >
             <span className="font-sans text-[8px] font-semibold truncate" style={{color: FUNNEL_COLOURS.ink}}>
@@ -232,7 +232,7 @@ function ClientFinderScriptsStackVisual({reduce, play}: StackVisualProps) {
   return (
     <div className="w-full min-h-[88px] border border-dark/15 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Approach</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Approach</span>
       </div>
       <div className="flex-1 flex items-center justify-center gap-1.5 px-2.5">
         <motion.div
@@ -267,7 +267,7 @@ function ClientFinderPlanStackVisual({reduce, play}: StackVisualProps) {
   return (
     <div className="w-full min-h-[88px] border border-dark/15 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Plan</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Plan</span>
       </div>
       <div className="flex-1 flex flex-col justify-center gap-1 px-2.5 py-2">
         {['Outreach order', 'Booking path'].map((label, i) => (
@@ -276,7 +276,7 @@ function ClientFinderPlanStackVisual({reduce, play}: StackVisualProps) {
             className="rounded-md border px-2 py-1 text-center"
             style={{borderColor: `${colors.teal}35`, backgroundColor: `${colors.teal}08`}}
             initial={reduce ? false : {opacity: 0, y: 4}}
-            animate={go ? {opacity: 1, y: 0} : {opacity: 0.35}}
+            animate={go ? {opacity: 1, y: 0} : {opacity: 0.8}}
             transition={{delay: reduce ? 0 : i * 0.1}}
           >
             <span className="font-sans text-[8px] font-semibold" style={{color: FUNNEL_COLOURS.ink}}>

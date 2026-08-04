@@ -14,7 +14,7 @@ function DmAdsStopLeakVisual({reduce}: BenefitVisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">DM intent</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">DM intent</span>
         <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
           Ack
         </span>
@@ -64,7 +64,7 @@ function DmSharedOwnershipVisual({reduce}: BenefitVisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Ownership</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Ownership</span>
       </div>
       <div className="flex-1 flex flex-col items-center justify-center gap-1.5 px-2.5">
         {['Page access shared', 'Watch rota clear'].map((label, i) => (
@@ -94,7 +94,7 @@ function DmConsistentAnswersVisual({reduce}: BenefitVisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Answers</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Answers</span>
         <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
           Approved
         </span>
@@ -132,7 +132,7 @@ function DmPathToCrmVisual({reduce}: BenefitVisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Next step</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Next step</span>
       </div>
       <div className="flex-1 flex flex-col items-center justify-center gap-1.5 px-3">
         <motion.div
@@ -171,7 +171,7 @@ function DmQuickReplyPackStackVisual({reduce, play}: StackVisualProps) {
   return (
     <div className="w-full min-h-[88px] border border-dark/15 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Quick reply pack</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Quick reply pack</span>
       </div>
       <div className="flex-1 flex flex-col justify-center gap-1 px-2.5 py-2">
         {['Price ask', 'Availability'].map((label, i) => (
@@ -180,7 +180,7 @@ function DmQuickReplyPackStackVisual({reduce, play}: StackVisualProps) {
             className="flex items-center justify-between rounded-md border px-2 py-1"
             style={{borderColor: `${colors.teal}35`, backgroundColor: `${colors.teal}08`}}
             initial={reduce ? false : {opacity: 0, y: 4}}
-            animate={go ? {opacity: 1, y: 0} : {opacity: 0.35}}
+            animate={go ? {opacity: 1, y: 0} : {opacity: 0.8}}
             transition={{delay: reduce ? 0 : i * 0.1}}
           >
             <span className="font-sans text-[8px] font-semibold truncate" style={{color: FUNNEL_COLOURS.ink}}>
@@ -201,7 +201,7 @@ function DmHandoffStackVisual({reduce, play}: StackVisualProps) {
   return (
     <div className="w-full min-h-[88px] border border-dark/15 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Handoff rules</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Handoff rules</span>
       </div>
       <div className="flex-1 flex items-center justify-center gap-1.5 px-2.5">
         <motion.div
@@ -236,7 +236,7 @@ function DmOwnershipStackVisual({reduce, play}: StackVisualProps) {
   return (
     <div className="w-full min-h-[88px] border border-dark/15 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Ownership note</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Ownership note</span>
       </div>
       <div className="flex-1 flex items-center px-2.5">
         <motion.div
@@ -262,7 +262,7 @@ function DmPathTestStackVisual({reduce, play}: StackVisualProps) {
   return (
     <div className="w-full min-h-[88px] border border-dark/15 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Path test</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Path test</span>
       </div>
       <div className="flex-1 flex flex-col justify-center gap-1 px-2.5 py-2">
         {['You send a DM', 'We watch the path'].map((label, i) => (
@@ -271,7 +271,7 @@ function DmPathTestStackVisual({reduce, play}: StackVisualProps) {
             className="rounded-md border px-2 py-1 text-center"
             style={{borderColor: `${colors.teal}35`, backgroundColor: `${colors.teal}08`}}
             initial={reduce ? false : {opacity: 0, y: 4}}
-            animate={go ? {opacity: 1, y: 0} : {opacity: 0.35}}
+            animate={go ? {opacity: 1, y: 0} : {opacity: 0.8}}
             transition={{delay: reduce ? 0 : i * 0.1}}
           >
             <span className="font-sans text-[8px] font-semibold" style={{color: FUNNEL_COLOURS.ink}}>

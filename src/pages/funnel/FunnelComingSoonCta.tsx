@@ -33,7 +33,7 @@ export function FunnelComingSoonCta({
         className={`inline-flex items-center justify-center font-mono font-bold uppercase border ${sizeClass}`}
         style={{
           borderColor: onDark ? `${FUNNEL_COLOURS.onInk}35` : `${FUNNEL_COLOURS.ink}28`,
-          backgroundColor: onDark ? 'transparent' : `${FUNNEL_COLOURS.ink}08`,
+          backgroundColor: onDark ? 'transparent' : `${FUNNEL_COLOURS.ink}1C`,
           color: onDark ? `${FUNNEL_COLOURS.onInk}90` : FUNNEL_COLOURS.steel,
         }}
       >

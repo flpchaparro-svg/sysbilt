@@ -67,7 +67,7 @@ export function LocalPackPainCards() {
             <motion.span
               className="font-mono text-[10px]"
               style={{color: `${FUNNEL_COLOURS.ink}30`}}
-              animate={play ? {opacity: [0.25, 0.55, 0.25]} : {opacity: 0.35}}
+              animate={play ? {opacity: [0.75, 1, 0.75]} : {opacity: 0.8}}
               transition={{duration: 2.2, repeat: Infinity, ease: 'easeInOut'}}
             >
               ···
@@ -100,7 +100,7 @@ export function LocalPackPainCards() {
                   clipPath:
                     'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)',
                 }}
-                initial={reduce ? false : i === 0 ? {opacity: 0, scale: 0.6} : {opacity: 0.35}}
+                initial={reduce ? false : i === 0 ? {opacity: 0, scale: 0.6} : {opacity: 0.8}}
                 animate={
                   play
                     ? i === 0
@@ -132,8 +132,8 @@ export function LocalPackPainCards() {
                   key={i}
                   className="aspect-square rounded-[3px] flex items-center justify-center"
                   style={{
-                    backgroundColor: i === 3 ? `${FUNNEL_COLOURS.accent}22` : `${FUNNEL_COLOURS.ink}07`,
-                    border: i === 3 ? `1px solid ${FUNNEL_COLOURS.accent}70` : `1px solid ${FUNNEL_COLOURS.ink}0A`,
+                    backgroundColor: i === 3 ? `${FUNNEL_COLOURS.accent}22` : `${FUNNEL_COLOURS.ink}18`,
+                    border: i === 3 ? `1px solid ${FUNNEL_COLOURS.accent}70` : `1px solid ${FUNNEL_COLOURS.ink}24`,
                   }}
                   initial={reduce ? false : {opacity: 0}}
                   animate={

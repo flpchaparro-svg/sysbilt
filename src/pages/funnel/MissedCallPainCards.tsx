@@ -59,7 +59,7 @@ function NextBusinessVisual({reduce}: VisualProps) {
       ref={ref}
       className="relative h-[140px] md:h-[160px] rounded-sm overflow-hidden border border-dark/15 bg-white/60 p-3"
     >
-      <p className="font-mono text-[8px] uppercase tracking-[0.2em] text-dark/40 mb-2">Google</p>
+      <p className="font-mono text-[8px] uppercase tracking-[0.2em] text-dark/55 mb-2">Google</p>
       <div className="space-y-2">
         {['You', 'Next business', 'Another listing'].map((row, i) => (
           <motion.div
@@ -101,7 +101,7 @@ function SilentLossVisual({reduce}: VisualProps) {
       ref={ref}
       className="relative h-[140px] md:h-[160px] rounded-sm overflow-hidden border border-dark/15 bg-white/60 p-3 flex flex-col"
     >
-      <p className="font-mono text-[8px] uppercase tracking-[0.2em] text-dark/40 mb-2">
+      <p className="font-mono text-[8px] uppercase tracking-[0.2em] text-dark/55 mb-2">
         Your week
       </p>
       <div className="flex-1 flex items-end gap-1.5 pb-1">

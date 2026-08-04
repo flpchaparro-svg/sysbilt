@@ -32,7 +32,7 @@ function StarsFirstVisual({reduce}: VisualProps) {
       ref={ref}
       className="relative h-[140px] md:h-[160px] rounded-sm overflow-hidden border border-dark/15 bg-white/60 p-3 flex flex-col"
     >
-      <p className="font-mono text-[8px] uppercase tracking-[0.2em] text-dark/40 mb-2">Maps panel</p>
+      <p className="font-mono text-[8px] uppercase tracking-[0.2em] text-dark/55 mb-2">Maps panel</p>
       <div className="flex-1 flex flex-col justify-center gap-2">
         <div className="flex items-center gap-1.5">
           {[0, 1, 2, 3, 4].map((i) => (
@@ -131,7 +131,7 @@ function QuietHappyVisual({reduce}: VisualProps) {
       ref={ref}
       className="relative h-[140px] md:h-[160px] rounded-sm overflow-hidden border border-dark/15 bg-white/60 p-3 flex flex-col"
     >
-      <p className="font-mono text-[8px] uppercase tracking-[0.2em] text-dark/40 mb-2">
+      <p className="font-mono text-[8px] uppercase tracking-[0.2em] text-dark/55 mb-2">
         Happy customers
       </p>
       <div className="flex-1 flex items-end justify-around gap-2 pb-1">
@@ -155,7 +155,7 @@ function QuietHappyVisual({reduce}: VisualProps) {
             <motion.div
               className="h-5 w-5 rounded-sm border border-dashed flex items-center justify-center"
               style={{borderColor: `${FUNNEL_COLOURS.ink}28`}}
-              animate={play ? {opacity: [0.25, 0.7, 0.25]} : {opacity: 0.35}}
+              animate={play ? {opacity: [0.25, 0.7, 0.25]} : {opacity: 0.8}}
               transition={play ? {duration: 1.8, repeat: Infinity, delay: i * 0.2} : undefined}
             >
               <span className="font-mono text-[8px]" style={{color: `${FUNNEL_COLOURS.ink}40`}}>

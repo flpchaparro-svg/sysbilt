@@ -10,7 +10,7 @@ function DashOnePlaceVisual({reduce}: BenefitVisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Weekly</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Weekly</span>
         <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
           Short
         </span>
@@ -60,7 +60,7 @@ function DashSpendOutcomesVisual({reduce}: BenefitVisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Spend to outcome</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Spend to outcome</span>
       </div>
       <div className="flex-1 flex flex-col items-center justify-center gap-1.5 px-2.5">
         {['Ads beside enquiries', 'Bookings in view'].map((label, i) => (
@@ -90,7 +90,7 @@ function DashHonestScopeVisual({reduce}: BenefitVisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Scope</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Scope</span>
         <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
           Lite
         </span>
@@ -128,7 +128,7 @@ function DashCrmPathVisual({reduce}: BenefitVisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">CRM path</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">CRM path</span>
       </div>
       <div className="flex-1 flex flex-col items-center justify-center gap-1.5 px-3">
         <motion.div
@@ -167,7 +167,7 @@ function DashMetricsStackVisual({reduce, play}: StackVisualProps) {
   return (
     <div className="w-full min-h-[88px] border border-dark/15 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Metric set</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Metric set</span>
       </div>
       <div className="flex-1 flex flex-col justify-center gap-1 px-2.5 py-2">
         {['Leads · bookings', 'Reviews · campaigns'].map((label, i) => (
@@ -176,7 +176,7 @@ function DashMetricsStackVisual({reduce, play}: StackVisualProps) {
             className="flex items-center justify-between rounded-md border px-2 py-1"
             style={{borderColor: `${colors.teal}35`, backgroundColor: `${colors.teal}08`}}
             initial={reduce ? false : {opacity: 0, y: 4}}
-            animate={go ? {opacity: 1, y: 0} : {opacity: 0.35}}
+            animate={go ? {opacity: 1, y: 0} : {opacity: 0.8}}
             transition={{delay: reduce ? 0 : i * 0.1}}
           >
             <span className="font-sans text-[8px] font-semibold truncate" style={{color: FUNNEL_COLOURS.ink}}>
@@ -197,7 +197,7 @@ function DashBoardStackVisual({reduce, play}: StackVisualProps) {
   return (
     <div className="w-full min-h-[88px] border border-dark/15 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Board</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Board</span>
       </div>
       <div className="flex-1 flex items-center justify-center gap-1.5 px-2.5">
         <motion.div
@@ -232,7 +232,7 @@ function DashSourceStackVisual({reduce, play}: StackVisualProps) {
   return (
     <div className="w-full min-h-[88px] border border-dark/15 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Source map</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Source map</span>
       </div>
       <div className="flex-1 flex items-center px-2.5">
         <motion.div
@@ -258,7 +258,7 @@ function DashRitualStackVisual({reduce, play}: StackVisualProps) {
   return (
     <div className="w-full min-h-[88px] border border-dark/15 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Weekly ritual</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Weekly ritual</span>
       </div>
       <div className="flex-1 flex flex-col justify-center gap-1 px-2.5 py-2">
         {['Ten minutes', 'Monday owner'].map((label, i) => (
@@ -267,7 +267,7 @@ function DashRitualStackVisual({reduce, play}: StackVisualProps) {
             className="rounded-md border px-2 py-1 text-center"
             style={{borderColor: `${colors.teal}35`, backgroundColor: `${colors.teal}08`}}
             initial={reduce ? false : {opacity: 0, y: 4}}
-            animate={go ? {opacity: 1, y: 0} : {opacity: 0.35}}
+            animate={go ? {opacity: 1, y: 0} : {opacity: 0.8}}
             transition={{delay: reduce ? 0 : i * 0.1}}
           >
             <span className="font-sans text-[8px] font-semibold" style={{color: FUNNEL_COLOURS.ink}}>

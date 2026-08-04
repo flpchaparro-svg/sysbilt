@@ -10,7 +10,7 @@ function InboxLessHuntingVisual({reduce}: BenefitVisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Buckets</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Buckets</span>
         <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
           Sorted
         </span>
@@ -43,7 +43,7 @@ function InboxFasterRepliesVisual({reduce}: BenefitVisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Draft help</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Draft help</span>
       </div>
       <div className="flex-1 flex items-center justify-center gap-2 px-2.5">
         <motion.div
@@ -90,7 +90,7 @@ function InboxHumanSayVisual({reduce}: BenefitVisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Send</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Send</span>
         <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
           You
         </span>
@@ -131,7 +131,7 @@ function InboxFeedsTeamVisual({reduce}: BenefitVisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Team AI path</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Team AI path</span>
       </div>
       <div className="flex-1 flex flex-col items-center justify-center gap-1.5 px-2.5">
         {['Inbox discipline', 'Shared prompt habits'].map((label, i) => (
@@ -162,7 +162,7 @@ function InboxMapStackVisual({reduce, play}: StackVisualProps) {
   return (
     <div className="w-full min-h-[88px] border border-dark/15 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Triage map</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Triage map</span>
       </div>
       <div className="flex-1 flex flex-col justify-center gap-1 px-2.5 py-2">
         {['Clients · act', 'Noise · batch'].map((label, i) => (
@@ -171,7 +171,7 @@ function InboxMapStackVisual({reduce, play}: StackVisualProps) {
             className="flex items-center justify-between rounded-md border px-2 py-1"
             style={{borderColor: `${colors.teal}35`, backgroundColor: `${colors.teal}08`}}
             initial={reduce ? false : {opacity: 0, y: 4}}
-            animate={go ? {opacity: 1, y: 0} : {opacity: 0.35}}
+            animate={go ? {opacity: 1, y: 0} : {opacity: 0.8}}
             transition={{delay: reduce ? 0 : i * 0.1}}
           >
             <span className="font-sans text-[8px] font-semibold truncate" style={{color: FUNNEL_COLOURS.ink}}>
@@ -192,7 +192,7 @@ function InboxRulesStackVisual({reduce, play}: StackVisualProps) {
   return (
     <div className="w-full min-h-[88px] border border-dark/15 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Rules setup</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Rules setup</span>
       </div>
       <div className="flex-1 flex items-center justify-center gap-1.5 px-2.5">
         <motion.div
@@ -227,7 +227,7 @@ function InboxDraftsStackVisual({reduce, play}: StackVisualProps) {
   return (
     <div className="w-full min-h-[88px] border border-dark/15 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Draft pack</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Draft pack</span>
       </div>
       <div className="flex-1 flex items-center px-2.5">
         <motion.div
@@ -253,7 +253,7 @@ function InboxTeamNoteStackVisual({reduce, play}: StackVisualProps) {
   return (
     <div className="w-full min-h-[88px] border border-dark/15 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Team note</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Team note</span>
       </div>
       <div className="flex-1 flex flex-col justify-center gap-1 px-2.5 py-2">
         {['Shared rules', 'Who owns triage'].map((label, i) => (
@@ -262,7 +262,7 @@ function InboxTeamNoteStackVisual({reduce, play}: StackVisualProps) {
             className="rounded-md border px-2 py-1 text-center"
             style={{borderColor: `${colors.teal}35`, backgroundColor: `${colors.teal}08`}}
             initial={reduce ? false : {opacity: 0, y: 4}}
-            animate={go ? {opacity: 1, y: 0} : {opacity: 0.35}}
+            animate={go ? {opacity: 1, y: 0} : {opacity: 0.8}}
             transition={{delay: reduce ? 0 : i * 0.1}}
           >
             <span className="font-sans text-[8px] font-semibold" style={{color: FUNNEL_COLOURS.ink}}>

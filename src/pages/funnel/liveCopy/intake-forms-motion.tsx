@@ -14,7 +14,7 @@ function IntakeOnceVisual({reduce}: BenefitVisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Intake</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Intake</span>
         <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
           Once
         </span>
@@ -64,7 +64,7 @@ function IntakeRekeyVisual({reduce}: BenefitVisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Staff time</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Staff time</span>
       </div>
       <div className="flex-1 flex flex-col items-center justify-center gap-1.5 px-2.5">
         {['No re-key', 'Fields land'].map((label, i) => (
@@ -94,7 +94,7 @@ function IntakeBrandVisual({reduce}: BenefitVisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Brand</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Brand</span>
         <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
           Yours
         </span>
@@ -132,7 +132,7 @@ function IntakeScopedVisual({reduce}: BenefitVisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Scoped fields</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Scoped fields</span>
       </div>
       <div className="flex-1 flex flex-col items-center justify-center gap-1.5 px-3">
         <motion.div
@@ -178,7 +178,7 @@ function IntakeDesignStackVisual({reduce, play}: StackVisualProps) {
   return (
     <div className="w-full min-h-[88px] border border-dark/15 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Form design</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Form design</span>
       </div>
       <div className="flex-1 flex flex-col justify-center gap-1 px-2.5 py-2">
         {['Mobile-first', 'Branded'].map((label, i) => (
@@ -187,7 +187,7 @@ function IntakeDesignStackVisual({reduce, play}: StackVisualProps) {
             className="flex items-center justify-between rounded-md border px-2 py-1"
             style={{borderColor: `${colors.teal}35`, backgroundColor: `${colors.teal}08`}}
             initial={reduce ? false : {opacity: 0, y: 4}}
-            animate={go ? {opacity: 1, y: 0} : {opacity: 0.35}}
+            animate={go ? {opacity: 1, y: 0} : {opacity: 0.8}}
             transition={{delay: reduce ? 0 : i * 0.1}}
           >
             <span className="font-sans text-[8px] font-semibold truncate" style={{color: FUNNEL_COLOURS.ink}}>
@@ -208,7 +208,7 @@ function IntakeMapStackVisual({reduce, play}: StackVisualProps) {
   return (
     <div className="w-full min-h-[88px] border border-dark/15 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Field map</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Field map</span>
       </div>
       <div className="flex-1 flex items-center justify-center gap-1.5 px-2.5">
         <motion.div
@@ -243,7 +243,7 @@ function IntakeConfirmStackVisual({reduce, play}: StackVisualProps) {
   return (
     <div className="w-full min-h-[88px] border border-dark/15 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Confirmation</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Confirmation</span>
       </div>
       <div className="flex-1 flex items-center px-2.5">
         <motion.div
@@ -269,7 +269,7 @@ function IntakeOwnerStackVisual({reduce, play}: StackVisualProps) {
   return (
     <div className="w-full min-h-[88px] border border-dark/15 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Owner rules</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Owner rules</span>
       </div>
       <div className="flex-1 flex flex-col justify-center gap-1 px-2.5 py-2">
         {['Who reads', 'When alerted'].map((label, i) => (
@@ -278,7 +278,7 @@ function IntakeOwnerStackVisual({reduce, play}: StackVisualProps) {
             className="rounded-md border px-2 py-1 text-center"
             style={{borderColor: `${colors.teal}35`, backgroundColor: `${colors.teal}08`}}
             initial={reduce ? false : {opacity: 0, y: 4}}
-            animate={go ? {opacity: 1, y: 0} : {opacity: 0.35}}
+            animate={go ? {opacity: 1, y: 0} : {opacity: 0.8}}
             transition={{delay: reduce ? 0 : i * 0.1}}
           >
             <span className="font-sans text-[8px] font-semibold" style={{color: FUNNEL_COLOURS.ink}}>

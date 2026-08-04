@@ -171,7 +171,7 @@ function AnsweredBookedCard({play}: {play: boolean}) {
               key={`${row.who}-${i}`}
               className="rounded-lg px-3 py-2.5 border"
               style={{
-                borderColor: `${FUNNEL_COLOURS.ink}10`,
+                borderColor: `${FUNNEL_COLOURS.ink}2C`,
                 backgroundColor: i % 2 === 1 ? `${FUNNEL_COLOURS.goldDeep}10` : FUNNEL_COLOURS.ground,
               }}
               animate={play ? {opacity: [0.55, 1, 0.55]} : {opacity: 0.9}}

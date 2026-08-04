@@ -83,7 +83,7 @@ export function LandingPainCards() {
               <motion.div
                 key={row}
                 className="h-6 rounded px-2 flex items-center font-mono text-[9px] uppercase tracking-wider"
-                style={{backgroundColor: `${FUNNEL_COLOURS.ink}08`, color: FUNNEL_COLOURS.muted}}
+                style={{backgroundColor: `${FUNNEL_COLOURS.ink}1C`, color: FUNNEL_COLOURS.muted}}
                 animate={
                   reduce || !inView
                     ? undefined
@@ -112,7 +112,7 @@ export function LandingPainCards() {
         {({inView, reduce}) => (
           <motion.div
             className="rounded-lg p-3 font-mono text-[11px] leading-relaxed"
-            style={{backgroundColor: `${FUNNEL_COLOURS.ink}06`, color: FUNNEL_COLOURS.ink}}
+            style={{backgroundColor: `${FUNNEL_COLOURS.ink}16`, color: FUNNEL_COLOURS.ink}}
           >
             <div>Ad spend · $2,000</div>
             <div>Clicks · 380</div>

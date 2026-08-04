@@ -31,7 +31,7 @@ function ThinPanelVisual({reduce}: VisualProps) {
       ref={ref}
       className="relative h-[140px] md:h-[160px] rounded-sm overflow-hidden border border-dark/15 bg-white/60 p-3"
     >
-      <p className="font-mono text-[8px] uppercase tracking-[0.2em] text-dark/40 mb-2">Your panel</p>
+      <p className="font-mono text-[8px] uppercase tracking-[0.2em] text-dark/55 mb-2">Your panel</p>
       <div className="space-y-2">
         {['Hours · outdated', 'Photos · 3', 'Services · empty'].map((row, i) => (
           <motion.div
@@ -59,7 +59,7 @@ function CompetitorAliveVisual({reduce}: VisualProps) {
       ref={ref}
       className="relative h-[140px] md:h-[160px] rounded-sm overflow-hidden border border-dark/15 bg-white/60 p-3"
     >
-      <p className="font-mono text-[8px] uppercase tracking-[0.2em] text-dark/40 mb-2">Next door</p>
+      <p className="font-mono text-[8px] uppercase tracking-[0.2em] text-dark/55 mb-2">Next door</p>
       <motion.div
         className="border px-2 py-2 space-y-1.5"
         style={{
@@ -96,7 +96,7 @@ function SomedayVisual({reduce}: VisualProps) {
       className="relative h-[140px] md:h-[160px] rounded-sm overflow-hidden border border-dark/15 bg-white/60 flex flex-col items-center justify-center px-4"
     >
       <motion.p
-        className="font-serif text-2xl text-dark/35"
+        className="font-serif text-2xl text-dark/55"
         animate={play ? {opacity: [0.35, 0.75, 0.35]} : {opacity: 0.5}}
         transition={play ? {duration: 2.2, repeat: Infinity} : {duration: 0}}
       >

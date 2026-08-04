@@ -49,7 +49,7 @@ export function BookingPainCards() {
         {({inView, reduce}) => (
           <motion.div
             className="rounded-lg p-3 font-mono text-[11px] leading-relaxed"
-            style={{backgroundColor: `${FUNNEL_COLOURS.ink}06`, color: FUNNEL_COLOURS.ink}}
+            style={{backgroundColor: `${FUNNEL_COLOURS.ink}16`, color: FUNNEL_COLOURS.ink}}
             animate={reduce || !inView ? undefined : {opacity: [0.65, 1, 0.65]}}
             transition={{duration: 2.2, repeat: Infinity}}
           >
@@ -118,7 +118,7 @@ export function BookingPainCards() {
                 key={row}
                 className="h-7 rounded px-2 flex items-center font-mono text-[9px] uppercase tracking-wider"
                 style={{
-                  backgroundColor: `${FUNNEL_COLOURS.ink}08`,
+                  backgroundColor: `${FUNNEL_COLOURS.ink}1C`,
                   color: i === 2 ? FUNNEL_COLOURS.accent : FUNNEL_COLOURS.muted,
                 }}
                 animate={

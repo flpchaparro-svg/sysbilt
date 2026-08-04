@@ -38,7 +38,7 @@ export function EnquiryReplyLeakPair() {
               key={row.label}
               className="rounded-lg px-3 py-2.5 font-mono text-[10px] uppercase tracking-wider"
               style={{
-                backgroundColor: row.hot ? `${FUNNEL_COLOURS.accent}12` : `${FUNNEL_COLOURS.ink}06`,
+                backgroundColor: row.hot ? `${FUNNEL_COLOURS.accent}12` : `${FUNNEL_COLOURS.ink}16`,
                 color: row.hot ? FUNNEL_COLOURS.accent : FUNNEL_COLOURS.muted,
               }}
               animate={

@@ -33,7 +33,7 @@ function BrowserChrome({url}: {url: string}) {
       >
         <span
           className="h-2.5 w-2.5 rounded-full shrink-0 border"
-          style={{borderColor: `${FUNNEL_COLOURS.ink}28`, backgroundColor: `${FUNNEL_COLOURS.ink}06`}}
+          style={{borderColor: `${FUNNEL_COLOURS.ink}28`, backgroundColor: `${FUNNEL_COLOURS.ink}16`}}
           aria-hidden
         />
         <span
@@ -83,7 +83,7 @@ export function WebsiteLeakPair() {
         <div
           className="flex items-center justify-between px-4 py-2.5 border-b"
           style={{
-            borderColor: `${FUNNEL_COLOURS.ink}10`,
+            borderColor: `${FUNNEL_COLOURS.ink}2C`,
             backgroundColor: `${FUNNEL_COLOURS.ink}05`,
           }}
         >
@@ -113,7 +113,7 @@ export function WebsiteLeakPair() {
             <div
               className="h-16 md:h-[72px] relative"
               style={{
-                background: `linear-gradient(135deg, ${FUNNEL_COLOURS.ink}10 0%, ${FUNNEL_COLOURS.ink}06 50%, ${FUNNEL_COLOURS.gold}18 100%)`,
+                background: `linear-gradient(135deg, ${FUNNEL_COLOURS.ink}2C 0%, ${FUNNEL_COLOURS.ink}16 50%, ${FUNNEL_COLOURS.gold}18 100%)`,
               }}
             >
               <div
@@ -162,7 +162,7 @@ export function WebsiteLeakPair() {
             style={{
               borderColor: `${FUNNEL_COLOURS.ink}16`,
               backgroundColor: '#fff',
-              boxShadow: `inset 0 0 0 1px ${FUNNEL_COLOURS.ink}06`,
+              boxShadow: `inset 0 0 0 1px ${FUNNEL_COLOURS.ink}16`,
             }}
           >
             <BrowserChrome url="website not found" />
@@ -262,7 +262,7 @@ export function WebsiteLeakPair() {
             {/* Mini site nav */}
             <div
               className="flex items-center justify-between px-3 h-9 border-b"
-              style={{borderColor: `${FUNNEL_COLOURS.ink}10`, backgroundColor: FUNNEL_COLOURS.surface}}
+              style={{borderColor: `${FUNNEL_COLOURS.ink}2C`, backgroundColor: FUNNEL_COLOURS.surface}}
             >
               <span
                 className="font-serif text-[11px] font-bold tracking-tight"
@@ -311,7 +311,7 @@ export function WebsiteLeakPair() {
                 <div
                   className="px-3 py-2 border-b flex items-center justify-between"
                   style={{
-                    borderColor: `${FUNNEL_COLOURS.ink}10`,
+                    borderColor: `${FUNNEL_COLOURS.ink}2C`,
                     backgroundColor: '#fff',
                   }}
                 >

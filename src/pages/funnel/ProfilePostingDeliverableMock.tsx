@@ -20,7 +20,7 @@ export function ProfilePostingDeliverableMock() {
     >
       <div
         className="rounded-2xl overflow-hidden border shadow-[0_16px_40px_-24px_rgba(14,28,47,0.35)]"
-        style={{borderColor: `${FUNNEL_COLOURS.ink}14`, backgroundColor: '#fff'}}
+        style={{borderColor: FUNNEL_COLOURS.mockBorder, backgroundColor: '#fff'}}
       >
         <div
           className="px-4 py-2.5 flex items-center gap-1.5"
@@ -32,7 +32,7 @@ export function ProfilePostingDeliverableMock() {
           <motion.span
             className="ml-auto h-1.5 w-1.5 rounded-full"
             style={{backgroundColor: '#1F7A4D'}}
-            animate={go ? {opacity: [0.4, 1, 0.4]} : {opacity: 0.8}}
+            animate={go ? {opacity: [0.55, 1, 0.55]} : {opacity: 0.85}}
             transition={{duration: 1.4, repeat: Infinity}}
           />
         </div>
@@ -44,8 +44,18 @@ export function ProfilePostingDeliverableMock() {
               <motion.div
                 key={i}
                 className="h-6 flex-1 rounded-sm"
-                style={{backgroundColor: `${FUNNEL_COLOURS.ink}08`}}
-                animate={go ? {backgroundColor: [`${FUNNEL_COLOURS.ink}08`, FUNNEL_COLOURS.gold, FUNNEL_COLOURS.gold]} : undefined}
+                style={{backgroundColor: FUNNEL_COLOURS.mockFill}}
+                animate={
+                  go
+                    ? {
+                        backgroundColor: [
+                          FUNNEL_COLOURS.mockFill,
+                          FUNNEL_COLOURS.gold,
+                          FUNNEL_COLOURS.gold,
+                        ],
+                      }
+                    : undefined
+                }
                 transition={{duration: 0.4, delay: reduce ? 0 : 0.15 + i * 0.09}}
               />
             ))}
@@ -57,12 +67,16 @@ export function ProfilePostingDeliverableMock() {
               <motion.div
                 key={i}
                 className="aspect-square rounded-md border"
-                style={{borderColor: `${FUNNEL_COLOURS.ink}18`, backgroundColor: '#fff'}}
+                style={{borderColor: FUNNEL_COLOURS.mockBorder, backgroundColor: '#fff'}}
                 initial={{borderStyle: 'dashed'}}
                 animate={
                   go
                     ? {
-                        borderColor: [`${FUNNEL_COLOURS.ink}18`, `${FUNNEL_COLOURS.goldDeep}80`, `${FUNNEL_COLOURS.goldDeep}80`],
+                        borderColor: [
+                          FUNNEL_COLOURS.mockBorder,
+                          `${FUNNEL_COLOURS.goldDeep}80`,
+                          `${FUNNEL_COLOURS.goldDeep}80`,
+                        ],
                         backgroundColor: ['#fff', `${FUNNEL_COLOURS.gold}1C`, `${FUNNEL_COLOURS.gold}1C`],
                       }
                     : undefined
@@ -79,7 +93,7 @@ export function ProfilePostingDeliverableMock() {
                 key={i}
                 className="absolute w-16 h-9 rounded-md border"
                 style={{
-                  borderColor: `${FUNNEL_COLOURS.ink}14`,
+                  borderColor: FUNNEL_COLOURS.mockBorder,
                   backgroundColor: '#fff',
                   boxShadow: '0 3px 8px -4px rgba(14,28,47,0.25)',
                   zIndex: i,
@@ -94,7 +108,9 @@ export function ProfilePostingDeliverableMock() {
               >
                 <div
                   className="absolute inset-1.5 rounded-sm"
-                  style={{backgroundColor: i % 2 === 0 ? `${FUNNEL_COLOURS.gold}25` : `${FUNNEL_COLOURS.ink}06`}}
+                  style={{
+                    backgroundColor: i % 2 === 0 ? `${FUNNEL_COLOURS.gold}35` : FUNNEL_COLOURS.mockFill,
+                  }}
                 />
               </motion.div>
             ))}

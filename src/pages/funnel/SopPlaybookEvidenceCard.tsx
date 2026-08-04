@@ -33,7 +33,7 @@ export function SopPlaybookEvidenceCard({business}: {business?: string | null}) 
     >
       <div
         className="px-3 py-2.5 flex items-center gap-2"
-        style={{backgroundColor: `${FUNNEL_COLOURS.ink}06`}}
+        style={{backgroundColor: `${FUNNEL_COLOURS.ink}16`}}
       >
         <span className="h-1.5 w-1.5 rounded-full" style={{backgroundColor: `${FUNNEL_COLOURS.accent}70`}} />
         <span className="h-1.5 w-1.5 rounded-full" style={{backgroundColor: `${FUNNEL_COLOURS.gold}80`}} />
@@ -41,7 +41,7 @@ export function SopPlaybookEvidenceCard({business}: {business?: string | null}) 
         {initials ? (
           <span
             className="ml-1 h-5 min-w-[20px] px-1 rounded-sm flex items-center justify-center font-mono text-[7px] font-bold"
-            style={{backgroundColor: `${FUNNEL_COLOURS.ink}10`, color: FUNNEL_COLOURS.steel}}
+            style={{backgroundColor: `${FUNNEL_COLOURS.ink}2C`, color: FUNNEL_COLOURS.steel}}
           >
             {initials}
           </span>

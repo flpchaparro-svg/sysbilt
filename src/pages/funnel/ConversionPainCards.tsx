@@ -54,7 +54,7 @@ export function ConversionPainCards() {
           <div className="flex items-center justify-center gap-3 py-2">
             <motion.div
               className="flex-1 rounded-lg border px-3 py-3 text-center"
-              style={{borderColor: `${FUNNEL_COLOURS.ink}22`, backgroundColor: `${FUNNEL_COLOURS.ink}08`}}
+              style={{borderColor: `${FUNNEL_COLOURS.ink}22`, backgroundColor: `${FUNNEL_COLOURS.ink}1C`}}
               initial={false}
               animate={play ? {opacity: 1, y: 0} : {opacity: 1}}
               transition={{duration: 0.4}}
@@ -72,7 +72,7 @@ export function ConversionPainCards() {
             <motion.span
               className="font-mono text-[10px]"
               style={{color: `${FUNNEL_COLOURS.ink}30`}}
-              animate={play ? {opacity: [0.25, 0.55, 0.25]} : {opacity: 0.35}}
+              animate={play ? {opacity: [0.75, 1, 0.75]} : {opacity: 0.8}}
               transition={{duration: 2.2, repeat: Infinity, ease: 'easeInOut'}}
             >
               ···
@@ -141,8 +141,8 @@ export function ConversionPainCards() {
                 style={{borderColor: `${FUNNEL_COLOURS.ink}22`}}
               >
                 <div className="h-1.5 w-4/5 rounded-sm" style={{backgroundColor: `${FUNNEL_COLOURS.ink}14`}} />
-                <div className="h-1.5 w-3/5 rounded-sm" style={{backgroundColor: `${FUNNEL_COLOURS.ink}0A`}} />
-                <div className="h-1.5 w-2/5 rounded-sm" style={{backgroundColor: `${FUNNEL_COLOURS.ink}0A`}} />
+                <div className="h-1.5 w-3/5 rounded-sm" style={{backgroundColor: `${FUNNEL_COLOURS.ink}24`}} />
+                <div className="h-1.5 w-2/5 rounded-sm" style={{backgroundColor: `${FUNNEL_COLOURS.ink}24`}} />
               </div>
             ))}
             <motion.span
@@ -174,7 +174,7 @@ export function ConversionPainCards() {
                   Fast
                 </span>
               </div>
-              <div className="h-1.5 rounded-full overflow-hidden" style={{backgroundColor: `${FUNNEL_COLOURS.ink}10`}}>
+              <div className="h-1.5 rounded-full overflow-hidden" style={{backgroundColor: `${FUNNEL_COLOURS.ink}2C`}}>
                 <motion.div
                   className="h-full rounded-full"
                   style={{backgroundColor: FUNNEL_COLOURS.goldDeep}}

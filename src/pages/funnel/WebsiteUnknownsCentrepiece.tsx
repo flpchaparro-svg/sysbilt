@@ -87,7 +87,7 @@ export function WebsiteUnknownsCentrepiece() {
           className="relative overflow-hidden h-full flex flex-col"
           style={{
             border: `1px solid ${FUNNEL_COLOURS.ink}14`,
-            backgroundColor: `${FUNNEL_COLOURS.ink}03`,
+            backgroundColor: `${FUNNEL_COLOURS.ink}12`,
             boxShadow: `0 18px 40px -30px ${FUNNEL_COLOURS.ink}40`,
           }}
           initial={reduce ? false : {opacity: 0, y: 20}}
@@ -122,7 +122,7 @@ export function WebsiteUnknownsCentrepiece() {
               <motion.li
                 key={line}
                 className="flex gap-3 py-2.5 border-b last:border-b-0"
-                style={{borderColor: `${FUNNEL_COLOURS.ink}0C`}}
+                style={{borderColor: `${FUNNEL_COLOURS.ink}28`}}
                 initial={reduce ? false : {opacity: 0, x: -8}}
                 animate={show ? {opacity: 1, x: 0} : undefined}
                 transition={{duration: 0.35, delay: 0.08 + i * 0.035, ease: EASE}}

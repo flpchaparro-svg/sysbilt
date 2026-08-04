@@ -55,7 +55,7 @@ function TextHoldsVisual({reduce}: VisualProps) {
       ref={ref}
       className="relative h-[140px] md:h-[160px] rounded-sm overflow-hidden border border-dark/15 bg-white/60 p-3 flex flex-col"
     >
-      <p className="font-mono text-[8px] uppercase tracking-[0.2em] text-dark/40 mb-2">
+      <p className="font-mono text-[8px] uppercase tracking-[0.2em] text-dark/55 mb-2">
         Missed-Call Text-Back
       </p>
       <motion.div
@@ -84,7 +84,7 @@ function VoiceBooksVisual({reduce}: VisualProps) {
       ref={ref}
       className="relative h-[140px] md:h-[160px] rounded-sm overflow-hidden border border-dark/15 bg-white/60 p-3 flex flex-col"
     >
-      <p className="font-mono text-[8px] uppercase tracking-[0.2em] text-dark/40 mb-2">
+      <p className="font-mono text-[8px] uppercase tracking-[0.2em] text-dark/55 mb-2">
         AI Phone Setup
       </p>
       <div className="space-y-1.5 flex-1">

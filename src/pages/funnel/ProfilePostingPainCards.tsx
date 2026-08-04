@@ -20,7 +20,7 @@ function Card({
       ref={ref}
       className="rounded-2xl p-5 md:p-6 border"
       style={{
-        borderColor: `${FUNNEL_COLOURS.ink}12`,
+        borderColor: FUNNEL_COLOURS.mockBorder,
         backgroundColor: FUNNEL_COLOURS.surface,
       }}
       initial={reduce ? false : {opacity: 0, y: 20, scale: 0.98}}
@@ -56,8 +56,8 @@ export function ProfilePostingPainCards() {
                   key={i}
                   className="aspect-square rounded-[3px] flex items-center justify-center"
                   style={{
-                    backgroundColor: i === 0 ? `${FUNNEL_COLOURS.accent}22` : `${FUNNEL_COLOURS.ink}07`,
-                    border: i === 0 ? `1px solid ${FUNNEL_COLOURS.accent}70` : `1px solid ${FUNNEL_COLOURS.ink}0A`,
+                    backgroundColor: i === 0 ? `${FUNNEL_COLOURS.accent}22` : FUNNEL_COLOURS.mockFill,
+                    border: i === 0 ? `1px solid ${FUNNEL_COLOURS.accent}70` : `1px solid ${FUNNEL_COLOURS.mockBorder}`,
                   }}
                   initial={reduce ? false : {opacity: 0}}
                   animate={
@@ -65,7 +65,7 @@ export function ProfilePostingPainCards() {
                       ? {opacity: 1}
                       : i === 0
                         ? {opacity: 1}
-                        : {opacity: [0.35, 0.6, 0.35]}
+                        : {opacity: [0.7, 0.95, 0.7]}
                   }
                   transition={{duration: 1.8, repeat: Infinity, delay: i * 0.05, ease: 'easeInOut'}}
                 >
@@ -85,22 +85,22 @@ export function ProfilePostingPainCards() {
           <div className="flex items-center justify-center gap-4 py-2">
             <div
               className="h-10 w-10 rounded-full border-2 border-dashed"
-              style={{borderColor: `${FUNNEL_COLOURS.ink}22`}}
+              style={{borderColor: FUNNEL_COLOURS.mockBorder}}
             />
             <motion.div
               className="h-1.5 w-8 rounded-full"
-              style={{backgroundColor: `${FUNNEL_COLOURS.ink}14`}}
-              animate={reduce || !inView ? undefined : {opacity: [0.3, 0.7, 0.3]}}
+              style={{backgroundColor: FUNNEL_COLOURS.mockBar}}
+              animate={reduce || !inView ? undefined : {opacity: [0.7, 1, 0.7]}}
               transition={{duration: 1.6, repeat: Infinity}}
             />
             <motion.div
               className="h-10 w-10 rounded-full"
-              style={{backgroundColor: `${FUNNEL_COLOURS.ink}0C`}}
+              style={{backgroundColor: FUNNEL_COLOURS.mockFill}}
               animate={
                 reduce || !inView
                   ? undefined
                   : {
-                      backgroundColor: [`${FUNNEL_COLOURS.ink}0C`, `${FUNNEL_COLOURS.accent}1E`, `${FUNNEL_COLOURS.ink}0C`],
+                      backgroundColor: [`${FUNNEL_COLOURS.ink}28`, `${FUNNEL_COLOURS.accent}1E`, `${FUNNEL_COLOURS.ink}28`],
                       scale: [1, 1.06, 1],
                     }
               }
@@ -116,8 +116,8 @@ export function ProfilePostingPainCards() {
           <div className="flex items-center justify-center py-3">
             <motion.div
               className="relative h-9 w-full max-w-[180px] rounded-lg border"
-              style={{borderColor: `${FUNNEL_COLOURS.ink}14`, backgroundColor: '#fff'}}
-              animate={reduce || !inView ? undefined : {opacity: [0.55, 0.85, 0.55]}}
+              style={{borderColor: FUNNEL_COLOURS.mockBorder, backgroundColor: '#fff'}}
+              animate={reduce || !inView ? undefined : {opacity: [0.75, 1, 0.75]}}
               transition={{duration: 2, repeat: Infinity}}
             >
               <div
@@ -148,7 +148,7 @@ export function ProfilePostingPainCards() {
                   className="w-1.5 rounded-sm"
                   style={{
                     height: `${h * 100}%`,
-                    backgroundColor: h > 0.5 ? FUNNEL_COLOURS.gold : `${FUNNEL_COLOURS.ink}14`,
+                    backgroundColor: h > 0.5 ? FUNNEL_COLOURS.gold : FUNNEL_COLOURS.mockFill,
                   }}
                   animate={reduce || !inView ? undefined : {opacity: h > 0.5 ? [0.7, 1, 0.7] : 1}}
                   transition={{duration: 1.4, repeat: Infinity, delay: i * 0.1}}

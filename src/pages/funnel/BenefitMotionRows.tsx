@@ -66,7 +66,7 @@ function StayWarmVisual({reduce}: VisualProps) {
           viewport={{once: true}}
           transition={{duration: 0.35, delay: reduce ? 0 : 0.4}}
         >
-          <p className="font-mono text-[6px] uppercase tracking-widest text-dark/40">SMS</p>
+          <p className="font-mono text-[6px] uppercase tracking-widest text-dark/55">SMS</p>
           <p className="font-sans text-[9px] leading-snug text-dark/75">We'll call you back…</p>
         </motion.div>
       </div>
@@ -115,7 +115,7 @@ function LoggedLeadVisual({reduce}: VisualProps) {
         whileInView={{opacity: 1}}
         viewport={{once: true}}
       >
-        <p className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/40">Call</p>
+        <p className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/55">Call</p>
         <motion.div
           className="rounded-sm border px-1.5 py-1.5"
           style={{borderColor: `${FUNNEL_COLOURS.accent}55`, backgroundColor: `${FUNNEL_COLOURS.accent}12`}}
@@ -143,7 +143,7 @@ function LoggedLeadVisual({reduce}: VisualProps) {
 
       <div className="flex-1 p-2 flex flex-col">
         <div className="flex items-center justify-between mb-1.5">
-          <p className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/40">CRM</p>
+          <p className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/55">CRM</p>
           <motion.span
             className="font-mono text-[7px] uppercase tracking-widest px-1 py-0.5"
             style={{backgroundColor: `${colors.teal}22`, color: colors.teal}}
@@ -179,7 +179,7 @@ function TestSmsReceivedVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white/70 p-2.5 flex gap-2">
       <div className="flex-1 border border-dark/10 rounded-sm bg-cream/70 p-1.5 flex flex-col">
-        <p className="font-mono text-[6px] uppercase tracking-[0.14em] text-dark/40 mb-1">
+        <p className="font-mono text-[6px] uppercase tracking-[0.14em] text-dark/55 mb-1">
           Your phone
         </p>
         <motion.div
@@ -206,7 +206,7 @@ function TestSmsReceivedVisual({reduce}: VisualProps) {
       </motion.span>
 
       <div className="flex-1 border border-dark/10 rounded-sm bg-cream/70 p-1.5 flex flex-col">
-        <p className="font-mono text-[6px] uppercase tracking-[0.14em] text-dark/40 mb-1">
+        <p className="font-mono text-[6px] uppercase tracking-[0.14em] text-dark/55 mb-1">
           Test handset
         </p>
         <motion.div
@@ -243,7 +243,7 @@ function WithinThreeDaysVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white/70 flex flex-col">
       <div className="h-7 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">
           Delivery window
         </span>
         <span className="font-mono text-[8px] font-bold uppercase tracking-[0.12em] text-gold-on-cream">
@@ -268,7 +268,7 @@ function WithinThreeDaysVisual({reduce}: VisualProps) {
             transition={{duration: 0.35, delay: reduce ? 0 : 0.2 + i * 0.28}}
           >
             <span className="font-serif text-lg text-dark leading-none">{c.label}</span>
-            <span className="mt-0.5 font-mono text-[6px] uppercase tracking-wide text-dark/45">
+            <span className="mt-0.5 font-mono text-[6px] uppercase tracking-wide text-dark/55">
               {c.sub}
             </span>
             <motion.span
@@ -304,7 +304,7 @@ function FastBrowseVisual({reduce}: VisualProps) {
         <span className="h-1 w-1 rounded-full bg-dark/25" />
         <span className="h-1 w-1 rounded-full bg-dark/25" />
         <span className="h-1 w-1 rounded-full bg-dark/25" />
-        <span className="ml-1.5 font-mono text-[7px] text-dark/45">yoursite.com</span>
+        <span className="ml-1.5 font-mono text-[7px] text-dark/55">yoursite.com</span>
       </div>
       <motion.div
         className="absolute inset-x-0 top-5 bottom-0 p-2"
@@ -377,7 +377,7 @@ function RankRaceVisual({reduce}: VisualProps) {
           viewport={{once: true}}
           transition={{duration: reduce ? 0 : 1.2, ease: 'linear'}}
         />
-        <div className="p-1.5 space-y-1 opacity-40">
+        <div className="p-1.5 space-y-1 opacity-80">
           <div className="h-1.5 w-full rounded-sm bg-dark/10" />
           <div className="h-1.5 w-1/2 rounded-sm bg-dark/10" />
         </div>
@@ -420,7 +420,7 @@ function ProofEmailVisual({reduce}: VisualProps) {
         transition={{duration: 0.45, delay: reduce ? 0 : 0.85}}
       >
         <span className="font-serif text-3xl text-teal tabular-nums leading-none">90+</span>
-        <span className="mt-1 font-mono text-[7px] uppercase tracking-[0.16em] text-dark/45">
+        <span className="mt-1 font-mono text-[7px] uppercase tracking-[0.16em] text-dark/55">
           Google score
         </span>
       </motion.div>
@@ -433,7 +433,7 @@ function ThreeDayCalendarVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white/70 flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">
           Delivery
         </span>
         <span className="font-mono text-[7px] text-gold-on-cream">3 days</span>
@@ -443,7 +443,7 @@ function ThreeDayCalendarVisual({reduce}: VisualProps) {
           {['D1', 'D2', 'D3', '—'].map((d) => (
             <span
               key={d}
-              className="text-center font-mono text-[6px] uppercase tracking-wide text-dark/35"
+              className="text-center font-mono text-[6px] uppercase tracking-wide text-dark/55"
             >
               {d}
             </span>
@@ -509,7 +509,7 @@ function CrmInstantReplyVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">
           New form enquiry
         </span>
         <motion.span
@@ -528,7 +528,7 @@ function CrmInstantReplyVisual({reduce}: VisualProps) {
           viewport={{once: true}}
           transition={{type: 'spring', stiffness: 380, damping: 22}}
         >
-          <p className="font-mono text-[7px] text-dark/40">Lead</p>
+          <p className="font-mono text-[7px] text-dark/55">Lead</p>
           <p className="font-sans text-[10px] text-dark/70 leading-tight">Website form · just now</p>
         </motion.div>
         <motion.div
@@ -561,7 +561,7 @@ function CrmRightPhoneVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2">
-        <span className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/40">Route to</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/55">Route to</span>
       </div>
       <div className="flex-1 min-h-0 p-1.5 flex flex-col justify-center gap-1">
         {[
@@ -626,7 +626,7 @@ function CrmQuoteChaseVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">
           Open quote · kitchen reno
         </span>
       </div>
@@ -679,7 +679,7 @@ function CrmFiveDayVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">
           Delivery window
         </span>
         <motion.span
@@ -726,7 +726,7 @@ function CrmFiveDayVisual({reduce}: VisualProps) {
             >
               {c.label}
             </motion.span>
-            <span className="mt-0.5 font-mono text-[6px] uppercase tracking-wide text-dark/45">
+            <span className="mt-0.5 font-mono text-[6px] uppercase tracking-wide text-dark/55">
               {c.sub}
             </span>
           </motion.div>
@@ -751,7 +751,7 @@ function AiPhoneAnsweredVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">
           Incoming · after hours
         </span>
         <motion.span
@@ -804,7 +804,7 @@ function AiPhoneBookHandoffVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">
           Call path
         </span>
       </div>
@@ -840,7 +840,7 @@ function AiPhoneOwnedAccountVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">
           Vendor account
         </span>
         <span className="font-mono text-[7px] font-bold uppercase tracking-wide text-gold-on-cream">
@@ -867,7 +867,7 @@ function AiPhoneOwnedAccountVisual({reduce}: VisualProps) {
           </motion.span>
         </motion.div>
         <motion.p
-          className="font-mono text-[7px] uppercase tracking-[0.12em] text-dark/40 text-center"
+          className="font-mono text-[7px] uppercase tracking-[0.12em] text-dark/55 text-center"
           initial={reduce ? false : {opacity: 0}}
           whileInView={{opacity: 1}}
           viewport={{once: true}}
@@ -890,7 +890,7 @@ function AiPhoneFewDaysVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">
           Delivery
         </span>
         <motion.span
@@ -920,7 +920,7 @@ function AiPhoneFewDaysVisual({reduce}: VisualProps) {
             transition={{delay: reduce ? 0 : 0.12 + i * 0.2, type: 'spring', stiffness: 340}}
           >
             <span className="font-serif text-sm text-dark leading-none">{c.label}</span>
-            <span className="mt-0.5 font-mono text-[6px] uppercase tracking-wide text-dark/45">
+            <span className="mt-0.5 font-mono text-[6px] uppercase tracking-wide text-dark/55">
               {c.sub}
             </span>
           </motion.div>
@@ -955,7 +955,7 @@ function EnquiryAckInSecondsVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">
           Website form
         </span>
         <motion.span
@@ -974,7 +974,7 @@ function EnquiryAckInSecondsVisual({reduce}: VisualProps) {
           viewport={{once: true}}
           transition={{type: 'spring', stiffness: 380, damping: 22}}
         >
-          <p className="font-mono text-[7px] text-dark/40">Enquiry</p>
+          <p className="font-mono text-[7px] text-dark/55">Enquiry</p>
           <p className="font-sans text-[10px] text-dark/70 leading-tight">Submitted · just now</p>
         </motion.div>
         <motion.div
@@ -1007,7 +1007,7 @@ function EnquiryOneInboxVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2">
-        <span className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/40">Routes to</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/55">Routes to</span>
       </div>
       <div className="flex-1 min-h-0 p-1.5 flex flex-col justify-center gap-1">
         {[
@@ -1074,7 +1074,7 @@ function EnquiryNextStepVisual({reduce}: VisualProps) {
   const steps = ['Enquiry Reply', 'Missed-Call', 'CRM Rescue']
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col justify-center">
-      <p className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/40 mb-2 text-center">
+      <p className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55 mb-2 text-center">
         Ready when you are
       </p>
       <div className="flex items-center justify-center gap-1 px-2">
@@ -1132,7 +1132,7 @@ function ProfilePostLiveVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Your week</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Your week</span>
         <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
           3 posts
         </span>
@@ -1144,7 +1144,7 @@ function ProfilePostLiveVisual({reduce}: VisualProps) {
               className="w-full rounded-sm"
               style={{
                 height: d.post ? 36 : 10,
-                backgroundColor: d.post ? `${colors.teal}28` : `${FUNNEL_COLOURS.ink}08`,
+                backgroundColor: d.post ? `${colors.teal}28` : `${FUNNEL_COLOURS.ink}1C`,
                 border: d.post ? `1px solid ${colors.teal}` : '1px solid transparent',
               }}
               initial={reduce || !d.post ? false : {scaleY: 0.2, opacity: 0.3}}
@@ -1152,7 +1152,7 @@ function ProfilePostLiveVisual({reduce}: VisualProps) {
               viewport={{once: true}}
               transition={{delay: reduce ? 0 : 0.12 + i * 0.08, type: 'spring', stiffness: 340, damping: 20}}
             />
-            <span className="font-mono text-[7px] uppercase tracking-wide text-dark/40">{d.label}</span>
+            <span className="font-mono text-[7px] uppercase tracking-wide text-dark/55">{d.label}</span>
           </div>
         ))}
       </div>
@@ -1171,7 +1171,7 @@ function ProfileTemplatesReadyVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Template set</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Template set</span>
       </div>
       <div className="flex-1 grid grid-cols-4 gap-1.5 p-2.5">
         {templates.map((t, i) => (
@@ -1216,7 +1216,7 @@ function ProfileOfferFreshVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Starter bank</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Starter bank</span>
         <motion.span
           className="font-mono text-[7px] font-bold uppercase tracking-wide"
           style={{color: colors.teal}}
@@ -1264,7 +1264,7 @@ function ProfilePostingNextStepVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Who posts</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Who posts</span>
       </div>
       <div className="flex-1 flex items-center gap-2.5 px-3 py-2.5">
         <motion.div
@@ -1284,12 +1284,12 @@ function ProfilePostingNextStepVisual({reduce}: VisualProps) {
           <span className="font-mono text-[8px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
             You
           </span>
-          <span className="font-mono text-[6px] uppercase tracking-wide text-dark/45">Publish</span>
+          <span className="font-mono text-[6px] uppercase tracking-wide text-dark/55">Publish</span>
         </motion.div>
         <motion.div
           className="flex-1 rounded-sm border border-dashed px-2.5 py-3 flex flex-col items-center justify-center gap-1.5"
           style={{borderColor: `${FUNNEL_COLOURS.gold}80`, backgroundColor: `${FUNNEL_COLOURS.gold}0A`}}
-          initial={reduce ? false : {opacity: 0.35}}
+          initial={reduce ? false : {opacity: 0.8}}
           whileInView={{opacity: 0.85}}
           viewport={{once: true}}
           transition={{delay: reduce ? 0 : 0.35}}
@@ -1298,8 +1298,8 @@ function ProfilePostingNextStepVisual({reduce}: VisualProps) {
             className="h-2.5 w-2.5 rounded-full border-2 border-dashed"
             style={{borderColor: `${FUNNEL_COLOURS.gold}90`}}
           />
-          <span className="font-mono text-[8px] font-bold uppercase tracking-wide text-dark/45">Care</span>
-          <span className="font-mono text-[6px] uppercase tracking-wide text-dark/35">Later</span>
+          <span className="font-mono text-[8px] font-bold uppercase tracking-wide text-dark/55">Care</span>
+          <span className="font-mono text-[6px] uppercase tracking-wide text-dark/55">Later</span>
         </motion.div>
       </div>
     </div>
@@ -1319,7 +1319,7 @@ function LocalPackOneKickoffVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Three briefs → one</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Three briefs → one</span>
       </div>
       <div className="flex-1 flex items-center justify-center gap-2 px-3">
         {labels.map((label, i) => (
@@ -1361,7 +1361,7 @@ function LocalPackCoherentMapVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Maps listing</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Maps listing</span>
       </div>
       <div className="flex-1 flex flex-col items-center justify-center gap-1.5 px-3">
         {labels.map((label, i) => (
@@ -1373,7 +1373,7 @@ function LocalPackCoherentMapVisual({reduce}: VisualProps) {
             viewport={{once: true}}
             transition={{delay: reduce ? 0 : 0.15 + i * 0.14}}
           >
-            <span className="font-mono text-[6px] uppercase tracking-wide text-dark/45 w-11 shrink-0">
+            <span className="font-mono text-[6px] uppercase tracking-wide text-dark/55 w-11 shrink-0">
               {label}
             </span>
             <motion.div
@@ -1397,7 +1397,7 @@ function LocalPackRealProductsVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Full scope, each one</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Full scope, each one</span>
       </div>
       <div className="flex-1 flex flex-col justify-center gap-1.5 px-3 py-2">
         {items.map((label, i) => (
@@ -1410,7 +1410,7 @@ function LocalPackRealProductsVisual({reduce}: VisualProps) {
             viewport={{once: true}}
             transition={{delay: reduce ? 0 : 0.1 + i * 0.12}}
           >
-            <span className="font-mono text-[7px] text-dark/40 shrink-0">{String(i + 1).padStart(2, '0')}</span>
+            <span className="font-mono text-[7px] text-dark/55 shrink-0">{String(i + 1).padStart(2, '0')}</span>
             <span className="font-mono text-[7px] font-bold uppercase tracking-wide flex-1" style={{color: colors.teal}}>
               {label}
             </span>
@@ -1437,7 +1437,7 @@ function LocalPackClearPriceVisual({reduce}: VisualProps) {
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col items-center justify-center gap-2">
       <div className="flex items-center gap-2.5">
         <motion.span
-          className="font-mono text-xs text-dark/35 relative"
+          className="font-mono text-xs text-dark/55 relative"
           initial={reduce ? false : {opacity: 0.6}}
           whileInView={{opacity: 1}}
           viewport={{once: true}}
@@ -1452,7 +1452,7 @@ function LocalPackClearPriceVisual({reduce}: VisualProps) {
             transition={{delay: reduce ? 0 : 0.25, duration: 0.35}}
           />
         </motion.span>
-        <span className="font-mono text-[9px] text-dark/35">→</span>
+        <span className="font-mono text-[9px] text-dark/55">→</span>
         <motion.span
           className="font-serif font-bold text-xl"
           style={{color: colors.teal}}
@@ -1492,7 +1492,7 @@ function ConversionHomeClearVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Homepage</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Homepage</span>
       </div>
       <div className="flex-1 flex flex-col items-center justify-center gap-2 px-4">
         <motion.div
@@ -1524,7 +1524,7 @@ function ConversionContactObviousVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Every page</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Every page</span>
       </div>
       <div className="flex-1 flex flex-col items-center justify-center gap-1.5 px-3">
         {pages.map((page, i) => (
@@ -1537,7 +1537,7 @@ function ConversionContactObviousVisual({reduce}: VisualProps) {
             viewport={{once: true}}
             transition={{delay: reduce ? 0 : i * 0.12}}
           >
-            <span className="font-mono text-[6px] uppercase tracking-wide text-dark/45">{page}</span>
+            <span className="font-mono text-[6px] uppercase tracking-wide text-dark/55">{page}</span>
             <span className="font-mono text-[6px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
               Contact
             </span>
@@ -1557,7 +1557,7 @@ function ConversionServicesSpecificVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Service pages</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Service pages</span>
       </div>
       <div className="flex-1 flex flex-col justify-center gap-1.5 px-3 py-2">
         {services.map((s, i) => (
@@ -1573,7 +1573,7 @@ function ConversionServicesSpecificVisual({reduce}: VisualProps) {
             <p className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
               {s.label}
             </p>
-            <p className="font-mono text-[6px] uppercase tracking-wide text-dark/45">{s.detail}</p>
+            <p className="font-mono text-[6px] uppercase tracking-wide text-dark/55">{s.detail}</p>
           </motion.div>
         ))}
       </div>
@@ -1623,7 +1623,7 @@ function OnpageTitleClearVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Priority page</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Priority page</span>
       </div>
       <div className="flex-1 flex flex-col items-center justify-center gap-2 px-4">
         <motion.div
@@ -1653,7 +1653,7 @@ function OnpagePriorityListVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Priority URLs</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Priority URLs</span>
       </div>
       <div className="flex-1 flex flex-col items-center justify-center gap-1.5 px-3">
         {urls.map((url, i) => (
@@ -1666,7 +1666,7 @@ function OnpagePriorityListVisual({reduce}: VisualProps) {
             viewport={{once: true}}
             transition={{delay: reduce ? 0 : i * 0.12}}
           >
-            <span className="font-mono text-[6px] uppercase tracking-wide text-dark/45">{url}</span>
+            <span className="font-mono text-[6px] uppercase tracking-wide text-dark/55">{url}</span>
             <span className="font-mono text-[6px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
               Locked
             </span>
@@ -1682,20 +1682,20 @@ function OnpageHonestNotStuffedVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Title tag</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Title tag</span>
         <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
           Honest
         </span>
       </div>
       <div className="flex-1 flex flex-col justify-center gap-2 px-3">
         <motion.div
-          className="rounded-sm border border-dashed px-2 py-1.5 opacity-40"
+          className="rounded-sm border border-dashed px-2 py-1.5 opacity-80"
           style={{borderColor: `${FUNNEL_COLOURS.ink}28`}}
           initial={reduce ? false : {opacity: 0.55}}
           whileInView={{opacity: 0.25}}
           viewport={{once: true}}
         >
-          <p className="font-mono text-[6px] uppercase tracking-wide text-dark/40 line-through">
+          <p className="font-mono text-[6px] uppercase tracking-wide text-dark/55 line-through">
             keyword · keyword · keyword
           </p>
         </motion.div>
@@ -1764,7 +1764,7 @@ function SchemaFaqQuestionsAnsweredVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">FAQ row</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">FAQ row</span>
         <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
           Open
         </span>
@@ -1803,7 +1803,7 @@ function SchemaFaqSchemaProperVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Match check</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Match check</span>
       </div>
       <div className="flex-1 flex items-center justify-center gap-2 px-2.5">
         <motion.div
@@ -1813,7 +1813,7 @@ function SchemaFaqSchemaProperVisual({reduce}: VisualProps) {
           whileInView={{opacity: 1, x: 0}}
           viewport={{once: true}}
         >
-          <p className="font-mono text-[6px] uppercase tracking-wide text-dark/45 mb-1">On page</p>
+          <p className="font-mono text-[6px] uppercase tracking-wide text-dark/55 mb-1">On page</p>
           <p className="font-sans text-[8px] font-semibold" style={{color: FUNNEL_COLOURS.ink}}>
             Q + A text
           </p>
@@ -1853,7 +1853,7 @@ function SchemaFaqHumansToolsVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Same answers</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Same answers</span>
       </div>
       <div className="flex-1 flex flex-col items-center justify-center gap-1.5 px-2.5">
         {readers.map((r, i) => (
@@ -1884,7 +1884,7 @@ function SchemaFaqNearDecisionVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Service page</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Service page</span>
       </div>
       <div className="flex-1 flex flex-col items-center justify-center gap-1.5 px-3">
         <motion.div
@@ -1928,7 +1928,7 @@ function TrackingEventSetVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Event set</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Event set</span>
         <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
           Up to 5
         </span>
@@ -1962,7 +1962,7 @@ function TrackingFormDestVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Destination</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Destination</span>
       </div>
       <div className="flex-1 flex items-center justify-center gap-2 px-2.5">
         <motion.div
@@ -1972,7 +1972,7 @@ function TrackingFormDestVisual({reduce}: VisualProps) {
           whileInView={{opacity: 1, x: 0}}
           viewport={{once: true}}
         >
-          <p className="font-mono text-[6px] uppercase tracking-wide text-dark/45 mb-1">Form</p>
+          <p className="font-mono text-[6px] uppercase tracking-wide text-dark/55 mb-1">Form</p>
           <p className="font-sans text-[8px] font-semibold" style={{color: FUNNEL_COLOURS.ink}}>
             Contact
           </p>
@@ -2012,7 +2012,7 @@ function TrackingWatchlistVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Watchlist</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Watchlist</span>
       </div>
       <div className="flex-1 flex flex-col items-center justify-center gap-1.5 px-2.5">
         {rows.map((r, i) => (
@@ -2043,7 +2043,7 @@ function TrackingTestProofVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Test proof</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Test proof</span>
         <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
           Pass
         </span>
@@ -2090,7 +2090,7 @@ function SiteChatCommonQuestionsVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Chat</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Chat</span>
         <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
           FAQ
         </span>
@@ -2125,7 +2125,7 @@ function SiteChatHandoffVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Handoff</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Handoff</span>
       </div>
       <div className="flex-1 flex items-center justify-center gap-2 px-2.5">
         <motion.div
@@ -2135,7 +2135,7 @@ function SiteChatHandoffVisual({reduce}: VisualProps) {
           whileInView={{opacity: 1, x: 0}}
           viewport={{once: true}}
         >
-          <p className="font-mono text-[6px] uppercase tracking-wide text-dark/45 mb-1">Chat</p>
+          <p className="font-mono text-[6px] uppercase tracking-wide text-dark/55 mb-1">Chat</p>
           <p className="font-sans text-[8px] font-semibold" style={{color: FUNNEL_COLOURS.ink}}>Stops</p>
         </motion.div>
         <motion.span className="font-mono text-[9px] font-bold" style={{color: colors.teal}} initial={reduce ? false : {opacity: 0}} whileInView={{opacity: 1}} viewport={{once: true}} transition={{delay: 0.15}}>→</motion.span>
@@ -2160,7 +2160,7 @@ function SiteChatOnBrandVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Your voice</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Your voice</span>
       </div>
       <div className="flex-1 flex flex-col items-center justify-center gap-1.5 px-2.5">
         {['Approved FAQ set', 'Tone locked'].map((label, i) => (
@@ -2187,7 +2187,7 @@ function SiteChatOptionalCareVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">After setup</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">After setup</span>
       </div>
       <div className="flex-1 flex flex-col items-center justify-center gap-1.5 px-3">
         <motion.div
@@ -2227,7 +2227,7 @@ function MediaCleanProtectVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Weight</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Weight</span>
         <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>Down</span>
       </div>
       <div className="flex-1 flex items-center justify-center gap-2 px-2.5">
@@ -2250,7 +2250,7 @@ function MediaCleanUploadRulesVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Upload guide</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Upload guide</span>
       </div>
       <div className="flex-1 flex flex-col items-center justify-center gap-1.5 px-2.5">
         {['Max width set', 'WebP preferred'].map((label, i) => (
@@ -2269,7 +2269,7 @@ function MediaCleanScopedVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">Scope</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Scope</span>
         <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>Locked</span>
       </div>
       <div className="flex-1 flex flex-col items-center justify-center gap-1.5 px-2.5">
@@ -2289,7 +2289,7 @@ function MediaCleanAfterSpeedVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">After Speed Fix</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">After Speed Fix</span>
       </div>
       <div className="flex-1 flex flex-col items-center justify-center gap-1.5 px-3">
         <motion.div className="w-full rounded-sm border px-2 py-1.5 flex items-center gap-1.5" style={{borderColor: `${colors.teal}40`, backgroundColor: `${colors.teal}0C`}} initial={reduce ? false : {opacity: 0, y: 4}} whileInView={{opacity: 1, y: 0}} viewport={{once: true}}>
@@ -2318,7 +2318,7 @@ function TeamSharedSetupVisual({reduce}: VisualProps) {
   return (
     <div className="relative w-full rounded-sm border border-dark/12 bg-white flex flex-col">
       <div className="h-7 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">
           Shared workspace
         </span>
         <span className="font-mono text-[7px] font-bold uppercase tracking-wide text-gold-on-cream">
@@ -2366,7 +2366,7 @@ function TeamSafeDataVisual({reduce}: VisualProps) {
   ]
   return (
     <div className="relative w-full rounded-sm border border-dark/12 bg-white p-3">
-      <p className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/40 mb-2.5">
+      <p className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/55 mb-2.5">
         Usage policy
       </p>
       <div className="space-y-2">
@@ -2402,7 +2402,7 @@ function TeamPromptLibraryVisual({reduce}: VisualProps) {
   return (
     <div className="relative w-full rounded-sm border border-dark/12 bg-white flex min-h-[128px]">
       <div className="w-[38%] border-r border-dark/10 bg-cream p-2.5 flex flex-col justify-center">
-        <p className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/40 mb-2">
+        <p className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55 mb-2">
           One person
         </p>
         <motion.div
@@ -2414,11 +2414,11 @@ function TeamPromptLibraryVisual({reduce}: VisualProps) {
           transition={{duration: 1.4, times: [0, 0.45, 1]}}
         >
           <p className="font-sans text-[11px] text-dark/70 leading-tight">Tricks in one head</p>
-          <p className="mt-1 font-mono text-[7px] uppercase tracking-wide text-dark/35">Private</p>
+          <p className="mt-1 font-mono text-[7px] uppercase tracking-wide text-dark/55">Private</p>
         </motion.div>
       </div>
       <div className="flex-1 p-2.5 flex flex-col">
-        <p className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/40 mb-2">
+        <p className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55 mb-2">
           Shared library
         </p>
         <div className="space-y-1.5">
@@ -2453,7 +2453,7 @@ function TeamSticksVisual({reduce}: VisualProps) {
   return (
     <div className="relative w-full rounded-sm border border-dark/12 bg-white flex flex-col">
       <div className="h-7 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">
           After the day
         </span>
         <span className="font-mono text-[8px] font-bold uppercase tracking-[0.12em] text-gold-on-cream">
@@ -2472,7 +2472,7 @@ function TeamSticksVisual({reduce}: VisualProps) {
           30
         </motion.div>
         <div className="min-w-0">
-          <p className="font-mono text-[8px] uppercase tracking-widest text-dark/45">Day check-in</p>
+          <p className="font-mono text-[8px] uppercase tracking-widest text-dark/55">Day check-in</p>
           <motion.p
             className="font-sans text-[13px] text-dark/70 mt-1 leading-snug"
             initial={{opacity: 0}}
@@ -2494,7 +2494,7 @@ function ChangeDayOnePathVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">
           Day one pack
         </span>
         <motion.span
@@ -2539,7 +2539,7 @@ function ChangeFewerTicketsVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">
           Week two · help desk
         </span>
       </div>
@@ -2550,7 +2550,7 @@ function ChangeFewerTicketsVisual({reduce}: VisualProps) {
           whileInView={{opacity: 0.35, x: 0}}
           viewport={{once: true}}
         >
-          <span className="font-sans text-[10px] text-dark/45 line-through">How do I log a job?</span>
+          <span className="font-sans text-[10px] text-dark/55 line-through">How do I log a job?</span>
           <span className="font-mono text-[7px] uppercase text-dark/30">Ticket</span>
         </motion.div>
         <motion.div
@@ -2576,7 +2576,7 @@ function ChangePackStaysYoursVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">
           Training library
         </span>
         <span className="font-mono text-[7px] font-bold uppercase tracking-wide text-gold-on-cream">
@@ -2610,7 +2610,7 @@ function ChangeDay30OwnerVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">
           People side
         </span>
         <motion.span
@@ -2633,7 +2633,7 @@ function ChangeDay30OwnerVisual({reduce}: VisualProps) {
         </motion.div>
         <div className="min-w-0">
           <p className="font-sans text-[11px] font-semibold text-dark/80">Day check-in</p>
-          <p className="font-mono text-[7px] uppercase tracking-wide text-dark/40 mt-0.5">
+          <p className="font-mono text-[7px] uppercase tracking-wide text-dark/55 mt-0.5">
             What stuck · what we patch
           </p>
         </div>
@@ -2655,7 +2655,7 @@ function ContentAliveChannelsVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">
           This week
         </span>
         <motion.span
@@ -2687,7 +2687,7 @@ function ContentAliveChannelsVisual({reduce}: VisualProps) {
             <span className="font-mono text-[10px] font-bold" style={{color: colors.teal}}>
               {c}
             </span>
-            <span className="font-mono text-[6px] uppercase tracking-wide text-dark/45 mt-0.5">
+            <span className="font-mono text-[6px] uppercase tracking-wide text-dark/55 mt-0.5">
               Set
             </span>
           </motion.div>
@@ -2702,7 +2702,7 @@ function ContentSoundsLikeYouVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">
           Voice check
         </span>
       </div>
@@ -2713,7 +2713,7 @@ function ContentSoundsLikeYouVisual({reduce}: VisualProps) {
           whileInView={{opacity: 0.4, x: 0}}
           viewport={{once: true}}
         >
-          <span className="font-sans text-[10px] text-dark/40 line-through">
+          <span className="font-sans text-[10px] text-dark/55 line-through">
             Exciting synergy for your journey
           </span>
         </motion.div>
@@ -2740,7 +2740,7 @@ function ContentOneHourVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center justify-between px-2">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">
           Input
         </span>
         <span className="font-mono text-[7px] font-bold uppercase tracking-wide text-gold-on-cream">
@@ -2789,7 +2789,7 @@ function ContentReportVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-5 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/45">
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">
           Monthly report
         </span>
       </div>
@@ -2834,7 +2834,7 @@ function CategoriesFillVisual({reduce}: VisualProps) {
   const items = ['Primary category', 'Services', 'Hours', 'Attributes']
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white/70 p-2.5">
-      <p className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/40 mb-1.5">
+      <p className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/55 mb-1.5">
         Profile fields
       </p>
       <div className="space-y-1">
@@ -2875,7 +2875,7 @@ function CategoriesFillVisual({reduce}: VisualProps) {
 function DescriptionSellsVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white/70 p-2.5 flex flex-col">
-      <p className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/40 mb-1.5">
+      <p className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/55 mb-1.5">
         Business description
       </p>
       <motion.div
@@ -2978,7 +2978,7 @@ function TwoDayProfileVisual({reduce}: VisualProps) {
           viewport={{once: true}}
           transition={{delay: reduce ? 0 : i * 0.35, duration: 0.4}}
         >
-          <p className="font-mono text-[8px] uppercase tracking-widest text-dark/40">{item.day}</p>
+          <p className="font-mono text-[8px] uppercase tracking-widest text-dark/55">{item.day}</p>
           <p className="font-serif text-sm mt-1" style={{color: FUNNEL_COLOURS.ink}}>
             {item.text}
           </p>
@@ -3126,7 +3126,7 @@ function QrLinkReadyVisual({reduce}: VisualProps) {
         ))}
       </div>
       <div className="flex-1 min-w-0">
-        <p className="font-mono text-[7px] uppercase tracking-widest text-dark/40 mb-2">Short link</p>
+        <p className="font-mono text-[7px] uppercase tracking-widest text-dark/55 mb-2">Short link</p>
         <div className="h-2 w-full bg-dark/10 overflow-hidden rounded-full">
           <motion.div
             className="h-full"
@@ -3209,12 +3209,12 @@ const REVIEWS_VISUALS = [
 function FoundAgainVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full overflow-hidden border border-dark/12 bg-white/70 p-2.5 flex flex-col gap-1.5">
-      <p className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/40">Results</p>
+      <p className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/55">Results</p>
       {['Studio Hale', 'North Shore Atelier'].map((name) => (
         <div
           key={name}
           className="h-5 px-2 flex items-center"
-          style={{backgroundColor: `${FUNNEL_COLOURS.ink}06`}}
+          style={{backgroundColor: `${FUNNEL_COLOURS.ink}16`}}
         >
           <span className="font-sans text-[10px]" style={{color: FUNNEL_COLOURS.muted}}>
             {name}
@@ -3245,7 +3245,7 @@ function ConsoleWatchVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full overflow-hidden border border-dark/12 bg-white/70 p-2.5 flex flex-col">
       <div className="flex items-center justify-between mb-2">
-        <p className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/40">
+        <p className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/55">
           Search Console
         </p>
         <motion.span
@@ -3343,7 +3343,7 @@ function ThreeDayWatchVisual({reduce}: VisualProps) {
             viewport={{once: true}}
             transition={{delay: reduce ? 0 : i * 0.2, duration: 0.35}}
           >
-            <p className="font-mono text-[8px] font-bold uppercase tracking-widest text-dark/45">
+            <p className="font-mono text-[8px] font-bold uppercase tracking-widest text-dark/55">
               {item.day}
             </p>
             <p className="font-sans text-[9px] mt-0.5" style={{color: FUNNEL_COLOURS.ink}}>
@@ -3390,7 +3390,7 @@ function AdPromiseMatchVisual({reduce}: VisualProps) {
           className="flex-1 border px-2 py-2 flex flex-col justify-between"
           style={{borderColor: `${FUNNEL_COLOURS.ink}14`, backgroundColor: FUNNEL_COLOURS.ground}}
         >
-          <p className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/40">The ad</p>
+          <p className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/55">The ad</p>
           <p className="font-serif text-[11px] font-bold leading-snug" style={{color: FUNNEL_COLOURS.ink}}>
             Free consult this week
           </p>
@@ -3475,7 +3475,7 @@ function AdsSmarterVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full overflow-hidden border border-dark/12 bg-white/70 p-2.5">
       <div className="flex items-center justify-between mb-1.5">
-        <p className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/40">Ad platform</p>
+        <p className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/55">Ad platform</p>
         <motion.span
           className="font-mono text-[8px] font-bold uppercase tracking-widest px-1.5 py-0.5"
           style={{backgroundColor: FUNNEL_COLOURS.gold, color: FUNNEL_COLOURS.ink}}
@@ -3551,7 +3551,7 @@ function OwnDomainVisual({reduce}: VisualProps) {
         animate={reduce ? undefined : {y: [2, 0, 0, 2]}}
         transition={reduce ? undefined : {duration: 3, repeat: Infinity, times: [0, 0.2, 0.85, 1]}}
       >
-        <p className="font-mono text-[8px] uppercase tracking-[0.18em] text-dark/40 mb-1">Your domain</p>
+        <p className="font-mono text-[8px] uppercase tracking-[0.18em] text-dark/55 mb-1">Your domain</p>
         <motion.p
           className="font-serif text-sm font-bold mx-auto overflow-hidden whitespace-nowrap"
           style={{color: FUNNEL_COLOURS.ink}}
@@ -3623,7 +3623,7 @@ function TwoDayLiveVisual({reduce}: VisualProps) {
                     }
               }
             />
-            <p className="relative font-mono text-[8px] font-bold uppercase tracking-widest text-dark/45">
+            <p className="relative font-mono text-[8px] font-bold uppercase tracking-widest text-dark/55">
               {item.day}
             </p>
             <p className="relative mt-1 font-serif text-sm font-bold" style={{color: FUNNEL_COLOURS.ink}}>
@@ -3663,7 +3663,7 @@ const LANDING_VISUALS = [
 function BookingHotTapVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[118px] w-full overflow-hidden border border-dark/12 bg-white/70 p-3 flex flex-col justify-between">
-      <p className="font-mono text-[8px] uppercase tracking-[0.14em] text-dark/40">Ready customer</p>
+      <p className="font-mono text-[8px] uppercase tracking-[0.14em] text-dark/55">Ready customer</p>
       <div className="space-y-2">
         <p className="font-serif text-sm font-bold" style={{color: FUNNEL_COLOURS.ink}}>
           They want a time now
@@ -3686,7 +3686,7 @@ function BookingCalendarTruthVisual({reduce}: VisualProps) {
   const slots = ['9:00', '10:30', '14:00']
   return (
     <div className="relative h-[118px] w-full overflow-hidden border border-dark/12 bg-white/70 p-3">
-      <p className="font-mono text-[8px] uppercase tracking-[0.14em] text-dark/40 mb-2">Your calendar</p>
+      <p className="font-mono text-[8px] uppercase tracking-[0.14em] text-dark/55 mb-2">Your calendar</p>
       <div className="space-y-1.5">
         {slots.map((slot, i) => (
           <motion.div
@@ -3730,7 +3730,7 @@ function BookingNoShowVisual({reduce}: VisualProps) {
           Empty slot
         </motion.span>
         <motion.span
-          className="font-mono text-[10px] text-dark/35"
+          className="font-mono text-[10px] text-dark/55"
           animate={reduce ? undefined : {x: [0, 4, 0], opacity: [0.3, 1, 0.3]}}
           transition={reduce ? undefined : {duration: 1.4, repeat: Infinity}}
         >
@@ -3761,7 +3761,7 @@ function BookingDaysVisual({reduce}: VisualProps) {
   ]
   return (
     <div className="relative h-[118px] w-full overflow-hidden border border-dark/12 bg-white/70 p-3">
-      <p className="font-mono text-[8px] uppercase tracking-[0.14em] text-dark/40 mb-3">Delivery</p>
+      <p className="font-mono text-[8px] uppercase tracking-[0.14em] text-dark/55 mb-3">Delivery</p>
       <div className="grid grid-cols-3 gap-2">
         {days.map((day, i) => (
           <motion.div
@@ -3801,7 +3801,7 @@ function NoDesignSpiralVisual({reduce}: VisualProps) {
           className="relative rounded-sm border overflow-hidden px-2 py-1.5"
           style={{borderColor: `${FUNNEL_COLOURS.ink}14`, backgroundColor: FUNNEL_COLOURS.ground}}
         >
-          <p className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/40 mb-1">
+          <p className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55 mb-1">
             Font pick
           </p>
           {['Serif?', 'Sans?', 'Bold?', 'Script?'].map((label, i) => (
@@ -3878,7 +3878,7 @@ function StillGoingSiteVisual({reduce}: VisualProps) {
         className="relative w-[72px] h-[98px] rounded-[10px] border overflow-hidden shrink-0"
         style={{borderColor: `${FUNNEL_COLOURS.ink}22`, backgroundColor: FUNNEL_COLOURS.surface}}
       >
-        <div className="h-2.5 border-b flex items-center justify-center" style={{borderColor: `${FUNNEL_COLOURS.ink}10`}}>
+        <div className="h-2.5 border-b flex items-center justify-center" style={{borderColor: `${FUNNEL_COLOURS.ink}2C`}}>
           <span className="h-1 w-6 rounded-full" style={{backgroundColor: `${FUNNEL_COLOURS.ink}18`}} />
         </div>
         <div className="p-1.5 space-y-1">
@@ -3889,10 +3889,10 @@ function StillGoingSiteVisual({reduce}: VisualProps) {
             transition={reduce ? undefined : {duration: 2, repeat: Infinity}}
           />
           <div className="h-1 w-full rounded-sm" style={{backgroundColor: `${FUNNEL_COLOURS.ink}12`}} />
-          <div className="h-1 rounded-sm" style={{width: '83%', backgroundColor: `${FUNNEL_COLOURS.ink}10`}} />
+          <div className="h-1 rounded-sm" style={{width: '83%', backgroundColor: `${FUNNEL_COLOURS.ink}2C`}} />
           <div
             className="mt-1 h-8 rounded-sm border"
-            style={{borderColor: `${FUNNEL_COLOURS.ink}10`, backgroundColor: `${FUNNEL_COLOURS.gold}18`}}
+            style={{borderColor: `${FUNNEL_COLOURS.ink}2C`, backgroundColor: `${FUNNEL_COLOURS.gold}18`}}
           />
           <motion.div
             className="h-4 rounded-sm flex items-center justify-center font-mono text-[6px] font-bold uppercase tracking-wider text-white"
@@ -3905,7 +3905,7 @@ function StillGoingSiteVisual({reduce}: VisualProps) {
         </div>
       </div>
       <div className="min-w-0 flex-1 space-y-2">
-        <p className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/40">On a phone</p>
+        <p className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/55">On a phone</p>
         <p className="font-serif text-sm font-bold leading-snug" style={{color: FUNNEL_COLOURS.ink}}>
           Clean. Fast. Clear.
         </p>
@@ -3936,7 +3936,7 @@ function BoringTechOursVisual({reduce}: VisualProps) {
   ]
   return (
     <div className="relative h-[118px] w-full overflow-hidden border border-dark/12 bg-white/70 p-2.5">
-      <p className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/40 mb-1.5">
+      <p className="font-mono text-[7px] uppercase tracking-[0.16em] text-dark/55 mb-1.5">
         Technical end
       </p>
       <div className="space-y-1.5">
@@ -3988,10 +3988,10 @@ function EnquiryToEmailVisual({reduce}: VisualProps) {
           className="rounded-sm border h-full px-2 py-1.5 flex flex-col gap-1"
           style={{borderColor: `${FUNNEL_COLOURS.ink}14`, backgroundColor: FUNNEL_COLOURS.ground}}
         >
-          <p className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/40">Form</p>
+          <p className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Form</p>
           <div className="h-2 rounded-sm" style={{backgroundColor: `${FUNNEL_COLOURS.ink}12`}} />
-          <div className="h-2 rounded-sm" style={{width: '80%', backgroundColor: `${FUNNEL_COLOURS.ink}10`}} />
-          <div className="h-3 rounded-sm" style={{width: '60%', backgroundColor: `${FUNNEL_COLOURS.ink}08`}} />
+          <div className="h-2 rounded-sm" style={{width: '80%', backgroundColor: `${FUNNEL_COLOURS.ink}2C`}} />
+          <div className="h-3 rounded-sm" style={{width: '60%', backgroundColor: `${FUNNEL_COLOURS.ink}1C`}} />
           <motion.div
             className="mt-auto h-5 rounded-sm flex items-center justify-center font-mono text-[7px] font-bold uppercase tracking-wider text-white"
             style={{backgroundColor: FUNNEL_COLOURS.accent}}
@@ -4037,7 +4037,7 @@ function EnquiryToEmailVisual({reduce}: VisualProps) {
             animate={reduce ? undefined : {y: [6, 0, 0, 6], opacity: [0, 1, 1, 0]}}
             transition={reduce ? undefined : {duration: 2.4, repeat: Infinity, times: [0, 0.25, 0.8, 1]}}
           >
-            <p className="font-mono text-[6px] uppercase tracking-widest text-dark/40">New enquiry</p>
+            <p className="font-mono text-[6px] uppercase tracking-widest text-dark/55">New enquiry</p>
             <p className="font-sans text-[9px] leading-snug mt-0.5" style={{color: FUNNEL_COLOURS.ink}}>
               Can we book this week?
             </p>

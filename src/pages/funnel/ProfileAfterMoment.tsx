@@ -108,7 +108,7 @@ export function ProfileAfterMoment({businessName}: {businessName?: string | null
                   style={{color: done ? FUNNEL_COLOURS.goldDeep : FUNNEL_COLOURS.accent}}
                   animate={
                     !done && phase === 'audit' && !reduce
-                      ? {opacity: [0.35, 1, 0.35]}
+                      ? {opacity: [0.65, 1, 0.65]}
                       : {opacity: 1}
                   }
                   transition={

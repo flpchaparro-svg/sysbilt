@@ -54,14 +54,14 @@ export function LocalPackEvidenceCard({business}: {business?: string | null}) {
     >
       <div
         className="px-3 py-2 flex items-center gap-1.5"
-        style={{backgroundColor: `${FUNNEL_COLOURS.ink}06`}}
+        style={{backgroundColor: `${FUNNEL_COLOURS.ink}16`}}
       >
         <span className="h-1.5 w-1.5 rounded-full" style={{backgroundColor: `${FUNNEL_COLOURS.accent}70`}} />
         <span className="h-1.5 w-1.5 rounded-full" style={{backgroundColor: `${FUNNEL_COLOURS.gold}80`}} />
         <span className="h-1.5 w-1.5 rounded-full" style={{backgroundColor: `${FUNNEL_COLOURS.ink}25`}} />
         <div
           className="h-5 w-5 rounded-sm ml-1 flex items-center justify-center"
-          style={{backgroundColor: `${FUNNEL_COLOURS.ink}08`}}
+          style={{backgroundColor: `${FUNNEL_COLOURS.ink}1C`}}
         >
           {initials ? (
             <span className="font-mono text-[7px] font-bold" style={{color: FUNNEL_COLOURS.steel}}>
@@ -83,11 +83,11 @@ export function LocalPackEvidenceCard({business}: {business?: string | null}) {
           <div className="flex items-center gap-2">
             <div
               className="h-8 w-8 rounded-md shrink-0"
-              style={{backgroundColor: `${FUNNEL_COLOURS.ink}0A`}}
+              style={{backgroundColor: `${FUNNEL_COLOURS.ink}24`}}
             />
             <div className="flex-1 space-y-1.5">
               <div className="h-1.5 w-4/5 rounded-sm" style={{backgroundColor: `${FUNNEL_COLOURS.ink}12`}} />
-              <div className="h-1.5 w-1/2 rounded-sm" style={{backgroundColor: `${FUNNEL_COLOURS.ink}08`}} />
+              <div className="h-1.5 w-1/2 rounded-sm" style={{backgroundColor: `${FUNNEL_COLOURS.ink}1C`}} />
             </div>
           </div>
           <div className="flex items-center gap-1.5">
@@ -154,7 +154,7 @@ export function LocalPackEvidenceCard({business}: {business?: string | null}) {
                 key={i}
                 className="h-2.5 rounded-sm"
                 style={{
-                  backgroundColor: i === 0 ? `${FUNNEL_COLOURS.goldDeep}30` : `${FUNNEL_COLOURS.ink}0A`,
+                  backgroundColor: i === 0 ? `${FUNNEL_COLOURS.goldDeep}30` : `${FUNNEL_COLOURS.ink}24`,
                   width: i === 0 ? '100%' : `${85 - i * 12}%`,
                 }}
                 initial={reduce ? false : {opacity: 0, x: 10}}

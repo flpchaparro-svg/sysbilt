@@ -33,6 +33,15 @@ export const FUNNEL_COLOURS = {
   caution: '#B8893A',
   /** Text on ink */
   onInk: '#FFF2EC',
+  /**
+   * Soft mock UI (skeleton bars, dashed empties, mini chrome).
+   * Tuned to read on cream/white without shouting.
+   */
+  mockWash: '#1A1A1A14',
+  mockFill: '#1A1A1A2A',
+  mockBar: '#1A1A1A3D',
+  mockBorder: '#1A1A1A48',
+  mockLabel: '#5C534C',
 } as const
 
 export type FunnelColourKey = keyof typeof FUNNEL_COLOURS

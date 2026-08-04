@@ -22,7 +22,7 @@ function Frame({
       style={{
         border: `1px solid ${accent ? `${FUNNEL_COLOURS.accent}35` : `${FUNNEL_COLOURS.ink}14`}`,
         backgroundColor: FUNNEL_COLOURS.surface,
-        boxShadow: `0 1px 0 ${FUNNEL_COLOURS.ink}08, 0 18px 40px -28px ${FUNNEL_COLOURS.ink}55`,
+        boxShadow: `0 1px 0 ${FUNNEL_COLOURS.ink}1C, 0 18px 40px -28px ${FUNNEL_COLOURS.ink}55`,
       }}
     >
       <div
@@ -247,7 +247,7 @@ export function WebsiteEvidenceCard({evidence}: {evidence: WebsiteEvidence}) {
               </p>
               <div
                 className="mt-3 h-1.5 w-36 md:w-44 overflow-hidden rounded-full"
-                style={{backgroundColor: `${FUNNEL_COLOURS.ink}10`}}
+                style={{backgroundColor: `${FUNNEL_COLOURS.ink}2C`}}
               >
                 <motion.div
                   className="h-full rounded-full"

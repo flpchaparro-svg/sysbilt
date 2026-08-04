@@ -22,7 +22,7 @@ export function EnquiryReplyEvidenceCard({business}: {business?: string | null})
     >
       <div
         className="px-3 py-2 font-mono text-[9px] font-bold uppercase tracking-[0.2em] flex justify-between"
-        style={{backgroundColor: `${FUNNEL_COLOURS.ink}06`, color: FUNNEL_COLOURS.muted}}
+        style={{backgroundColor: `${FUNNEL_COLOURS.ink}16`, color: FUNNEL_COLOURS.muted}}
       >
         <span>{who} · Contact form</span>
         <motion.span
@@ -36,7 +36,7 @@ export function EnquiryReplyEvidenceCard({business}: {business?: string | null})
       <div className="p-4 md:p-5 space-y-3">
         <div
           className="rounded-lg px-3 py-2.5 font-sans text-sm max-w-[90%]"
-          style={{backgroundColor: `${FUNNEL_COLOURS.ink}08`, color: FUNNEL_COLOURS.ink}}
+          style={{backgroundColor: `${FUNNEL_COLOURS.ink}1C`, color: FUNNEL_COLOURS.ink}}
         >
           Hi, do you have anyone free to quote this week? Happy to send photos.
         </div>

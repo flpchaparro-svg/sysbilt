@@ -49,7 +49,7 @@ export function LocalPackDeliverableMock() {
             <motion.div
               key={block.label}
               className="flex items-center gap-3 rounded-lg border px-3 py-2.5"
-              style={{borderColor: `${FUNNEL_COLOURS.ink}10`, backgroundColor: '#fff'}}
+              style={{borderColor: `${FUNNEL_COLOURS.ink}2C`, backgroundColor: '#fff'}}
               initial={reduce ? false : {opacity: 0.3, x: 12}}
               animate={
                 go
@@ -89,7 +89,7 @@ export function LocalPackDeliverableMock() {
           {/* monthly checklist strip */}
           <div
             className="rounded-lg border px-3 py-2.5 space-y-1.5"
-            style={{borderColor: `${FUNNEL_COLOURS.ink}10`, backgroundColor: FUNNEL_COLOURS.ground}}
+            style={{borderColor: `${FUNNEL_COLOURS.ink}2C`, backgroundColor: FUNNEL_COLOURS.ground}}
           >
             <p
               className="font-mono text-[7px] font-bold uppercase tracking-[0.14em]"

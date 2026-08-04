@@ -62,7 +62,7 @@ export function ReportDeliverableMock() {
                 <span style={{color: FUNNEL_COLOURS.accent}}>Before</span>
                 <span style={{color: FUNNEL_COLOURS.accent}}>34 · Poor</span>
               </div>
-              <div className="h-2.5 w-full overflow-hidden" style={{backgroundColor: `${FUNNEL_COLOURS.ink}10`}}>
+              <div className="h-2.5 w-full overflow-hidden" style={{backgroundColor: `${FUNNEL_COLOURS.ink}2C`}}>
                 <motion.div
                   className="h-full"
                   style={{backgroundColor: FUNNEL_COLOURS.accent}}
@@ -79,7 +79,7 @@ export function ReportDeliverableMock() {
                 <span style={{color: '#0D9488'}}>After</span>
                 <span style={{color: '#0D9488'}}>90+ · Good</span>
               </div>
-              <div className="h-2.5 w-full overflow-hidden" style={{backgroundColor: `${FUNNEL_COLOURS.ink}10`}}>
+              <div className="h-2.5 w-full overflow-hidden" style={{backgroundColor: `${FUNNEL_COLOURS.ink}2C`}}>
                 <motion.div
                   className="h-full bg-teal"
                   initial={{width: '0%'}}

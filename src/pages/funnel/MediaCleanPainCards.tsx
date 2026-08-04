@@ -115,7 +115,7 @@ export function MediaCleanPainCards() {
                     {row.value}
                   </span>
                 </div>
-                <div className="h-1.5 rounded-full overflow-hidden" style={{backgroundColor: `${FUNNEL_COLOURS.ink}10`}}>
+                <div className="h-1.5 rounded-full overflow-hidden" style={{backgroundColor: `${FUNNEL_COLOURS.ink}2C`}}>
                   <motion.div
                     className="h-full rounded-full"
                     style={{backgroundColor: row.ok ? FUNNEL_COLOURS.goldDeep : FUNNEL_COLOURS.accent}}

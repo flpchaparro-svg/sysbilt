@@ -53,7 +53,7 @@ export function EnquiryReplyPainCards() {
                 key={row}
                 className="h-7 rounded px-2 flex items-center font-mono text-[9px] uppercase tracking-wider"
                 style={{
-                  backgroundColor: `${FUNNEL_COLOURS.ink}08`,
+                  backgroundColor: `${FUNNEL_COLOURS.ink}1C`,
                   color: i === 2 ? FUNNEL_COLOURS.accent : FUNNEL_COLOURS.muted,
                 }}
                 initial={reduce ? false : {opacity: 0, x: -8}}
@@ -134,7 +134,7 @@ export function EnquiryReplyPainCards() {
                 <motion.div
                   key={row}
                   className="h-7 rounded px-2 flex items-center font-mono text-[9px] uppercase tracking-wider"
-                  style={{backgroundColor: `${FUNNEL_COLOURS.ink}08`, color: FUNNEL_COLOURS.goldDeep}}
+                  style={{backgroundColor: `${FUNNEL_COLOURS.ink}1C`, color: FUNNEL_COLOURS.goldDeep}}
                   animate={reduce || !inView ? undefined : {opacity: [0.5, 1, 0.5]}}
                   transition={{duration: 1.5, repeat: Infinity, delay: i * 0.12}}
                 >

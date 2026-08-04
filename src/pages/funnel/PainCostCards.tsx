@@ -37,7 +37,7 @@ function SlowSiteVisual({reduce}: VisualProps) {
         <span className="h-1.5 w-1.5 rounded-full bg-gold/80" />
         <span className="h-1.5 w-1.5 rounded-full bg-dark/20" />
         <div className="ml-2 flex-1 h-3.5 rounded-sm bg-dark/5 border border-dark/10 px-2 flex items-center">
-          <span className="font-mono text-[8px] text-dark/40 truncate">yoursite.com</span>
+          <span className="font-mono text-[8px] text-dark/55 truncate">yoursite.com</span>
         </div>
       </div>
 
@@ -209,7 +209,7 @@ function RoasInvoiceVisual({reduce}: VisualProps) {
     >
       <div className="flex items-start justify-between mb-1.5 shrink-0">
         <div>
-          <p className="font-mono text-[8px] uppercase tracking-[0.2em] text-dark/40">Invoice</p>
+          <p className="font-mono text-[8px] uppercase tracking-[0.2em] text-dark/55">Invoice</p>
           <p className="font-mono text-[9px] text-gold-on-cream mt-0.5">Google Ads · Monthly</p>
         </div>
         <motion.span
@@ -239,7 +239,7 @@ function RoasInvoiceVisual({reduce}: VisualProps) {
       </div>
 
       <div className="mt-auto pt-2 border-t border-dark/10 flex items-baseline justify-between gap-2 shrink-0">
-        <span className="font-mono text-[8px] uppercase tracking-[0.18em] text-dark/40">
+        <span className="font-mono text-[8px] uppercase tracking-[0.18em] text-dark/55">
           Cost per lead
         </span>
         <motion.span

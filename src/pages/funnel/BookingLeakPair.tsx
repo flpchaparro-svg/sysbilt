@@ -25,7 +25,7 @@ export function BookingLeakPair() {
       >
         <div
           className="px-3 py-2 font-mono text-[9px] font-bold uppercase tracking-[0.2em]"
-          style={{color: FUNNEL_COLOURS.muted, backgroundColor: `${FUNNEL_COLOURS.ink}06`}}
+          style={{color: FUNNEL_COLOURS.muted, backgroundColor: `${FUNNEL_COLOURS.ink}16`}}
         >
           How it books today
         </div>
@@ -39,7 +39,7 @@ export function BookingLeakPair() {
               key={item.row}
               className="rounded-lg px-3 py-2.5 font-mono text-[10px] uppercase tracking-wider flex items-center justify-between"
               style={{
-                backgroundColor: item.stale ? `${FUNNEL_COLOURS.accent}12` : `${FUNNEL_COLOURS.ink}06`,
+                backgroundColor: item.stale ? `${FUNNEL_COLOURS.accent}12` : `${FUNNEL_COLOURS.ink}16`,
                 color: item.stale ? FUNNEL_COLOURS.accent : FUNNEL_COLOURS.muted,
               }}
               animate={

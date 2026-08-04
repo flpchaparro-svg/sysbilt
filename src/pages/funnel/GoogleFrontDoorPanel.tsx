@@ -38,7 +38,7 @@ function PhotoStrip({kind, play, reduce}: {kind: PanelKind; play: boolean; reduc
           >
             {kind === 'alive' ? (
               <div
-                className="absolute inset-0 opacity-40"
+                className="absolute inset-0 opacity-80"
                 style={{
                   background: `linear-gradient(145deg, ${FUNNEL_COLOURS.gold}55 0%, transparent 55%)`,
                 }}

@@ -36,7 +36,7 @@ export function ContentFeedLeakPair({lastPostMonth}: {lastPostMonth: string | nu
                 key={i}
                 className="aspect-square rounded-sm"
                 style={{
-                  backgroundColor: i < 3 ? `${FUNNEL_COLOURS.ink}18` : `${FUNNEL_COLOURS.ink}06`,
+                  backgroundColor: i < 3 ? `${FUNNEL_COLOURS.ink}18` : `${FUNNEL_COLOURS.ink}16`,
                   border: i >= 3 ? `1px dashed ${FUNNEL_COLOURS.ink}22` : undefined,
                 }}
                 animate={

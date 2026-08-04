@@ -23,7 +23,7 @@ function Panel({
         className="px-3 py-2 font-mono text-[9px] font-bold uppercase tracking-[0.2em]"
         style={{
           color: accent ? FUNNEL_COLOURS.goldDeep : FUNNEL_COLOURS.muted,
-          backgroundColor: accent ? `${FUNNEL_COLOURS.goldDeep}12` : `${FUNNEL_COLOURS.ink}06`,
+          backgroundColor: accent ? `${FUNNEL_COLOURS.goldDeep}12` : `${FUNNEL_COLOURS.ink}16`,
         }}
       >
         {label}
@@ -89,11 +89,11 @@ export function LandingLeakPair() {
             <motion.div
               key={item}
               className="h-3 rounded"
-              style={{backgroundColor: `${FUNNEL_COLOURS.ink}10`, width: item === 'Popup' ? '55%' : '100%'}}
+              style={{backgroundColor: `${FUNNEL_COLOURS.ink}2C`, width: item === 'Popup' ? '55%' : '100%'}}
               animate={
                 reduce || !inView
                   ? undefined
-                  : {opacity: [0.35, 1, 0.35], x: [0, i % 2 === 0 ? 5 : -5, 0]}
+                  : {opacity: [0.65, 1, 0.65], x: [0, i % 2 === 0 ? 5 : -5, 0]}
               }
               transition={{duration: 1.5, repeat: Infinity, delay: i * 0.1}}
             />

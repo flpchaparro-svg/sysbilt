@@ -40,7 +40,7 @@ export function ChangeLeakPair() {
               key={row.label}
               className="rounded-lg px-3 py-2.5 font-mono text-[10px] uppercase tracking-wider flex items-center justify-between"
               style={{
-                backgroundColor: row.hot ? `${FUNNEL_COLOURS.accent}12` : `${FUNNEL_COLOURS.ink}06`,
+                backgroundColor: row.hot ? `${FUNNEL_COLOURS.accent}12` : `${FUNNEL_COLOURS.ink}16`,
                 color: row.hot ? FUNNEL_COLOURS.accent : FUNNEL_COLOURS.muted,
               }}
               initial={reduce ? false : {opacity: 0, x: -10}}
@@ -101,10 +101,10 @@ export function ChangeLeakPair() {
           >
             <div
               className="h-8 flex items-center gap-2 px-3 border-b"
-              style={{borderColor: `${FUNNEL_COLOURS.ink}10`, backgroundColor: FUNNEL_COLOURS.ground}}
+              style={{borderColor: `${FUNNEL_COLOURS.ink}2C`, backgroundColor: FUNNEL_COLOURS.ground}}
             >
               <span className="h-2 w-2 rounded-sm" style={{backgroundColor: '#1F7A4D'}} />
-              <span className="font-mono text-[8px] uppercase tracking-wider text-dark/45">
+              <span className="font-mono text-[8px] uppercase tracking-wider text-dark/55">
                 Spreadsheet
               </span>
               <motion.span
@@ -122,8 +122,8 @@ export function ChangeLeakPair() {
               </p>
               <div className="mt-3 space-y-1.5">
                 <div className="h-1.5 w-full rounded-sm" style={{backgroundColor: `${FUNNEL_COLOURS.ink}12`}} />
-                <div className="h-1.5 rounded-sm" style={{width: '80%', backgroundColor: `${FUNNEL_COLOURS.ink}10`}} />
-                <div className="h-1.5 rounded-sm" style={{width: '60%', backgroundColor: `${FUNNEL_COLOURS.ink}08`}} />
+                <div className="h-1.5 rounded-sm" style={{width: '80%', backgroundColor: `${FUNNEL_COLOURS.ink}2C`}} />
+                <div className="h-1.5 rounded-sm" style={{width: '60%', backgroundColor: `${FUNNEL_COLOURS.ink}1C`}} />
               </div>
             </div>
           </motion.div>

@@ -68,7 +68,7 @@ export function ProfileDeliverableMock() {
                 animate={play ? {opacity: 1, y: 0} : {opacity: 0, y: 8}}
                 transition={{delay: reduce ? 0 : 0.2 + i * 0.12, duration: 0.35}}
               >
-                <p className="font-mono text-[8px] uppercase tracking-widest text-dark/45">
+                <p className="font-mono text-[8px] uppercase tracking-widest text-dark/55">
                   {field.label}
                 </p>
                 <motion.p

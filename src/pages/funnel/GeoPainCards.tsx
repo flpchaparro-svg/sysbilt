@@ -77,7 +77,7 @@ export function GeoPainCards() {
           <div className="flex items-center justify-center gap-3 py-2">
             <div
               className="flex-1 rounded-lg border px-3 py-3 text-center"
-              style={{borderColor: `${FUNNEL_COLOURS.ink}22`, backgroundColor: `${FUNNEL_COLOURS.ink}08`}}
+              style={{borderColor: `${FUNNEL_COLOURS.ink}22`, backgroundColor: `${FUNNEL_COLOURS.ink}1C`}}
             >
               <p className="font-mono text-[7px] uppercase tracking-wide mb-1" style={{color: `${FUNNEL_COLOURS.ink}60`}}>
                 Rival
@@ -89,7 +89,7 @@ export function GeoPainCards() {
             <motion.span
               className="font-mono text-[10px]"
               style={{color: `${FUNNEL_COLOURS.ink}30`}}
-              animate={play ? {opacity: [0.25, 0.55, 0.25]} : {opacity: 0.35}}
+              animate={play ? {opacity: [0.75, 1, 0.75]} : {opacity: 0.8}}
               transition={{duration: 2.2, repeat: Infinity, ease: 'easeInOut'}}
             >
               ···
@@ -128,7 +128,7 @@ export function GeoPainCards() {
                     {row.value}
                   </span>
                 </div>
-                <div className="h-1.5 rounded-full overflow-hidden" style={{backgroundColor: `${FUNNEL_COLOURS.ink}10`}}>
+                <div className="h-1.5 rounded-full overflow-hidden" style={{backgroundColor: `${FUNNEL_COLOURS.ink}2C`}}>
                   <motion.div
                     className="h-full rounded-full"
                     style={{backgroundColor: row.ok ? FUNNEL_COLOURS.goldDeep : FUNNEL_COLOURS.accent}}

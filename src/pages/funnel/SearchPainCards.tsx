@@ -33,7 +33,7 @@ function MissingFromResultsVisual({reduce}: VisualProps) {
       className="relative h-[140px] md:h-[160px] rounded-sm overflow-hidden border border-dark/15 bg-white/60"
     >
       <div className="flex items-center gap-1.5 px-2.5 h-7 border-b border-dark/10 bg-cream">
-        <span className="font-mono text-[8px] text-dark/40 truncate">architect Mosman</span>
+        <span className="font-mono text-[8px] text-dark/55 truncate">architect Mosman</span>
       </div>
       <div className="p-2.5 space-y-1.5">
         {['Studio Hale', 'North Shore Atelier'].map((name, i) => (
@@ -127,7 +127,7 @@ function NeverArrivedVisual({reduce}: VisualProps) {
         animate={play ? {opacity: [0.35, 0.85, 0.35]} : {opacity: 0.6}}
         transition={play ? {duration: 2.8, repeat: Infinity, ease: 'easeInOut'} : {duration: 0.2}}
       >
-        <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-dark/45">
+        <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-dark/55">
           No enquiry · never arrived
         </span>
       </motion.div>

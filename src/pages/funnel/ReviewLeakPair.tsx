@@ -35,7 +35,7 @@ export function ReviewLeakPair() {
             className="absolute top-8 left-1/2 -translate-x-1/2 w-[78%] rounded-2xl rounded-bl-sm border px-3 py-3"
             style={{
               borderColor: `${FUNNEL_COLOURS.ink}14`,
-              backgroundColor: `${FUNNEL_COLOURS.ink}06`,
+              backgroundColor: `${FUNNEL_COLOURS.ink}16`,
             }}
             animate={
               play

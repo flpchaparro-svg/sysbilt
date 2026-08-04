@@ -36,14 +36,14 @@ export function ConversionEvidenceCard({business}: {business?: string | null}) {
     >
       <div
         className="px-3 py-2 flex items-center gap-1.5"
-        style={{backgroundColor: `${FUNNEL_COLOURS.ink}06`}}
+        style={{backgroundColor: `${FUNNEL_COLOURS.ink}16`}}
       >
         <span className="h-1.5 w-1.5 rounded-full" style={{backgroundColor: `${FUNNEL_COLOURS.accent}70`}} />
         <span className="h-1.5 w-1.5 rounded-full" style={{backgroundColor: `${FUNNEL_COLOURS.gold}80`}} />
         <span className="h-1.5 w-1.5 rounded-full" style={{backgroundColor: `${FUNNEL_COLOURS.ink}25`}} />
         <div
           className="h-5 w-5 rounded-sm ml-1 flex items-center justify-center"
-          style={{backgroundColor: `${FUNNEL_COLOURS.ink}08`}}
+          style={{backgroundColor: `${FUNNEL_COLOURS.ink}1C`}}
         >
           {initials ? (
             <span className="font-mono text-[7px] font-bold" style={{color: FUNNEL_COLOURS.steel}}>
@@ -86,7 +86,7 @@ export function ConversionEvidenceCard({business}: {business?: string | null}) {
           />
           <motion.div
             className="h-2.5 rounded-sm"
-            style={{backgroundColor: `${FUNNEL_COLOURS.ink}0A`}}
+            style={{backgroundColor: `${FUNNEL_COLOURS.ink}24`}}
             animate={{
               opacity: go ? 0 : 1,
               width: go ? '0%' : '40%',

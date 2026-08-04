@@ -63,9 +63,9 @@ function BrowserLooksFineCard({play, reduce}: {play: boolean; reduce: boolean | 
           <span className="h-2 w-2 rounded-full" style={{backgroundColor: FUNNEL_COLOURS.gold}} />
           <span className="h-2 w-2 rounded-full bg-dark/20" />
           <div className="ml-2 flex-1 h-4 rounded-sm bg-dark/5 border border-dark/10 px-2 flex items-center gap-1.5">
-            <span className="font-mono text-[8px] text-dark/35">🔒</span>
+            <span className="font-mono text-[8px] text-dark/55">🔒</span>
             <motion.span
-              className="font-mono text-[8px] text-dark/45 truncate"
+              className="font-mono text-[8px] text-dark/55 truncate"
               animate={play ? {opacity: [0.55, 1, 0.55]} : {opacity: 0.8}}
               transition={
                 play ? {duration: 3, repeat: Infinity, ease: 'easeInOut'} : {duration: 0.2}
@@ -189,7 +189,7 @@ function GoogleResultsMissingCard({play, reduce}: {play: boolean; reduce: boolea
         {/* Search field */}
         <div className="px-2.5 pt-2.5 pb-2 border-b border-dark/8">
           <div className="h-8 border border-dark/12 rounded-full px-3 flex items-center gap-2 bg-cream/80">
-            <span className="font-mono text-[10px] text-dark/35">⌕</span>
+            <span className="font-mono text-[10px] text-dark/55">⌕</span>
             <motion.span
               className="font-sans text-[11px] text-dark/70"
               animate={play ? {opacity: [0.6, 1, 0.6]} : {opacity: 0.85}}
@@ -215,7 +215,7 @@ function GoogleResultsMissingCard({play, reduce}: {play: boolean; reduce: boolea
                   className="h-3.5 w-3.5 rounded-full border border-dark/15 shrink-0"
                   style={{backgroundColor: `${FUNNEL_COLOURS.gold}33`}}
                 />
-                <p className="font-sans text-[9px] text-dark/45 truncate">{r.path}</p>
+                <p className="font-sans text-[9px] text-dark/55 truncate">{r.path}</p>
               </div>
               <p className="font-sans text-[13px] font-semibold leading-tight text-dark">{r.name}</p>
               <motion.div
