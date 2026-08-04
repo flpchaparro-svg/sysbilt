@@ -14,6 +14,7 @@ import {
   Globe2,
   LayoutTemplate,
   Mail,
+  MessageCircle,
   Phone,
   Server,
   ShoppingBag,
@@ -55,6 +56,7 @@ import {
   type WhoPublishesId,
   type EnquiryChannelId,
   type EnquiryRouteId,
+  type WhatsappStatusId,
 } from './funnelAccessTypes'
 
 const SCHEDULER_URL = 'https://meetings-ap1.hubspot.com/felipe-chaparro'
@@ -75,6 +77,7 @@ type StepId =
   | 'websiteUrl'
   | 'phone'
   | 'phoneSetup'
+  | 'whatsappStatus'
   | 'profileUrl'
   | 'profileStatus'
   | 'whoPublishes'
@@ -252,6 +255,13 @@ const PHASES_SITE_CHAT: {id: PhaseId; n: number; label: string}[] = [
 const PHASES_MEDIA_CLEAN: {id: PhaseId; n: number; label: string}[] = [
   {id: 'about', n: 1, label: 'About you'},
   {id: 'site', n: 2, label: 'Your media'},
+  {id: 'access', n: 3, label: 'Access'},
+  {id: 'done', n: 4, label: 'Done'},
+]
+
+const PHASES_WHATSAPP: {id: PhaseId; n: number; label: string}[] = [
+  {id: 'about', n: 1, label: 'About you'},
+  {id: 'site', n: 2, label: 'Your WhatsApp'},
   {id: 'access', n: 3, label: 'Access'},
   {id: 'done', n: 4, label: 'Done'},
 ]
@@ -495,9 +505,14 @@ function phaseForStep(
     }
     return 'access'
   }
+  if (kind === 'whatsapp-setup') {
+    if (step === 'phone' || step === 'whatsappStatus' || step === 'whatsappGoals') {
+      return 'site'
+    }
+    return 'access'
+  }
   if (
     kind === 'a11y-pass' ||
-    kind === 'whatsapp-setup' ||
     kind === 'dm-reply' ||
     kind === 'quote-followup' ||
     kind === 'noshow-rescue' ||
@@ -513,7 +528,6 @@ function phaseForStep(
   ) {
     if (
       step === 'a11yPages' ||
-      step === 'whatsappGoals' ||
       step === 'dmChannels' ||
       step === 'quoteTools' ||
       step === 'noshowTools' ||
@@ -904,6 +918,80 @@ function aiPhoneAccessOptionsForSetup(setup: PhoneSetupId | null) {
     case 'unsure':
     default:
       return [call, vendor, calendar]
+  }
+}
+
+const WHATSAPP_STATUS_OPTIONS: {
+  id: WhatsappStatusId
+  label: string
+  blurb: string
+  icon: React.ReactNode
+  unsure?: boolean
+}[] = [
+  {
+    id: 'personal',
+    label: 'Personal app',
+    blurb: 'Chats live on one phone in the consumer WhatsApp app.',
+    icon: <Phone className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'business-app',
+    label: 'Business app',
+    blurb: 'WhatsApp Business is already installed, even if it is messy.',
+    icon: <MessageCircle className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'meta',
+    label: 'Meta Business',
+    blurb: 'Number sits under Meta Business Manager or the API path.',
+    icon: <Server className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'unsure',
+    label: 'Not sure',
+    blurb: 'We will work it out on the access call.',
+    icon: <Sparkles className="w-full h-full" strokeWidth={1.25} />,
+    unsure: true,
+  },
+]
+
+/** WhatsApp Business Setup: access cards follow how chat runs today. */
+function whatsappAccessOptionsForStatus(status: WhatsappStatusId | null) {
+  const phoneHandoff = {
+    id: 'invite' as AccessPathId,
+    label: 'Phone handoff',
+    blurb: 'You can hand us the handset for setup, or walk through Business install together.',
+    icon: <Phone className="w-full h-full" strokeWidth={1.25} />,
+  }
+  const businessInvite = {
+    id: 'admin' as AccessPathId,
+    label: 'Business app invite',
+    blurb: 'Invite our device or account into WhatsApp Business so we can set labels and replies.',
+    icon: <MessageCircle className="w-full h-full" strokeWidth={1.25} />,
+  }
+  const metaBm = {
+    id: 'provider' as AccessPathId,
+    label: 'Meta Business Manager',
+    blurb: 'Invite us as a partner or admin on the Meta Business that owns the number.',
+    icon: <Server className="w-full h-full" strokeWidth={1.25} />,
+  }
+  const call = {
+    id: 'call' as AccessPathId,
+    label: 'Quick access call',
+    blurb: 'We walk through the number path and Business setup together. About five minutes.',
+    icon: <Phone className="w-full h-full" strokeWidth={1.25} />,
+  }
+
+  switch (status) {
+    case 'personal':
+      return [phoneHandoff, call]
+    case 'business-app':
+      return [businessInvite, metaBm, call]
+    case 'meta':
+      return [metaBm, businessInvite, call]
+    case 'unsure':
+    default:
+      return [call, phoneHandoff, metaBm]
   }
 }
 
@@ -2641,7 +2729,10 @@ type HelpBlock = {
   links?: {label: string; href: string}[]
 }
 
-function helpForStep(step: StepId, opts?: {isAiPhone?: boolean}): HelpBlock {
+function helpForStep(
+  step: StepId,
+  opts?: {isAiPhone?: boolean; isWhatsappSetup?: boolean},
+): HelpBlock {
   switch (step) {
     case 'product':
       return {
@@ -2651,12 +2742,20 @@ function helpForStep(step: StepId, opts?: {isAiPhone?: boolean}): HelpBlock {
     case 'name':
       return {
         title: 'A short form, then we start',
-        body: 'You are on a short access form. A few plain questions about you and your site so we can begin as soon as we can. No tech degree needed. If a later step feels unclear, open Help again and we will walk you through it.',
-        steps: [
-          'About you: name, email, business',
-          'Your site: URL, what it runs on, where it lives',
-          'Access: the easiest way for us to get in',
-        ],
+        body: opts?.isWhatsappSetup
+          ? 'A few plain questions about you and WhatsApp so we can begin. No tech degree needed. If a later step feels unclear, open Help again.'
+          : 'You are on a short access form. A few plain questions about you and your site so we can begin as soon as we can. No tech degree needed. If a later step feels unclear, open Help again and we will walk you through it.',
+        steps: opts?.isWhatsappSetup
+          ? [
+              'About you: name, email, business',
+              'Your WhatsApp: number, how it runs today, what it should handle',
+              'Access: the easiest way for us to set it up',
+            ]
+          : [
+              'About you: name, email, business',
+              'Your site: URL, what it runs on, where it lives',
+              'Access: the easiest way for us to get in',
+            ],
       }
     case 'email':
       return {
@@ -2669,13 +2768,27 @@ function helpForStep(step: StepId, opts?: {isAiPhone?: boolean}): HelpBlock {
         body: 'The name on the website, the one customers know. Legal company name is fine too if that is what you use day to day.',
       }
     case 'phone':
+      return opts?.isWhatsappSetup
+        ? {
+            title: 'Which number is on WhatsApp',
+            body: 'The Australian number customers message on WhatsApp. Ten digits, usually a mobile.',
+            steps: [
+              'Use the public WhatsApp number, not a private staff line unless that is the public chat',
+              'Include the leading 0',
+            ],
+          }
+        : {
+            title: 'Which number we watch',
+            body: 'The Australian business number customers dial. Ten digits, mobile or landline.',
+            steps: [
+              'Use the main enquiry number, not a private mobile unless that is the public line',
+              'Include the leading 0',
+            ],
+          }
+    case 'whatsappStatus':
       return {
-        title: 'Which number we watch',
-        body: 'The Australian business number customers dial. Ten digits, mobile or landline.',
-        steps: [
-          'Use the main enquiry number, not a private mobile unless that is the public line',
-          'Include the leading 0',
-        ],
+        title: 'How WhatsApp runs today',
+        body: 'Personal app on one phone, WhatsApp Business already installed, or under Meta Business Manager. Not sure is fine.',
       }
     case 'phoneSetup':
       return {
@@ -3275,6 +3388,7 @@ const FunnelAccessPage: React.FC = () => {
   const [website, setWebsite] = useState('')
   const [phone, setPhone] = useState('')
   const [phoneSetup, setPhoneSetup] = useState<PhoneSetupId | null>(null)
+  const [whatsappStatus, setWhatsappStatus] = useState<WhatsappStatusId | null>(null)
   const [profileUrl, setProfileUrl] = useState('')
   const [profileStatus, setProfileStatus] = useState<ProfileStatusId | null>(null)
   const [reviewJob, setReviewJob] = useState<ReviewJobId | null>(null)
@@ -3376,7 +3490,6 @@ const FunnelAccessPage: React.FC = () => {
   const isClientFinder = product === 'client-finder'
   const usesBatchWizard =
     isA11yPass ||
-    isWhatsappSetup ||
     isDmReply ||
     isQuoteFollowup ||
     isNoshowRescue ||
@@ -3392,29 +3505,27 @@ const FunnelAccessPage: React.FC = () => {
   const batchScopeField: StepId | null =
     isA11yPass
       ? 'a11yPages'
-      : isWhatsappSetup
-        ? 'whatsappGoals'
-        : isDmReply
-          ? 'dmChannels'
-          : isQuoteFollowup
-            ? 'quoteTools'
-            : isNoshowRescue
-              ? 'noshowTools'
-              : isIntakeForms
-                ? 'intakePurpose'
-                : isInboxTriage
-                  ? 'inboxTools'
-                  : isSopPlaybook
-                    ? 'sopJobs'
-                    : isDashboardLite
-                      ? 'dashMetrics'
-                      : isBundleClinic || isBundleSpeedNext || isBundleFrontDoor
-                        ? 'bundleNotes'
-                        : isGeo
-                          ? 'geoTopics'
-                          : isClientFinder
-                            ? 'finderIcp'
-                            : null
+      : isDmReply
+        ? 'dmChannels'
+        : isQuoteFollowup
+          ? 'quoteTools'
+          : isNoshowRescue
+            ? 'noshowTools'
+            : isIntakeForms
+              ? 'intakePurpose'
+              : isInboxTriage
+                ? 'inboxTools'
+                : isSopPlaybook
+                  ? 'sopJobs'
+                  : isDashboardLite
+                    ? 'dashMetrics'
+                    : isBundleClinic || isBundleSpeedNext || isBundleFrontDoor
+                      ? 'bundleNotes'
+                      : isGeo
+                        ? 'geoTopics'
+                        : isClientFinder
+                          ? 'finderIcp'
+                          : null
   const isTeamAi = product === 'team-ai'
   const isChangePack = product === 'change-pack'
   const isContentSystem = product === 'content-system'
@@ -3424,6 +3535,7 @@ const FunnelAccessPage: React.FC = () => {
   const usesEnquiryWizard = isEnquiryReply
   const usesReviewsWizard = isReviews
   const usesLocalPackWizard = isLocalPack
+  const usesWhatsappWizard = isWhatsappSetup
   const usesConversionWizard = isConversionPass
   const usesOnpageWizard = isOnpageSearch
   const usesSchemaFaqWizard = isSchemaFaq
@@ -3494,6 +3606,8 @@ const FunnelAccessPage: React.FC = () => {
                             ? 'site-chat'
                           : usesMediaCleanWizard
                             ? 'media-clean'
+                          : usesWhatsappWizard
+                            ? 'whatsapp-setup'
                           : usesBatchWizard && product
                             ? (product as typeof productKind)
                           : isTeamAi
@@ -3533,6 +3647,8 @@ const FunnelAccessPage: React.FC = () => {
                           ? PHASES_SITE_CHAT
                         : usesMediaCleanWizard
                           ? PHASES_MEDIA_CLEAN
+                        : usesWhatsappWizard
+                          ? PHASES_WHATSAPP
                         : usesBatchWizard
                           ? PHASES_BATCH
                         : isTeamAi
@@ -3802,6 +3918,21 @@ const FunnelAccessPage: React.FC = () => {
       base.push('mediaTargets', 'access', 'accessDetail', 'notes', 'done')
       return base
     }
+    if (usesWhatsappWizard) {
+      return [
+        'product',
+        'name',
+        'email',
+        'business',
+        'phone',
+        'whatsappStatus',
+        'whatsappGoals',
+        'access',
+        'accessDetail',
+        'notes',
+        'done',
+      ]
+    }
     if (usesBatchWizard && batchScopeField) {
       const base: StepId[] = [
         'product',
@@ -3899,6 +4030,10 @@ const FunnelAccessPage: React.FC = () => {
     usesSchemaFaqWizard,
     usesTrackingFormsWizard,
     usesSiteChatWizard,
+    usesMediaCleanWizard,
+    usesWhatsappWizard,
+    usesBatchWizard,
+    batchScopeField,
     isSearchFix,
     isTeamAi,
     isChangePack,
@@ -3915,7 +4050,7 @@ const FunnelAccessPage: React.FC = () => {
   const activePhase = phaseForStep(step, productKind)
 
   const firstStep: StepId = 'product'
-  const help = helpForStep(step, {isAiPhone})
+  const help = helpForStep(step, {isAiPhone, isWhatsappSetup})
   const liveProducts = useMemo(() => {
     const all = FUNNEL_PRODUCT_CATALOGUE.filter(
       (p) => p.status === 'live' && p.code !== 'website' && p.code !== 'website-hook',
@@ -3930,7 +4065,9 @@ const FunnelAccessPage: React.FC = () => {
     ? isAiPhone
       ? aiPhoneAccessOptionsForSetup(phoneSetup)
       : missedCallAccessOptionsForSetup(phoneSetup)
-    : usesPostingWizard
+    : usesWhatsappWizard
+      ? whatsappAccessOptionsForStatus(whatsappStatus)
+      : usesPostingWizard
       ? postingAccessOptionsForStatus(profileStatus, whoPublishes)
       : usesEnquiryWizard
         ? enquiryAccessOptionsFor(enquiryChannels, enquiryRoute)
@@ -3982,6 +4119,11 @@ const FunnelAccessPage: React.FC = () => {
     }
     if (usesMissedWizard) {
       if (!phoneSetup) {
+        setError('Something is missing. Use Back to check your answers.')
+        return
+      }
+    } else if (usesWhatsappWizard) {
+      if (!whatsappStatus || scopeText.trim().length < 8) {
         setError('Something is missing. Use Back to check your answers.')
         return
       }
@@ -4173,6 +4315,19 @@ const FunnelAccessPage: React.FC = () => {
           accessDetail: accessDetail.trim(),
           notes: notes.trim(),
         }
+      : usesWhatsappWizard
+        ? {
+            product,
+            name: name.trim(),
+            email: email.trim(),
+            business: business.trim(),
+            phone: phone.trim(),
+            whatsappStatus: whatsappStatus!,
+            whatsappGoals: scopeText.trim(),
+            accessPath,
+            accessDetail: accessDetail.trim(),
+            notes: notes.trim(),
+          }
       : usesGoogleWizard
         ? {
             product,
@@ -4575,6 +4730,12 @@ const FunnelAccessPage: React.FC = () => {
     window.setTimeout(() => goNext('phoneSetup'), 200)
   }
 
+  function selectWhatsappStatus(id: WhatsappStatusId) {
+    setWhatsappStatus(id)
+    setAccessPath(null)
+    window.setTimeout(() => goNext('whatsappStatus'), 200)
+  }
+
   function selectProfileStatus(id: ProfileStatusId) {
     setProfileStatus(id)
     setReviewJob(null)
@@ -4907,8 +5068,16 @@ const FunnelAccessPage: React.FC = () => {
 
             {step === 'phone' ? (
               <OneField
-                title="Which number should we watch?"
-                hint="The Australian business line customers dial. Ten digits."
+                title={
+                  usesWhatsappWizard
+                    ? 'Which number is on WhatsApp?'
+                    : 'Which number should we watch?'
+                }
+                hint={
+                  usesWhatsappWizard
+                    ? 'The Australian number customers message. Ten digits.'
+                    : 'The Australian business line customers dial. Ten digits.'
+                }
                 value={phone}
                 onChange={setPhone}
                 placeholder="02 1234 5678 or 0412 345 678"
@@ -4942,6 +5111,44 @@ const FunnelAccessPage: React.FC = () => {
                   ))}
                 </div>
               </>
+            ) : null}
+
+            {step === 'whatsappStatus' ? (
+              <>
+                <QuestionTitle>
+                  How does <span style={{color: RED}}>WhatsApp</span> run today?
+                </QuestionTitle>
+                <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
+                  Hover a card, then Select. Not sure is fine.
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+                  {WHATSAPP_STATUS_OPTIONS.map((opt) => (
+                    <div key={opt.id}>
+                      <SelectCard
+                        selected={whatsappStatus === opt.id}
+                        onSelect={() => selectWhatsappStatus(opt.id)}
+                        title={opt.label}
+                        blurb={opt.blurb}
+                        icon={opt.icon}
+                        unsure={opt.unsure}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : null}
+
+            {usesWhatsappWizard && step === 'whatsappGoals' ? (
+              <OneField
+                title="What should WhatsApp handle"
+                hint="Labels, quick replies, and how messages should route. A short list is enough."
+                value={scopeText}
+                onChange={setScopeText}
+                placeholder={'e.g. New enquiries\nAfter-hours\nBooking link\nWho escalates'}
+                multiline
+                disabled={scopeText.trim().length < 8}
+                onNext={() => goNext('whatsappGoals')}
+              />
             ) : null}
 
             {step === 'profileUrl' ? (
@@ -5537,79 +5744,73 @@ const FunnelAccessPage: React.FC = () => {
                 title={
                   batchScopeField === 'a11yPages'
                     ? 'Which pages matter most'
-                    : batchScopeField === 'whatsappGoals'
-                      ? 'What should WhatsApp handle'
-                      : batchScopeField === 'dmChannels'
-                        ? 'Which channels and what to answer'
-                        : batchScopeField === 'quoteTools'
-                          ? 'Where quotes live today'
-                          : batchScopeField === 'noshowTools'
-                            ? 'Booking tool and reminder gaps'
-                            : batchScopeField === 'intakePurpose'
-                              ? 'What intake should capture'
-                              : batchScopeField === 'inboxTools'
-                                ? 'Inbox and tools in play'
-                                : batchScopeField === 'sopJobs'
-                                  ? 'Which jobs to turn into playbooks'
-                                  : batchScopeField === 'dashMetrics'
-                                    ? 'Metrics you need on one screen'
-                                    : batchScopeField === 'bundleNotes'
-                                      ? 'Scope notes for this bundle'
-                                      : batchScopeField === 'geoTopics'
-                                        ? 'Topics AI should know you for'
-                                        : 'Who you want to find'
+                    : batchScopeField === 'dmChannels'
+                      ? 'Which channels and what to answer'
+                      : batchScopeField === 'quoteTools'
+                        ? 'Where quotes live today'
+                        : batchScopeField === 'noshowTools'
+                          ? 'Booking tool and reminder gaps'
+                          : batchScopeField === 'intakePurpose'
+                            ? 'What intake should capture'
+                            : batchScopeField === 'inboxTools'
+                              ? 'Inbox and tools in play'
+                              : batchScopeField === 'sopJobs'
+                                ? 'Which jobs to turn into playbooks'
+                                : batchScopeField === 'dashMetrics'
+                                  ? 'Metrics you need on one screen'
+                                  : batchScopeField === 'bundleNotes'
+                                    ? 'Scope notes for this bundle'
+                                    : batchScopeField === 'geoTopics'
+                                      ? 'Topics AI should know you for'
+                                      : 'Who you want to find'
                 }
                 hint={
                   batchScopeField === 'a11yPages'
                     ? 'Priority pages for the access pass. Paths or plain names are fine.'
-                    : batchScopeField === 'whatsappGoals'
-                      ? 'Labels, quick replies, and how messages should route. A short list is enough.'
-                      : batchScopeField === 'dmChannels'
-                        ? 'Instagram, Facebook, and the questions people ask most.'
-                        : batchScopeField === 'quoteTools'
-                          ? 'Tool or spreadsheet, and how follow-up works now.'
-                          : batchScopeField === 'noshowTools'
-                            ? 'What you use today and where reminders fail.'
-                            : batchScopeField === 'intakePurpose'
-                              ? 'Purpose, key fields, and where answers should land.'
-                              : batchScopeField === 'inboxTools'
-                                ? 'Email or CRM, and what burns the most time.'
-                                : batchScopeField === 'sopJobs'
-                                  ? 'Real repeating work the team does every week.'
-                                  : batchScopeField === 'dashMetrics'
-                                    ? 'Leads, bookings, ads, reviews. What you check every week.'
-                                    : batchScopeField === 'bundleNotes'
-                                      ? 'Location, quirks, and anything we should know before kickoff.'
-                                      : batchScopeField === 'geoTopics'
-                                        ? 'Services, suburbs, and proof points tools should cite.'
-                                        : 'Ideal customer, geography, and who to exclude.'
+                    : batchScopeField === 'dmChannels'
+                      ? 'Instagram, Facebook, and the questions people ask most.'
+                      : batchScopeField === 'quoteTools'
+                        ? 'Tool or spreadsheet, and how follow-up works now.'
+                        : batchScopeField === 'noshowTools'
+                          ? 'What you use today and where reminders fail.'
+                          : batchScopeField === 'intakePurpose'
+                            ? 'Purpose, key fields, and where answers should land.'
+                            : batchScopeField === 'inboxTools'
+                              ? 'Email or CRM, and what burns the most time.'
+                              : batchScopeField === 'sopJobs'
+                                ? 'Real repeating work the team does every week.'
+                                : batchScopeField === 'dashMetrics'
+                                  ? 'Leads, bookings, ads, reviews. What you check every week.'
+                                  : batchScopeField === 'bundleNotes'
+                                    ? 'Location, quirks, and anything we should know before kickoff.'
+                                    : batchScopeField === 'geoTopics'
+                                      ? 'Services, suburbs, and proof points tools should cite.'
+                                      : 'Ideal customer, geography, and who to exclude.'
                 }
                 value={scopeText}
                 onChange={setScopeText}
                 placeholder={
                   batchScopeField === 'a11yPages'
                     ? '/\n/contact\n/book'
-                    : batchScopeField === 'whatsappGoals'
-                      ? 'e.g. New enquiries, after-hours, booking link'
-                      : batchScopeField === 'dmChannels'
-                        ? 'e.g. IG + FB. Hours, pricing, how to book'
-                        : batchScopeField === 'quoteTools'
-                          ? 'e.g. HubSpot deals, PDF by email, no chase'
-                          : batchScopeField === 'noshowTools'
-                            ? 'e.g. Fresha, SMS day-before only'
-                            : batchScopeField === 'intakePurpose'
-                              ? 'e.g. New patient form into HubSpot'
-                              : batchScopeField === 'inboxTools'
-                                ? 'e.g. Gmail + HubSpot, quotes and referrals'
-                                : batchScopeField === 'sopJobs'
-                                  ? 'e.g. Quote replies, onboarding checklist'
-                                  : batchScopeField === 'dashMetrics'
-                                    ? 'e.g. Weekly leads, booked jobs, ad spend'
-                                    : batchScopeField === 'bundleNotes'
-                                      ? 'e.g. One clinic location, two phone lines'
-                                      : batchScopeField === 'geoTopics'
-                                        ? 'e.g. Kitchen reno, Inner West, 12 years'
-                                        : 'e.g. Clinic owners, Sydney, no chains'
+                    : batchScopeField === 'dmChannels'
+                      ? 'e.g. IG + FB. Hours, pricing, how to book'
+                      : batchScopeField === 'quoteTools'
+                        ? 'e.g. HubSpot deals, PDF by email, no chase'
+                        : batchScopeField === 'noshowTools'
+                          ? 'e.g. Fresha, SMS day-before only'
+                          : batchScopeField === 'intakePurpose'
+                            ? 'e.g. New patient form into HubSpot'
+                            : batchScopeField === 'inboxTools'
+                              ? 'e.g. Gmail + HubSpot, quotes and referrals'
+                              : batchScopeField === 'sopJobs'
+                                ? 'e.g. Quote replies, onboarding checklist'
+                                : batchScopeField === 'dashMetrics'
+                                  ? 'e.g. Weekly leads, booked jobs, ad spend'
+                                  : batchScopeField === 'bundleNotes'
+                                    ? 'e.g. One clinic location, two phone lines'
+                                    : batchScopeField === 'geoTopics'
+                                      ? 'e.g. Kitchen reno, Inner West, 12 years'
+                                      : 'e.g. Clinic owners, Sydney, no chains'
                 }
                 multiline
                 disabled={scopeText.trim().length < 8}
@@ -6430,6 +6631,10 @@ const FunnelAccessPage: React.FC = () => {
                         How do we reach the <span style={{color: RED}}>enquiry tools</span>?
                       </>
                     )
+                  ) : usesWhatsappWizard ? (
+                    <>
+                      How should we set up <span style={{color: RED}}>WhatsApp</span>?
+                    </>
                   ) : (
                     <>
                       How should we get <span style={{color: RED}}>in</span>?
@@ -6468,6 +6673,8 @@ const FunnelAccessPage: React.FC = () => {
                         : enquiryRoute === 'sms'
                           ? 'We need the form or inbox tool, plus the SMS alert path. Or a short call.'
                           : 'Hover, then Select. Pick whatever is easiest for you.'
+                    : usesWhatsappWizard
+                      ? 'Phone handoff, Business app invite, Meta Business Manager, or a short call. Pick whatever is easiest.'
                     : 'Hover, then Select. Pick whatever is easiest for you.'}
                 </p>
                 <div

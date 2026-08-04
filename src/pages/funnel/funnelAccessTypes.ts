@@ -73,6 +73,8 @@ export type LandingGoalId = 'leads' | 'calls' | 'book' | 'buy' | 'other'
 export type LandingAdsId = 'meta' | 'google' | 'both' | 'not-live' | 'other'
 export type LandingTrackingId = 'meta' | 'google' | 'both' | 'none' | 'unsure'
 export type ConversionAskId = 'call' | 'form' | 'book'
+/** Current WhatsApp setup before Business Setup sprint. */
+export type WhatsappStatusId = 'personal' | 'business-app' | 'meta' | 'unsure'
 
 export type FunnelAccessPayload = {
   product: FunnelProductCode
@@ -120,6 +122,7 @@ export type FunnelAccessPayload = {
   chatHandoff?: string
   mediaTargets?: string
   a11yPages?: string
+  whatsappStatus?: WhatsappStatusId | ''
   whatsappGoals?: string
   dmChannels?: string
   quoteTools?: string

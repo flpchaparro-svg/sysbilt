@@ -157,6 +157,8 @@ const LANDING_ACCESS = new Set(['ad-account', 'wp-admin', 'hosting', 'agency', '
 const CONVERSION_ASK = new Set(['call', 'form', 'book']);
 const MISSED_CALL_SETUPS = new Set(['mobile', 'landline', 'voip', 'mixed', 'unsure']);
 const MISSED_CALL_ACCESS = new Set(['forward', 'provider', 'crm', 'call', 'invite']);
+const WHATSAPP_STATUS = new Set(['personal', 'business-app', 'meta', 'unsure']);
+const WHATSAPP_ACCESS = new Set(['invite', 'admin', 'provider', 'call']);
 const GOOGLE_PROFILE_STATUS = new Set([
   'unclaimed',
   'claimed-me',
@@ -238,6 +240,7 @@ type Body = {
   chatHandoff?: unknown;
   mediaTargets?: unknown;
   a11yPages?: unknown;
+  whatsappStatus?: unknown;
   whatsappGoals?: unknown;
   dmChannels?: unknown;
   quoteTools?: unknown;
@@ -611,6 +614,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const chatHandoff = str(body.chatHandoff, 2000);
   const mediaTargets = str(body.mediaTargets, 4000);
   const a11yPages = str(body.a11yPages, 4000);
+  const whatsappStatus = str(body.whatsappStatus, 40);
   const whatsappGoals = str(body.whatsappGoals, 4000);
   const dmChannels = str(body.dmChannels, 4000);
   const quoteTools = str(body.quoteTools, 4000);
@@ -685,7 +689,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const isClientFinder = product === 'client-finder';
   const isBatchScoped =
     isA11yPass ||
-    isWhatsappSetup ||
     isDmReply ||
     isQuoteFollowup ||
     isNoshowRescue ||
@@ -917,6 +920,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       res.status(400).json({ error: 'Missing pages or folders to clean' });
       return;
     }
+  } else if (isWhatsappSetup) {
+    const cleanPhone = phone.replace(/\s+/g, '');
+    if (!/^(0[23478])\d{8}$/.test(cleanPhone)) {
+      res.status(400).json({ error: 'Please enter a valid Australian WhatsApp number.' });
+      return;
+    }
+    if (!WHATSAPP_STATUS.has(whatsappStatus) || !WHATSAPP_ACCESS.has(accessPath)) {
+      res.status(400).json({ error: 'Invalid WhatsApp status or access path' });
+      return;
+    }
+    if (whatsappGoals.length < 8) {
+      res.status(400).json({ error: 'Missing what WhatsApp should handle' });
+      return;
+    }
   } else if (isBatchScoped) {
     if (website.length < 4) {
       res.status(400).json({ error: 'Missing website' });
@@ -928,7 +945,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     }
     const scopeVal =
       (isA11yPass && a11yPages) ||
-      (isWhatsappSetup && whatsappGoals) ||
       (isDmReply && dmChannels) ||
       (isQuoteFollowup && quoteTools) ||
       (isNoshowRescue && noshowTools) ||
@@ -1240,6 +1256,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
             ]
               .filter(Boolean)
               .join('\n')
+        : isWhatsappSetup
+          ? [
+              `Funnel access form — ${product}`,
+              `Business: ${business}`,
+              `WhatsApp number: ${phone}`,
+              `WhatsApp status: ${whatsappStatus}`,
+              `Goals:\n${whatsappGoals}`,
+              `Access path: ${accessPath}`,
+              accessDetail ? `Access notes:\n${accessDetail}` : null,
+              notes ? `Other notes:\n${notes}` : null,
+              `Submitted: ${new Date().toISOString()}`,
+            ]
+              .filter(Boolean)
+              .join('\n')
         : isBatchScoped
           ? [
               `Funnel access form — ${product}`,
@@ -1247,7 +1277,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
               `Website: ${website}`,
               `Scope:\n${
                 a11yPages ||
-                whatsappGoals ||
                 dmChannels ||
                 quoteTools ||
                 noshowTools ||
@@ -1377,6 +1406,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     chatHandoff: chatHandoff || undefined,
     mediaTargets: mediaTargets || undefined,
     a11yPages: a11yPages || undefined,
+    whatsappStatus: whatsappStatus || undefined,
     whatsappGoals: whatsappGoals || undefined,
     dmChannels: dmChannels || undefined,
     quoteTools: quoteTools || undefined,
@@ -1520,10 +1550,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
                               ? `${website} · Topics: ${chatTopics.slice(0, 60)} · Handoff: ${chatHandoff.slice(0, 40)}`
                             : isMediaClean
                               ? `${website} · Scope: ${mediaTargets.slice(0, 80)}`
+                            : isWhatsappSetup
+                              ? `WA: ${phone} · Status: ${whatsappStatus} · Goals: ${whatsappGoals.slice(0, 60)}`
                             : isBatchScoped
                               ? `${website} · Scope: ${(
                                   a11yPages ||
-                                  whatsappGoals ||
                                   dmChannels ||
                                   quoteTools ||
                                   noshowTools ||
