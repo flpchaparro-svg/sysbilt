@@ -152,90 +152,150 @@ function BundleClinicNextVisual({reduce}: BenefitVisualProps) {
   )
 }
 
+/** Stack: profile chips light clean on Maps. */
 function BundleClinicProfileStackVisual({reduce, play}: StackVisualProps) {
   const go = play || reduce
+  const chips = ['Category', 'Photos', 'Hours']
   return (
-    <div className="w-full min-h-[88px] border border-dark/15 bg-white flex flex-col">
-      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Google Profile Fix</span>
-      </div>
-      <div className="flex-1 flex items-center px-2.5">
+    <div className="w-full min-h-[96px] border border-dark/15 bg-white px-3 py-2.5 flex flex-col gap-2">
+      <div className="flex items-center gap-2">
         <motion.div
-          className="w-full rounded-md border px-2 py-1.5"
-          style={{borderColor: `${colors.teal}40`, backgroundColor: `${colors.teal}0C`}}
-          initial={reduce ? false : {opacity: 0, y: 4}}
-          animate={go ? {opacity: 1, y: 0} : {opacity: 0.4}}
-        >
-          <p className="font-mono text-[7px] font-bold" style={{color: colors.teal}}>
-            INCLUDED
-          </p>
-          <p className="font-sans text-[8px]" style={{color: FUNNEL_COLOURS.ink}}>
-            Maps presence cleaned
-          </p>
-        </motion.div>
-      </div>
-    </div>
-  )
-}
-
-function BundleClinicReviewsStackVisual({reduce, play}: StackVisualProps) {
-  const go = play || reduce
-  return (
-    <div className="w-full min-h-[88px] border border-dark/15 bg-white flex flex-col">
-      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Review Engine</span>
-      </div>
-      <div className="flex-1 flex flex-col justify-center gap-1 px-2.5 py-2">
-        {['Ask path', 'Habit live'].map((label, i) => (
+          className="h-8 w-8 rounded-md shrink-0"
+          style={{backgroundColor: FUNNEL_COLOURS.mockFill}}
+          initial={reduce ? false : {opacity: 0.4, scale: 0.9}}
+          animate={go ? {opacity: 1, scale: 1} : {opacity: 1, scale: 1}}
+        />
+        <div className="flex-1 space-y-1 min-w-0">
           <motion.div
+            className="h-1.5 w-3/4 rounded-sm origin-left"
+            style={{backgroundColor: FUNNEL_COLOURS.mockBar}}
+            initial={reduce ? false : {scaleX: 0.4, opacity: 0.5}}
+            animate={go ? {scaleX: 1, opacity: 1} : {scaleX: 1, opacity: 1}}
+          />
+          <div className="h-1.5 w-1/2 rounded-sm" style={{backgroundColor: FUNNEL_COLOURS.mockFill}} />
+        </div>
+      </div>
+      <div className="flex items-center gap-1.5">
+        {chips.map((label, i) => (
+          <motion.span
             key={label}
-            className="rounded-md border px-2 py-1 text-center"
-            style={{borderColor: `${colors.teal}35`, backgroundColor: `${colors.teal}08`}}
-            initial={reduce ? false : {opacity: 0, y: 4}}
-            animate={go ? {opacity: 1, y: 0} : {opacity: 0.8}}
-            transition={{delay: reduce ? 0 : i * 0.1}}
+            className="flex-1 rounded-sm border px-1 py-1 text-center font-mono text-[6px] uppercase tracking-wide"
+            initial={reduce ? false : {opacity: 0.35, y: 4}}
+            animate={
+              go
+                ? {
+                    opacity: 1,
+                    y: 0,
+                    borderColor: colors.teal,
+                    backgroundColor: `${colors.teal}14`,
+                    color: colors.teal,
+                  }
+                : {
+                    opacity: 1,
+                    y: 0,
+                    borderColor: FUNNEL_COLOURS.mockBorder,
+                    color: FUNNEL_COLOURS.steel,
+                  }
+            }
+            transition={{delay: reduce ? 0 : 0.12 + i * 0.12, type: 'spring', stiffness: 340, damping: 20}}
+            style={{borderColor: FUNNEL_COLOURS.mockBorder, color: FUNNEL_COLOURS.steel}}
           >
-            <span className="font-sans text-[8px] font-semibold" style={{color: FUNNEL_COLOURS.ink}}>
-              {label}
-            </span>
-          </motion.div>
+            {label}
+          </motion.span>
         ))}
       </div>
     </div>
   )
 }
 
+/** Stack: visit done → ask sent → stars fill. */
+function BundleClinicReviewsStackVisual({reduce, play}: StackVisualProps) {
+  const go = play || reduce
+  return (
+    <div className="w-full min-h-[96px] border border-dark/15 bg-white px-3 py-2.5 flex flex-col gap-2">
+      <div className="flex items-center gap-2">
+        <motion.div
+          className="rounded-sm border px-2 py-1.5 shrink-0"
+          style={{borderColor: FUNNEL_COLOURS.mockBorder}}
+          initial={reduce ? false : {opacity: 0.45}}
+          animate={go ? {opacity: 1} : {opacity: 1}}
+        >
+          <span className="font-mono text-[6px] uppercase tracking-wide text-dark/55">Visit done</span>
+        </motion.div>
+        <motion.span
+          className="font-mono text-[9px] shrink-0"
+          style={{color: colors.teal}}
+          animate={go ? {x: [0, 4, 0], opacity: [0.55, 1, 0.55]} : {opacity: 0.8}}
+          transition={{duration: 1.2, repeat: Infinity, ease: 'easeInOut'}}
+        >
+          →
+        </motion.span>
+        <motion.div
+          className="flex-1 rounded-sm border px-2 py-1.5 text-center"
+          style={{borderColor: colors.teal, backgroundColor: `${colors.teal}12`}}
+          initial={reduce ? false : {opacity: 0.35, scale: 0.94}}
+          animate={go ? {opacity: 1, scale: 1} : {opacity: 1, scale: 1}}
+          transition={{delay: reduce ? 0 : 0.25, type: 'spring', stiffness: 340, damping: 20}}
+        >
+          <span className="font-mono text-[6px] uppercase tracking-wide" style={{color: colors.teal}}>
+            Ask sent
+          </span>
+        </motion.div>
+      </div>
+      <div className="flex items-center justify-center gap-1">
+        {[0, 1, 2, 3, 4].map((i) => (
+          <motion.span
+            key={i}
+            className="h-3.5 w-3.5"
+            style={{
+              backgroundColor: colors.teal,
+              clipPath:
+                'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)',
+            }}
+            initial={reduce ? false : {opacity: 0.15, scale: 0.7}}
+            animate={go ? {opacity: 1, scale: 1} : {opacity: 1, scale: 1}}
+            transition={{delay: reduce ? 0 : 0.45 + i * 0.08, type: 'spring', stiffness: 360, damping: 18}}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** Stack: missed ring → SMS bubble lands. */
 function BundleClinicMissedStackVisual({reduce, play}: StackVisualProps) {
   const go = play || reduce
   return (
-    <div className="w-full min-h-[88px] border border-dark/15 bg-white flex flex-col">
-      <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Missed-Call Text-Back</span>
-      </div>
-      <div className="flex-1 flex items-center justify-center gap-1.5 px-2.5">
+    <div className="w-full min-h-[96px] border border-dark/15 bg-white px-3 py-2.5 flex flex-col gap-2">
+      <div className="flex items-center gap-2">
         <motion.div
-          className="flex-1 rounded-md border px-2 py-1.5 text-center"
-          style={{borderColor: `${FUNNEL_COLOURS.ink}20`}}
-          initial={reduce ? false : {opacity: 0, x: -4}}
-          animate={go ? {opacity: 1, x: 0} : {opacity: 0.4}}
+          className="h-8 w-8 rounded-full border flex items-center justify-center shrink-0"
+          style={{borderColor: FUNNEL_COLOURS.mockBorder, backgroundColor: FUNNEL_COLOURS.mockWash}}
+          animate={
+            go
+              ? {scale: [1, 1.08, 1], borderColor: [FUNNEL_COLOURS.mockBorder, colors.teal, FUNNEL_COLOURS.mockBorder]}
+              : {scale: 1}
+          }
+          transition={{duration: 1.4, repeat: Infinity, ease: 'easeInOut'}}
         >
-          <p className="font-sans text-[8px] font-semibold" style={{color: FUNNEL_COLOURS.ink}}>
-            Ring out
-          </p>
+          <span className="h-2 w-2 rounded-full" style={{backgroundColor: FUNNEL_COLOURS.accent}} />
         </motion.div>
-        <span className="font-mono text-[9px] font-bold" style={{color: colors.teal}}>
-          →
-        </span>
-        <motion.div
-          className="flex-1 rounded-md px-2 py-1.5 text-center"
-          style={{backgroundColor: colors.teal}}
-          initial={reduce ? false : {opacity: 0, x: 4}}
-          animate={go ? {opacity: 1, x: 0} : {opacity: 0.4}}
-          transition={{delay: reduce ? 0 : 0.15}}
-        >
-          <p className="font-mono text-[8px] font-bold text-white">SMS</p>
-        </motion.div>
+        <div className="flex-1 min-w-0">
+          <p className="font-mono text-[6px] uppercase tracking-wide text-dark/55 mb-1">Missed call</p>
+          <div className="h-1.5 w-2/3 rounded-sm" style={{backgroundColor: FUNNEL_COLOURS.mockBar}} />
+        </div>
       </div>
+      <motion.div
+        className="self-end max-w-[78%] rounded-lg rounded-br-sm px-2.5 py-1.5"
+        style={{backgroundColor: colors.teal}}
+        initial={reduce ? false : {opacity: 0, x: 16, y: 4}}
+        animate={go ? {opacity: 1, x: 0, y: 0} : {opacity: 1, x: 0, y: 0}}
+        transition={{delay: reduce ? 0 : 0.35, type: 'spring', stiffness: 320, damping: 20}}
+      >
+        <p className="font-sans text-[8px] font-semibold text-white leading-snug">
+          Sorry we missed you. Reply to book.
+        </p>
+      </motion.div>
     </div>
   )
 }

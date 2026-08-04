@@ -230,6 +230,13 @@ const PHASES_CONVERSION: {id: PhaseId; n: number; label: string}[] = [
   {id: 'done', n: 4, label: 'Done'},
 ]
 
+const PHASES_SPEED_NEXT: {id: PhaseId; n: number; label: string}[] = [
+  {id: 'about', n: 1, label: 'About you'},
+  {id: 'site', n: 2, label: 'Your site'},
+  {id: 'access', n: 3, label: 'Access'},
+  {id: 'done', n: 4, label: 'Done'},
+]
+
 const PHASES_ONPAGE: {id: PhaseId; n: number; label: string}[] = [
   {id: 'about', n: 1, label: 'About you'},
   {id: 'site', n: 2, label: 'Your pages'},
@@ -289,6 +296,20 @@ const PHASES_QUOTE: {id: PhaseId; n: number; label: string}[] = [
 const PHASES_INTAKE: {id: PhaseId; n: number; label: string}[] = [
   {id: 'about', n: 1, label: 'About you'},
   {id: 'site', n: 2, label: 'Your intake'},
+  {id: 'access', n: 3, label: 'Access'},
+  {id: 'done', n: 4, label: 'Done'},
+]
+
+const PHASES_CLINIC_BUNDLE: {id: PhaseId; n: number; label: string}[] = [
+  {id: 'about', n: 1, label: 'About you'},
+  {id: 'site', n: 2, label: 'Your clinic'},
+  {id: 'access', n: 3, label: 'Access'},
+  {id: 'done', n: 4, label: 'Done'},
+]
+
+const PHASES_FRONT_DOOR: {id: PhaseId; n: number; label: string}[] = [
+  {id: 'about', n: 1, label: 'About you'},
+  {id: 'site', n: 2, label: 'Your front door'},
   {id: 'access', n: 3, label: 'Access'},
   {id: 'done', n: 4, label: 'Done'},
 ]
@@ -462,6 +483,25 @@ function phaseForStep(
     }
     return 'access'
   }
+  if (kind === 'bundle-speed-next') {
+    if (
+      step === 'conversionServiceA' ||
+      step === 'conversionServiceB' ||
+      step === 'conversionAsk' ||
+      step === 'conversionOffer' ||
+      step === 'trackingStatus' ||
+      step === 'trackingActions' ||
+      step === 'trackingDestinations' ||
+      step === 'website' ||
+      step === 'platform' ||
+      step === 'provider' ||
+      step === 'domainProvider' ||
+      step === 'hostingProvider'
+    ) {
+      return 'site'
+    }
+    return 'access'
+  }
   if (kind === 'onpage-search') {
     if (
       step === 'onpageUrls' ||
@@ -556,15 +596,39 @@ function phaseForStep(
     }
     return 'access'
   }
+  if (kind === 'bundle-clinic') {
+    if (
+      step === 'profileUrl' ||
+      step === 'profileStatus' ||
+      step === 'phone' ||
+      step === 'phoneSetup' ||
+      step === 'reviewJob' ||
+      step === 'bundleNotes'
+    ) {
+      return 'site'
+    }
+    return 'access'
+  }
+  if (kind === 'bundle-front-door') {
+    if (
+      step === 'profileUrl' ||
+      step === 'profileStatus' ||
+      step === 'reviewJob' ||
+      step === 'bookingTool' ||
+      step === 'bookingWhat' ||
+      step === 'bookingWhere' ||
+      step === 'websiteUrl'
+    ) {
+      return 'site'
+    }
+    return 'access'
+  }
   if (
     kind === 'a11y-pass' ||
     kind === 'noshow-rescue' ||
     kind === 'inbox-triage' ||
     kind === 'sop-playbook' ||
     kind === 'dashboard-lite' ||
-    kind === 'bundle-clinic' ||
-    kind === 'bundle-speed-next' ||
-    kind === 'bundle-front-door' ||
     kind === 'geo' ||
     kind === 'client-finder'
   ) {
@@ -1653,6 +1717,29 @@ function googleAccessOptionsForStatus(status: ProfileStatusId | null) {
         },
       ]
   }
+}
+
+/** Clinic Capture Bundle: Maps access plus the missed-call path, without duplicate cards. */
+function clinicBundleAccessOptions(
+  status: ProfileStatusId | null,
+  setup: PhoneSetupId | null,
+) {
+  const google = googleAccessOptionsForStatus(status)
+  const phone = missedCallAccessOptionsForSetup(setup).filter((opt) => opt.id !== 'call')
+  const seen = new Set<string>()
+  const merged: typeof google = []
+  for (const opt of [...google, ...phone]) {
+    if (seen.has(opt.id)) continue
+    seen.add(opt.id)
+    merged.push(opt)
+  }
+  const callOpt = {
+    id: 'call' as AccessPathId,
+    label: 'Quick access call',
+    blurb: 'We walk through Maps manager and the missed-call SMS path together. About ten minutes.',
+    icon: <Phone className="w-full h-full" strokeWidth={1.25} />,
+  }
+  return [...merged.filter((opt) => opt.id !== 'call'), callOpt]
 }
 
 const WHO_PUBLISHES_OPTIONS: {
@@ -2755,6 +2842,108 @@ function bookingAccessOptionsForWhere(
   }
 }
 
+/**
+ * Front Door Bundle: Maps / review path plus Book now surfaces.
+ * `invite` covers Google manager and calendar share in one card to avoid duplicate IDs.
+ */
+function frontDoorAccessOptions(
+  status: ProfileStatusId | null,
+  where: BookingWhereId | null,
+  tool: BookingToolId | null,
+  job: ReviewJobId | null,
+) {
+  const google = googleAccessOptionsForStatus(status).map((opt) => {
+    if (opt.id === 'invite') {
+      return {
+        ...opt,
+        label: 'Manager + calendar',
+        blurb:
+          'Add us as a Google Business Profile manager, and share the calendar Book now will use. No password sharing.',
+      }
+    }
+    if (opt.id === 'call') {
+      return {
+        ...opt,
+        blurb:
+          'We walk Maps manager, the review ask path, and Book now access together. About ten minutes.',
+      }
+    }
+    if (opt.id === 'claim') {
+      return {
+        ...opt,
+        blurb: 'Nobody owns the listing yet. We claim it together, then wire reviews and Book now.',
+      }
+    }
+    if (opt.id === 'recover') {
+      return {
+        ...opt,
+        blurb:
+          status === 'suspended'
+            ? 'We open the suspension case with you. Profile, reviews, and Book now wait until Google allows work.'
+            : 'We start Google recovery. Reviews and Book now wait until you control the listing.',
+      }
+    }
+    return opt
+  })
+
+  const extras: typeof google = []
+  if (status === 'claimed-me') {
+    if (job === 'sms' || job === 'email') {
+      extras.push({
+        id: 'provider',
+        label: 'SMS / email tool',
+        blurb:
+          'The tool that already texts or emails customers after a visit or job. We need it for the review ask.',
+        icon: <Server className="w-full h-full" strokeWidth={1.25} />,
+      })
+    } else if (job === 'software') {
+      extras.push({
+        id: 'crm',
+        label: 'Job software login',
+        blurb:
+          'CRM, job management, or booking tool where work gets marked done. That is the review trigger.',
+        icon: <Building2 className="w-full h-full" strokeWidth={1.25} />,
+      })
+    } else if (job === 'unsure') {
+      extras.push({
+        id: 'provider',
+        label: 'SMS / email tool',
+        blurb: 'If reviews fire from a text or email tool, invite us there too.',
+        icon: <Server className="w-full h-full" strokeWidth={1.25} />,
+      })
+    }
+  }
+
+  if (where === 'site' || where === 'both' || where === 'unsure' || !where) {
+    extras.push({
+      ...BOOKING_ACCESS_BY_ID['wp-admin'],
+      blurb: 'Temporary site admin so we can place Book now where it belongs on the website.',
+    })
+  }
+  if ((where === 'google' || where === 'both') && !google.some((o) => o.id === 'invite')) {
+    extras.push({
+      ...BOOKING_ACCESS_BY_ID.admin,
+      blurb: 'Add us as a manager so we can turn booking on the listing.',
+    })
+  }
+
+  const seen = new Set<string>()
+  const merged: typeof google = []
+  for (const opt of [...google, ...extras]) {
+    if (seen.has(opt.id)) continue
+    seen.add(opt.id)
+    merged.push(opt)
+  }
+  const callOpt = {
+    id: 'call' as AccessPathId,
+    label: 'Quick access call',
+    blurb:
+      'We walk Maps manager, the review ask path, and Book now access together. About ten minutes.',
+    icon: <Phone className="w-full h-full" strokeWidth={1.25} />,
+  }
+  return [...merged.filter((opt) => opt.id !== 'call'), callOpt]
+}
+
 const TEAM_FORMAT_OPTIONS = [
   {
     id: 'remote' as const,
@@ -3039,6 +3228,9 @@ function helpForStep(
     isDmReply?: boolean
     isQuoteFollowup?: boolean
     isIntakeForms?: boolean
+    isBundleClinic?: boolean
+    isBundleSpeedNext?: boolean
+    isBundleFrontDoor?: boolean
   },
 ): HelpBlock {
   switch (step) {
@@ -3058,6 +3250,12 @@ function helpForStep(
             ? 'A few plain questions about you and your quote path so we can begin. No tech degree needed. If a later step feels unclear, open Help again.'
           : opts?.isIntakeForms
             ? 'A few plain questions about you and the intake path so we can begin. No tech degree needed. If a later step feels unclear, open Help again.'
+          : opts?.isBundleClinic
+            ? 'A few plain questions about you, your Google listing, and the clinic phone so we can begin. No tech degree needed. If a later step feels unclear, open Help again.'
+          : opts?.isBundleSpeedNext
+            ? 'A few plain questions about your site, which pages to rewrite, and how enquiries should be tracked. No tech degree needed. If a later step feels unclear, open Help again.'
+          : opts?.isBundleFrontDoor
+            ? 'A few plain questions about your Google listing, how reviews get asked, and how Book now should work. No tech degree needed. If a later step feels unclear, open Help again.'
           : 'You are on a short access form. A few plain questions about you and your site so we can begin as soon as we can. No tech degree needed. If a later step feels unclear, open Help again and we will walk you through it.',
         steps: opts?.isWhatsappSetup
           ? [
@@ -3082,6 +3280,24 @@ function helpForStep(
                 'About you: name, email, business',
                 'Your intake: where answers land, which fields matter',
                 'Access: the easiest way into that destination',
+              ]
+          : opts?.isBundleClinic
+            ? [
+                'About you: name, email, business',
+                'Your clinic: Google listing, phone for missed calls, how reviews get asked',
+                'Access: Maps manager plus the missed-call path',
+              ]
+          : opts?.isBundleSpeedNext
+            ? [
+                'About you: name, email, business',
+                'Your site: URL, platform, which pages, the main ask, tracking today',
+                'Access: the easiest way into the site',
+              ]
+          : opts?.isBundleFrontDoor
+            ? [
+                'About you: name, email, business',
+                'Your front door: Google listing, review ask path, calendar and Book now surfaces',
+                'Access: Maps manager, calendar, and site if Book now lives there',
               ]
           : [
               'About you: name, email, business',
@@ -3109,7 +3325,16 @@ function helpForStep(
               'Include the leading 0',
             ],
           }
-        : {
+        : opts?.isBundleClinic
+          ? {
+              title: 'Which number we watch for missed calls',
+              body: 'The Australian clinic line patients dial. When it rings out, we send the text-back. Ten digits, mobile or landline.',
+              steps: [
+                'Use the main booking number, not a private mobile unless that is the public line',
+                'Include the leading 0',
+              ],
+            }
+          : {
             title: 'Which number we watch',
             body: 'The Australian business number customers dial. Ten digits, mobile or landline.',
             steps: [
@@ -3397,8 +3622,12 @@ function helpForStep(
       }
     case 'bundleNotes':
       return {
-        title: 'Scope notes for this bundle',
-        body: 'Location, quirks, and anything we should know before kickoff.',
+        title: opts?.isBundleClinic
+          ? 'Anything about this clinic location'
+          : 'Scope notes for this bundle',
+        body: opts?.isBundleClinic
+          ? 'One location is in scope. Note opening hours quirks, multiple lines, or anything that would trip the review ask or text-back.'
+          : 'Location, quirks, and anything we should know before kickoff.',
       }
     case 'geoTopics':
       return {
@@ -3485,23 +3714,57 @@ function helpForStep(
     case 'access':
       return {
         title: 'How we get in',
-        body: 'Pick the easiest path for you. We never need more access than the job requires. Hover a card for a short explanation, then Select.',
-        steps: [
-          'Website admin: temporary admin user, or tell us how to request one',
-          'Hosting panel: cPanel, Plesk, or your host dashboard',
-          'Someone else: agency or developer. You introduce us',
-          'Quick call: we walk through it together in about five minutes',
-        ],
+        body: opts?.isBundleClinic
+          ? 'This bundle needs Google listing access and a path into the missed-call SMS setup. Pick the easiest option. A short call can cover both.'
+          : opts?.isBundleFrontDoor
+            ? 'This bundle needs Google listing access, the review ask path, and Book now access on the calendar and site or Maps. Pick the easiest option. A short call can cover it.'
+          : 'Pick the easiest path for you. We never need more access than the job requires. Hover a card for a short explanation, then Select.',
+        steps: opts?.isBundleClinic
+          ? [
+              'Manager invite: add us on Google Business Profile',
+              'Claim or recover: if the listing is not yours yet',
+              'Missed-call path: divert, VoIP, or CRM where calls land',
+              'Quick call: we walk Maps and the phone path together',
+            ]
+          : opts?.isBundleFrontDoor
+            ? [
+                'Manager + calendar: Google manager invite and calendar share',
+                'Claim or recover: if the listing is not yours yet',
+                'Website access: if Book now lives on the site',
+                'Quick call: we walk Maps, reviews, and Book now together',
+              ]
+          : [
+              'Website admin: temporary admin user, or tell us how to request one',
+              'Hosting panel: cPanel, Plesk, or your host dashboard',
+              'Someone else: agency or developer. You introduce us',
+              'Quick call: we walk through it together in about five minutes',
+            ],
       }
     case 'accessDetail':
       return {
         title: 'Access notes',
-        body: 'Anything that helps us log in without a chase. Do not put passwords in this form if you would rather send them by email.',
-        steps: [
-          'Login URL (for example yoursite.com.au/wp-admin)',
-          'Who manages the site day to day',
-          'Best times for a short call if you chose that path',
-        ],
+        body: opts?.isBundleClinic
+          ? 'Anything that helps us reach Maps manager and the missed-call path without a chase. Do not put passwords in this form if you would rather send them by email.'
+          : opts?.isBundleFrontDoor
+            ? 'Anything that helps us reach Maps manager, the review ask tool, and Book now without a chase. Do not put passwords in this form if you would rather send them by email.'
+          : 'Anything that helps us log in without a chase. Do not put passwords in this form if you would rather send them by email.',
+        steps: opts?.isBundleClinic
+          ? [
+              'Google account email that can add managers',
+              'Carrier, VoIP, or SMS tool name if you know it',
+              'Best times for a short call if you chose that path',
+            ]
+          : opts?.isBundleFrontDoor
+            ? [
+                'Google account email that can add managers',
+                'Calendar email to share, and booking tool name if you have one',
+                'Best times for a short call if you chose that path',
+              ]
+          : [
+              'Login URL (for example yoursite.com.au/wp-admin)',
+              'Who manages the site day to day',
+              'Best times for a short call if you chose that path',
+            ],
       }
     case 'notes':
       return {
@@ -3844,9 +4107,6 @@ const FunnelAccessPage: React.FC = () => {
     isInboxTriage ||
     isSopPlaybook ||
     isDashboardLite ||
-    isBundleClinic ||
-    isBundleSpeedNext ||
-    isBundleFrontDoor ||
     isGeo ||
     isClientFinder
   const batchScopeField: StepId | null =
@@ -3860,13 +4120,11 @@ const FunnelAccessPage: React.FC = () => {
             ? 'sopJobs'
             : isDashboardLite
               ? 'dashMetrics'
-              : isBundleClinic || isBundleSpeedNext || isBundleFrontDoor
-                ? 'bundleNotes'
-                : isGeo
-                  ? 'geoTopics'
-                  : isClientFinder
-                    ? 'finderIcp'
-                    : null
+              : isGeo
+                ? 'geoTopics'
+                : isClientFinder
+                  ? 'finderIcp'
+                  : null
   const isTeamAi = product === 'team-ai'
   const isChangePack = product === 'change-pack'
   const isContentSystem = product === 'content-system'
@@ -3880,6 +4138,9 @@ const FunnelAccessPage: React.FC = () => {
   const usesDmWizard = isDmReply
   const usesQuoteWizard = isQuoteFollowup
   const usesIntakeWizard = isIntakeForms
+  const usesClinicWizard = isBundleClinic
+  const usesSpeedNextWizard = isBundleSpeedNext
+  const usesFrontDoorWizard = isBundleFrontDoor
   const usesConversionWizard = isConversionPass
   const usesOnpageWizard = isOnpageSearch
   const usesSchemaFaqWizard = isSchemaFaq
@@ -3940,6 +4201,8 @@ const FunnelAccessPage: React.FC = () => {
                     ? 'landing-page'
                     : usesConversionWizard
                       ? 'conversion-pass'
+                      : usesSpeedNextWizard
+                        ? 'bundle-speed-next'
                       : usesOnpageWizard
                         ? 'onpage-search'
                         : usesSchemaFaqWizard
@@ -3958,6 +4221,10 @@ const FunnelAccessPage: React.FC = () => {
                             ? 'quote-followup'
                           : usesIntakeWizard
                             ? 'intake-forms'
+                          : usesClinicWizard
+                            ? 'bundle-clinic'
+                          : usesFrontDoorWizard
+                            ? 'bundle-front-door'
                           : usesBatchWizard && product
                             ? (product as typeof productKind)
                           : isTeamAi
@@ -3987,6 +4254,8 @@ const FunnelAccessPage: React.FC = () => {
                   ? PHASES_LANDING
                   : usesConversionWizard
                     ? PHASES_CONVERSION
+                    : usesSpeedNextWizard
+                      ? PHASES_SPEED_NEXT
                     : usesOnpageWizard
                       ? PHASES_ONPAGE
                       : usesSchemaFaqWizard
@@ -4005,6 +4274,10 @@ const FunnelAccessPage: React.FC = () => {
                           ? PHASES_QUOTE
                         : usesIntakeWizard
                           ? PHASES_INTAKE
+                        : usesClinicWizard
+                          ? PHASES_CLINIC_BUNDLE
+                        : usesFrontDoorWizard
+                          ? PHASES_FRONT_DOOR
                         : usesBatchWizard
                           ? PHASES_BATCH
                         : isTeamAi
@@ -4194,6 +4467,34 @@ const FunnelAccessPage: React.FC = () => {
       )
       return base
     }
+    if (usesSpeedNextWizard) {
+      const base: StepId[] = [
+        'product',
+        'name',
+        'email',
+        'business',
+        'website',
+        'platform',
+        'provider',
+      ]
+      if (sameProvider === 'no') {
+        base.push('domainProvider', 'hostingProvider')
+      }
+      base.push(
+        'conversionServiceA',
+        'conversionServiceB',
+        'conversionAsk',
+        'conversionOffer',
+        'trackingStatus',
+        'trackingActions',
+        'trackingDestinations',
+        'access',
+        'accessDetail',
+        'notes',
+        'done',
+      )
+      return base
+    }
     if (usesOnpageWizard) {
       const base: StepId[] = [
         'product',
@@ -4331,6 +4632,43 @@ const FunnelAccessPage: React.FC = () => {
         'done',
       ]
     }
+    if (usesClinicWizard) {
+      const steps: StepId[] = [
+        'product',
+        'name',
+        'email',
+        'business',
+        'profileUrl',
+        'profileStatus',
+        'phone',
+        'phoneSetup',
+      ]
+      if (profileStatus === 'claimed-me') steps.push('reviewJob')
+      steps.push('bundleNotes', 'access', 'accessDetail', 'notes', 'done')
+      return steps
+    }
+    if (usesFrontDoorWizard) {
+      const steps: StepId[] = [
+        'product',
+        'name',
+        'email',
+        'business',
+        'profileUrl',
+        'profileStatus',
+      ]
+      if (profileStatus === 'claimed-me') steps.push('reviewJob')
+      steps.push(
+        'bookingTool',
+        'bookingWhat',
+        'bookingWhere',
+        'websiteUrl',
+        'access',
+        'accessDetail',
+        'notes',
+        'done',
+      )
+      return steps
+    }
     if (usesBatchWizard && batchScopeField) {
       const base: StepId[] = [
         'product',
@@ -4424,6 +4762,7 @@ const FunnelAccessPage: React.FC = () => {
     isBooking,
     isLandingPage,
     usesConversionWizard,
+    usesSpeedNextWizard,
     usesOnpageWizard,
     usesSchemaFaqWizard,
     usesTrackingFormsWizard,
@@ -4433,6 +4772,8 @@ const FunnelAccessPage: React.FC = () => {
     usesDmWizard,
     usesQuoteWizard,
     usesIntakeWizard,
+    usesClinicWizard,
+    usesFrontDoorWizard,
     usesBatchWizard,
     batchScopeField,
     isSearchFix,
@@ -4457,6 +4798,9 @@ const FunnelAccessPage: React.FC = () => {
     isDmReply,
     isQuoteFollowup,
     isIntakeForms,
+    isBundleClinic,
+    isBundleSpeedNext,
+    isBundleFrontDoor,
   })
   const liveProducts = useMemo(() => {
     const all = FUNNEL_PRODUCT_CATALOGUE.filter(
@@ -4480,6 +4824,10 @@ const FunnelAccessPage: React.FC = () => {
         ? quoteAccessOptionsForTool(quoteTool)
       : usesIntakeWizard
         ? intakeAccessOptionsForDest(intakeDest)
+      : usesClinicWizard
+        ? clinicBundleAccessOptions(profileStatus, phoneSetup)
+      : usesFrontDoorWizard
+        ? frontDoorAccessOptions(profileStatus, bookingWhere, bookingTool, reviewJob)
       : usesPostingWizard
       ? postingAccessOptionsForStatus(profileStatus, whoPublishes)
       : usesEnquiryWizard
@@ -4555,6 +4903,36 @@ const FunnelAccessPage: React.FC = () => {
         setError('Something is missing. Use Back to check your answers.')
         return
       }
+    } else if (usesClinicWizard) {
+      if (
+        profileUrl.trim().length < 3 ||
+        !profileStatus ||
+        !phoneSetup ||
+        !isValidPhone(phone) ||
+        scopeText.trim().length < 8
+      ) {
+        setError('Something is missing. Use Back to check your answers.')
+        return
+      }
+      if (profileStatus === 'claimed-me' && !reviewJob) {
+        setError('Something is missing. Use Back to check your answers.')
+        return
+      }
+    } else if (usesFrontDoorWizard) {
+      if (
+        profileUrl.trim().length < 3 ||
+        !profileStatus ||
+        !bookingTool ||
+        !bookingWhat ||
+        !bookingWhere
+      ) {
+        setError('Something is missing. Use Back to check your answers.')
+        return
+      }
+      if (profileStatus === 'claimed-me' && !reviewJob) {
+        setError('Something is missing. Use Back to check your answers.')
+        return
+      }
     } else if (usesGoogleWizard) {
       if (!profileStatus) {
         setError('Something is missing. Use Back to check your answers.')
@@ -4619,6 +4997,22 @@ const FunnelAccessPage: React.FC = () => {
         conversionServiceB.trim().length < 2 ||
         !conversionAsk ||
         conversionOffer.trim().length < 8
+      ) {
+        setError('Something is missing. Use Back to check your answers.')
+        return
+      }
+    } else if (usesSpeedNextWizard) {
+      if (
+        !isValidWebsite(website) ||
+        !platform ||
+        !sameProvider ||
+        conversionServiceA.trim().length < 2 ||
+        conversionServiceB.trim().length < 2 ||
+        !conversionAsk ||
+        conversionOffer.trim().length < 8 ||
+        !trackingStatus ||
+        trackingActions.trim().length < 8 ||
+        trackingDestinations.trim().length < 8
       ) {
         setError('Something is missing. Use Back to check your answers.')
         return
@@ -4792,6 +5186,39 @@ const FunnelAccessPage: React.FC = () => {
             accessDetail: accessDetail.trim(),
             notes: notes.trim(),
           }
+      : usesClinicWizard
+        ? {
+            product,
+            name: name.trim(),
+            email: email.trim(),
+            business: business.trim(),
+            profileUrl: profileUrl.trim(),
+            profileStatus: profileStatus!,
+            phone: phone.trim(),
+            phoneSetup: phoneSetup!,
+            reviewJob: profileStatus === 'claimed-me' ? reviewJob! : '',
+            bundleNotes: scopeText.trim(),
+            accessPath,
+            accessDetail: accessDetail.trim(),
+            notes: notes.trim(),
+          }
+      : usesFrontDoorWizard
+        ? {
+            product,
+            name: name.trim(),
+            email: email.trim(),
+            business: business.trim(),
+            profileUrl: profileUrl.trim(),
+            profileStatus: profileStatus!,
+            reviewJob: profileStatus === 'claimed-me' ? reviewJob! : '',
+            bookingTool: bookingTool!,
+            bookingWhat: bookingWhat!,
+            bookingWhere: bookingWhere!,
+            websiteUrl: websiteUrl.trim(),
+            accessPath,
+            accessDetail: accessDetail.trim(),
+            notes: notes.trim(),
+          }
       : usesGoogleWizard
         ? {
             product,
@@ -4919,6 +5346,28 @@ const FunnelAccessPage: React.FC = () => {
                 conversionServiceB: conversionServiceB.trim(),
                 conversionAsk: conversionAsk!,
                 conversionOffer: conversionOffer.trim(),
+                accessPath,
+                accessDetail: accessDetail.trim(),
+                notes: notes.trim(),
+              }
+          : usesSpeedNextWizard
+            ? {
+                product,
+                name: name.trim(),
+                email: email.trim(),
+                business: business.trim(),
+                website: website.trim(),
+                platform: platform!,
+                sameProvider: sameProvider!,
+                domainProvider: domainProvider.trim(),
+                hostingProvider: hostingProvider.trim(),
+                conversionServiceA: conversionServiceA.trim(),
+                conversionServiceB: conversionServiceB.trim(),
+                conversionAsk: conversionAsk!,
+                conversionOffer: conversionOffer.trim(),
+                trackingStatus: trackingStatus!,
+                trackingActions: trackingActions.trim(),
+                trackingDestinations: trackingDestinations.trim(),
                 accessPath,
                 accessDetail: accessDetail.trim(),
                 notes: notes.trim(),
@@ -5233,6 +5682,10 @@ const FunnelAccessPage: React.FC = () => {
         setStep(id === 'claimed-me' ? 'reviewJob' : 'access')
         return
       }
+      if (usesFrontDoorWizard) {
+        setStep(id === 'claimed-me' ? 'reviewJob' : 'bookingTool')
+        return
+      }
       goNext('profileStatus')
     }, 200)
   }
@@ -5299,7 +5752,7 @@ const FunnelAccessPage: React.FC = () => {
     window.setTimeout(() => {
       if (id === 'no') {
         setStep('domainProvider')
-      } else if (usesConversionWizard) {
+      } else if (usesConversionWizard || usesSpeedNextWizard) {
         setStep('conversionServiceA')
       } else if (usesOnpageWizard) {
         setStep('onpageUrls')
@@ -5553,12 +6006,16 @@ const FunnelAccessPage: React.FC = () => {
                 title={
                   usesWhatsappWizard
                     ? 'Which number is on WhatsApp?'
-                    : 'Which number should we watch?'
+                    : usesClinicWizard
+                      ? 'Which number should we watch for missed calls?'
+                      : 'Which number should we watch?'
                 }
                 hint={
                   usesWhatsappWizard
                     ? 'The Australian number customers message. Ten digits.'
-                    : 'The Australian business line customers dial. Ten digits.'
+                    : usesClinicWizard
+                      ? 'The clinic line patients dial. When it rings out, we send the text-back. Ten digits.'
+                      : 'The Australian business line customers dial. Ten digits.'
                 }
                 value={phone}
                 onChange={setPhone}
@@ -5762,7 +6219,10 @@ const FunnelAccessPage: React.FC = () => {
             {step === 'profileStatus' ? (
               <>
                 <QuestionTitle>
-                  {usesPostingWizard || usesLocalPackWizard ? (
+                  {usesPostingWizard ||
+                  usesLocalPackWizard ||
+                  usesClinicWizard ||
+                  usesFrontDoorWizard ? (
                     <>
                       What is the <span style={{color: RED}}>listing</span> status?
                     </>
@@ -5777,6 +6237,10 @@ const FunnelAccessPage: React.FC = () => {
                     ? 'This decides whether we claim, recover, or invite before the posting kit. Hover a card, then Select.'
                     : usesLocalPackWizard
                       ? 'This decides whether we claim, recover, or invite before the pack starts. Hover a card, then Select.'
+                      : usesClinicWizard
+                        ? 'This decides whether we claim, recover, or invite before we clean the listing and wire reviews. Hover a card, then Select.'
+                      : usesFrontDoorWizard
+                        ? 'This decides whether we claim, recover, or invite before profile clean-up, reviews, and Book now. Hover a card, then Select.'
                       : 'Hover a card, then Select. Not sure is fine.'}
                 </p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
@@ -5843,10 +6307,20 @@ const FunnelAccessPage: React.FC = () => {
             {step === 'reviewJob' ? (
               <>
                 <QuestionTitle>
-                  How do jobs get marked <span style={{color: RED}}>done</span>?
+                  {usesClinicWizard || usesFrontDoorWizard ? (
+                    <>
+                      How do visits get marked <span style={{color: RED}}>done</span>?
+                    </>
+                  ) : (
+                    <>
+                      How do jobs get marked <span style={{color: RED}}>done</span>?
+                    </>
+                  )}
                 </QuestionTitle>
                 <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
-                  That is when the review ask should fire. Hover a card, then Select.
+                  {usesClinicWizard || usesFrontDoorWizard
+                    ? 'That is when the review ask should fire after a visit or job. Hover a card, then Select.'
+                    : 'That is when the review ask should fire. Hover a card, then Select.'}
                 </p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
                   {REVIEW_JOB_OPTIONS.map((opt) => (
@@ -5871,7 +6345,7 @@ const FunnelAccessPage: React.FC = () => {
                 hint={
                   usesEnquiryWizard
                     ? 'The site with the contact or quote form. Paste the homepage if you are not sure which page holds the form.'
-                    : isBooking
+                    : isBooking || usesFrontDoorWizard
                       ? 'Optional but helpful. The site where Book now should appear.'
                       : 'Optional but helpful. The site people use to enquire with you.'
                 }
@@ -6335,6 +6809,19 @@ const FunnelAccessPage: React.FC = () => {
               />
             ) : null}
 
+            {usesClinicWizard && step === 'bundleNotes' ? (
+              <OneField
+                title="Anything about this clinic location?"
+                hint="One location is in scope. Note hours quirks, multiple lines, or anything that would trip the review ask or text-back."
+                value={scopeText}
+                onChange={setScopeText}
+                placeholder={'e.g. One location in Bondi\nMain line on Maps, mobile for after hours\nReviews asked by SMS after checkout'}
+                multiline
+                disabled={scopeText.trim().length < 8}
+                onNext={() => goNext('bundleNotes')}
+              />
+            ) : null}
+
             {usesBatchWizard && batchScopeField && step === batchScopeField ? (
               <OneField
                 title={
@@ -6348,11 +6835,9 @@ const FunnelAccessPage: React.FC = () => {
                           ? 'Which jobs to turn into playbooks'
                           : batchScopeField === 'dashMetrics'
                             ? 'Metrics you need on one screen'
-                            : batchScopeField === 'bundleNotes'
-                              ? 'Scope notes for this bundle'
-                              : batchScopeField === 'geoTopics'
-                                ? 'Topics AI should know you for'
-                                : 'Who you want to find'
+                            : batchScopeField === 'geoTopics'
+                              ? 'Topics AI should know you for'
+                              : 'Who you want to find'
                 }
                 hint={
                   batchScopeField === 'a11yPages'
@@ -6365,11 +6850,9 @@ const FunnelAccessPage: React.FC = () => {
                           ? 'Real repeating work the team does every week.'
                           : batchScopeField === 'dashMetrics'
                             ? 'Leads, bookings, ads, reviews. What you check every week.'
-                            : batchScopeField === 'bundleNotes'
-                              ? 'Location, quirks, and anything we should know before kickoff.'
-                              : batchScopeField === 'geoTopics'
-                                ? 'Services, suburbs, and proof points tools should cite.'
-                                : 'Ideal customer, geography, and who to exclude.'
+                            : batchScopeField === 'geoTopics'
+                              ? 'Services, suburbs, and proof points tools should cite.'
+                              : 'Ideal customer, geography, and who to exclude.'
                 }
                 value={scopeText}
                 onChange={setScopeText}
@@ -6384,11 +6867,9 @@ const FunnelAccessPage: React.FC = () => {
                           ? 'e.g. Quote replies, onboarding checklist'
                           : batchScopeField === 'dashMetrics'
                             ? 'e.g. Weekly leads, booked jobs, ad spend'
-                            : batchScopeField === 'bundleNotes'
-                              ? 'e.g. One clinic location, two phone lines'
-                              : batchScopeField === 'geoTopics'
-                                ? 'e.g. Kitchen reno, Inner West, 12 years'
-                                : 'e.g. Clinic owners, Sydney, no chains'
+                            : batchScopeField === 'geoTopics'
+                              ? 'e.g. Kitchen reno, Inner West, 12 years'
+                              : 'e.g. Clinic owners, Sydney, no chains'
                 }
                 multiline
                 disabled={scopeText.trim().length < 8}
@@ -7225,6 +7706,42 @@ const FunnelAccessPage: React.FC = () => {
                     <>
                       How should we wire the <span style={{color: RED}}>intake destination</span>?
                     </>
+                  ) : usesClinicWizard ? (
+                    profileStatus === 'unclaimed' ? (
+                      <>
+                        How do we <span style={{color: RED}}>claim</span> the listing and set phone access?
+                      </>
+                    ) : profileStatus === 'claimed-other' ? (
+                      <>
+                        How do we <span style={{color: RED}}>recover</span> the listing and set phone access?
+                      </>
+                    ) : profileStatus === 'suspended' ? (
+                      <>
+                        How do we handle the <span style={{color: RED}}>suspension</span> and phone path?
+                      </>
+                    ) : (
+                      <>
+                        How should we get <span style={{color: RED}}>Maps and phone</span> access?
+                      </>
+                    )
+                  ) : usesFrontDoorWizard ? (
+                    profileStatus === 'unclaimed' ? (
+                      <>
+                        How do we <span style={{color: RED}}>claim</span> the listing and set Book now?
+                      </>
+                    ) : profileStatus === 'claimed-other' ? (
+                      <>
+                        How do we <span style={{color: RED}}>recover</span> the listing and set Book now?
+                      </>
+                    ) : profileStatus === 'suspended' ? (
+                      <>
+                        How do we handle the <span style={{color: RED}}>suspension</span> and Book now?
+                      </>
+                    ) : (
+                      <>
+                        How should we get <span style={{color: RED}}>Maps, reviews, and Book now</span> access?
+                      </>
+                    )
                   ) : (
                     <>
                       How should we get <span style={{color: RED}}>in</span>?
@@ -7271,6 +7788,22 @@ const FunnelAccessPage: React.FC = () => {
                       ? 'CRM invite, sheet share, mailbox access, or a short call. Pick whatever is easiest.'
                     : usesIntakeWizard
                       ? 'CRM invite, form tool login, inbox or sheet share, or a short call. Pick whatever is easiest.'
+                    : usesClinicWizard
+                      ? profileStatus === 'unclaimed'
+                        ? 'We need a path to claim the Google listing, plus how we reach the missed-call SMS setup. Or a short call covering both.'
+                        : profileStatus === 'claimed-other'
+                          ? 'Recovery for the listing plus the missed-call path. Or a short call covering both.'
+                          : profileStatus === 'suspended'
+                            ? 'We assess the suspension with you, then lock the missed-call path. Or a short call first.'
+                            : 'Google manager invite, missed-call divert or VoIP access, or a short call that covers both. Pick whatever is easiest.'
+                    : usesFrontDoorWizard
+                      ? profileStatus === 'unclaimed'
+                        ? 'We need a path to claim the Google listing, plus calendar and site access for Book now. Or a short call covering all of it.'
+                        : profileStatus === 'claimed-other'
+                          ? 'Recovery for the listing, then calendar and Book now access. Or a short call covering all of it.'
+                          : profileStatus === 'suspended'
+                            ? 'We assess the suspension with you, then lock the review and Book now paths. Or a short call first.'
+                            : 'Google manager plus calendar share, website access if Book now lives on the site, or a short call that covers the whole front door. Pick whatever is easiest.'
                     : 'Hover, then Select. Pick whatever is easiest for you.'}
                 </p>
                 <div
@@ -7319,6 +7852,36 @@ const FunnelAccessPage: React.FC = () => {
                           : accessPath === 'crm'
                             ? 'Which CRM, and whether calls already log there.'
                             : 'Best times to call, or anything that usually trips people up.'
+                    : usesClinicWizard
+                      ? accessPath === 'invite'
+                        ? 'The Google account email that can add managers, or say you will send the invite shortly.'
+                        : accessPath === 'claim'
+                          ? 'Business name, suburb, and the Google Maps link if you have one. Do not share passwords here.'
+                          : accessPath === 'recover'
+                            ? 'Who used to manage it if you know, any suspension email from Google, and best times to call.'
+                            : accessPath === 'forward'
+                              ? 'Carrier name, or how you change divert today for the clinic line.'
+                              : accessPath === 'provider'
+                                ? 'VoIP or SMS login URL, or say you will email credentials separately.'
+                                : accessPath === 'crm'
+                                  ? 'Which CRM or booking tool logs calls today, and the email to invite.'
+                                  : 'Best times to call, or anything that usually trips people up on Maps or the phone path.'
+                    : usesFrontDoorWizard
+                      ? accessPath === 'invite'
+                        ? 'Google account email for manager invite, plus the calendar email to share for Book now.'
+                        : accessPath === 'claim'
+                          ? 'Business name, suburb, and the Google Maps link if you have one. Do not share passwords here.'
+                          : accessPath === 'recover'
+                            ? 'Who used to manage it if you know, any suspension email from Google, and best times to call.'
+                            : accessPath === 'wp-admin'
+                              ? 'Login URL for the site, or say you will email credentials separately.'
+                              : accessPath === 'admin'
+                                ? 'The Google account email that can add managers on the listing.'
+                                : accessPath === 'provider'
+                                  ? 'SMS or email tool name and login URL, or say you will email access separately.'
+                                  : accessPath === 'crm'
+                                    ? 'Which job software marks visits done, and how to invite us.'
+                                    : 'Best times to call, or anything that usually trips people up on Maps, reviews, or Book now.'
                     : usesGoogleWizard ||
                         usesPostingWizard ||
                         usesReviewsWizard ||

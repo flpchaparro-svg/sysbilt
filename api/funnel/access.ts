@@ -181,6 +181,25 @@ const ENQUIRY_REPLY_ACCESS = new Set(['form-provider', 'call', 'crm', 'provider'
 const REVIEW_JOBS = new Set(['sms', 'email', 'software', 'manual', 'unsure']);
 const REVIEWS_ACCESS = new Set(['invite', 'call', 'claim', 'recover', 'provider', 'crm']);
 const LOCAL_PACK_ACCESS = new Set(['invite', 'call', 'claim', 'recover', 'provider', 'crm']);
+const CLINIC_BUNDLE_ACCESS = new Set([
+  'invite',
+  'claim',
+  'recover',
+  'forward',
+  'provider',
+  'crm',
+  'call',
+]);
+const FRONT_DOOR_ACCESS = new Set([
+  'invite',
+  'claim',
+  'recover',
+  'provider',
+  'crm',
+  'wp-admin',
+  'admin',
+  'call',
+]);
 const PLATFORMS = new Set([
   'wordpress',
   'wordpress-com',
@@ -705,9 +724,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     isInboxTriage ||
     isSopPlaybook ||
     isDashboardLite ||
-    isBundleClinic ||
-    isBundleSpeedNext ||
-    isBundleFrontDoor ||
     isGeo ||
     isClientFinder;
   const isTeamAi = product === 'team-ai';
@@ -801,6 +817,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     }
     if (!BOOKING_ACCESS.has(accessPath)) {
       res.status(400).json({ error: 'Invalid access path' });
+      return;
+    }
+  } else if (isBundleFrontDoor) {
+    if (profileUrl.length < 3) {
+      res.status(400).json({ error: 'Please enter your Google profile link or exact listing name.' });
+      return;
+    }
+    if (!GOOGLE_PROFILE_STATUS.has(profileStatus) || !FRONT_DOOR_ACCESS.has(accessPath)) {
+      res.status(400).json({ error: 'Invalid profile status or access path' });
+      return;
+    }
+    if (profileStatus === 'claimed-me' && !REVIEW_JOBS.has(reviewJob)) {
+      res.status(400).json({ error: 'Invalid job-complete path' });
+      return;
+    }
+    if (!BOOKING_TOOLS.has(bookingTool) || !BOOKING_WHAT.has(bookingWhat) || !BOOKING_WHERE.has(bookingWhere)) {
+      res.status(400).json({ error: 'Invalid booking tool, booking type, or Book now surfaces' });
       return;
     }
   } else if (isLandingPage) {
@@ -899,6 +932,39 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       res.status(400).json({ error: 'Missing where leads should land' });
       return;
     }
+  } else if (isBundleSpeedNext) {
+    if (website.length < 4) {
+      res.status(400).json({ error: 'Missing website' });
+      return;
+    }
+    if (!PLATFORMS.has(platform) || !SAME.has(sameProvider) || !ACCESS.has(accessPath)) {
+      res.status(400).json({ error: 'Invalid platform, provider, or access path' });
+      return;
+    }
+    if (conversionServiceA.length < 2 || conversionServiceB.length < 2) {
+      res.status(400).json({ error: 'Missing the two service pages' });
+      return;
+    }
+    if (!CONVERSION_ASK.has(conversionAsk)) {
+      res.status(400).json({ error: 'Invalid main action' });
+      return;
+    }
+    if (conversionOffer.length < 8) {
+      res.status(400).json({ error: 'Missing the one-line offer' });
+      return;
+    }
+    if (!['ga4', 'gtm', 'none', 'unsure'].includes(trackingStatus)) {
+      res.status(400).json({ error: 'Invalid tracking status' });
+      return;
+    }
+    if (trackingActions.length < 8) {
+      res.status(400).json({ error: 'Missing the actions that matter' });
+      return;
+    }
+    if (trackingDestinations.length < 8) {
+      res.status(400).json({ error: 'Missing where leads should land' });
+      return;
+    }
   } else if (isSiteChat) {
     if (website.length < 4) {
       res.status(400).json({ error: 'Missing website' });
@@ -970,6 +1036,32 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       res.status(400).json({ error: 'Missing what intake should capture' });
       return;
     }
+  } else if (isBundleClinic) {
+    const cleanPhone = phone.replace(/\s+/g, '');
+    if (profileUrl.length < 3) {
+      res.status(400).json({ error: 'Please enter your Google profile link or exact listing name.' });
+      return;
+    }
+    if (!GOOGLE_PROFILE_STATUS.has(profileStatus) || !CLINIC_BUNDLE_ACCESS.has(accessPath)) {
+      res.status(400).json({ error: 'Invalid profile status or access path' });
+      return;
+    }
+    if (!/^(0[23478])\d{8}$/.test(cleanPhone)) {
+      res.status(400).json({ error: 'Please enter a valid Australian business number.' });
+      return;
+    }
+    if (!MISSED_CALL_SETUPS.has(phoneSetup)) {
+      res.status(400).json({ error: 'Invalid phone setup' });
+      return;
+    }
+    if (profileStatus === 'claimed-me' && !REVIEW_JOBS.has(reviewJob)) {
+      res.status(400).json({ error: 'Invalid job-complete path' });
+      return;
+    }
+    if (bundleNotes.length < 8) {
+      res.status(400).json({ error: 'Missing clinic location notes' });
+      return;
+    }
   } else if (isBatchScoped) {
     if (website.length < 4) {
       res.status(400).json({ error: 'Missing website' });
@@ -985,7 +1077,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       (isInboxTriage && inboxTools) ||
       (isSopPlaybook && sopJobs) ||
       (isDashboardLite && dashMetrics) ||
-      ((isBundleClinic || isBundleSpeedNext || isBundleFrontDoor) && bundleNotes) ||
       (isGeo && geoTopics) ||
       (isClientFinder && finderIcp) ||
       '';
@@ -1155,6 +1246,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
             ]
               .filter(Boolean)
               .join('\n')
+        : isBundleFrontDoor
+          ? [
+              `Funnel access form — ${product}`,
+              `Business: ${business}`,
+              `Profile: ${profileUrl}`,
+              `Profile status: ${profileStatus}`,
+              reviewJob ? `Visit complete path: ${reviewJob}` : null,
+              `Booking tool: ${bookingTool}`,
+              `What gets booked: ${bookingWhat}`,
+              `Book now surfaces: ${bookingWhere}`,
+              websiteUrl ? `Website: ${websiteUrl}` : null,
+              `Access path: ${accessPath}`,
+              accessDetail ? `Access notes:\n${accessDetail}` : null,
+              notes ? `Other notes:\n${notes}` : null,
+              `Submitted: ${new Date().toISOString()}`,
+            ]
+              .filter(Boolean)
+              .join('\n')
         : isLandingPage
           ? [
               `Funnel access form — ${product}`,
@@ -1240,6 +1349,29 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
               `Funnel access form — ${product}`,
               `Business: ${business}`,
               `Website: ${website}`,
+              `Tracking status: ${trackingStatus}`,
+              `Actions that matter:\n${trackingActions}`,
+              `Lead destinations:\n${trackingDestinations}`,
+              `Platform: ${platform}`,
+              `Domain + hosting same provider: ${sameProvider}`,
+              domainProvider ? `Domain provider: ${domainProvider}` : null,
+              hostingProvider ? `Hosting provider: ${hostingProvider}` : null,
+              `Access path: ${accessPath}`,
+              accessDetail ? `Access notes:\n${accessDetail}` : null,
+              notes ? `Other notes:\n${notes}` : null,
+              `Submitted: ${new Date().toISOString()}`,
+            ]
+              .filter(Boolean)
+              .join('\n')
+        : isBundleSpeedNext
+          ? [
+              `Funnel access form — ${product}`,
+              `Business: ${business}`,
+              `Website: ${website}`,
+              `Service page 1: ${conversionServiceA}`,
+              `Service page 2: ${conversionServiceB}`,
+              `Main action: ${conversionAsk}`,
+              `One-line offer:\n${conversionOffer}`,
               `Tracking status: ${trackingStatus}`,
               `Actions that matter:\n${trackingActions}`,
               `Lead destinations:\n${trackingDestinations}`,
@@ -1342,6 +1474,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
             ]
               .filter(Boolean)
               .join('\n')
+        : isBundleClinic
+          ? [
+              `Funnel access form — ${product}`,
+              `Business: ${business}`,
+              `Profile: ${profileUrl}`,
+              `Profile status: ${profileStatus}`,
+              `Phone: ${phone}`,
+              `Phone setup: ${phoneSetup}`,
+              reviewJob ? `Visit complete path: ${reviewJob}` : null,
+              `Clinic notes:\n${bundleNotes}`,
+              `Access path: ${accessPath}`,
+              accessDetail ? `Access notes:\n${accessDetail}` : null,
+              notes ? `Other notes:\n${notes}` : null,
+              `Submitted: ${new Date().toISOString()}`,
+            ]
+              .filter(Boolean)
+              .join('\n')
         : isBatchScoped
           ? [
               `Funnel access form — ${product}`,
@@ -1434,7 +1583,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     name,
     email,
     business,
-    website: isCrmRescue || isBooking ? websiteUrl : website,
+    website: isCrmRescue || isBooking || isBundleFrontDoor ? websiteUrl : website,
     platform,
     sameProvider,
     domainProvider,
@@ -1534,7 +1683,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         email,
         firstname: name,
         company: business,
-        website: (isCrmRescue || isBooking ? websiteUrl : website) || undefined,
+        website: (isCrmRescue || isBooking || isBundleFrontDoor ? websiteUrl : website) || undefined,
         phone: phone || undefined,
         lifecyclestage: isChangePack || isContentSystem ? 'lead' : 'customer',
         leadSourceDetail: `go/${product}`,
@@ -1610,6 +1759,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
                     ? `CRM: ${crmSystem} · Leads: ${leadSource} · Goal: ${crmGoal}`
                     : isBooking
                       ? `Tool: ${bookingTool} · Books: ${bookingWhat} · Surfaces: ${bookingWhere}`
+                      : isBundleFrontDoor
+                        ? `Profile: ${profileUrl.slice(0, 50)} · ${profileStatus} · Book: ${bookingTool}/${bookingWhere}${reviewJob ? ` · Visit: ${reviewJob}` : ''}`
                       : isConversionPass
                         ? `${website} · Pages: ${conversionServiceA}, ${conversionServiceB} · Ask: ${conversionAsk}`
                         : isOnpageSearch
@@ -1618,6 +1769,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
                             ? `${website} · Services: ${schemaServiceLines(schemaServices).join(', ').slice(0, 80)} · Questions: ${schemaQuestions.slice(0, 80)}`
                             : isTrackingForms
                               ? `${website} · Status: ${trackingStatus} · Actions: ${trackingActions.slice(0, 60)}`
+                            : isBundleSpeedNext
+                              ? `${website} · Pages: ${conversionServiceA}, ${conversionServiceB} · Ask: ${conversionAsk} · Track: ${trackingStatus}`
                             : isSiteChat
                               ? `${website} · Topics: ${chatTopics.slice(0, 60)} · Handoff: ${chatHandoff.slice(0, 40)}`
                             : isMediaClean
@@ -1630,6 +1783,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
                               ? `Quotes: ${quoteTool} · ${quoteTools.slice(0, 60)}`
                             : isIntakeForms
                               ? `Intake: ${intakeDest} · ${intakePurpose.slice(0, 60)}`
+                            : isBundleClinic
+                              ? `Profile: ${profileUrl.slice(0, 60)} · ${profileStatus} · Phone: ${phone}${reviewJob ? ` · Visit: ${reviewJob}` : ''}`
                             : isBatchScoped
                               ? `${website} · Scope: ${(
                                   a11yPages ||
@@ -1650,7 +1805,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         isReviews ||
         isLocalPack ||
         isCrmRescue ||
-        isBooking
+        isBooking ||
+        isBundleClinic ||
+        isBundleFrontDoor
           ? `Access: ${accessPath}`
           : `Platform: ${platform} · Access: ${accessPath}`,
         !isMissedCall &&
@@ -1661,10 +1818,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         !isLocalPack &&
         !isCrmRescue &&
         !isBooking &&
+        !isBundleClinic &&
+        !isBundleFrontDoor &&
         sameProvider !== 'yes'
           ? `Domain/hosting same: ${sameProvider}${domainProvider ? ` · Domain: ${domainProvider}` : ''}${hostingProvider ? ` · Host: ${hostingProvider}` : ''}`
           : null,
-        (isCrmRescue || isBooking || isEnquiryReply) && websiteUrl ? `Website: ${websiteUrl}` : null,
+        (isCrmRescue || isBooking || isEnquiryReply || isBundleFrontDoor) && websiteUrl ? `Website: ${websiteUrl}` : null,
         accessDetail ? `Access notes: ${accessDetail.slice(0, 280)}` : null,
         dealLink ? `<${dealLink}|Open deal>` : null,
         `<${contactLink}|Open contact>`,

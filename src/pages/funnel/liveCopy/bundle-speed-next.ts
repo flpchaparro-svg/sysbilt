@@ -6,7 +6,7 @@ export const BUNDLE_SPEED_NEXT_LIVE_COPY = {
   h1Generic: 'While the site is open: make pages convert and make results visible',
   h1Personal: (b: string) =>
     `${b}, while the site is open: make pages convert and make results visible`,
-  sub: 'Conversion Pass plus Tracking and Forms Pack as the natural next bundle after Website Speed Fix. Same access window, two jobs that finish the story.',
+  sub: 'Two follow-on jobs while site access is still warm: rewrite priority pages so the next step is obvious, and wire tracking plus forms so you can see when an enquiry lands. Natural finish after Website Speed Fix.',
   ctaLabel: 'Buy Speed Next · $2,400',
   proofLabel: 'The picture',
   proofHeadingLive: 'Fast is not finished',
@@ -30,28 +30,55 @@ export const BUNDLE_SPEED_NEXT_LIVE_COPY = {
   bridgeLabel: 'The fix',
   bridgeHeading: 'Speed Next bundle',
   bridgeBody:
-    'This is not another archaeology of passwords. While site access is warm, we run Conversion Pass on scoped pages and wire Tracking and Forms so you can see enquiries land.',
+    'While site access is warm, we do two jobs in one window. We rewrite scoped pages so the ask is clear. We wire primary events and form destinations so you can see enquiries land. No second chase for passwords.',
   bridgeGaugeCaption: 'Clear ask. Visible signal.',
   benefitsLabel: 'What changes for you',
-  benefitsHeading: 'Outcomes, not jargon',
+  benefitsHeading: 'Outcomes you can point at',
   benefits: [
-    {title: 'Same open window', text: 'No second archaeology of passwords.'},
-    {title: 'Words and proof together', text: 'Convert and measure in one pass.'},
-    {title: 'Honest bundle price', text: '$2,400 vs $1,400 + $950 separate.'},
-    {title: 'Story for the client', text: 'We made it fast, clear, and measurable.'},
+    {
+      title: 'Same open window',
+      text: 'We reuse the site access from Speed Fix, or any job where the site is already open.',
+    },
+    {
+      title: 'Words and proof together',
+      text: 'Clearer pages and measurable enquiries ship in one pass, not two kickoffs.',
+    },
+    {
+      title: 'Honest bundle price',
+      text: '$2,400 for both jobs in one window, vs $1,400 + $950 if you buy them apart.',
+    },
+    {
+      title: 'A story you can tell',
+      text: 'The site is fast, the ask is clear, and you can show when enquiries land.',
+    },
   ],
   processLabel: 'How it runs',
   processHeading: 'A short, clear path',
   processSteps: [
-    {label: 'Pages', text: 'Conversion Pass on scoped URLs.'},
-    {label: 'Signal', text: 'Tracking and form destinations.'},
-    {label: 'Show', text: 'Before/after note plus a test enquiry.'},
+    {
+      label: 'Pages',
+      text: 'We lock two service pages plus the main ask, then rewrite headlines and CTAs so the path to enquire is obvious.',
+    },
+    {
+      label: 'Signal',
+      text: 'We wire the primary events and form destinations so a real enquiry shows up where you watch.',
+    },
+    {
+      label: 'Show',
+      text: 'Before/after note on the pages, plus a test enquiry so you see the signal fire.',
+    },
   ],
   stackLabel: 'Everything included',
   stackHeading: 'Two jobs that finish Speed Fix',
   stackItems: [
-    {title: 'Conversion Pass', text: 'Included.'},
-    {title: 'Tracking and Forms Pack', text: 'Included.'},
+    {
+      title: 'Conversion Pass',
+      text: 'We rewrite scoped pages so headlines, CTAs, and the path to enquire are clear. Not a full redesign.',
+    },
+    {
+      title: 'Tracking and Forms Pack',
+      text: 'We set primary events, form destinations, and a plain watchlist so you can see whether enquiries landed.',
+    },
   ],
   scopeLine:
     'Assumes site access similar to Speed Fix. Conversion Pass and Tracking and Forms Pack as scoped at kickoff.',
@@ -78,7 +105,7 @@ export const BUNDLE_SPEED_NEXT_LIVE_COPY = {
     },
     {
       q: 'Why buy the bundle?',
-      a: 'Same access window, one story, and $2,400 instead of $1,400 + $950 if you buy them apart.',
+      a: 'Same access window, one story, and both jobs scoped together for $2,400 instead of two separate kickoffs at $1,400 + $950.',
     },
     {
       q: 'Is this refundable?',
