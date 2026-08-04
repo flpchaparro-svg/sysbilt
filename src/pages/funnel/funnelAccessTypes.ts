@@ -75,6 +75,8 @@ export type LandingTrackingId = 'meta' | 'google' | 'both' | 'none' | 'unsure'
 export type ConversionAskId = 'call' | 'form' | 'book'
 /** Current WhatsApp setup before Business Setup sprint. */
 export type WhatsappStatusId = 'personal' | 'business-app' | 'meta' | 'unsure'
+/** Which Meta inboxes DM Reply covers. */
+export type DmPlatformId = 'instagram' | 'facebook' | 'both' | 'unsure'
 
 export type FunnelAccessPayload = {
   product: FunnelProductCode
@@ -124,6 +126,7 @@ export type FunnelAccessPayload = {
   a11yPages?: string
   whatsappStatus?: WhatsappStatusId | ''
   whatsappGoals?: string
+  dmPlatform?: DmPlatformId | ''
   dmChannels?: string
   quoteTools?: string
   noshowTools?: string
