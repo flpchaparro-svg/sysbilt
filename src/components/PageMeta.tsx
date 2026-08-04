@@ -2,7 +2,7 @@ import type { FC, ReactNode } from 'react';
 import { Helmet as HelmetImpl } from 'react-helmet-async';
 
 /** react-helmet-async + React 19 JSX types */
-const Helmet = HelmetImpl as FC<{ children?: ReactNode }>;
+const Helmet = HelmetImpl as unknown as FC<{ children?: ReactNode }>;
 
 const DEFAULT_OG_IMAGE = 'https://sysbilt.com/images/og-sysbilt.png';
 

@@ -707,7 +707,7 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
   };
   const tagItemVariants = {
     hidden: { opacity: 0, x: -10 },
-    show: { opacity: 1, x: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } }
+    show: { opacity: 1, x: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as const } }
   };
 
   // Setup SEO Variables
@@ -760,7 +760,7 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
               <motion.h1 
                 initial={{ opacity: 0, x: -30 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] as const }}
                 className={`font-sans font-black break-words text-balance ${
                   post?.title?.length < 20 ? 'text-[clamp(3rem,9vw,8.5rem)] leading-[0.9]' :
                   post?.title?.length < 40 ? 'text-[clamp(2.5rem,6vw,6rem)] leading-[1]' :
@@ -792,7 +792,7 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
                 <motion.div 
                   initial={{ opacity: 0, x: 30 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 1.2, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                  transition={{ duration: 1.2, delay: 0.3, ease: [0.16, 1, 0.3, 1] as const }}
                   className="relative aspect-square w-full border border-white/10 overflow-hidden bg-dark"
                 >
                   <img 

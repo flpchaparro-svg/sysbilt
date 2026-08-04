@@ -7,7 +7,7 @@ import ScrambleTitle from '../components/HomePage/ScrambleTitle';
 import { SEO_META } from '../constants/seoMeta';
 
 /** react-helmet-async + React 19 JSX types */
-const Helmet = HelmetImpl as FC<{ children?: ReactNode }>;
+const Helmet = HelmetImpl as unknown as FC<{ children?: ReactNode }>;
 
 /** Organization + services — homepage ProfessionalService JSON-LD for search/AI consumers */
 const PROFESSIONAL_SERVICE_JSONLD = {

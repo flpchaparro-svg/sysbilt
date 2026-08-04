@@ -35,7 +35,7 @@ export interface ServiceDetail {
   icon?: string; 
 }
 
-export interface SystemPillarDetail extends ServiceDetail {
+export interface SystemPillarDetail extends Omit<ServiceDetail, 'icon'> {
   number: string; 
   icon: LucideIcon; 
   subtitle: string; 

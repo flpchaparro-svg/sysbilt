@@ -9,7 +9,7 @@ interface SystemPhasesProps {
 }
 
 export default function SystemPhases({ onNavigate }: SystemPhasesProps) {
-  const transition = { duration: 9, repeat: Infinity, ease: "easeInOut" };
+  const transition = { duration: 9, repeat: Infinity, ease: "easeInOut" as const };
   const times3Icon = [0, 0.3, 0.36, 0.63, 0.69, 0.94, 1];
   const times2Icon = [0, 0.44, 0.5, 0.94, 1];
 

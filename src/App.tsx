@@ -221,7 +221,7 @@ const App: React.FC = () => {
                     <Route path="/contact" element={<ContactPage onBack={() => handleGlobalNavigate('homepage')} />} />
                     <Route path="/privacy" element={<PrivacyPolicyPage onBack={() => handleGlobalNavigate('homepage')} onNavigate={handleGlobalNavigate} />} />
                     <Route path="/terms" element={<TermsOfServicePage onBack={() => handleGlobalNavigate('homepage')} onNavigate={handleGlobalNavigate} />} />
-                    <Route path="/blog" element={<BlogPage onNavigate={handleGlobalNavigate} />} />
+                    <Route path="/blog" element={<BlogPage />} />
                     <Route path="/blog/:slug" element={<BlogPostPage onNavigate={handleGlobalNavigate} />} />
                     <Route path="/news" element={<NewsPage />} />
                     <Route path="/guides/built-to-work/read" element={<BuiltToWorkBookPage />} />
@@ -280,7 +280,7 @@ const App: React.FC = () => {
           {location.pathname !== '/system' && !hideChrome && (
             <GlobalFooter onNavigate={handleGlobalNavigate} />
           )}
-          <Modal service={selectedService} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onViewPillar={(id) => handleGlobalNavigate(id)} />
+          <Modal service={selectedService} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
           <CookieBanner />
           {!isFunnelRoute && <HelpDock />}
         </div>

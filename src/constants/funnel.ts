@@ -68,44 +68,6 @@ export type FunnelSectionId =
   | 'draft-bundles'
   | 'draft-web'
 
-export const FUNNEL_SECTION_META: Record<
-  FunnelSectionId,
-  {title: string; blurb: string}
-> = {
-  outbound: {
-    title: 'Outbound doors',
-    blurb: 'Cold-email products. Live buy paths where Stripe is wired.',
-  },
-  warm: {
-    title: 'Warm / scoping',
-    blurb: 'Call or qualify first. Higher touch, fixed once scoped.',
-  },
-  'draft-local': {
-    title: 'Draft: Google and local',
-    blurb: 'Profile upgrades, posts, reviews desk. Visual only.',
-  },
-  'draft-after-site': {
-    title: 'Draft: After the site is open',
-    blurb: 'What to sell once Speed Fix or a rebuild has access. Visual only.',
-  },
-  'draft-leads': {
-    title: 'Draft: Catch and chase',
-    blurb: 'WhatsApp, DMs, quotes, no-shows, intake. Visual only.',
-  },
-  'draft-ai': {
-    title: 'Draft: AI and clarity',
-    blurb: 'Inbox, playbooks, dashboards. Visual only.',
-  },
-  'draft-bundles': {
-    title: 'Draft: Bundles',
-    blurb: 'Combined scopes at a list price. Visual only.',
-  },
-  'draft-web': {
-    title: 'Draft: Websites and findability',
-    blurb: 'Entry brochure through full systems site, GEO, client finder. Visual only.',
-  },
-}
-
 export const FUNNEL_PRODUCT_LABELS: Record<FunnelProductCode, string> = {
   'speed-fix': 'Website Speed Fix',
   'missed-call': 'Missed-Call Text-Back',
@@ -569,17 +531,6 @@ export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
     section: 'outbound',
     href: '/go/client-finder',
   },
-]
-
-export const FUNNEL_SECTION_ORDER: FunnelSectionId[] = [
-  'outbound',
-  'warm',
-  'draft-local',
-  'draft-after-site',
-  'draft-leads',
-  'draft-ai',
-  'draft-bundles',
-  'draft-web',
 ]
 
 export function isFunnelProductCode(value: string | null | undefined): value is FunnelProductCode {

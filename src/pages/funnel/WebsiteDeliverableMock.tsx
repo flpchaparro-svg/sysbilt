@@ -3,9 +3,9 @@ import {motion, useInView, useReducedMotion} from 'framer-motion'
 import {FUNNEL_COLOURS} from './funnelTheme'
 
 const TIERS = [
-  {name: 'Brochure', price: '$120', pages: '1 page'},
+  {name: 'Brochure', price: '$120', pages: '1 page', featured: false},
   {name: 'Practice', price: '$160', pages: '5–7 pages', featured: true},
-  {name: 'Full site', price: '$190', pages: '9–12 pages'},
+  {name: 'Full site', price: '$190', pages: '9–12 pages', featured: false},
 ] as const
 
 /**

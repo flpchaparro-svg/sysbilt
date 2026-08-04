@@ -71,7 +71,9 @@ export const TOOLKIT_CATEGORY_SANITY_OPTIONS = TOOLKIT_CATEGORIES.map(({value, l
   value,
 }))
 
-const categoryByValue = new Map(TOOLKIT_CATEGORIES.map((c) => [c.value, c]))
+const categoryByValue = new Map<string, (typeof TOOLKIT_CATEGORIES)[number]>(
+  TOOLKIT_CATEGORIES.map((c) => [c.value, c]),
+)
 
 export function getCategoryLabel(category: string): string {
   return categoryByValue.get(category)?.label ?? category

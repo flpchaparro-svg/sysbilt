@@ -47,7 +47,7 @@ const formatFAQAnswer = (answer: string, accentColor: string) => {
     if (currentList.length > 0) {
       if (isNumberedList) {
         elements.push(
-          <ol key={`ol-${elements.length}`} className="list-decimal space-y-2 mb-4 last:mb-0 pl-6" style={{ listStyleColor: accentColor }}>
+          <ol key={`ol-${elements.length}`} className="list-decimal space-y-2 mb-4 last:mb-0 pl-6" style={{ color: accentColor }}>
             {currentList.map((item, idx) => (
               <li key={idx} className="pl-2">
                 <span>{parseBold(item.replace(/^\d+\.\s*/, '').trim())}</span>

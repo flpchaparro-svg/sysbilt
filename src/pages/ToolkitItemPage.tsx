@@ -581,7 +581,7 @@ export default function ToolkitItemPage() {
                 <div className="font-sans text-white/60 font-light leading-relaxed max-w-2xl text-base md:text-lg">
                   {tool.author?.bio ? (
                     <PortableText
-                      value={tool.author.bio}
+                      value={tool.author.bio as React.ComponentProps<typeof PortableText>['value']}
                       components={{block: {normal: ({children}: {children?: React.ReactNode}) => <p className="mb-4">{children}</p>}}}
                     />
                   ) : (
