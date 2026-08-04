@@ -253,6 +253,7 @@ type Body = {
   quoteTool?: unknown;
   quoteTools?: unknown;
   noshowTools?: unknown;
+  intakeDest?: unknown;
   intakePurpose?: unknown;
   inboxTools?: unknown;
   sopJobs?: unknown;
@@ -629,6 +630,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const quoteTool = str(body.quoteTool, 40);
   const quoteTools = str(body.quoteTools, 4000);
   const noshowTools = str(body.noshowTools, 4000);
+  const intakeDest = str(body.intakeDest, 40);
   const intakePurpose = str(body.intakePurpose, 4000);
   const inboxTools = str(body.inboxTools, 4000);
   const sopJobs = str(body.sopJobs, 4000);
@@ -1480,6 +1482,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     quoteTool: quoteTool || undefined,
     quoteTools: quoteTools || undefined,
     noshowTools: noshowTools || undefined,
+    intakeDest: intakeDest || undefined,
     intakePurpose: intakePurpose || undefined,
     inboxTools: inboxTools || undefined,
     sopJobs: sopJobs || undefined,
