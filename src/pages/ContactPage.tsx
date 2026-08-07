@@ -310,28 +310,35 @@ const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
           </div>
         </div>
 
-        <div className="flex-none mt-10 lg:mt-0">
-          <div className="w-12 h-[1px] bg-gold mb-4" />
-          <address className="not-italic font-sans text-sm md:text-base font-light leading-relaxed text-dark/80 space-y-1">
-            <p className="font-medium text-dark">{VISIBLE_NAP.name}</p>
-            <p>{VISIBLE_NAP.localityLine}</p>
-            <p>{VISIBLE_NAP.abnDisplay}</p>
-            <p>
-              <a
-                href={`mailto:${VISIBLE_NAP.email}`}
-                className="underline decoration-dark/20 underline-offset-4 hover:text-dark"
-              >
-                {VISIBLE_NAP.email}
-              </a>
-            </p>
-            <p>
-              <a
-                href={VISIBLE_NAP.url}
-                className="underline decoration-dark/20 underline-offset-4 hover:text-dark"
-              >
-                {VISIBLE_NAP.url}
-              </a>
-            </p>
+        <div className="flex-none mt-8 lg:mt-0 pt-4">
+          <address className="not-italic font-mono text-[10px] md:text-[11px] font-normal tracking-wide text-dark/55 leading-snug">
+            <span className="text-dark/70">{VISIBLE_NAP.name}</span>
+            <span className="mx-1.5 text-dark/25" aria-hidden="true">
+              ·
+            </span>
+            <span>{VISIBLE_NAP.localityLine}</span>
+            <span className="mx-1.5 text-dark/25" aria-hidden="true">
+              ·
+            </span>
+            <span>{VISIBLE_NAP.abnDisplay}</span>
+            <span className="mx-1.5 text-dark/25" aria-hidden="true">
+              ·
+            </span>
+            <a
+              href={`mailto:${VISIBLE_NAP.email}`}
+              className="underline decoration-dark/15 underline-offset-2 hover:text-dark"
+            >
+              {VISIBLE_NAP.email}
+            </a>
+            <span className="mx-1.5 text-dark/25" aria-hidden="true">
+              ·
+            </span>
+            <a
+              href={VISIBLE_NAP.url}
+              className="underline decoration-dark/15 underline-offset-2 hover:text-dark"
+            >
+              {VISIBLE_NAP.url}
+            </a>
           </address>
         </div>
       </div>
