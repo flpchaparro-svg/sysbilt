@@ -150,6 +150,46 @@ function checkRouteHtml(route, html) {
       addViolation(`${p} — missing build-time JSON-LD @type "${type}"`);
     }
   }
+
+  if (p === '/' || p === '/contact') {
+    checkProfessionalServiceNode(p, html);
+  }
+}
+
+function extractJsonLdNodes(html) {
+  const nodes = [];
+  for (const match of html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)) {
+    try {
+      const parsed = JSON.parse(match[1]);
+      if (Array.isArray(parsed)) nodes.push(...parsed);
+      else if (parsed && typeof parsed === 'object') nodes.push(parsed);
+    } catch {
+      addViolation('JSON-LD — unparseable application/ld+json script');
+    }
+  }
+  return nodes;
+}
+
+function checkProfessionalServiceNode(routePath, html) {
+  const nodes = extractJsonLdNodes(html);
+  const org = nodes.find((n) => n && n['@type'] === 'ProfessionalService');
+  if (!org) {
+    addViolation(`${routePath} — missing JSON-LD node of @type ProfessionalService`);
+    return;
+  }
+  if (org.address?.addressCountry !== 'AU') {
+    addViolation(
+      `${routePath} — ProfessionalService address.addressCountry must be "AU" (got ${JSON.stringify(org.address?.addressCountry)})`
+    );
+  }
+  if (!Array.isArray(org.areaServed) || org.areaServed.length === 0) {
+    addViolation(`${routePath} — ProfessionalService areaServed must be a non-empty array`);
+  }
+  const identifiers = Array.isArray(org.identifier) ? org.identifier : [];
+  const hasAbn = identifiers.some((id) => id && id.propertyID === 'ABN');
+  if (!hasAbn) {
+    addViolation(`${routePath} — ProfessionalService identifier must contain propertyID "ABN"`);
+  }
 }
 
 /**

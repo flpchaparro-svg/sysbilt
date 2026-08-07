@@ -4,6 +4,7 @@ import { m, AnimatePresence } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import { PageMeta } from '../components/PageMeta';
 import { SITE_ORIGIN } from '../constants/seoMeta';
+import { organizationIdRef } from '../constants/organizationJsonLd';
 import ShareButton from '../components/ShareButton';
 import { ArrowRight, BookOpen, FileText, Rss, ChevronDown, ChevronUp } from 'lucide-react';
 import { client } from '../sanityClient';
@@ -153,11 +154,7 @@ const guidesHubCollectionJsonLd = {
   description:
     'Deep guides on how to build business systems that actually work. Websites, CRM, automation, AI, content, training, and dashboards.',
   url: GUIDES_HUB_URL,
-  publisher: {
-    '@type': 'Organization',
-    name: 'SYSBILT',
-    url: SITE_ORIGIN,
-  },
+  publisher: organizationIdRef(),
 };
 
 const guidesHubBreadcrumbJsonLd = {

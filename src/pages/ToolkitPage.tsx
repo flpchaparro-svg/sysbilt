@@ -5,6 +5,7 @@ import { Helmet } from 'react-helmet-async'
 import { ArrowRight, BookOpen, ChevronDown, ChevronUp, FileText } from 'lucide-react'
 import { PageMeta } from '../components/PageMeta'
 import { SEO_META, SITE_ORIGIN } from '../constants/seoMeta'
+import { organizationIdRef } from '../constants/organizationJsonLd'
 import { client } from '../sanityClient'
 import {
   getCategoryLabel,
@@ -49,11 +50,7 @@ const toolkitCollectionJsonLd = {
   description:
     'Tools we rate for running a business, with a plain explanation of what each one does.',
   url: TOOLKIT_URL,
-  publisher: {
-    '@type': 'Organization',
-    name: 'SYSBILT',
-    url: SITE_ORIGIN,
-  },
+  publisher: organizationIdRef(),
 }
 
 const toolkitBreadcrumbJsonLd = {

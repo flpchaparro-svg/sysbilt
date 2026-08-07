@@ -1,104 +1,9 @@
-import React, { useState, useRef, useEffect, lazy, Suspense, type FC, type ReactNode } from 'react';
-import { Helmet as HelmetImpl } from 'react-helmet-async';
+import React, { useState, useRef, useEffect, lazy, Suspense } from 'react';
 import { m, useScroll, useMotionValueEvent, useAnimationFrame, useMotionValue, useTransform } from 'framer-motion';
 import CTAButton from '../components/CTAButton';
 import { PageMeta } from '../components/PageMeta';
 import ScrambleTitle from '../components/HomePage/ScrambleTitle';
 import { SEO_META } from '../constants/seoMeta';
-
-/** react-helmet-async + React 19 JSX types */
-const Helmet = HelmetImpl as unknown as FC<{ children?: ReactNode }>;
-
-/** Organization + services — homepage ProfessionalService JSON-LD for search/AI consumers */
-const PROFESSIONAL_SERVICE_JSONLD = {
-  '@context': 'https://schema.org',
-  '@type': 'ProfessionalService',
-  name: 'SYSBILT',
-  url: 'https://sysbilt.com',
-  logo: 'https://sysbilt.com/images/og-sysbilt.png',
-  description:
-    'SYSBILT is a Sydney-based team that builds business systems for Australian companies doing $1M to $20M. We build websites, CRM systems, automations, AI assistants, content systems, team training, and business dashboards.',
-  address: {
-    '@type': 'PostalAddress',
-    addressLocality: 'Sydney',
-    addressRegion: 'NSW',
-    addressCountry: 'AU',
-  },
-  areaServed: { '@type': 'Country', name: 'Australia' },
-  priceRange: '$$',
-  hasOfferCatalog: {
-    '@type': 'OfferCatalog',
-    name: 'Business Systems Services',
-    itemListElement: [
-      {
-        '@type': 'Offer',
-        itemOffered: {
-          '@type': 'Service',
-          name: 'Website Development & E-commerce',
-          url: 'https://sysbilt.com/pillar1',
-        },
-      },
-      {
-        '@type': 'Offer',
-        itemOffered: {
-          '@type': 'Service',
-          name: 'CRM & Lead Tracking Setup',
-          url: 'https://sysbilt.com/pillar2',
-        },
-      },
-      {
-        '@type': 'Offer',
-        itemOffered: {
-          '@type': 'Service',
-          name: 'Business Process Automation',
-          url: 'https://sysbilt.com/pillar3',
-        },
-      },
-      {
-        '@type': 'Offer',
-        itemOffered: {
-          '@type': 'Service',
-          name: 'AI Assistants & Chatbots',
-          url: 'https://sysbilt.com/pillar4',
-        },
-      },
-      {
-        '@type': 'Offer',
-        itemOffered: {
-          '@type': 'Service',
-          name: 'Content Systems & Distribution',
-          url: 'https://sysbilt.com/pillar5',
-        },
-      },
-      {
-        '@type': 'Offer',
-        itemOffered: {
-          '@type': 'Service',
-          name: 'Team Training & System Adoption',
-          url: 'https://sysbilt.com/pillar6',
-        },
-      },
-      {
-        '@type': 'Offer',
-        itemOffered: {
-          '@type': 'Service',
-          name: 'Business Dashboards & Reporting',
-          url: 'https://sysbilt.com/pillar7',
-        },
-      },
-    ],
-  },
-  knowsAbout: [
-    'HubSpot CRM',
-    'Make.com automation',
-    'business process automation',
-    'AI chatbots',
-    'website development Sydney',
-    'business dashboards',
-    'content marketing systems',
-    'team training',
-  ],
-} as const;
 
 // Lazy load BookingCTA (at bottom of page)
 const BookingCTA = lazy(() => import('../components/HomePage/BookingCTA'));
@@ -221,9 +126,6 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onServiceClick }) => {
         description={SEO_META.home.description}
         canonical={SEO_META.home.canonical}
       />
-      <Helmet>
-        <script type="application/ld+json">{JSON.stringify(PROFESSIONAL_SERVICE_JSONLD)}</script>
-      </Helmet>
       <article aria-labelledby="homepage-hero-heading" className="w-full min-w-0">
       <section id="hero" aria-label="Hero Section" className="min-h-[100svh] w-full flex items-center pt-32 md:pt-20 overflow-hidden relative z-20 content-layer">
 

@@ -1,4 +1,5 @@
 import { SITE_ORIGIN } from './seoMeta';
+import { organizationIdRef } from './organizationJsonLd';
 import { pillar1Copy } from './pillar1Copy';
 import { pillar2Copy } from './pillar2Copy';
 import { pillar3Copy } from './pillar3Copy';
@@ -81,15 +82,7 @@ export function buildPillarServiceJsonLd(pillarKey: PillarServiceKey): Record<st
     serviceType: meta.serviceType,
     url: meta.url,
     image: `${SITE_ORIGIN}/images/og-sysbilt.png`,
-    provider: {
-      '@type': 'Organization',
-      name: 'SYSBILT',
-      url: SITE_ORIGIN,
-      logo: {
-        '@type': 'ImageObject',
-        url: `${SITE_ORIGIN}/images/og-sysbilt.png`,
-      },
-    },
+    provider: organizationIdRef(),
     areaServed: [
       { '@type': 'Country', name: 'Australia' },
       { '@type': 'AdministrativeArea', name: 'New South Wales' },

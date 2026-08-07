@@ -1,5 +1,6 @@
 import { urlFor } from '../sanityClient';
 import { SITE_ORIGIN } from '../constants/seoMeta';
+import { organizationIdRef } from '../constants/organizationJsonLd';
 
 function toIsoDateTime(value: string | undefined): string | undefined {
   if (!value) return undefined;
@@ -57,15 +58,7 @@ export function buildBlogPostingJsonLd(params: {
     ...(datePublished ? { datePublished } : {}),
     ...(dateModified ? { dateModified } : {}),
     author,
-    publisher: {
-      '@type': 'Organization',
-      name: 'SYSBILT',
-      url: SITE_ORIGIN,
-      logo: {
-        '@type': 'ImageObject',
-        url: `${SITE_ORIGIN}/images/og-sysbilt.png`,
-      },
-    },
+    publisher: organizationIdRef(),
     mainEntityOfPage: {
       '@type': 'WebPage',
       '@id': canonicalUrl,

@@ -63,6 +63,11 @@ import { buildBlogPostingJsonLd } from '../../src/utils/blogSeoJsonLd';
 import { buildToolkitArticleJsonLd } from '../../src/utils/toolkitSeoJsonLd';
 import { generateFAQSchema, getPillarFAQs, getSystemPageFAQs } from '../../src/constants/faqData';
 import {
+  buildProfessionalServiceJsonLd,
+  organizationIdRef,
+} from '../../src/constants/organizationJsonLd';
+import { SITE_ORIGIN } from '../../src/constants/seoMeta';
+import {
   BTW_CHAPTERS,
   btwChapterPath,
   extractChapterBlocks,
@@ -124,7 +129,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '../..');
 const DIST = path.join(ROOT, 'dist');
 const TEMPLATE_PATH = path.join(DIST, 'index.html');
-const BASE_URL = 'https://sysbilt.com';
+const BASE_URL = SITE_ORIGIN;
 
 /** Title present in the un-stamped dist/index.html template; a stamped page must differ. */
 const GENERIC_TITLE = 'SYSBILT | Business Systems';
@@ -506,13 +511,7 @@ function ogUrl(routePath) {
 // --- JSON-LD builders (build-time; mirror the client Helmet schemas) ---------
 
 function organizationJsonLd() {
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'Organization',
-    name: 'SYSBILT',
-    url: `${BASE_URL}/`,
-    logo: { '@type': 'ImageObject', url: `${BASE_URL}/images/og-sysbilt.png` },
-  };
+  return buildProfessionalServiceJsonLd();
 }
 
 function webSiteJsonLd() {
@@ -547,12 +546,7 @@ function genericArticleJsonLd({ canonical, headline, description, image }) {
     headline,
     description,
     author: { '@type': 'Organization', name: 'SYSBILT', url: `${BASE_URL}/` },
-    publisher: {
-      '@type': 'Organization',
-      name: 'SYSBILT',
-      url: `${BASE_URL}/`,
-      logo: { '@type': 'ImageObject', url: `${BASE_URL}/images/og-sysbilt.png` },
-    },
+    publisher: organizationIdRef(),
     mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
     inLanguage: 'en-AU',
   };
@@ -592,12 +586,7 @@ function btwChapterJsonLd(slug) {
     headline: chapter.h1,
     description: chapter.seoDescription,
     author: { '@type': 'Organization', name: 'SYSBILT', url: `${BASE_URL}/` },
-    publisher: {
-      '@type': 'Organization',
-      name: 'SYSBILT',
-      url: `${BASE_URL}/`,
-      logo: { '@type': 'ImageObject', url: `${BASE_URL}/images/og-sysbilt.png` },
-    },
+    publisher: organizationIdRef(),
     mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
     image,
     isPartOf: { '@type': 'Book', name: BTW_META.title, url: `${BASE_URL}${BTW_HUB_ROUTE}` },
@@ -646,12 +635,7 @@ function btsChapterJsonLd(slug) {
     headline: chapter.h1,
     description: chapter.seoDescription,
     author: { '@type': 'Organization', name: 'SYSBILT', url: `${BASE_URL}/` },
-    publisher: {
-      '@type': 'Organization',
-      name: 'SYSBILT',
-      url: `${BASE_URL}/`,
-      logo: { '@type': 'ImageObject', url: `${BASE_URL}/images/og-sysbilt.png` },
-    },
+    publisher: organizationIdRef(),
     mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
     image,
     isPartOf: { '@type': 'Book', name: BTS_META.title, url: `${BASE_URL}${BTS_HUB_ROUTE}` },
@@ -701,12 +685,7 @@ function btcChapterJsonLd(slug) {
     headline: chapter.h1,
     description: chapter.seoDescription,
     author: { '@type': 'Organization', name: 'SYSBILT', url: `${BASE_URL}/` },
-    publisher: {
-      '@type': 'Organization',
-      name: 'SYSBILT',
-      url: `${BASE_URL}/`,
-      logo: { '@type': 'ImageObject', url: `${BASE_URL}/images/og-sysbilt.png` },
-    },
+    publisher: organizationIdRef(),
     mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
     image,
     isPartOf: { '@type': 'Book', name: BTC_META.title, url: `${BASE_URL}${BTC_HUB_ROUTE}` },
@@ -756,12 +735,7 @@ function btrChapterJsonLd(slug) {
     headline: chapter.h1,
     description: chapter.seoDescription,
     author: { '@type': 'Organization', name: 'SYSBILT', url: `${BASE_URL}/` },
-    publisher: {
-      '@type': 'Organization',
-      name: 'SYSBILT',
-      url: `${BASE_URL}/`,
-      logo: { '@type': 'ImageObject', url: `${BASE_URL}/images/og-sysbilt.png` },
-    },
+    publisher: organizationIdRef(),
     mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
     image,
     isPartOf: { '@type': 'Book', name: BTR_META.title, url: `${BASE_URL}${BTR_HUB_ROUTE}` },
@@ -811,12 +785,7 @@ function bttChapterJsonLd(slug) {
     headline: chapter.h1,
     description: chapter.seoDescription,
     author: { '@type': 'Organization', name: 'SYSBILT', url: `${BASE_URL}/` },
-    publisher: {
-      '@type': 'Organization',
-      name: 'SYSBILT',
-      url: `${BASE_URL}/`,
-      logo: { '@type': 'ImageObject', url: `${BASE_URL}/images/og-sysbilt.png` },
-    },
+    publisher: organizationIdRef(),
     mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
     image,
     isPartOf: { '@type': 'Book', name: BTT_META.title, url: `${BASE_URL}${BTT_HUB_ROUTE}` },
@@ -866,12 +835,7 @@ function btmChapterJsonLd(slug) {
     headline: chapter.h1,
     description: chapter.seoDescription,
     author: { '@type': 'Organization', name: 'SYSBILT', url: `${BASE_URL}/` },
-    publisher: {
-      '@type': 'Organization',
-      name: 'SYSBILT',
-      url: `${BASE_URL}/`,
-      logo: { '@type': 'ImageObject', url: `${BASE_URL}/images/og-sysbilt.png` },
-    },
+    publisher: organizationIdRef(),
     mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
     image,
     isPartOf: { '@type': 'Book', name: BTM_META.title, url: `${BASE_URL}${BTM_HUB_ROUTE}` },
@@ -921,12 +885,7 @@ function bteChapterJsonLd(slug) {
     headline: chapter.h1,
     description: chapter.seoDescription,
     author: { '@type': 'Organization', name: 'SYSBILT', url: `${BASE_URL}/` },
-    publisher: {
-      '@type': 'Organization',
-      name: 'SYSBILT',
-      url: `${BASE_URL}/`,
-      logo: { '@type': 'ImageObject', url: `${BASE_URL}/images/og-sysbilt.png` },
-    },
+    publisher: organizationIdRef(),
     mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
     image,
     isPartOf: { '@type': 'Book', name: BTE_META.title, url: `${BASE_URL}${BTE_HUB_ROUTE}` },
@@ -976,12 +935,7 @@ function bseChapterJsonLd(slug) {
     headline: chapter.h1,
     description: chapter.seoDescription,
     author: { '@type': 'Organization', name: 'SYSBILT', url: `${BASE_URL}/` },
-    publisher: {
-      '@type': 'Organization',
-      name: 'SYSBILT',
-      url: `${BASE_URL}/`,
-      logo: { '@type': 'ImageObject', url: `${BASE_URL}/images/og-sysbilt.png` },
-    },
+    publisher: organizationIdRef(),
     mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
     image,
     isPartOf: { '@type': 'Book', name: BSE_META.title, url: `${BASE_URL}${BSE_HUB_ROUTE}` },
@@ -1000,9 +954,10 @@ function bseChapterJsonLd(slug) {
   return out;
 }
 
-/** JSON-LD for static routes (homepage Organization/WebSite, pillar/system FAQ). */
+/** JSON-LD for static routes (homepage ProfessionalService/WebSite, contact org, pillar/system FAQ). */
 function staticJsonLd(routePath) {
   if (routePath === '/') return [organizationJsonLd(), webSiteJsonLd()];
+  if (routePath === '/contact') return [organizationJsonLd()];
   if (/^\/pillar[1-7]$/.test(routePath)) {
     const faqs = getPillarFAQs(routePath.slice(1));
     return faqs.length > 0 ? [generateFAQSchema(faqs)] : [];

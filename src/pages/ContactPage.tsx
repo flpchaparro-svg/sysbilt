@@ -19,6 +19,7 @@ import CTAButton from '../components/CTAButton'
 import BackButton from '../components/BackButton'
 import { PageMeta } from '../components/PageMeta'
 import { SEO_META } from '../constants/seoMeta'
+import { VISIBLE_NAP } from '../constants/organizationJsonLd'
 import { useContactForm } from '../hooks/useContactForm'
 import { DIAGNOSIS_OPTIONS } from '../constants/contactData'
 
@@ -309,9 +310,29 @@ const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
           </div>
         </div>
 
-        <div className="hidden lg:block flex-none opacity-40">
+        <div className="flex-none mt-10 lg:mt-0">
           <div className="w-12 h-[1px] bg-gold mb-4" />
-          <p className="type-eyebrow text-dark">DIRECT LINE OPEN</p>
+          <address className="not-italic font-sans text-sm md:text-base font-light leading-relaxed text-dark/80 space-y-1">
+            <p className="font-medium text-dark">{VISIBLE_NAP.name}</p>
+            <p>{VISIBLE_NAP.localityLine}</p>
+            <p>{VISIBLE_NAP.abnDisplay}</p>
+            <p>
+              <a
+                href={`mailto:${VISIBLE_NAP.email}`}
+                className="underline decoration-dark/20 underline-offset-4 hover:text-dark"
+              >
+                {VISIBLE_NAP.email}
+              </a>
+            </p>
+            <p>
+              <a
+                href={VISIBLE_NAP.url}
+                className="underline decoration-dark/20 underline-offset-4 hover:text-dark"
+              >
+                {VISIBLE_NAP.url}
+              </a>
+            </p>
+          </address>
         </div>
       </div>
 

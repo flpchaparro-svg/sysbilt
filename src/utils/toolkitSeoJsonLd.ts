@@ -1,6 +1,7 @@
-import {SITE_ORIGIN} from '../constants/seoMeta'
-import {getCategoryLabel, type ToolkitCategory} from '../constants/toolkit'
-import {urlFor} from '../sanityClient'
+import { SITE_ORIGIN } from '../constants/seoMeta';
+import { organizationIdRef } from '../constants/organizationJsonLd';
+import { getCategoryLabel, type ToolkitCategory } from '../constants/toolkit';
+import { urlFor } from '../sanityClient';
 
 function toIsoDateTime(value: string | undefined): string | undefined {
   if (!value) return undefined
@@ -57,15 +58,7 @@ export function buildToolkitArticleJsonLd(params: {
     description: pageDescription,
     ...(dateModified ? {dateModified} : {}),
     author,
-    publisher: {
-      '@type': 'Organization',
-      name: 'SYSBILT',
-      url: SITE_ORIGIN,
-      logo: {
-        '@type': 'ImageObject',
-        url: `${SITE_ORIGIN}/images/og-sysbilt.png`,
-      },
-    },
+    publisher: organizationIdRef(),
     mainEntityOfPage: {
       '@type': 'WebPage',
       '@id': canonicalUrl,

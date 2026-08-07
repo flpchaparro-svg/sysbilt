@@ -8,9 +8,8 @@ import BackButton from '../components/BackButton';
 import VideoHUD from '../components/Architect/VideoHUD';
 
 // HOOKS & DATA
-import { Helmet } from 'react-helmet-async';
 import { PageMeta } from '../components/PageMeta';
-import { SEO_META, SITE_ORIGIN } from '../constants/seoMeta';
+import { SEO_META } from '../constants/seoMeta';
 import { ARCHITECT_CONTENT } from '../constants/architectData'; 
 
 interface ArchitectPageProps {
@@ -63,36 +62,6 @@ const ArchitectPage: React.FC<ArchitectPageProps> = ({ onBack, onNavigate }) => 
         description={SEO_META.architect.description}
         canonical={SEO_META.architect.canonical}
       />
-      <Helmet>
-        <script type="application/ld+json">
-          {JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'Organization',
-            name: 'SYSBILT',
-            url: SITE_ORIGIN,
-            logo: `${SITE_ORIGIN}/images/og-sysbilt.png`,
-            description: SEO_META.architect.description,
-            slogan: 'Sydney-based team building integrated business systems for Australian companies.',
-            address: {
-              '@type': 'PostalAddress',
-              addressLocality: 'Sydney',
-              addressRegion: 'NSW',
-              addressCountry: 'AU',
-            },
-            areaServed: [
-              { '@type': 'Country', name: 'Australia' },
-              { '@type': 'AdministrativeArea', name: 'New South Wales' },
-            ],
-            sameAs: ['https://www.linkedin.com/in/felipe-chaparro-97a390176/'],
-            founder: {
-              '@type': 'Person',
-              name: 'Felipe Chaparro',
-              jobTitle: 'Founder',
-              sameAs: 'https://www.linkedin.com/in/felipe-chaparro-97a390176/',
-            },
-          })}
-        </script>
-      </Helmet>
       <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 w-full flex-grow relative z-10">
         
         <div className="flex justify-between items-center mb-12 md:mb-20 pt-24 relative z-[200]">
