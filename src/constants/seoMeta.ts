@@ -18,7 +18,7 @@ export const SEO_META = {
   architect: {
     title: 'About SYSBILT | Business Systems Team',
     description:
-      'Meet the SYSBILT team. We build business systems for Australian companies doing $1M to $20M in revenue.',
+      'Meet the SYSBILT team. We build business systems for growing Australian companies.',
     canonical: `${SITE_ORIGIN}/architect`,
   },
   proof: {
@@ -80,7 +80,7 @@ export const SEO_META = {
   pillar1: {
     title: 'Websites & E-commerce for Australian Businesses | SYSBILT',
     description:
-      'We build websites and e-commerce systems that capture leads and connect to your CRM. For Australian businesses doing $1M to $20M.',
+      'We build websites and e-commerce systems that capture leads and connect to your CRM. For growing Australian businesses.',
     canonical: `${SITE_ORIGIN}/pillar1`,
   },
   pillar2: {
@@ -92,7 +92,7 @@ export const SEO_META = {
   pillar3: {
     title: 'Business Automation for Australian Companies | SYSBILT',
     description:
-      'We build automations that move data between your tools, send follow-ups, and handle admin. Using Make.com and n8n for businesses doing $1M to $20M.',
+      'We build automations that move data between your tools, send follow-ups, and handle admin. Using Make.com and n8n for growing Australian businesses.',
     canonical: `${SITE_ORIGIN}/pillar3`,
   },
   pillar4: {

@@ -38,10 +38,9 @@ Docs say **70** blog posts. Build manifest (`BLOG_SLUGS`) has **69** published s
 
 Docs say **224** URLs (verified live 2026-07-07). Manifest-only arithmetic today: 69 blog + 24 toolkit + 10 standalone guides + 8 book hubs + (8 × 12) chapters + core routes ≈ **222** content slugs before static/pillar routes. Re-run `/sitemap.xml` or `verify-seo` after sync; update docs if the count moved.
 
-### 3. Revenue band on `/architect` — **fix site (violates BRAND_FACTS)**
+### 3. Revenue band in public meta — **fixed**
 
-`BRAND_FACTS.md` says revenue range **never** appears in reader-facing copy.  
-`src/constants/seoMeta.ts` → `architect.description` still includes **"$1M to $20M"**. Remove or rephrase to match the growing-companies standard.
+`$1M to $20M` was removed from `/architect`, `/pillar1`, and `/pillar3` meta descriptions in `seoMeta.ts` and `stamp-meta.mjs`. Reader-facing copy now uses growing-companies language per `BRAND_FACTS.md`.
 
 ### 4. Persona guide: “system pages” — **fix PERSONA guide**
 

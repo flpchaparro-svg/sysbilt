@@ -173,7 +173,7 @@ const STATIC_ROUTES = [
     path: '/architect',
     title: 'About SYSBILT | Business Systems Team',
     description:
-      'Meet the SYSBILT team. We build business systems for Australian companies doing $1M to $20M in revenue.',
+      'Meet the SYSBILT team. We build business systems for growing Australian companies.',
   },
   {
     path: '/proof',
@@ -251,7 +251,7 @@ const STATIC_ROUTES = [
     path: '/pillar1',
     title: 'Websites & E-commerce for Australian Businesses | SYSBILT',
     description:
-      'We build websites and e-commerce systems that capture leads and connect to your CRM. For Australian businesses doing $1M to $20M.',
+      'We build websites and e-commerce systems that capture leads and connect to your CRM. For growing Australian businesses.',
   },
   {
     path: '/pillar2',
@@ -263,7 +263,7 @@ const STATIC_ROUTES = [
     path: '/pillar3',
     title: 'Business Automation for Australian Companies | SYSBILT',
     description:
-      'We build automations that move data between your tools, send follow-ups, and handle admin. Using Make.com and n8n for businesses doing $1M to $20M.',
+      'We build automations that move data between your tools, send follow-ups, and handle admin. Using Make.com and n8n for growing Australian businesses.',
   },
   {
     path: '/pillar4',
