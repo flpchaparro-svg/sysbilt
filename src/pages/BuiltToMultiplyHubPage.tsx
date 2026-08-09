@@ -16,6 +16,17 @@ export default function BuiltToMultiplyHubPage() {
     <div className="min-h-screen bg-cream text-dark selection:bg-dark selection:text-cream pt-[100px] md:pt-[140px] pb-16 md:pb-24">
       <PageMeta title={htmlTitle} description={description} canonical={hubUrl} ogImage={`${SITE_ORIGIN}${BTM_HUB_OG}`} />
       <div className="mx-auto w-full max-w-[840px] px-4 md:px-6">
+        <nav aria-label="Breadcrumb" className="mb-8 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-dark/45">
+          <Link to="/" className="hover:text-dark transition-colors">
+            Home
+          </Link>
+          <span className="mx-2">/</span>
+          <Link to="/guides" className="hover:text-dark transition-colors">
+            Guides
+          </Link>
+          <span className="mx-2">/</span>
+          <span className="text-dark/70">{BTM_META.title}</span>
+        </nav>
         <Link to="/guides" className="inline-flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark/45 hover:text-dark transition-colors mb-10">
           <ArrowLeft className="h-4 w-4" /> All Guides
         </Link>

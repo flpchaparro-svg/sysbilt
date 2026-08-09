@@ -12,11 +12,20 @@ import { ServiceDetail } from './types';
 import NotFoundPage from './pages/NotFoundPage';
 import { ClientOnly } from './site/ClientOnly';
 
-// Wave B1 required-body pilots: EAGER (not lazy) so the SSR renderer can
+// Wave B required-body routes: EAGER (not lazy) so the SSR renderer can
 // produce a real body synchronously, with no Suspense boundary to resolve.
 import BlogPostPage from './pages/BlogPostPage';
 import BtwChapterArticlePage from './pages/BtwChapterArticlePage';
 import Pillar1 from './pages/System/Pillar1';
+import GuidesPage from './pages/GuidesHubPage';
+import BuiltToWorkHubPage from './pages/BuiltToWorkHubPage';
+import BuiltToSellHubPage from './pages/BuiltToSellHubPage';
+import BuiltToCloseHubPage from './pages/BuiltToCloseHubPage';
+import BuiltToRunHubPage from './pages/BuiltToRunHubPage';
+import BuiltToThinkHubPage from './pages/BuiltToThinkHubPage';
+import BuiltToMultiplyHubPage from './pages/BuiltToMultiplyHubPage';
+import BuiltToTeachHubPage from './pages/BuiltToTeachHubPage';
+import BuiltToSeeHubPage from './pages/BuiltToSeeHubPage';
 
 // PERFORMANCE: Keep HomePage Lazy
 const HomePage = lazy(() => import('./pages/HomePage'));
@@ -36,29 +45,20 @@ const WebsiteAgreementPage = lazy(() => import('./pages/funnel/WebsiteAgreementP
 const QuoteCaptureDemoPage = lazy(() => import('./pages/demo/quoteCapture/QuoteCaptureDemoPage'));
 const BlogPage = lazy(() => import('./pages/BlogPage'));
 const NewsPage = lazy(() => import('./pages/NewsPage'));
-const GuidesPage = lazy(() => import('./pages/GuidesHubPage'));
 const GuideDocumentPage = lazy(() => import('./pages/GuideDocumentPage'));
-const BuiltToWorkHubPage = lazy(() => import('./pages/BuiltToWorkHubPage'));
 const BuiltToWorkBookPage = lazy(() => import('./pages/BuiltToWorkBookPage'));
-const BuiltToSellHubPage = lazy(() => import('./pages/BuiltToSellHubPage'));
 const BuiltToSellBookPage = lazy(() => import('./pages/BuiltToSellBookPage'));
 const BtsChapterArticlePage = lazy(() => import('./pages/BtsChapterArticlePage'));
-const BuiltToCloseHubPage = lazy(() => import('./pages/BuiltToCloseHubPage'));
 const BuiltToCloseBookPage = lazy(() => import('./pages/BuiltToCloseBookPage'));
 const BtcChapterArticlePage = lazy(() => import('./pages/BtcChapterArticlePage'));
-const BuiltToRunHubPage = lazy(() => import('./pages/BuiltToRunHubPage'));
 const BuiltToRunBookPage = lazy(() => import('./pages/BuiltToRunBookPage'));
 const BtrChapterArticlePage = lazy(() => import('./pages/BtrChapterArticlePage'));
-const BuiltToThinkHubPage = lazy(() => import('./pages/BuiltToThinkHubPage'));
 const BuiltToThinkBookPage = lazy(() => import('./pages/BuiltToThinkBookPage'));
 const BttChapterArticlePage = lazy(() => import('./pages/BttChapterArticlePage'));
-const BuiltToMultiplyHubPage = lazy(() => import('./pages/BuiltToMultiplyHubPage'));
 const BuiltToMultiplyBookPage = lazy(() => import('./pages/BuiltToMultiplyBookPage'));
 const BtmChapterArticlePage = lazy(() => import('./pages/BtmChapterArticlePage'));
-const BuiltToTeachHubPage = lazy(() => import('./pages/BuiltToTeachHubPage'));
 const BuiltToTeachBookPage = lazy(() => import('./pages/BuiltToTeachBookPage'));
 const BteChapterArticlePage = lazy(() => import('./pages/BteChapterArticlePage'));
-const BuiltToSeeHubPage = lazy(() => import('./pages/BuiltToSeeHubPage'));
 const BuiltToSeeBookPage = lazy(() => import('./pages/BuiltToSeeBookPage'));
 const BseChapterArticlePage = lazy(() => import('./pages/BseChapterArticlePage'));
 const ToolkitPage = lazy(() => import('./pages/ToolkitPage'));

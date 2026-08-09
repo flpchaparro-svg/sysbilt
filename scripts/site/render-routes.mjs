@@ -138,10 +138,24 @@ function buildBlogRouteData(snapshot, slug) {
   return { slug, post, relatedPosts: related };
 }
 
-/** `null` for pilots that derive everything from static/code content (Pillar1, the BTW chapter). */
+/** Sanity guide cards for `/guides`, reshaped to the client fetch shape (`slug.current`). */
+function buildGuidesHubRouteData(snapshot) {
+  const guides = (snapshot.guides ?? []).map((g) => ({
+    title: g.title,
+    subtitle: g.subtitle,
+    slug: { current: g.slug },
+    servicePillar: g.servicePillar,
+  }));
+  return { guides };
+}
+
+/** `null` for routes that derive everything from static/code content. */
 function routeDataFor(routePath, snapshot) {
   if (routePath.startsWith('/blog/')) {
     return buildBlogRouteData(snapshot, routePath.slice('/blog/'.length));
+  }
+  if (routePath === '/guides') {
+    return buildGuidesHubRouteData(snapshot);
   }
   return null;
 }

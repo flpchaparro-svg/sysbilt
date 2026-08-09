@@ -2,7 +2,8 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { m, AnimatePresence } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
-import { PageMeta } from '../components/PageMeta';
+import { RouteHead } from '../site/RouteHead';
+import { useRouteData } from '../site/RouteContentProvider';
 import { SITE_ORIGIN } from '../constants/seoMeta';
 import { organizationIdRef } from '../constants/organizationJsonLd';
 import ShareButton from '../components/ShareButton';
@@ -23,6 +24,10 @@ type HubGuide = {
   subtitle?: string;
   slug?: { current: string };
   servicePillar?: string[]; // Now explicitly an array from Sanity
+};
+
+type GuidesHubRouteData = {
+  guides?: HubGuide[];
 };
 
 // Phase Constants for strict mapping
@@ -145,12 +150,19 @@ const matchesFilter = (pillars: string[] | undefined, filter: string) => {
 };
 
 export default function GuidesHubPage() {
-  const [guides, setGuides] = useState<HubGuide[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const routeData = useRouteData<GuidesHubRouteData>();
+  const initialGuides = routeData?.guides;
+  const [guides, setGuides] = useState<HubGuide[]>(() => initialGuides ?? []);
+  const [isLoading, setIsLoading] = useState(() => !initialGuides);
   const [activeFilter, setActiveFilter] = useState('All Guides');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
+    if (initialGuides) {
+      setGuides(initialGuides);
+      setIsLoading(false);
+      return;
+    }
     const query = `*[_type == "guide"] | order(publishedAt desc) {
       title,
       subtitle,
@@ -162,7 +174,7 @@ export default function GuidesHubPage() {
       setGuides(data);
       setIsLoading(false);
     });
-  }, []);
+  }, [initialGuides]);
 
   const filterRows = [
     ['Website & E-commerce', 'CRM & Lead Tracking', 'Automation', 'Get Clients'],
@@ -186,7 +198,7 @@ export default function GuidesHubPage() {
 
   return (
     <div className="min-h-screen bg-cream font-sans selection:bg-dark selection:text-cream flex flex-col">
-      <PageMeta
+      <RouteHead
         title="Business System Guides for Growing Companies | SYSBILT"
         description="Deep guides on building business systems. Websites, CRM, automation, AI assistants, content systems, team training, and dashboards. Free to read and download."
         canonical={GUIDES_HUB_URL}
@@ -201,7 +213,18 @@ export default function GuidesHubPage() {
 
         {/* HERO */}
         <section className="px-6 md:px-12 max-w-[1400px] mx-auto mb-12 md:mb-16 relative z-10 text-center">
-          <m.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
+          <nav
+            aria-label="Breadcrumb"
+            className="mb-8 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-dark/45 text-left max-w-5xl mx-auto"
+          >
+            <Link to="/" className="hover:text-dark transition-colors">
+              Home
+            </Link>
+            <span className="mx-2">/</span>
+            <span className="text-dark/70">Guides</span>
+          </nav>
+          {/* initial={false}: keep H1 visible in raw SSR HTML (no opacity-0 first paint). */}
+          <m.div initial={false} animate={{ opacity: 1, y: 0 }}>
             <div className="relative w-16 h-16 md:w-20 md:h-20 bg-cream rounded-full shadow-neu mx-auto flex items-center justify-center mb-6">
               <div className="w-10 h-10 md:w-12 md:h-12 bg-cream rounded-full shadow-neu-inner flex items-center justify-center">
                 <BookOpen size={20} className="text-red-text" strokeWidth={2} />

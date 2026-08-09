@@ -347,6 +347,33 @@ function checkRequiredBodyRoute(route, html) {
   if (words < threshold) {
     addViolation(`${p} — required-body route has ${words} words, below the ${threshold}-word threshold`);
   }
+
+  // Guides hubs cohort: raw HTML must expose crawlable child links.
+  if (p === '/guides') {
+    for (const hub of [
+      '/guides/built-to-work',
+      '/guides/built-to-sell',
+      '/guides/built-to-close',
+      '/guides/built-to-run',
+      '/guides/built-to-think',
+      '/guides/built-to-multiply',
+      '/guides/built-to-teach',
+      '/guides/built-to-see',
+    ]) {
+      if (!html.includes(`href="${hub}"`)) {
+        addViolation(`${p} — missing featured book hub link ${hub}`);
+      }
+    }
+  } else if (
+    p.startsWith('/guides/built-to-') &&
+    p.split('/').length === 3
+  ) {
+    // Book hub: expect at least one chapter child path under this hub.
+    const chapterPrefix = `${p}/`;
+    if (!html.includes(`href="${chapterPrefix}`)) {
+      addViolation(`${p} — missing chapter links under ${chapterPrefix}`);
+    }
+  }
 }
 
 /** Guard v2: `temporary-legacy-shell` routes stay head-only; the client hydrates and renders the body. */
