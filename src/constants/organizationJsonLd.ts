@@ -16,7 +16,12 @@ export const VISIBLE_NAP = {
  */
 export const PUBLIC_TELEPHONE: string | null = null;
 
-const LINKEDIN_COMPANY_URL = 'https://www.linkedin.com/company/112107023';
+/** Public social profiles. Keep byte-identical with GlobalFooter + GBP social fields. */
+export const SOCIAL_PROFILE_URLS = [
+  'https://www.linkedin.com/company/112107023',
+  'https://www.instagram.com/sysbilt/',
+  'https://www.facebook.com/profile.php?id=61577590740296',
+] as const;
 
 export const ORGANIZATION_ID = `${SITE_ORIGIN}/#organization` as const;
 
@@ -56,7 +61,7 @@ export function buildProfessionalServiceJsonLd(): Record<string, unknown> {
     email: 'hello@sysbilt.com',
     knowsLanguage: ['en-AU'],
     founder: { '@type': 'Person', name: 'Felipe Chaparro' },
-    sameAs: [LINKEDIN_COMPANY_URL],
+    sameAs: [...SOCIAL_PROFILE_URLS],
   };
 
   if (PUBLIC_TELEPHONE) {
