@@ -173,7 +173,7 @@ export default function SystemPhases({ onNavigate }: SystemPhasesProps) {
         {/* CTA BUTTON */}
         <m.div
           className="mt-20 md:mt-32 flex justify-center"
-          initial={{ opacity: 0, y: 16 }}
+          initial={false}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.2 }}

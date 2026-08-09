@@ -17,7 +17,6 @@
  * plus new per-policy checks from `src/site/routePolicy.ts`:
  *   - required-body: unique <h1>, minimum word count, a breadcrumb nav, no
  *     leftover shell placeholder, data-ssr="1", a stylesheet link
- *   - temporary-legacy-shell: no data-ssr="1" (head-only; client hydrates)
  *   - noindex-shell: noindex stamped, no data-ssr="1", excluded from the sitemap
  * and that the sitemap set and the stamped indexable set agree in both directions.
  *
@@ -386,14 +385,6 @@ function checkRequiredBodyRoute(route, html) {
     if (!html.includes('href="/blog/')) {
       addViolation(`${p} — missing blog post links`);
     }
-  }
-}
-
-/** Guard v2: `temporary-legacy-shell` routes stay head-only; the client hydrates and renders the body. */
-function checkLegacyShellRoute(route, html) {
-  if (html == null) return;
-  if (html.includes('data-ssr="1"')) {
-    addViolation(`${route.path} — temporary-legacy-shell route unexpectedly has data-ssr="1"`);
   }
 }
 
@@ -829,23 +820,25 @@ async function main() {
     addViolation('required-body — no /guides/:slug Sanity guide routes found in the built route list');
   }
 
-  const legacyPaths = [...routePaths].filter((p) => bodyPolicyForPath(p) === 'temporary-legacy-shell');
-  if (legacyPaths.length !== 1 || legacyPaths[0] !== '/') {
-    addViolation(
-      `temporary-legacy-shell — expected only /, found ${legacyPaths.length}: ${legacyPaths.join(', ') || '(none)'}`
-    );
+  if (!routePaths.has('/')) {
+    addViolation('required-body — / is missing from the built route list');
   }
 
-  const policyCounts = { 'required-body': 0, 'temporary-legacy-shell': 0, 'noindex-shell': NOINDEX_BOOK_READ_PATHS.length };
+  const policyCounts = { 'required-body': 0, 'noindex-shell': NOINDEX_BOOK_READ_PATHS.length };
 
   for (const route of routes) {
     const html = await readDist(route.path);
     checkRouteHtml(route, html);
 
-    const policy = bodyPolicyForPath(route.path);
+    let policy;
+    try {
+      policy = bodyPolicyForPath(route.path);
+    } catch (err) {
+      addViolation(err instanceof Error ? err.message : String(err));
+      continue;
+    }
     policyCounts[policy] += 1;
     if (policy === 'required-body') checkRequiredBodyRoute(route, html);
-    else if (policy === 'temporary-legacy-shell') checkLegacyShellRoute(route, html);
     else checkNoindexShellRoute(route.path, html);
   }
 
@@ -908,7 +901,6 @@ async function main() {
   }
   console.log(
     `[verify-seo] Policy counts — required-body: ${policyCounts['required-body']}, ` +
-      `temporary-legacy-shell: ${policyCounts['temporary-legacy-shell']}, ` +
       `noindex-shell: ${policyCounts['noindex-shell']}.`
   );
 

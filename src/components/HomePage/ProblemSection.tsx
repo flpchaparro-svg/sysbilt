@@ -12,7 +12,7 @@ const ProblemSection: React.FC = () => {
     <m.section 
       id="problem" 
       aria-label="Problem Section" 
-      initial={{ opacity: 0 }} 
+      initial={false}
       whileInView={{ opacity: 1 }} 
       viewport={{ once: true, margin: "-100px" }} 
       className="w-full bg-cream py-16 md:py-24 lg:py-32 px-6 md:px-12 lg:px-20 relative z-30 overflow-hidden"

@@ -51,9 +51,8 @@ import Pillar4 from './pages/System/Pillar4';
 import Pillar5 from './pages/System/Pillar5';
 import Pillar6 from './pages/System/Pillar6';
 import Pillar7 from './pages/System/Pillar7';
+import HomePage from './pages/HomePage';
 
-// PERFORMANCE: Keep HomePage Lazy (homepage cohort is last)
-const HomePage = lazy(() => import('./pages/HomePage'));
 const FunnelPage = lazy(() => import('./pages/funnel/FunnelPage'));
 const FunnelHomePage = lazy(() => import('./pages/funnel/FunnelHomePage'));
 const FunnelThanksPage = lazy(() => import('./pages/funnel/FunnelThanksPage'));

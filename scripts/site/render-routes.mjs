@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Wave B1 build orchestrator: turns the content snapshot + the client Vite
+ * Wave B build orchestrator: turns the content snapshot + the client Vite
  * build into the deployed `dist/` HTML for every route.
  *
  * - `required-body` routes (see `src/site/routePolicy.ts`) get a real
@@ -11,11 +11,8 @@
  *   those), and splices the remaining body markup into `#root` with
  *   `data-ssr="1"` and an embedded `window.__SYSBILT_ROUTE_DATA__` payload
  *   for the client to hydrate against with no re-fetch.
- * - Every other indexable route keeps Wave A's behaviour: head-only
- *   stamping via `stampHtml`, `#root` left as the client's static
- *   placeholder, and the client hydrates/renders normally on load
- *   (`temporary-legacy-shell`) or is stamped `noindex` and excluded from
- *   the sitemap (`noindex-shell`).
+ * - `noindex-shell` routes keep head-only stamping via `stampHtml`, with
+ *   robots noindex and no SSR body.
  *
  * Also writes `dist/sitemap.xml` and `.build/route-catalog.json` (the full
  * per-route policy + word-count record `verify-seo.mjs` Guard v2 reads).
@@ -334,10 +331,16 @@ async function main() {
   const { render } = await import(pathToFileURL(SSR_ENTRY_PATH).href);
 
   const catalog = [];
-  const policyCounts = { 'required-body': 0, 'temporary-legacy-shell': 0, 'noindex-shell': 0 };
+  const policyCounts = { 'required-body': 0, 'noindex-shell': 0 };
 
   for (const route of allRoutes) {
-    const policy = bodyPolicyForPath(route.path);
+    let policy;
+    try {
+      policy = bodyPolicyForPath(route.path);
+    } catch (err) {
+      console.error(err instanceof Error ? err.message : err);
+      process.exit(1);
+    }
     let html;
     let wordCount = null;
 
@@ -410,6 +413,11 @@ async function main() {
     process.exit(1);
   }
 
+  if (!renderedRequired.includes('/')) {
+    console.error('[render-routes] / required-body homepage is missing from the rendered set.');
+    process.exit(1);
+  }
+
   const sanityGuideCount = renderedRequired.filter((p) => isSanityGuidePath(p)).length;
   const snapshotSanityGuideCount = (snapshot.guides ?? []).filter(
     (g) => g.slug && isSanityGuidePath(`/guides/${g.slug}`)
@@ -442,8 +450,7 @@ async function main() {
 
   console.log(
     `[render-routes] Rendered ${allRoutes.length + NOINDEX_BOOK_READ_PATHS.length} routes ` +
-      `(${policyCounts['required-body']} required-body, ${policyCounts['temporary-legacy-shell']} temporary-legacy-shell, ` +
-      `${policyCounts['noindex-shell']} noindex-shell).`
+      `(${policyCounts['required-body']} required-body, ${policyCounts['noindex-shell']} noindex-shell).`
   );
   console.log(`[render-routes] Code-book chapters: ${chapterCount}/${EXPECTED_CODE_BOOK_CHAPTER_COUNT}.`);
   console.log(`[render-routes] Toolkit items: ${toolkitItemCount}/${snapshotToolkitCount}.`);

@@ -1,7 +1,10 @@
 /**
- * Wave B route policy: classifies every route into one of three SSR body
+ * Wave B route policy: classifies every route into one of two SSR body
  * strategies. Shared by `scripts/site/render-routes.mjs` and
  * `scripts/site/verify-seo.mjs`.
+ *
+ * Every indexable route is `required-body`. Funnel, news, and `/read`
+ * editions are `noindex-shell`. There is no legacy head-only shell left.
  */
 
 /** Guides collection hub + eight book hubs. */
@@ -23,6 +26,7 @@ export const GUIDES_HUB_REQUIRED_BODY_PATHS = [
  * blog posts use `isBlogPostPath`; Sanity guides use `isSanityGuidePath`.
  */
 export const STATIC_REQUIRED_BODY_PATHS = [
+  '/',
   '/architect',
   '/contact',
   '/evidence-vault',
@@ -49,7 +53,7 @@ export const REQUIRED_BODY_PATHS = [
 
 export type RequiredBodyPath = (typeof REQUIRED_BODY_PATHS)[number] | string;
 
-export type RouteBodyPolicy = 'required-body' | 'temporary-legacy-shell' | 'noindex-shell';
+export type RouteBodyPolicy = 'required-body' | 'noindex-shell';
 
 /** Guide book hub slugs that print a static "read online" long-form edition; always noindex. */
 const BOOK_READ_HUB_SLUGS = [
@@ -140,9 +144,10 @@ export function wordThresholdForRequiredBodyPath(path: RequiredBodyPath | string
 /**
  * Classify a route path into its SSR body policy.
  *
- * - `required-body`: pilots, guides hubs, book chapters, toolkit, blog, Sanity guides.
+ * - `required-body`: every indexable public route (homepage, static, guides, blog, toolkit).
  * - `noindex-shell`: funnel, news, `/read` editions.
- * - `temporary-legacy-shell`: every other indexable route until a later cohort.
+ *
+ * Unclassified paths throw so a new route cannot silently ship without a body policy.
  */
 export function bodyPolicyForPath(path: string): RouteBodyPolicy {
   const normalised = path === '' ? '/' : path;
@@ -161,7 +166,7 @@ export function bodyPolicyForPath(path: string): RouteBodyPolicy {
     return 'noindex-shell';
   }
 
-  return 'temporary-legacy-shell';
+  throw new Error(`[routePolicy] Unclassified body policy for path: ${normalised}`);
 }
 
 export function isRequiredBodyPath(path: string): boolean {

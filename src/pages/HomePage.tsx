@@ -1,23 +1,18 @@
-import React, { useState, useRef, useEffect, lazy, Suspense } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { m, useScroll, useMotionValueEvent, useAnimationFrame, useMotionValue, useTransform } from 'framer-motion';
 import CTAButton from '../components/CTAButton';
 import GuideLibrarySection from '../components/HomePage/GuideLibrarySection';
-import { PageMeta } from '../components/PageMeta';
 import ScrambleTitle from '../components/HomePage/ScrambleTitle';
+import BookingCTA from '../components/HomePage/BookingCTA';
+import HeroVisual from '../components/HomePage/HeroVisual';
+import ProblemSection from '../components/HomePage/ProblemSection';
+import FrictionAuditSection from '../components/HomePage/FrictionAuditSection';
+import SystemPhases from '../components/HomePage/SystemPhases';
+import TheArchitect from '../components/HomePage/TheArchitect';
+import Feature_Group7 from '../components/HomePage/Feature_Group7';
+import { RouteHead } from '../site/RouteHead';
+import { ClientOnly } from '../site/ClientOnly';
 import { SEO_META } from '../constants/seoMeta';
-
-// Lazy load BookingCTA (at bottom of page)
-const BookingCTA = lazy(() => import('../components/HomePage/BookingCTA'));
-
-// FIX: Lazy load HeroVisual so text paints FIRST
-const HeroVisual = lazy(() => import('../components/HomePage/HeroVisual'));
-
-// Lazy load below-the-fold content
-const ProblemSection = lazy(() => import('../components/HomePage/ProblemSection'));
-const FrictionAuditSection = lazy(() => import('../components/HomePage/FrictionAuditSection'));
-const SystemPhases = lazy(() => import('../components/HomePage/SystemPhases'));
-const TheArchitect = lazy(() => import('../components/HomePage/TheArchitect'));
-const Feature_Group7 = lazy(() => import('../components/HomePage/Feature_Group7'));
 
 const TECH_STACK = [
   'WEBSITES', 'CRM', 'AUTOMATION', 'AI ASSISTANTS', 'CONTENT', 'DASHBOARDS'
@@ -122,7 +117,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onServiceClick }) => {
 
   return (
     <>
-      <PageMeta
+      <RouteHead
         title={SEO_META.home.title}
         description={SEO_META.home.description}
         canonical={SEO_META.home.canonical}
@@ -131,13 +126,20 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onServiceClick }) => {
       <section id="hero" aria-label="Hero Section" className="min-h-[100svh] w-full flex items-center pt-32 md:pt-20 overflow-hidden relative z-20 content-layer">
 
         <div className="absolute inset-0 z-[1]">
-          <Suspense fallback={<div className="w-full h-full bg-transparent" />}>
+          <ClientOnly fallback={<div className="w-full h-full bg-transparent" aria-hidden="true" />}>
             <HeroVisual />
-          </Suspense>
+          </ClientOnly>
         </div>
 
         <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 relative z-20">
           <div className="lg:col-span-12 flex flex-col justify-start md:justify-center items-center lg:items-start text-center lg:text-left pt-8 md:pt-0">
+
+            <nav
+              aria-label="Breadcrumb"
+              className="mb-6 relative z-20 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-dark/45 w-full text-left"
+            >
+              <span className="text-dark/70">Home</span>
+            </nav>
 
             <h1 id="homepage-hero-heading" className="sr-only">
               Business Systems & Automation Agency Sydney | SYSBILT
@@ -162,16 +164,14 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onServiceClick }) => {
               </div>
 
               <p
-                className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/70 max-w-2xl border-l-2 border-gold pl-6 animate-fade-in text-left mx-auto lg:mx-0 mb-12 md:mb-0"
-                style={{ animationDelay: '0.6s' }}
+                className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/70 max-w-2xl border-l-2 border-gold pl-6 text-left mx-auto lg:mx-0 mb-12 md:mb-0"
               >
                 We build the systems that run your business without you
               </p>
             </div>
 
             <div
-              className="mt-10 md:mt-16 flex flex-col sm:flex-row items-center gap-6 md:gap-12 animate-fade-in relative z-30"
-              style={{ animationDelay: '0.8s' }}
+              className="mt-10 md:mt-16 flex flex-col sm:flex-row items-center gap-6 md:gap-12 relative z-30"
             >
               <CTAButton theme="light" to="/contact">
                 LET&apos;S TALK
@@ -212,35 +212,27 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onServiceClick }) => {
         </div>
       </section>
 
-      <Suspense fallback={<div className="min-h-[500px] bg-cream" />}>
-        <ProblemSection />
-      </Suspense>
+      <ProblemSection />
         
-      <Suspense fallback={<div className="min-h-[300px] bg-cream" />}>
-        <section id="friction-audit" aria-label="Friction Audit Section" className="relative bg-cream z-30">
-          <FrictionAuditSection onNavigate={onNavigate} />
-        </section>
-      </Suspense>
+      <section id="friction-audit" aria-label="Friction Audit Section" className="relative bg-cream z-30">
+        <FrictionAuditSection onNavigate={onNavigate} />
+      </section>
 
-      <Suspense fallback={<div className="min-h-[300px] bg-cream" />}>
-        <section id="seven-pillars" className="relative bg-cream z-30">
-          <SystemPhases onNavigate={onNavigate} />
-        </section>
-      </Suspense>
+      <section id="seven-pillars" className="relative bg-cream z-30">
+        <SystemPhases onNavigate={onNavigate} />
+      </section>
 
       <GuideLibrarySection />
 
-      <Suspense fallback={<div className="min-h-[300px] bg-cream" />}>
-        <section id="about" className="relative bg-cream z-30">
-          <TheArchitect />
-        </section>
-        <section id="case-study" className="relative bg-cream z-30">
-          <Feature_Group7 />
-        </section>
-        <section id="cta" aria-label="Call to Action Section" className="relative bg-cream z-30">
-          <BookingCTA />
-        </section>
-      </Suspense>
+      <section id="about" className="relative bg-cream z-30">
+        <TheArchitect />
+      </section>
+      <section id="case-study" className="relative bg-cream z-30">
+        <Feature_Group7 />
+      </section>
+      <section id="cta" aria-label="Call to Action Section" className="relative bg-cream z-30">
+        <BookingCTA />
+      </section>
       </article>
     </>
   );

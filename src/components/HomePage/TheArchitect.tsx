@@ -13,7 +13,7 @@ const TheArchitect: React.FC = () => {
       
           {/* LEFT: LIVING PORTRAIT CONTAINER */}
           <m.div 
-            initial={{ opacity: 0, x: -30 }}
+            initial={false}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
@@ -29,7 +29,7 @@ const TheArchitect: React.FC = () => {
                 {/* Video in 9:16 ratio */}
                 <m.div
                   className="w-full h-full relative"
-                  initial={{ opacity: 0 }}
+                  initial={false}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.5 }}
                 >
@@ -123,7 +123,7 @@ const TheArchitect: React.FC = () => {
             <AnimatePresence mode="wait">
               <m.div
                 key={mode}
-                initial={{ opacity: 0, y: 20 }}
+                initial={false}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.5 }}
