@@ -18,13 +18,13 @@ export const GUIDES_HUB_REQUIRED_BODY_PATHS = [
 ] as const;
 
 /**
- * Explicit required-body paths that are not inferred (B1 pilots that are not
- * book chapters, plus guides hubs). All code-defined book chapters are
- * classified via `isCodeBookChapterPath` instead of listing 96 slugs here.
+ * Explicit required-body paths that are not inferred (pilots, hubs).
+ * Book chapters use `isCodeBookChapterPath`; toolkit items use `isToolkitItemPath`.
  */
 export const REQUIRED_BODY_PATHS = [
   '/pillar1',
   '/blog/after-hours-phone-answering-ai-vs-answering',
+  '/toolkit',
   ...GUIDES_HUB_REQUIRED_BODY_PATHS,
 ] as const;
 
@@ -68,10 +68,18 @@ export function isCodeBookChapterPath(path: string): boolean {
   return BOOK_HUB_SLUG_SET.has(parts[1]);
 }
 
+/** `/toolkit/:slug` item pages (not the `/toolkit` index). */
+export function isToolkitItemPath(path: string): boolean {
+  const parts = path.split('/').filter(Boolean);
+  return parts.length === 2 && parts[0] === 'toolkit' && parts[1].length > 0;
+}
+
 /** Word-count minimums verify-seo enforces on `required-body` routes, by route shape. */
 export const REQUIRED_BODY_WORD_THRESHOLDS = {
   staticOrPillar: 100,
   guidesHub: 120,
+  toolkitHub: 120,
+  toolkitItem: 450,
   chapter: 600,
   blog: 600,
 } as const;
@@ -81,6 +89,8 @@ export const EXPECTED_CODE_BOOK_CHAPTER_COUNT = 96;
 
 export function wordThresholdForRequiredBodyPath(path: RequiredBodyPath | string): number {
   if (path.startsWith('/blog/')) return REQUIRED_BODY_WORD_THRESHOLDS.blog;
+  if (path === '/toolkit') return REQUIRED_BODY_WORD_THRESHOLDS.toolkitHub;
+  if (isToolkitItemPath(path)) return REQUIRED_BODY_WORD_THRESHOLDS.toolkitItem;
   if (GUIDES_HUB_PATH_SET.has(path)) return REQUIRED_BODY_WORD_THRESHOLDS.guidesHub;
   if (isCodeBookChapterPath(path) || path.startsWith('/guides/')) {
     return REQUIRED_BODY_WORD_THRESHOLDS.chapter;
@@ -91,14 +101,18 @@ export function wordThresholdForRequiredBodyPath(path: RequiredBodyPath | string
 /**
  * Classify a route path into its SSR body policy.
  *
- * - `required-body`: pilots, guides hubs, and all code-defined book chapters.
+ * - `required-body`: pilots, guides hubs, book chapters, toolkit index + items.
  * - `noindex-shell`: funnel, news, `/read` editions.
  * - `temporary-legacy-shell`: every other indexable route until a later cohort.
  */
 export function bodyPolicyForPath(path: string): RouteBodyPolicy {
   const normalised = path === '' ? '/' : path;
 
-  if ((REQUIRED_BODY_PATHS as readonly string[]).includes(normalised) || isCodeBookChapterPath(normalised)) {
+  if (
+    (REQUIRED_BODY_PATHS as readonly string[]).includes(normalised) ||
+    isCodeBookChapterPath(normalised) ||
+    isToolkitItemPath(normalised)
+  ) {
     return 'required-body';
   }
 

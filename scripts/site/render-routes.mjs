@@ -37,6 +37,7 @@ import {
   NOINDEX_BOOK_READ_PATHS,
   wordThresholdForRequiredBodyPath,
   isCodeBookChapterPath,
+  isToolkitItemPath,
   EXPECTED_CODE_BOOK_CHAPTER_COUNT,
 } from '../../src/site/routePolicy';
 import { BTW_META } from '../../src/built-to-work/types';
@@ -151,6 +152,58 @@ function buildGuidesHubRouteData(snapshot) {
   return { guides };
 }
 
+/** Toolkit index cards for `/toolkit`. */
+function buildToolkitHubRouteData(snapshot) {
+  const tools = (snapshot.toolkitItems ?? []).map((t) => ({
+    _id: t._id,
+    name: t.name,
+    slug: t.slug,
+    tagline: t.tagline,
+    category: t.category,
+    pricingModel: t.pricingModel,
+    picks: t.picks,
+    linkType: t.linkType,
+    url: t.url,
+    featured: t.featured,
+  }));
+  return { tools };
+}
+
+function toRelatedPostItemFromSnapshot(post) {
+  return {
+    title: post.title,
+    slug: { current: post.slug },
+    mainImage: post.mainImage,
+    servicePillar: post.servicePillar,
+    publishedAt: post.publishedAt,
+  };
+}
+
+/** Full toolkit item + related posts for `/toolkit/:slug`. */
+function buildToolkitItemRouteData(snapshot, slug) {
+  const item = (snapshot.toolkitItems ?? []).find((t) => t.slug === slug);
+  if (!item) return null;
+
+  const tags = Array.isArray(item.tags) ? item.tags : [];
+  const posts = snapshot.posts ?? [];
+  let related = [];
+  if (tags.length > 0) {
+    related = posts.filter((p) => Array.isArray(p.tags) && p.tags.some((tag) => tags.includes(tag)));
+  }
+  if (related.length < 3) {
+    const seen = new Set(related.map((p) => p.slug));
+    for (const p of posts) {
+      if (seen.has(p.slug)) continue;
+      related.push(p);
+      if (related.length >= 3) break;
+    }
+  }
+  related = related.slice(0, 3).map(toRelatedPostItemFromSnapshot);
+
+  const { authorName: _authorName, imageUrl: _imageUrl, ...tool } = item;
+  return { slug, tool, relatedPosts: related };
+}
+
 /** `null` for routes that derive everything from static/code content. */
 function routeDataFor(routePath, snapshot) {
   if (routePath.startsWith('/blog/')) {
@@ -158,6 +211,12 @@ function routeDataFor(routePath, snapshot) {
   }
   if (routePath === '/guides') {
     return buildGuidesHubRouteData(snapshot);
+  }
+  if (routePath === '/toolkit') {
+    return buildToolkitHubRouteData(snapshot);
+  }
+  if (routePath.startsWith('/toolkit/')) {
+    return buildToolkitItemRouteData(snapshot, routePath.slice('/toolkit/'.length));
   }
   return null;
 }
@@ -274,6 +333,20 @@ async function main() {
     process.exit(1);
   }
 
+  const toolkitItemCount = renderedRequired.filter((p) => isToolkitItemPath(p)).length;
+  const snapshotToolkitCount = (snapshot.toolkitItems ?? []).length;
+  if (toolkitItemCount !== snapshotToolkitCount) {
+    console.error(
+      `[render-routes] Expected ${snapshotToolkitCount} toolkit items with required-body, got ${toolkitItemCount}.`
+    );
+    process.exit(1);
+  }
+
+  if (!renderedRequired.includes('/toolkit')) {
+    console.error('[render-routes] /toolkit required-body index is missing from the rendered set.');
+    process.exit(1);
+  }
+
   const sitemap = buildSitemapXml(allRoutes, content);
   await writeFile(SITEMAP_PATH, sitemap.xml, 'utf8');
 
@@ -299,6 +372,7 @@ async function main() {
       `${policyCounts['noindex-shell']} noindex-shell).`
   );
   console.log(`[render-routes] Code-book chapters: ${chapterCount}/${EXPECTED_CODE_BOOK_CHAPTER_COUNT}.`);
+  console.log(`[render-routes] Toolkit items: ${toolkitItemCount}/${snapshotToolkitCount}.`);
 
   const underThreshold = [];
   for (const p of renderedRequired) {
@@ -317,7 +391,7 @@ async function main() {
   // Log a short sample: hubs + one chapter per book family + non-guide pilots.
   const samplePaths = renderedRequired.filter(
     (p) =>
-      !isCodeBookChapterPath(p) ||
+      (!isCodeBookChapterPath(p) && !isToolkitItemPath(p)) ||
       p.endsWith('/what-a-business-website-is-for') ||
       p.endsWith('/why-your-store-exists') ||
       p.endsWith('/why-your-business-needs-a-memory') ||
@@ -325,7 +399,8 @@ async function main() {
       p.endsWith('/why-everyone-talks-about-ai') ||
       p.endsWith('/why-content-and-why-most-is-wasted') ||
       p.endsWith('/why-good-systems-fail-without-trained-people') ||
-      p.endsWith('/why-youre-flying-blind-even-with-all-this-data')
+      p.endsWith('/why-youre-flying-blind-even-with-all-this-data') ||
+      p === '/toolkit/hubspot'
   );
   for (const p of samplePaths) {
     const entry = catalog.find((r) => r.path === p);

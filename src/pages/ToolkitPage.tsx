@@ -1,9 +1,10 @@
-import React, { useEffect, useMemo, useState, lazy, Suspense } from 'react'
+import React, { useEffect, useMemo, useState, lazy, Suspense, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { m, AnimatePresence } from 'framer-motion'
 import { Helmet } from 'react-helmet-async'
 import { ArrowRight, BookOpen, ChevronDown, ChevronUp, FileText } from 'lucide-react'
-import { PageMeta } from '../components/PageMeta'
+import { RouteHead } from '../site/RouteHead'
+import { useRouteData } from '../site/RouteContentProvider'
 import { SEO_META, SITE_ORIGIN } from '../constants/seoMeta'
 import { organizationIdRef } from '../constants/organizationJsonLd'
 import { client } from '../sanityClient'
@@ -86,14 +87,20 @@ function filterButtonClass(isActive: boolean): string {
 
 export default function ToolkitPage() {
   const navigate = useNavigate()
-  const [tools, setTools] = useState<ToolkitItemSummary[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const routeData = useRouteData<{ tools?: ToolkitItemSummary[] }>()
+  const initialToolsRef = useRef(routeData?.tools ?? null)
+  const [tools, setTools] = useState<ToolkitItemSummary[]>(() => initialToolsRef.current ?? [])
+  const [isLoading, setIsLoading] = useState(() => !initialToolsRef.current)
   const [activeCategory, setActiveCategory] = useState<string>('all')
   const [activePricing, setActivePricing] = useState<string>('all')
   const [isMobileCategoryOpen, setIsMobileCategoryOpen] = useState(false)
   const [isMobilePricingOpen, setIsMobilePricingOpen] = useState(false)
 
   useEffect(() => {
+    if (initialToolsRef.current) {
+      initialToolsRef.current = null
+      return
+    }
     client
       .fetch<ToolkitItemSummary[]>(TOOLKIT_INDEX_QUERY)
       .then((data) => {
@@ -141,7 +148,7 @@ export default function ToolkitPage() {
 
   return (
     <section className="w-full min-h-screen bg-dark text-cream font-sans">
-      <PageMeta
+      <RouteHead
         title={SEO_META.toolkitIndex.title}
         description={SEO_META.toolkitIndex.description}
         canonical={SEO_META.toolkitIndex.canonical}
@@ -152,8 +159,23 @@ export default function ToolkitPage() {
       </Helmet>
 
       <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 pt-32 md:pt-44 pb-20 w-full">
+        <nav
+          aria-label="Breadcrumb"
+          className="mb-8 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-cream/45"
+        >
+          <Link to="/" className="hover:text-cream transition-colors">
+            Home
+          </Link>
+          <span className="mx-2">/</span>
+          <Link to="/blog" className="hover:text-cream transition-colors">
+            Insights
+          </Link>
+          <span className="mx-2">/</span>
+          <span className="text-cream/70">Toolkit</span>
+        </nav>
+
         <header className="mb-12 md:mb-16 border-b-4 border-cream pb-10 md:pb-14">
-          <m.div initial={{opacity: 0, y: 16}} animate={{opacity: 1, y: 0}} transition={{duration: 0.6}}>
+          <m.div initial={false} animate={{ opacity: 1, y: 0 }}>
             <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-cream/50 mb-4 block">
               / TOOLKIT
             </span>

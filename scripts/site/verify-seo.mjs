@@ -90,6 +90,7 @@ import {
   NOINDEX_BOOK_READ_PATHS,
   wordThresholdForRequiredBodyPath,
   isCodeBookChapterPath,
+  isToolkitItemPath,
   EXPECTED_CODE_BOOK_CHAPTER_COUNT,
 } from '../../src/site/routePolicy';
 
@@ -374,6 +375,10 @@ function checkRequiredBodyRoute(route, html) {
     const chapterPrefix = `${p}/`;
     if (!html.includes(`href="${chapterPrefix}`)) {
       addViolation(`${p} — missing chapter links under ${chapterPrefix}`);
+    }
+  } else if (p === '/toolkit') {
+    if (!html.includes('href="/toolkit/')) {
+      addViolation(`${p} — missing toolkit item links`);
     }
   }
 }
@@ -795,6 +800,14 @@ async function main() {
     addViolation(
       `required-body — expected ${EXPECTED_CODE_BOOK_CHAPTER_COUNT} code-book chapters, found ${chapterPaths.length}`
     );
+  }
+
+  if (!routePaths.has('/toolkit')) {
+    addViolation('required-body — /toolkit is missing from the built route list');
+  }
+  const toolkitItemPaths = [...routePaths].filter((p) => isToolkitItemPath(p));
+  if (toolkitItemPaths.length === 0) {
+    addViolation('required-body — no /toolkit/:slug routes found in the built route list');
   }
 
   const policyCounts = { 'required-body': 0, 'temporary-legacy-shell': 0, 'noindex-shell': NOINDEX_BOOK_READ_PATHS.length };

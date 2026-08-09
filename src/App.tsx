@@ -33,6 +33,8 @@ import BuiltToThinkHubPage from './pages/BuiltToThinkHubPage';
 import BuiltToMultiplyHubPage from './pages/BuiltToMultiplyHubPage';
 import BuiltToTeachHubPage from './pages/BuiltToTeachHubPage';
 import BuiltToSeeHubPage from './pages/BuiltToSeeHubPage';
+import ToolkitPage from './pages/ToolkitPage';
+import ToolkitItemPage from './pages/ToolkitItemPage';
 
 // PERFORMANCE: Keep HomePage Lazy
 const HomePage = lazy(() => import('./pages/HomePage'));
@@ -61,8 +63,6 @@ const BuiltToThinkBookPage = lazy(() => import('./pages/BuiltToThinkBookPage'));
 const BuiltToMultiplyBookPage = lazy(() => import('./pages/BuiltToMultiplyBookPage'));
 const BuiltToTeachBookPage = lazy(() => import('./pages/BuiltToTeachBookPage'));
 const BuiltToSeeBookPage = lazy(() => import('./pages/BuiltToSeeBookPage'));
-const ToolkitPage = lazy(() => import('./pages/ToolkitPage'));
-const ToolkitItemPage = lazy(() => import('./pages/ToolkitItemPage'));
 const ProposalPage = lazy(() => import('./pages/proposal/ProposalPage'));
 const AgreementPage = lazy(() => import('./pages/agreement/AgreementPage'));
 const DeepAuditReportPage = lazy(() => import('./pages/DeepAuditReportPage'));

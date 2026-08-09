@@ -1,13 +1,13 @@
 import {PortableText} from '@portabletext/react'
-import React, {useEffect, useMemo, useState} from 'react'
+import React, {useEffect, useMemo, useRef, useState} from 'react'
 import {Link, useNavigate, useParams} from 'react-router-dom'
 import {motion} from 'framer-motion'
-import {Helmet} from 'react-helmet-async'
 import {ArrowLeft, ArrowUpRight} from 'lucide-react'
 import ShareButton from '../components/ShareButton'
 import PostEndCTA from '../components/PostEndCTA'
 import {ToolkitPortableText, getToolkitBodyMainSections, getToolkitSectionsFromBody} from '../components/toolkit/ToolkitPortableText'
-import {PageMeta} from '../components/PageMeta'
+import {RouteHead} from '../site/RouteHead'
+import {useRouteData} from '../site/RouteContentProvider'
 import {SITE_ORIGIN} from '../constants/seoMeta'
 import {client, urlFor} from '../sanityClient'
 import {brandTitle, stripSysbiltBrand} from '../utils/brandTitle'
@@ -112,18 +112,35 @@ const PAGE_QUERY = `*[_type == "toolkitItem" && slug.current == $slug][0] {
   }
 }`
 
+type ToolkitRouteData = {
+  slug: string
+  tool: ToolkitItem
+  relatedPosts: RelatedPost[]
+}
+
 export default function ToolkitItemPage() {
   const {slug} = useParams<{slug: string}>()
   const navigate = useNavigate()
-  const [tool, setTool] = useState<ToolkitItem | null>(null)
-  const [relatedPosts, setRelatedPosts] = useState<RelatedPost[]>([])
-  const [loading, setLoading] = useState(true)
+  const routeData = useRouteData<ToolkitRouteData>()
+  const initialDataRef = useRef<ToolkitRouteData | null>(
+    routeData && routeData.slug === slug ? routeData : null,
+  )
+  const [tool, setTool] = useState<ToolkitItem | null>(initialDataRef.current?.tool ?? null)
+  const [relatedPosts, setRelatedPosts] = useState<RelatedPost[]>(
+    initialDataRef.current?.relatedPosts ?? [],
+  )
+  const [loading, setLoading] = useState(!initialDataRef.current)
   const [loadError, setLoadError] = useState(false)
   const [activeSection, setActiveSection] = useState('what-it-is')
 
   useEffect(() => {
     if (!slug) {
       setLoading(false)
+      return
+    }
+
+    if (initialDataRef.current && initialDataRef.current.slug === slug) {
+      initialDataRef.current = null
       return
     }
 
@@ -226,7 +243,7 @@ export default function ToolkitItemPage() {
   if (!tool) {
     return (
       <div className="min-h-screen bg-dark flex flex-col items-center justify-center gap-6 px-6 py-24 text-center">
-        <PageMeta
+        <RouteHead
           title="Tool not found | SYSBILT"
           description="This tool page does not exist or is unpublished."
           robots="noindex, follow"
@@ -262,6 +279,7 @@ export default function ToolkitItemPage() {
         year: 'numeric',
         month: 'short',
         day: '2-digit',
+        timeZone: 'Australia/Sydney',
       }).toUpperCase()
     : 'UPDATED'
 
@@ -281,28 +299,29 @@ export default function ToolkitItemPage() {
 
   return (
     <main className="min-h-screen bg-dark text-cream font-sans pb-14 border-t border-white/10">
-      <Helmet>
-        <title>{brandedTitle}</title>
-        <meta name="description" content={pageDescription} />
-        <link rel="canonical" href={canonicalUrl} />
-        {tool.focusKeyword ? <meta name="keywords" content={tool.focusKeyword} /> : null}
-
-        <meta property="og:type" content="article" />
-        <meta property="og:url" content={canonicalUrl} />
-        <meta property="og:title" content={brandedTitle} />
-        <meta property="og:description" content={pageDescription} />
-        {shareImage ? <meta property="og:image" content={shareImage} /> : null}
-
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:url" content={canonicalUrl} />
-        <meta name="twitter:title" content={brandedTitle} />
-        <meta name="twitter:description" content={pageDescription} />
-        {shareImage ? <meta name="twitter:image" content={shareImage} /> : null}
-        {/* JSON-LD (Article + BreadcrumbList) is stamped into static HTML at build time. */}
-      </Helmet>
+      <RouteHead
+        title={brandedTitle}
+        description={pageDescription}
+        canonical={canonicalUrl}
+        ogImage={shareImage || undefined}
+        ogType="article"
+      />
+      {/* JSON-LD (Article + BreadcrumbList) is stamped into static HTML at build time. */}
 
       <div className="pt-32 px-4 md:px-8 max-w-7xl mx-auto">
-        <nav className="mb-8 relative z-20">
+        <nav aria-label="Breadcrumb" className="mb-8 relative z-20 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-white/45">
+          <Link to="/" className="hover:text-white transition-colors">
+            Home
+          </Link>
+          <span className="mx-2">/</span>
+          <Link to="/toolkit" className="hover:text-white transition-colors">
+            Toolkit
+          </Link>
+          <span className="mx-2">/</span>
+          <span className="text-white/70">{tool.name}</span>
+        </nav>
+
+        <div className="mb-6 relative z-20">
           <Link
             to="/toolkit"
             className="inline-flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-[0.2em] text-white/50 hover:text-white transition-colors"
@@ -310,7 +329,7 @@ export default function ToolkitItemPage() {
             <ArrowLeft className="w-4 h-4" />
             All tools
           </Link>
-        </nav>
+        </div>
 
         <div className="relative mb-12 md:mb-16 overflow-hidden lg:overflow-visible">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-stretch">
@@ -324,9 +343,8 @@ export default function ToolkitItemPage() {
               )}
 
               <motion.h1
-                initial={{opacity: 0, x: -30}}
+                initial={false}
                 animate={{opacity: 1, x: 0}}
-                transition={{duration: 1, ease: [0.16, 1, 0.3, 1]}}
                 className={`font-sans font-black break-words text-balance uppercase tracking-tighter text-white mb-4 md:mb-5 ${
                   tool.name.length < 16
                     ? 'text-[clamp(2.5rem,8vw,5rem)] leading-[0.9]'
@@ -340,9 +358,8 @@ export default function ToolkitItemPage() {
 
               {heroTagline && (
                 <motion.p
-                  initial={{opacity: 0}}
+                  initial={false}
                   animate={{opacity: 1}}
-                  transition={{duration: 0.8, delay: 0.15}}
                   className="font-sans text-lg md:text-xl font-light leading-snug text-cream/85 text-pretty mb-6 max-w-2xl"
                 >
                   {heroTagline}

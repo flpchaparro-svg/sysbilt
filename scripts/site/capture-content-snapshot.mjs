@@ -78,13 +78,21 @@ const SNAPSHOT_QUERY = `{
       content
     }
   },
-  "toolkitItems": *[_type == "toolkitItem" && !(_id in path("drafts.**")) && defined(slug.current)] | order(slug.current asc) {
+  "toolkitItems": *[_type == "toolkitItem" && !(_id in path("drafts.**")) && defined(slug.current)] | order(featured desc, orderRank asc, name asc) {
+    _id,
     "slug": slug.current,
     name,
     tagline,
     summary,
     benefits,
     body,
+    mainImage,
+    ogImage,
+    author->{
+      name,
+      image,
+      bio
+    },
     category,
     phase,
     pricingModel,
@@ -95,6 +103,10 @@ const SNAPSHOT_QUERY = `{
     metaTitle,
     metaDescription,
     focusKeyword,
+    internalLinkDestination,
+    tags,
+    featured,
+    orderRank,
     _updatedAt,
     "authorName": author->name,
     "imageUrl": coalesce(ogImage.asset->url, mainImage.asset->url)
