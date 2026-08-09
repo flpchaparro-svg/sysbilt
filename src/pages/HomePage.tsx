@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, lazy, Suspense } from 'react';
 import { m, useScroll, useMotionValueEvent, useAnimationFrame, useMotionValue, useTransform } from 'framer-motion';
 import CTAButton from '../components/CTAButton';
+import GuideLibrarySection from '../components/HomePage/GuideLibrarySection';
 import { PageMeta } from '../components/PageMeta';
 import ScrambleTitle from '../components/HomePage/ScrambleTitle';
 import { SEO_META } from '../constants/seoMeta';
@@ -172,10 +173,10 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onServiceClick }) => {
               className="mt-10 md:mt-16 flex flex-col sm:flex-row items-center gap-6 md:gap-12 animate-fade-in relative z-30"
               style={{ animationDelay: '0.8s' }}
             >
-              <CTAButton theme="light" onClick={() => onNavigate('contact')}>
+              <CTAButton theme="light" to="/contact">
                 LET&apos;S TALK
               </CTAButton>
-              <CTAButton variant="bracket" theme="light" onClick={() => onNavigate('system')}>
+              <CTAButton variant="bracket" theme="light" to="/system">
                 SEE THE SYSTEM
               </CTAButton>
             </div>
@@ -226,6 +227,8 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onServiceClick }) => {
           <SystemPhases onNavigate={onNavigate} />
         </section>
       </Suspense>
+
+      <GuideLibrarySection />
 
       <Suspense fallback={<div className="min-h-[300px] bg-cream" />}>
         <section id="about" className="relative bg-cream z-30">

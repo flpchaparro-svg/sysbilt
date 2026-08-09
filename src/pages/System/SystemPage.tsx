@@ -168,7 +168,7 @@ const SystemPage: React.FC<SystemPageProps> = ({ onBack, onNavigate }) => {
         subtitle="The most common things people ask before they book a call"
         onNavigate={onNavigate}
       />
-      <GlobalFooter onNavigate={onNavigate} />
+      <GlobalFooter />
     </div>
   );
 };

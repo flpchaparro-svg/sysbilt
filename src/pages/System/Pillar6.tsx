@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useAnimationFrame, useMotionValue, useTransform, useScroll } from 'framer-motion';
 import CTAButton from '../../components/CTAButton';
+import GuidePathways from '../../components/GuidePathways';
 import BackButton from '../../components/BackButton';
 import PillarVisual_Helix from '../../components/Pillar6/PillarVisual_Helix';
 import { pillar6Copy } from '../../constants/pillar6Copy';
@@ -99,7 +100,7 @@ const Pillar6: React.FC<Pillar6Props> = ({ onNavigate }) => {
               </h1>
               <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/70 max-w-2xl border-l-2 border-gold pl-6 mb-10 md:mb-8">{hero.sub}</p>
               <div className="flex flex-col sm:flex-row gap-4 sm:items-center sm:gap-8 items-start mt-2">
-                <CTAButton theme="light" onClick={() => onNavigate('contact')}>{hero.ctaPrimary}</CTAButton>
+                <CTAButton theme="light" to="/contact">{hero.ctaPrimary}</CTAButton>
                 <Link
                   to="/guides/team-training"
                   className="font-sans text-sm text-dark/40 transition-colors hover:text-dark/60"
@@ -236,12 +237,11 @@ const Pillar6: React.FC<Pillar6Props> = ({ onNavigate }) => {
               Read the complete guide on team training and adoption that works for your business. Everything we described
               here, in depth, with examples and a diagnostic checklist.
             </p>
-            <Link
-              to="/guides/team-training"
-              className="inline-block rounded-full border border-dark/20 px-8 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark transition-colors hover:border-dark/40"
-            >
-              [ READ THE GUIDE ]
-            </Link>
+            <GuidePathways
+              legacyPath="/guides/team-training"
+              bookPath="/guides/built-to-teach"
+              bookTitle="Built to Teach"
+            />
           </section>
 
           {/* FINAL CTA */}
@@ -254,7 +254,7 @@ const Pillar6: React.FC<Pillar6Props> = ({ onNavigate }) => {
               </span>
             </h2>
             <div className="mb-16">
-              <CTAButton theme="dark" onClick={() => onNavigate('contact')}>BOOK A CALL</CTAButton>
+              <CTAButton theme="dark" to="/contact">BOOK A CALL</CTAButton>
             </div>
             <div className="flex items-center justify-center gap-3">
               <div className="w-2 h-2 rounded-full bg-[#D4A84B] animate-pulse"></div>

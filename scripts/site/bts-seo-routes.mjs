@@ -2,10 +2,9 @@
  * Single source of truth for Built to Sell public routes and per-chapter SEO meta.
  *
  * Consumed by:
- *   - scripts/site/stamp-meta.mjs   (build-time HTML + JSON-LD stamping)
+ *   - scripts/site/stamp-meta.mjs   (build-time HTML, JSON-LD and static sitemap)
  *   - scripts/site/verify-seo.mjs   (pre-deploy guard + anti-drift assertion)
  *   - scripts/site/gen-content-manifest.mjs (edge middleware slug manifest)
- *   - api/sitemap.ts                (sitemap generation)
  *
  * Plain JS only (no TS syntax). Content source of truth for chapters is
  * src/built-to-sell/chapter-seo.ts; verify-seo asserts lock-step with this file.

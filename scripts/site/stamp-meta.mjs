@@ -129,6 +129,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '../..');
 const DIST = path.join(ROOT, 'dist');
 const TEMPLATE_PATH = path.join(DIST, 'index.html');
+const SITEMAP_PATH = path.join(DIST, 'sitemap.xml');
 const BASE_URL = SITE_ORIGIN;
 
 /** Title present in the un-stamped dist/index.html template; a stamped page must differ. */
@@ -136,6 +137,28 @@ const GENERIC_TITLE = 'SYSBILT | Business Systems';
 
 /** Routes that are intentionally noindex and therefore excluded from the sitemap. */
 const INDEXABLE_EXCLUDE = new Set(['/news']);
+
+const SITEMAP_STATIC_PRIORITIES = new Map([
+  ['/', '1.0'],
+  ['/system', '0.9'],
+  ['/process', '0.9'],
+  ['/architect', '0.9'],
+  ['/proof', '0.9'],
+  ['/blog', '0.9'],
+  ['/evidence-vault', '0.9'],
+  ['/contact', '0.7'],
+  ['/privacy', '0.6'],
+  ['/terms', '0.6'],
+  ['/pillar1', '0.8'],
+  ['/pillar2', '0.8'],
+  ['/pillar3', '0.8'],
+  ['/pillar4', '0.8'],
+  ['/pillar5', '0.8'],
+  ['/pillar6', '0.8'],
+  ['/pillar7', '0.8'],
+  ['/guides', '0.7'],
+  ['/toolkit', '0.7'],
+]);
 
 /** Private funnel routes: stamped with noindex, never in the sitemap. */
 function isGoFunnelPath(routePath) {
@@ -463,6 +486,8 @@ const GUIDES_QUERY = `*[_type == "guide" && !(_id in path("drafts.**"))]{
   seoTitle,
   seoDescription,
   subtitle,
+  publishedAt,
+  _updatedAt,
   "imageUrl": ogImage.asset->url
 }`;
 
@@ -501,6 +526,101 @@ function escapeJsonLd(schema) {
 function canonicalUrl(routePath) {
   if (routePath === '/') return `${BASE_URL}/`;
   return `${BASE_URL}${routePath}`;
+}
+
+function cmsDateOnly(updatedAt, publishedAt) {
+  const raw = updatedAt || publishedAt;
+  if (!raw) return undefined;
+  const parsed = new Date(raw);
+  if (Number.isNaN(parsed.getTime())) return undefined;
+  return parsed.toISOString().slice(0, 10);
+}
+
+function sitemapLastmodByPath({ posts, guides, toolkitItems }) {
+  const dates = new Map();
+  for (const post of posts) {
+    if (!post.slug) continue;
+    const date = cmsDateOnly(post._updatedAt, post.publishedAt);
+    if (date) dates.set(`/blog/${post.slug}`, date);
+  }
+  for (const guide of guides) {
+    if (!guide.slug) continue;
+    const routePath = `/guides/${guide.slug}`;
+    if (
+      routePath === BTW_HUB_ROUTE ||
+      routePath === BTS_HUB_ROUTE ||
+      routePath === BTC_HUB_ROUTE ||
+      routePath === BTR_HUB_ROUTE ||
+      routePath === BTT_HUB_ROUTE ||
+      routePath === BTM_HUB_ROUTE ||
+      routePath === BTE_HUB_ROUTE ||
+      routePath === BSE_HUB_ROUTE
+    ) {
+      continue;
+    }
+    const date = cmsDateOnly(guide._updatedAt, guide.publishedAt);
+    if (date) dates.set(routePath, date);
+  }
+  for (const item of toolkitItems) {
+    if (!item.slug) continue;
+    const date = cmsDateOnly(item._updatedAt);
+    if (date) dates.set(`/toolkit/${item.slug}`, date);
+  }
+  return dates;
+}
+
+function sitemapHints(routePath) {
+  const staticPriority = SITEMAP_STATIC_PRIORITIES.get(routePath);
+  if (staticPriority) return { changefreq: 'weekly', priority: staticPriority };
+
+  const codeHubRoutes = [
+    BTW_HUB_ROUTE,
+    BTS_HUB_ROUTE,
+    BTC_HUB_ROUTE,
+    BTR_HUB_ROUTE,
+    BTT_HUB_ROUTE,
+    BTM_HUB_ROUTE,
+    BTE_HUB_ROUTE,
+    BSE_HUB_ROUTE,
+  ];
+  if (codeHubRoutes.includes(routePath)) return { changefreq: 'monthly', priority: '0.8' };
+  if (codeHubRoutes.some((hubPath) => routePath.startsWith(`${hubPath}/`))) {
+    return { changefreq: 'monthly', priority: '0.75' };
+  }
+  if (routePath.startsWith('/guides/')) return { changefreq: 'weekly', priority: '0.8' };
+  return { changefreq: 'weekly', priority: '0.65' };
+}
+
+function buildSitemapXml(routes, content) {
+  const lastmodByPath = sitemapLastmodByPath(content);
+  const uniquePaths = [
+    ...new Set(routes.map((route) => route.path).filter((routePath) => !isIndexableExcluded(routePath))),
+  ].sort((a, b) => {
+    if (a === '/') return -1;
+    if (b === '/') return 1;
+    return a.localeCompare(b);
+  });
+
+  const rows = uniquePaths
+    .map((routePath) => {
+      const lastmod = lastmodByPath.get(routePath);
+      const { changefreq, priority } = sitemapHints(routePath);
+      return `  <url>
+    <loc>${escapeAttr(canonicalUrl(routePath))}</loc>${lastmod ? `\n    <lastmod>${lastmod}</lastmod>` : ''}
+    <changefreq>${changefreq}</changefreq>
+    <priority>${priority}</priority>
+  </url>`;
+    })
+    .join('\n');
+
+  return {
+    paths: uniquePaths,
+    xml: `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${rows}
+</urlset>
+`,
+  };
 }
 
 function ogUrl(routePath) {
@@ -1253,10 +1373,12 @@ async function main() {
     process.exit(1);
   }
 
+  let content;
   let allRoutes;
   let skipped = [];
   try {
-    const result = await collectAllRoutes();
+    content = await fetchSanityContent();
+    const result = buildAllRoutes(content);
     allRoutes = result.routes;
     skipped = result.skipped;
   } catch (err) {
@@ -1272,6 +1394,9 @@ async function main() {
     await writeFile(outPath, html, 'utf8');
   }
 
+  const sitemap = buildSitemapXml(allRoutes, content);
+  await writeFile(SITEMAP_PATH, sitemap.xml, 'utf8');
+
   const codeDefinedCount = BTW_ROUTES.length + BTS_ROUTES.length + BTC_ROUTES.length + BTR_ROUTES.length + BTT_ROUTES.length + BTM_ROUTES.length + BTE_ROUTES.length + BSE_ROUTES.length;
   const sanityCount = allRoutes.length - STATIC_ROUTES.length - codeDefinedCount;
   console.log(
@@ -1283,6 +1408,7 @@ async function main() {
       console.log(`  - ${line}`);
     }
   }
+  console.log(`[stamp-meta] Wrote dist/sitemap.xml with ${sitemap.paths.length} deployed indexable routes.`);
 }
 
 const isMain = import.meta.url === pathToFileURL(process.argv[1]).href;
@@ -1309,6 +1435,7 @@ export {
   BTE_ROUTES,
   BSE_ROUTES,
   canonicalUrl,
+  buildSitemapXml,
   distPathForRoute,
   fetchSanityContent,
   buildAllRoutes,

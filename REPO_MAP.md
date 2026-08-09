@@ -149,7 +149,6 @@
 | `api/agreement/sign.ts` | — | (admin) parses Notion URL only | — | `PROPOSAL_SIGNING_SECRET`, `PUBLIC_BASE_URL`, `ADMIN_PASSCODE` |
 | `api/reports/ingest.ts` | — | — | **Auth for n8n** (`requireN8nWebhook`) | **Vercel KV** via `reportsStore`, `AUDIT_REPORT_SIGNING_SECRET`, `PUBLIC_BASE_URL` |
 | `api/reports/get.ts` | — | — | — | KV read, `AUDIT_REPORT_SIGNING_SECRET` |
-| `api/sitemap.ts` | — | — | — | **Sanity** (posts + guides; hardcoded `projectId`) |
 | `api/_lib/hubspot.ts` | CRM REST | — | — | `HUBSPOT_PRIVATE_APP_TOKEN` |
 | `api/_lib/notion.ts` | — | Pages API | — | `NOTION_TOKEN` |
 | `api/_lib/auth.ts` | — | — | `N8N_WEBHOOK_SECRET` | `PROPOSAL_SIGNING_SECRET` (proposal + agreement URL tokens), `AUDIT_REPORT_SIGNING_SECRET`, `ADMIN_PASSCODE` |
@@ -223,14 +222,14 @@
 
 ---
 
-### 3.7 `api/sitemap.ts`
+### 3.7 Build-generated sitemap
 
 | Item | Detail |
 |------|--------|
-| **External** | Sanity (same project as site): posts + guides slugs |
-| **Output** | XML sitemap |
+| **Source** | `scripts/site/stamp-meta.mjs`, using the same route and Sanity snapshot as stamped pages |
+| **Output** | Static `dist/sitemap.xml` with deployed indexable routes only |
 
-**Env:** None required (embedded `projectId` / dataset); uses public CDN read.
+The SEO guard compares the generated XML with the deployed route set. No runtime sitemap function or Sanity request is required.
 
 ---
 
@@ -264,7 +263,7 @@ No `api/` route; field names must match the HubSpot form configuration.
 
 1. **Strict Cream vs Dark** is a simplification: some components (e.g. `HomePage/HeroVisual`, `Feature_Group7`) blend both within one viewport. The table records the **dominant brand mode** or **Mixed** where split is intentional.
 2. **`DESIGN_GUIDELINES.md`** does not use the literal labels “Cream” and “Dark/Brutalist” as enums; they map to documented tokens (`bg-cream`, `bg-dark`, readable gold variants).
-3. **Sanity** appears in `api/chat.ts` and `api/sitemap.ts` (and the Vite app elsewhere) but was outside your three named integrations; it is listed under “Other.”
+3. **Sanity** appears in `api/chat.ts`, the build-time site scripts, and the Vite app elsewhere, but was outside your three named integrations; it is listed under “Other.”
 4. **Agreement signing:** `signAgreementToken` / `verifyAgreementToken` in `api/_lib/auth.ts` use the same `hmac()` as proposals, which reads **`PROPOSAL_SIGNING_SECRET`** only — there is no separate `AGREEMENT_SIGNING_SECRET` in code today.
 
 ---

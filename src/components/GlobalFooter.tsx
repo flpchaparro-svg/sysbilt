@@ -1,25 +1,22 @@
 import React from 'react';
 import { Target, TrendingUp, BarChart3, Layers, Building2, Newspaper, Instagram, Facebook, Linkedin } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import CTAButton from './CTAButton';
 import { SysbiltLogo } from './SysbiltLogo';
 import ShareButton from './ShareButton';
 import { OPEN_BANNER_EVENT } from '../utils/consent';
 
-interface GlobalFooterProps {
-  onNavigate: (view: string, sectionId?: string) => void;
-}
-
 type FooterLinkGroup = {
   title: string;
   icon: React.ComponentType<{ className?: string }>;
   color: string;
-  links: { label: string; action: () => void }[];
+  links: { label: string; to: string }[];
 };
 
 const socialIconLinkClass =
   'inline-flex h-9 w-9 shrink-0 items-center justify-center text-white/70 transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/35';
 
-const GlobalFooter: React.FC<GlobalFooterProps> = ({ onNavigate }) => {
+const GlobalFooter: React.FC = () => {
   const currentYear = new Date().getFullYear();
 
   const footerLinks: FooterLinkGroup[] = [
@@ -28,9 +25,9 @@ const GlobalFooter: React.FC<GlobalFooterProps> = ({ onNavigate }) => {
       icon: Building2,
       color: 'text-white/80',
       links: [
-        { label: 'About', action: () => onNavigate('architect') },
-        { label: 'Process', action: () => onNavigate('process') },
-        { label: 'Proof', action: () => onNavigate('proof') },
+        { label: 'About', to: '/architect' },
+        { label: 'Process', to: '/process' },
+        { label: 'Proof', to: '/proof' },
       ],
     },
     {
@@ -38,9 +35,9 @@ const GlobalFooter: React.FC<GlobalFooterProps> = ({ onNavigate }) => {
       icon: Target,
       color: 'text-red-on-dark',
       links: [
-        { label: 'Websites', action: () => onNavigate('pillar1') },
-        { label: 'CRM', action: () => onNavigate('pillar2') },
-        { label: 'Automation', action: () => onNavigate('pillar3') },
+        { label: 'Websites', to: '/pillar1' },
+        { label: 'CRM', to: '/pillar2' },
+        { label: 'Automation', to: '/pillar3' },
       ],
     },
     {
@@ -48,26 +45,26 @@ const GlobalFooter: React.FC<GlobalFooterProps> = ({ onNavigate }) => {
       icon: TrendingUp,
       color: 'text-gold-on-dark',
       links: [
-        { label: 'AI Assistants', action: () => onNavigate('pillar4') },
-        { label: 'Content', action: () => onNavigate('pillar5') },
-        { label: 'Training', action: () => onNavigate('pillar6') },
+        { label: 'AI Assistants', to: '/pillar4' },
+        { label: 'Content', to: '/pillar5' },
+        { label: 'Training', to: '/pillar6' },
       ],
     },
     {
       title: 'SEE CLEARLY',
       icon: BarChart3,
       color: 'text-white',
-      links: [{ label: 'Dashboards', action: () => onNavigate('pillar7') }],
+      links: [{ label: 'Dashboards', to: '/pillar7' }],
     },
     {
       title: 'INSIGHTS',
       icon: Newspaper,
       color: 'text-white/80',
       links: [
-        { label: 'Blog', action: () => onNavigate('blog') },
-        { label: 'Toolkit', action: () => onNavigate('toolkit') },
-        { label: 'Guides', action: () => onNavigate('guides') },
-        { label: 'News', action: () => onNavigate('news') },
+        { label: 'Blog', to: '/blog' },
+        { label: 'Toolkit', to: '/toolkit' },
+        { label: 'Guides', to: '/guides' },
+        { label: 'News', to: '/news' },
       ],
     },
   ];
@@ -88,7 +85,9 @@ const GlobalFooter: React.FC<GlobalFooterProps> = ({ onNavigate }) => {
         <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8 lg:gap-6 xl:gap-10 mb-10 lg:mb-8">
           <div className="shrink-0 max-w-[20rem] lg:max-w-[min(100%,17rem)] xl:max-w-[18.5rem]">
             <div className="mb-3 w-[7.5rem]">
-              <SysbiltLogo isDarkBg={true} />
+              <Link to="/" aria-label="Go to Homepage">
+                <SysbiltLogo isDarkBg={true} />
+              </Link>
             </div>
             <h2 className="font-serif text-xl sm:text-2xl lg:text-[1.4rem] xl:text-[1.5rem] leading-[1.2] tracking-tight mb-4 text-white">
               We build the{' '}
@@ -96,7 +95,7 @@ const GlobalFooter: React.FC<GlobalFooterProps> = ({ onNavigate }) => {
               {' '}
               without you
             </h2>
-            <CTAButton theme="dark" onClick={() => onNavigate('contact')} className="text-sm py-2.5 px-5">
+            <CTAButton theme="dark" to="/contact" className="text-sm py-2.5 px-5">
               BOOK A CALL
             </CTAButton>
           </div>
@@ -121,12 +120,12 @@ const GlobalFooter: React.FC<GlobalFooterProps> = ({ onNavigate }) => {
                   <ul className="space-y-1">
                     {group.links.map((link) => (
                       <li key={link.label}>
-                        <button
-                          onClick={link.action}
+                        <Link
+                          to={link.to}
                           className="font-sans text-[11px] sm:text-xs text-white/70 hover:text-white transition-colors text-left leading-snug"
                         >
                           {link.label}
-                        </button>
+                        </Link>
                       </li>
                     ))}
                   </ul>
@@ -209,13 +208,18 @@ const GlobalFooter: React.FC<GlobalFooterProps> = ({ onNavigate }) => {
           </nav>
 
           <div className="flex flex-wrap items-center justify-center gap-6 md:justify-end">
-            <button
-              type="button"
-              onClick={() => onNavigate('privacy')}
+            <Link
+              to="/privacy"
               className="font-mono text-[9px] text-white/70 hover:text-white uppercase tracking-widest transition-colors"
             >
               Privacy Policy
-            </button>
+            </Link>
+            <Link
+              to="/terms"
+              className="font-mono text-[9px] text-white/70 hover:text-white uppercase tracking-widest transition-colors"
+            >
+              Terms
+            </Link>
             <button
               type="button"
               onClick={() => window.dispatchEvent(new Event(OPEN_BANNER_EVENT))}

@@ -86,67 +86,6 @@ const FEATURED_CODE_GUIDES = [
 
 const CODE_GUIDE_SLUGS = new Set(['built-to-work', 'built-to-sell', 'built-to-close', 'built-to-run', 'built-to-think', 'built-to-multiply', 'built-to-teach', 'built-to-see']);
 
-const FEATURED_INITIAL_VISIBLE = 2;
-const GRID_INITIAL_VISIBLE = 4;
-const LOAD_MORE_STEP = 4;
-
-function ShowMoreButton({
-  expanded,
-  hiddenCount,
-  onClick,
-  variant,
-  canCollapse = false,
-}: {
-  expanded: boolean;
-  hiddenCount: number;
-  onClick: () => void;
-  variant: 'featured' | 'card';
-  canCollapse?: boolean;
-}) {
-  const showLess = expanded && hiddenCount <= 0 && canCollapse;
-  if (hiddenCount <= 0 && !showLess) return null;
-
-  const label = showLess ? 'Show less' : `Show ${hiddenCount} more`;
-  const Icon = showLess ? ChevronUp : ChevronDown;
-
-  if (variant === 'featured') {
-    return (
-      <div className="mt-6 md:mt-8">
-        <button
-          type="button"
-          onClick={onClick}
-          aria-expanded={expanded}
-          className="group w-full flex items-center justify-center gap-3 rounded-[28px] bg-cream px-8 py-6 shadow-neu border border-white/40 transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(17,17,17,0.08)]"
-        >
-          <span className="font-serif text-lg md:text-xl text-dark group-hover:text-red-text transition-colors">
-            {label}
-          </span>
-          <Icon className="w-4 h-4 text-gold-on-cream group-hover:text-red-text transition-colors" />
-        </button>
-      </div>
-    );
-  }
-
-  return (
-    <div className="mt-10 md:mt-12 col-span-1 md:col-span-2">
-      <button
-        type="button"
-        onClick={onClick}
-        aria-expanded={expanded}
-        className="group w-full flex flex-col items-center justify-center gap-3 rounded-[28px] bg-cream px-8 py-10 shadow-neu border border-white/40 transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(17,17,17,0.08)]"
-      >
-        <span className="font-serif text-xl md:text-2xl text-dark group-hover:text-red-text transition-colors">
-          {label}
-        </span>
-        <span className="flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-dark/45 group-hover:text-gold-on-cream transition-colors">
-          {showLess ? 'Back to the first two' : 'Load the next guides'}
-          <Icon className="w-3.5 h-3.5" />
-        </span>
-      </button>
-    </div>
-  );
-}
-
 const guidesHubCollectionJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'CollectionPage',
@@ -210,8 +149,6 @@ export default function GuidesHubPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState('All Guides');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [featuredExpanded, setFeaturedExpanded] = useState(false);
-  const [visibleGuideCount, setVisibleGuideCount] = useState(GRID_INITIAL_VISIBLE);
 
   useEffect(() => {
     const query = `*[_type == "guide"] | order(publishedAt desc) {
@@ -227,10 +164,6 @@ export default function GuidesHubPage() {
     });
   }, []);
 
-  useEffect(() => {
-    setVisibleGuideCount(GRID_INITIAL_VISIBLE);
-  }, [activeFilter]);
-
   const filterRows = [
     ['Website & E-commerce', 'CRM & Lead Tracking', 'Automation', 'Get Clients'],
     ['AI Assistants', 'Content Systems', 'Team Training', 'Scale Faster'],
@@ -244,15 +177,6 @@ export default function GuidesHubPage() {
       return matchesFilter(guide.servicePillar, activeFilter);
     });
   }, [guides, activeFilter]);
-
-  const visibleFeaturedGuides = featuredExpanded
-    ? FEATURED_CODE_GUIDES
-    : FEATURED_CODE_GUIDES.slice(0, FEATURED_INITIAL_VISIBLE);
-  const hiddenFeaturedCount = FEATURED_CODE_GUIDES.length - FEATURED_INITIAL_VISIBLE;
-
-  const visibleSanityGuides = filteredGuides.slice(0, visibleGuideCount);
-  const remainingSanityCount = Math.max(0, filteredGuides.length - visibleGuideCount);
-  const sanityAllVisible = visibleGuideCount >= filteredGuides.length;
 
   const cardVariants = {
     hidden: { opacity: 0, y: 15 },
@@ -298,7 +222,7 @@ export default function GuidesHubPage() {
             <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark">/ Featured</span>
           </div>
           <div className="flex flex-col gap-6 md:gap-8">
-            {visibleFeaturedGuides.map((guide) => (
+            {FEATURED_CODE_GUIDES.map((guide) => (
               <Link
                 key={guide.path}
                 to={guide.path}
@@ -324,13 +248,6 @@ export default function GuidesHubPage() {
               </Link>
             ))}
           </div>
-          <ShowMoreButton
-            variant="featured"
-            expanded={featuredExpanded}
-            hiddenCount={featuredExpanded ? 0 : hiddenFeaturedCount}
-            canCollapse
-            onClick={() => setFeaturedExpanded((v) => !v)}
-          />
         </section>
 
         {/* MORE GUIDES — Sanity CMS + filters */}
@@ -404,7 +321,7 @@ export default function GuidesHubPage() {
             <>
               <m.div layout className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
                 <AnimatePresence mode="popLayout">
-                  {visibleSanityGuides.map((guide) => {
+                  {filteredGuides.map((guide) => {
                     const slug = guide.slug?.current ?? '';
                     const guidePath = `/guides/${slug}`;
                     const shareUrl = `${SITE_ORIGIN}${guidePath}`;
@@ -432,21 +349,6 @@ export default function GuidesHubPage() {
                     );
                   })}
                 </AnimatePresence>
-                {(remainingSanityCount > 0 || (sanityAllVisible && filteredGuides.length > GRID_INITIAL_VISIBLE)) ? (
-                  <ShowMoreButton
-                    variant="card"
-                    expanded={sanityAllVisible}
-                    hiddenCount={remainingSanityCount > 0 ? Math.min(LOAD_MORE_STEP, remainingSanityCount) : 0}
-                    canCollapse={filteredGuides.length > GRID_INITIAL_VISIBLE}
-                    onClick={() => {
-                      if (remainingSanityCount > 0) {
-                        setVisibleGuideCount((n) => Math.min(n + LOAD_MORE_STEP, filteredGuides.length));
-                      } else {
-                        setVisibleGuideCount(GRID_INITIAL_VISIBLE);
-                      }
-                    }}
-                  />
-                ) : null}
               </m.div>
             </>
           )}

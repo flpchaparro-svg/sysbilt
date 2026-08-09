@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useAnimationFrame, useMotionValue, useTransform, useScroll } from 'framer-motion';
 import CTAButton from '../../components/CTAButton';
+import GuidePathways from '../../components/GuidePathways';
 import BackButton from '../../components/BackButton';
 import PillarVisual_Catchment from '../../components/Pillar1/PillarVisual_Catchment';
 import { pillar1Copy } from '../../constants/pillar1Copy';
@@ -165,7 +166,7 @@ const Pillar1: React.FC<Pillar1Props> = ({ onNavigate }) => {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 sm:items-center sm:gap-8 items-start mt-2">
-                <CTAButton theme="light" onClick={() => onNavigate('contact')}>
+                <CTAButton theme="light" to="/contact">
                   {hero.ctaPrimary}
                 </CTAButton>
                 <Link
@@ -378,12 +379,11 @@ const Pillar1: React.FC<Pillar1Props> = ({ onNavigate }) => {
               Read the complete guide on building a website that works for your business. Everything we described here,
               in depth, with examples and a diagnostic checklist.
             </p>
-            <Link
-              to="/guides/websites"
-              className="inline-block rounded-full border border-dark/20 px-8 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark transition-colors hover:border-dark/40"
-            >
-              [ READ THE GUIDE ]
-            </Link>
+            <GuidePathways
+              legacyPath="/guides/websites"
+              bookPath="/guides/built-to-work"
+              bookTitle="Built to Work"
+            />
           </section>
 
           {/* FINAL CTA MODULE */}
@@ -400,7 +400,7 @@ const Pillar1: React.FC<Pillar1Props> = ({ onNavigate }) => {
             </h2>
             
             <div className="mb-16">
-              <CTAButton theme="dark" onClick={() => onNavigate('contact')}>
+              <CTAButton theme="dark" to="/contact">
                 BOOK A CALL
               </CTAButton>
             </div>

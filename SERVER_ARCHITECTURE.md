@@ -55,7 +55,7 @@ No `docker-compose` or `Dockerfile` for n8n/Postiz lives in this repo; Postiz bo
 **Routing (`vercel.json`):**
 
 - SPA fallback to `/index.html` for most paths
-- `/sitemap.xml` → `/api/sitemap`
+- `/sitemap.xml` serves the build-generated `dist/sitemap.xml`
 - Security headers on all routes (`X-Content-Type-Options`, `X-Frame-Options`, etc.)
 
 **Edge middleware (`middleware.ts`):** Adds `X-Robots-Tag: noindex, follow` on URLs that are not valid SPA routes (soft 404s), using build-time content manifest slug sets.
@@ -177,10 +177,10 @@ Public HTTPS for `n8n.sysbilt.com` and `postiz.sysbilt.com` terminates at Cloudf
 
 | Item | Value |
 |------|-------|
-| Project ID | `wdlc9pg8` (`studio/sanity.config.ts`, `src/sanityClient.ts`, `api/sitemap.ts`) |
+| Project ID | `wdlc9pg8` (`studio/sanity.config.ts`, `src/sanityClient.ts`, build-time site scripts) |
 | Dataset | `production` |
 | Studio | `studio/` (separate Sanity Studio app) |
-| Site read | Public CDN + API queries from Vite app and `api/sitemap.ts` |
+| Site read | Public CDN + API queries from the Vite app and build-time site scripts |
 | Write tokens | `SANITY_API_TOKEN` / `SANITY_API_WRITE_TOKEN` / `SANITY_AUTH_TOKEN` in `.env.local` (content scripts) |
 
 ### 6.2 HubSpot
@@ -231,7 +231,6 @@ Postiz uses **internal** Redis (`redis://postiz-redis:6379`) inside its Docker s
 | Route | Purpose | Key env vars |
 |-------|---------|--------------|
 | `api/chat.ts` | Sybil (Gemini) + Sanity catalogue | `GEMINI_API_KEY`, `SYBIL_KV_*`, optional `SYBIL_TRANSCRIPT_WEBHOOK_URL` |
-| `api/sitemap.ts` | Dynamic sitemap XML | Sanity `wdlc9pg8` / `production` (embedded) |
 | `api/reports/ingest.ts` | n8n → store audit JSON | `N8N_WEBHOOK_SECRET`, `KV_REST_*`, `AUDIT_REPORT_SIGNING_SECRET`, `PUBLIC_BASE_URL` |
 | `api/reports/get.ts` | Signed audit viewer | `AUDIT_REPORT_SIGNING_SECRET`, `KV_REST_*` |
 | `api/proposal/*`, `api/agreement/*` | Client document flows | `HUBSPOT_PRIVATE_APP_TOKEN`, `NOTION_TOKEN`, `PROPOSAL_SIGNING_SECRET`, stage env vars |

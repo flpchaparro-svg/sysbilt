@@ -9,6 +9,7 @@ type DropdownKind = 'pillars' | 'insights';
 
 interface NavItemConfig {
   id: string;
+  to: string;
   label: string;
   fullLabel: string;
   dropdown?: DropdownKind;
@@ -16,7 +17,6 @@ interface NavItemConfig {
 
 interface GlobalHeaderProps {
   currentView: string;
-  onNavigate: (view: string, sectionId?: string) => void;
   scrolled: boolean;
   /** When true, use solid cream background (e.g. on dark pages like blog post) */
   solidBackground?: boolean;
@@ -36,7 +36,7 @@ function isInsightsActive(currentView: string): boolean {
 
 type SybilChatStateDetail = { isOpen: boolean; isFullscreen: boolean };
 
-const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, scrolled, solidBackground = false }) => {
+const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, scrolled, solidBackground = false }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [openDesktopDropdown, setOpenDesktopDropdown] = useState<string | null>(null);
@@ -55,11 +55,11 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
   }, []);
 
   const navItems: NavItemConfig[] = [
-    { id: 'architect', label: 'ABOUT', fullLabel: 'ABOUT' },
-    { id: 'system', label: 'SERVICES', fullLabel: 'SERVICES', dropdown: 'pillars' },
-    { id: 'process', label: 'PROCESS', fullLabel: 'PROCESS' },
-    { id: 'proof', label: 'PROOF', fullLabel: 'PROOF' },
-    { id: 'insights', label: 'INSIGHTS', fullLabel: 'INSIGHTS', dropdown: 'insights' },
+    { id: 'architect', to: '/architect', label: 'ABOUT', fullLabel: 'ABOUT' },
+    { id: 'system', to: '/system', label: 'SERVICES', fullLabel: 'SERVICES', dropdown: 'pillars' },
+    { id: 'process', to: '/process', label: 'PROCESS', fullLabel: 'PROCESS' },
+    { id: 'proof', to: '/proof', label: 'PROOF', fullLabel: 'PROOF' },
+    { id: 'insights', to: '/blog', label: 'INSIGHTS', fullLabel: 'INSIGHTS', dropdown: 'insights' },
   ];
 
   const archPillars = [
@@ -69,9 +69,9 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
       color: 'text-red-text',
       hoverClass: 'hover:text-red-text',
       items: [
-        { id: 'pillar1', name: '01 / Websites & E-commerce' },
-        { id: 'pillar2', name: '02 / CRM & Lead Tracking' },
-        { id: 'pillar3', name: '03 / Automation' },
+        { id: 'pillar1', to: '/pillar1', name: '01 / Websites & E-commerce' },
+        { id: 'pillar2', to: '/pillar2', name: '02 / CRM & Lead Tracking' },
+        { id: 'pillar3', to: '/pillar3', name: '03 / Automation' },
       ],
     },
     {
@@ -80,9 +80,9 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
       color: 'text-gold-on-cream',
       hoverClass: 'hover:text-gold-on-cream',
       items: [
-        { id: 'pillar4', name: '04 / AI Assistants' },
-        { id: 'pillar5', name: '05 / Content Systems' },
-        { id: 'pillar6', name: '06 / Team Training' },
+        { id: 'pillar4', to: '/pillar4', name: '04 / AI Assistants' },
+        { id: 'pillar5', to: '/pillar5', name: '05 / Content Systems' },
+        { id: 'pillar6', to: '/pillar6', name: '06 / Team Training' },
       ],
     },
     {
@@ -90,21 +90,13 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
       icon: BarChart3,
       color: 'text-dark',
       hoverClass: 'hover:text-black',
-      items: [{ id: 'pillar7', name: '07 / Dashboards & Reporting' }],
+      items: [{ id: 'pillar7', to: '/pillar7', name: '07 / Dashboards & Reporting' }],
     },
   ];
 
   const navItemIsActive = (item: NavItemConfig) => {
     if (item.id === 'insights') return isInsightsActive(currentView);
     return currentView === item.id;
-  };
-
-  const handleNavPrimaryClick = (item: NavItemConfig) => {
-    if (item.id === 'insights') {
-      onNavigate('blog');
-    } else {
-      onNavigate(item.id);
-    }
   };
 
   const hideForChat = isChatOpen;
@@ -129,13 +121,13 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
           setHoveredNav(null);
         }}
       >
-            <button
-              onClick={() => onNavigate('homepage')}
+            <Link
+              to="/"
               aria-label="Go to Homepage"
               className="group z-[310] pointer-events-auto flex items-center"
             >
               <SysbiltLogo />
-            </button>
+            </Link>
 
             <div className="hidden lg:flex items-center gap-4 lg:gap-8 pointer-events-auto">
               {navItems.map((item) => {
@@ -157,7 +149,6 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
                     }}
                     onFocus={() => {
                       setHoveredNav(item.id);
-                      setOpenDesktopDropdown(dd ? item.id : null);
                     }}
                     onBlur={(e) => {
                       if (!e.currentTarget.contains(e.relatedTarget as Node)) {
@@ -174,21 +165,31 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
                       />
                     )}
 
-                    <button
-                      type="button"
-                      onClick={() => handleNavPrimaryClick(item)}
-                      className="relative z-10 flex items-center gap-3 type-eyebrow text-dark whitespace-nowrap"
-                    >
-                      <span
-                        className={`w-1.5 h-1.5 rounded-full bg-gold transition-all duration-snap ${isActive ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}`}
-                      />
-                      {item.fullLabel}
-                      {dd && (
-                        <ChevronDown
-                          className={`w-3 h-3 transition-transform duration-snap ${dropdownOpen ? 'rotate-180' : ''}`}
+                    <div className="relative z-10 flex items-center gap-1 text-dark">
+                      <Link
+                        to={item.to}
+                        onClick={() => setOpenDesktopDropdown(null)}
+                        className="flex items-center gap-3 type-eyebrow whitespace-nowrap"
+                      >
+                        <span
+                          className={`w-1.5 h-1.5 rounded-full bg-gold transition-all duration-snap ${isActive ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}`}
                         />
+                        {item.fullLabel}
+                      </Link>
+                      {dd && (
+                        <button
+                          type="button"
+                          onClick={() => setOpenDesktopDropdown(item.id)}
+                          aria-label={`Toggle ${item.fullLabel.toLowerCase()} menu`}
+                          aria-expanded={dropdownOpen}
+                          className="p-1"
+                        >
+                          <ChevronDown
+                            className={`w-3 h-3 transition-transform duration-snap ${dropdownOpen ? 'rotate-180' : ''}`}
+                          />
+                        </button>
                       )}
-                    </button>
+                    </div>
 
                     {dd === 'pillars' && (
                       <AnimatePresence>
@@ -209,18 +210,16 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
                                 </div>
                                 <div className="flex flex-col gap-2">
                                   {group.items.map((subItem) => (
-                                    <button
+                                    <Link
                                       key={subItem.id}
-                                      type="button"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        onNavigate(subItem.id);
+                                      to={subItem.to}
+                                      onClick={() => {
                                         setOpenDesktopDropdown(null);
                                       }}
                                       className={`text-left font-serif text-lg text-dark/80 hover:pl-2 transition-all duration-200 ${group.hoverClass}`}
                                     >
                                       {subItem.name}
-                                    </button>
+                                    </Link>
                                   ))}
                                 </div>
                               </div>
@@ -241,49 +240,40 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
                             className="absolute top-full left-1/2 -translate-x-1/2 mt-4 min-w-[220px] bg-white border border-dark/10 shadow-2xl p-8 z-[400] cursor-default"
                           >
                             <div className="flex flex-col gap-2">
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  onNavigate('blog');
+                              <Link
+                                to="/blog"
+                                onClick={() => {
                                   setOpenDesktopDropdown(null);
                                 }}
                                 className="text-left font-serif text-lg text-dark/80 hover:pl-2 transition-all duration-200 hover:text-red-text"
                               >
                                 Blog
-                              </button>
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  onNavigate('toolkit');
+                              </Link>
+                              <Link
+                                to="/toolkit"
+                                onClick={() => {
                                   setOpenDesktopDropdown(null);
                                 }}
                                 className="text-left font-serif text-lg text-dark/80 hover:pl-2 transition-all duration-200 hover:text-red-text"
                               >
                                 Toolkit
-                              </button>
+                              </Link>
                               <Link
                                 to="/guides"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setOpenDesktopDropdown(null);
-                                }}
+                                onClick={() => setOpenDesktopDropdown(null)}
                                 className="text-left font-serif text-lg text-dark/80 hover:pl-2 transition-all duration-200 hover:text-red-text"
                               >
                                 Guides
                               </Link>
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  onNavigate('news');
+                              <Link
+                                to="/news"
+                                onClick={() => {
                                   setOpenDesktopDropdown(null);
                                 }}
                                 className="text-left font-serif text-lg text-dark/80 hover:pl-2 transition-all duration-200 hover:text-red-text"
                               >
                                 News
-                              </button>
+                              </Link>
                             </div>
                           </m.div>
                         )}
@@ -297,7 +287,7 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
             <div className="hidden lg:flex items-center pointer-events-auto">
               <CTAButton
                 theme="light"
-                onClick={() => onNavigate('contact')}
+                to="/contact"
                 className="py-3 px-6 whitespace-nowrap"
               >
                 LET&apos;S TALK
@@ -321,8 +311,8 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
         }`}
         style={{ maxHeight: 'calc(100vh - 18vh - 6rem)' }}
       >
-            <button
-              onClick={() => onNavigate('homepage')}
+            <Link
+              to="/"
               aria-label="Go to Homepage"
               className={`p-4 transition-all duration-snap border-b border-white/10 ${
                 currentView === 'homepage' ? 'bg-gold text-dark' : 'text-cream hover:bg-white/5'
@@ -331,16 +321,15 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
               <span className="font-mono text-[10px] font-bold whitespace-nowrap inline-block -translate-x-1">
                 [SYS]
               </span>
-            </button>
+            </Link>
 
             <div className="flex flex-col">
               {navItems.map((item) => {
                 const isActive = navItemIsActive(item);
                 return (
-                  <button
+                  <Link
                     key={item.id}
-                    type="button"
-                    onClick={() => handleNavPrimaryClick(item)}
+                    to={item.to}
                     className={`group relative h-24 w-full flex items-center justify-center transition-all duration-snap border-b border-white/5 ${
                       isActive ? 'bg-white/10 text-gold-on-cream' : 'text-cream/60 hover:text-cream hover:bg-white/5'
                     }`}
@@ -349,18 +338,17 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
                     <span className="block -rotate-90 whitespace-nowrap font-mono text-[9px] uppercase tracking-[0.2em] font-bold">
                       {item.label}
                     </span>
-                  </button>
+                  </Link>
                 );
               })}
             </div>
 
-            <button
-              type="button"
-              onClick={() => onNavigate('contact')}
+            <Link
+              to="/contact"
               className="h-32 w-full bg-gold flex items-center justify-center hover:bg-white hover:text-dark transition-colors duration-snap group"
             >
               <span className="block -rotate-90 whitespace-nowrap type-eyebrow text-dark">TALK</span>
-            </button>
+            </Link>
       </m.div>
 
       <div
@@ -369,13 +357,12 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
         }`}
       >
         <div className={`flex items-center gap-3 ${hideForChat ? 'pointer-events-none' : 'pointer-events-auto'}`}>
-          <button
-            type="button"
-            onClick={() => onNavigate('contact')}
+          <Link
+            to="/contact"
             className={`px-3 py-2 type-eyebrow border border-dark bg-dark text-cream whitespace-nowrap ${scrolled ? 'shadow-lg' : ''}`}
           >
             LET&apos;S TALK
-          </button>
+          </Link>
           <button
             type="button"
             onClick={() => setIsMenuOpen(true)}
@@ -398,17 +385,16 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
             className="fixed inset-0 bg-cream z-[400] flex flex-col px-8 overflow-y-auto"
           >
             <div className="h-20 w-full flex items-center justify-between shrink-0">
-              <button
-                type="button"
+              <Link
+                to="/"
                 onClick={() => {
                   setIsMenuOpen(false);
-                  onNavigate('homepage');
                 }}
                 aria-label="Go to Homepage"
                 className="flex items-center"
               >
                 <SysbiltLogo className="w-[min(130px,calc(100vw-6rem))]" />
-              </button>
+              </Link>
               <button
                 type="button"
                 onClick={() => setIsMenuOpen(false)}
@@ -427,17 +413,16 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
                 return (
                   <div key={item.id} className="flex flex-col">
                     <div className="flex items-center justify-between w-full group">
-                      <button
-                        type="button"
+                      <Link
+                        to={item.to}
                         onClick={() => {
-                          handleNavPrimaryClick(item);
                           setIsMenuOpen(false);
                         }}
                         className="flex items-center gap-4 text-4xl font-serif text-dark text-left hover:text-gold-on-cream transition-colors"
                       >
                         {isActive && <div className="w-2 h-2 rounded-full bg-gold" />}
                         {item.fullLabel}
-                      </button>
+                      </Link>
 
                       {dd === 'pillars' && (
                         <button
@@ -487,17 +472,16 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
                                   </span>
                                   <div className="flex flex-col gap-3">
                                     {group.items.map((sub) => (
-                                      <button
+                                      <Link
                                         key={sub.id}
-                                        type="button"
+                                        to={sub.to}
                                         onClick={() => {
-                                          onNavigate(sub.id);
                                           setIsMenuOpen(false);
                                         }}
                                         className="text-left font-serif text-lg text-dark/70 hover:text-dark active:text-gold-on-cream transition-colors"
                                       >
                                         {sub.name}
-                                      </button>
+                                      </Link>
                                     ))}
                                   </div>
                                 </div>
@@ -518,26 +502,24 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
                             className="overflow-hidden"
                           >
                             <div className="pt-6 pb-2 pl-6 space-y-3 border-l border-dark/10 ml-2 mt-2 flex flex-col">
-                              <button
-                                type="button"
+                              <Link
+                                to="/blog"
                                 onClick={() => {
-                                  onNavigate('blog');
                                   setIsMenuOpen(false);
                                 }}
                                 className="text-left font-serif text-lg text-dark/70 hover:text-dark active:text-gold-on-cream transition-colors"
                               >
                                 Blog
-                              </button>
-                              <button
-                                type="button"
+                              </Link>
+                              <Link
+                                to="/toolkit"
                                 onClick={() => {
-                                  onNavigate('toolkit');
                                   setIsMenuOpen(false);
                                 }}
                                 className="text-left font-serif text-lg text-dark/70 hover:text-dark active:text-gold-on-cream transition-colors"
                               >
                                 Toolkit
-                              </button>
+                              </Link>
                               <Link
                                 to="/guides"
                                 onClick={() => setIsMenuOpen(false)}
@@ -545,16 +527,15 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
                               >
                                 Guides
                               </Link>
-                              <button
-                                type="button"
+                              <Link
+                                to="/news"
                                 onClick={() => {
-                                  onNavigate('news');
                                   setIsMenuOpen(false);
                                 }}
                                 className="text-left font-serif text-lg text-dark/70 hover:text-dark active:text-gold-on-cream transition-colors"
                               >
                                 News
-                              </button>
+                              </Link>
                             </div>
                           </m.div>
                         )}
@@ -567,8 +548,8 @@ const GlobalHeader: React.FC<GlobalHeaderProps> = ({ currentView, onNavigate, sc
               <div className="mt-auto w-full flex justify-center pb-8 pt-12">
                 <CTAButton
                   theme="light"
+                  to="/contact"
                   onClick={() => {
-                    onNavigate('contact');
                     setIsMenuOpen(false);
                   }}
                   className="w-full whitespace-nowrap"

@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useAnimationFrame, useMotionValue, useTransform, useScroll } from 'framer-motion';
 import CTAButton from '../../components/CTAButton';
+import GuidePathways from '../../components/GuidePathways';
 import BackButton from '../../components/BackButton';
 import PillarVisual_Dashboard from '../../components/Pillar7/PillarVisual_Dashboard';
 import { pillar7Copy } from '../../constants/pillar7Copy';
@@ -99,7 +100,7 @@ const Pillar7: React.FC<Pillar7Props> = ({ onNavigate }) => {
               </h1>
               <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/70 max-w-2xl border-l-2 border-dark pl-6 mb-10 md:mb-8">{hero.sub}</p>
               <div className="flex flex-col sm:flex-row gap-4 sm:items-center sm:gap-8 items-start mt-2">
-                <CTAButton theme="light" onClick={() => onNavigate('contact')}>{hero.ctaPrimary}</CTAButton>
+                <CTAButton theme="light" to="/contact">{hero.ctaPrimary}</CTAButton>
                 <Link
                   to="/guides/dashboards"
                   className="font-sans text-sm text-dark/40 transition-colors hover:text-dark/60"
@@ -245,12 +246,11 @@ const Pillar7: React.FC<Pillar7Props> = ({ onNavigate }) => {
               Read the complete guide on dashboards that work for your business. Everything we described here, in depth,
               with examples and a diagnostic checklist.
             </p>
-            <Link
-              to="/guides/dashboards"
-              className="inline-block rounded-full border border-dark/20 px-8 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark transition-colors hover:border-dark/40"
-            >
-              [ READ THE GUIDE ]
-            </Link>
+            <GuidePathways
+              legacyPath="/guides/dashboards"
+              bookPath="/guides/built-to-see"
+              bookTitle="Built to See"
+            />
           </section>
 
           {/* FINAL CTA */}
@@ -263,7 +263,7 @@ const Pillar7: React.FC<Pillar7Props> = ({ onNavigate }) => {
               </span>
             </h2>
             <div className="mb-16">
-              <CTAButton theme="dark" onClick={() => onNavigate('contact')}>BOOK A CALL</CTAButton>
+              <CTAButton theme="dark" to="/contact">BOOK A CALL</CTAButton>
             </div>
             <div className="flex items-center justify-center gap-3">
               <div className="w-2 h-2 rounded-full bg-white/60 animate-pulse"></div>

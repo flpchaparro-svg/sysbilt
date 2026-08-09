@@ -66,7 +66,6 @@ import { BTM_CHAPTERS } from '../../src/built-to-multiply/chapter-seo.ts';
 import { BTE_CHAPTERS } from '../../src/built-to-teach/chapter-seo.ts';
 import { BSE_CHAPTERS } from '../../src/built-to-see/chapter-seo.ts';
 import {
-  STATIC_ROUTES,
   canonicalUrl,
   distPathForRoute,
   GENERIC_TITLE,
@@ -74,6 +73,7 @@ import {
   isIndexableExcluded,
   fetchSanityContent,
   buildAllRoutes,
+  buildSitemapXml,
 } from './stamp-meta.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -87,6 +87,114 @@ async function readDist(routePath) {
     return await readFile(distPathForRoute(routePath), 'utf8');
   } catch {
     return null;
+  }
+}
+
+async function readSource(relativePath) {
+  try {
+    return await readFile(path.join(ROOT, relativePath), 'utf8');
+  } catch {
+    addViolation(`crawl graph — could not read ${relativePath}`);
+    return '';
+  }
+}
+
+async function checkWaveACrawlGraph() {
+  const [header, footer, ctaButton, guidesHub, homeGuides, vercelConfig] = await Promise.all([
+    readSource('src/components/GlobalHeader.tsx'),
+    readSource('src/components/GlobalFooter.tsx'),
+    readSource('src/components/CTAButton.tsx'),
+    readSource('src/pages/GuidesHubPage.tsx'),
+    readSource('src/components/HomePage/GuideLibrarySection.tsx'),
+    readSource('vercel.json'),
+  ]);
+
+  if (header.includes('onNavigate')) {
+    addViolation('crawl graph — GlobalHeader still uses button-only onNavigate routing');
+  }
+  if (footer.includes('onNavigate')) {
+    addViolation('crawl graph — GlobalFooter still uses button-only onNavigate routing');
+  }
+  if (!ctaButton.includes('<Link to={to}')) {
+    addViolation('crawl graph — CTAButton link mode is missing');
+  }
+
+  const headerPaths = ['/', '/architect', '/system', '/process', '/proof', '/blog', '/contact'];
+  for (const routePath of headerPaths) {
+    if (!header.includes(`'${routePath}'`) && !header.includes(`"${routePath}"`)) {
+      addViolation(`crawl graph — GlobalHeader is missing route ${routePath}`);
+    }
+  }
+
+  const footerPaths = [
+    '/',
+    '/architect',
+    '/process',
+    '/proof',
+    '/pillar1',
+    '/pillar2',
+    '/pillar3',
+    '/pillar4',
+    '/pillar5',
+    '/pillar6',
+    '/pillar7',
+    '/blog',
+    '/toolkit',
+    '/guides',
+    '/news',
+    '/privacy',
+    '/terms',
+  ];
+  for (const routePath of footerPaths) {
+    if (!footer.includes(`'${routePath}'`) && !footer.includes(`"${routePath}"`)) {
+      addViolation(`crawl graph — GlobalFooter is missing route ${routePath}`);
+    }
+  }
+
+  if (!guidesHub.includes('FEATURED_CODE_GUIDES.map') || guidesHub.includes('FEATURED_INITIAL_VISIBLE')) {
+    addViolation('crawl graph — /guides must render all eight code-defined guide hubs without a visibility slice');
+  }
+  if (!guidesHub.includes('filteredGuides.map') || guidesHub.includes('visibleSanityGuides')) {
+    addViolation('crawl graph — /guides must render every filtered Sanity guide without a load-more slice');
+  }
+
+  const homeGuideMetas = [
+    'BTW_META',
+    'BTS_META',
+    'BTC_META',
+    'BTR_META',
+    'BTT_META',
+    'BTM_META',
+    'BTE_META',
+    'BSE_META',
+  ];
+  for (const metaName of homeGuideMetas) {
+    if (!homeGuides.includes(`{ meta: ${metaName},`)) {
+      addViolation(`crawl graph — homepage guide section is missing ${metaName}`);
+    }
+  }
+
+  const pillarBookRoutes = [
+    ['src/pages/System/Pillar1.tsx', BTW_HUB_ROUTE],
+    ['src/pages/System/Pillar2.tsx', BTC_HUB_ROUTE],
+    ['src/pages/System/Pillar3.tsx', BTR_HUB_ROUTE],
+    ['src/pages/System/Pillar4.tsx', BTT_HUB_ROUTE],
+    ['src/pages/System/Pillar5.tsx', BTM_HUB_ROUTE],
+    ['src/pages/System/Pillar6.tsx', BTE_HUB_ROUTE],
+    ['src/pages/System/Pillar7.tsx', BSE_HUB_ROUTE],
+  ];
+  for (const [relativePath, bookRoute] of pillarBookRoutes) {
+    const source = await readSource(relativePath);
+    if (!source.includes(`bookPath="${bookRoute}"`)) {
+      addViolation(`crawl graph — ${relativePath} is missing its ${bookRoute} field-guide link`);
+    }
+  }
+
+  if (vercelConfig.includes('/api/sitemap')) {
+    addViolation('sitemap — vercel.json still routes sitemap.xml through a runtime function');
+  }
+  if (!vercelConfig.includes('"source": "/sitemap.xml", "destination": "/sitemap.xml"')) {
+    addViolation('sitemap — vercel.json does not preserve the static sitemap.xml route');
   }
 }
 
@@ -194,7 +302,7 @@ function checkProfessionalServiceNode(routePath, html) {
 
 /**
  * Anti-drift: the shared BTW route module is the single source consumed by
- * stamp-meta, api/sitemap and (via the generated manifest) middleware. Assert it
+ * stamp-meta and (via the generated manifest) middleware. Assert it
  * stays in lock-step with the content source (chapter-seo.ts) and that no
  * consumer has re-introduced its own hardcoded copy of the chapter slugs.
  */
@@ -217,7 +325,7 @@ async function checkBtwAntiDrift() {
   }
 
   // No consumer should keep its own hardcoded chapter-slug list.
-  const consumers = ['middleware.ts', 'api/sitemap.ts'];
+  const consumers = ['middleware.ts'];
   for (const rel of consumers) {
     let src;
     try {
@@ -254,7 +362,7 @@ async function checkBtsAntiDrift() {
     }
   }
 
-  const consumers = ['middleware.ts', 'api/sitemap.ts'];
+  const consumers = ['middleware.ts'];
   for (const rel of consumers) {
     let src;
     try {
@@ -291,7 +399,7 @@ async function checkBtcAntiDrift() {
     }
   }
 
-  const consumers = ['middleware.ts', 'api/sitemap.ts'];
+  const consumers = ['middleware.ts'];
   for (const rel of consumers) {
     let src;
     try {
@@ -328,7 +436,7 @@ async function checkBtrAntiDrift() {
     }
   }
 
-  const consumers = ['middleware.ts', 'api/sitemap.ts'];
+  const consumers = ['middleware.ts'];
   for (const rel of consumers) {
     let src;
     try {
@@ -365,7 +473,7 @@ async function checkBttAntiDrift() {
     }
   }
 
-  const consumers = ['middleware.ts', 'api/sitemap.ts'];
+  const consumers = ['middleware.ts'];
   for (const rel of consumers) {
     let src;
     try {
@@ -402,7 +510,7 @@ async function checkBtmAntiDrift() {
     }
   }
 
-  const consumers = ['middleware.ts', 'api/sitemap.ts'];
+  const consumers = ['middleware.ts'];
   for (const rel of consumers) {
     let src;
     try {
@@ -439,7 +547,7 @@ async function checkBteAntiDrift() {
     }
   }
 
-  const consumers = ['middleware.ts', 'api/sitemap.ts'];
+  const consumers = ['middleware.ts'];
   for (const rel of consumers) {
     let src;
     try {
@@ -476,7 +584,7 @@ async function checkBseAntiDrift() {
     }
   }
 
-  const consumers = ['middleware.ts', 'api/sitemap.ts'];
+  const consumers = ['middleware.ts'];
   for (const rel of consumers) {
     let src;
     try {
@@ -493,40 +601,6 @@ async function checkBseAntiDrift() {
       );
     }
   }
-}
-
-/** Sitemap URL set derived from the same source data the API route uses. */
-function buildSitemapPathSet(content) {
-  const set = new Set();
-  for (const r of STATIC_ROUTES) {
-    if (!isIndexableExcluded(r.path)) set.add(r.path);
-  }
-  for (const g of content.guides) {
-    if (g.slug && g.slug !== 'built-to-work' && g.slug !== 'built-to-sell' && g.slug !== 'built-to-close' && g.slug !== 'built-to-run' && g.slug !== 'built-to-think' && g.slug !== 'built-to-multiply' && g.slug !== 'built-to-teach' && g.slug !== 'built-to-see') set.add(`/guides/${g.slug}`);
-  }
-  set.add(BTW_HUB_ROUTE);
-  for (const slug of BTW_CHAPTER_SLUGS) set.add(`${BTW_HUB_ROUTE}/${slug}`);
-  set.add(BTS_HUB_ROUTE);
-  for (const slug of BTS_CHAPTER_SLUGS) set.add(`${BTS_HUB_ROUTE}/${slug}`);
-  set.add(BTC_HUB_ROUTE);
-  for (const slug of BTC_CHAPTER_SLUGS) set.add(`${BTC_HUB_ROUTE}/${slug}`);
-  set.add(BTR_HUB_ROUTE);
-  for (const slug of BTR_CHAPTER_SLUGS) set.add(`${BTR_HUB_ROUTE}/${slug}`);
-  set.add(BTT_HUB_ROUTE);
-  for (const slug of BTT_CHAPTER_SLUGS) set.add(`${BTT_HUB_ROUTE}/${slug}`);
-  set.add(BTM_HUB_ROUTE);
-  for (const slug of BTM_CHAPTER_SLUGS) set.add(`${BTM_HUB_ROUTE}/${slug}`);
-  set.add(BTE_HUB_ROUTE);
-  for (const slug of BTE_CHAPTER_SLUGS) set.add(`${BTE_HUB_ROUTE}/${slug}`);
-  set.add(BSE_HUB_ROUTE);
-  for (const slug of BSE_CHAPTER_SLUGS) set.add(`${BSE_HUB_ROUTE}/${slug}`);
-  for (const post of content.posts) {
-    if (post.slug) set.add(`/blog/${post.slug}`);
-  }
-  for (const item of content.toolkitItems) {
-    if (item.slug) set.add(`/toolkit/${item.slug}`);
-  }
-  return set;
 }
 
 async function main() {
@@ -554,8 +628,29 @@ async function main() {
   await checkBtmAntiDrift();
   await checkBteAntiDrift();
   await checkBseAntiDrift();
+  await checkWaveACrawlGraph();
 
-  const sitemapSet = buildSitemapPathSet(content);
+  const expectedSitemap = buildSitemapXml(routes, content);
+  const sitemapPath = path.join(ROOT, 'dist', 'sitemap.xml');
+  let actualSitemap = null;
+  try {
+    actualSitemap = await readFile(sitemapPath, 'utf8');
+  } catch {
+    addViolation(`sitemap — generated file missing (${sitemapPath})`);
+  }
+  if (actualSitemap != null && actualSitemap !== expectedSitemap.xml) {
+    addViolation('sitemap — generated XML does not match the deployed route and content snapshot');
+  }
+  if (
+    actualSitemap != null &&
+    (!actualSitemap.startsWith('<?xml version="1.0" encoding="UTF-8"?>') ||
+      !actualSitemap.includes('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">') ||
+      !actualSitemap.trimEnd().endsWith('</urlset>'))
+  ) {
+    addViolation('sitemap — generated file is missing the expected XML declaration or urlset root');
+  }
+
+  const sitemapSet = new Set(expectedSitemap.paths);
   const indexableSet = new Set(routes.map((r) => r.path).filter((p) => !isIndexableExcluded(p)));
 
   for (const p of sitemapSet) {
@@ -578,7 +673,7 @@ async function main() {
   }
 
   console.log(
-    `[verify-seo] PASS — ${routes.length} routes verified (title, canonical, noindex, JSON-LD, anti-drift, sitemap set of ${sitemapSet.size}).`
+    `[verify-seo] PASS — ${routes.length} routes verified (title, canonical, noindex, JSON-LD, crawl graph, anti-drift, static sitemap set of ${sitemapSet.size}).`
   );
 }
 
