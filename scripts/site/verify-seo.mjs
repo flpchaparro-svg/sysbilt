@@ -190,11 +190,35 @@ async function checkWaveACrawlGraph() {
     }
   }
 
-  if (vercelConfig.includes('/api/sitemap')) {
-    addViolation('sitemap — vercel.json still routes sitemap.xml through a runtime function');
+  let parsedVercel = null;
+  try {
+    parsedVercel = JSON.parse(vercelConfig);
+  } catch {
+    addViolation('sitemap — vercel.json is not valid JSON');
   }
-  if (!vercelConfig.includes('"source": "/sitemap.xml", "destination": "/sitemap.xml"')) {
-    addViolation('sitemap — vercel.json does not preserve the static sitemap.xml route');
+
+  if (parsedVercel) {
+    const rewrites = Array.isArray(parsedVercel.rewrites) ? parsedVercel.rewrites : [];
+    const rewriteBlob = JSON.stringify(rewrites);
+    if (rewriteBlob.includes('/api/sitemap')) {
+      addViolation('sitemap — vercel.json still routes sitemap.xml through a runtime function');
+    }
+
+    const hasIdentitySitemapRewrite = rewrites.some(
+      (rule) => rule?.source === '/sitemap.xml' && rule?.destination === '/sitemap.xml'
+    );
+    const spaRewrite = rewrites.find(
+      (rule) => rule?.destination === '/index.html' && String(rule?.source || '').includes('(?!')
+    );
+    const spaExcludesSitemap =
+      typeof spaRewrite?.source === 'string' &&
+      (spaRewrite.source.includes('sitemap\\.xml') || spaRewrite.source.includes('sitemap.xml'));
+
+    // Static dist/sitemap.xml is filesystem-served. Guard against the SPA fallback
+    // swallowing it; do not require a redundant identity rewrite (Vercel may omit those).
+    if (!hasIdentitySitemapRewrite && !spaExcludesSitemap) {
+      addViolation('sitemap — vercel.json SPA fallback does not exclude the static sitemap.xml route');
+    }
   }
 }
 
