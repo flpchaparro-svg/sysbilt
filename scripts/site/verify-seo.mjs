@@ -91,6 +91,7 @@ import {
   wordThresholdForRequiredBodyPath,
   isCodeBookChapterPath,
   isToolkitItemPath,
+  isBlogPostPath,
   EXPECTED_CODE_BOOK_CHAPTER_COUNT,
 } from '../../src/site/routePolicy';
 
@@ -379,6 +380,10 @@ function checkRequiredBodyRoute(route, html) {
   } else if (p === '/toolkit') {
     if (!html.includes('href="/toolkit/')) {
       addViolation(`${p} — missing toolkit item links`);
+    }
+  } else if (p === '/blog') {
+    if (!html.includes('href="/blog/')) {
+      addViolation(`${p} — missing blog post links`);
     }
   }
 }
@@ -808,6 +813,14 @@ async function main() {
   const toolkitItemPaths = [...routePaths].filter((p) => isToolkitItemPath(p));
   if (toolkitItemPaths.length === 0) {
     addViolation('required-body — no /toolkit/:slug routes found in the built route list');
+  }
+
+  if (!routePaths.has('/blog')) {
+    addViolation('required-body — /blog is missing from the built route list');
+  }
+  const blogPostPaths = [...routePaths].filter((p) => isBlogPostPath(p));
+  if (blogPostPaths.length === 0) {
+    addViolation('required-body — no /blog/:slug routes found in the built route list');
   }
 
   const policyCounts = { 'required-body': 0, 'temporary-legacy-shell': 0, 'noindex-shell': NOINDEX_BOOK_READ_PATHS.length };

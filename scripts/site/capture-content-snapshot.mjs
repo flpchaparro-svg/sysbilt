@@ -49,6 +49,8 @@ const SNAPSHOT_QUERY = `{
     internalLinkDestination,
     tags,
     customCTA,
+    isFeatured,
+    featuredOrder,
     "relatedPosts": relatedPosts[]->{
       title,
       slug,

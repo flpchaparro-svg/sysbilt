@@ -71,7 +71,6 @@ export const BLOG_SLUGS: readonly string[] = [
   "why-every-business-needs-website-built-code",
   "why-my-business-growing-i-have-no",
   "why-your-business-website-looks-bad-mobile",
-  "why-your-crm-taking-months-learn-how",
   "why-your-job-profit-margins-are-shrinking",
   "why-your-team-refuses-use-new-software",
   "why-your-website-isnt-getting-calls-how",

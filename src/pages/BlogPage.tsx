@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -9,15 +9,42 @@ import HeroVisualBrutalist from '../components/Blog/HeroVisualBrutalist';
 import RobotPeek from '../components/RobotPeek';
 import { SYBIL_CHAT_OPEN_CHANGE_EVENT } from '../constants/sybilChatOpenEvent';
 import NewsletterForm from '../components/NewsletterForm';
-import { PageMeta } from '../components/PageMeta';
+import { RouteHead } from '../site/RouteHead';
+import { useRouteData } from '../site/RouteContentProvider';
 import { SEO_META, SITE_ORIGIN } from '../constants/seoMeta';
 import ShareButton from '../components/ShareButton';
+import { organizationIdRef } from '../constants/organizationJsonLd';
+import { Helmet } from 'react-helmet-async';
 
 const RED_PILLARS = ['Websites & E-commerce', 'CRM & Lead Tracking', 'Automation'];
 const GOLD_PILLARS = ['AI Assistants', 'Content Systems', 'Team Training'];
 const BW_PILLARS = ['Dashboards & Reporting'];
 
 const FILTER_OPTIONS = ['ALL', ...getAllPillars().map((p) => p.subtitle)];
+
+const BLOG_URL = `${SITE_ORIGIN}/blog`;
+
+const blogCollectionJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: SEO_META.blogIndex.title,
+  description: SEO_META.blogIndex.description,
+  url: BLOG_URL,
+  publisher: organizationIdRef(),
+};
+
+const blogBreadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_ORIGIN}/` },
+    { '@type': 'ListItem', position: 2, name: 'Insights', item: BLOG_URL },
+  ],
+};
+
+type BlogHubRouteData = {
+  posts?: any[];
+};
 
 function getPillarBadgeClass(servicePillar: string | null | undefined): string {
   if (!servicePillar) return 'border-dark/20 bg-dark/5 text-dark/70';
@@ -30,7 +57,14 @@ function getPillarBadgeClass(servicePillar: string | null | undefined): string {
 function formatDate(dateString: string | null | undefined): string {
   if (!dateString) return '';
   const date = new Date(dateString);
-  return date.toLocaleDateString('en-AU', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '.');
+  return date
+    .toLocaleDateString('en-AU', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      timeZone: 'Australia/Sydney',
+    })
+    .replace(/\//g, '.');
 }
 
 // --- FEATURED CARDS (CLEAN, SCALABLE, NO OVERLAYS) ---
@@ -263,13 +297,18 @@ const LedgerRow: React.FC<{ post: any }> = ({ post }) => {
 };
 
 export default function BlogPage() {
-  const [posts, setPosts] = useState<any[]>([]);
+  const routeData = useRouteData<BlogHubRouteData>();
+  const initialDataRef = useRef<BlogHubRouteData | null>(routeData?.posts ? routeData : null);
+  const [posts, setPosts] = useState<any[]>(() => initialDataRef.current?.posts ?? []);
   const [latestCaseStudy, setLatestCaseStudy] = useState<SanityCaseStudy | null>(null);
-  const [isLoading, setIsLoading] = useState(true); 
+  const [isLoading, setIsLoading] = useState(() => !initialDataRef.current);
   const [activeFilter, setActiveFilter] = useState<string>('ALL');
-  const [searchQuery, setSearchQuery] = useState<string>(''); 
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
-  const [visibleCount, setVisibleCount] = useState(10);
+  // SSR: show every article link in the raw HTML. Client filter/search resets to a page of 10.
+  const [visibleCount, setVisibleCount] = useState(() =>
+    initialDataRef.current?.posts?.length ? initialDataRef.current.posts.length : 10
+  );
   const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
   const [currentText, setCurrentText] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
@@ -294,9 +333,20 @@ export default function BlogPage() {
   ], []);
 
   useEffect(() => {
-    document.title = "Insights | SYSBILT";
-    setIsLoading(true); 
-    
+    if (initialDataRef.current) {
+      initialDataRef.current = null;
+      getCaseStudies()
+        .then((caseStudiesData) => {
+          if (caseStudiesData && caseStudiesData.length > 0) {
+            setLatestCaseStudy(caseStudiesData[0]);
+          }
+        })
+        .catch(() => {});
+      return;
+    }
+
+    setIsLoading(true);
+
     Promise.all([
       client.fetch(`*[_type == "post"] | order(publishedAt desc) { 
         title, slug, mainImage, publishedAt, "authorName": author->name, 
@@ -401,15 +451,29 @@ export default function BlogPage() {
 
   return (
     <section className="w-full bg-cream relative z-10 flex flex-col font-sans text-dark min-h-screen">
-      <PageMeta
+      <RouteHead
         title={SEO_META.blogIndex.title}
         description={SEO_META.blogIndex.description}
         canonical={SEO_META.blogIndex.canonical}
       />
+      <Helmet>
+        <script type="application/ld+json">{JSON.stringify(blogCollectionJsonLd)}</script>
+        <script type="application/ld+json">{JSON.stringify(blogBreadcrumbJsonLd)}</script>
+      </Helmet>
 
       {!sybilChatOpen && <RobotPeek />}
 
       <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 pt-32 md:pt-48 pb-16 flex-1 w-full relative z-20 flex flex-col">
+        <nav
+          aria-label="Breadcrumb"
+          className="mb-6 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-dark/45"
+        >
+          <Link to="/" className="hover:text-dark transition-colors">
+            Home
+          </Link>
+          <span className="mx-2">/</span>
+          <span className="text-dark/70">Insights</span>
+        </nav>
         
         <header className="mb-12 md:mb-20 flex flex-col md:flex-row md:items-start justify-between gap-12 border-b-4 border-dark pb-12 md:pb-16 relative w-full">
           <div className="max-w-3xl flex-1 relative z-30 pt-8 md:pt-0">

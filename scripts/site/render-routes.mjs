@@ -169,6 +169,28 @@ function buildToolkitHubRouteData(snapshot) {
   return { tools };
 }
 
+/** Blog index cards for `/blog` (slug shape matches the live client fetch). */
+function buildBlogHubRouteData(snapshot) {
+  const posts = [...(snapshot.posts ?? [])]
+    .sort((a, b) => {
+      const ta = a.publishedAt ? Date.parse(a.publishedAt) : 0;
+      const tb = b.publishedAt ? Date.parse(b.publishedAt) : 0;
+      return tb - ta;
+    })
+    .map((p) => ({
+      title: p.title,
+      slug: { current: p.slug },
+      mainImage: p.mainImage,
+      publishedAt: p.publishedAt,
+      authorName: p.author?.name ?? null,
+      servicePillar: p.servicePillar,
+      isFeatured: p.isFeatured,
+      featuredOrder: p.featuredOrder,
+      seoDescription: p.seoDescription,
+    }));
+  return { posts };
+}
+
 function toRelatedPostItemFromSnapshot(post) {
   return {
     title: post.title,
@@ -206,6 +228,9 @@ function buildToolkitItemRouteData(snapshot, slug) {
 
 /** `null` for routes that derive everything from static/code content. */
 function routeDataFor(routePath, snapshot) {
+  if (routePath === '/blog') {
+    return buildBlogHubRouteData(snapshot);
+  }
   if (routePath.startsWith('/blog/')) {
     return buildBlogRouteData(snapshot, routePath.slice('/blog/'.length));
   }

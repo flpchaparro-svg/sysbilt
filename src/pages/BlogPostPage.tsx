@@ -198,8 +198,8 @@ const CodeBlock = ({ value, theme }: any) => {
 export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string, sectionId?: string) => void }) {
   const { slug } = useParams();
   const routeData = useRouteData<BlogRouteData>();
-  // Consumed once on the pilot route's first mount (SSR hydration); any later
-  // slug change (client-side nav to a different post) always fetches live.
+  // Consumed once on first mount (SSR hydration); any later slug change
+  // (client-side nav to a different post) always fetches live.
   const initialDataRef = useRef<BlogRouteData | null>(
     routeData && routeData.slug === slug ? routeData : null
   );
@@ -214,7 +214,7 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
 
   useEffect(() => {
     if (initialDataRef.current && initialDataRef.current.slug === slug) {
-      // Build-time snapshot already has this pilot post; skip the live fetch.
+      // Build-time snapshot already has this post; skip the live fetch.
       initialDataRef.current = null;
       return;
     }
@@ -779,7 +779,7 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
             
             <div className="lg:col-span-7 flex flex-col justify-center z-20">
               <motion.h1 
-                initial={{ opacity: 0, x: -30 }}
+                initial={false}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] as const }}
                 className={`font-sans font-black break-words text-balance ${
