@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { m, AnimatePresence } from 'framer-motion'
 import {
   ArrowLeft,
@@ -17,7 +18,7 @@ import {
 
 import CTAButton from '../components/CTAButton'
 import BackButton from '../components/BackButton'
-import { PageMeta } from '../components/PageMeta'
+import { RouteHead } from '../site/RouteHead'
 import { SEO_META } from '../constants/seoMeta'
 import { VISIBLE_NAP } from '../constants/organizationJsonLd'
 import { useContactForm } from '../hooks/useContactForm'
@@ -280,7 +281,7 @@ const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
 
   return (
     <div className="min-h-screen lg:h-screen w-full flex flex-col lg:flex-row relative z-[9999] bg-dark lg:overflow-hidden">
-      <PageMeta
+      <RouteHead
         title={SEO_META.contact.title}
         description={SEO_META.contact.description}
         canonical={SEO_META.contact.canonical}
@@ -288,6 +289,16 @@ const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
 
       <div className="w-full lg:w-5/12 h-auto lg:h-screen bg-cream text-dark flex flex-col p-8 md:p-12 lg:px-16 lg:pb-12 lg:pt-20 border-r border-dark/10 justify-between order-first relative z-10">
         <div className="flex-none mb-12 lg:mb-0 pt-2 lg:pt-0">
+          <nav
+            aria-label="Breadcrumb"
+            className="relative z-20 mb-4 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-dark/45"
+          >
+            <Link to="/" className="hover:text-dark transition-colors">
+              Home
+            </Link>
+            <span className="mx-2">/</span>
+            <span className="text-dark/70">Contact</span>
+          </nav>
           <BackButton onClick={onBack} label="Back" />
         </div>
 
@@ -306,6 +317,10 @@ const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
             </p>
             <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/80">
               We will personally review your situation and tell you honestly if we can help.
+            </p>
+            <p className="font-sans text-lg md:text-xl font-light leading-relaxed text-dark/80">
+              If we can help, we will say how and what it takes. If we cannot, we will say that too.
+              Either way you leave with a clear next step for your business.
             </p>
           </div>
         </div>

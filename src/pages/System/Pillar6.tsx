@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useAnimationFrame, useMotionValue, useTransform, useScroll } from 'framer-motion';
 import CTAButton from '../../components/CTAButton';
@@ -10,7 +10,8 @@ import FAQSection from '../../components/FAQSection';
 import { getPillarFAQs } from '../../constants/faqData';
 import { colors } from '../../constants/theme';
 import SolutionCardPillar from '../../components/System/SolutionCardPillar';
-import { PageMeta } from '../../components/PageMeta';
+import { RouteHead } from '../../site/RouteHead';
+import { ClientOnly } from '../../site/ClientOnly';
 import PillarServiceJsonLd from '../../components/PillarServiceJsonLd';
 import { SEO_META } from '../../constants/seoMeta';
 
@@ -18,47 +19,74 @@ interface Pillar6Props {
   onNavigate: (view: string, sectionId?: string) => void;
 }
 
-const AnimatedCardLeft = ({ data }: { data: any }) => {
+/** True after the first client-side effect flush; always `false` during SSR. */
+function useMounted(): boolean {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  return mounted;
+}
+
+/**
+ * Card copy shared between the SSR/pre-hydration static card and the
+ * scroll-driven animated card, so crawlers and the first client paint see
+ * the exact same words search engines index.
+ */
+const GapCardBody = ({ data, defaultTag }: { data: any; defaultTag: string }) => (
+  <>
+    <div className="font-mono text-xs font-bold text-gold-on-cream mb-8 border-b border-dark/10 pb-4 flex justify-end items-center">
+      <span className="bg-gold/10 text-gold-on-cream px-2 py-1">{data.tag || defaultTag}</span>
+    </div>
+    <h3 className="font-serif text-3xl md:text-4xl leading-tight text-dark mb-6">{data.title}</h3>
+    <p className="font-sans text-lg text-dark/70 leading-relaxed">{data.desc}</p>
+  </>
+);
+
+/**
+ * SSR/crawlers, and the client's pre-hydration paint, never run a scroll
+ * listener, so `useScroll`'s `scrollYProgress` sits at 0, which the opacity
+ * transform below maps to fully transparent. Render a static, full-opacity
+ * card with identical copy until mounted, then swap to the scroll-linked
+ * animated version. direction 1 = card slides right-to-left; -1 = left-to-right.
+ */
+const AnimatedGapCard = ({ data, defaultTag, direction }: { data: any; defaultTag: string; direction: 1 | -1 }) => {
+  const mounted = useMounted();
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const cardX = useTransform(scrollYProgress, [0, 1], ["15vw", "-15vw"]);
-  const lineX = useTransform(scrollYProgress, [0, 1], ["-35vw", "35vw"]);
+  const cardX = useTransform(scrollYProgress, [0, 1], [`${15 * direction}vw`, `${-15 * direction}vw`]);
+  const lineX = useTransform(scrollYProgress, [0, 1], [`${-35 * direction}vw`, `${35 * direction}vw`]);
   const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
 
   return (
     <div ref={ref} className="relative w-full flex justify-center items-center py-12 md:min-h-[25vh] md:py-8 overflow-hidden">
-      <motion.div style={{ x: lineX, opacity }} className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 h-[2px] bg-gold w-[60vw] md:w-[800px] z-0 pointer-events-none" />
-      <motion.div style={{ x: cardX, opacity }} className="relative z-10 w-[85vw] md:w-[550px] shrink-0 bg-cream/80 backdrop-blur-md border border-dark p-8 md:p-12">
-        <div className="font-mono text-xs font-bold text-gold-on-cream mb-8 border-b border-dark/10 pb-4 flex justify-end items-center">
-          <span className="bg-gold/10 text-gold-on-cream px-2 py-1">{data.tag || '[SYS_BLEED]'}</span>
-        </div>
-        <h3 className="font-serif text-3xl md:text-4xl leading-tight text-dark mb-6">{data.title}</h3>
-        <p className="font-sans text-lg text-dark/70 leading-relaxed">{data.desc}</p>
-      </motion.div>
+      {mounted ? (
+        <>
+          <motion.div style={{ x: lineX, opacity }} className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 h-[2px] bg-gold w-[60vw] md:w-[800px] z-0 pointer-events-none" />
+          <motion.div style={{ x: cardX, opacity }} className="relative z-10 w-[85vw] md:w-[550px] shrink-0 bg-cream/80 backdrop-blur-md border border-dark p-8 md:p-12">
+            <GapCardBody data={data} defaultTag={defaultTag} />
+          </motion.div>
+        </>
+      ) : (
+        <>
+          {/* SSR/pre-hydration: static, full-opacity, same copy — see useMounted note above */}
+          <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 h-[2px] bg-gold w-[60vw] md:w-[800px] z-0 pointer-events-none" />
+          <div className="relative z-10 w-[85vw] md:w-[550px] shrink-0 bg-cream/80 backdrop-blur-md border border-dark p-8 md:p-12">
+            <GapCardBody data={data} defaultTag={defaultTag} />
+          </div>
+        </>
+      )}
     </div>
   );
 };
 
-const AnimatedCardRight = ({ data }: { data: any }) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const cardX = useTransform(scrollYProgress, [0, 1], ["-15vw", "15vw"]);
-  const lineX = useTransform(scrollYProgress, [0, 1], ["35vw", "-35vw"]);
-  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
+const AnimatedCardLeft = ({ data }: { data: any }) => (
+  <AnimatedGapCard data={data} defaultTag="[SYS_BLEED]" direction={1} />
+);
 
-  return (
-    <div ref={ref} className="relative w-full flex justify-center items-center py-12 md:min-h-[25vh] md:py-8 overflow-hidden">
-      <motion.div style={{ x: lineX, opacity }} className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 h-[2px] bg-gold w-[60vw] md:w-[800px] z-0 pointer-events-none" />
-      <motion.div style={{ x: cardX, opacity }} className="relative z-10 w-[85vw] md:w-[550px] shrink-0 bg-cream/80 backdrop-blur-md border border-dark p-8 md:p-12">
-        <div className="font-mono text-xs font-bold text-gold-on-cream mb-8 border-b border-dark/10 pb-4 flex justify-end items-center">
-          <span className="bg-gold/10 text-gold-on-cream px-2 py-1">{data.tag || '[CRITICAL_FAIL]'}</span>
-        </div>
-        <h3 className="font-serif text-3xl md:text-4xl leading-tight text-dark mb-6">{data.title}</h3>
-        <p className="font-sans text-lg text-dark/70 leading-relaxed">{data.desc}</p>
-      </motion.div>
-    </div>
-  );
-};
+const AnimatedCardRight = ({ data }: { data: any }) => (
+  <AnimatedGapCard data={data} defaultTag="[CRITICAL_FAIL]" direction={-1} />
+);
 
 const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.3 } } };
 
@@ -77,7 +105,7 @@ const Pillar6: React.FC<Pillar6Props> = ({ onNavigate }) => {
 
   return (
     <article className="min-h-screen bg-cream text-dark px-0 relative z-[150] overflow-x-hidden flex flex-col font-sans" aria-labelledby="pillar-hero-title">
-      <PageMeta
+      <RouteHead
         title={SEO_META.pillar6.title}
         description={SEO_META.pillar6.description}
         canonical={SEO_META.pillar6.canonical}
@@ -87,7 +115,21 @@ const Pillar6: React.FC<Pillar6Props> = ({ onNavigate }) => {
       {/* HERO */}
       <section aria-label="Hero" className="relative min-h-[700px] h-[100dvh] w-full flex flex-col overflow-hidden">
         <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 w-full h-full flex flex-col relative z-10">
-          <nav className="flex justify-between items-center mb-8 md:mb-4 pt-24 relative z-20" aria-label="Section navigation">
+          <nav
+            aria-label="Breadcrumb"
+            className="pt-24 relative z-20 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-dark/45"
+          >
+            <Link to="/" className="hover:text-dark transition-colors">
+              Home
+            </Link>
+            <span className="mx-2">/</span>
+            <Link to="/system" className="hover:text-dark transition-colors">
+              The System
+            </Link>
+            <span className="mx-2">/</span>
+            <span className="text-dark/70">Team Training</span>
+          </nav>
+          <nav className="flex justify-between items-center mb-8 md:mb-4 mt-4 relative z-20" aria-label="Section navigation">
             <BackButton onClick={() => onNavigate('system')} label="Return to The System" />
           </nav>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 lg:gap-20 flex-1 content-center items-center">
@@ -111,7 +153,9 @@ const Pillar6: React.FC<Pillar6Props> = ({ onNavigate }) => {
             </div>
             <div className="hidden lg:flex w-full h-full items-center justify-end">
               <div className="relative w-full max-w-[450px] h-[450px] opacity-90 flex items-center justify-center">
-                <PillarVisual_Helix />
+                <ClientOnly fallback={<div className="w-full h-full" aria-hidden="true" />}>
+                  <PillarVisual_Helix />
+                </ClientOnly>
               </div>
             </div>
           </div>

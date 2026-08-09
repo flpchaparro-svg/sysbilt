@@ -22,8 +22,26 @@ export const GUIDES_HUB_REQUIRED_BODY_PATHS = [
  * Book chapters use `isCodeBookChapterPath`; toolkit items use `isToolkitItemPath`;
  * blog posts use `isBlogPostPath`; Sanity guides use `isSanityGuidePath`.
  */
-export const REQUIRED_BODY_PATHS = [
+export const STATIC_REQUIRED_BODY_PATHS = [
+  '/architect',
+  '/contact',
+  '/evidence-vault',
   '/pillar1',
+  '/pillar2',
+  '/pillar3',
+  '/pillar4',
+  '/pillar5',
+  '/pillar6',
+  '/pillar7',
+  '/privacy',
+  '/process',
+  '/proof',
+  '/system',
+  '/terms',
+] as const;
+
+export const REQUIRED_BODY_PATHS = [
+  ...STATIC_REQUIRED_BODY_PATHS,
   '/blog',
   '/toolkit',
   ...GUIDES_HUB_REQUIRED_BODY_PATHS,

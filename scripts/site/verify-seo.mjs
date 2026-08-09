@@ -829,6 +829,13 @@ async function main() {
     addViolation('required-body — no /guides/:slug Sanity guide routes found in the built route list');
   }
 
+  const legacyPaths = [...routePaths].filter((p) => bodyPolicyForPath(p) === 'temporary-legacy-shell');
+  if (legacyPaths.length !== 1 || legacyPaths[0] !== '/') {
+    addViolation(
+      `temporary-legacy-shell — expected only /, found ${legacyPaths.length}: ${legacyPaths.join(', ') || '(none)'}`
+    );
+  }
+
   const policyCounts = { 'required-body': 0, 'temporary-legacy-shell': 0, 'noindex-shell': NOINDEX_BOOK_READ_PATHS.length };
 
   for (const route of routes) {

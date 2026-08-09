@@ -1,4 +1,4 @@
-import React, { useRef, lazy, Suspense } from 'react';
+import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   m, 
@@ -15,11 +15,10 @@ import { getSystemPageFAQs } from '../../constants/faqData';
 import { colors } from '../../constants/theme';
 import BackButton from '../../components/BackButton';
 import SystemGrid from '../../components/System/SystemGrid';
-import { PageMeta } from '../../components/PageMeta';
+import { RouteHead } from '../../site/RouteHead';
 import { SEO_META } from '../../constants/seoMeta';
-
-// Lazy load the scroll-heavy section
-const SystemArchitecture = lazy(() => import('../../components/System/SystemArchitecture').then(module => ({ default: module.SystemArchitecture })));
+// Eager import (was lazy-loaded) so this SEO-bearing section always SSRs.
+import { SystemArchitecture } from '../../components/System/SystemArchitecture';
 
 interface SystemPageProps {
   onBack: () => void;
@@ -67,7 +66,7 @@ const SystemPage: React.FC<SystemPageProps> = ({ onBack, onNavigate }) => {
 
   return (
     <div className="min-h-screen bg-cream text-dark pt-0 pb-0 px-0 relative z-[150] flex flex-col font-sans">
-      <PageMeta
+      <RouteHead
         title={SEO_META.system.title}
         description={SEO_META.system.description}
         canonical={SEO_META.system.canonical}
@@ -76,7 +75,17 @@ const SystemPage: React.FC<SystemPageProps> = ({ onBack, onNavigate }) => {
       {/* 1. HERO SECTION (Static Props, Self-Contained Animation) */}
       <section className="relative h-[100dvh] w-full flex flex-col overflow-hidden">
         <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 w-full h-full flex flex-col relative z-10">
-          <div className="flex justify-between items-center mb-4 pt-24 relative z-20">
+          <nav
+            aria-label="Breadcrumb"
+            className="pt-24 relative z-20 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-dark/45"
+          >
+            <Link to="/" className="hover:text-dark transition-colors">
+              Home
+            </Link>
+            <span className="mx-2">/</span>
+            <span className="text-dark/70">The System</span>
+          </nav>
+          <div className="flex justify-between items-center mb-4 mt-4 relative z-20">
             <BackButton onClick={onBack} label="Return to Home" />
           </div>
           
@@ -122,12 +131,10 @@ const SystemPage: React.FC<SystemPageProps> = ({ onBack, onNavigate }) => {
         </div>
       </section>
 
-      {/* 3. SCROLLYTELLING (Lazy Loaded) */}
-      <Suspense fallback={<div className="h-[50vh] bg-cream" />}>
-        <section className="relative z-0 mb-16 md:mb-20">
-           <SystemArchitecture />
-        </section>
-      </Suspense>
+      {/* 3. SCROLLYTELLING (eager-imported so it SSRs with the rest of the page) */}
+      <section className="relative z-0 mb-16 md:mb-20">
+         <SystemArchitecture />
+      </section>
 
       {/* 3. GRID BLUEPRINT (Isolated State) */}
       <section className="w-full bg-cream pb-20 md:pb-24 relative z-10">

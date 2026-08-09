@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { createPortal } from 'react-dom';
 import { m, AnimatePresence } from 'framer-motion';
 import { ShieldCheck, Database, Zap, Activity, CheckCircle2, X, Terminal } from 'lucide-react';
 import EvidenceVisual_Compare from '../components/EvidenceVisual_Compare';
 import CTAButton from '../components/CTAButton'; 
 import BackButton from '../components/BackButton';
-import { PageMeta } from '../components/PageMeta';
+import { RouteHead } from '../site/RouteHead';
 import { SEO_META } from '../constants/seoMeta'; 
 
 interface EvidenceVaultPageProps {
@@ -127,12 +128,12 @@ const EvidenceVaultPage: React.FC<EvidenceVaultPageProps> = ({ onBack }) => {
 
   return (
     <m.div 
-      initial={{ opacity: 0 }} 
+      initial={false} 
       animate={{ opacity: 1 }} 
       exit={{ opacity: 0 }}
       className="relative min-h-screen w-full bg-cream text-dark overflow-x-hidden content-layer"
     >
-      <PageMeta
+      <RouteHead
         title={SEO_META.evidenceVault.title}
         description={SEO_META.evidenceVault.description}
         canonical={SEO_META.evidenceVault.canonical}
@@ -150,8 +151,20 @@ const EvidenceVaultPage: React.FC<EvidenceVaultPageProps> = ({ onBack }) => {
 
       <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 relative z-10 pt-0 pb-24">
         
+        {/* BREADCRUMB */}
+        <nav
+          aria-label="Breadcrumb"
+          className="pt-24 relative z-20 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-dark/45"
+        >
+          <Link to="/" className="hover:text-dark transition-colors">
+            Home
+          </Link>
+          <span className="mx-2">/</span>
+          <span className="text-dark/70">Evidence Vault</span>
+        </nav>
+
         {/* NAVIGATION */}
-        <div className="flex justify-between items-center mb-4 pt-24 relative z-20">
+        <div className="flex justify-between items-center mb-4 mt-4 relative z-20">
           <BackButton onClick={onBack} label="Return to Overview" />
           
           <div className="hidden md:flex items-center gap-3">
@@ -163,7 +176,8 @@ const EvidenceVaultPage: React.FC<EvidenceVaultPageProps> = ({ onBack }) => {
 
         {/* HERO SECTION */}
         <section className="mb-40">
-          <m.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
+          {/* initial={false}: keep H1 visible in raw SSR HTML (no opacity-0 first paint) */}
+          <m.div initial={false} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
             <span className="font-mono text-xs text-red-text tracking-[0.4em] mb-6 block uppercase">/ Verification_Repository</span>
             <h1 className="font-serif text-6xl md:text-8xl lg:text-[8.5rem] leading-[0.9] tracking-tighter mb-10">
               The Forensic <br />

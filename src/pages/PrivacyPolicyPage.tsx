@@ -1,7 +1,8 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { m } from 'framer-motion';
 import BackButton from '../components/BackButton';
-import { PageMeta } from '../components/PageMeta';
+import { RouteHead } from '../site/RouteHead';
 import { SEO_META } from '../constants/seoMeta';
 
 interface PrivacyPolicyPageProps {
@@ -12,17 +13,28 @@ interface PrivacyPolicyPageProps {
 const PrivacyPolicyPage: React.FC<PrivacyPolicyPageProps> = ({ onBack }) => {
   return (
     <m.div
-      initial={{ opacity: 0 }}
+      initial={false}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className="min-h-screen bg-cream text-dark font-sans selection:bg-gold/30"
     >
-      <PageMeta
+      <RouteHead
         title={SEO_META.privacy.title}
         description={SEO_META.privacy.description}
         canonical={SEO_META.privacy.canonical}
       />
       <div className="max-w-[1000px] mx-auto px-6 md:px-12 lg:px-20 pt-24 pb-32">
+        <nav
+          aria-label="Breadcrumb"
+          className="relative z-20 mb-8 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-dark/45"
+        >
+          <Link to="/" className="hover:text-dark transition-colors">
+            Home
+          </Link>
+          <span className="mx-2">/</span>
+          <span className="text-dark/70">Privacy</span>
+        </nav>
+
         <div className="mb-16">
           <BackButton onClick={onBack} label="Return to Home" />
         </div>

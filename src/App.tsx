@@ -37,16 +37,23 @@ import ToolkitPage from './pages/ToolkitPage';
 import ToolkitItemPage from './pages/ToolkitItemPage';
 import BlogPage from './pages/BlogPage';
 import GuideDocumentPage from './pages/GuideDocumentPage';
+import ArchitectPage from './pages/ArchitectPage';
+import ProcessPage from './pages/ProcessPage';
+import ProofPage from './pages/ProofPage';
+import EvidenceVaultPage from './pages/EvidenceVaultPage';
+import ContactPage from './pages/ContactPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import TermsOfServicePage from './pages/TermsOfServicePage';
+import SystemPage from './pages/System/SystemPage';
+import Pillar2 from './pages/System/Pillar2';
+import Pillar3 from './pages/System/Pillar3';
+import Pillar4 from './pages/System/Pillar4';
+import Pillar5 from './pages/System/Pillar5';
+import Pillar6 from './pages/System/Pillar6';
+import Pillar7 from './pages/System/Pillar7';
 
-// PERFORMANCE: Keep HomePage Lazy
+// PERFORMANCE: Keep HomePage Lazy (homepage cohort is last)
 const HomePage = lazy(() => import('./pages/HomePage'));
-const ArchitectPage = lazy(() => import('./pages/ArchitectPage'));
-const ProcessPage = lazy(() => import('./pages/ProcessPage'));
-const ProofPage = lazy(() => import('./pages/ProofPage'));
-const EvidenceVaultPage = lazy(() => import('./pages/EvidenceVaultPage'));
-const ContactPage = lazy(() => import('./pages/ContactPage'));
-const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage'));
-const TermsOfServicePage = lazy(() => import('./pages/TermsOfServicePage'));
 const FunnelPage = lazy(() => import('./pages/funnel/FunnelPage'));
 const FunnelHomePage = lazy(() => import('./pages/funnel/FunnelHomePage'));
 const FunnelThanksPage = lazy(() => import('./pages/funnel/FunnelThanksPage'));
@@ -66,14 +73,6 @@ const BuiltToSeeBookPage = lazy(() => import('./pages/BuiltToSeeBookPage'));
 const ProposalPage = lazy(() => import('./pages/proposal/ProposalPage'));
 const AgreementPage = lazy(() => import('./pages/agreement/AgreementPage'));
 const DeepAuditReportPage = lazy(() => import('./pages/DeepAuditReportPage'));
-
-const SystemPage = lazy(() => import('./pages/System/SystemPage'));
-const Pillar2 = lazy(() => import('./pages/System/Pillar2'));
-const Pillar3 = lazy(() => import('./pages/System/Pillar3'));
-const Pillar4 = lazy(() => import('./pages/System/Pillar4'));
-const Pillar5 = lazy(() => import('./pages/System/Pillar5'));
-const Pillar6 = lazy(() => import('./pages/System/Pillar6'));
-const Pillar7 = lazy(() => import('./pages/System/Pillar7'));
 
 declare global {
   interface Window {

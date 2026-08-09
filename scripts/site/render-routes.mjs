@@ -243,6 +243,12 @@ function buildGuideRouteData(snapshot, slug) {
   };
 }
 
+/** Latest case study for `/proof`. */
+function buildProofRouteData(snapshot) {
+  const caseStudy = (snapshot.caseStudies ?? [])[0] ?? null;
+  return { caseStudy };
+}
+
 /** `null` for routes that derive everything from static/code content. */
 function routeDataFor(routePath, snapshot) {
   if (routePath === '/blog') {
@@ -262,6 +268,9 @@ function routeDataFor(routePath, snapshot) {
   }
   if (routePath.startsWith('/toolkit/')) {
     return buildToolkitItemRouteData(snapshot, routePath.slice('/toolkit/'.length));
+  }
+  if (routePath === '/proof') {
+    return buildProofRouteData(snapshot);
   }
   return null;
 }
@@ -389,6 +398,15 @@ async function main() {
 
   if (!renderedRequired.includes('/toolkit')) {
     console.error('[render-routes] /toolkit required-body index is missing from the rendered set.');
+    process.exit(1);
+  }
+
+  if (!renderedRequired.includes('/proof')) {
+    console.error('[render-routes] /proof required-body index is missing from the rendered set.');
+    process.exit(1);
+  }
+  if (!(snapshot.caseStudies ?? []).length) {
+    console.error('[render-routes] /proof requires at least one case study in the content snapshot.');
     process.exit(1);
   }
 

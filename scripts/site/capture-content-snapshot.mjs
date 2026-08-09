@@ -124,6 +124,19 @@ const SNAPSHOT_QUERY = `{
     "slug": slug.current,
     title,
     sub
+  },
+  "caseStudies": *[_type == "caseStudy" && !(_id in path("drafts.**"))] | order(_createdAt desc) {
+    _id,
+    clientName,
+    clientIndustry,
+    pillarFocus,
+    terminalLines,
+    problemItems,
+    solutionItems,
+    evidenceMetrics,
+    "beforeImage": beforeImage.asset->url,
+    "afterImage": afterImage.asset->url,
+    "gallery": gallery[].asset->url
   }
 }`;
 
@@ -228,11 +241,11 @@ async function main() {
     apiVersion: '2024-02-20',
   });
 
-  const { posts, guides, toolkitItems, funnelPages } = await client.fetch(SNAPSHOT_QUERY);
+  const { posts, guides, toolkitItems, funnelPages, caseStudies } = await client.fetch(SNAPSHOT_QUERY);
 
   const census = buildCensus({ posts, guides, toolkitItems });
 
-  const snapshotBody = { posts, guides, toolkitItems, funnelPages, census };
+  const snapshotBody = { posts, guides, toolkitItems, funnelPages, caseStudies, census };
   const snapshotHash = stableHash(snapshotBody);
   const snapshot = {
     fetchedAt: new Date().toISOString(),
@@ -251,7 +264,7 @@ async function main() {
 
   console.log(
     `[capture-content-snapshot] Wrote ${path.relative(ROOT, SNAPSHOT_PATH)} ` +
-      `(${posts.length} posts, ${guides.length} guides, ${toolkitItems.length} toolkit items, ${funnelPages.length} funnel pages). ` +
+      `(${posts.length} posts, ${guides.length} guides, ${toolkitItems.length} toolkit items, ${funnelPages.length} funnel pages, ${(caseStudies ?? []).length} case studies). ` +
       `Hash ${snapshotHash.slice(0, 12)}.`
   );
   console.log(

@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { m, AnimatePresence } from 'framer-motion';
 import { Terminal, Fingerprint } from 'lucide-react';
 
@@ -8,7 +9,7 @@ import BackButton from '../components/BackButton';
 import VideoHUD from '../components/Architect/VideoHUD';
 
 // HOOKS & DATA
-import { PageMeta } from '../components/PageMeta';
+import { RouteHead } from '../site/RouteHead';
 import { SEO_META } from '../constants/seoMeta';
 import { ARCHITECT_CONTENT } from '../constants/architectData'; 
 
@@ -18,9 +19,11 @@ interface ArchitectPageProps {
 }
 
 // Reusable Animation Wrapper
-const Section: React.FC<{ children: React.ReactNode, className?: string, delay?: number }> = ({ children, className = "", delay = 0 }) => (
+// `noInitialFade`: skip the opacity-0 initial state so SSR/pre-hydration paint stays
+// visible; used for the hero block that contains the H1.
+const Section: React.FC<{ children: React.ReactNode, className?: string, delay?: number, noInitialFade?: boolean }> = ({ children, className = "", delay = 0, noInitialFade = false }) => (
   <m.div 
-    initial={{ opacity: 0, y: 30 }}
+    initial={noInitialFade ? false : { opacity: 0, y: 30 }}
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true, margin: "-50px" }}
     transition={{ duration: 0.7, delay, ease: "easeOut" }}
@@ -56,20 +59,31 @@ const ArchitectPage: React.FC<ArchitectPageProps> = ({ onBack, onNavigate }) => 
   };
 
   return (
-    <m.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="min-h-screen bg-cream text-dark relative z-[150] flex flex-col selection:bg-gold/30">
-      <PageMeta
+    <m.div initial={false} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="min-h-screen bg-cream text-dark relative z-[150] flex flex-col selection:bg-gold/30">
+      <RouteHead
         title={SEO_META.architect.title}
         description={SEO_META.architect.description}
         canonical={SEO_META.architect.canonical}
       />
       <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 w-full flex-grow relative z-10">
-        
-        <div className="flex justify-between items-center mb-12 md:mb-20 pt-24 relative z-[200]">
+
+        <nav
+          aria-label="Breadcrumb"
+          className="pt-24 relative z-20 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-dark/45"
+        >
+          <Link to="/" className="hover:text-dark transition-colors">
+            Home
+          </Link>
+          <span className="mx-2">/</span>
+          <span className="text-dark/70">About</span>
+        </nav>
+
+        <div className="flex justify-between items-center mb-12 md:mb-20 mt-4 relative z-[200]">
           <BackButton onClick={onBack} label="Return to Home" />
         </div>
 
         {/* HEADER & SWITCH */}
-        <Section className="mb-16 md:mb-24 relative text-center lg:text-left">
+        <Section noInitialFade className="mb-16 md:mb-24 relative text-center lg:text-left">
            <div className="flex items-center gap-0 mb-12 border border-dark/10 bg-white p-1 rounded-sm w-fit shadow-lg mx-auto lg:mx-0">
               <button 
                 onClick={() => setMode('architect')}
@@ -92,7 +106,7 @@ const ArchitectPage: React.FC<ArchitectPageProps> = ({ onBack, onNavigate }) => 
            <AnimatePresence mode="wait">
              <m.h1
                key={mode}
-               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+               initial={false} animate={{ opacity: 1, y: 0 }}
                className="font-serif text-5xl md:text-6xl lg:text-7xl xl:text-8xl leading-[1.1] lg:leading-[0.9] tracking-tighter text-dark max-w-5xl mb-6 md:mb-10 mx-auto lg:mx-0"
              >
                {current.headline}

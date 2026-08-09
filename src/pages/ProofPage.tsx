@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { m } from 'framer-motion';
 import { 
-  ShieldCheck, ArrowRight, Clock, LayoutTemplate, 
+  ShieldCheck, ArrowRight, LayoutTemplate, 
   AlertTriangle, CheckCircle2, TrendingUp 
 } from 'lucide-react';
 
@@ -13,7 +14,8 @@ import TerminalLog from '../components/Proof/TerminalLog';
 import CountUp from '../components/Proof/CountUp';
 
 // HOOKS & DATA
-import { PageMeta } from '../components/PageMeta';
+import { RouteHead } from '../site/RouteHead';
+import { useRouteData } from '../site/RouteContentProvider';
 import { SEO_META } from '../constants/seoMeta';
 import { getCaseStudies } from '../sanityClient';
 import { SanityCaseStudy } from '../types';
@@ -23,9 +25,14 @@ interface ProofPageProps {
   onNavigate: (view: string, sectionId?: string) => void;
 }
 
+type ProofRouteData = {
+  caseStudy?: SanityCaseStudy | null;
+};
+
 const Section: React.FC<{ children: React.ReactNode, className?: string, delay?: number }> = ({ children, className = "", delay = 0 }) => (
   <m.div 
-    initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
+    initial={false}
+    whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.7, delay, ease: "easeOut" }}
     className={className}
   >
@@ -34,17 +41,26 @@ const Section: React.FC<{ children: React.ReactNode, className?: string, delay?:
 );
 
 const ProofPage: React.FC<ProofPageProps> = ({ onBack, onNavigate }) => {
-  // SANITY STATE
-  const [caseStudy, setCaseStudy] = useState<SanityCaseStudy | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const routeData = useRouteData<ProofRouteData>();
+  const initialDataRef = useRef<ProofRouteData | null>(
+    routeData && 'caseStudy' in routeData ? routeData : null
+  );
+  const [caseStudy, setCaseStudy] = useState<SanityCaseStudy | null>(
+    () => initialDataRef.current?.caseStudy ?? null
+  );
+  const [isLoading, setIsLoading] = useState(() => !initialDataRef.current);
 
-  // FETCH ON MOUNT
   useEffect(() => {
+    if (initialDataRef.current) {
+      initialDataRef.current = null;
+      return;
+    }
+
     const fetchProof = async () => {
       try {
         const data = await getCaseStudies();
         if (data && data.length > 0) {
-          setCaseStudy(data[0]); // Grabs the newest case study
+          setCaseStudy(data[0]);
         }
       } catch (error) {
         console.error("Error fetching case study:", error);
@@ -58,7 +74,7 @@ const ProofPage: React.FC<ProofPageProps> = ({ onBack, onNavigate }) => {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-cream flex items-center justify-center">
-        <PageMeta
+        <RouteHead
           title={SEO_META.proof.title}
           description={SEO_META.proof.description}
           canonical={SEO_META.proof.canonical}
@@ -71,12 +87,25 @@ const ProofPage: React.FC<ProofPageProps> = ({ onBack, onNavigate }) => {
   if (!caseStudy) {
     return (
       <div className="min-h-screen bg-cream flex flex-col items-center justify-center gap-4">
-        <PageMeta
+        <RouteHead
           title={SEO_META.proof.title}
           description={SEO_META.proof.description}
           canonical={SEO_META.proof.canonical}
         />
-        <span className="font-mono text-sm uppercase tracking-widest text-dark/50">No Evidence Found.</span>
+        <nav
+          aria-label="Breadcrumb"
+          className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-dark/45"
+        >
+          <Link to="/" className="hover:text-dark transition-colors">
+            Home
+          </Link>
+          <span className="mx-2">/</span>
+          <span className="text-dark/70">Proof</span>
+        </nav>
+        <h1 className="font-serif text-2xl text-dark">No evidence published yet</h1>
+        <p className="font-sans text-dark/70 max-w-md text-center">
+          We publish verified case studies here when the numbers are ready to share.
+        </p>
         <BackButton onClick={onBack} label="Return to Home" />
       </div>
     );
@@ -84,10 +113,12 @@ const ProofPage: React.FC<ProofPageProps> = ({ onBack, onNavigate }) => {
 
   return (
     <m.div 
-      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      initial={false}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
       className="min-h-screen bg-cream text-dark pt-0 relative z-[150] overflow-x-hidden flex flex-col selection:bg-gold/30"
     >
-      <PageMeta
+      <RouteHead
         title={SEO_META.proof.title}
         description={SEO_META.proof.description}
         canonical={SEO_META.proof.canonical}
@@ -97,8 +128,19 @@ const ProofPage: React.FC<ProofPageProps> = ({ onBack, onNavigate }) => {
 
       <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 w-full flex-grow pb-24 relative z-10">
         
+        <nav
+          aria-label="Breadcrumb"
+          className="pt-24 relative z-20 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-dark/45"
+        >
+          <Link to="/" className="hover:text-dark transition-colors">
+            Home
+          </Link>
+          <span className="mx-2">/</span>
+          <span className="text-dark/70">Proof</span>
+        </nav>
+
         {/* NAVIGATION */}
-        <div className="flex justify-between items-center mb-12 md:mb-20 pt-24 relative z-20">
+        <div className="flex justify-between items-center mb-12 md:mb-20 mt-4 relative z-20">
           <BackButton onClick={onBack} label="Return to Home" />
         </div>
 
@@ -243,7 +285,7 @@ const ProofPage: React.FC<ProofPageProps> = ({ onBack, onNavigate }) => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {caseStudy.evidenceMetrics.map((m, i) => (
+              {caseStudy.evidenceMetrics.map((metric, i) => (
                 <div key={i} className="bg-white p-8 border border-dark/5 hover:border-gold transition-all duration-snap group shadow-sm flex flex-col justify-between min-h-[280px] h-auto">
                   <div className="flex justify-between items-start">
                     <div className="p-3 bg-zinc-50 rounded-full group-hover:bg-gold/10 transition-colors">
@@ -252,16 +294,16 @@ const ProofPage: React.FC<ProofPageProps> = ({ onBack, onNavigate }) => {
                     <ArrowRight className="w-4 h-4 text-dark/20 group-hover:-rotate-45 transition-transform duration-snap" />
                   </div>
                   <div className="mt-auto">
-                    <div className="font-mono text-xs font-bold text-dark/80 uppercase tracking-[0.2em] mb-3">{m.label}</div>
+                    <div className="font-mono text-xs font-bold text-dark/80 uppercase tracking-[0.2em] mb-3">{metric.label}</div>
                     <div className="flex items-baseline gap-1 mb-2">
                       <span className="text-5xl md:text-6xl font-serif text-dark tracking-tighter">
-                        <CountUp value={m.val} prefix={m.prefix || ""} />
+                        <CountUp value={metric.val} prefix={metric.prefix || ""} />
                       </span>
-                      <span className="text-xl font-serif text-gold-on-cream">{m.suffix}</span>
+                      <span className="text-xl font-serif text-gold-on-cream">{metric.suffix}</span>
                     </div>
                     <div className="flex items-center gap-2 border-t border-dark/5 pt-4 mt-2">
                       <div className="w-1.5 h-1.5 rounded-full bg-gold" />
-                      <span className="font-sans text-sm text-dark/80">{m.note}</span>
+                      <span className="font-sans text-sm text-dark/80">{metric.note}</span>
                     </div>
                   </div>
                 </div>
@@ -287,7 +329,6 @@ const ProofPage: React.FC<ProofPageProps> = ({ onBack, onNavigate }) => {
               </h2>
             </div>
             
-            {/* 1. Show Slider ONLY if both Before and After images exist */}
             {caseStudy.beforeImage && caseStudy.afterImage && (
               <div className="bg-white p-4 border border-dark/10 shadow-2xl rounded-sm mb-12">
                  <EvidenceVisual_Compare 
@@ -299,7 +340,6 @@ const ProofPage: React.FC<ProofPageProps> = ({ onBack, onNavigate }) => {
               </div>
             )}
 
-            {/* 2. Show Photo Grid ONLY if gallery images exist */}
             {caseStudy.gallery && caseStudy.gallery.length > 0 && (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {caseStudy.gallery.map((imgUrl, idx) => (
@@ -332,7 +372,6 @@ const ProofPage: React.FC<ProofPageProps> = ({ onBack, onNavigate }) => {
               <p className="font-sans text-lg md:text-xl text-white/80 mb-12 max-w-2xl mx-auto leading-relaxed">
                 {caseStudy.clientName} went from invisible to indexed. From slow to instant. If your system is holding you back, let's fix it.
               </p>
-              
               <CTAButton theme="dark" onClick={() => onNavigate('contact')}>
                 BOOK A CALL
               </CTAButton>

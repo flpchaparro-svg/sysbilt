@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { m } from 'framer-motion';
 
 // COMPONENTS
@@ -7,7 +8,7 @@ import CTAButton from '../components/CTAButton';
 import BackButton from '../components/BackButton'; 
 
 // HOOKS & DATA
-import { PageMeta } from '../components/PageMeta';
+import { RouteHead } from '../site/RouteHead';
 import { SEO_META } from '../constants/seoMeta';
 import { PRINCIPLES, STEPS } from '../constants/processData'; 
 
@@ -17,9 +18,11 @@ interface ProcessPageProps {
 }
 
 // Reusable Animation Wrapper
-const Section: React.FC<{ children: React.ReactNode, className?: string, delay?: number }> = ({ children, className = "", delay = 0 }) => (
+// `noInitialFade`: skip the opacity-0 initial state so SSR/pre-hydration paint stays
+// visible; used for the hero block that contains the H1.
+const Section: React.FC<{ children: React.ReactNode, className?: string, delay?: number, noInitialFade?: boolean }> = ({ children, className = "", delay = 0, noInitialFade = false }) => (
   <m.div 
-    initial={{ opacity: 0, y: 30 }}
+    initial={noInitialFade ? false : { opacity: 0, y: 30 }}
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true, margin: "-50px" }}
     transition={{ duration: 0.7, delay, ease: "easeOut" }}
@@ -32,26 +35,37 @@ const Section: React.FC<{ children: React.ReactNode, className?: string, delay?:
 const ProcessPage: React.FC<ProcessPageProps> = ({ onBack, onNavigate }) => {
   return (
     <m.div 
-      initial={{ opacity: 0 }} 
+      initial={false} 
       animate={{ opacity: 1 }} 
       exit={{ opacity: 0 }}
       className="min-h-screen bg-cream text-dark pt-0 pb-0 px-0 relative z-[150] overflow-x-hidden flex flex-col selection:bg-gold/30"
     >
-      <PageMeta
+      <RouteHead
         title={SEO_META.process.title}
         description={SEO_META.process.description}
         canonical={SEO_META.process.canonical}
       />
       <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 w-full flex-grow relative z-10">
-        
+
+        <nav
+          aria-label="Breadcrumb"
+          className="pt-24 relative z-20 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-dark/45"
+        >
+          <Link to="/" className="hover:text-dark transition-colors">
+            Home
+          </Link>
+          <span className="mx-2">/</span>
+          <span className="text-dark/70">Process</span>
+        </nav>
+
         {/* NAV BACK */}
-        <div className="flex justify-between items-center mb-4 pt-24 relative z-20">
+        <div className="flex justify-between items-center mb-4 mt-4 relative z-20">
           <BackButton onClick={onBack} label="Return to Home" />
         </div>
 
         {/* HERO SECTION */}
         <div className="mb-20 lg:mb-24 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative">
-          <Section className="text-center lg:text-left flex flex-col items-center lg:items-start">
+          <Section noInitialFade className="text-center lg:text-left flex flex-col items-center lg:items-start">
             <span className="block font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark mb-6 md:mb-10 text-center lg:text-left">
               / THE PROCESS
             </span>
