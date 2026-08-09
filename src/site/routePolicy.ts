@@ -20,7 +20,7 @@ export const GUIDES_HUB_REQUIRED_BODY_PATHS = [
 /**
  * Explicit required-body paths that are not inferred (pilots, hubs).
  * Book chapters use `isCodeBookChapterPath`; toolkit items use `isToolkitItemPath`;
- * blog posts use `isBlogPostPath`.
+ * blog posts use `isBlogPostPath`; Sanity guides use `isSanityGuidePath`.
  */
 export const REQUIRED_BODY_PATHS = [
   '/pillar1',
@@ -81,6 +81,16 @@ export function isBlogPostPath(path: string): boolean {
   return parts.length === 2 && parts[0] === 'blog' && parts[1].length > 0;
 }
 
+/**
+ * `/guides/:slug` Sanity CMS guide docs.
+ * Excludes the collection hub, the eight code book hubs, chapters, and `/read`.
+ */
+export function isSanityGuidePath(path: string): boolean {
+  const parts = path.split('/').filter(Boolean);
+  if (parts.length !== 2 || parts[0] !== 'guides' || !parts[1]) return false;
+  return !BOOK_HUB_SLUG_SET.has(parts[1]);
+}
+
 /** Word-count minimums verify-seo enforces on `required-body` routes, by route shape. */
 export const REQUIRED_BODY_WORD_THRESHOLDS = {
   staticOrPillar: 100,
@@ -90,6 +100,7 @@ export const REQUIRED_BODY_WORD_THRESHOLDS = {
   toolkitItem: 450,
   chapter: 600,
   blog: 600,
+  guide: 800,
 } as const;
 
 /** Expected public chapter count across all eight code-defined books (12 × 8). */
@@ -100,6 +111,7 @@ export function wordThresholdForRequiredBodyPath(path: RequiredBodyPath | string
   if (isBlogPostPath(path)) return REQUIRED_BODY_WORD_THRESHOLDS.blog;
   if (path === '/toolkit') return REQUIRED_BODY_WORD_THRESHOLDS.toolkitHub;
   if (isToolkitItemPath(path)) return REQUIRED_BODY_WORD_THRESHOLDS.toolkitItem;
+  if (isSanityGuidePath(path)) return REQUIRED_BODY_WORD_THRESHOLDS.guide;
   if (GUIDES_HUB_PATH_SET.has(path)) return REQUIRED_BODY_WORD_THRESHOLDS.guidesHub;
   if (isCodeBookChapterPath(path) || path.startsWith('/guides/')) {
     return REQUIRED_BODY_WORD_THRESHOLDS.chapter;
@@ -110,7 +122,7 @@ export function wordThresholdForRequiredBodyPath(path: RequiredBodyPath | string
 /**
  * Classify a route path into its SSR body policy.
  *
- * - `required-body`: pilots, guides hubs, book chapters, toolkit, blog hub + posts.
+ * - `required-body`: pilots, guides hubs, book chapters, toolkit, blog, Sanity guides.
  * - `noindex-shell`: funnel, news, `/read` editions.
  * - `temporary-legacy-shell`: every other indexable route until a later cohort.
  */
@@ -121,7 +133,8 @@ export function bodyPolicyForPath(path: string): RouteBodyPolicy {
     (REQUIRED_BODY_PATHS as readonly string[]).includes(normalised) ||
     isCodeBookChapterPath(normalised) ||
     isToolkitItemPath(normalised) ||
-    isBlogPostPath(normalised)
+    isBlogPostPath(normalised) ||
+    isSanityGuidePath(normalised)
   ) {
     return 'required-body';
   }

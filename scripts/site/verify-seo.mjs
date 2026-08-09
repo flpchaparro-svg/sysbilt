@@ -92,6 +92,7 @@ import {
   isCodeBookChapterPath,
   isToolkitItemPath,
   isBlogPostPath,
+  isSanityGuidePath,
   EXPECTED_CODE_BOOK_CHAPTER_COUNT,
 } from '../../src/site/routePolicy';
 
@@ -821,6 +822,11 @@ async function main() {
   const blogPostPaths = [...routePaths].filter((p) => isBlogPostPath(p));
   if (blogPostPaths.length === 0) {
     addViolation('required-body — no /blog/:slug routes found in the built route list');
+  }
+
+  const sanityGuidePaths = [...routePaths].filter((p) => isSanityGuidePath(p));
+  if (sanityGuidePaths.length === 0) {
+    addViolation('required-body — no /guides/:slug Sanity guide routes found in the built route list');
   }
 
   const policyCounts = { 'required-body': 0, 'temporary-legacy-shell': 0, 'noindex-shell': NOINDEX_BOOK_READ_PATHS.length };

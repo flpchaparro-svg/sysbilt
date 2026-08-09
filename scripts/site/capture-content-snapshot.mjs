@@ -73,6 +73,13 @@ const SNAPSHOT_QUERY = `{
     publishedAt,
     _updatedAt,
     servicePillar,
+    coverLegend,
+    includeCtaPage,
+    ctaTitle,
+    ctaDescription,
+    ctaButtonText,
+    ctaLink,
+    ctaLegend,
     "imageUrl": ogImage.asset->url,
     pages[]{
       _key,

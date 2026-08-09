@@ -36,6 +36,7 @@ import BuiltToSeeHubPage from './pages/BuiltToSeeHubPage';
 import ToolkitPage from './pages/ToolkitPage';
 import ToolkitItemPage from './pages/ToolkitItemPage';
 import BlogPage from './pages/BlogPage';
+import GuideDocumentPage from './pages/GuideDocumentPage';
 
 // PERFORMANCE: Keep HomePage Lazy
 const HomePage = lazy(() => import('./pages/HomePage'));
@@ -54,7 +55,6 @@ const WebsiteWizardPage = lazy(() => import('./pages/funnel/WebsiteWizardPage'))
 const WebsiteAgreementPage = lazy(() => import('./pages/funnel/WebsiteAgreementPage'));
 const QuoteCaptureDemoPage = lazy(() => import('./pages/demo/quoteCapture/QuoteCaptureDemoPage'));
 const NewsPage = lazy(() => import('./pages/NewsPage'));
-const GuideDocumentPage = lazy(() => import('./pages/GuideDocumentPage'));
 const BuiltToWorkBookPage = lazy(() => import('./pages/BuiltToWorkBookPage'));
 const BuiltToSellBookPage = lazy(() => import('./pages/BuiltToSellBookPage'));
 const BuiltToCloseBookPage = lazy(() => import('./pages/BuiltToCloseBookPage'));

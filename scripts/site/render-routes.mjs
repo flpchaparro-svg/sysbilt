@@ -38,6 +38,7 @@ import {
   wordThresholdForRequiredBodyPath,
   isCodeBookChapterPath,
   isToolkitItemPath,
+  isSanityGuidePath,
   EXPECTED_CODE_BOOK_CHAPTER_COUNT,
 } from '../../src/site/routePolicy';
 import { BTW_META } from '../../src/built-to-work/types';
@@ -226,6 +227,22 @@ function buildToolkitItemRouteData(snapshot, slug) {
   return { slug, tool, relatedPosts: related };
 }
 
+/** Sanity CMS guide doc for `/guides/:slug` (excludes code book hubs). */
+function buildGuideRouteData(snapshot, slug) {
+  const g = (snapshot.guides ?? []).find((x) => x.slug === slug);
+  if (!g) return null;
+
+  const { imageUrl: _imageUrl, ...rest } = g;
+  return {
+    slug,
+    guide: {
+      ...rest,
+      slug: { current: g.slug },
+      pages: Array.isArray(g.pages) ? g.pages : [],
+    },
+  };
+}
+
 /** `null` for routes that derive everything from static/code content. */
 function routeDataFor(routePath, snapshot) {
   if (routePath === '/blog') {
@@ -236,6 +253,9 @@ function routeDataFor(routePath, snapshot) {
   }
   if (routePath === '/guides') {
     return buildGuidesHubRouteData(snapshot);
+  }
+  if (isSanityGuidePath(routePath)) {
+    return buildGuideRouteData(snapshot, routePath.slice('/guides/'.length));
   }
   if (routePath === '/toolkit') {
     return buildToolkitHubRouteData(snapshot);
@@ -372,6 +392,17 @@ async function main() {
     process.exit(1);
   }
 
+  const sanityGuideCount = renderedRequired.filter((p) => isSanityGuidePath(p)).length;
+  const snapshotSanityGuideCount = (snapshot.guides ?? []).filter(
+    (g) => g.slug && isSanityGuidePath(`/guides/${g.slug}`)
+  ).length;
+  if (sanityGuideCount !== snapshotSanityGuideCount) {
+    console.error(
+      `[render-routes] Expected ${snapshotSanityGuideCount} Sanity guide docs with required-body, got ${sanityGuideCount}.`
+    );
+    process.exit(1);
+  }
+
   const sitemap = buildSitemapXml(allRoutes, content);
   await writeFile(SITEMAP_PATH, sitemap.xml, 'utf8');
 
@@ -398,6 +429,7 @@ async function main() {
   );
   console.log(`[render-routes] Code-book chapters: ${chapterCount}/${EXPECTED_CODE_BOOK_CHAPTER_COUNT}.`);
   console.log(`[render-routes] Toolkit items: ${toolkitItemCount}/${snapshotToolkitCount}.`);
+  console.log(`[render-routes] Sanity guides: ${sanityGuideCount}/${snapshotSanityGuideCount}.`);
 
   const underThreshold = [];
   for (const p of renderedRequired) {

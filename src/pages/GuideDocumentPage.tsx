@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react'
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react'
 import {useParams, Link} from 'react-router-dom'
 import {ArrowLeft} from 'lucide-react'
 import {client, urlFor} from '../sanityClient'
@@ -9,6 +9,7 @@ import {brandTitle, stripSysbiltBrand} from '../utils/brandTitle'
 import {SysbiltLogo} from '../components/SysbiltLogo'
 import ShareButton from '../components/ShareButton'
 import {GuideGateForm} from '../components/GuideGateForm'
+import {useRouteData} from '../site/RouteContentProvider'
 // --- Types aligned with Sanity `guide` + `guideBlockContent` ---
 
 type MarkDef = {
@@ -1147,10 +1148,21 @@ const GUIDE_STYLES = `
 }
 `
 
+type GuideRouteData = {
+  slug: string
+  guide: GuideDocument
+}
+
 export default function GuideDocumentPage() {
   const {slug} = useParams<{slug: string}>()
-  const [guideData, setGuideData] = useState<GuideDocument | null>(null)
-  const [loading, setLoading] = useState(true)
+  const routeData = useRouteData<GuideRouteData>()
+  const initialDataRef = useRef<GuideRouteData | null>(
+    routeData && routeData.slug === slug ? routeData : null
+  )
+  const [guideData, setGuideData] = useState<GuideDocument | null>(
+    () => initialDataRef.current?.guide ?? null
+  )
+  const [loading, setLoading] = useState(() => !initialDataRef.current)
   const [notFound, setNotFound] = useState(false)
   const [fetchError, setFetchError] = useState(false)
   const [showPdfGate, setShowPdfGate] = useState(false)
@@ -1168,6 +1180,11 @@ export default function GuideDocumentPage() {
       setLoading(false)
       setNotFound(true)
       setGuideData(null)
+      return
+    }
+
+    if (initialDataRef.current && initialDataRef.current.slug === slug) {
+      initialDataRef.current = null
       return
     }
 
@@ -1358,21 +1375,27 @@ export default function GuideDocumentPage() {
       </Helmet>
       
       <div className="guide-page-stack mx-auto flex w-full max-w-[840px] flex-col items-center gap-12 md:gap-16 px-4">
-        <nav aria-label="Guide navigation" className="print:hidden relative z-20 w-full self-stretch">
-          <div className="flex flex-wrap items-center gap-x-8 gap-y-2">
-            <Link
-              to="/guides"
-              className="inline-flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-[0.2em] text-[#1a1a1a]/50 transition-colors hover:text-[#1a1a1a]"
-            >
-              <ArrowLeft className="h-4 w-4" /> All Guides
-            </Link>
-            <Link
-              to="/"
-              className="inline-flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-[0.2em] text-[#1a1a1a]/35 transition-colors hover:text-[#1a1a1a]/85"
-            >
-              <ArrowLeft className="h-4 w-4" /> Home
-            </Link>
-          </div>
+        <nav
+          aria-label="Breadcrumb"
+          className="print:hidden relative z-20 w-full self-stretch font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-[#1a1a1a]/45"
+        >
+          <Link to="/" className="hover:text-[#1a1a1a] transition-colors">
+            Home
+          </Link>
+          <span className="mx-2">/</span>
+          <Link to="/guides" className="hover:text-[#1a1a1a] transition-colors">
+            Guides
+          </Link>
+          <span className="mx-2">/</span>
+          <span className="text-[#1a1a1a]/70">{guideData.title}</span>
+        </nav>
+        <nav className="print:hidden relative z-20 w-full self-stretch -mt-6 md:-mt-8">
+          <Link
+            to="/guides"
+            className="inline-flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-[0.2em] text-[#1a1a1a]/50 transition-colors hover:text-[#1a1a1a]"
+          >
+            <ArrowLeft className="h-4 w-4" /> All Guides
+          </Link>
         </nav>
         
         {guideData && <CoverPage guideData={guideData} onRequestPdf={requestPdfDownload} />}
