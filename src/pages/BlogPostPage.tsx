@@ -1,7 +1,6 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet-async';
 import { client, urlFor } from '../sanityClient';
 import { SITE_ORIGIN } from '../constants/seoMeta';
 import { PortableText } from '@portabletext/react';
@@ -9,7 +8,16 @@ import { ArrowLeft, ArrowUpRight, Quote, Copy, Check, Info, AlertTriangle } from
 import PostEndCTA from '../components/PostEndCTA';
 import ShareButton from '../components/ShareButton';
 import { PageMeta } from '../components/PageMeta';
+import { RouteHead } from '../site/RouteHead';
+import { useRouteData } from '../site/RouteContentProvider';
 import { brandTitle, stripSysbiltBrand } from '../utils/brandTitle';
+
+/** Shape embedded by `scripts/site/render-routes.mjs` for the `/blog/:slug` pilot route. */
+type BlogRouteData = {
+  slug: string;
+  post: any;
+  relatedPosts: any[];
+};
 
 // Helper function to extract YouTube ID
 const getYouTubeId = (url: string) => {
@@ -189,9 +197,15 @@ const CodeBlock = ({ value, theme }: any) => {
 
 export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string, sectionId?: string) => void }) {
   const { slug } = useParams();
-  const [post, setPost] = useState<any>(null);
-  const [relatedPosts, setRelatedPosts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const routeData = useRouteData<BlogRouteData>();
+  // Consumed once on the pilot route's first mount (SSR hydration); any later
+  // slug change (client-side nav to a different post) always fetches live.
+  const initialDataRef = useRef<BlogRouteData | null>(
+    routeData && routeData.slug === slug ? routeData : null
+  );
+  const [post, setPost] = useState<any>(initialDataRef.current?.post ?? null);
+  const [relatedPosts, setRelatedPosts] = useState<any[]>(initialDataRef.current?.relatedPosts ?? []);
+  const [loading, setLoading] = useState(!initialDataRef.current);
   const [loadError, setLoadError] = useState(false);
   const [activeToc, setActiveToc] = useState<string>('');
   
@@ -199,6 +213,11 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
   const [formStatus, setFormStatus] = useState<'idle' | 'loading' | 'success'>('idle');
 
   useEffect(() => {
+    if (initialDataRef.current && initialDataRef.current.slug === slug) {
+      // Build-time snapshot already has this pilot post; skip the live fetch.
+      initialDataRef.current = null;
+      return;
+    }
     setLoading(true);
     setLoadError(false);
     client
@@ -722,30 +741,32 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
 
   return (
     <main className="min-h-screen bg-dark text-white font-sans pb-14 border-t border-white/10 relative">
-      <Helmet>
-        <title>{brandedTitle}</title>
-        <meta name="description" content={pageDescription} />
-        {canonicalUrl ? <link rel="canonical" href={canonicalUrl} /> : null}
-        {post?.focusKeyword && <meta name="keywords" content={post.focusKeyword} />}
-        
-        {/* Open Graph Tags (LinkedIn, Facebook, iMessage) */}
-        <meta property="og:type" content="article" />
-        <meta property="og:url" content={currentUrl} />
-        <meta property="og:title" content={brandedTitle} />
-        <meta property="og:description" content={pageDescription} />
-        {shareImage && <meta property="og:image" content={shareImage} />}
-
-        {/* Twitter Card Tags */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:url" content={currentUrl} />
-        <meta name="twitter:title" content={brandedTitle} />
-        <meta name="twitter:description" content={pageDescription} />
-        {shareImage && <meta name="twitter:image" content={shareImage} />}
-        {/* JSON-LD (BlogPosting + BreadcrumbList) is stamped into static HTML at build time. */}
-      </Helmet>
+      <RouteHead
+        title={brandedTitle}
+        description={pageDescription}
+        canonical={canonicalUrl || undefined}
+        ogImage={shareImage || undefined}
+        ogType="article"
+      />
+      {/* JSON-LD (BlogPosting + BreadcrumbList) is stamped into static HTML at build time. */}
       
       <div className="pt-32 px-4 md:px-8 max-w-7xl mx-auto">
-        
+
+        <nav
+          aria-label="Breadcrumb"
+          className="mb-4 relative z-20 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-white/45"
+        >
+          <Link to="/" className="hover:text-white transition-colors">
+            Home
+          </Link>
+          <span className="mx-2">/</span>
+          <Link to="/blog" className="hover:text-white transition-colors">
+            Insights
+          </Link>
+          <span className="mx-2">/</span>
+          <span className="text-white/70">{resolvedArticleTitle || post?.title}</span>
+        </nav>
+
         <nav className="mb-8 relative z-20">
           <Link to="/blog" className="inline-flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-[0.2em] text-white/50 hover:text-white transition-colors">
             <ArrowLeft className="w-4 h-4" /> All articles

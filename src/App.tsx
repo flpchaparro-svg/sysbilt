@@ -10,6 +10,13 @@ import CookieBanner from './components/CookieBanner';
 import HelpDock from './components/HelpDock';
 import { ServiceDetail } from './types';
 import NotFoundPage from './pages/NotFoundPage';
+import { ClientOnly } from './site/ClientOnly';
+
+// Wave B1 required-body pilots: EAGER (not lazy) so the SSR renderer can
+// produce a real body synchronously, with no Suspense boundary to resolve.
+import BlogPostPage from './pages/BlogPostPage';
+import BtwChapterArticlePage from './pages/BtwChapterArticlePage';
+import Pillar1 from './pages/System/Pillar1';
 
 // PERFORMANCE: Keep HomePage Lazy
 const HomePage = lazy(() => import('./pages/HomePage'));
@@ -28,13 +35,11 @@ const WebsiteWizardPage = lazy(() => import('./pages/funnel/WebsiteWizardPage'))
 const WebsiteAgreementPage = lazy(() => import('./pages/funnel/WebsiteAgreementPage'));
 const QuoteCaptureDemoPage = lazy(() => import('./pages/demo/quoteCapture/QuoteCaptureDemoPage'));
 const BlogPage = lazy(() => import('./pages/BlogPage'));
-const BlogPostPage = lazy(() => import('./pages/BlogPostPage'));
 const NewsPage = lazy(() => import('./pages/NewsPage'));
 const GuidesPage = lazy(() => import('./pages/GuidesHubPage'));
 const GuideDocumentPage = lazy(() => import('./pages/GuideDocumentPage'));
 const BuiltToWorkHubPage = lazy(() => import('./pages/BuiltToWorkHubPage'));
 const BuiltToWorkBookPage = lazy(() => import('./pages/BuiltToWorkBookPage'));
-const BtwChapterArticlePage = lazy(() => import('./pages/BtwChapterArticlePage'));
 const BuiltToSellHubPage = lazy(() => import('./pages/BuiltToSellHubPage'));
 const BuiltToSellBookPage = lazy(() => import('./pages/BuiltToSellBookPage'));
 const BtsChapterArticlePage = lazy(() => import('./pages/BtsChapterArticlePage'));
@@ -63,7 +68,6 @@ const AgreementPage = lazy(() => import('./pages/agreement/AgreementPage'));
 const DeepAuditReportPage = lazy(() => import('./pages/DeepAuditReportPage'));
 
 const SystemPage = lazy(() => import('./pages/System/SystemPage'));
-const Pillar1 = lazy(() => import('./pages/System/Pillar1'));
 const Pillar2 = lazy(() => import('./pages/System/Pillar2'));
 const Pillar3 = lazy(() => import('./pages/System/Pillar3'));
 const Pillar4 = lazy(() => import('./pages/System/Pillar4'));
@@ -283,9 +287,11 @@ const App: React.FC = () => {
           {location.pathname !== '/system' && !hideChrome && (
             <GlobalFooter />
           )}
-          <Modal service={selectedService} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-          <CookieBanner />
-          {!isFunnelRoute && !isDemoRoute && <HelpDock />}
+          <ClientOnly>
+            <Modal service={selectedService} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+            <CookieBanner />
+            {!isFunnelRoute && !isDemoRoute && <HelpDock />}
+          </ClientOnly>
         </div>
       </LazyMotion>
     </HelmetProvider>

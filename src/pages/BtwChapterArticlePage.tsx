@@ -1,6 +1,6 @@
 import { Link, useParams, Navigate } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
-import { PageMeta } from '../components/PageMeta'
+import { RouteHead } from '../site/RouteHead'
 import { SITE_ORIGIN } from '../constants/seoMeta'
 import {
   BTW_CHAPTERS,
@@ -37,11 +37,12 @@ export default function BtwChapterArticlePage() {
   return (
     <div className="btw-root min-h-screen bg-cream text-dark selection:bg-dark selection:text-cream pt-[100px] md:pt-[140px] pb-16 md:pb-24">
       <style>{BTW_STYLES}</style>
-      <PageMeta
+      <RouteHead
         title={htmlTitle}
         description={chapter.seoDescription}
         canonical={canonical}
         ogImage={cover ? `${SITE_ORIGIN}${chapterCoverWebSrc(cover)}` : `${SITE_ORIGIN}/images/og-sysbilt.png`}
+        ogType="article"
       />
       {/* JSON-LD (Article + BreadcrumbList + glossary FAQPage on ch12) is stamped at build time. */}
 

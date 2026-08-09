@@ -1,18 +1,27 @@
 #!/usr/bin/env node
 /**
- * Pre-deploy SEO guard. Runs after stamp-meta in the build pipeline; a non-zero
- * exit aborts the Vercel deploy.
+ * Pre-deploy SEO guard. Runs after render-routes in the build pipeline; a
+ * non-zero exit aborts the Vercel deploy.
  *
- * It re-derives the route + sitemap sets from the SAME SOURCE DATA the app uses
- * (Sanity content + the shared route definitions) — it never fetches production —
- * then asserts, for every indexable route, that the generated dist HTML has:
+ * Guard v2 (Wave B1): reads the content SNAPSHOT (`.build/content-snapshot.json`,
+ * written by capture-content-snapshot.mjs) and the route CATALOG
+ * (`.build/route-catalog.json`, written by render-routes.mjs) instead of
+ * fetching Sanity itself — `fetchSanityContent()` already prefers the
+ * snapshot file when present, so this never hits the network in a normal
+ * build. It re-derives the route + sitemap sets from that snapshot, then
+ * asserts, for every indexable route, that the generated dist HTML has:
  *   - a unique, non-generic <title>
  *   - exactly one self-referential <link rel="canonical">
  *   - no accidental noindex
  *   - every JSON-LD @type that stamp-meta intended to emit
+ * plus new per-policy checks from `src/site/routePolicy.ts`:
+ *   - required-body: unique <h1>, minimum word count, a breadcrumb nav, no
+ *     leftover shell placeholder, data-ssr="1", a stylesheet link
+ *   - temporary-legacy-shell: no data-ssr="1" (head-only; client hydrates)
+ *   - noindex-shell: noindex stamped, no data-ssr="1", excluded from the sitemap
  * and that the sitemap set and the stamped indexable set agree in both directions.
  *
- * Hard-fails on Sanity fetch errors, matching stamp-meta's behaviour.
+ * Hard-fails if the snapshot or catalog files are missing.
  */
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -75,9 +84,17 @@ import {
   buildAllRoutes,
   buildSitemapXml,
 } from './stamp-meta.mjs';
+import {
+  bodyPolicyForPath,
+  REQUIRED_BODY_PATHS,
+  NOINDEX_BOOK_READ_PATHS,
+  wordThresholdForRequiredBodyPath,
+} from '../../src/site/routePolicy';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '../..');
+const SNAPSHOT_PATH = path.join(ROOT, '.build', 'content-snapshot.json');
+const CATALOG_PATH = path.join(ROOT, '.build', 'route-catalog.json');
 
 const violations = [];
 const addViolation = (msg) => violations.push(msg);
@@ -285,6 +302,80 @@ function checkRouteHtml(route, html) {
 
   if (p === '/' || p === '/contact') {
     checkProfessionalServiceNode(p, html);
+  }
+}
+
+function wordCountOfHtml(html) {
+  // Head content (title/meta/JSON-LD scripts) never counts toward a body word threshold.
+  const withoutHead = html.replace(/<head[\s\S]*?<\/head>/i, '');
+  const withoutScriptsAndStyles = withoutHead
+    .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<style[\s\S]*?<\/style>/gi, ' ');
+  const text = withoutScriptsAndStyles.replace(/<[^>]+>/g, ' ').replace(/&[a-zA-Z#0-9]+;/g, ' ');
+  const trimmed = text.trim();
+  return trimmed ? trimmed.split(/\s+/).length : 0;
+}
+
+/** Guard v2: `required-body` routes must have a real, unique, threshold-length server-rendered body. */
+function checkRequiredBodyRoute(route, html) {
+  const p = route.path;
+  if (html == null) return; // already flagged by checkRouteHtml
+
+  if (!html.includes('data-ssr="1"')) {
+    addViolation(`${p} — required-body route is missing data-ssr="1"`);
+  }
+  if (html.includes('class="static-hero-container"')) {
+    addViolation(`${p} — required-body route still shows the generic shell placeholder`);
+  }
+
+  const h1Count = (html.match(/<h1[\s>]/g) || []).length;
+  if (h1Count === 0) {
+    addViolation(`${p} — required-body route has no <h1>`);
+  } else if (h1Count > 1) {
+    addViolation(`${p} — required-body route has ${h1Count} <h1> elements (expected 1)`);
+  }
+
+  if (!/aria-label="Breadcrumb"/.test(html)) {
+    addViolation(`${p} — required-body route is missing a breadcrumb nav`);
+  }
+  if (!/<link rel="stylesheet"/.test(html)) {
+    addViolation(`${p} — required-body route is missing its stylesheet link`);
+  }
+
+  const threshold = wordThresholdForRequiredBodyPath(p);
+  const words = wordCountOfHtml(html);
+  if (words < threshold) {
+    addViolation(`${p} — required-body route has ${words} words, below the ${threshold}-word threshold`);
+  }
+}
+
+/** Guard v2: `temporary-legacy-shell` routes stay head-only; the client hydrates and renders the body. */
+function checkLegacyShellRoute(route, html) {
+  if (html == null) return;
+  if (html.includes('data-ssr="1"')) {
+    addViolation(`${route.path} — temporary-legacy-shell route unexpectedly has data-ssr="1"`);
+  }
+}
+
+/** Guard v2: `noindex-shell` routes are stamped noindex and never server-render a body. */
+function checkNoindexShellRoute(routePath, html) {
+  if (html == null) {
+    addViolation(`${routePath} — dist HTML missing (${distPathForRoute(routePath)})`);
+    return;
+  }
+  if (!/<meta[^>]+name="robots"[^>]*content="[^"]*noindex/i.test(html)) {
+    addViolation(`${routePath} — noindex-shell route missing noindex robots meta`);
+  }
+  if (html.includes('data-ssr="1"')) {
+    addViolation(`${routePath} — noindex-shell route unexpectedly has data-ssr="1"`);
+  }
+}
+
+/** The eight "read online" book editions: not part of `buildAllRoutes()`, so checked as their own set. */
+async function checkNoindexBookReadRoutes() {
+  for (const p of NOINDEX_BOOK_READ_PATHS) {
+    const html = await readDist(p);
+    checkNoindexShellRoute(p, html);
   }
 }
 
@@ -628,21 +719,62 @@ async function checkBseAntiDrift() {
 }
 
 async function main() {
+  let rawSnapshot;
+  try {
+    rawSnapshot = JSON.parse(await readFile(SNAPSHOT_PATH, 'utf8'));
+  } catch (err) {
+    console.error(
+      `[verify-seo] Content snapshot not found at ${path.relative(ROOT, SNAPSHOT_PATH)}. ` +
+        `Run capture-content-snapshot.mjs first.`
+    );
+    console.error(err instanceof Error ? err.message : err);
+    process.exit(1);
+  }
+
+  let catalog = null;
+  try {
+    catalog = JSON.parse(await readFile(CATALOG_PATH, 'utf8'));
+  } catch {
+    addViolation(
+      `route-catalog — ${path.relative(ROOT, CATALOG_PATH)} missing; render-routes.mjs must run before verify-seo.mjs`
+    );
+  }
+  if (catalog && catalog.snapshotHash !== rawSnapshot.snapshotHash) {
+    addViolation('route-catalog — snapshotHash does not match the current content snapshot (stale render-routes output)');
+  }
+
   let content;
   try {
-    content = await fetchSanityContent();
+    content = await fetchSanityContent(); // reads the snapshot above; no network call when it's present
   } catch (err) {
-    console.error('[verify-seo] Sanity fetch failed — aborting build.');
+    console.error('[verify-seo] Failed to build the route list from the content snapshot.');
     console.error(err instanceof Error ? err.message : err);
     process.exit(1);
   }
 
   const { routes } = buildAllRoutes(content);
 
+  const routePaths = new Set(routes.map((r) => r.path));
+  for (const p of REQUIRED_BODY_PATHS) {
+    if (!routePaths.has(p)) {
+      addViolation(`required-body — pilot route ${p} is missing from the built route list`);
+    }
+  }
+
+  const policyCounts = { 'required-body': 0, 'temporary-legacy-shell': 0, 'noindex-shell': NOINDEX_BOOK_READ_PATHS.length };
+
   for (const route of routes) {
     const html = await readDist(route.path);
     checkRouteHtml(route, html);
+
+    const policy = bodyPolicyForPath(route.path);
+    policyCounts[policy] += 1;
+    if (policy === 'required-body') checkRequiredBodyRoute(route, html);
+    else if (policy === 'temporary-legacy-shell') checkLegacyShellRoute(route, html);
+    else checkNoindexShellRoute(route.path, html);
   }
+
+  await checkNoindexBookReadRoutes();
 
   await checkBtwAntiDrift();
   await checkBtsAntiDrift();
@@ -690,6 +822,21 @@ async function main() {
     if (!indexableSet.has(p)) addViolation(`sitemap — sitemap URL ${p} has no stamped indexable page`);
   }
 
+  const census = rawSnapshot.census;
+  if (census) {
+    console.log(
+      `[verify-seo] Census — ${census.totalDocs} docs, ${census.underThresholdCount} under threshold ` +
+        `(post<${census.thresholds.post}: ${census.byType.post.underThreshold}/${census.byType.post.total}, ` +
+        `guide<${census.thresholds.guide}: ${census.byType.guide.underThreshold}/${census.byType.guide.total}, ` +
+        `toolkitItem<${census.thresholds.toolkitItem}: ${census.byType.toolkitItem.underThreshold}/${census.byType.toolkitItem.total}).`
+    );
+  }
+  console.log(
+    `[verify-seo] Policy counts — required-body: ${policyCounts['required-body']}, ` +
+      `temporary-legacy-shell: ${policyCounts['temporary-legacy-shell']}, ` +
+      `noindex-shell: ${policyCounts['noindex-shell']}.`
+  );
+
   if (violations.length > 0) {
     console.error(`[verify-seo] FAIL — ${violations.length} violation(s):`);
     for (const v of violations) console.error(`  \u2717 ${v}`);
@@ -697,7 +844,7 @@ async function main() {
   }
 
   console.log(
-    `[verify-seo] PASS — ${routes.length} routes verified (title, canonical, noindex, JSON-LD, crawl graph, anti-drift, static sitemap set of ${sitemapSet.size}).`
+    `[verify-seo] PASS — ${routes.length} routes verified (title, canonical, noindex, JSON-LD, crawl graph, anti-drift, policy, static sitemap set of ${sitemapSet.size}).`
   );
 }
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 interface SysbiltLogoProps {
@@ -18,11 +18,6 @@ export const SysbiltLogo: React.FC<SysbiltLogoProps> = ({ isDarkBg = false, clas
 
   const [bColor, setBColor] = useState(bColors[0]); 
   const [rotation, setRotation] = useState(0); 
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    setIsVisible(true);
-  }, []);
 
   const handleHover = () => {
     setRotation((prevRotation) => prevRotation + 360);
@@ -38,8 +33,7 @@ export const SysbiltLogo: React.FC<SysbiltLogoProps> = ({ isDarkBg = false, clas
   return (
     <div
       className={twMerge(
-        'transition-opacity duration-1000 ease-in-out cursor-pointer flex items-center w-[130px]',
-        isVisible ? 'opacity-100' : 'opacity-0',
+        'cursor-pointer flex items-center w-[130px] opacity-100',
         className
       )}
       onMouseEnter={handleHover}

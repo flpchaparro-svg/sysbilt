@@ -1,6 +1,5 @@
 import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
-import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js';
 import { visualizer } from 'rollup-plugin-visualizer';
 import path from 'path';
 import { existsSync, readFileSync } from 'node:fs';
@@ -124,7 +123,96 @@ function websiteSessionDevApi(): Plugin {
   };
 }
 
-export default defineConfig({
+/** Local-only: Quote Capture submit + Concierge without `vercel dev`. */
+function quoteCaptureDevApi(): Plugin {
+  return {
+    name: 'quote-capture-dev-api',
+    configureServer(server) {
+      server.middlewares.use(async (req, res, next) => {
+        const url = (req.url || '').split('?')[0]
+        const isSubmit = url === '/api/quote-capture/submit'
+        const isConcierge = url === '/api/quote-capture/concierge'
+        if (!isSubmit && !isConcierge) return next()
+
+        res.setHeader('Access-Control-Allow-Origin', '*')
+        res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+
+        if (req.method === 'OPTIONS') {
+          res.statusCode = 204
+          res.end()
+          return
+        }
+        if (req.method !== 'POST') {
+          res.statusCode = 405
+          res.setHeader('Content-Type', 'application/json')
+          res.end(JSON.stringify({error: 'Method not allowed'}))
+          return
+        }
+
+        try {
+          const env = loadEnvLocal()
+          for (const [k, v] of Object.entries(env)) {
+            if (!process.env[k]) process.env[k] = v
+          }
+
+          const chunks: Buffer[] = []
+          await new Promise<void>((resolve, reject) => {
+            req.on('data', (c) => chunks.push(Buffer.from(c)))
+            req.on('end', () => resolve())
+            req.on('error', reject)
+          })
+          const raw = Buffer.concat(chunks).toString('utf8')
+          const body = raw ? JSON.parse(raw) : {}
+
+          if (isConcierge) {
+            const mod = await server.ssrLoadModule('/api/_lib/quoteCaptureConcierge.ts')
+            const result = await mod.processQuoteCaptureConcierge(body)
+            if (!result.ok) {
+              res.statusCode = result.status || 400
+              res.setHeader('Content-Type', 'application/json')
+              res.end(JSON.stringify({error: result.error}))
+              return
+            }
+            res.statusCode = 200
+            res.setHeader('Content-Type', 'application/json')
+            res.setHeader('Cache-Control', 'no-store')
+            res.end(JSON.stringify({reply: result.reply, suggestions: result.suggestions || []}))
+            return
+          }
+
+          const mod = await server.ssrLoadModule('/api/_lib/quoteCaptureSubmit.ts')
+          const base =
+            process.env.PUBLIC_BASE_URL?.trim() || 'http://localhost:3333'
+          const result = await mod.processQuoteCaptureSubmit(body, base)
+
+          if (!result.ok) {
+            res.statusCode = result.status || 400
+            res.setHeader('Content-Type', 'application/json')
+            res.end(JSON.stringify({error: result.error}))
+            return
+          }
+
+          res.statusCode = 200
+          res.setHeader('Content-Type', 'application/json')
+          res.setHeader('Cache-Control', 'no-store')
+          res.end(JSON.stringify(result))
+        } catch (err) {
+          console.error('[quote-capture-dev-api]', err)
+          res.statusCode = 500
+          res.setHeader('Content-Type', 'application/json')
+          res.end(
+            JSON.stringify({
+              error: err instanceof Error ? err.message : 'Server error',
+            }),
+          )
+        }
+      })
+    },
+  }
+}
+
+export default defineConfig(({ isSsrBuild }) => ({
   server: {
     port: 3333,
     strictPort: false,
@@ -132,7 +220,7 @@ export default defineConfig({
   plugins: [
     react(),
     websiteSessionDevApi(),
-    cssInjectedByJsPlugin(),
+    quoteCaptureDevApi(),
     visualizer({
       open: !process.env.CI && !process.env.VERCEL,
       filename: 'bundle-stats.html',
@@ -148,18 +236,28 @@ export default defineConfig({
   },
   build: {
     cssCodeSplit: true,
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          'vendor-motion': ['framer-motion'],
-          'vendor-icons': ['lucide-react'],
-          'vendor-d3': ['d3-selection', 'd3-shape', 'd3-scale', 'd3-axis', 'd3-transition', 'd3-ease'],
+    // SSR build (`vite build --ssr src/entry-server.tsx --outDir .build/ssr`)
+    // just needs one importable Node module; skip the client vendor
+    // chunking split for it.
+    rollupOptions: isSsrBuild
+      ? undefined
+      : {
+          output: {
+            manualChunks: {
+              'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+              'vendor-motion': ['framer-motion'],
+              'vendor-icons': ['lucide-react'],
+              'vendor-d3': ['d3-selection', 'd3-shape', 'd3-scale', 'd3-axis', 'd3-transition', 'd3-ease'],
+            },
+          },
         },
-      },
-    },
   },
   optimizeDeps: {
     include: ['react', 'react-dom', 'framer-motion'],
   },
-});
+  ssr: {
+    // Server bundle runs under plain Node (tsx); bundle app deps so the SSR
+    // output is a single self-contained module tree under `.build/ssr`.
+    noExternal: true,
+  },
+}));

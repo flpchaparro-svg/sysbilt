@@ -10,17 +10,35 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
+import { RouteContentProvider } from './site/RouteContentProvider';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
   throw new Error("Could not find root element to mount to");
 }
 
-const root = ReactDOM.createRoot(rootElement);
-root.render(
+const app = (
   <React.StrictMode>
     <BrowserRouter>
-      <App />
+      <RouteContentProvider data={null}>
+        <App />
+      </RouteContentProvider>
     </BrowserRouter>
   </React.StrictMode>
 );
+
+/** `render-routes.mjs` stamps `data-ssr="1"` on `#root` for `required-body` routes. */
+const wasServerRendered = rootElement.getAttribute('data-ssr') === '1';
+
+if (wasServerRendered) {
+  ReactDOM.hydrateRoot(rootElement, app, {
+    onRecoverableError: (error, errorInfo) => {
+      // Hydration mismatches on a required-body route silently degrade SEO;
+      // log loudly so they surface in the browser console and RUM tooling.
+      console.error('[hydrate] recoverable hydration error', error, errorInfo);
+    },
+  });
+} else {
+  const root = ReactDOM.createRoot(rootElement);
+  root.render(app);
+}

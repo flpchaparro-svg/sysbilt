@@ -10,6 +10,7 @@ lerna-debug.log*
 node_modules
 .cache
 dist-ssr
+.build/
 *.local
 bundle-stats.html
 

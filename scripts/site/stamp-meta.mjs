@@ -9,6 +9,7 @@
  */
 import { createClient } from '@sanity/client';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import {
@@ -130,6 +131,7 @@ const ROOT = path.resolve(__dirname, '../..');
 const DIST = path.join(ROOT, 'dist');
 const TEMPLATE_PATH = path.join(DIST, 'index.html');
 const SITEMAP_PATH = path.join(DIST, 'sitemap.xml');
+const SNAPSHOT_PATH = path.join(ROOT, '.build', 'content-snapshot.json');
 const BASE_URL = SITE_ORIGIN;
 
 /** Title present in the un-stamped dist/index.html template; a stamped page must differ. */
@@ -1194,7 +1196,73 @@ function distPathForRoute(routePath) {
   return path.join(DIST, ...segments, 'index.html');
 }
 
+/** Narrows the snapshot's wide per-doc shape down to the fields stamp-meta/verify-seo need. */
+function fromSnapshot(snapshot) {
+  const posts = (snapshot.posts ?? []).map((p) => ({
+    slug: p.slug,
+    title: p.title,
+    seoTitle: p.seoTitle,
+    seoDescription: p.seoDescription,
+    publishedAt: p.publishedAt,
+    _updatedAt: p._updatedAt,
+    servicePillar: p.servicePillar,
+    focusKeyword: p.focusKeyword,
+    authorName: p.author?.name,
+    imageUrl: p.ogImage?.asset?._ref
+      ? sanityAssetRefToUrl(p.ogImage)
+      : sanityAssetRefToUrl(p.mainImage),
+  }));
+
+  const guides = (snapshot.guides ?? []).map((g) => ({
+    slug: g.slug,
+    title: g.title,
+    seoTitle: g.seoTitle,
+    seoDescription: g.seoDescription,
+    subtitle: g.subtitle,
+    publishedAt: g.publishedAt,
+    _updatedAt: g._updatedAt,
+    imageUrl: g.imageUrl,
+  }));
+
+  const toolkitItems = (snapshot.toolkitItems ?? []).map((t) => ({
+    slug: t.slug,
+    name: t.name,
+    metaTitle: t.metaTitle,
+    metaDescription: t.metaDescription,
+    summary: t.summary,
+    category: t.category,
+    focusKeyword: t.focusKeyword,
+    _updatedAt: t._updatedAt,
+    authorName: t.authorName,
+    imageUrl: t.imageUrl,
+  }));
+
+  const funnelPages = (snapshot.funnelPages ?? []).map((f) => ({
+    slug: f.slug,
+    title: f.title,
+    sub: f.sub,
+  }));
+
+  return { posts, guides, toolkitItems, funnelPages };
+}
+
+/** Best-effort asset ref -> CDN URL; the snapshot keeps raw image refs (needed by `urlFor` client-side). */
+function sanityAssetRefToUrl(image) {
+  const ref = image?.asset?._ref;
+  if (!ref) return undefined;
+  // e.g. "image-abc123-1200x630-png" -> "abc123-1200x630.png"
+  const match = /^image-([a-f0-9]+)-(\d+x\d+)-(\w+)$/.exec(ref);
+  if (!match) return undefined;
+  const [, id, dims, format] = match;
+  return `https://cdn.sanity.io/images/wdlc9pg8/production/${id}-${dims}.${format}`;
+}
+
 async function fetchSanityContent() {
+  if (existsSync(SNAPSHOT_PATH)) {
+    const raw = await readFile(SNAPSHOT_PATH, 'utf8');
+    return fromSnapshot(JSON.parse(raw));
+  }
+
   const client = createClient({
     projectId: 'wdlc9pg8',
     dataset: 'production',
@@ -1440,4 +1508,5 @@ export {
   fetchSanityContent,
   buildAllRoutes,
   collectAllRoutes,
+  stampHtml,
 };
