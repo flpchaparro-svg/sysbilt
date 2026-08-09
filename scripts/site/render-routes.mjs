@@ -36,6 +36,8 @@ import {
   REQUIRED_BODY_PATHS,
   NOINDEX_BOOK_READ_PATHS,
   wordThresholdForRequiredBodyPath,
+  isCodeBookChapterPath,
+  EXPECTED_CODE_BOOK_CHAPTER_COUNT,
 } from '../../src/site/routePolicy';
 import { BTW_META } from '../../src/built-to-work/types';
 import { BTS_META } from '../../src/built-to-sell/types';
@@ -254,12 +256,20 @@ async function main() {
     catalog.push({ path: route.path, policy: 'noindex-shell', wordCount: null });
   }
 
-  const renderedPilots = catalog.filter((r) => r.policy === 'required-body').map((r) => r.path);
-  const missingPilots = REQUIRED_BODY_PATHS.filter((p) => !renderedPilots.includes(p));
-  if (missingPilots.length > 0) {
+  const renderedRequired = catalog.filter((r) => r.policy === 'required-body').map((r) => r.path);
+  const missingExplicit = REQUIRED_BODY_PATHS.filter((p) => !renderedRequired.includes(p));
+  if (missingExplicit.length > 0) {
     console.error(
-      `[render-routes] ${missingPilots.length} required-body pilot(s) were not found in the built route list: ` +
-        missingPilots.join(', ')
+      `[render-routes] ${missingExplicit.length} required-body route(s) were not found in the built route list: ` +
+        missingExplicit.join(', ')
+    );
+    process.exit(1);
+  }
+
+  const chapterCount = renderedRequired.filter((p) => isCodeBookChapterPath(p)).length;
+  if (chapterCount !== EXPECTED_CODE_BOOK_CHAPTER_COUNT) {
+    console.error(
+      `[render-routes] Expected ${EXPECTED_CODE_BOOK_CHAPTER_COUNT} code-book chapters with required-body, got ${chapterCount}.`
     );
     process.exit(1);
   }
@@ -288,11 +298,39 @@ async function main() {
       `(${policyCounts['required-body']} required-body, ${policyCounts['temporary-legacy-shell']} temporary-legacy-shell, ` +
       `${policyCounts['noindex-shell']} noindex-shell).`
   );
-  for (const p of renderedPilots) {
+  console.log(`[render-routes] Code-book chapters: ${chapterCount}/${EXPECTED_CODE_BOOK_CHAPTER_COUNT}.`);
+
+  const underThreshold = [];
+  for (const p of renderedRequired) {
     const entry = catalog.find((r) => r.path === p);
     const threshold = wordThresholdForRequiredBodyPath(p);
-    const flag = entry.wordCount < threshold ? ' \u2717 UNDER THRESHOLD' : '';
-    console.log(`  - ${p}: ${entry.wordCount} words (threshold ${threshold})${flag}`);
+    if (entry.wordCount < threshold) {
+      underThreshold.push(`${p}: ${entry.wordCount} < ${threshold}`);
+    }
+  }
+  if (underThreshold.length > 0) {
+    console.error('[render-routes] required-body routes under word threshold:');
+    for (const line of underThreshold) console.error(`  - ${line}`);
+    process.exit(1);
+  }
+
+  // Log a short sample: hubs + one chapter per book family + non-guide pilots.
+  const samplePaths = renderedRequired.filter(
+    (p) =>
+      !isCodeBookChapterPath(p) ||
+      p.endsWith('/what-a-business-website-is-for') ||
+      p.endsWith('/why-your-store-exists') ||
+      p.endsWith('/why-your-business-needs-a-memory') ||
+      p.endsWith('/why-your-business-drowns-in-admin') ||
+      p.endsWith('/why-everyone-talks-about-ai') ||
+      p.endsWith('/why-content-and-why-most-is-wasted') ||
+      p.endsWith('/why-good-systems-fail-without-trained-people') ||
+      p.endsWith('/why-youre-flying-blind-even-with-all-this-data')
+  );
+  for (const p of samplePaths) {
+    const entry = catalog.find((r) => r.path === p);
+    const threshold = wordThresholdForRequiredBodyPath(p);
+    console.log(`  - ${p}: ${entry.wordCount} words (threshold ${threshold})`);
   }
   if (skipped.length > 0) {
     console.log('[render-routes] Skipped Sanity entries:');

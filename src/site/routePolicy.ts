@@ -1,12 +1,10 @@
 /**
  * Wave B route policy: classifies every route into one of three SSR body
- * strategies. Shared by the client (no runtime behaviour depends on it yet),
- * `scripts/site/render-routes.mjs` (decides which routes get a rendered
- * React body vs a head-only shell), and `scripts/site/verify-seo.mjs`
- * (asserts each route matches its declared class).
+ * strategies. Shared by `scripts/site/render-routes.mjs` and
+ * `scripts/site/verify-seo.mjs`.
  */
 
-/** Wave B1 pilots plus the guides-hubs cohort (collection + eight book hubs). */
+/** Guides collection hub + eight book hubs. */
 export const GUIDES_HUB_REQUIRED_BODY_PATHS = [
   '/guides',
   '/guides/built-to-work',
@@ -19,15 +17,18 @@ export const GUIDES_HUB_REQUIRED_BODY_PATHS = [
   '/guides/built-to-see',
 ] as const;
 
-/** Routes that get a real server-rendered React body. */
+/**
+ * Explicit required-body paths that are not inferred (B1 pilots that are not
+ * book chapters, plus guides hubs). All code-defined book chapters are
+ * classified via `isCodeBookChapterPath` instead of listing 96 slugs here.
+ */
 export const REQUIRED_BODY_PATHS = [
   '/pillar1',
-  '/guides/built-to-work/what-a-business-website-is-for',
   '/blog/after-hours-phone-answering-ai-vs-answering',
   ...GUIDES_HUB_REQUIRED_BODY_PATHS,
 ] as const;
 
-export type RequiredBodyPath = (typeof REQUIRED_BODY_PATHS)[number];
+export type RequiredBodyPath = (typeof REQUIRED_BODY_PATHS)[number] | string;
 
 export type RouteBodyPolicy = 'required-body' | 'temporary-legacy-shell' | 'noindex-shell';
 
@@ -50,8 +51,21 @@ const NOINDEX_EXACT_PATHS = new Set<string>(['/news', ...NOINDEX_BOOK_READ_PATHS
 
 const GUIDES_HUB_PATH_SET = new Set<string>(GUIDES_HUB_REQUIRED_BODY_PATHS);
 
+const BOOK_HUB_SLUG_SET = new Set<string>(BOOK_READ_HUB_SLUGS);
+
 function isGoFunnelPath(path: string): boolean {
   return path === '/go' || path.startsWith('/go/');
+}
+
+/**
+ * `/guides/built-to-work/:chapterSlug` (and the other seven books).
+ * Excludes hubs (`/guides/built-to-work`) and `/read` editions.
+ */
+export function isCodeBookChapterPath(path: string): boolean {
+  const parts = path.split('/').filter(Boolean);
+  if (parts.length !== 3 || parts[0] !== 'guides') return false;
+  if (parts[2] === 'read') return false;
+  return BOOK_HUB_SLUG_SET.has(parts[1]);
 }
 
 /** Word-count minimums verify-seo enforces on `required-body` routes, by route shape. */
@@ -62,24 +76,29 @@ export const REQUIRED_BODY_WORD_THRESHOLDS = {
   blog: 600,
 } as const;
 
+/** Expected public chapter count across all eight code-defined books (12 × 8). */
+export const EXPECTED_CODE_BOOK_CHAPTER_COUNT = 96;
+
 export function wordThresholdForRequiredBodyPath(path: RequiredBodyPath | string): number {
   if (path.startsWith('/blog/')) return REQUIRED_BODY_WORD_THRESHOLDS.blog;
   if (GUIDES_HUB_PATH_SET.has(path)) return REQUIRED_BODY_WORD_THRESHOLDS.guidesHub;
-  if (path.startsWith('/guides/')) return REQUIRED_BODY_WORD_THRESHOLDS.chapter;
+  if (isCodeBookChapterPath(path) || path.startsWith('/guides/')) {
+    return REQUIRED_BODY_WORD_THRESHOLDS.chapter;
+  }
   return REQUIRED_BODY_WORD_THRESHOLDS.staticOrPillar;
 }
 
 /**
  * Classify a route path into its SSR body policy.
  *
- * - `required-body`: Wave B pilots / cohorts with a real server-rendered body.
- * - `noindex-shell`: intentionally not indexed (funnel, news, `/read` editions).
- * - `temporary-legacy-shell`: every other indexable route (head-only until a later cohort).
+ * - `required-body`: pilots, guides hubs, and all code-defined book chapters.
+ * - `noindex-shell`: funnel, news, `/read` editions.
+ * - `temporary-legacy-shell`: every other indexable route until a later cohort.
  */
 export function bodyPolicyForPath(path: string): RouteBodyPolicy {
   const normalised = path === '' ? '/' : path;
 
-  if ((REQUIRED_BODY_PATHS as readonly string[]).includes(normalised)) {
+  if ((REQUIRED_BODY_PATHS as readonly string[]).includes(normalised) || isCodeBookChapterPath(normalised)) {
     return 'required-body';
   }
 
@@ -90,6 +109,6 @@ export function bodyPolicyForPath(path: string): RouteBodyPolicy {
   return 'temporary-legacy-shell';
 }
 
-export function isRequiredBodyPath(path: string): path is RequiredBodyPath {
+export function isRequiredBodyPath(path: string): boolean {
   return bodyPolicyForPath(path) === 'required-body';
 }

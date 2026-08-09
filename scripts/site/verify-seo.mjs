@@ -89,6 +89,8 @@ import {
   REQUIRED_BODY_PATHS,
   NOINDEX_BOOK_READ_PATHS,
   wordThresholdForRequiredBodyPath,
+  isCodeBookChapterPath,
+  EXPECTED_CODE_BOOK_CHAPTER_COUNT,
 } from '../../src/site/routePolicy';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -784,8 +786,15 @@ async function main() {
   const routePaths = new Set(routes.map((r) => r.path));
   for (const p of REQUIRED_BODY_PATHS) {
     if (!routePaths.has(p)) {
-      addViolation(`required-body — pilot route ${p} is missing from the built route list`);
+      addViolation(`required-body — route ${p} is missing from the built route list`);
     }
+  }
+
+  const chapterPaths = [...routePaths].filter((p) => isCodeBookChapterPath(p));
+  if (chapterPaths.length !== EXPECTED_CODE_BOOK_CHAPTER_COUNT) {
+    addViolation(
+      `required-body — expected ${EXPECTED_CODE_BOOK_CHAPTER_COUNT} code-book chapters, found ${chapterPaths.length}`
+    );
   }
 
   const policyCounts = { 'required-body': 0, 'temporary-legacy-shell': 0, 'noindex-shell': NOINDEX_BOOK_READ_PATHS.length };
