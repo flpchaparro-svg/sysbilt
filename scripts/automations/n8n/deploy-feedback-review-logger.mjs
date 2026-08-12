@@ -12,6 +12,7 @@
  * Usage:
  *   node scripts/automations/n8n/deploy-feedback-review-logger.mjs --setup-sheet
  *   node scripts/automations/n8n/deploy-feedback-review-logger.mjs --activate
+ *   node scripts/automations/n8n/deploy-feedback-review-logger.mjs --fix-sheet --activate
  *   node scripts/automations/n8n/deploy-feedback-review-logger.mjs --setup-sheet --activate
  */
 import {readFileSync, existsSync, writeFileSync} from 'node:fs'
@@ -23,8 +24,10 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = resolve(__dirname, '../../..')
 const GOOGLE_SHEETS_CRED_ID = 'W8jOFatMKmraYw0F'
 const GOOGLE_SHEETS_CRED_NAME = 'Google Sheets account'
-const TAB = 'Sheet1'
+const TAB = 'Responses'
+const LEGACY_TAB = 'Sheet1'
 const WEBHOOK_PATH = 'sysbilt-feedback-review'
+const FIX_PATH = 'sysbilt-feedback-review-fix-sheet'
 
 const HEADERS = [
   'Timestamp',
@@ -230,49 +233,69 @@ function buildSheetSetupWorkflow() {
       },
       {
         id: uid(),
-        name: 'Build Header Row',
+        name: 'Rename To Responses',
         type: 'n8n-nodes-base.code',
         typeVersion: 2,
         position: [-160, 0],
         parameters: {
           mode: 'runOnceForAllItems',
-          jsCode: `const spreadsheetId = $("Create Spreadsheet").item.json.spreadsheetId;
-const spreadsheetUrl = $("Create Spreadsheet").item.json.spreadsheetUrl;
-const row = { spreadsheetId, spreadsheetUrl };
-for (const h of ${JSON.stringify(HEADERS)}) row[h] = h;
-return [{ json: row }];`,
+          jsCode: `const created = $("Create Spreadsheet").item.json;
+const spreadsheetId = created.spreadsheetId;
+const spreadsheetUrl = created.spreadsheetUrl;
+const sheets = created.sheets || [];
+const sheet1 = sheets.find((s) => s.properties?.title === 'Sheet1') || sheets[0];
+const sheetIdNum = sheet1?.properties?.sheetId ?? 0;
+return [{
+  json: {
+    spreadsheetId,
+    spreadsheetUrl,
+    requests: [{
+      updateSheetProperties: {
+        properties: { sheetId: sheetIdNum, title: '${TAB}' },
+        fields: 'title',
+      },
+    }],
+  },
+}];`,
         },
       },
       {
         id: uid(),
-        name: 'Append Header Row',
-        type: 'n8n-nodes-base.googleSheets',
-        typeVersion: 4.7,
+        name: 'Apply Rename',
+        type: 'n8n-nodes-base.httpRequest',
+        typeVersion: 4.4,
         position: [80, 0],
         credentials: {
           googleSheetsOAuth2Api: {id: GOOGLE_SHEETS_CRED_ID, name: GOOGLE_SHEETS_CRED_NAME},
         },
         parameters: {
-          operation: 'append',
-          documentId: {
-            __rl: true,
-            value: '={{ $json.spreadsheetId }}',
-            mode: 'id',
-          },
-          sheetName: {
-            __rl: true,
-            value: 'Sheet1',
-            mode: 'name',
-            cachedResultName: 'Sheet1',
-          },
-          columns: {
-            mappingMode: 'autoMapInputData',
-            value: {},
-            matchingColumns: [],
-            schema: headerSchema(),
-            attemptToConvertTypes: false,
-            convertFieldsToString: false,
-          },
+          method: 'POST',
+          url: '=https://sheets.googleapis.com/v4/spreadsheets/{{ $json.spreadsheetId }}:batchUpdate',
+          authentication: 'predefinedCredentialType',
+          nodeCredentialType: 'googleSheetsOAuth2Api',
+          sendBody: true,
+          specifyBody: 'json',
+          jsonBody: '={{ JSON.stringify({ requests: $json.requests }) }}',
+          options: {},
+        },
+      },
+      {
+        id: uid(),
+        name: 'Write Headers',
+        type: 'n8n-nodes-base.httpRequest',
+        typeVersion: 4.4,
+        position: [320, 0],
+        credentials: {
+          googleSheetsOAuth2Api: {id: GOOGLE_SHEETS_CRED_ID, name: GOOGLE_SHEETS_CRED_NAME},
+        },
+        parameters: {
+          method: 'PUT',
+          url: `=https://sheets.googleapis.com/v4/spreadsheets/{{ $("Create Spreadsheet").item.json.spreadsheetId }}/values/${encodeURIComponent(`${TAB}!A1`)}?valueInputOption=RAW`,
+          authentication: 'predefinedCredentialType',
+          nodeCredentialType: 'googleSheetsOAuth2Api',
+          sendBody: true,
+          specifyBody: 'json',
+          jsonBody: JSON.stringify({values: [HEADERS]}),
           options: {},
         },
       },
@@ -281,22 +304,21 @@ return [{ json: row }];`,
         name: 'Respond With Sheet URL',
         type: 'n8n-nodes-base.respondToWebhook',
         typeVersion: 1.1,
-        position: [320, 0],
+        position: [560, 0],
         parameters: {
           respondWith: 'json',
           responseBody:
-            '={{ ({ spreadsheetId: $json.spreadsheetId || $("Create Spreadsheet").item.json.spreadsheetId, spreadsheetUrl: $json.spreadsheetUrl || $("Create Spreadsheet").item.json.spreadsheetUrl }) }}',
+            '={{ ({ spreadsheetId: $("Create Spreadsheet").item.json.spreadsheetId, spreadsheetUrl: $("Create Spreadsheet").item.json.spreadsheetUrl }) }}',
           options: {},
         },
       },
     ],
     connections: {
       'Setup Webhook': {main: [[{node: 'Create Spreadsheet', type: 'main', index: 0}]]},
-      'Create Spreadsheet': {main: [[{node: 'Build Header Row', type: 'main', index: 0}]]},
-      'Build Header Row': {main: [[{node: 'Append Header Row', type: 'main', index: 0}]]},
-      'Append Header Row': {
-        main: [[{node: 'Respond With Sheet URL', type: 'main', index: 0}]],
-      },
+      'Create Spreadsheet': {main: [[{node: 'Rename To Responses', type: 'main', index: 0}]]},
+      'Rename To Responses': {main: [[{node: 'Apply Rename', type: 'main', index: 0}]]},
+      'Apply Rename': {main: [[{node: 'Write Headers', type: 'main', index: 0}]]},
+      'Write Headers': {main: [[{node: 'Respond With Sheet URL', type: 'main', index: 0}]]},
     },
     settings: {executionOrder: 'v1'},
   }
@@ -440,6 +462,269 @@ async function setupSheet() {
   return sheetId
 }
 
+function buildFixSheetWorkflow(sheetId) {
+  const FIX_JS = `const meta = $input.first().json;
+const sheets = meta.sheets || [];
+const legacy = sheets.find((s) => s.properties?.title === '${LEGACY_TAB}');
+const responses = sheets.find((s) => s.properties?.title === '${TAB}');
+const requests = [];
+let readTitle = '${TAB}';
+
+if (!responses && legacy) {
+  requests.push({
+    updateSheetProperties: {
+      properties: { sheetId: legacy.properties.sheetId, title: '${TAB}' },
+      fields: 'title',
+    },
+  });
+}
+// Always read Responses after optional rename.
+return [{
+  json: {
+    spreadsheetId: '${sheetId}',
+    requests,
+    skipRename: requests.length === 0,
+    readTitle: '${TAB}',
+  },
+}];`
+
+  const REMAP_JS = `const headers = ${JSON.stringify(HEADERS)};
+const payload = $input.first().json;
+const values = payload.values || [];
+if (!values.length) {
+  return [{ json: { values: [headers], rowCount: 0 } }];
+}
+
+const head = values[0].map((c) => String(c || '').trim());
+const hasJunk = head[0] === 'spreadsheetId' || head.includes('spreadsheetId');
+const tsIdx = head.indexOf('Timestamp');
+const start = hasJunk && tsIdx >= 0 ? tsIdx : head[0] === 'Timestamp' ? 0 : 0;
+
+const out = [headers];
+for (let i = 1; i < values.length; i++) {
+  const row = values[i] || [];
+  const slice = start > 0 ? row.slice(start) : row;
+  const ts = String(slice[0] || '').trim();
+  // Drop duplicate header rows and empty rows
+  if (!ts || ts === 'Timestamp' || ts === 'spreadsheetId') continue;
+  if (!ts.includes('T') && !/^\\d{4}-/.test(ts)) continue;
+  const clean = headers.map((_, idx) => String(slice[idx] ?? ''));
+  out.push(clean);
+}
+
+return [{ json: { values: out, rowCount: out.length - 1 } }];`
+
+  return {
+    name: 'SYSBILT - Feedback Review Sheet Fix',
+    nodes: [
+      {
+        id: uid(),
+        name: 'Setup Webhook',
+        type: 'n8n-nodes-base.webhook',
+        typeVersion: 2.1,
+        position: [-720, 0],
+        parameters: {
+          path: FIX_PATH,
+          httpMethod: 'POST',
+          responseMode: 'responseNode',
+          options: {},
+        },
+        webhookId: FIX_PATH,
+      },
+      {
+        id: uid(),
+        name: 'Get Spreadsheet Meta',
+        type: 'n8n-nodes-base.httpRequest',
+        typeVersion: 4.4,
+        position: [-480, 0],
+        credentials: {
+          googleSheetsOAuth2Api: {id: GOOGLE_SHEETS_CRED_ID, name: GOOGLE_SHEETS_CRED_NAME},
+        },
+        parameters: {
+          method: 'GET',
+          url: `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}?fields=spreadsheetId,sheets(properties(sheetId,title))`,
+          authentication: 'predefinedCredentialType',
+          nodeCredentialType: 'googleSheetsOAuth2Api',
+          options: {},
+        },
+      },
+      {
+        id: uid(),
+        name: 'Plan Rename',
+        type: 'n8n-nodes-base.code',
+        typeVersion: 2,
+        position: [-240, 0],
+        parameters: {mode: 'runOnceForAllItems', jsCode: FIX_JS},
+      },
+      {
+        id: uid(),
+        name: 'Needs Rename',
+        type: 'n8n-nodes-base.if',
+        typeVersion: 2.3,
+        position: [0, 0],
+        parameters: {
+          conditions: {
+            options: {caseSensitive: true, leftValue: '', typeValidation: 'loose', version: 3},
+            conditions: [
+              {
+                id: uid(),
+                leftValue: '={{ $json.skipRename }}',
+                rightValue: true,
+                operator: {type: 'boolean', operation: 'notEquals'},
+              },
+            ],
+            combinator: 'and',
+          },
+          looseTypeValidation: true,
+          options: {},
+        },
+      },
+      {
+        id: uid(),
+        name: 'Apply Rename',
+        type: 'n8n-nodes-base.httpRequest',
+        typeVersion: 4.4,
+        position: [240, -100],
+        credentials: {
+          googleSheetsOAuth2Api: {id: GOOGLE_SHEETS_CRED_ID, name: GOOGLE_SHEETS_CRED_NAME},
+        },
+        parameters: {
+          method: 'POST',
+          url: `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}:batchUpdate`,
+          authentication: 'predefinedCredentialType',
+          nodeCredentialType: 'googleSheetsOAuth2Api',
+          sendBody: true,
+          specifyBody: 'json',
+          jsonBody: '={{ JSON.stringify({ requests: $json.requests }) }}',
+          options: {},
+        },
+      },
+      {
+        id: uid(),
+        name: 'Skip Rename',
+        type: 'n8n-nodes-base.code',
+        typeVersion: 2,
+        position: [240, 100],
+        parameters: {
+          mode: 'runOnceForAllItems',
+          jsCode: 'return $input.all();',
+        },
+      },
+      {
+        id: uid(),
+        name: 'Read Values',
+        type: 'n8n-nodes-base.httpRequest',
+        typeVersion: 4.4,
+        position: [480, 0],
+        credentials: {
+          googleSheetsOAuth2Api: {id: GOOGLE_SHEETS_CRED_ID, name: GOOGLE_SHEETS_CRED_NAME},
+        },
+        parameters: {
+          method: 'GET',
+          url: `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodeURIComponent(`${TAB}!A1:AZ500`)}`,
+          authentication: 'predefinedCredentialType',
+          nodeCredentialType: 'googleSheetsOAuth2Api',
+          options: {},
+        },
+      },
+      {
+        id: uid(),
+        name: 'Remap Rows',
+        type: 'n8n-nodes-base.code',
+        typeVersion: 2,
+        position: [720, 0],
+        parameters: {mode: 'runOnceForAllItems', jsCode: REMAP_JS},
+      },
+      {
+        id: uid(),
+        name: 'Clear Responses',
+        type: 'n8n-nodes-base.httpRequest',
+        typeVersion: 4.4,
+        position: [960, 0],
+        credentials: {
+          googleSheetsOAuth2Api: {id: GOOGLE_SHEETS_CRED_ID, name: GOOGLE_SHEETS_CRED_NAME},
+        },
+        parameters: {
+          method: 'POST',
+          url: `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodeURIComponent(`${TAB}!A:AZ`)}:clear`,
+          authentication: 'predefinedCredentialType',
+          nodeCredentialType: 'googleSheetsOAuth2Api',
+          sendBody: true,
+          specifyBody: 'json',
+          jsonBody: '{}',
+          options: {},
+        },
+      },
+      {
+        id: uid(),
+        name: 'Write Clean Values',
+        type: 'n8n-nodes-base.httpRequest',
+        typeVersion: 4.4,
+        position: [1200, 0],
+        credentials: {
+          googleSheetsOAuth2Api: {id: GOOGLE_SHEETS_CRED_ID, name: GOOGLE_SHEETS_CRED_NAME},
+        },
+        parameters: {
+          method: 'PUT',
+          url: `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodeURIComponent(`${TAB}!A1`)}?valueInputOption=RAW`,
+          authentication: 'predefinedCredentialType',
+          nodeCredentialType: 'googleSheetsOAuth2Api',
+          sendBody: true,
+          specifyBody: 'json',
+          jsonBody: '={{ JSON.stringify({ values: $("Remap Rows").item.json.values }) }}',
+          options: {},
+        },
+      },
+      {
+        id: uid(),
+        name: 'Respond OK',
+        type: 'n8n-nodes-base.respondToWebhook',
+        typeVersion: 1.1,
+        position: [1440, 0],
+        parameters: {
+          respondWith: 'json',
+          responseBody:
+            '={{ ({ ok: true, spreadsheetId: "' +
+            sheetId +
+            '", tab: "' +
+            TAB +
+            '", rowCount: $("Remap Rows").item.json.rowCount }) }}',
+          options: {},
+        },
+      },
+    ],
+    connections: {
+      'Setup Webhook': {main: [[{node: 'Get Spreadsheet Meta', type: 'main', index: 0}]]},
+      'Get Spreadsheet Meta': {main: [[{node: 'Plan Rename', type: 'main', index: 0}]]},
+      'Plan Rename': {main: [[{node: 'Needs Rename', type: 'main', index: 0}]]},
+      'Needs Rename': {
+        main: [
+          [{node: 'Apply Rename', type: 'main', index: 0}],
+          [{node: 'Skip Rename', type: 'main', index: 0}],
+        ],
+      },
+      'Apply Rename': {main: [[{node: 'Read Values', type: 'main', index: 0}]]},
+      'Skip Rename': {main: [[{node: 'Read Values', type: 'main', index: 0}]]},
+      'Read Values': {main: [[{node: 'Remap Rows', type: 'main', index: 0}]]},
+      'Remap Rows': {main: [[{node: 'Clear Responses', type: 'main', index: 0}]]},
+      'Clear Responses': {main: [[{node: 'Write Clean Values', type: 'main', index: 0}]]},
+      'Write Clean Values': {main: [[{node: 'Respond OK', type: 'main', index: 0}]]},
+    },
+    settings: {executionOrder: 'v1'},
+  }
+}
+
+async function fixSheet(sheetId) {
+  console.log(`Fixing headers / renaming to ${TAB} on ${sheetId}...`)
+  const {data, workflowId} = await runWebhookSetup(FIX_PATH, buildFixSheetWorkflow(sheetId))
+  if (!data.ok) throw new Error(`Fix failed: ${JSON.stringify(data)}`)
+  saveDeployState({
+    FEEDBACK_REVIEW_SHEET_FIX_WORKFLOW_ID: workflowId,
+    FEEDBACK_REVIEW_SHEET_ID: sheetId,
+  })
+  console.log(`Fixed. Kept ${data.rowCount ?? '?'} response rows on tab ${TAB}.`)
+}
+
 async function deployLogger(sheetId, activate) {
   const wf = await upsertWorkflow(buildLoggerWorkflow(sheetId), {activate})
   const webhookUrl = `${N8N_BASE}/webhook/${WEBHOOK_PATH}`
@@ -456,6 +741,7 @@ async function deployLogger(sheetId, activate) {
 }
 
 const setup = process.argv.includes('--setup-sheet')
+const fix = process.argv.includes('--fix-sheet')
 const activate = process.argv.includes('--activate')
 
 const sheetId = setup
@@ -467,5 +753,6 @@ if (!sheetId) {
   process.exit(1)
 }
 
-await deployLogger(sheetId, activate || setup)
+if (fix) await fixSheet(sheetId)
+await deployLogger(sheetId, activate || setup || fix)
 console.log('\nDone.')

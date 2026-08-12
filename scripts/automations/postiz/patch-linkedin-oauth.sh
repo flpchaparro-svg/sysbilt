@@ -7,10 +7,6 @@
 #      + social_feed. Removes prompt=none so LinkedIn shows consent (#1582 / #1243).
 #   2. Authenticate/refresh: use /v2/me (r_basicprofile) instead of OpenID /v2/userinfo.
 #   3. Comments: rest/socialActions + LinkedIn-Version header (carousel/ugcPost).
-#   4. Comment path URN: encodeURIComponent(parentPostId/id) - never decodeURIComponent
-#      in the socialActions/.../comments path (unencoded URN → 400).
-#   5. First-comment race: createCommentPost retries on 404/429/5xx (and domain
-#      authorization) with 15s/30s/45s/60s delays; still throws if all fail.
 #
 # After running: re-connect LinkedIn in Postiz (OAuth must be redone for new scopes).
 #
@@ -188,142 +184,6 @@ function removeLeftoverVanityName(t) {
 }
 
 
-
-function ensureBadBodyImportTs(t) {
-  if (!t.includes('throw new BadBody')) return t;
-  if (/import\s*\{[^}]*\bBadBody\b[^}]*\}\s*from\s*['"]@gitroom\/nestjs-libraries\/integrations\/social\.abstract['"]/.test(t)) {
-    return t;
-  }
-  return t.replace(
-    /import\s*\{\s*SocialAbstract\s*\}\s*from\s*['"]@gitroom\/nestjs-libraries\/integrations\/social\.abstract['"]\s*;/,
-    "import { SocialAbstract, BadBody } from '@gitroom/nestjs-libraries/integrations/social.abstract';"
-  );
-}
-
-function patchCreateCommentPostRetry(t, isTs) {
-  if (t.includes('delaysMs = [15000, 30000, 45000, 60000]')) return t;
-
-  const JS_NEW = `    async createCommentPost(id, accessToken, post, parentPostId, type) {
-        const actor = type === 'personal' ? \`urn:li:person:\${id}\` : \`urn:li:organization:\${id}\`;
-        const url = \`https://api.linkedin.com/rest/socialActions/\${encodeURIComponent(parentPostId)}/comments\`;
-        const options = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'LinkedIn-Version': '202601',
-                'X-Restli-Protocol-Version': '2.0.0',
-                Authorization: \`Bearer \${accessToken}\`,
-            },
-            body: JSON.stringify({
-                actor,
-                object: parentPostId,
-                message: {
-                    text: this.fixText(post.message),
-                },
-            }),
-        };
-        const delaysMs = [15000, 30000, 45000, 60000];
-        let lastStatus = 0;
-        let lastBody = '';
-        for (let attempt = 0; attempt <= delaysMs.length; attempt++) {
-            const response = await fetch(url, options);
-            lastStatus = response.status;
-            if (response.status === 200 || response.status === 201) {
-                const { object } = await response.json();
-                return object;
-            }
-            lastBody = await response.text().catch(() => '{}');
-            const isAccessDenied = /ACCESS_DENIED/i.test(lastBody);
-            const shouldRetry = !isAccessDenied &&
-                (response.status === 404 ||
-                    response.status === 429 ||
-                    response.status >= 500 ||
-                    /domain authorization/i.test(lastBody));
-            if (!shouldRetry || attempt >= delaysMs.length) {
-                break;
-            }
-            console.log(\`[linkedin] createCommentPost retry \${attempt + 1}/\${delaysMs.length} after status=\${response.status} for \${parentPostId}; sleeping \${delaysMs[attempt]}ms\`);
-            await new Promise((r) => setTimeout(r, delaysMs[attempt]));
-        }
-        throw new social_abstract_1.BadBody(id, lastBody || '{}', options.body || '{}', \`LinkedIn createCommentPost failed after retries: status=\${lastStatus}\`);
-    }`;
-
-  const TS_NEW = `  private async createCommentPost(
-    id: string,
-    accessToken: string,
-    post: PostDetails,
-    parentPostId: string,
-    type: 'company' | 'personal'
-  ): Promise<string> {
-    const actor =
-      type === 'personal' ? \`urn:li:person:\${id}\` : \`urn:li:organization:\${id}\`;
-
-    const url = \`https://api.linkedin.com/rest/socialActions/\${encodeURIComponent(
-      parentPostId
-    )}/comments\`;
-    const options = {
-      method: 'POST' as const,
-      headers: {
-        'Content-Type': 'application/json',
-        'LinkedIn-Version': '202601',
-        'X-Restli-Protocol-Version': '2.0.0',
-        Authorization: \`Bearer \${accessToken}\`,
-      },
-      body: JSON.stringify({
-        actor,
-        object: parentPostId,
-        message: {
-          text: this.fixText(post.message),
-        },
-      }),
-    };
-
-    const delaysMs = [15000, 30000, 45000, 60000];
-    let lastStatus = 0;
-    let lastBody = '';
-    for (let attempt = 0; attempt <= delaysMs.length; attempt++) {
-      const response = await fetch(url, options);
-      lastStatus = response.status;
-      if (response.status === 200 || response.status === 201) {
-        const { object } = await response.json();
-        return object;
-      }
-      lastBody = await response.text().catch(() => '{}');
-      const isAccessDenied = /ACCESS_DENIED/i.test(lastBody);
-      const shouldRetry =
-        !isAccessDenied &&
-        (response.status === 404 ||
-          response.status === 429 ||
-          response.status >= 500 ||
-          /domain authorization/i.test(lastBody));
-      if (!shouldRetry || attempt >= delaysMs.length) {
-        break;
-      }
-      console.log(
-        \`[linkedin] createCommentPost retry \${attempt + 1}/\${delaysMs.length} after status=\${response.status} for \${parentPostId}; sleeping \${delaysMs[attempt]}ms\`
-      );
-      await new Promise((r) => setTimeout(r, delaysMs[attempt]));
-    }
-    throw new BadBody(
-      id,
-      lastBody || '{}',
-      options.body || '{}',
-      \`LinkedIn createCommentPost failed after retries: status=\${lastStatus}\`
-    );
-  }`;
-
-  if (isTs) {
-    const re = /private async createCommentPost\([\s\S]*?\n  \}\n\n  private createPostResponse/;
-    if (!re.test(t)) return t;
-    t = t.replace(re, TS_NEW + '\n\n  private createPostResponse');
-    return ensureBadBodyImportTs(t);
-  }
-  const re = /async createCommentPost\(id, accessToken, post, parentPostId, type\) \{[\s\S]*?\n    \}\n    createPostResponse/;
-  if (!re.test(t)) return t;
-  return t.replace(re, JS_NEW + '\n    createPostResponse');
-}
-
-
 let patched = 0;
 for (const f of files) {
   if (!fs.existsSync(f.path)) {
@@ -344,25 +204,6 @@ for (const f of files) {
     'https://api.linkedin.com/rest/socialActions/'
   );
 
-  // Comment path must URL-encode the URN (urn:li:ugcPost:... / share:...).
-  // Upstream page autoPlugPost incorrectly used decodeURIComponent → 400.
-  t = t.replace(
-    /rest\/socialActions\/\$\{decodeURIComponent\(\s*id\s*\)\}\/comments/g,
-    'rest/socialActions/${encodeURIComponent(id)}/comments'
-  );
-  t = t.replace(
-    /rest\/socialActions\/\$\{decodeURIComponent\(id\)\}\/comments/g,
-    'rest/socialActions/${encodeURIComponent(id)}/comments'
-  );
-  // Unencoded template interpolations in comment POST paths
-  t = t.replace(
-    /rest\/socialActions\/\$\{(parentPostId|id|postId)\}\/comments/g,
-    'rest/socialActions/${encodeURIComponent($1)}/comments'
-  );
-  // Idempotent: already-encoded stays encoded
-  // (encodeURIComponent(encodeURIComponent(x)) would be wrong if we wrapped again -
-  //  the replace above only matches bare ${var}, not encodeURIComponent(var).)
-
   // Always inject version headers on comment Content-Type blocks that lack them
   // (file may already contain LinkedIn-Version elsewhere for posts).
   t = t.replace(
@@ -372,9 +213,6 @@ for (const f of files) {
       return `headers: {\n${i1}'Content-Type': 'application/json',\n${i1}'LinkedIn-Version': '202601',\n${i1}'X-Restli-Protocol-Version': '2.0.0',\n${i2}Authorization:`;
     }
   );
-
-  // First-comment race: retry createCommentPost on 404/429/5xx
-  t = patchCreateCommentPostRetry(t, f.ts);
 
   if (t !== before) {
     fs.writeFileSync(f.path, t);
@@ -410,14 +248,9 @@ PAGE_JS=/app/apps/backend/dist/libraries/nestjs-libraries/src/integrations/socia
 ORCH_JS=/app/apps/orchestrator/dist/libraries/nestjs-libraries/src/integrations/social/linkedin.provider.js
 
 ok=1
-docker exec postiz grep -q 'delaysMs = [15000, 30000, 45000, 60000]' "${ORCH_JS}" || ok=0
-docker exec postiz grep -q 'createCommentPost retry' "${ORCH_JS}" || ok=0
-docker exec postiz grep -q 'setTimeout' "${ORCH_JS}" || ok=0
 docker exec postiz grep -q 'w_member_social_feed' "${PERSONAL_JS}" || ok=0
 docker exec postiz grep -q 'w_organization_social_feed' "${PAGE_JS}" || ok=0
 docker exec postiz grep -q 'rest/socialActions' "${ORCH_JS}" || ok=0
-docker exec postiz grep -q 'encodeURIComponent(parentPostId)' "${ORCH_JS}" || ok=0
-! docker exec postiz grep -q 'socialActions/${decodeURIComponent' "${PAGE_JS}" || ok=0
 ! docker exec postiz grep -q 'openid' "${PERSONAL_JS}" || ok=0
 ! docker exec postiz grep -q 'prompt=none' "${PERSONAL_JS}" || ok=0
 ! docker exec postiz grep -q 'userinfo' "${PERSONAL_JS}" || ok=0

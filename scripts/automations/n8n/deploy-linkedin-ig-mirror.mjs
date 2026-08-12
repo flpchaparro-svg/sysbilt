@@ -160,9 +160,20 @@ const candidates = posts.filter((p) => {
   if (!isLinkedInPersonal(p)) return false;
   if (p.parentPostId) return false;
   if ((p.content || '').length < 400) return false;
-  if (!['QUEUE', 'DRAFT'].includes(p.state)) return false;
+  // Never mirror drafts. Lane charts / manual drafts must not create Instagram posts.
+  // Only mirror real scheduled personal LinkedIn (QUEUE). Manual publish can be mirrored once it is queued.
+  if (p.state !== 'QUEUE') return false;
   const tags = p.tags || [];
-  if (tags.includes('no-ig-mirror')) return false;
+  const tagVals = tags.map((t) => (typeof t === 'string' ? t : (t?.value || t?.label || ''))).filter(Boolean);
+  // Lane 1/2/3 and any post tagged to skip Instagram
+  if (tagVals.includes('no-ig-mirror') || tagVals.includes('lane-1') || tagVals.includes('lane-2') || tagVals.includes('lane-3')) return false;
+  const plain = String(p.content || '').replace(/<[^>]+>/g, ' ');
+  // Belt-and-braces for Lane 2 chart copy (tags sometimes drop in Postiz)
+  if (/Source in the first comment/i.test(plain) &&
+      /(Imagine running a business|Salesforce is not just ahead|58% is the number|Five platforms on the chart|Who still owns|Create plus approve|distribution and measurement|Media Clean|week.?s distribution)/i.test(plain)) {
+    return false;
+  }
+  if (/\blane-?2\b|\bno-ig-mirror\b/i.test(plain)) return false;
   if (mirrored[p.id]) return false;
   const when = new Date(p.publishDate).getTime();
   if (Number.isNaN(when) || when < now - 5 * 60 * 1000) return false;
@@ -281,9 +292,9 @@ if (!targets?.instagramId) {
 }
 
 const instagramHtml = linkedinToInstagram(prev.linkedinHtml || detail.content || '');
-const postType = prev.state === 'DRAFT' ? 'draft' : 'schedule';
+// Always schedule. Drafts are excluded upstream; never create IG drafts from this workflow.
 const body = {
-  type: postType,
+  type: 'schedule',
   date: prev.publishDate,
   shortLink: false,
   tags: [],

@@ -346,7 +346,7 @@ return [{
     Email: lead.Email || '',
     Phone: lead.Phone || '',
     'LH Mobile': lead['LH Mobile'] || '',
-    Status: 'Ready',
+    Status: 'Wait',
     'Maps ID': mapsId,
     Notes: '',
     _skipAppend: false,
@@ -957,7 +957,7 @@ async function deployScorer(sheetId, { activate = false } = {}) {
   });
   console.log(`\nScorer deployed${activate ? ' (active)' : ' (inactive)'}: ${N8N_BASE}/workflow/${wf.id}`);
   console.log(`Sheet: https://docs.google.com/spreadsheets/d/${sheetId}/edit`);
-  console.log(`Gate: LH Mobile < ${LH_THRESHOLD} → Speed Fix tab (Status=Ready)`);
+  console.log(`Gate: LH Mobile < ${LH_THRESHOLD} → Speed Fix tab (Status=Wait)`);
   console.log('Quota: PageSpeed limit → silent 24h pause; email only on 2nd fail.');
   console.log('Test: open workflow → Execute (Manual Trigger). One row per run.');
   return wf;
