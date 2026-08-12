@@ -14,6 +14,7 @@
  *
  * Usage:
  *   node scripts/automations/n8n/deploy-feedback-review-send.mjs --setup-tab --activate
+ *   node scripts/automations/n8n/deploy-feedback-review-send.mjs --setup-dropdowns
  *   node scripts/automations/n8n/deploy-feedback-review-send.mjs --activate
  */
 import {readFileSync, existsSync, writeFileSync} from 'node:fs'
