@@ -1,0 +1,90 @@
+{
+  "slug": "5-manual-processes-you-should-never-automate",
+  "title": "The 5 Manual Processes You Should Never Automate",
+  "url": "sysbilt.com/blog/5-manual-processes-you-should-never-automate",
+  "sanityId": "6f47cfe2-1866-4b8a-9c02-35c2c6180436",
+  "kicker": "Automation",
+  "total": "06",
+  "notes": "No attributable numeric figure in the article, so no frame-stat. PwC line used as quote only.",
+  "frames": [
+    {
+      "page": "01",
+      "frame": "frame-hook",
+      "theme": "theme-dark",
+      "len": "len-mid",
+      "tokens": {
+        "CHIP1": "Systems",
+        "CHIP2": "Judgment",
+        "CHIP3": "Ops",
+        "HEADLINE": "Stop automating the <em>wrong</em> work"
+      }
+    },
+    {
+      "page": "02",
+      "frame": "frame-problem",
+      "theme": "theme-cream",
+      "len": "len-mid",
+      "tokens": {
+        "HEADLINE": "You kept the admin. You removed the <em>judgment</em>",
+        "BODY": "A lot of businesses are not asking what is repetitive enough to automate. They are asking how much they can hand to the system. That is how good operators automate the wrong things."
+      }
+    },
+    {
+      "page": "03",
+      "frame": "frame-quote",
+      "theme": "theme-red",
+      "len": "len-mid",
+      "tokens": {
+        "QUOTE": "Automating an inefficient process just makes you inefficient <em>faster</em>",
+        "ATTRIBUTION": "PwC · cited in the article"
+      }
+    },
+    {
+      "page": "04",
+      "frame": "frame-steps",
+      "theme": "theme-gold",
+      "len": "len-short",
+      "tokens": {
+        "HEADLINE": "Keep these <em>human</em>",
+        "ITEM1": "Complaint resolution. Automate intake and routing. A person decides the response.",
+        "ITEM2": "Pricing exceptions. Automate standard quotes. Keep edge cases human-led.",
+        "ITEM3": "Hiring decisions. Automate scheduling and notes. Not the final call.",
+        "ITEM4": "High-stakes sales discovery. Automate booking and CRM. Keep the real conversation."
+      }
+    },
+    {
+      "page": "05",
+      "frame": "frame-consequence",
+      "theme": "theme-dark",
+      "len": "len-mid",
+      "tokens": {
+        "HEADLINE": "Automate prep. Keep the <em>decision</em>",
+        "BODY": "Final brand approval stays human when reputation is on the line. The pattern is the same across all five: automate preparation, movement, and admin. Keep decision, exception, and accountability with a person."
+      }
+    },
+    {
+      "page": "06",
+      "frame": "frame-cta",
+      "theme": "theme-cream",
+      "len": "len-mid",
+      "tokens": {
+        "HEADLINE": "Where should the line sit in <em>your</em> business",
+        "BODY": "The full breakdown is on the site, including the five-question filter for manual versus automated.",
+        "CTA_URL": "sysbilt.com/blog/5-manual-processes-you-should-never-automate"
+      }
+    }
+  ],
+  "captions": {
+    "linkedinPersonal": "Most businesses do not fail at automation because they automate too little. They fail because they automate judgment.\n\nComplaint handling, pricing exceptions, hiring, discovery, and final brand approval still need a human call. The system can prep the work. The person should own the outcome.\n\nPwC's line is still the cleanest warning: automate a bad process and you just get inefficient faster.\n\nFull breakdown in the comments.\n\n#sysbilt #automation #operations #systems #australianbusiness",
+    "linkedinFirstComment": "Tip: automate intake, routing, and reminders first. Keep the last meaningful decision with a named person.\n\nsysbilt.com/blog/5-manual-processes-you-should-never-automate",
+    "companyOrInstagram": "Most businesses do not fail at automation because they automate too little. They fail because they automate judgment.\n\nSwipe for the five processes that should stay human, and what you can still automate around them.\n\nFull breakdown at the link in bio.\n\n#sysbilt #automation #operations #systems #australianbusiness"
+  },
+  "postiz": {
+    "settings": {
+      "__type": "linkedin",
+      "post_as_images_carousel": true,
+      "carousel_name": "5 processes you should never fully automate"
+    },
+    "tags": ["lane-4"]
+  }
+}

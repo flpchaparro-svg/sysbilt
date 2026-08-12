@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Deploy Social Distribute workflow + NEWS branch to n8n.
+# Deploy Social Distribute workflow + NEWS branch to n8n (Lane 1 cards).
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
 cd "$ROOT"
@@ -22,6 +22,17 @@ if [[ -z "${POSTIZ_API_KEY:-}" ]]; then
   export POSTIZ_API_KEY
 fi
 
+# Browserless token (Mini)
+if [[ -z "${BROWSERLESS_TOKEN:-}" && -f "$HOME/.config/sysbilt/browserless-secrets.env" ]]; then
+  # shellcheck disable=SC1091
+  source "$HOME/.config/sysbilt/browserless-secrets.env"
+fi
+if [[ -z "${BROWSERLESS_TOKEN:-}" ]]; then
+  echo "Fetching BROWSERLESS_TOKEN from Mac Mini..." >&2
+  BROWSERLESS_TOKEN=$(ssh sysbilt@felipes-mac-mini-1.tail1e2dea.ts.net 'grep ^BROWSERLESS_TOKEN= ~/.config/sysbilt/browserless-secrets.env | cut -d= -f2-')
+  export BROWSERLESS_TOKEN
+fi
+
 if [[ -z "${POSTIZ_CREDENTIAL_ID:-}" && -f "${STATE_ENV}" ]]; then
   # shellcheck disable=SC1091
   source "${STATE_ENV}"
@@ -29,5 +40,6 @@ fi
 
 : "${N8N_API_KEY:?Set N8N_API_KEY or cursor-mcp in .env.local}"
 : "${POSTIZ_API_KEY:?Set POSTIZ_API_KEY}"
+: "${BROWSERLESS_TOKEN:?Set BROWSERLESS_TOKEN}"
 
 exec node scripts/automations/n8n/deploy-social-pipeline.mjs "$@"

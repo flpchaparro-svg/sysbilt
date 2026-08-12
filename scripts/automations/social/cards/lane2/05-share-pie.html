@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<title>SYSBILT chart 05 - share, circular</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<!--
+  ═══════════════════════════════════════════════════════════════
+  INJECTION CONTRACT
+  ═══════════════════════════════════════════════════════════════
+  body class    "{{TONE}} {{LEN}}"   see chart-01 for values
+  {{TOPIC}} {{TITLE}} {{SOURCE}}     as chart-01
+
+  SEGMENTS      exactly 5, sorted descending, raw percentages summing to 100.
+
+  The pie is one conic-gradient. Stops are CUMULATIVE, not the raw values:
+    stop[0] = v[0]
+    stop[i] = stop[i-1] + v[i]
+  So 34, 27, 19, 12, 8 becomes 34, 61, 80, 92, 100.
+  The final stop must be exactly 100 percent.
+
+  Rebuild the whole gradient string in the workflow and inject it as one
+  inline style on .pie. The legend order must match the segment order.
+
+  Note: use this when the story is "one slice dominates". When the segments
+  are close in size, chart-04 reads better at feed size.
+  ═══════════════════════════════════════════════════════════════
+-->
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+
+  :root {
+    --cream: #FFF2EC;
+    --ink: #1A1A1A;
+    --crimson: #9A1730;
+    --gold: #C5A059;
+    --gold-dk: #8B6914;
+    --teal: #0F766E;
+    --n1: rgba(26, 26, 26, 0.30);
+    --n2: rgba(26, 26, 26, 0.22);
+    --n3: rgba(26, 26, 26, 0.15);
+    --n4: rgba(26, 26, 26, 0.10);
+  }
+
+  body.tone-problem { --tone: var(--crimson); --tone-sh: var(--gold); }
+  body.tone-gain    { --tone: var(--teal);    --tone-sh: var(--gold); }
+  body.tone-neutral { --tone: var(--gold-dk); --tone-sh: rgba(197, 160, 89, 0.55); }
+
+  body {
+    width: 1080px;
+    height: 1080px;
+    padding: 80px;
+    overflow: hidden;
+    position: relative;
+    background-color: var(--cream);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .bg-pattern {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(to right, rgba(26, 26, 26, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(26, 26, 26, 0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, transparent 220px, #000 320px, #000 850px, rgba(0,0,0,0.3) 100%);
+            mask-image: linear-gradient(to bottom, transparent 0, transparent 220px, #000 320px, #000 850px, rgba(0,0,0,0.3) 100%);
+  }
+
+  .content-layer {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-height: 0;
+  }
+
+  .topic {
+    font-weight: 600;
+    font-size: 18px;
+    text-transform: uppercase;
+    letter-spacing: 0.24em;
+    margin: 0 0 24px 0;
+  }
+  .topic::before { content: '/ '; }
+
+  .title {
+    font-family: 'Lora', serif;
+    font-weight: 400;
+    font-size: 54px;
+    line-height: 1.15;
+    letter-spacing: -0.005em;
+    margin: 0;
+    max-width: 900px;
+  }
+  .title em { font-style: italic; font-weight: 400; color: var(--tone); }
+  .len-short .title { font-size: 62px; }
+  .len-mid   .title { font-size: 54px; }
+  .len-long  .title { font-size: 44px; }
+
+  .chart {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 72px;
+    padding: 40px 0 96px 0;
+    min-height: 0;
+  }
+
+  .pie {
+    width: 400px;
+    height: 400px;
+    flex: 0 0 auto;
+    border-radius: 50%;
+    box-shadow: 10px 10px 0 0 var(--tone-sh);
+    /* cumulative stops, rebuilt per render */
+    background: conic-gradient(
+      var(--tone) 0 34%,
+      var(--n1)  34% 61%,
+      var(--n2)  61% 80%,
+      var(--n3)  80% 92%,
+      var(--n4)  92% 100%
+    );
+  }
+
+  .legend { display: flex; flex-direction: column; gap: 26px; min-width: 0; }
+  .legend-item { display: flex; align-items: center; min-width: 0; }
+
+  .swatch { width: 18px; height: 18px; margin-right: 16px; flex-shrink: 0; }
+  .legend-item:nth-child(1) .swatch { background-color: var(--tone); }
+  .legend-item:nth-child(2) .swatch { background-color: var(--n1); }
+  .legend-item:nth-child(3) .swatch { background-color: var(--n2); }
+  .legend-item:nth-child(4) .swatch { background-color: var(--n3); }
+  .legend-item:nth-child(5) .swatch { background-color: var(--n4); }
+
+  .legend-value {
+    font-weight: 500;
+    font-size: 22px;
+    width: 66px;
+    flex: 0 0 auto;
+    font-variant-numeric: tabular-nums;
+  }
+  .legend-item:nth-child(1) .legend-value {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--tone);
+  }
+  .legend-label { font-weight: 400; font-size: 18px; opacity: 0.80; }
+
+  .footer {
+    position: absolute;
+    bottom: 80px;
+    left: 80px;
+    right: 80px;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .source { font-weight: 400; font-size: 16px; opacity: 0.55; }
+  .mark {
+    font-weight: 500;
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    opacity: 0.40;
+  }
+</style>
+</head>
+<body class="tone-problem len-mid">
+  <div class="bg-pattern" aria-hidden="true"></div>
+
+  <div class="content-layer">
+    <div class="topic">AI TOOLS</div>
+    <h1 class="title">Where small teams actually spend their <em>automation budget</em></h1>
+
+    <div class="chart">
+      <div class="pie"></div>
+
+      <div class="legend">
+        <div class="legend-item">
+          <div class="swatch"></div><div class="legend-value">34%</div><div class="legend-label">Scheduling and reminders</div>
+        </div>
+        <div class="legend-item">
+          <div class="swatch"></div><div class="legend-value">27%</div><div class="legend-label">Lead follow up</div>
+        </div>
+        <div class="legend-item">
+          <div class="swatch"></div><div class="legend-value">19%</div><div class="legend-label">Invoicing and quotes</div>
+        </div>
+        <div class="legend-item">
+          <div class="swatch"></div><div class="legend-value">12%</div><div class="legend-label">Reporting</div>
+        </div>
+        <div class="legend-item">
+          <div class="swatch"></div><div class="legend-value">8%</div><div class="legend-label">Everything else</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="source">Source: Sample data, illustrative only</div>
+    <div class="mark">SYSBILT</div>
+  </div>
+</body>
+</html>

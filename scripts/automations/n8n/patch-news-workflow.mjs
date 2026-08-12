@@ -156,7 +156,7 @@ const OLD_SELECT_NODE = 'Groq Select and Tag';
 
 // Selection: only keep stories where a SYSBILT capability closes a real gap.
 const SELECT_SYSTEM = [
-  'SYSBILT editorial director. Pick news only when a recent event creates a problem one SYSBILT capability directly solves for Australian SMB owners. Global news is fine if it affects AU SMBs.',
+  'SYSBILT editorial director. Pick news only when a recent event creates a problem one SYSBILT capability directly solves for owners of growing Australian businesses. Global news is fine if it affects growing Australian businesses.',
   'Capabilities and gaps:',
   "Websites & E-commerce: invisible online, lost enquiries, weak storefront.",
   "CRM & Lead Tracking: leads slip through, no follow-up, no customer record.",
@@ -165,12 +165,12 @@ const SELECT_SYSTEM = [
   "Content Systems: no time for marketing, inconsistent presence.",
   "Team Training: tools unused, poor adoption.",
   "Dashboards & Reporting: scattered data, flying blind, cannot prove what works.",
-  'GEOGRAPHY RULE (important): the SOURCE can be from anywhere in the world. What matters is whether the EVENT affects Australian SMBs.',
+  'GEOGRAPHY RULE (important): the SOURCE can be from anywhere in the world. What matters is whether the EVENT affects growing Australian businesses.',
   '- KEEP global events that apply to Australian businesses too: a new AI model, a tool launch or pricing change, a platform or feature update, a security issue, a global product or service. These reach Australian businesses directly.',
   '- REJECT foreign-local news: an event tied to one other country that only affects that country (for example a UK-only law for UK businesses, a US state regulation), UNLESS it has already been proposed or introduced in Australia. "It might reach Australia someday" is NOT enough, reject it.',
   'GENERAL NEWS IS WELCOME, not only product launches. A study, a market shift, a change in customer behaviour, a regulation, an industry trend, or research counts just as much as a tool release, as long as it creates a gap one capability closes. Do not bias toward "company X launched feature Y".',
-  'FRESHNESS: we publish every 2 weeks, so only keep news from roughly the last 2 weeks. If the underlying event clearly happened more than about 2 weeks ago (old version, last month, last year, a dated "April 2025" style announcement), set keep false even if the article was recirculated.',
-  'KEEP when a recent concrete event affects Australian SMBs and connects to one capability. REJECT off-brief: macro economy, interest rates, hiring-cost stats, bank PR, politics, celebrity, evergreen listicles with no news event, stale events, and foreign-local stories per the rule above.',
+  'FRESHNESS: we publish every week, so only keep news from roughly the last 1–2 weeks. If the underlying event clearly happened more than about 2 weeks ago (old version, last month, last year, a dated "April 2025" style announcement), set keep false even if the article was recirculated.',
+  'KEEP when a recent concrete event affects growing Australian businesses and connects to one capability. REJECT off-brief: macro economy, interest rates, hiring-cost stats, bank PR, politics, celebrity, evergreen listicles with no news event, stale events, and foreign-local stories per the rule above.',
   "servicePillar exact: Websites & E-commerce | CRM & Lead Tracking | Automation | AI Assistants | Content Systems | Team Training | Dashboards & Reporting.",
   'revenuePhase: phase1 (Websites, CRM), phase2 (Automation, AI Assistants, Content Systems, Team Training), phase3 (Dashboards), horizon (forward forecast only).',
   'personaName: The Builder (phase1), The Scaler (phase2), The Controller (phase3), The Visionary (horizon).',
@@ -220,11 +220,13 @@ function buildDeepSeekSelectNode(existing) {
   };
 }
 
-// Normalise, dedupe, and drop stale items (older than 45 days by publish date).
+// Normalise, dedupe within the run, drop stale RSS, and skip anything already
+// in Sanity (published or draft) from the last LOOKBACK_DAYS.
 const NORMALISE_DEDUPE_JS = `const items = $input.all();
 const seen = new Set();
 const out = [];
 const MAX_AGE_DAYS = 14;
+const LOOKBACK_DAYS = 21;
 const now = Date.now();
 
 const sanitize = (str) => str
@@ -240,20 +242,60 @@ const normaliseTitle = (str) => str
   .replace(/\\s+/g, ' ')
   .trim();
 
+const urlKeys = (raw) => {
+  const u = String(raw || '').trim();
+  if (!u) return [];
+  const keys = [u];
+  try {
+    const parsed = new URL(u);
+    keys.push(parsed.origin + parsed.pathname);
+    const m = parsed.pathname.match(/\\/articles\\/([^/?#]+)/);
+    if (m) keys.push('gnews:' + m[1]);
+  } catch (e) {
+    /* ignore bad urls */
+  }
+  return keys.filter(Boolean);
+};
+
+const knownTitles = new Set();
+const knownUrls = new Set();
+try {
+  const cutoff = DateTime.now().minus({ days: LOOKBACK_DAYS }).toUTC().toISO();
+  const res = await this.helpers.httpRequest({
+    method: 'POST',
+    url: 'https://wdlc9pg8.api.sanity.io/v2021-06-07/data/query/production',
+    body: {
+      query: '*[_type == "newsItem" && coalesce(publishedAt, _updatedAt) > $cutoff]{ title, sourceUrl }',
+      params: { cutoff },
+    },
+    json: true,
+  });
+  for (const row of res.result || []) {
+    const t = normaliseTitle(row.title || '');
+    if (t) knownTitles.add(t);
+    for (const k of urlKeys(row.sourceUrl)) knownUrls.add(k);
+  }
+} catch (e) {
+  // Fail open on Sanity lookup so a blip does not stop the whole NEWS run.
+  // Within-run dedupe still applies.
+}
+
 for (const it of items) {
   const j = it.json;
   const url = (j.link || j.guid || '').trim();
   const title = (j.title || '').trim();
   if (!title || !url) continue;
 
-  // Drop stale stories: we publish every 2 weeks, so anything older than 14 days
-  // is out of cycle. Google News sometimes recirculates old articles.
+  // Drop stale stories: Google News sometimes recirculates old articles.
   const rawDate = j.isoDate || j.pubDate || '';
   const pub = rawDate ? new Date(rawDate).getTime() : 0;
   if (pub && (now - pub) > MAX_AGE_DAYS * 86400000) continue;
 
   const key = normaliseTitle(title);
   if (!key || seen.has(key)) continue;
+  if (knownTitles.has(key)) continue;
+  const uk = urlKeys(url);
+  if (uk.some((k) => knownUrls.has(k))) continue;
   seen.add(key);
 
   const desc = (j.contentSnippet || j.content || '')
@@ -367,13 +409,53 @@ for (let i = 0; i < responses.length; i++) {
 
 return out;`;
 
-const BALANCE_BY_PHASE_JS = `const items = $input.all();
-const titleKey = (item) => String(item.json.sourceTitle || '')
+const BALANCE_BY_PHASE_JS = `const titleKey = (item) => String(item.json.sourceTitle || '')
   .toLowerCase()
   .replace(/\\s+-\\s+[^-]+$/, '')
   .replace(/[^a-z0-9\\s]/g, ' ')
   .replace(/\\s+/g, ' ')
   .trim();
+
+const urlKeys = (raw) => {
+  const u = String(raw || '').trim();
+  if (!u) return [];
+  const keys = [u];
+  try {
+    const parsed = new URL(u);
+    keys.push(parsed.origin + parsed.pathname);
+    const m = parsed.pathname.match(/\\/articles\\/([^/?#]+)/);
+    if (m) keys.push('gnews:' + m[1]);
+  } catch (e) {}
+  return keys.filter(Boolean);
+};
+
+const knownTitles = new Set();
+const knownUrls = new Set();
+try {
+  const cutoff = DateTime.now().minus({ days: 21 }).toUTC().toISO();
+  const res = await this.helpers.httpRequest({
+    method: 'POST',
+    url: 'https://wdlc9pg8.api.sanity.io/v2021-06-07/data/query/production',
+    body: {
+      query: '*[_type == "newsItem" && coalesce(publishedAt, _updatedAt) > $cutoff]{ title, sourceUrl }',
+      params: { cutoff },
+    },
+    json: true,
+  });
+  for (const row of res.result || []) {
+    const t = titleKey({ json: { sourceTitle: row.title || '' } });
+    if (t) knownTitles.add(t);
+    for (const k of urlKeys(row.sourceUrl)) knownUrls.add(k);
+  }
+} catch (e) {}
+
+let items = $input.all().filter((item) => {
+  if (item.json.keep === false) return false;
+  const t = titleKey(item);
+  if (t && knownTitles.has(t)) return false;
+  if (urlKeys(item.json.sourceUrl).some((k) => knownUrls.has(k))) return false;
+  return true;
+});
 
 // Max 1 story per brand/company per run, so we never ship two Shopify stories.
 const BRANDS = [
@@ -589,13 +671,13 @@ return interleaved.map(([servicePillar, q, geo]) => {
 
 // Rewrite: report the event, then connect it to the gap our capability closes.
 const DS_REWRITE_PROMPT = [
-  '=You are the brand voice writer for SYSBILT, a Sydney team that builds business systems for Australian small and medium businesses. Turn this source into a SYSBILT news item.',
+  '=You are the brand voice writer for SYSBILT, a Sydney team that builds business systems for growing Australian businesses. Turn this source into a SYSBILT news item.',
   '',
   'What a SYSBILT news item is: it reports a real, recent event and then tells the reader what it means for their business and which capability closes the gap it exposes. It is journalistic and advisory, never a press release and never a hard sell.',
   '',
   'Structure across 4 to 6 paragraphs:',
   '1. Report what actually happened. Name the specific actor, tool, platform, policy, report, or incident. The story can be global, that is fine.',
-  '2. Turn straight to why it matters for an Australian small or medium business owner. Make it about their time, money, stress, or risk.',
+  '2. Turn straight to why it matters for an owner of a growing Australian business. Make it about their time, money, stress, or risk.',
   '3. Make the gap concrete: the specific problem, cost, or opportunity this event creates for them.',
   '4. Connect that gap to the relevant SYSBILT capability in plain outcome language (what it does for them), woven in naturally, never a sales pitch. This connection is required, it is the whole point of the item.',
   '5. Name the honest limitation or catch. Every item is honest about the trade-off.',
@@ -603,9 +685,10 @@ const DS_REWRITE_PROMPT = [
   '',
   'Grounding: stay strictly to the facts in the source. Do not invent statistics, dollar figures, dates, names, or quotes. If the source is thin, write about what the development means for the area in general.',
   '',
-  'Title rules: under 90 characters, lead with the concrete news angle, do not reuse a generic frame like "What small businesses need to know" or "Why your website matters" unless the source is literally about that.',
+  'Title rules: under 90 characters, lead with the concrete news angle, do not reuse a generic frame like "What growing businesses need to know" or "Why your website matters" unless the source is literally about that.',
   '',
   'Brand voice: Australian spelling (organise, optimise, colour, centre). Never use em dashes or en dashes, use commas or a new sentence. Never use exclamation marks. Use "we" for SYSBILT, never "I". Direct, practical, warm, confident, no jargon. You may name the tools the reader uses (Google, Meta, Shopify, Xero, ChatGPT, Claude). Explain what we do in plain language, never name prices, never use persona names or pillar numbers.',
+  'HARD BAN: never write "small business", "small businesses", "small and medium business", "small and medium businesses", "SMB", or "SMBs". Say growing business, growing companies, or Australian businesses instead.',
   '',
   'Return a strict JSON object only, no markdown, no preamble: {"title": "string under 90 chars", "bodyText": "Paragraph one.\\n\\nParagraph two.\\n\\nParagraph three.\\n\\nParagraph four."}',
   '',
@@ -626,7 +709,7 @@ function patchWorkflow(wf) {
   if (normalise) {
     normalise.parameters.jsCode = NORMALISE_DEDUPE_JS;
     changes++;
-    console.log('Patched Normalise and Dedupe (drop stale >14 days)');
+    console.log('Patched Normalise and Dedupe (drop stale >14d + Sanity lookback 21d)');
   }
 
   const preLimit = wf.nodes.find((n) => n.name === 'Pre-Limit');
@@ -659,7 +742,7 @@ function patchWorkflow(wf) {
   if (balance) {
     balance.parameters.jsCode = BALANCE_BY_PHASE_JS;
     changes++;
-    console.log('Patched Balance by Phase (9 max, weighted areas, max 2/service, horizon 1)');
+    console.log('Patched Balance by Phase (9 max + Sanity lookback exclude)');
   }
 
   const cleanup = wf.nodes.find((n) => n.name === 'Cleanup Gate');

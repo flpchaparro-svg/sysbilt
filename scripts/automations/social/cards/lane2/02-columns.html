@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<title>SYSBILT chart 02 - vertical columns</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<!--
+  ═══════════════════════════════════════════════════════════════
+  INJECTION CONTRACT
+  ═══════════════════════════════════════════════════════════════
+  body class    "{{TONE}} {{LEN}}"   see chart-01 for values
+
+  {{TOPIC}} {{TITLE}} {{SOURCE}}     as chart-01
+
+  ROWS          exactly 5, sorted descending. Row 1 carries "standout".
+
+  BAR HEIGHT    pct = (value / maxValue) * 84
+                the 84 reserves room for the value label above the column.
+
+  LABELS        the x-axis row must carry the same number of .label divs as
+                there are columns, in the same order. Keep labels under about
+                22 characters or they wrap to three lines and unbalance the row.
+
+  NOTE          columns use a right-only offset shadow so it never crosses
+                the baseline rule. Horizontal bars use right and down.
+  ═══════════════════════════════════════════════════════════════
+-->
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+
+  :root {
+    --cream: #FFF2EC;
+    --ink: #1A1A1A;
+    --crimson: #9A1730;
+    --gold: #C5A059;
+    --gold-dk: #8B6914;
+    --teal: #0F766E;
+    --n1: rgba(26, 26, 26, 0.30);
+    --n2: rgba(26, 26, 26, 0.22);
+    --n3: rgba(26, 26, 26, 0.15);
+    --n4: rgba(26, 26, 26, 0.10);
+    --n1-sh: rgba(26, 26, 26, 0.13);
+    --n2-sh: rgba(26, 26, 26, 0.10);
+    --n3-sh: rgba(26, 26, 26, 0.07);
+    --n4-sh: rgba(26, 26, 26, 0.05);
+  }
+
+  body.tone-problem { --tone: var(--crimson); --tone-sh: var(--gold); }
+  body.tone-gain    { --tone: var(--teal);    --tone-sh: var(--gold); }
+  body.tone-neutral { --tone: var(--gold-dk); --tone-sh: rgba(197, 160, 89, 0.55); }
+
+  body {
+    width: 1080px;
+    height: 1080px;
+    padding: 80px;
+    overflow: hidden;
+    position: relative;
+    background-color: var(--cream);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .bg-pattern {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(to right, rgba(26, 26, 26, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(26, 26, 26, 0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, transparent 220px, #000 320px, #000 850px, rgba(0,0,0,0.3) 100%);
+            mask-image: linear-gradient(to bottom, transparent 0, transparent 220px, #000 320px, #000 850px, rgba(0,0,0,0.3) 100%);
+  }
+
+  .content-layer {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-height: 0;
+  }
+
+  .topic {
+    font-weight: 600;
+    font-size: 18px;
+    text-transform: uppercase;
+    letter-spacing: 0.24em;
+    margin: 0 0 24px 0;
+  }
+  .topic::before { content: '/ '; }
+
+  .title {
+    font-family: 'Lora', serif;
+    font-weight: 400;
+    font-size: 54px;
+    line-height: 1.15;
+    letter-spacing: -0.005em;
+    margin: 0;
+    max-width: 900px;
+  }
+  .title em { font-style: italic; font-weight: 400; color: var(--tone); }
+  .len-short .title { font-size: 62px; }
+  .len-mid   .title { font-size: 54px; }
+  .len-long  .title { font-size: 44px; }
+
+  .chart {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 40px 0 96px 0;
+    min-height: 0;
+  }
+
+  .plot {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 48px;
+    height: 420px;
+    border-bottom: 1px solid rgba(26, 26, 26, 0.30);
+  }
+
+  .col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    width: 130px;
+    height: 100%;
+  }
+
+  .value {
+    font-weight: 500;
+    font-size: 22px;
+    opacity: 0.70;
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 16px;
+    white-space: nowrap;
+  }
+  .col.standout .value { font-size: 28px; opacity: 1; }
+
+  /* height = (value / max) * 84 */
+  .bar { width: 72px; flex: 0 0 auto; }
+
+  .col:nth-child(1) .bar { background-color: var(--tone); box-shadow: 10px 0 0 0 var(--tone-sh); }
+  .col:nth-child(2) .bar { background-color: var(--n1);   box-shadow: 10px 0 0 0 var(--n1-sh); }
+  .col:nth-child(3) .bar { background-color: var(--n2);   box-shadow: 10px 0 0 0 var(--n2-sh); }
+  .col:nth-child(4) .bar { background-color: var(--n3);   box-shadow: 10px 0 0 0 var(--n3-sh); }
+  .col:nth-child(5) .bar { background-color: var(--n4);   box-shadow: 10px 0 0 0 var(--n4-sh); }
+
+  /* Gap and width must match .plot exactly or the labels drift off the columns */
+  .x-axis {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 48px;
+    padding-top: 16px;
+  }
+  .label {
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 1.35;
+    text-align: center;
+    width: 130px;
+  }
+
+  .footer {
+    position: absolute;
+    bottom: 80px;
+    left: 80px;
+    right: 80px;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .source { font-weight: 400; font-size: 16px; opacity: 0.55; }
+  .mark {
+    font-weight: 500;
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    opacity: 0.40;
+  }
+</style>
+</head>
+<body class="tone-gain len-mid">
+  <div class="bg-pattern" aria-hidden="true"></div>
+
+  <div class="content-layer">
+    <div class="topic">AI TOOLS</div>
+    <h1 class="title">Where small teams actually spend their <em>automation budget</em></h1>
+
+    <div class="chart">
+      <div class="plot">
+        <!-- height = (value / max) * 84 -->
+        <div class="col standout"><div class="value">34%</div><div class="bar" style="height: 84%;"></div></div>
+        <div class="col"><div class="value">27%</div><div class="bar" style="height: 66.7%;"></div></div>
+        <div class="col"><div class="value">19%</div><div class="bar" style="height: 47%;"></div></div>
+        <div class="col"><div class="value">12%</div><div class="bar" style="height: 29.6%;"></div></div>
+        <div class="col"><div class="value">8%</div><div class="bar" style="height: 19.8%;"></div></div>
+      </div>
+      <div class="x-axis">
+        <div class="label">Scheduling and reminders</div>
+        <div class="label">Lead follow up</div>
+        <div class="label">Invoicing and quotes</div>
+        <div class="label">Reporting</div>
+        <div class="label">Everything else</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="source">Source: Sample data, illustrative only</div>
+    <div class="mark">SYSBILT</div>
+  </div>
+</body>
+</html>

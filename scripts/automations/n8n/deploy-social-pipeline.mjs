@@ -1,20 +1,33 @@
 #!/usr/bin/env node
 /**
- * Deploy SYSBILT - Social Distribute workflow and patch SYSBILT - NEWS.
+ * Deploy SYSBILT - Social Distribute (Lane 1 Website News social)
+ * and patch SYSBILT - NEWS Call Distributor wiring.
  *
- * Env (from .env.local or shell):
- *   N8N_API_KEY          — n8n API key (cursor-mcp JWT)
- *   POSTIZ_API_KEY       — Postiz organization API key
- *   N8N_BASE_URL         — default https://n8n.sysbilt.com
- *   NEWS_WORKFLOW_ID     — default hB7YMEOcD7TLu3NZ
+ * Lane 1 card: Browserless HTML (1200×630) → Postiz
+ * Channels: personal LinkedIn + Facebook at slot.
+ * Company LinkedIn page: Postiz repost plug on the personal post (+2h). Never a second post.
+ * No Instagram.
+ *
+ *   ./scripts/automations/n8n/deploy-social-pipeline.sh
+ *
+ * Env: N8N_API_KEY / cursor-mcp, POSTIZ_API_KEY, BROWSERLESS_TOKEN (or Mini)
  */
 import { readFileSync, existsSync, writeFileSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { execSync } from 'node:child_process';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '../../..');
+const CARD_PATH = resolve(ROOT, 'scripts/automations/social/cards/lane1-news-card.html');
+const MINI_HOST = process.env.SYSBILT_MINI_SSH || 'sysbilt@felipes-mac-mini-1.tail1e2dea.ts.net';
+const STATE_ENV = resolve(__dirname, '.deploy-state.env');
+
+const LI_PERSONAL_FALLBACK = 'cmrvgawuy0005ob6ufwade18l';
+const LI_COMPANY_FALLBACK = 'cmqiupuld0012pe76c3kjc6wb';
+const FB_FALLBACK = 'cmqdhhxms0001pe760w6chubg';
+const COMPANY_DELAY_HOURS = 2;
 
 function loadEnvLocal() {
   const path = resolve(ROOT, '.env.local');
@@ -32,16 +45,48 @@ loadEnvLocal();
 
 const N8N_BASE = (process.env.N8N_BASE_URL || 'https://n8n.sysbilt.com').replace(/\/$/, '');
 const N8N_KEY = process.env.N8N_API_KEY || process.env['cursor-mcp'];
-const POSTIZ_KEY = process.env.POSTIZ_API_KEY;
 const NEWS_WF_ID = process.env.NEWS_WORKFLOW_ID || 'hB7YMEOcD7TLu3NZ';
 const POSTIZ_BASE = 'https://postiz.sysbilt.com/api/public/v1';
 
+function loadPostizApiKey() {
+  if (process.env.POSTIZ_API_KEY) return process.env.POSTIZ_API_KEY.trim();
+  const local = resolve(process.env.HOME || '', '.config/sysbilt/postiz-secrets.env');
+  if (existsSync(local)) {
+    const m = readFileSync(local, 'utf8').match(/^POSTIZ_API_KEY=(.+)$/m);
+    if (m) return m[1].trim();
+  }
+  return execSync(
+    `ssh -o ConnectTimeout=15 -o BatchMode=yes ${MINI_HOST} 'grep ^POSTIZ_API_KEY= ~/.config/sysbilt/postiz-secrets.env | cut -d= -f2-'`,
+    { encoding: 'utf8' },
+  ).trim();
+}
+
+function loadBrowserlessToken() {
+  if (process.env.BROWSERLESS_TOKEN) return process.env.BROWSERLESS_TOKEN.trim();
+  const local = resolve(process.env.HOME || '', '.config/sysbilt/browserless-secrets.env');
+  if (existsSync(local)) {
+    const m = readFileSync(local, 'utf8').match(/^BROWSERLESS_TOKEN=(.+)$/m);
+    if (m) return m[1].trim();
+  }
+  const remote = execSync(
+    `ssh -o ConnectTimeout=15 -o BatchMode=yes ${MINI_HOST} 'grep ^BROWSERLESS_TOKEN= ~/.config/sysbilt/browserless-secrets.env | cut -d= -f2-'`,
+    { encoding: 'utf8' },
+  ).trim();
+  if (!remote) throw new Error('Could not load BROWSERLESS_TOKEN from Mini');
+  return remote;
+}
+
+const POSTIZ_KEY = loadPostizApiKey();
 if (!N8N_KEY) {
   console.error('Missing N8N_API_KEY or cursor-mcp in .env.local');
   process.exit(1);
 }
 if (!POSTIZ_KEY) {
-  console.error('Missing POSTIZ_API_KEY (Mac Mini ~/.config/sysbilt/postiz-secrets.env)');
+  console.error('Missing POSTIZ_API_KEY');
+  process.exit(1);
+}
+if (!existsSync(CARD_PATH)) {
+  console.error('Missing card template:', CARD_PATH);
   process.exit(1);
 }
 
@@ -68,6 +113,7 @@ const n8n = async (method, path, body) => {
 };
 
 const uid = () => randomUUID();
+const postizCred = (id) => ({ httpHeaderAuth: { id, name: 'Postiz API' } });
 
 const CLEANUP_JS = `function cleanText(s) {
   if (!s) return s;
@@ -88,17 +134,11 @@ const CLEANUP_JS = `function cleanText(s) {
 const j = { ...$json };
 j.linkedin = cleanText(j.linkedin);
 j.facebook = cleanText(j.facebook);
+j.company = cleanText(j.company || j.facebook);
 return [{ json: j }];`;
 
-const postizCred = (id) => ({ httpHeaderAuth: { id, name: 'Postiz API' } });
-
-const PREPARE_ITEMS_JS = `const SANITY_QUERY = '*[_type == "newsItem" && !(_id in path("drafts.**"))] | order(publishedAt desc) [0...12] { _id, title, publishedAt, servicePillar, revenuePhase, "imageUrl": mainImage.asset->url, "introText": pt::text(body), sourceUrl }';
-
-const sanityImage = (url) => {
-  const u = (url || '').trim();
-  if (!u.startsWith('https://cdn.sanity.io/images/')) return '';
-  return u.split('?')[0];
-};
+const PREPARE_ITEMS_JS = `const SANITY_QUERY = '*[_type == "newsItem" && !(_id in path("drafts.**")) && defined(publishedAt) && publishedAt > $cutoff] | order(publishedAt desc) [0...40] { _id, title, publishedAt, servicePillar, revenuePhase, "imageUrl": mainImage.asset->url, "introText": pt::text(body), sourceUrl }';
+const cutoff = DateTime.now().minus({ days: 14 }).toUTC().toISO();
 
 const mapNewsRows = (rows) => (rows || [])
   .map((r) => ({
@@ -106,12 +146,26 @@ const mapNewsRows = (rows) => (rows || [])
     title: (r.title || '').trim(),
     summary: (r.introText || '').trim(),
     link: 'https://sysbilt.com/news',
-    imageUrl: sanityImage(r.imageUrl),
+    imageUrl: (r.imageUrl || '').split('?')[0] || '',
     pillar: r.servicePillar || '',
     persona: r.revenuePhase || '',
     sanityId: r._id,
+    sourceUrl: r.sourceUrl || '',
+    publishedAt: r.publishedAt || '',
   }))
-  .filter((it) => it.title && it.summary && it.imageUrl);
+  .filter((it) => it.title && it.summary);
+
+const staticData = $getWorkflowStaticData('global');
+const seen = staticData.lane1PostedSanityIds || {};
+const seenUrls = staticData.lane1PostedSourceUrls || {};
+const now = Date.now();
+const SEEN_TTL_MS = 21 * 24 * 60 * 60 * 1000;
+for (const [id, at] of Object.entries({ ...seen })) {
+  if (!at || now - Number(at) > SEEN_TTL_MS) delete seen[id];
+}
+for (const [url, at] of Object.entries({ ...seenUrls })) {
+  if (!at || now - Number(at) > SEEN_TTL_MS) delete seenUrls[url];
+}
 
 let batch = $('Execute Workflow Trigger').first().json || {};
 if (!(batch.items || []).length) {
@@ -120,45 +174,191 @@ if (!(batch.items || []).length) {
 }
 
 let items = batch.items || [];
-const mode = batch.mode || { postType: 'schedule' };
 const targets = $('Parse Integrations').first().json;
 
 if (!items.length) {
   const res = await this.helpers.httpRequest({
     method: 'POST',
     url: 'https://wdlc9pg8.api.sanity.io/v2021-06-07/data/query/production',
-    body: { query: SANITY_QUERY },
+    body: { query: SANITY_QUERY, params: { cutoff } },
     json: true,
   });
   items = mapNewsRows(res.result);
-  if (!items.length) {
-    throw new Error('No published news with body text and main image in Sanity.');
-  }
 }
 
-const SLOTS = [8, 13];
-let day = DateTime.now().setZone('Australia/Sydney').plus({ days: 1 }).startOf('day');
-const nextWeekday = (d) => { while (d.weekday > 5) d = d.plus({ days: 1 }); return d; };
-day = nextWeekday(day);
+// Only new items (not already posted to social). Fresh publishes from NEWS arrive here once.
+items = items.filter((it) => {
+  if (!it.sanityId || seen[it.sanityId]) return false;
+  const url = String(it.sourceUrl || '').trim();
+  if (url && seenUrls[url]) return false;
+  return true;
+});
+if (!items.length) {
+  staticData.lane1PostedSanityIds = seen;
+  staticData.lane1PostedSourceUrls = seenUrls;
+  return [];
+}
+
+// Social: one post per day from today (if hour still ahead), clear of L2/L3.
+// First 7 stories get day 0..6. Anything beyond piles on the Sunday in that window
+// (Monday gets a fresh NEWS batch). Website already has all stories live.
+const PUBLISH_HOUR = 12; // Sydney — clear of carousel 08:00, L3 ~11:00, L2 ~15:00
+const DAILY_CAP_BEFORE_SUNDAY = 7;
+const RESERVED = [
+  { hour: 11, minute: 0, radiusMin: 40, days: [2, 4, 6] }, // Lane 3
+  { hour: 15, minute: 0, radiusMin: 40, days: [1, 3] }, // Lane 2
+];
+function nudgePastReserved(dt) {
+  let t = dt;
+  for (let guard = 0; guard < 64; guard++) {
+    let hit = null;
+    for (const r of RESERVED) {
+      if (r.days && !r.days.includes(t.weekday)) continue;
+      const center = t.set({ hour: r.hour, minute: r.minute, second: 0, millisecond: 0 });
+      const diff = Math.abs(t.diff(center, 'minutes').minutes);
+      if (diff <= r.radiusMin) {
+        hit = center.plus({ minutes: r.radiusMin + 5 });
+        break;
+      }
+    }
+    if (!hit) return t;
+    t = hit;
+  }
+  return t;
+}
+
+const sydneyNow = DateTime.now().setZone('Australia/Sydney');
+let startDay = sydneyNow.startOf('day').set({ hour: PUBLISH_HOUR, minute: 0, second: 0, millisecond: 0 });
+if (startDay <= sydneyNow.plus({ minutes: 10 })) {
+  startDay = startDay.plus({ days: 1 });
+}
+
+const daySlots = [];
+for (let i = 0; i < DAILY_CAP_BEFORE_SUNDAY; i++) {
+  daySlots.push(nudgePastReserved(startDay.plus({ days: i })));
+}
+const sundayDump = daySlots.find((d) => d.weekday === 7) || nudgePastReserved(
+  startDay.plus({ days: (7 - startDay.weekday + 7) % 7 || 7 }).set({ hour: PUBLISH_HOUR, minute: 0 }),
+);
+
 const out = [];
-let slotIdx = 0;
 items.forEach((it, i) => {
-  if (slotIdx >= SLOTS.length) { slotIdx = 0; day = nextWeekday(day.plus({ days: 1 })); }
-  const slot = day.set({ hour: SLOTS[slotIdx], minute: 0, second: 0, millisecond: 0 });
-  slotIdx++;
-  out.push({ json: { ...it, index: i, slotISO: slot.toUTC().toISO(), mode, targets } });
+  let slot;
+  if (i < DAILY_CAP_BEFORE_SUNDAY) {
+    slot = daySlots[i];
+  } else {
+    // Overflow on Sunday, staggered so Postiz does not collide with itself
+    slot = nudgePastReserved(sundayDump.plus({ minutes: (i - DAILY_CAP_BEFORE_SUNDAY + 1) * 20 }));
+  }
+  const companySlot = slot.plus({ hours: ${COMPANY_DELAY_HOURS} });
+  // Do NOT mark seen here. Mark only after Postiz schedule succeeds (Mark Seen node),
+  // otherwise a mid-loop failure permanently skips stories.
+  out.push({
+    json: {
+      ...it,
+      index: i,
+      slotISO: slot.toUTC().toISO(),
+      companySlotISO: companySlot.toUTC().toISO(),
+      slotLabel: slot.toFormat("ccc d LLL yyyy, HH:mm") + ' Sydney',
+      companySlotLabel: companySlot.toFormat("ccc d LLL yyyy, HH:mm") + ' Sydney',
+      mode: { postType: 'schedule' },
+      targets,
+    },
+  });
 });
 return out;`;
 
 const WRITE_POST_JS = `const title = ($json.title || '').trim();
 const intro = ($json.summary || '').trim();
-const lines = [title];
-if (intro) lines.push(intro);
-lines.push('See more news → https://sysbilt.com/news');
-const caption = lines.join('\\n\\n');
-return [{ json: { ...$json, linkedin: caption, facebook: caption } }];`;
+function escapeHtml(s) {
+  return String(s || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+// Postiz LinkedIn expects HTML paragraphs (same shape as manual Lane 1 recovery).
+const paras = [title, ...String(intro).split(/\\n\\n+/).map((p) => p.trim()).filter(Boolean)];
+const parts = [];
+paras.forEach((p, i) => {
+  parts.push('<p>' + escapeHtml(p) + '</p>');
+  if (i < paras.length - 1) parts.push('<p></p>');
+});
+const caption = parts.join('');
+const newsComment = 'See more news → https://sysbilt.com/news';
+const company = caption
+  .replace(/>I /g, '>We ')
+  .replace(/\\bI\\b/g, 'we');
+return [{ json: { ...$json, linkedin: caption, facebook: caption, company, newsComment } }];`;
 
-function buildSocialDistributeWorkflow(postizCredId) {
+const FILL_CARD_JS = `const TEMPLATE = ${JSON.stringify(readFileSync(CARD_PATH, 'utf8'))};
+const j = $input.first().json;
+const title = String(j.title || '').trim();
+
+const PHASE_MAP = {
+  phase1: 'phase-01',
+  phase2: 'phase-02',
+  phase3: 'phase-03',
+  horizon: 'phase-01',
+};
+const TAG_MAP = {
+  'Websites & E-commerce': 'Websites',
+  'CRM & Lead Tracking': 'CRM',
+  Automation: 'Automation',
+  'AI Assistants': 'AI',
+  'Content Systems': 'Content',
+  'Team Training': 'Training',
+  'Dashboards & Reporting': 'Dashboards',
+};
+const MOTIF_MAP = {
+  'Websites & E-commerce': 'motif-nodes',
+  'CRM & Lead Tracking': 'motif-nodes',
+  Automation: 'motif-bars',
+  'AI Assistants': 'motif-nodes',
+  'Content Systems': 'motif-grid',
+  'Team Training': 'motif-grid',
+  'Dashboards & Reporting': 'motif-bars',
+};
+
+function esc(s) {
+  return String(s || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+function accentHeadline(plain) {
+  const words = String(plain || '').trim().split(/\\s+/).filter(Boolean);
+  if (!words.length) return '';
+  // Prefer a mid-length content word for the italic accent
+  let idx = words.findIndex((w) => w.replace(/[^a-zA-Z]/g, '').length >= 5);
+  if (idx < 0) idx = Math.min(1, words.length - 1);
+  return words
+    .map((w, i) => (i === idx ? '<em>' + esc(w) + '</em>' : esc(w)))
+    .join(' ');
+}
+
+const plainLen = title.replace(/<[^>]+>/g, '').length;
+let lenClass = 'len-long';
+if (plainLen < 35) lenClass = 'len-short';
+else if (plainLen <= 65) lenClass = 'len-mid';
+
+const phase = PHASE_MAP[j.persona] || PHASE_MAP[j.revenuePhase] || 'phase-01';
+const motif = MOTIF_MAP[j.pillar] || 'motif-grid';
+const tag = TAG_MAP[j.pillar] || String(j.pillar || 'News').slice(0, 22);
+const headline = accentHeadline(title);
+
+let html = TEMPLATE;
+html = html.split('{{PHASE}}').join(phase);
+html = html.split('{{LEN}}').join(lenClass);
+html = html.split('{{MOTIF}}').join(motif);
+html = html.split('{{TAG}}').join(esc(tag));
+html = html.split('{{HEADLINE}}').join(headline);
+if (html.includes('{{')) throw new Error('Unreplaced card placeholders remain');
+
+return [{ json: { ...j, cardHtml: html, cardPhase: phase, cardLen: lenClass, cardMotif: motif, cardTag: tag } }];`;
+
+function buildSocialDistributeWorkflow(postizCredId, browserlessToken, slackCredId) {
+  const slackChannel = process.env.SLACK_CHANNEL || '#content';
   const ids = {
     trigger: uid(),
     getIntegrations: uid(),
@@ -167,21 +367,27 @@ function buildSocialDistributeWorkflow(postizCredId) {
     loop: uid(),
     writePost: uid(),
     cleanupCaptions: uid(),
-    checkImage: uid(),
-    ifValidImage: uid(),
-    uploadImage: uid(),
+    fillCard: uid(),
+    browserless: uid(),
+    upload: uid(),
     mergeUpload: uid(),
-    skipImage: uid(),
-    buildPayload: uid(),
-    schedulePost: uid(),
+    buildPrimary: uid(),
+    schedulePrimary: uid(),
+    forcePrimary: uid(),
+    forceFacebook: uid(),
+    markSeen: uid(),
+    buildSlack: uid(),
+    slackNotify: uid(),
     queueSummary: uid(),
+    cancelWebhook: uid(),
+    cancelNormalise: uid(),
+    cancelPrimary: uid(),
+    cancelSummary: uid(),
   };
 
   const nodes = [
     {
-      parameters: {
-        inputSource: 'passthrough',
-      },
+      parameters: { inputSource: 'passthrough' },
       type: 'n8n-nodes-base.executeWorkflowTrigger',
       typeVersion: 1.1,
       position: [0, 0],
@@ -197,7 +403,7 @@ function buildSocialDistributeWorkflow(postizCredId) {
       },
       type: 'n8n-nodes-base.httpRequest',
       typeVersion: 4.2,
-      position: [240, 0],
+      position: [220, 0],
       id: ids.getIntegrations,
       name: 'Get Integrations',
       credentials: postizCred(postizCredId),
@@ -206,9 +412,8 @@ function buildSocialDistributeWorkflow(postizCredId) {
       parameters: {
         jsCode: `const rows = $input.all();
 let ints;
-if (rows.length > 1) {
-  ints = rows.map((r) => r.json);
-} else {
+if (rows.length > 1) ints = rows.map((r) => r.json);
+else {
   const raw = rows[0]?.json ?? {};
   if (Array.isArray(raw)) ints = raw;
   else if (Array.isArray(raw.integrations)) ints = raw.integrations;
@@ -217,19 +422,35 @@ if (rows.length > 1) {
 }
 const provider = (i) => i.providerIdentifier || i.platform || i.provider || i.identifier || '';
 const active = ints.filter((i) => !i.disabled);
+const linkedinPersonal = active.find((i) => provider(i) === 'linkedin') || {};
+const linkedinCompany = active.find((i) => provider(i) === 'linkedin-page') || {};
+const facebook = active.find((i) => provider(i) === 'facebook') || {};
 const targets = {
-  linkedinTargets: active.filter((i) => provider(i) === 'linkedin-page').map((i) => ({ id: i.id, provider: provider(i) })),
-  facebookTargets: active.filter((i) => provider(i) === 'facebook').map((i) => ({ id: i.id, provider: provider(i) })),
+  linkedinPersonalId: linkedinPersonal.id || '${LI_PERSONAL_FALLBACK}',
+  linkedinCompanyId: linkedinCompany.id || '${LI_COMPANY_FALLBACK}',
+  facebookId: facebook.id || '${FB_FALLBACK}',
+  // Full page object for Postiz personal→page repost plug (NOT a second post)
+  linkedinCompany: {
+    id: linkedinCompany.id || '${LI_COMPANY_FALLBACK}',
+    name: linkedinCompany.name || 'SYSBILT',
+    internalId: linkedinCompany.internalId || '',
+    disabled: false,
+    picture: linkedinCompany.picture || '',
+    identifier: 'linkedin-page',
+    providerIdentifier: 'linkedin-page',
+    display: linkedinCompany.display || linkedinCompany.name || 'SYSBILT',
+    type: 'social',
+  },
 };
-if (!targets.linkedinTargets.length && !targets.facebookTargets.length) {
-  throw new Error('No Postiz integrations connected. Got: ' + JSON.stringify(ints).slice(0, 400));
-}
+if (!targets.linkedinPersonalId) throw new Error('Missing personal LinkedIn integration');
+if (!targets.linkedinCompanyId) throw new Error('Missing company LinkedIn page integration');
+if (!targets.facebookId) throw new Error('Missing Facebook integration');
 $getWorkflowStaticData('global').postizTargets = targets;
 return [{ json: targets }];`,
       },
       type: 'n8n-nodes-base.code',
       typeVersion: 2,
-      position: [480, 0],
+      position: [440, 0],
       id: ids.parseIntegrations,
       name: 'Parse Integrations',
     },
@@ -237,7 +458,7 @@ return [{ json: targets }];`,
       parameters: { jsCode: PREPARE_ITEMS_JS },
       type: 'n8n-nodes-base.code',
       typeVersion: 2,
-      position: [720, 0],
+      position: [660, 0],
       id: ids.prepareItems,
       name: 'Prepare Items',
     },
@@ -245,7 +466,7 @@ return [{ json: targets }];`,
       parameters: { batchSize: 1, options: {} },
       type: 'n8n-nodes-base.splitInBatches',
       typeVersion: 3,
-      position: [960, 0],
+      position: [880, 0],
       id: ids.loop,
       name: 'Loop Over Items',
     },
@@ -253,7 +474,7 @@ return [{ json: targets }];`,
       parameters: { jsCode: WRITE_POST_JS },
       type: 'n8n-nodes-base.code',
       typeVersion: 2,
-      position: [1200, 120],
+      position: [1100, 140],
       id: ids.writePost,
       name: 'Write Post Copy',
     },
@@ -261,113 +482,129 @@ return [{ json: targets }];`,
       parameters: { jsCode: CLEANUP_JS },
       type: 'n8n-nodes-base.code',
       typeVersion: 2,
-      position: [1440, 120],
+      position: [1320, 140],
       id: ids.cleanupCaptions,
       name: 'Cleanup Captions',
     },
     {
-      parameters: {
-        jsCode: `const url = ($json.imageUrl || '').trim();
-return [{ json: { ...$json, hasValidImage: url.startsWith('https://cdn.sanity.io/images/') } }];`,
-      },
+      parameters: { jsCode: FILL_CARD_JS },
       type: 'n8n-nodes-base.code',
       typeVersion: 2,
-      position: [1560, 120],
-      id: ids.checkImage,
-      name: 'Check Image',
-    },
-    {
-      parameters: {
-        conditions: {
-          options: { caseSensitive: true, leftValue: '', typeValidation: 'strict' },
-          conditions: [
-            {
-              id: uid(),
-              leftValue: '={{ $json.hasValidImage }}',
-              rightValue: true,
-              operator: { type: 'boolean', operation: 'true' },
-            },
-          ],
-          combinator: 'and',
-        },
-        options: {},
-      },
-      type: 'n8n-nodes-base.if',
-      typeVersion: 2.2,
-      position: [1680, 120],
-      id: ids.ifValidImage,
-      name: 'Valid image?',
+      position: [1540, 140],
+      id: ids.fillCard,
+      name: 'Fill Card HTML',
     },
     {
       parameters: {
         method: 'POST',
-        url: `${POSTIZ_BASE}/upload-from-url`,
-        authentication: 'genericCredentialType',
-        genericAuthType: 'httpHeaderAuth',
+        url: `http://127.0.0.1:3010/chromium/screenshot?token=${browserlessToken}`,
         sendBody: true,
-        specifyBody: 'keypair',
-        bodyParameters: {
-          parameters: [{ name: 'url', value: '={{ ($json.imageUrl || "").split("?")[0] }}' }],
+        specifyBody: 'json',
+        jsonBody: `={{ JSON.stringify({ html: $json.cardHtml, options: { type: 'png' }, viewport: { width: 1200, height: 630, deviceScaleFactor: 2 }, gotoOptions: { waitUntil: 'networkidle0' }, waitForTimeout: 4000 }) }}`,
+        options: {
+          timeout: 90000,
+          response: { response: { responseFormat: 'file', outputPropertyName: 'data' } },
         },
-        options: {},
       },
       type: 'n8n-nodes-base.httpRequest',
       typeVersion: 4.2,
-      position: [1920, 0],
-      id: ids.uploadImage,
+      position: [1760, 140],
+      id: ids.browserless,
+      name: 'Browserless Screenshot',
+    },
+    {
+      parameters: {
+        method: 'POST',
+        url: `${POSTIZ_BASE}/upload`,
+        authentication: 'genericCredentialType',
+        genericAuthType: 'httpHeaderAuth',
+        sendBody: true,
+        contentType: 'multipart-form-data',
+        bodyParameters: {
+          parameters: [
+            {
+              parameterType: 'formBinaryData',
+              name: 'file',
+              inputDataFieldName: 'data',
+            },
+          ],
+        },
+        options: { timeout: 60000 },
+      },
+      type: 'n8n-nodes-base.httpRequest',
+      typeVersion: 4.2,
+      position: [1980, 140],
+      id: ids.upload,
       name: 'Upload Image',
       credentials: postizCred(postizCredId),
     },
     {
       parameters: {
-        jsCode: `const prev = $('Check Image').item.json;
+        jsCode: `const prev = $('Fill Card HTML').item.json;
 const up = $json;
-if (!up.id) throw new Error('Postiz image upload failed: ' + JSON.stringify(up).slice(0, 300));
-const imagePath = (prev.imageUrl || '').split('?')[0];
-return [{ json: { ...prev, uploadId: up.id, uploadPath: imagePath } }];`,
+if (!up.id || !up.path) throw new Error('Postiz upload missing id/path: ' + JSON.stringify(up).slice(0, 300));
+return [{ json: { ...prev, uploadId: up.id, uploadPath: up.path } }];`,
       },
       type: 'n8n-nodes-base.code',
       typeVersion: 2,
-      position: [2160, 0],
+      position: [2200, 140],
       id: ids.mergeUpload,
       name: 'Merge Upload',
     },
     {
       parameters: {
-        jsCode: `throw new Error('News item missing valid Sanity image. imageUrl=' + ($json.imageUrl || 'none'));`,
-      },
-      type: 'n8n-nodes-base.code',
-      typeVersion: 2,
-      position: [1920, 240],
-      id: ids.skipImage,
-      name: 'Skip Image',
-    },
-    {
-      parameters: {
         jsCode: `const item = $input.item.json;
-const targets = item.targets || $getWorkflowStaticData('global').postizTargets || { linkedinTargets: [], facebookTargets: [] };
-const images = item.uploadId && item.uploadPath
-  ? [{ id: item.uploadId, path: item.uploadPath }]
-  : [];
-const posts = [];
-for (const t of targets.linkedinTargets || [])
-  posts.push({ integration: { id: t.id }, value: [{ content: item.linkedin, image: images }], settings: { __type: t.provider } });
-for (const t of targets.facebookTargets || [])
-  posts.push({ integration: { id: t.id }, value: [{ content: item.facebook, image: images }], settings: { __type: t.provider, post_type: 'post' } });
-if (!posts.length) {
-  throw new Error('No posts to schedule. Check Postiz integrations and captions. targets=' + JSON.stringify(targets));
-}
+const targets = item.targets || $getWorkflowStaticData('global').postizTargets || {};
+const images = [{ id: item.uploadId, path: item.uploadPath }];
+const tags = [
+  { value: 'no-ig-mirror', label: 'no-ig-mirror' },
+  { value: 'lane-1', label: 'lane-1' },
+];
 const mode = item.mode || { postType: 'schedule' };
 const postType = mode.postType || 'schedule';
 const date = item.slotISO || DateTime.now().plus({ days: 1 }).toUTC().toISO();
-const body = { type: postType, date, shortLink: false, tags: [], posts };
-return [{ json: { ...item, body } }];`,
+const company = targets.linkedinCompany || { id: targets.linkedinCompanyId, identifier: 'linkedin-page' };
+// ONE LinkedIn post on personal. Company page = Postiz repost plug +2h (never a second post).
+const linkedinSettings = {
+  __type: 'linkedin',
+  'plug--linkedin-add-comment--integrations': [],
+  'plug--linkedin-add-comment--delay': '0',
+  'plug--linkedin-add-comment--comment': '',
+  'plug--linkedin-repost-post-users--integrations': [company],
+  'plug--linkedin-repost-post-users--delay': String(${COMPANY_DELAY_HOURS} * 60 * 60 * 1000),
+  'plug--linkedin-repost-post-users--active': true,
+};
+const body = {
+  type: postType,
+  date,
+  shortLink: false,
+  tags,
+  posts: [
+    {
+      integration: { id: targets.linkedinPersonalId },
+      value: [
+        { content: item.linkedin, image: images },
+        { content: item.newsComment || 'See more news → https://sysbilt.com/news', image: [] },
+      ],
+      settings: linkedinSettings,
+    },
+    {
+      integration: { id: targets.facebookId },
+      value: [
+        { content: item.facebook, image: images },
+        { content: item.newsComment || 'See more news → https://sysbilt.com/news', image: [] },
+      ],
+      settings: { __type: 'facebook' },
+    },
+  ],
+};
+return [{ json: { ...item, primaryBody: body } }];`,
       },
       type: 'n8n-nodes-base.code',
       typeVersion: 2,
-      position: [2160, 120],
-      id: ids.buildPayload,
-      name: 'Build Payload',
+      position: [2420, 140],
+      id: ids.buildPrimary,
+      name: 'Build Primary Payload',
     },
     {
       parameters: {
@@ -377,27 +614,206 @@ return [{ json: { ...item, body } }];`,
         genericAuthType: 'httpHeaderAuth',
         sendBody: true,
         specifyBody: 'json',
-        jsonBody: '={{ JSON.stringify($json.body) }}',
+        jsonBody: '={{ JSON.stringify($json.primaryBody) }}',
         options: {},
       },
       type: 'n8n-nodes-base.httpRequest',
       typeVersion: 4.2,
-      position: [2400, 120],
-      id: ids.schedulePost,
-      name: 'Schedule Post',
+      position: [2640, 140],
+      id: ids.schedulePrimary,
+      name: 'Schedule Personal + FB',
       credentials: postizCred(postizCredId),
     },
     {
       parameters: {
-        jsCode: `const trigger = $('Execute Workflow Trigger').first().json;
-const count = (trigger.items || []).length || $('Prepare Items').all().length;
-return [{ json: { message: \`\${count} social post(s) queued in Postiz → https://postiz.sysbilt.com/launches\`, count } }];`,
+        method: 'PUT',
+        // Postiz returns array-like {0: liPost, 1: fbPost} for multi-channel creates.
+        url: `={{ (() => { const j = $json; const li = j[0] || j['0'] || j; const id = li?.id || li?.postId || j.postId || j.id || ''; return '${POSTIZ_BASE}/posts/' + id + '/status'; })() }}`,
+        authentication: 'genericCredentialType',
+        genericAuthType: 'httpHeaderAuth',
+        sendBody: true,
+        specifyBody: 'json',
+        jsonBody: '={{ JSON.stringify({ status: "schedule" }) }}',
+        options: {},
+      },
+      type: 'n8n-nodes-base.httpRequest',
+      typeVersion: 4.2,
+      position: [2860, 140],
+      id: ids.forcePrimary,
+      name: 'Force Schedule LinkedIn',
+      credentials: postizCred(postizCredId),
+      continueOnFail: true,
+    },
+    {
+      parameters: {
+        method: 'PUT',
+        url: `={{ (() => { const j = $('Schedule Personal + FB').first().json || {}; const fb = j[1] || j['1'] || {}; const id = fb?.id || fb?.postId || ''; return '${POSTIZ_BASE}/posts/' + id + '/status'; })() }}`,
+        authentication: 'genericCredentialType',
+        genericAuthType: 'httpHeaderAuth',
+        sendBody: true,
+        specifyBody: 'json',
+        jsonBody: '={{ JSON.stringify({ status: "schedule" }) }}',
+        options: {},
+      },
+      type: 'n8n-nodes-base.httpRequest',
+      typeVersion: 4.2,
+      position: [2970, 140],
+      id: ids.forceFacebook,
+      name: 'Force Schedule Facebook',
+      credentials: postizCred(postizCredId),
+      continueOnFail: true,
+    },
+    {
+      parameters: {
+        jsCode: `const item = $('Merge Upload').item.json;
+const scheduled = $('Schedule Personal + FB').first().json || {};
+const li = scheduled[0] || scheduled['0'] || scheduled;
+const fb = scheduled[1] || scheduled['1'] || {};
+const primaryId = li?.id || li?.postId || scheduled.postId || scheduled.id || '';
+const facebookId = fb?.id || fb?.postId || '';
+const staticData = $getWorkflowStaticData('global');
+const seen = staticData.lane1PostedSanityIds || {};
+const seenUrls = staticData.lane1PostedSourceUrls || {};
+const now = Date.now();
+if (item.sanityId) seen[item.sanityId] = now;
+if (item.sourceUrl) seenUrls[String(item.sourceUrl).trim()] = now;
+staticData.lane1PostedSanityIds = seen;
+staticData.lane1PostedSourceUrls = seenUrls;
+return [{ json: { ...item, primaryPostId: primaryId, facebookPostId: facebookId } }];`,
       },
       type: 'n8n-nodes-base.code',
       typeVersion: 2,
-      position: [1200, -160],
+      position: [3080, 140],
+      id: ids.markSeen,
+      name: 'Mark Seen',
+    },
+    {
+      parameters: {
+        jsCode: `const item = $('Mark Seen').item.json;
+const primaryId = item.primaryPostId || '';
+const sanityId = item.sanityId || '';
+const studioUrl = sanityId
+  ? 'https://sysbilt.com/studio/structure/newsItem;' + encodeURIComponent(sanityId)
+  : 'https://sysbilt.com/studio';
+const killUrl = 'https://n8n.sysbilt.com/webhook/sysbilt-lane1-cancel?postId=' + encodeURIComponent(primaryId);
+const slack_text = [
+  '*Lane 1 ready* (personal LI + Facebook; company page via personal repost plug +${COMPANY_DELAY_HOURS}h)',
+  '',
+  '*' + (item.title || 'News') + '*',
+  'Phase: ' + (item.persona || '') + ' · ' + (item.pillar || ''),
+  'Goes live: ' + (item.slotLabel || item.slotISO),
+  'Company page: same post, shared +${COMPANY_DELAY_HOURS}h (not a second Postiz post)',
+  '',
+  'Sanity: ' + studioUrl,
+  'Site: https://sysbilt.com/news',
+  'Postiz: https://postiz.sysbilt.com/launches',
+  '',
+  'Do nothing → it posts. Kill social: ' + killUrl,
+].join('\\n');
+return [{ json: { ...item, slack_text, killUrl, studioUrl } }];`,
+      },
+      type: 'n8n-nodes-base.code',
+      typeVersion: 2,
+      position: [3300, 140],
+      id: ids.buildSlack,
+      name: 'Build Slack Alert',
+    },
+    slackCredId
+      ? {
+          parameters: {
+            select: 'channel',
+            channelId: { __rl: true, value: slackChannel, mode: 'name' },
+            text: '={{ $json.slack_text }}',
+            otherOptions: {},
+          },
+          type: 'n8n-nodes-base.slack',
+          typeVersion: 2.2,
+          position: [3520, 140],
+          id: ids.slackNotify,
+          name: 'Slack Notify',
+          credentials: { slackApi: { id: slackCredId, name: 'SYSBILT Slack' } },
+        }
+      : {
+          parameters: {
+            jsCode: `return [{ json: { ...$json, slackSkipped: true } }];`,
+          },
+          type: 'n8n-nodes-base.code',
+          typeVersion: 2,
+          position: [3520, 140],
+          id: ids.slackNotify,
+          name: 'Slack Notify',
+        },
+    {
+      parameters: {
+        jsCode: `const count = $('Prepare Items').all().length;
+return [{ json: {
+  message: count + ' Lane 1 news post(s), 1/day. Company via personal LinkedIn repost plug +${COMPANY_DELAY_HOURS}h (no duplicate post).',
+  count,
+} }];`,
+      },
+      type: 'n8n-nodes-base.code',
+      typeVersion: 2,
+      position: [1100, -160],
       id: ids.queueSummary,
       name: 'Queue Summary',
+    },
+    {
+      parameters: {
+        path: 'sysbilt-lane1-cancel',
+        httpMethod: 'GET',
+        responseMode: 'lastNode',
+        options: {},
+      },
+      type: 'n8n-nodes-base.webhook',
+      typeVersion: 2,
+      position: [0, 420],
+      id: ids.cancelWebhook,
+      name: 'Cancel Webhook',
+      webhookId: ids.cancelWebhook,
+    },
+    {
+      parameters: {
+        jsCode: `const q = $json.query || {};
+const body = $json.body || {};
+const postId = String(q.postId || body.postId || '').trim();
+if (!postId) throw new Error('Cancel needs postId');
+return [{ json: { postId } }];`,
+      },
+      type: 'n8n-nodes-base.code',
+      typeVersion: 2,
+      position: [220, 420],
+      id: ids.cancelNormalise,
+      name: 'Cancel Normalise',
+    },
+    {
+      parameters: {
+        method: 'PUT',
+        url: `=${POSTIZ_BASE}/posts/{{ $json.postId }}/status`,
+        authentication: 'genericCredentialType',
+        genericAuthType: 'httpHeaderAuth',
+        sendBody: true,
+        specifyBody: 'json',
+        jsonBody: '={{ JSON.stringify({ status: "draft" }) }}',
+        options: {},
+      },
+      type: 'n8n-nodes-base.httpRequest',
+      typeVersion: 4.2,
+      position: [440, 420],
+      id: ids.cancelPrimary,
+      name: 'Demote Primary',
+      credentials: postizCred(postizCredId),
+      continueOnFail: true,
+    },
+    {
+      parameters: {
+        jsCode: `const n = $('Cancel Normalise').item.json;
+return [{ json: { ok: true, cancelled: true, postId: n.postId, message: 'Lane 1 social moved to draft (will not publish). Company share plug dies with it.' } }];`,
+      },
+      type: 'n8n-nodes-base.code',
+      typeVersion: 2,
+      position: [660, 420],
+      id: ids.cancelSummary,
+      name: 'Cancel Summary',
     },
   ];
 
@@ -413,59 +829,50 @@ return [{ json: { message: \`\${count} social post(s) queued in Postiz → https
       ],
     },
     'Write Post Copy': { main: [[{ node: 'Cleanup Captions', type: 'main', index: 0 }]] },
-    'Cleanup Captions': { main: [[{ node: 'Check Image', type: 'main', index: 0 }]] },
-    'Check Image': { main: [[{ node: 'Valid image?', type: 'main', index: 0 }]] },
-    'Valid image?': {
-      main: [
-        [{ node: 'Upload Image', type: 'main', index: 0 }],
-        [{ node: 'Skip Image', type: 'main', index: 0 }],
-      ],
-    },
+    'Cleanup Captions': { main: [[{ node: 'Fill Card HTML', type: 'main', index: 0 }]] },
+    'Fill Card HTML': { main: [[{ node: 'Browserless Screenshot', type: 'main', index: 0 }]] },
+    'Browserless Screenshot': { main: [[{ node: 'Upload Image', type: 'main', index: 0 }]] },
     'Upload Image': { main: [[{ node: 'Merge Upload', type: 'main', index: 0 }]] },
-    'Skip Image': { main: [[{ node: 'Build Payload', type: 'main', index: 0 }]] },
-    'Merge Upload': { main: [[{ node: 'Build Payload', type: 'main', index: 0 }]] },
-    'Build Payload': { main: [[{ node: 'Schedule Post', type: 'main', index: 0 }]] },
-    'Schedule Post': { main: [[{ node: 'Loop Over Items', type: 'main', index: 0 }]] },
+    'Merge Upload': { main: [[{ node: 'Build Primary Payload', type: 'main', index: 0 }]] },
+    'Build Primary Payload': { main: [[{ node: 'Schedule Personal + FB', type: 'main', index: 0 }]] },
+    'Schedule Personal + FB': { main: [[{ node: 'Force Schedule LinkedIn', type: 'main', index: 0 }]] },
+    'Force Schedule LinkedIn': { main: [[{ node: 'Force Schedule Facebook', type: 'main', index: 0 }]] },
+    'Force Schedule Facebook': { main: [[{ node: 'Mark Seen', type: 'main', index: 0 }]] },
+    'Mark Seen': { main: [[{ node: 'Build Slack Alert', type: 'main', index: 0 }]] },
+    'Build Slack Alert': { main: [[{ node: 'Slack Notify', type: 'main', index: 0 }]] },
+    'Slack Notify': { main: [[{ node: 'Loop Over Items', type: 'main', index: 0 }]] },
+    'Cancel Webhook': { main: [[{ node: 'Cancel Normalise', type: 'main', index: 0 }]] },
+    'Cancel Normalise': { main: [[{ node: 'Demote Primary', type: 'main', index: 0 }]] },
+    'Demote Primary': { main: [[{ node: 'Cancel Summary', type: 'main', index: 0 }]] },
   };
 
   return {
     name: 'SYSBILT - Social Distribute',
     nodes,
     connections,
-    settings: { executionOrder: 'v1' },
+    settings: { executionOrder: 'v1', timezone: 'Australia/Sydney' },
   };
 }
 
 async function ensurePostizCredential() {
-  const statePath = resolve(__dirname, '.deploy-state.env');
-  if (!process.env.POSTIZ_CREDENTIAL_ID && existsSync(statePath)) {
-    const m = readFileSync(statePath, 'utf8').match(/^POSTIZ_CREDENTIAL_ID=(.+)$/m);
-    if (m) process.env.POSTIZ_CREDENTIAL_ID = m[1].trim();
+  if (process.env.POSTIZ_CREDENTIAL_ID) return process.env.POSTIZ_CREDENTIAL_ID;
+  if (existsSync(STATE_ENV)) {
+    const m = readFileSync(STATE_ENV, 'utf8').match(/^POSTIZ_CREDENTIAL_ID=(.+)$/m);
+    if (m) return m[1].trim();
   }
-  if (process.env.POSTIZ_CREDENTIAL_ID) {
-    return process.env.POSTIZ_CREDENTIAL_ID;
-  }
-  try {
-    const created = await n8n('POST', '/credentials', {
-      name: 'Postiz API',
-      type: 'httpHeaderAuth',
-      data: { name: 'Authorization', value: POSTIZ_KEY },
-    });
-    console.log('Created Postiz API credential:', created.id);
-    return created.id;
-  } catch (err) {
-    if (String(err.message).includes('already exists')) {
-      throw new Error('Postiz credential may already exist — set POSTIZ_CREDENTIAL_ID and re-run');
-    }
-    throw err;
-  }
+  const created = await n8n('POST', '/credentials', {
+    name: 'Postiz API',
+    type: 'httpHeaderAuth',
+    data: { name: 'Authorization', value: POSTIZ_KEY },
+  });
+  console.log('Created Postiz API credential:', created.id);
+  return created.id;
 }
 
 async function activateWorkflow(id, name) {
   try {
-    const activated = await n8n('POST', `/workflows/${id}/activate`, {});
+    await n8n('POST', `/workflows/${id}/activate`, {});
     console.log(`Activated workflow "${name}" (${id})`);
-    return activated;
   } catch (err) {
     if (String(err.message).includes('already active')) return;
     throw err;
@@ -487,7 +894,6 @@ async function upsertWorkflow(workflow) {
   };
   if (existing) {
     const updated = await n8n('PUT', `/workflows/${existing.id}`, body);
-    await clearWorkflowPinData(existing.id);
     console.log(`Updated workflow "${workflow.name}" (${updated.id})`);
     return updated;
   }
@@ -496,69 +902,40 @@ async function upsertWorkflow(workflow) {
   return created;
 }
 
-async function clearWorkflowPinData(workflowId) {
-  const wf = await n8n('GET', `/workflows/${workflowId}`);
-  if (!wf.pinData || !Object.keys(wf.pinData).length) return;
-  const res = await fetch(`${N8N_BASE}/api/v1/workflows/${workflowId}`, {
-    method: 'PATCH',
-    headers: { 'X-N8N-API-KEY': N8N_KEY, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ pinData: {} }),
-  });
-  if (res.ok) {
-    console.log('Cleared pinned test data on workflow');
-    return;
-  }
-  const full = { ...wf, pinData: {}, nodes: wf.nodes, connections: wf.connections, settings: wf.settings, name: wf.name };
-  delete full.id;
-  delete full.createdAt;
-  delete full.updatedAt;
-  delete full.versionId;
-  delete full.meta;
-  delete full.tags;
-  delete full.active;
-  await n8n('PUT', `/workflows/${workflowId}`, {
-    name: full.name,
-    nodes: full.nodes,
-    connections: full.connections,
-    settings: full.settings,
-  });
-  console.log('Pinned data may still exist — clear manually in n8n UI if needed');
-}
-
-const BUILD_CONTENT_JS = `// Runs after Sanity publish — read the pull node, not the mutation response.
-const pull = $('Pull Published News').first()?.json || $json;
+const BUILD_CONTENT_JS = `const pull = $('Pull Published News').first()?.json || $json;
 const rows = pull.result || pull.items || [];
-const sanityImage = (url) => {
-  const u = (url || '').trim();
-  if (!u.startsWith('https://cdn.sanity.io/images/')) return '';
-  return u.split('?')[0];
-};
-// All published news with image — Prepare Items assigns 8am + 1pm Sydney slots across weekdays.
+const cutoff = Date.now() - 14 * 24 * 60 * 60 * 1000;
 const items = rows
   .map((r) => ({
     type: 'news',
     title: (r.title || '').trim(),
     summary: (r.introText || '').trim(),
     link: 'https://sysbilt.com/news',
-    imageUrl: sanityImage(r.imageUrl),
+    imageUrl: ((r.imageUrl || '').split('?')[0] || ''),
     pillar: r.servicePillar || '',
     persona: r.revenuePhase || '',
     sanityId: r._id,
+    sourceUrl: r.sourceUrl || '',
+    publishedAt: r.publishedAt || '',
   }))
-  .filter((it) => it.title && it.summary && it.imageUrl);
+  .filter((it) => {
+    if (!it.title || !it.summary) return false;
+    if (!it.publishedAt) return true;
+    return Date.parse(it.publishedAt) >= cutoff;
+  });
 if (!items.length) {
-  throw new Error('No published news with both body text and main image. Add Main Visual in Sanity.');
+  throw new Error('No published news with body text in the last 14 days.');
 }
 return [{ json: { items, mode: { postType: 'schedule' } } }];`;
 
 const PULL_PUBLISHED_QUERY =
-  '*[_type == "newsItem" && !(_id in path("drafts.**"))] | order(publishedAt desc) [0...12] { _id, title, publishedAt, servicePillar, revenuePhase, "imageUrl": mainImage.asset->url, "introText": pt::text(body), sourceUrl }';
+  '*[_type == "newsItem" && !(_id in path("drafts.**")) && defined(publishedAt)] | order(publishedAt desc) [0...40] { _id, title, publishedAt, servicePillar, revenuePhase, "imageUrl": mainImage.asset->url, "introText": pt::text(body), sourceUrl }';
 
 function updateNewsPullPublished(wf) {
   const node = wf.nodes.find((n) => n.name === 'Pull Published News');
   if (node?.parameters) {
     node.parameters.jsonBody = `={{ JSON.stringify({ query: ${JSON.stringify(PULL_PUBLISHED_QUERY)} }) }}`;
-    console.log('Updated Pull Published News (full body text for social)');
+    console.log('Updated Pull Published News');
   }
   return wf;
 }
@@ -573,7 +950,7 @@ function updateNewsCallDistributor(wf, distributorId) {
       options: { waitForSubWorkflow: true },
     };
     node.typeVersion = 1.2;
-    console.log('Updated Call Distributor (passThrough inputs, wait for sub-workflow)');
+    console.log('Updated Call Distributor →', distributorId);
   }
   return wf;
 }
@@ -582,7 +959,7 @@ function updateNewsBuildContent(wf) {
   const node = wf.nodes.find((n) => n.name === 'Build Content Objects');
   if (node) {
     node.parameters.jsCode = BUILD_CONTENT_JS;
-    console.log('Updated Build Content Objects (Sanity copy, image required, schedule posts)');
+    console.log('Updated Build Content Objects (card rendered in Social Distribute)');
   }
   return wf;
 }
@@ -602,9 +979,7 @@ function ensureSocialNodes(wf, distributorId) {
       name: 'Build Content Objects',
     };
     wf.nodes.push(build);
-    console.log('Added Build Content Objects node');
   }
-
   if (!call) {
     call = {
       parameters: {
@@ -620,9 +995,7 @@ function ensureSocialNodes(wf, distributorId) {
       name: 'Call Distributor',
     };
     wf.nodes.push(call);
-    console.log('Added Call Distributor node');
   }
-
   if (!restore) {
     restore = {
       parameters: {
@@ -636,20 +1009,14 @@ return [{ json: pull }];`,
       name: 'Restore Pull For Newsletter',
     };
     wf.nodes.push(restore);
-    console.log('Added Restore Pull For Newsletter node');
   }
-
   return wf;
 }
 
-/** Wire social in series before newsletter (parallel fork never ran in production). */
 function wireNewsSocialBranch(wf, distributorId) {
   ensureSocialNodes(wf, distributorId);
-
   const pullOut = wf.connections['Pull Published News']?.main?.[0] || [];
   const newsletterEntry = pullOut.find((c) => c.node === 'Build News HTML')?.node || 'Build News HTML';
-
-  // Serial: Pull Published News → Build Content Objects → Call Distributor → newsletter
   wf.connections['Pull Published News'] = {
     main: [[{ node: 'Build Content Objects', type: 'main', index: 0 }]],
   };
@@ -662,19 +1029,12 @@ function wireNewsSocialBranch(wf, distributorId) {
   wf.connections['Restore Pull For Newsletter'] = {
     main: [[{ node: newsletterEntry, type: 'main', index: 0 }]],
   };
-
-  console.log(
-    `Wired social serial: Pull Published News → Build Content Objects → Call Distributor → Restore Pull For Newsletter → ${newsletterEntry}`,
-  );
+  console.log('Wired NEWS social serial branch');
   return wf;
 }
 
 function buildSocialTestWorkflow(distributorId) {
   const webhookId = uid();
-  const pullId = uid();
-  const buildId = uid();
-  const callId = uid();
-
   return {
     name: 'SYSBILT - Social Test (webhook)',
     nodes: [
@@ -699,7 +1059,7 @@ function buildSocialTestWorkflow(distributorId) {
         type: 'n8n-nodes-base.httpRequest',
         typeVersion: 4.2,
         position: [240, 0],
-        id: pullId,
+        id: uid(),
         name: 'Pull Published News',
       },
       {
@@ -707,7 +1067,7 @@ function buildSocialTestWorkflow(distributorId) {
         type: 'n8n-nodes-base.code',
         typeVersion: 2,
         position: [480, 0],
-        id: buildId,
+        id: uid(),
         name: 'Build Content Objects',
       },
       {
@@ -720,7 +1080,7 @@ function buildSocialTestWorkflow(distributorId) {
         type: 'n8n-nodes-base.executeWorkflow',
         typeVersion: 1.2,
         position: [720, 0],
-        id: callId,
+        id: uid(),
         name: 'Call Distributor',
       },
     ],
@@ -733,9 +1093,39 @@ function buildSocialTestWorkflow(distributorId) {
   };
 }
 
+async function ensureSlackCredential() {
+  if (process.env.SLACK_CREDENTIAL_ID) return process.env.SLACK_CREDENTIAL_ID;
+  if (existsSync(STATE_ENV)) {
+    const m = readFileSync(STATE_ENV, 'utf8').match(/^SLACK_CREDENTIAL_ID=(.+)$/m);
+    if (m) return m[1].trim();
+  }
+  try {
+    const list = await n8n('GET', '/workflows?limit=100');
+    for (const w of list.data || []) {
+      const full = await n8n('GET', `/workflows/${w.id}`);
+      for (const node of full.nodes || []) {
+        const sid = node.credentials?.slackApi?.id;
+        if (sid) {
+          console.log('Reusing Slack credential from', full.name);
+          return sid;
+        }
+      }
+    }
+  } catch (e) {
+    console.warn('Slack credential scan failed:', e.message || e);
+  }
+  return '';
+}
+
 async function main() {
+  console.log('Loading Browserless token from Mini…');
+  const browserlessToken = loadBrowserlessToken();
+  console.log('Token prefix:', browserlessToken.slice(0, 6) + '…');
+
   const postizCredId = await ensurePostizCredential();
-  const socialWf = buildSocialDistributeWorkflow(postizCredId);
+  const slackCredId = await ensureSlackCredential();
+  console.log('Slack:', slackCredId || 'skipped');
+  const socialWf = buildSocialDistributeWorkflow(postizCredId, browserlessToken, slackCredId);
   const deployed = await upsertWorkflow(socialWf);
   await activateWorkflow(deployed.id, deployed.name);
 
@@ -744,28 +1134,47 @@ async function main() {
   await activateWorkflow(testDeployed.id, testDeployed.name);
   console.log(`Test webhook: POST ${N8N_BASE}/webhook/sysbilt-social-test`);
 
-  const newsWf = await n8n('GET', `/workflows/${NEWS_WF_ID}`);
-  let patched = wireNewsSocialBranch(newsWf, deployed.id);
-  patched = updateNewsPullPublished(patched);
-  patched = updateNewsBuildContent(patched);
-  patched = updateNewsCallDistributor(patched, deployed.id);
-  await n8n('PUT', `/workflows/${NEWS_WF_ID}`, {
-    name: patched.name,
-    nodes: patched.nodes,
-    connections: patched.connections,
-    settings: { executionOrder: patched.settings?.executionOrder || 'v1' },
-  });
-  console.log(`Patched NEWS workflow (${NEWS_WF_ID}) with social branch → distributor ${deployed.id}`);
+  try {
+    const newsWf = await n8n('GET', `/workflows/${NEWS_WF_ID}`);
+    let patched = wireNewsSocialBranch(newsWf, deployed.id);
+    patched = updateNewsPullPublished(patched);
+    patched = updateNewsBuildContent(patched);
+    patched = updateNewsCallDistributor(patched, deployed.id);
+    await n8n('PUT', `/workflows/${NEWS_WF_ID}`, {
+      name: patched.name,
+      nodes: patched.nodes,
+      connections: patched.connections,
+      settings: { executionOrder: patched.settings?.executionOrder || 'v1' },
+    });
+    console.log(`Patched NEWS workflow (${NEWS_WF_ID}) → distributor ${deployed.id}`);
+  } catch (err) {
+    console.warn('NEWS patch skipped:', err.message || err);
+  }
 
-  const statePath = resolve(__dirname, '.deploy-state.env');
-  writeFileSync(
-    statePath,
-    `# Generated by deploy-social-pipeline.mjs — do not commit\nPOSTIZ_CREDENTIAL_ID=${postizCredId}\nSOCIAL_DISTRIBUTE_WORKFLOW_ID=${deployed.id}\n`,
-  );
-  console.log(`Wrote ${statePath}`);
+  let state = '';
+  if (existsSync(STATE_ENV)) state = readFileSync(STATE_ENV, 'utf8');
+  const lines = state
+    .split('\n')
+    .filter(
+      (l) =>
+        l &&
+        !l.startsWith('POSTIZ_CREDENTIAL_ID=') &&
+        !l.startsWith('SOCIAL_DISTRIBUTE_WORKFLOW_ID=') &&
+        !(slackCredId && l.startsWith('SLACK_CREDENTIAL_ID=')),
+    );
+  if (!lines[0] || !lines[0].startsWith('#')) {
+    lines.unshift('# Generated by deploy-social-pipeline.mjs — do not commit');
+  }
+  lines.push(`POSTIZ_CREDENTIAL_ID=${postizCredId}`);
+  lines.push(`SOCIAL_DISTRIBUTE_WORKFLOW_ID=${deployed.id}`);
+  if (slackCredId) lines.push(`SLACK_CREDENTIAL_ID=${slackCredId}`);
+  writeFileSync(STATE_ENV, `${lines.filter(Boolean).join('\n')}\n`);
 
-  console.log('\nDone. Verify: node scripts/automations/n8n/verify-sanity-post.mjs');
-  console.log('Manual n8n test: paste real news JSON on Execute Workflow Trigger (no pinned data).');
+  console.log('\nLane 1 Social Distribute live:');
+  console.log('  Social: 1/day at 12:00 Sydney; 8+ dump on Sunday');
+  console.log('  Full body HTML + first comment link; personal LI + Facebook only');
+  console.log('  Company page: personal LinkedIn repost plug +2h (NO duplicate Postiz post)');
+  console.log('  Slack #content + kill; force-schedule LI+FB; mark seen after success');
 }
 
 main().catch((err) => {

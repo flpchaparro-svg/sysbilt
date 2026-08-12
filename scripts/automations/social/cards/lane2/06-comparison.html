@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<title>SYSBILT chart 06 - comparison</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<!--
+  ═══════════════════════════════════════════════════════════════
+  INJECTION CONTRACT
+  ═══════════════════════════════════════════════════════════════
+  body class    "{{TONE}} {{LEN}}"   see chart-01 for values
+  {{TOPIC}} {{TITLE}} {{SOURCE}}     as chart-01
+
+  For before and after, or us and them. Left side is the baseline in neutral
+  ink, right side is the subject in the tone colour.
+
+  ROWS          exactly 5.
+  BAR WIDTH     pct = (value / axisMax) * 100
+                axisMax is the single largest value across BOTH sides, so the
+                two sides stay comparable. Never scale each side separately.
+
+  HEADS         the two column headings above the rows must be filled in.
+                Keep each under about 14 characters.
+
+  Shadows mirror outward from the centre by design. Do not make them match.
+  ═══════════════════════════════════════════════════════════════
+-->
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+
+  :root {
+    --cream: #FFF2EC;
+    --ink: #1A1A1A;
+    --crimson: #9A1730;
+    --gold: #C5A059;
+    --gold-dk: #8B6914;
+    --teal: #0F766E;
+    --base: rgba(26, 26, 26, 0.28);
+    --base-sh: rgba(26, 26, 26, 0.12);
+  }
+
+  body.tone-problem { --tone: var(--crimson); --tone-sh: var(--gold); }
+  body.tone-gain    { --tone: var(--teal);    --tone-sh: var(--gold); }
+  body.tone-neutral { --tone: var(--gold-dk); --tone-sh: rgba(197, 160, 89, 0.55); }
+
+  body {
+    width: 1080px;
+    height: 1080px;
+    padding: 80px;
+    overflow: hidden;
+    position: relative;
+    background-color: var(--cream);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .bg-pattern {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(to right, rgba(26, 26, 26, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(26, 26, 26, 0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, transparent 220px, #000 320px, #000 850px, rgba(0,0,0,0.3) 100%);
+            mask-image: linear-gradient(to bottom, transparent 0, transparent 220px, #000 320px, #000 850px, rgba(0,0,0,0.3) 100%);
+  }
+
+  .content-layer {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-height: 0;
+  }
+
+  .topic {
+    font-weight: 600;
+    font-size: 18px;
+    text-transform: uppercase;
+    letter-spacing: 0.24em;
+    margin: 0 0 24px 0;
+  }
+  .topic::before { content: '/ '; }
+
+  .title {
+    font-family: 'Lora', serif;
+    font-weight: 400;
+    font-size: 54px;
+    line-height: 1.15;
+    letter-spacing: -0.005em;
+    margin: 0;
+    max-width: 900px;
+  }
+  .title em { font-style: italic; font-weight: 400; color: var(--tone); }
+  .len-short .title { font-size: 62px; }
+  .len-mid   .title { font-size: 54px; }
+  .len-long  .title { font-size: 44px; }
+
+  .chart {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 40px 0 96px 0;
+    gap: 24px;
+    min-height: 0;
+  }
+
+  .heads {
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+  }
+  .head {
+    flex: 1 1 0;
+    font-weight: 600;
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    opacity: 0.55;
+  }
+  .head.left  { text-align: right; }
+  .head.right { text-align: left; color: var(--tone); opacity: 1; }
+  .head.spacer { flex: 0 0 200px; }
+
+  .row { display: flex; align-items: center; }
+
+  .side { flex: 1 1 0; display: flex; align-items: center; min-width: 0; }
+  .side.left  { justify-content: flex-end; }
+  .side.right { justify-content: flex-start; }
+
+  /* Fixed value columns keep both tracks the same width on every row,
+     so the bar percentages stay comparable side to side. */
+  .val {
+    flex: 0 0 64px;
+    font-weight: 500;
+    font-size: 24px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .val.left  { text-align: right; margin-right: 20px; opacity: 0.70; }
+  .val.right { text-align: left;  margin-left: 20px;  font-size: 30px; color: var(--tone); }
+
+  .track { flex: 1 1 auto; min-width: 0; display: flex; }
+  .track.left  { justify-content: flex-end; }
+  .track.right { justify-content: flex-start; }
+
+  .bar { height: 44px; flex: 0 0 auto; }
+  .bar.left  { background-color: var(--base); box-shadow: -10px 10px 0 0 var(--base-sh); }
+  .bar.right { background-color: var(--tone); box-shadow:  10px 10px 0 0 var(--tone-sh); }
+
+  .centre {
+    flex: 0 0 200px;
+    text-align: center;
+    font-weight: 400;
+    font-size: 18px;
+    padding: 0 12px;
+    line-height: 1.25;
+  }
+
+  .footer {
+    position: absolute;
+    bottom: 80px;
+    left: 80px;
+    right: 80px;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .source { font-weight: 400; font-size: 16px; opacity: 0.55; }
+  .mark {
+    font-weight: 500;
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    opacity: 0.40;
+  }
+</style>
+</head>
+<body class="tone-gain len-mid">
+  <div class="bg-pattern" aria-hidden="true"></div>
+
+  <div class="content-layer">
+    <div class="topic">AUTOMATION</div>
+    <h1 class="title">What still gets done by hand, and what <em>runs itself</em></h1>
+
+    <div class="chart">
+      <div class="heads">
+        <div class="head left">Manual</div>
+        <div class="head spacer"></div>
+        <div class="head right">Automated</div>
+      </div>
+
+      <!-- width = (value / axisMax) * 100, axisMax across both sides -->
+      <div class="row">
+        <div class="side left"><div class="val left">62</div><div class="track left"><div class="bar left" style="width: 72.9%;"></div></div></div>
+        <div class="centre">Scheduling</div>
+        <div class="side right"><div class="track right"><div class="bar right" style="width: 44.7%;"></div></div><div class="val right">38</div></div>
+      </div>
+      <div class="row">
+        <div class="side left"><div class="val left">55</div><div class="track left"><div class="bar left" style="width: 64.7%;"></div></div></div>
+        <div class="centre">Lead follow up</div>
+        <div class="side right"><div class="track right"><div class="bar right" style="width: 52.9%;"></div></div><div class="val right">45</div></div>
+      </div>
+      <div class="row">
+        <div class="side left"><div class="val left">40</div><div class="track left"><div class="bar left" style="width: 47.1%;"></div></div></div>
+        <div class="centre">Invoicing</div>
+        <div class="side right"><div class="track right"><div class="bar right" style="width: 70.6%;"></div></div><div class="val right">60</div></div>
+      </div>
+      <div class="row">
+        <div class="side left"><div class="val left">25</div><div class="track left"><div class="bar left" style="width: 29.4%;"></div></div></div>
+        <div class="centre">Reporting</div>
+        <div class="side right"><div class="track right"><div class="bar right" style="width: 88.2%;"></div></div><div class="val right">75</div></div>
+      </div>
+      <div class="row">
+        <div class="side left"><div class="val left">15</div><div class="track left"><div class="bar left" style="width: 17.6%;"></div></div></div>
+        <div class="centre">Everything else</div>
+        <div class="side right"><div class="track right"><div class="bar right" style="width: 100%;"></div></div><div class="val right">85</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="source">Source: Sample data, illustrative only</div>
+    <div class="mark">SYSBILT</div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<title>SYSBILT chart 01 - horizontal bars</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<!--
+  ═══════════════════════════════════════════════════════════════
+  INJECTION CONTRACT
+  ═══════════════════════════════════════════════════════════════
+  body class    "{{TONE}} {{LEN}}"
+                TONE  tone-problem | tone-gain | tone-neutral
+                LEN   len-short (<45 chars) | len-mid (45-85) | len-long (>85)
+                      measured on the plain-text title, tags stripped
+
+  {{TOPIC}}     1-2 words, uppercase applied by CSS. No slash, CSS adds it.
+  {{TITLE}}     may contain one inline <em>accent phrase</em>
+                escape & < > in source text, leave the em tags intact
+  {{SOURCE}}    mandatory, never blank. Format "Source: Gartner, July 2026"
+
+  ROWS          exactly 5. Sort descending by value before rendering.
+                Row 1 carries class "standout" and the tone colour.
+
+  BAR WIDTH     pct = (value / maxValue) * 86
+                the 86 reserves room for the value label. Do not use 100.
+
+  ═══════════════════════════════════════════════════════════════
+-->
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+
+  :root {
+    --cream: #FFF2EC;
+    --ink: #1A1A1A;
+    --crimson: #9A1730;
+    --gold: #C5A059;
+    --gold-dk: #8B6914;
+    --teal: #0F766E;
+
+    /* Neutral ramp for non-standout bars. The tone colour is the only
+       hue on the card, so the accent always means something. */
+    --n1: rgba(26, 26, 26, 0.30);
+    --n2: rgba(26, 26, 26, 0.22);
+    --n3: rgba(26, 26, 26, 0.15);
+    --n4: rgba(26, 26, 26, 0.10);
+    --n1-sh: rgba(26, 26, 26, 0.13);
+    --n2-sh: rgba(26, 26, 26, 0.10);
+    --n3-sh: rgba(26, 26, 26, 0.07);
+    --n4-sh: rgba(26, 26, 26, 0.05);
+  }
+
+  /* Semantic tone. Gold is the universal offset shadow across the family. */
+  body.tone-problem { --tone: var(--crimson); --tone-sh: var(--gold); }
+  body.tone-gain    { --tone: var(--teal);    --tone-sh: var(--gold); }
+  body.tone-neutral { --tone: var(--gold-dk); --tone-sh: rgba(197, 160, 89, 0.55); }
+
+  body {
+    width: 1080px;
+    height: 1080px;
+    padding: 80px;
+    overflow: hidden;
+    position: relative;
+    background-color: var(--cream);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .bg-pattern {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(to right, rgba(26, 26, 26, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(26, 26, 26, 0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, transparent 220px, #000 320px, #000 850px, rgba(0,0,0,0.3) 100%);
+            mask-image: linear-gradient(to bottom, transparent 0, transparent 220px, #000 320px, #000 850px, rgba(0,0,0,0.3) 100%);
+  }
+
+  .content-layer {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-height: 0;
+  }
+
+  .topic {
+    font-weight: 600;
+    font-size: 18px;
+    text-transform: uppercase;
+    letter-spacing: 0.24em;
+    margin: 0 0 24px 0;
+  }
+  .topic::before { content: '/ '; }
+
+  .title {
+    font-family: 'Lora', serif;
+    font-weight: 400;
+    font-size: 54px;
+    line-height: 1.15;
+    letter-spacing: -0.005em;
+    margin: 0;
+    max-width: 900px;
+  }
+  .title em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--tone);
+  }
+  /* Title size steps, set by character count at render time */
+  .len-short .title { font-size: 62px; }
+  .len-mid   .title { font-size: 54px; }
+  .len-long  .title { font-size: 44px; }
+
+  .chart {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 40px 0 96px 0; /* 96 clears the footer */
+    min-height: 0;
+  }
+
+  .item { display: flex; flex-direction: column; margin-bottom: 24px; }
+  .item:last-child { margin-bottom: 0; }
+
+  .label {
+    font-weight: 400;
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+
+  /* Track keeps the bar percentage honest. Without it the bar and the value
+     share one flex context and the widths stop matching the data. */
+  .bar-row  { display: flex; align-items: center; }
+  .bar-track { flex: 1 1 auto; min-width: 0; display: flex; align-items: center; gap: 24px; }
+  .bar { height: 44px; flex: 0 0 auto; }
+
+  .value {
+    flex: 0 0 auto;
+    font-weight: 500;
+    font-size: 24px;
+    opacity: 0.70;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .item.standout .value { font-size: 32px; opacity: 1; }
+
+  .item:nth-child(1) .bar { background-color: var(--tone); box-shadow: 10px 10px 0 0 var(--tone-sh); }
+  .item:nth-child(2) .bar { background-color: var(--n1);   box-shadow: 10px 10px 0 0 var(--n1-sh); }
+  .item:nth-child(3) .bar { background-color: var(--n2);   box-shadow: 10px 10px 0 0 var(--n2-sh); }
+  .item:nth-child(4) .bar { background-color: var(--n3);   box-shadow: 10px 10px 0 0 var(--n3-sh); }
+  .item:nth-child(5) .bar { background-color: var(--n4);   box-shadow: 10px 10px 0 0 var(--n4-sh); }
+
+  .footer {
+    position: absolute;
+    bottom: 80px;
+    left: 80px;
+    right: 80px;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .source { font-weight: 400; font-size: 16px; opacity: 0.55; }
+  .mark {
+    font-weight: 500;
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    opacity: 0.40;
+  }
+</style>
+</head>
+<body class="tone-problem len-mid">
+  <div class="bg-pattern" aria-hidden="true"></div>
+
+  <div class="content-layer">
+    <div class="topic">AI TOOLS</div>
+    <h1 class="title">Where small teams actually spend their <em>automation budget</em></h1>
+
+    <div class="chart">
+      <!-- width = (value / max) * 86 -->
+      <div class="item standout">
+        <div class="label">Scheduling and reminders</div>
+        <div class="bar-row"><div class="bar-track">
+          <div class="bar" style="width: 86%;"></div><div class="value">34%</div>
+        </div></div>
+      </div>
+      <div class="item">
+        <div class="label">Lead follow up</div>
+        <div class="bar-row"><div class="bar-track">
+          <div class="bar" style="width: 68.3%;"></div><div class="value">27%</div>
+        </div></div>
+      </div>
+      <div class="item">
+        <div class="label">Invoicing and quotes</div>
+        <div class="bar-row"><div class="bar-track">
+          <div class="bar" style="width: 48.1%;"></div><div class="value">19%</div>
+        </div></div>
+      </div>
+      <div class="item">
+        <div class="label">Reporting</div>
+        <div class="bar-row"><div class="bar-track">
+          <div class="bar" style="width: 30.4%;"></div><div class="value">12%</div>
+        </div></div>
+      </div>
+      <div class="item">
+        <div class="label">Everything else</div>
+        <div class="bar-row"><div class="bar-track">
+          <div class="bar" style="width: 20.2%;"></div><div class="value">8%</div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="source">Source: Sample data, illustrative only</div>
+    <div class="mark">SYSBILT</div>
+  </div>
+</body>
+</html>

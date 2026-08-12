@@ -1,0 +1,405 @@
+{
+  "cadence": {
+    "draftsPerDay": 1,
+    "timezone": "Australia/Sydney",
+    "pickCron": "0 8 * * 1,3",
+    "publishHourLocal": 15,
+    "publishWeekdays": [1, 3],
+    "reuseAfterDays": 60,
+    "maxAgeMonths": 6,
+    "note": "Mon/Wed 08:00 pick → Browserless HTML chart → 15:00 Sydney LI+FB. 2/week. Reserved (Lane 1 skips ±40m). Skip if no fresh topic. Source must be current calendar year OR sourceAsOf within maxAgeMonths."
+  },
+  "channels": {
+    "primary": "linkedin",
+    "secondary": "facebook",
+    "skip": ["instagram", "instagram-standalone", "linkedin-page"]
+  },
+  "templates": {
+    "01-bars": "Horizontal ranking bars. Exactly 5 rows.",
+    "02-columns": "Vertical columns. Exactly 5 rows.",
+    "03-line": "Trend line. 4 to 8 points.",
+    "04-share-bar": "Stacked share bar. Exactly 5 segments summing to 100.",
+    "05-share-pie": "Pie when one slice dominates. Exactly 5 segments summing to 100.",
+    "06-comparison": "Left vs right. Exactly 5 rows. Shared axisMax.",
+    "07-stat": "Single giant figure."
+  },
+  "sources": {
+    "datareportal-digital": {
+      "name": "DataReportal",
+      "cadence": "Annual Digital Overview (Jan/Feb) plus monthly country packs",
+      "url": "https://datareportal.com/reports/",
+      "useFor": ["social reach", "internet users", "device mix by country"]
+    },
+    "statcounter-platform": {
+      "name": "Statcounter",
+      "cadence": "Monthly platform / browser / search share",
+      "url": "https://gs.statcounter.com/",
+      "useFor": ["mobile vs desktop", "browser share", "search engine share"]
+    },
+    "sparktoro-datos-zeroclick": {
+      "name": "SparkToro / Datos",
+      "cadence": "Periodic zero-click studies (not monthly)",
+      "url": "https://sparktoro.com/blog/2024-zero-click-search-study/",
+      "useFor": ["zero-click search", "Google property click share"]
+    },
+    "mckinsey-state-of-ai": {
+      "name": "McKinsey State of AI",
+      "cadence": "Annual survey",
+      "url": "https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai",
+      "useFor": ["gen AI adoption at work"]
+    },
+    "brightlocal-reviews": {
+      "name": "BrightLocal",
+      "cadence": "Annual Local Consumer Review Survey",
+      "url": "https://www.brightlocal.com/research/local-consumer-review-survey/",
+      "useFor": ["review trust", "local reputation"]
+    },
+    "okta-businesses-at-work": {
+      "name": "Okta Businesses at Work",
+      "cadence": "Annual",
+      "url": "https://www.okta.com/businesses-at-work/",
+      "useFor": ["SaaS app count", "stack sprawl"]
+    },
+    "litmus-state-of-email": {
+      "name": "Litmus",
+      "cadence": "Annual State of Email / ROI benchmarks",
+      "url": "https://www.litmus.com/resources/state-of-email",
+      "useFor": ["email ROI vs other channels"]
+    },
+    "gartner-crm": {
+      "name": "Gartner",
+      "cadence": "Periodic CRM market share releases",
+      "url": "https://www.gartner.com/en/newsroom",
+      "useFor": ["CRM vendor share"]
+    },
+    "sysbilt-operator": {
+      "name": "SYSBILT",
+      "cadence": "Illustrative operator patterns only",
+      "url": "https://sysbilt.com",
+      "useFor": ["illustrative splits labelled as patterns, not studies"]
+    }
+  },
+  "topics": [
+    {
+      "id": "social-platforms-users-2025",
+      "active": false,
+      "inactiveReason": "Digital 2025 annual pack is older than 6 months in mid-2026. Refresh when Digital 2026 numbers are banked.",
+      "template": "01-bars",
+      "tone": "tone-neutral",
+      "topicLabel": "Social",
+      "titleHtml": "The biggest platforms still win on <em>raw reach</em>",
+      "rows": [
+        { "label": "Facebook", "value": 3.07, "display": "3.1B" },
+        { "label": "YouTube", "value": 2.5, "display": "2.5B" },
+        { "label": "Instagram", "value": 2.0, "display": "2.0B" },
+        { "label": "WhatsApp", "value": 2.0, "display": "2.0B" },
+        { "label": "TikTok", "value": 1.6, "display": "1.6B" }
+      ],
+      "relationship": "Five platforms on the chart, two owners. Meta has Facebook, Instagram and WhatsApp. Google has YouTube. TikTok is the only one outside that pair, and it is the smallest.",
+      "derived": [
+        "You cannot add these monthly active totals. One person on Facebook, Instagram and WhatsApp is counted three times, so the stack is not 11 billion people."
+      ],
+      "caveat": "Global monthly actives is the wrong denominator for most growing businesses. What matters is how many of your buyers are on it, how often, and whether they show up ready to buy.",
+      "position": "Reach is the easy number to chase because it gets published. The number that pays is whether the people seeing you can actually buy. LinkedIn is not on this chart, and a lot of Australian B2B still gets decided there.",
+      "sourceId": "datareportal-digital",
+      "sourceLine": "Source: DataReportal, Digital 2025",
+      "sourceUrl": "https://datareportal.com/reports/digital-2025-global-overview-report",
+      "sourceYear": 2025,
+      "sourceAsOf": "2025-02-01",
+      "softClaim": true
+    },
+    {
+      "id": "zero-click-search",
+      "active": false,
+      "inactiveReason": "SparkToro / Datos study is 2024. Do not imply it is current. Refresh when a newer zero-click study is banked.",
+      "template": "07-stat",
+      "tone": "tone-problem",
+      "topicLabel": "Search",
+      "titleHtml": "Most Google searches never leave the <em>results page</em>",
+      "figure": "58%",
+      "context": "of searches end as zero-click, with no visit to another site",
+      "relationship": "58% is the number everyone quotes. It is not the one that matters on its own.",
+      "derived": [
+        "Of the clicks that do happen, close to 30% land on something Google owns (YouTube, Maps, Flights, Hotels, the app store).",
+        "Run that through and for every 1,000 US searches, roughly 360 reach a site that is not Google's."
+      ],
+      "caveat": "Google is not shrinking. Searches per person are at record highs. The pie got bigger and the slice going out got smaller.",
+      "position": "So the answer is not ranking harder for the same thing. It is working out what your site is for now. A destination competes with the answer box and loses. A source the answer box quotes, and a place people land once they have already decided, is a different site with different pages on it. Most growing businesses are still building the first one.",
+      "sourceId": "sparktoro-datos-zeroclick",
+      "sourceLine": "Source: SparkToro / Datos, 2024",
+      "sourceUrl": "https://sparktoro.com/blog/2024-zero-click-search-study/",
+      "sourceYear": 2024,
+      "sourceAsOf": "2024-01-01",
+      "softClaim": true
+    },
+    {
+      "id": "crm-leaders-share",
+      "active": false,
+      "inactiveReason": "Gartner CRM share figures are 2024. Caption title implied present-tense ownership. Refresh with a current Gartner release before reactivating.",
+      "template": "02-columns",
+      "tone": "tone-neutral",
+      "topicLabel": "CRM",
+      "titleHtml": "Gartner 2024 CRM share, top named vendors",
+      "rows": [
+        { "label": "Salesforce", "value": 21.7, "display": "22%" },
+        { "label": "Microsoft", "value": 6.1, "display": "6%" },
+        { "label": "Oracle", "value": 5.6, "display": "6%" },
+        { "label": "SAP", "value": 4.9, "display": "5%" },
+        { "label": "Adobe", "value": 3.9, "display": "4%" }
+      ],
+      "relationship": "In that 2024 Gartner cut, Salesforce sat roughly three times the next named vendor on this board.",
+      "derived": [
+        "The five named vendors together were still under about 45% of CRM revenue share. More than half of the market sat in the long tail."
+      ],
+      "caveat": "Market share is vendor revenue, not how many growing companies actually use the tool well day to day. These figures are from 2024, not a live 2026 ranking.",
+      "position": "Picking a CRM because it leads a chart is how stacks get heavy. Pick the one your team will keep updated, then connect it.",
+      "sourceId": "gartner-crm",
+      "sourceLine": "Source: Gartner CRM market share, 2024",
+      "sourceUrl": "https://www.gartner.com/en/newsroom",
+      "sourceYear": 2024,
+      "sourceAsOf": "2024-01-01",
+      "softClaim": true
+    },
+    {
+      "id": "email-roi-channels",
+      "active": false,
+      "inactiveReason": "Litmus benchmarks are 2024. Refresh before reactivating.",
+      "template": "01-bars",
+      "tone": "tone-gain",
+      "topicLabel": "Channels",
+      "titleHtml": "Where marketing ROI showed up in <em>2024 benchmarks</em>",
+      "rows": [
+        { "label": "Email", "value": 36, "display": "36x" },
+        { "label": "SEO", "value": 22, "display": "22x" },
+        { "label": "Paid search", "value": 14, "display": "14x" },
+        { "label": "Paid social", "value": 11, "display": "11x" },
+        { "label": "Display", "value": 2, "display": "2x" }
+      ],
+      "relationship": "Email is not a little ahead of paid social. On these benchmarks it returns multiple times more.",
+      "derived": [
+        "Email sits near 36x while paid social sits near 11x. That is roughly a three-to-one gap on the same board."
+      ],
+      "caveat": "These are average marketer benchmarks from 2024, not a promise for your list. Bad data and weak offers still wreck email ROI.",
+      "position": "If the list is warm and the system is boring and reliable, email still pays. Chasing the loud channel first is usually the expensive habit.",
+      "sourceId": "litmus-state-of-email",
+      "sourceLine": "Source: Litmus State of Email benchmarks, 2024",
+      "sourceUrl": "https://www.litmus.com/resources/state-of-email",
+      "sourceYear": 2024,
+      "sourceAsOf": "2024-01-01",
+      "softClaim": true
+    },
+    {
+      "id": "content-time-split",
+      "active": true,
+      "template": "04-share-bar",
+      "tone": "tone-problem",
+      "topicLabel": "Content",
+      "titleHtml": "Where content time actually <em>goes</em>",
+      "rows": [
+        { "label": "Create", "value": 40, "display": "40%" },
+        { "label": "Approve / revise", "value": 25, "display": "25%" },
+        { "label": "Distribute", "value": 18, "display": "18%" },
+        { "label": "Measure", "value": 10, "display": "10%" },
+        { "label": "Everything else", "value": 7, "display": "7%" }
+      ],
+      "relationship": "Create plus approve is most of the week. Distribution and measurement are the leftovers.",
+      "derived": [
+        "Create and approve together take about 65% of the split. Distribution and measure together take under 30%."
+      ],
+      "caveat": "This is an illustrative operator pattern, not a published study. Treat it as a shape we keep seeing, not a census.",
+      "position": "If almost all the effort is making the asset, the system is still handmade. The gain shows up when distribution runs without another meeting.",
+      "sourceId": "sysbilt-operator",
+      "sourceLine": "Source: SYSBILT operator pattern, illustrative",
+      "sourceUrl": "https://sysbilt.com",
+      "sourceYear": 2026,
+      "sourceAsOf": "2026-07-01",
+      "softClaim": true
+    },
+    {
+      "id": "automation-budget-share",
+      "active": true,
+      "template": "05-share-pie",
+      "tone": "tone-problem",
+      "topicLabel": "Automation",
+      "titleHtml": "Where automation budget still <em>lands first</em>",
+      "rows": [
+        { "label": "Scheduling and reminders", "value": 34, "display": "34%" },
+        { "label": "Lead follow up", "value": 27, "display": "27%" },
+        { "label": "Invoicing and quotes", "value": 19, "display": "19%" },
+        { "label": "Reporting", "value": 12, "display": "12%" },
+        { "label": "Everything else", "value": 8, "display": "8%" }
+      ],
+      "relationship": "The first slice is not glamorous AI. It is scheduling and reminders.",
+      "derived": [
+        "Scheduling plus lead follow-up is about 61% of this illustrative budget. Reporting is only 12%."
+      ],
+      "caveat": "Illustrative pattern, not a published spend survey. Soften.",
+      "position": "Boring workflows get automated first because they hurt every week. Start there, then earn the right to touch money and promises.",
+      "sourceId": "sysbilt-operator",
+      "sourceLine": "Source: SYSBILT operator pattern, illustrative",
+      "sourceUrl": "https://sysbilt.com",
+      "sourceYear": 2026,
+      "sourceAsOf": "2026-07-01",
+      "softClaim": true
+    },
+    {
+      "id": "manual-vs-automated",
+      "active": true,
+      "template": "06-comparison",
+      "tone": "tone-gain",
+      "topicLabel": "Automation",
+      "titleHtml": "What still gets done by hand, and what <em>runs itself</em>",
+      "leftHead": "Manual",
+      "rightHead": "Automated",
+      "rows": [
+        { "label": "Scheduling", "left": 62, "right": 38, "leftDisplay": "62", "rightDisplay": "38" },
+        { "label": "Lead follow up", "left": 55, "right": 45, "leftDisplay": "55", "rightDisplay": "45" },
+        { "label": "Invoicing", "left": 40, "right": 60, "leftDisplay": "40", "rightDisplay": "60" },
+        { "label": "Reporting", "left": 25, "right": 75, "leftDisplay": "25", "rightDisplay": "75" },
+        { "label": "Everything else", "left": 15, "right": 85, "leftDisplay": "15", "rightDisplay": "85" }
+      ],
+      "relationship": "Reporting flips first. Scheduling still sits with people more than it should.",
+      "derived": [
+        "Reporting is about 75 automated to 25 manual on this board. Scheduling is still roughly 62 manual to 38 automated."
+      ],
+      "caveat": "Illustrative pattern. Soften and say it is a shape we see, not a census.",
+      "position": "Automate the work that is already rule-based. Keep a human eye on anything that moves money or makes a promise to a customer.",
+      "sourceId": "sysbilt-operator",
+      "sourceLine": "Source: SYSBILT operator pattern, illustrative",
+      "sourceUrl": "https://sysbilt.com",
+      "sourceYear": 2026,
+      "sourceAsOf": "2026-07-01",
+      "softClaim": true
+    },
+    {
+      "id": "ai-adoption-climb",
+      "active": false,
+      "inactiveReason": "Illustrative curve tied to 2024 McKinsey direction. Refresh with a dated 2026 series before reactivating.",
+      "template": "03-line",
+      "tone": "tone-gain",
+      "topicLabel": "AI",
+      "titleHtml": "Adoption is climbing faster than anyone <em>planned for</em>",
+      "points": [
+        { "label": "Jan", "value": 12, "display": "12" },
+        { "label": "Mar", "value": 19, "display": "19" },
+        { "label": "May", "value": 24, "display": "24" },
+        { "label": "Jul", "value": 31, "display": "31" },
+        { "label": "Sep", "value": 44, "display": "44" },
+        { "label": "Nov", "value": 58, "display": "58" }
+      ],
+      "relationship": "The line does not climb evenly. The jump gets steeper late in the year.",
+      "derived": [
+        "From the first point to the last, the series roughly multiplies about five times on this illustrative curve."
+      ],
+      "caveat": "Trend shape is illustrative, drawn from the direction of public adoption surveys, not one locked monthly dataset.",
+      "position": "The risk for a growing business is not missing the model. It is bolting AI onto messy work. Clean the instructions first, then let the curve help.",
+      "sourceId": "mckinsey-state-of-ai",
+      "sourceLine": "Source: McKinsey State of AI direction, illustrative curve",
+      "sourceUrl": "https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai",
+      "sourceYear": 2024,
+      "sourceAsOf": "2024-01-01",
+      "softClaim": true
+    },
+    {
+      "id": "mobile-web-share",
+      "active": true,
+      "template": "07-stat",
+      "tone": "tone-problem",
+      "topicLabel": "Web",
+      "titleHtml": "Most of the measured web still arrives on a <em>phone</em>",
+      "figure": "52%",
+      "context": "of global page views on mobile in Statcounter's June 2026 cut (desktop vs mobile)",
+      "relationship": "Mobile is not a side channel. In the June 2026 Statcounter desktop-vs-mobile cut it still clears half of measured page views.",
+      "derived": [
+        "If about 52% of views are mobile, a site that only feels finished on a laptop is failing roughly one in two visits before the offer loads."
+      ],
+      "caveat": "Statcounter is a share of measured page views, not a perfect census of every human online. Shares move month to month.",
+      "position": "Speed and clarity on a phone are the front door. Fancy desktop polish that breaks on mobile is theatre.",
+      "sourceId": "statcounter-platform",
+      "sourceLine": "Source: Statcounter Global Stats, June 2026",
+      "sourceUrl": "https://gs.statcounter.com/platform-market-share/desktop-mobile/worldwide",
+      "sourceYear": 2026,
+      "sourceAsOf": "2026-06-01",
+      "softClaim": true
+    },
+    {
+      "id": "gen-ai-at-work",
+      "active": false,
+      "inactiveReason": "McKinsey State of AI figure is 2024. Refresh with the latest survey before reactivating.",
+      "template": "07-stat",
+      "tone": "tone-neutral",
+      "topicLabel": "AI",
+      "titleHtml": "Most workers still have not started with <em>gen AI</em>",
+      "figure": "28%",
+      "context": "of employees report using generative AI at work in recent surveys",
+      "relationship": "The headlines sound like everyone is using it. The survey share still says most are not.",
+      "derived": [
+        "If about 28% are using it, roughly seven in ten workers still are not, at least in these surveys."
+      ],
+      "caveat": "Survey definitions of use vary. Soften. These are 2024 survey figures, not a live 2026 census.",
+      "position": "Adoption is a trust and workflow problem, not a model demo problem. Give people a job the tool can finish, with a human eye on the output.",
+      "sourceId": "mckinsey-state-of-ai",
+      "sourceLine": "Source: McKinsey State of AI, 2024",
+      "sourceUrl": "https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai",
+      "sourceYear": 2024,
+      "sourceAsOf": "2024-01-01",
+      "softClaim": true
+    },
+    {
+      "id": "saas-stack-sprawl",
+      "active": false,
+      "inactiveReason": "Okta / widely reported figures are 2024. Refresh before reactivating.",
+      "template": "01-bars",
+      "tone": "tone-problem",
+      "topicLabel": "Ops",
+      "titleHtml": "How fast the tool stack <em>swells</em> with headcount",
+      "rows": [
+        { "label": "1000+ staff", "value": 250, "display": "250" },
+        { "label": "201–1000", "value": 162, "display": "162" },
+        { "label": "51–200", "value": 88, "display": "88" },
+        { "label": "1–50 staff", "value": 40, "display": "40" },
+        { "label": "Solo / micro", "value": 18, "display": "18" }
+      ],
+      "relationship": "App count climbs with headcount faster than most owners plan for.",
+      "derived": [
+        "From the 1–50 band to the 1000+ band, average app count jumps from about 40 to about 250 on these widely reported figures."
+      ],
+      "caveat": "Different reports count apps differently. Soften. Figures are from 2024 reporting.",
+      "position": "Every new tool is another login until it is connected. The work is not collecting software. It is making the stack behave as one system.",
+      "sourceId": "okta-businesses-at-work",
+      "sourceLine": "Source: Okta Businesses at Work / widely reported, 2024",
+      "sourceUrl": "https://www.okta.com/businesses-at-work/",
+      "sourceYear": 2024,
+      "sourceAsOf": "2024-01-01",
+      "softClaim": true
+    },
+    {
+      "id": "review-trust",
+      "active": false,
+      "inactiveReason": "BrightLocal 2024 survey is older than 6 months. Refresh with the latest survey before reactivating.",
+      "template": "02-columns",
+      "tone": "tone-neutral",
+      "topicLabel": "Trust",
+      "titleHtml": "Everyone reads reviews. Almost nobody <em>writes them</em>",
+      "rows": [
+        { "label": "Read reviews", "value": 93, "display": "93%" },
+        { "label": "Trust stars", "value": 91, "display": "91%" },
+        { "label": "Check recency", "value": 72, "display": "72%" },
+        { "label": "Only 4★+", "value": 48, "display": "48%" },
+        { "label": "Write a review", "value": 21, "display": "21%" }
+      ],
+      "relationship": "Reading and writing are not the same behaviour. Almost everyone consumes. Almost nobody produces.",
+      "derived": [
+        "About 93% read reviews while about 21% write them. Reputation runs on a quiet minority."
+      ],
+      "caveat": "BrightLocal is heavy on US/UK shoppers. Soften for Australian readers. Survey year is 2024.",
+      "position": "If reviews decide the click, ask for them on purpose after a good job. Leaving it to chance is how good operators stay invisible.",
+      "sourceId": "brightlocal-reviews",
+      "sourceLine": "Source: BrightLocal Local Consumer Review Survey, 2024",
+      "sourceUrl": "https://www.brightlocal.com/research/local-consumer-review-survey/",
+      "sourceYear": 2024,
+      "sourceAsOf": "2024-01-01",
+      "softClaim": true
+    }
+  ]
+}

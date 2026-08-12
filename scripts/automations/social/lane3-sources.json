@@ -1,0 +1,41 @@
+{
+  "cadence": {
+    "draftsPerDay": 1,
+    "timezone": "Australia/Sydney",
+    "pickCron": "0 7 * * 2,4,6",
+    "publishHourLocal": 11,
+    "publishWeekdays": [2, 4, 6],
+    "note": "Tue/Thu/Sat 07:00 pick + write + schedule. 11:00 Sydney LI+FB unless cancelled. 3/week to leave room for carousels and other lanes. Reserved (Lane 1 skips ±40m). Skip if no fresh story. No Instagram."
+  },
+  "channels": {
+    "primary": "linkedin",
+    "secondary": "facebook",
+    "skip": ["instagram", "instagram-standalone", "linkedin-page"]
+  },
+  "feeds": [
+    {
+      "id": "techcrunch-ai",
+      "name": "TechCrunch AI",
+      "url": "https://techcrunch.com/category/artificial-intelligence/feed/",
+      "trust": "high"
+    },
+    {
+      "id": "verge-ai",
+      "name": "The Verge AI",
+      "url": "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml",
+      "trust": "high"
+    },
+    {
+      "id": "ars-ai",
+      "name": "Ars Technica AI",
+      "url": "https://arstechnica.com/ai/feed/",
+      "trust": "high"
+    },
+    {
+      "id": "google-ai",
+      "name": "Google AI Blog",
+      "url": "https://blog.google/technology/ai/rss/",
+      "trust": "high"
+    }
+  ]
+}

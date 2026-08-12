@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<title>SYSBILT chart 03 - line</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<!--
+  ═══════════════════════════════════════════════════════════════
+  INJECTION CONTRACT
+  ═══════════════════════════════════════════════════════════════
+  body class    "{{TONE}} {{LEN}}"   see chart-01 for values
+  {{TOPIC}} {{TITLE}} {{SOURCE}}     as chart-01
+
+  Every element is positioned from inline CSS variables, so the workflow
+  injects numbers only and never touches the stylesheet. Element order in
+  the DOM does not matter.
+
+  PLOT is 800 wide by 400 tall. Origin is bottom left. y counts upward.
+
+  For n points, values v[0..n-1], max = largest value:
+
+    x[i] = (i / (n - 1)) * 800
+    y[i] = (v[i] / max) * 340          340 leaves headroom for annotations
+
+  POINT   <div class="vtx" style="--x:160; --y:111.4"></div>
+  DROP    <div class="drop" style="--x:160; --y:111.4"></div>
+  NOTE    <div class="note" style="--x:160; --y:111.4">19</div>
+          add class "end" to the final point's note for the tone highlight
+
+  SEGMENT from point i to point i+1:
+    dx = x[i+1] - x[i]
+    dy = y[i+1] - y[i]
+    w  = sqrt(dx*dx + dy*dy)
+    r  = -atan2(dy, dx) in DEGREES        note the minus, y counts upward
+
+    <div class="seg" style="--x:0; --y:70.3; --w:165.2; --r:-14.41"></div>
+
+  LABEL   <div class="lab" style="--x:160">Mar</div>
+
+  Four to eight points works. Fewer than four looks thin, more crowds
+  the annotations.
+  ═══════════════════════════════════════════════════════════════
+-->
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+
+  :root {
+    --cream: #FFF2EC;
+    --ink: #1A1A1A;
+    --crimson: #9A1730;
+    --gold: #C5A059;
+    --gold-dk: #8B6914;
+    --teal: #0F766E;
+  }
+
+  body.tone-problem { --tone: var(--crimson); --tone-sh: var(--gold); }
+  body.tone-gain    { --tone: var(--teal);    --tone-sh: var(--gold); }
+  body.tone-neutral { --tone: var(--gold-dk); --tone-sh: rgba(197, 160, 89, 0.55); }
+
+  body {
+    width: 1080px;
+    height: 1080px;
+    padding: 80px;
+    overflow: hidden;
+    position: relative;
+    background-color: var(--cream);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .bg-pattern {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(to right, rgba(26, 26, 26, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(26, 26, 26, 0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, transparent 220px, #000 320px, #000 850px, rgba(0,0,0,0.3) 100%);
+            mask-image: linear-gradient(to bottom, transparent 0, transparent 220px, #000 320px, #000 850px, rgba(0,0,0,0.3) 100%);
+  }
+
+  .content-layer {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-height: 0;
+  }
+
+  .topic {
+    font-weight: 600;
+    font-size: 18px;
+    text-transform: uppercase;
+    letter-spacing: 0.24em;
+    margin: 0 0 24px 0;
+  }
+  .topic::before { content: '/ '; }
+
+  .title {
+    font-family: 'Lora', serif;
+    font-weight: 400;
+    font-size: 54px;
+    line-height: 1.15;
+    letter-spacing: -0.005em;
+    margin: 0;
+    max-width: 900px;
+  }
+  .title em { font-style: italic; font-weight: 400; color: var(--tone); }
+  .len-short .title { font-size: 62px; }
+  .len-mid   .title { font-size: 54px; }
+  .len-long  .title { font-size: 44px; }
+
+  .chart {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 40px 0 96px 0;
+    min-height: 0;
+  }
+
+  .plot {
+    position: relative;
+    width: 800px;
+    height: 400px;
+    margin: 0 auto;
+    border-bottom: 1px solid rgba(26, 26, 26, 0.30);
+  }
+
+  .drop {
+    position: absolute;
+    bottom: 0;
+    width: 1px;
+    background-color: rgba(26, 26, 26, 0.10);
+    left: calc(var(--x) * 1px);
+    height: calc(var(--y) * 1px);
+  }
+
+  .seg {
+    position: absolute;
+    height: 3px;
+    background-color: var(--tone);
+    transform-origin: left center;
+    left: calc(var(--x) * 1px);
+    bottom: calc(var(--y) * 1px);
+    width: calc(var(--w) * 1px);
+    transform: rotate(calc(var(--r) * 1deg));
+  }
+
+  .vtx {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    background-color: var(--tone);
+    border: 3px solid var(--cream);
+    z-index: 2;
+    left: calc(var(--x) * 1px);
+    bottom: calc(var(--y) * 1px);
+    transform: translate(-50%, 50%) rotate(45deg);
+  }
+
+  .note {
+    position: absolute;
+    z-index: 3;
+    left: calc(var(--x) * 1px);
+    bottom: calc((var(--y) + 22) * 1px);
+    transform: translateX(-50%);
+    font-weight: 500;
+    font-size: 18px;
+    opacity: 0.65;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .note.end { font-size: 26px; opacity: 1; color: var(--tone); }
+
+  .x-axis {
+    position: relative;
+    width: 800px;
+    height: 44px;
+    margin: 0 auto;
+  }
+  .lab {
+    position: absolute;
+    top: 16px;
+    left: calc(var(--x) * 1px);
+    transform: translateX(-50%);
+    width: 110px;
+    text-align: center;
+    font-weight: 500;
+    font-size: 16px;
+    white-space: nowrap;
+  }
+
+  .footer {
+    position: absolute;
+    bottom: 80px;
+    left: 80px;
+    right: 80px;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .source { font-weight: 400; font-size: 16px; opacity: 0.55; }
+  .mark {
+    font-weight: 500;
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    opacity: 0.40;
+  }
+</style>
+</head>
+<body class="tone-gain len-mid">
+  <div class="bg-pattern" aria-hidden="true"></div>
+
+  <div class="content-layer">
+    <div class="topic">AI TOOLS</div>
+    <h1 class="title">Adoption is climbing faster than anyone <em>planned for</em></h1>
+
+    <div class="chart">
+      <div class="plot">
+        <!-- sample: 12, 19, 24, 31, 44, 58 with max 58 -->
+        <div class="drop" style="--x:0;   --y:70.3"></div>
+        <div class="drop" style="--x:160; --y:111.4"></div>
+        <div class="drop" style="--x:320; --y:140.7"></div>
+        <div class="drop" style="--x:480; --y:181.7"></div>
+        <div class="drop" style="--x:640; --y:257.9"></div>
+        <div class="drop" style="--x:800; --y:340"></div>
+
+        <div class="seg" style="--x:0;   --y:70.3;  --w:165.2; --r:-14.41"></div>
+        <div class="seg" style="--x:160; --y:111.4; --w:162.7; --r:-10.37"></div>
+        <div class="seg" style="--x:320; --y:140.7; --w:165.2; --r:-14.37"></div>
+        <div class="seg" style="--x:480; --y:181.7; --w:177.2; --r:-25.47"></div>
+        <div class="seg" style="--x:640; --y:257.9; --w:179.8; --r:-27.16"></div>
+
+        <div class="vtx" style="--x:0;   --y:70.3"></div>
+        <div class="vtx" style="--x:160; --y:111.4"></div>
+        <div class="vtx" style="--x:320; --y:140.7"></div>
+        <div class="vtx" style="--x:480; --y:181.7"></div>
+        <div class="vtx" style="--x:640; --y:257.9"></div>
+        <div class="vtx" style="--x:800; --y:340"></div>
+
+        <div class="note" style="--x:0;   --y:70.3">12</div>
+        <div class="note" style="--x:160; --y:111.4">19</div>
+        <div class="note" style="--x:320; --y:140.7">24</div>
+        <div class="note" style="--x:480; --y:181.7">31</div>
+        <div class="note" style="--x:640; --y:257.9">44</div>
+        <div class="note end" style="--x:800; --y:340">58</div>
+      </div>
+
+      <div class="x-axis">
+        <div class="lab" style="--x:0">Jan</div>
+        <div class="lab" style="--x:160">Mar</div>
+        <div class="lab" style="--x:320">May</div>
+        <div class="lab" style="--x:480">Jul</div>
+        <div class="lab" style="--x:640">Sep</div>
+        <div class="lab" style="--x:800">Nov</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="source">Source: Sample data, illustrative only</div>
+    <div class="mark">SYSBILT</div>
+  </div>
+</body>
+</html>

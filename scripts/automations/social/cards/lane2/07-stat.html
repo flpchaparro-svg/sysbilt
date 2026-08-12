@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<title>SYSBILT chart 07 - single stat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<!--
+  ═══════════════════════════════════════════════════════════════
+  INJECTION CONTRACT
+  ═══════════════════════════════════════════════════════════════
+  body class    "{{TONE}} {{LEN}} {{FIG}}"
+                TONE and LEN as chart-01
+                FIG sizes the giant figure by its character count, symbols
+                and separators included:
+                  fig-1   1 to 3 chars    34%      340px
+                  fig-2   4 chars         128%     280px
+                  fig-3   5 to 6 chars    $11.2k   230px
+                  fig-4   7 or more       $11,182  180px
+
+  {{TOPIC}} {{TITLE}} {{SOURCE}}     as chart-01
+
+  {{FIGURE}}    the number itself, formatted and ready. Include the unit.
+  {{CONTEXT}}   one line finishing the sentence the figure starts.
+                Do not repeat the title here.
+
+  Use this when the story is one number. If there are three or more numbers
+  worth showing, use chart-01 instead.
+  ═══════════════════════════════════════════════════════════════
+-->
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+
+  :root {
+    --cream: #FFF2EC;
+    --ink: #1A1A1A;
+    --crimson: #9A1730;
+    --gold: #C5A059;
+    --gold-dk: #8B6914;
+    --teal: #0F766E;
+    --fig-size: 340px;
+    --fig-offset: 12px;
+  }
+
+  body.tone-problem { --tone: var(--crimson); --tone-sh: var(--gold); }
+  body.tone-gain    { --tone: var(--teal);    --tone-sh: var(--gold); }
+  body.tone-neutral { --tone: var(--gold-dk); --tone-sh: rgba(197, 160, 89, 0.55); }
+
+  /* Figure size steps, set by character count at render time */
+  body.fig-1 { --fig-size: 340px; --fig-offset: 12px; }
+  body.fig-2 { --fig-size: 280px; --fig-offset: 10px; }
+  body.fig-3 { --fig-size: 230px; --fig-offset: 8px; }
+  body.fig-4 { --fig-size: 180px; --fig-offset: 6px; }
+
+  body {
+    width: 1080px;
+    height: 1080px;
+    padding: 80px;
+    overflow: hidden;
+    position: relative;
+    background-color: var(--cream);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Stronger grid here because the card carries more empty space */
+  .bg-pattern {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(to right, rgba(26, 26, 26, 0.06) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(26, 26, 26, 0.06) 1px, transparent 1px);
+    background-size: 40px 40px;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, transparent 180px, #000 250px, #000 900px, rgba(0,0,0,0.4) 100%);
+            mask-image: linear-gradient(to bottom, transparent 0, transparent 180px, #000 250px, #000 900px, rgba(0,0,0,0.4) 100%);
+  }
+
+  .content-layer {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-height: 0;
+  }
+
+  .topic {
+    font-weight: 600;
+    font-size: 18px;
+    text-transform: uppercase;
+    letter-spacing: 0.24em;
+    margin: 0 0 24px 0;
+  }
+  .topic::before { content: '/ '; }
+
+  .title {
+    font-family: 'Lora', serif;
+    font-weight: 400;
+    font-size: 54px;
+    line-height: 1.15;
+    letter-spacing: -0.005em;
+    margin: 0;
+    max-width: 900px;
+  }
+  .title em { font-style: italic; font-weight: 400; color: var(--tone); }
+  .len-short .title { font-size: 62px; }
+  .len-mid   .title { font-size: 54px; }
+  .len-long  .title { font-size: 44px; }
+
+  .chart {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 40px 0 96px 0;
+    min-height: 0;
+  }
+
+  .figure {
+    font-family: 'Lora', serif;
+    font-weight: 400;
+    font-size: var(--fig-size);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--tone);
+    text-shadow: var(--fig-offset) var(--fig-offset) 0 var(--tone-sh);
+    font-variant-numeric: tabular-nums;
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  .context {
+    font-weight: 400;
+    font-size: 28px;
+    line-height: 1.4;
+    margin-top: 24px;
+    max-width: 640px;
+  }
+
+  .footer {
+    position: absolute;
+    bottom: 80px;
+    left: 80px;
+    right: 80px;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .source { font-weight: 400; font-size: 16px; opacity: 0.55; }
+  .mark {
+    font-weight: 500;
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    opacity: 0.40;
+  }
+</style>
+</head>
+<body class="tone-problem len-mid fig-1">
+  <div class="bg-pattern" aria-hidden="true"></div>
+
+  <div class="content-layer">
+    <div class="topic">AI TOOLS</div>
+    <h1 class="title">Where small teams actually spend their <em>automation budget</em></h1>
+
+    <div class="chart">
+      <div class="figure">34%</div>
+      <div class="context">of small team automation spend goes to scheduling and reminders</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="source">Source: Sample data, illustrative only</div>
+    <div class="mark">SYSBILT</div>
+  </div>
+</body>
+</html>

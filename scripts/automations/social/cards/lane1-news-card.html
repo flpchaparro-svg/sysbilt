@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<title>SYSBILT news card - watermark corner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+<!--
+  ═══════════════════════════════════════════════════════════════════════
+  SYSBILT website news card
+  1200 x 630, rendered to PNG by Browserless at deviceScaleFactor 2
+  ═══════════════════════════════════════════════════════════════════════
+
+  INJECTION CONTRACT
+  ------------------
+  The workflow replaces four tokens. It never edits the stylesheet and never
+  edits the motif markup. All three motifs ship in the file and are switched
+  by a body class.
+
+  body class = "{{PHASE}} {{LEN}} {{MOTIF}}"
+
+    PHASE   phase-01   Get Clients    crimson watermark, crimson italic accent
+            phase-02   Scale Faster   gold watermark, dark gold italic accent
+            phase-03   See Clearly    ink watermark, BOLD italic accent, no colour
+
+    LEN     len-short  under 35 chars   headline 48px
+            len-mid    35 to 65 chars   headline 40px
+            len-long   65 to 90 chars   headline 32px
+            Count the PLAIN TEXT length with the <em> tags stripped.
+            Default to len-long if the count is unavailable.
+
+    MOTIF   motif-nodes | motif-grid | motif-bars
+            One per service category. See ADDING MOTIFS below.
+
+  {{TAG}}       category name, plain text. CSS applies uppercase and the
+                leading slash. Do not pass "/ " or "NEWS:" yourself.
+                Keep under 22 characters.
+
+  {{HEADLINE}}  the Sanity title, up to 90 characters.
+                Escape & < > from the source text, then wrap ONE phrase in
+                <em></em> for the accent. Order matters: escape first, add
+                the em tags second, or the tags get escaped too.
+                A headline with no <em> renders fine, it just loses the accent.
+
+  CROP SAFETY
+  -----------
+  The same PNG is displayed at three ratios with object-cover:
+    grid card       16:9   loses 40px from each side
+    mobile detail   16:9   loses 40px from each side
+    desktop detail  21:9   loses 58px from top and bottom
+
+  Everything that matters sits inside a centred 1072 x 486 safe zone, and
+  text sits 24px further in again. Nothing is anchored to an edge. Do not
+  move the text block or the watermark toward any edge.
+
+  ADDING MOTIFS FOR THE REMAINING CATEGORIES
+  ------------------------------------------
+  Three ship here. To add a fourth:
+    1. add the markup inside .watermark with class "motif yourname"
+    2. add a rule: body.motif-yourname .motif.yourname { display: block; }
+    3. build it from solid blocks and 2px to 4px rules using
+       var(--motif-color) and var(--stroke). No icons, no SVG, no images.
+  The motif box is a 340px square. Position children in percentages so the
+  size stays adjustable from one variable.
+
+  ═══════════════════════════════════════════════════════════════════════
+-->
+<style>
+  * { box-sizing: border-box; }
+
+  :root {
+    --c-cream: #FFF2EC;
+    --c-ink: #1A1A1A;
+    --c-crimson: #9A1730;
+    --c-gold: #C5A059;
+    --c-gold-dk: #8B6914;
+    --c-teal: #0F766E;
+
+    --stroke: 4px;      /* motif line thickness */
+    --m-size: 340px;    /* motif box, square */
+  }
+
+  /* Phase families.
+     Watermark opacity is set per phase because the three colours do not
+     read at equal strength on cream. Gold needs roughly double the value
+     of ink to be equally visible. Do not unify these. */
+  body.phase-01 {
+    --field-bg: var(--c-cream);
+    --watermark-color: var(--c-crimson);
+    --watermark-opacity: 0.20;
+    --accent-color: var(--c-crimson);
+    --accent-weight: 400;
+  }
+  body.phase-02 {
+    --field-bg: var(--c-cream);
+    --watermark-color: var(--c-gold);
+    --watermark-opacity: 0.38;
+    --accent-color: var(--c-gold-dk);
+    --accent-weight: 400;
+  }
+  /* Phase 03 has no accent colour available, so the emphasis is carried by
+     weight alone. Lora italic 700 is loaded above specifically for this.
+     Drop to 600 if it reads too heavy. */
+  body.phase-03 {
+    --field-bg: var(--c-cream);
+    --watermark-color: var(--c-ink);
+    --watermark-opacity: 0.15;
+    --accent-color: var(--c-ink);
+    --accent-weight: 700;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    width: 1200px;
+    height: 630px;
+    position: relative;
+    overflow: hidden;
+    /* Fallbacks keep the card readable if a class token fails to substitute */
+    background: var(--field-bg, #FFF2EC);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: geometricPrecision;
+  }
+
+  /* ── Text ─────────────────────────────────────────────────────────── */
+
+  .text-block {
+    position: absolute;
+    left: 88px;
+    width: 600px;
+    top: 96px;
+    bottom: 96px;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .tag {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: var(--c-ink);
+    margin-bottom: 20px;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .tag::before { content: "/ "; }
+
+  .headline {
+    font-family: 'Lora', serif;
+    font-weight: 400;
+    line-height: 1.18;
+    letter-spacing: -0.005em;
+    color: var(--c-ink);
+    margin: 0;
+    text-wrap: pretty; /* stops a single word stranded on the last line */
+  }
+  .headline em {
+    font-style: italic;
+    color: var(--accent-color, #1A1A1A);
+    font-weight: var(--accent-weight, 400);
+  }
+
+  body.len-short .headline { font-size: 48px; }
+  body.len-mid   .headline { font-size: 40px; }
+  body.len-long  .headline { font-size: 32px; }
+  /* Fallback if no len class is applied */
+  .headline { font-size: 32px; }
+
+  /* ── Watermark ────────────────────────────────────────────────────── */
+
+  .watermark {
+    position: absolute;
+    right: 88px;
+    bottom: 96px;
+    width: var(--m-size);
+    height: var(--m-size);
+    z-index: 1;
+    opacity: var(--watermark-opacity, 0.20);
+    --motif-color: var(--watermark-color, #1A1A1A);
+  }
+
+  .motif {
+    position: absolute;
+    inset: 0;
+    display: none;
+  }
+  body.motif-nodes .motif.nodes { display: block; }
+  body.motif-grid  .motif.grid  { display: grid; }
+  body.motif-bars  .motif.bars  { display: flex; }
+
+  /* Nodes: a branching path. Node centres at
+     n1 20,50   n2 50,50   n3 75,25   n4 75,75  (percent of the square) */
+  .nodes .node {
+    position: absolute;
+    width: 12%;
+    height: 12%;
+    background: var(--motif-color);
+    transform: translate(-50%, -50%);
+  }
+  .nodes .n1 { left: 20%; top: 50%; }
+  .nodes .n2 { left: 50%; top: 50%; }
+  .nodes .n3 { left: 75%; top: 25%; }
+  .nodes .n4 { left: 75%; top: 75%; }
+
+  .nodes .line {
+    position: absolute;
+    height: var(--stroke);
+    background: var(--motif-color);
+    transform-origin: 0 50%;
+    margin-top: calc(var(--stroke) / -2);
+  }
+  .nodes .l1 { left: 20%; top: 50%; width: 30%; }
+  .nodes .l2 { left: 50%; top: 50%; width: 35.355%; transform: rotate(-45deg); }
+  .nodes .l3 { left: 50%; top: 50%; width: 35.355%; transform: rotate(45deg); }
+
+  /* Grid: three by three, two filled */
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 6%;
+  }
+  .grid .sq { border: var(--stroke) solid var(--motif-color); }
+  .grid .sq.filled { background: var(--motif-color); }
+
+  /* Bars: five ascending */
+  .bars {
+    align-items: flex-end;
+    gap: 8%;
+  }
+  .bars .bar { flex: 1; background: var(--motif-color); }
+  .bars .b1 { height: 20%; }
+  .bars .b2 { height: 40%; }
+  .bars .b3 { height: 60%; }
+  .bars .b4 { height: 80%; }
+  .bars .b5 { height: 100%; }
+</style>
+</head>
+<body class="{{PHASE}} {{LEN}} {{MOTIF}}">
+
+  <div class="watermark" aria-hidden="true">
+    <div class="motif nodes">
+      <div class="node n1"></div><div class="node n2"></div>
+      <div class="node n3"></div><div class="node n4"></div>
+      <div class="line l1"></div><div class="line l2"></div><div class="line l3"></div>
+    </div>
+
+    <div class="motif grid">
+      <div class="sq filled"></div><div class="sq"></div><div class="sq"></div>
+      <div class="sq"></div><div class="sq"></div><div class="sq filled"></div>
+      <div class="sq"></div><div class="sq"></div><div class="sq"></div>
+    </div>
+
+    <div class="motif bars">
+      <div class="bar b1"></div><div class="bar b2"></div><div class="bar b3"></div>
+      <div class="bar b4"></div><div class="bar b5"></div>
+    </div>
+  </div>
+
+  <div class="text-block">
+    <div class="tag">{{TAG}}</div>
+    <h1 class="headline">{{HEADLINE}}</h1>
+  </div>
+
+</body>
+</html>
