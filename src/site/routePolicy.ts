@@ -80,6 +80,21 @@ function isGoFunnelPath(path: string): boolean {
   return path === '/go' || path.startsWith('/go/');
 }
 
+/** Private post-job feedback / review helpers (SYSBILT first, client installs later). */
+function isFeedbackReviewPath(path: string): boolean {
+  return path === '/r' || path.startsWith('/r/');
+}
+
+/** Quote Capture demo + live installs (noindex). */
+function isQuoteCapturePath(path: string): boolean {
+  return (
+    path === '/demo/quote-capture' ||
+    path.startsWith('/demo/quote-capture/') ||
+    path.startsWith('/q/') ||
+    path.startsWith('/embed/q/')
+  );
+}
+
 /**
  * `/guides/built-to-work/:chapterSlug` (and the other seven books).
  * Excludes hubs (`/guides/built-to-work`) and `/read` editions.
@@ -162,7 +177,12 @@ export function bodyPolicyForPath(path: string): RouteBodyPolicy {
     return 'required-body';
   }
 
-  if (NOINDEX_EXACT_PATHS.has(normalised) || isGoFunnelPath(normalised)) {
+  if (
+    NOINDEX_EXACT_PATHS.has(normalised) ||
+    isGoFunnelPath(normalised) ||
+    isFeedbackReviewPath(normalised) ||
+    isQuoteCapturePath(normalised)
+  ) {
     return 'noindex-shell';
   }
 

@@ -66,6 +66,7 @@ const OUTBOUND_GROUPS: CatalogueGroup[] = [
       'whatsapp-setup',
       'dm-reply',
       'quote-followup',
+      'quote-capture',
       'intake-forms',
     ],
   },

@@ -41,6 +41,12 @@ export type FunnelProductCopy = {
   priceLabel: string
   price: string
   priceLead: string
+  /** Optional body under the price lead (Quote Capture investment block). */
+  priceBody?: string
+  /** Optional add-on block between stack and investment (Quote Capture AI Concierge). */
+  addonLabel?: string
+  addonHeading?: string
+  addonBody?: string
   guarantee: string
   priceAnchor: string
   faqLabel: string
@@ -79,6 +85,7 @@ export type FunnelProductCopy = {
     | 'whatsapp-setup'
     | 'dm-reply'
     | 'quote-followup'
+    | 'quote-capture'
     | 'noshow-rescue'
     | 'intake-forms'
     | 'inbox-triage'
@@ -3172,6 +3179,7 @@ import {A11Y_PASS_COPY as A11Y_PASS_LIVE} from './liveCopy/a11y-pass'
 import {WHATSAPP_SETUP_COPY as WHATSAPP_SETUP_LIVE} from './liveCopy/whatsapp-setup'
 import {DM_REPLY_COPY as DM_REPLY_LIVE} from './liveCopy/dm-reply'
 import {QUOTE_FOLLOWUP_LIVE_COPY as QUOTE_FOLLOWUP_LIVE} from './liveCopy/quote-followup'
+import {QUOTE_CAPTURE_LIVE_COPY as QUOTE_CAPTURE_LIVE} from './liveCopy/quote-capture'
 import {NOSHOW_RESCUE_LIVE_COPY as NOSHOW_RESCUE_LIVE} from './liveCopy/noshow-rescue'
 import {INTAKE_FORMS_LIVE_COPY as INTAKE_FORMS_LIVE} from './liveCopy/intake-forms'
 import {INBOX_TRIAGE_LIVE_COPY as INBOX_TRIAGE_LIVE} from './liveCopy/inbox-triage'
@@ -3189,6 +3197,7 @@ export function funnelCopyForSlug(slug: string | undefined): FunnelProductCopy {
   if (slug === 'whatsapp-setup') return WHATSAPP_SETUP_LIVE
   if (slug === 'dm-reply') return DM_REPLY_LIVE
   if (slug === 'quote-followup') return QUOTE_FOLLOWUP_LIVE
+  if (slug === 'quote-capture') return QUOTE_CAPTURE_LIVE
   if (slug === 'noshow-rescue') return NOSHOW_RESCUE_LIVE
   if (slug === 'intake-forms') return INTAKE_FORMS_LIVE
   if (slug === 'inbox-triage') return INBOX_TRIAGE_LIVE

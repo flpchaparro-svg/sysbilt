@@ -174,6 +174,33 @@ export async function addDealNote(dealId: string, body: string): Promise<void> {
   });
 }
 
+/** Find an existing contact by email. Does not create. */
+export async function findContactByEmail(
+  emailRaw: string,
+): Promise<{ id: string; email: string; firstname: string; lastname: string } | null> {
+  const email = emailRaw.trim().toLowerCase();
+  if (!email) return null;
+
+  const search: any = await hubspotPost('/crm/v3/objects/contacts/search', {
+    filterGroups: [
+      {
+        filters: [{ propertyName: 'email', operator: 'EQ', value: email }],
+      },
+    ],
+    properties: ['email', 'firstname', 'lastname'],
+    limit: 1,
+  });
+
+  const hit = search.results?.[0];
+  if (!hit?.id) return null;
+  return {
+    id: String(hit.id),
+    email: String(hit.properties?.email || email),
+    firstname: String(hit.properties?.firstname || ''),
+    lastname: String(hit.properties?.lastname || ''),
+  };
+}
+
 /** Search contact by email; create or update with standard properties only (Free-tier friendly). */
 export async function upsertContactByEmail(input: {
   email: string;
@@ -190,17 +217,8 @@ export async function upsertContactByEmail(input: {
   const email = input.email.trim().toLowerCase();
   if (!email) throw new Error('email required');
 
-  const search: any = await hubspotPost('/crm/v3/objects/contacts/search', {
-    filterGroups: [
-      {
-        filters: [{ propertyName: 'email', operator: 'EQ', value: email }],
-      },
-    ],
-    properties: ['email', 'firstname', 'lastname'],
-    limit: 1,
-  });
-
-  const existingId = search.results?.[0]?.id as string | undefined;
+  const existing = await findContactByEmail(email);
+  const existingId = existing?.id;
   const nameParts = (input.firstname || '').trim().split(/\s+/).filter(Boolean);
   const firstname = nameParts[0] || input.firstname || '';
   const lastname =

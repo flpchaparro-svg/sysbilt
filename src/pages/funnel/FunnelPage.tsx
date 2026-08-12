@@ -121,6 +121,9 @@ import {QuoteFollowupEvidenceCard} from './QuoteFollowupEvidenceCard'
 import {QuoteFollowupLeakPair} from './QuoteFollowupLeakPair'
 import {QuoteFollowupPainCards} from './QuoteFollowupPainCards'
 import {QuoteFollowupDeliverableMock} from './QuoteFollowupDeliverableMock'
+import {QuoteCaptureLeakPair} from './QuoteCaptureLeakPair'
+import {QuoteCapturePainCards} from './QuoteCapturePainCards'
+import {QuoteCaptureDeliverableMock} from './QuoteCaptureDeliverableMock'
 import {NoshowRescueEvidenceCard} from './NoshowRescueEvidenceCard'
 import {NoshowRescueLeakPair} from './NoshowRescueLeakPair'
 import {NoshowRescuePainCards} from './NoshowRescuePainCards'
@@ -203,6 +206,7 @@ import {A11Y_PASS_STRIPE_URL} from '../../constants/a11yPassStripe'
 import {WHATSAPP_SETUP_STRIPE_URL} from '../../constants/whatsappSetupStripe'
 import {DM_REPLY_STRIPE_URL} from '../../constants/dmReplyStripe'
 import {QUOTE_FOLLOWUP_STRIPE_URL} from '../../constants/quoteFollowupStripe'
+import {QUOTE_CAPTURE_STRIPE_URL} from '../../constants/quoteCaptureStripe'
 import {NOSHOW_RESCUE_STRIPE_URL} from '../../constants/noshowRescueStripe'
 import {INTAKE_FORMS_STRIPE_URL} from '../../constants/intakeFormsStripe'
 import {INBOX_TRIAGE_STRIPE_URL} from '../../constants/inboxTriageStripe'
@@ -376,6 +380,7 @@ const FunnelPage: React.FC = () => {
   const isWhatsappSetup = proofKind === 'whatsapp-setup'
   const isDmReply = proofKind === 'dm-reply'
   const isQuoteFollowup = proofKind === 'quote-followup'
+  const isQuoteCapture = proofKind === 'quote-capture'
   const isNoshowRescue = proofKind === 'noshow-rescue'
   const isIntakeForms = proofKind === 'intake-forms'
   const isInboxTriage = proofKind === 'inbox-triage'
@@ -430,6 +435,8 @@ const FunnelPage: React.FC = () => {
                             ? 'dm-reply'
                           : isQuoteFollowup
                             ? 'quote-followup'
+                          : isQuoteCapture
+                            ? 'quote-capture'
                           : isNoshowRescue
                             ? 'noshow-rescue'
                           : isIntakeForms
@@ -487,7 +494,9 @@ const FunnelPage: React.FC = () => {
                         ? 'search-fix'
                         : isLandingPage
                           ? 'landing-page'
-                          : 'google-profile'
+                          : isQuoteCapture
+                            ? 'quote-capture'
+                            : 'google-profile'
   const missedEvidence: MissedCallEvidence = useMemo(() => {
     if (business && callDay && callTime) {
       return {mode: 'tested', business, day: callDay, time: callTime}
@@ -605,6 +614,7 @@ const FunnelPage: React.FC = () => {
     (isWhatsappSetup ? WHATSAPP_SETUP_STRIPE_URL : undefined) ||
     (isDmReply ? DM_REPLY_STRIPE_URL : undefined) ||
     (isQuoteFollowup ? QUOTE_FOLLOWUP_STRIPE_URL : undefined) ||
+    (isQuoteCapture ? QUOTE_CAPTURE_STRIPE_URL : undefined) ||
     (isNoshowRescue ? NOSHOW_RESCUE_STRIPE_URL : undefined) ||
     (isIntakeForms ? INTAKE_FORMS_STRIPE_URL : undefined) ||
     (isInboxTriage ? INBOX_TRIAGE_STRIPE_URL : undefined) ||
@@ -643,10 +653,14 @@ const FunnelPage: React.FC = () => {
       : undefined,
     secondaryCtaLabel: isWebsite
       ? doc?.secondaryCtaLabel || 'Prefer to talk first? Book 15 minutes.'
-      : doc?.secondaryCtaLabel,
+      : isQuoteCapture
+        ? 'Want to feel it first? Try the 60-second demo'
+        : doc?.secondaryCtaLabel,
     secondaryUrl: isWebsite
       ? doc?.secondaryUrl || doc?.schedulerUrl
-      : doc?.secondaryUrl,
+      : isQuoteCapture
+        ? '/demo/quote-capture'
+        : doc?.secondaryUrl,
     schedulerUrl: buyDoorNeedsAccess
       ? accessFormPathForProduct(
           isReviews
@@ -799,6 +813,7 @@ const FunnelPage: React.FC = () => {
               isWhatsappSetup ||
               isDmReply ||
               isQuoteFollowup ||
+              isQuoteCapture ||
               isNoshowRescue ||
               isIntakeForms ||
               isInboxTriage ||
@@ -907,7 +922,8 @@ const FunnelPage: React.FC = () => {
             !(isCrmRescue && crmEvidence.mode === 'try') &&
             !(isContentSystem && !business) &&
             !isDraftSoon &&
-            !isWebsite ? (
+            !isWebsite &&
+            !isQuoteCapture ? (
               <Reveal delay={0.12} y={12}>
                 <p
                   className={`font-sans text-base md:text-lg leading-relaxed max-w-2xl ${
@@ -1546,6 +1562,26 @@ const FunnelPage: React.FC = () => {
                   <QuoteFollowupLeakPair />
                 </section>
               </>
+            ) : isQuoteCapture ? (
+              <>
+                <Reveal delay={0.08} y={12}>
+                  <p
+                    className="mt-6 font-sans text-base md:text-lg leading-relaxed max-w-2xl"
+                    style={{color: FUNNEL_COLOURS.muted}}
+                  >
+                    {COPY.proofLeadGeneric}
+                  </p>
+                </Reveal>
+                <Reveal delay={0.12} y={12}>
+                  <p
+                    className="mt-4 font-sans text-base md:text-lg leading-relaxed max-w-2xl"
+                    style={{color: FUNNEL_COLOURS.muted}}
+                  >
+                    {COPY.proofAfterGeneric}
+                  </p>
+                </Reveal>
+                <QuoteCaptureLeakPair />
+              </>
             ) : isNoshowRescue ? (
               <>
                 <Reveal delay={0.08} y={12}>
@@ -2136,6 +2172,8 @@ const FunnelPage: React.FC = () => {
                 <DmReplyPainCards />
               ) : isQuoteFollowup ? (
                 <QuoteFollowupPainCards />
+              ) : isQuoteCapture ? (
+                <QuoteCapturePainCards />
               ) : isNoshowRescue ? (
                 <NoshowRescuePainCards />
               ) : isIntakeForms ? (
@@ -2201,12 +2239,11 @@ const FunnelPage: React.FC = () => {
               </h2>
             </Reveal>
             <Reveal delay={0.12} y={12}>
-              <p
-                className="font-sans text-base md:text-lg leading-relaxed max-w-2xl"
-                style={{color: FUNNEL_COLOURS.muted}}
-              >
-                {COPY.bridgeBody}
-              </p>
+              <div className="font-sans text-base md:text-lg leading-relaxed max-w-2xl space-y-4" style={{color: FUNNEL_COLOURS.muted}}>
+                {COPY.bridgeBody.split(/\n\n+/).map((para, i) => (
+                  <p key={i}>{para}</p>
+                ))}
+              </div>
             </Reveal>
 
             {isWebsite ? (
@@ -2248,6 +2285,7 @@ const FunnelPage: React.FC = () => {
               isWhatsappSetup ||
               isDmReply ||
               isQuoteFollowup ||
+              isQuoteCapture ||
               isNoshowRescue ||
               isIntakeForms ||
               isInboxTriage ||
@@ -2361,6 +2399,31 @@ const FunnelPage: React.FC = () => {
             />
           </section>
 
+          {isQuoteCapture && COPY.addonHeading && COPY.addonBody ? (
+            <section className="max-w-3xl mx-auto px-6 md:px-10 pb-16 md:pb-24">
+              <SectionRule />
+              <Reveal y={10}>
+                <SectionLabel>{COPY.addonLabel || 'The add-on'}</SectionLabel>
+              </Reveal>
+              <Reveal delay={0.06} y={18}>
+                <h2
+                  className="font-serif font-bold text-3xl md:text-4xl tracking-tight mb-6 max-w-2xl"
+                  style={{color: FUNNEL_COLOURS.ink}}
+                >
+                  {COPY.addonHeading}
+                </h2>
+              </Reveal>
+              <Reveal delay={0.12} y={12}>
+                <p
+                  className="font-sans text-base md:text-lg leading-relaxed max-w-2xl"
+                  style={{color: FUNNEL_COLOURS.muted}}
+                >
+                  {COPY.addonBody}
+                </p>
+              </Reveal>
+            </section>
+          ) : null}
+
           <section
             className={`w-full overflow-hidden ${
               isWebsite ? 'py-20 md:py-28 mb-20 md:mb-28' : 'py-16 md:py-24 mb-16 md:mb-24'
@@ -2368,7 +2431,11 @@ const FunnelPage: React.FC = () => {
             style={{backgroundColor: FUNNEL_COLOURS.inkSoft, color: FUNNEL_COLOURS.onInk}}
           >
             <div className="max-w-5xl mx-auto px-6 md:px-10">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-12 md:items-center">
+              <div
+                className={`grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-12 ${
+                  isQuoteCapture ? 'md:items-stretch' : 'md:items-center'
+                }`}
+              >
                 <div className="flex flex-col justify-center">
                   <Reveal y={10}>
                     <p
@@ -2394,6 +2461,16 @@ const FunnelPage: React.FC = () => {
                       {COPY.priceLead}
                     </p>
                   </Reveal>
+                  {COPY.priceBody ? (
+                    <Reveal delay={0.17} y={10}>
+                      <p
+                        className="font-sans text-base md:text-lg leading-relaxed max-w-xl mb-4"
+                        style={{color: `${FUNNEL_COLOURS.onInk}CC`}}
+                      >
+                        {COPY.priceBody}
+                      </p>
+                    </Reveal>
+                  ) : null}
                   <Reveal delay={0.2} y={10}>
                     <p
                       className="font-sans text-base md:text-lg leading-relaxed max-w-xl mb-4"
@@ -2455,6 +2532,8 @@ const FunnelPage: React.FC = () => {
                   <DmReplyDeliverableMock />
                 ) : isQuoteFollowup ? (
                   <QuoteFollowupDeliverableMock />
+                ) : isQuoteCapture ? (
+                  <QuoteCaptureDeliverableMock />
                 ) : isNoshowRescue ? (
                   <NoshowRescueDeliverableMock />
                 ) : isIntakeForms ? (

@@ -132,7 +132,8 @@ function quoteCaptureDevApi(): Plugin {
         const url = (req.url || '').split('?')[0]
         const isSubmit = url === '/api/quote-capture/submit'
         const isConcierge = url === '/api/quote-capture/concierge'
-        if (!isSubmit && !isConcierge) return next()
+        const isFeedback = url === '/api/feedback-review/submit'
+        if (!isSubmit && !isConcierge && !isFeedback) return next()
 
         res.setHeader('Access-Control-Allow-Origin', '*')
         res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
@@ -164,6 +165,22 @@ function quoteCaptureDevApi(): Plugin {
           })
           const raw = Buffer.concat(chunks).toString('utf8')
           const body = raw ? JSON.parse(raw) : {}
+
+          if (isFeedback) {
+            const mod = await server.ssrLoadModule('/api/_lib/feedbackReviewSubmit.ts')
+            const result = await mod.processFeedbackReviewSubmit(body)
+            if (!result.ok) {
+              res.statusCode = result.status || 400
+              res.setHeader('Content-Type', 'application/json')
+              res.end(JSON.stringify({error: result.error}))
+              return
+            }
+            res.statusCode = 200
+            res.setHeader('Content-Type', 'application/json')
+            res.setHeader('Cache-Control', 'no-store')
+            res.end(JSON.stringify(result))
+            return
+          }
 
           if (isConcierge) {
             const mod = await server.ssrLoadModule('/api/_lib/quoteCaptureConcierge.ts')

@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode} from 'react'
-import {Link, useSearchParams} from 'react-router-dom'
+import {useParams, useSearchParams} from 'react-router-dom'
 import {
   ArrowRight,
   Fence,
@@ -13,9 +13,10 @@ import {
   Sprout,
   Trees,
 } from 'lucide-react'
-import {SysbiltLogo} from '../../../components/SysbiltLogo'
-import {PageMeta} from '../../../components/PageMeta'
-import {SITE_ORIGIN} from '../../../constants/seoMeta'
+import {SysbiltLogo} from '../../components/SysbiltLogo'
+import {PageMeta} from '../../components/PageMeta'
+import {SITE_ORIGIN} from '../../constants/seoMeta'
+import {getQuoteCaptureClient} from './clients'
 import {
   QuoteCaptureConciergeDock,
   QuoteCaptureConciergeTalk,
@@ -28,7 +29,6 @@ import {
   JOBS,
   MATERIALS_OPTIONS,
   MIX_ITEM_LABELS,
-  SAMPLE_DISCLAIMER,
   SITE_CONDITIONS,
   SITUATIONS,
   SIZE_PRESETS,
@@ -41,7 +41,7 @@ import {
   type SiteConditionId,
   type SituationId,
   type SizePresetId,
-} from './rateCard'
+} from './landscapingRateCard'
 
 const RED = '#E21E3F'
 const INK = '#1A1A1A'
@@ -50,6 +50,8 @@ const CREAM = '#FFF2EC'
 type Step =
   | 'intro'
   | 'talk'
+  | 'scope'
+  | 'soft-no'
   | 'situation'
   | 'job'
   | 'size'
@@ -60,7 +62,7 @@ type Step =
   | 'site'
   | 'details'
   | 'quote'
-  | 'buy'
+  | 'done'
 
 const PHASES = [
   {id: 'start', n: 1, label: 'Start'},
@@ -74,6 +76,8 @@ function phaseIndexFor(step: Step): number {
   switch (step) {
     case 'intro':
     case 'talk':
+    case 'scope':
+    case 'soft-no':
       return 0
     case 'situation':
     case 'job':
@@ -88,7 +92,7 @@ function phaseIndexFor(step: Step): number {
     case 'details':
       return 3
     case 'quote':
-    case 'buy':
+    case 'done':
       return 4
   }
 }
@@ -530,33 +534,19 @@ function jobIcon(id: JobId): ReactNode {
   return <Flower2 strokeWidth={1.5} />
 }
 
-export default function QuoteCaptureDemoPage() {
+export default function QuoteCaptureLivePage({embed = false}: {embed?: boolean}) {
+  const {slug: slugParam} = useParams<{slug: string}>()
   const [params] = useSearchParams()
-  const businessName = (params.get('name') || '')
-    .trim()
-    .replace(/[\\/]+$/g, '')
-    .trim()
-  const tradeRaw = (params.get('trade') || 'landscaping').trim().toLowerCase()
-  const TRADE_LABELS: Record<string, string> = {
-    landscaping: 'landscaping',
-    fencing: 'fencing',
-    'retaining-walls': 'retaining walls',
-    paving: 'paving',
-    concreting: 'concreting',
-    'tree-services': 'tree services',
-    pools: 'pool building',
-    roofing: 'roofing',
-    painting: 'painting',
-    electrical: 'electrical',
-    plumbing: 'plumbing',
-    hvac: 'HVAC',
-    cleaning: 'cleaning',
-    'pest-control': 'pest control',
-    removals: 'removals',
-  }
-  const tradeLabel = TRADE_LABELS[tradeRaw] || tradeRaw.replace(/-/g, ' ') || 'landscaping'
+  const slug = (slugParam || 'proof-landscapes').trim().toLowerCase()
+  const client = getQuoteCaptureClient(slug)
+  const businessName = client?.businessName || 'Proof Landscapes'
+  const paidFlag = params.get('paid') === '1'
 
   const [step, setStep] = useState<Step>('intro')
+  const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
+  const [payUrl, setPayUrl] = useState<string | null>(null)
+  const [submitWarnings, setSubmitWarnings] = useState<string[]>([])
   const [situationId, setSituationId] = useState<SituationId | null>(null)
   const [jobId, setJobId] = useState<JobId | null>(null)
   const [sizePresetId, setSizePresetId] = useState<SizePresetId | null>(null)
@@ -779,33 +769,87 @@ export default function QuoteCaptureDemoPage() {
     return {value: preset.value, label: preset.label}
   }
 
-  function buildAndShow() {
+  async function submitQuote(built: BuiltQuote) {
+    if (!job || !access || !materials || !client) return null
+    setSubmitting(true)
+    setSubmitError(null)
+    try {
+      const res = await fetch('/api/quote-capture/submit', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          slug: client.slug,
+          softNo: false,
+          visitorName,
+          visitorPhone,
+          visitorEmail,
+          jobId: job.id,
+          sizeValue: built.sizeValue,
+          sizeLabel: built.sizeLabel,
+          access,
+          site: job.impliesRemoval ? null : site,
+          materials,
+          finish: job.asksFinish ? finish : null,
+          mixHave: materials === 'mix' ? mixHave : [],
+          extras,
+        }),
+      })
+      const data = (await res.json().catch(() => ({}))) as {
+        error?: string
+        payUrl?: string | null
+        warnings?: string[]
+      }
+      if (!res.ok) {
+        throw new Error(data.error || 'Submit failed')
+      }
+      setPayUrl(data.payUrl || null)
+      setSubmitWarnings(Array.isArray(data.warnings) ? data.warnings : [])
+      return data.payUrl || null
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : 'Submit failed')
+      return null
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  async function buildAndShow() {
     if (!job || !access || !materials) return
     if (job.asksFinish && !finish) return
     if (!job.impliesRemoval && !site) return
     const size = resolveSize()
     if (!size) return
-    setQuote(
-      buildQuote({
-        job,
-        sizeValue: size.value,
-        sizeLabel: size.label,
-        access,
-        site: job.impliesRemoval ? null : site,
-        materials,
-        finish: job.asksFinish ? finish : null,
-        mixHave: materials === 'mix' ? mixHave : [],
-        extras,
-      }),
-    )
+    const built = buildQuote({
+      job,
+      sizeValue: size.value,
+      sizeLabel: size.label,
+      access,
+      site: job.impliesRemoval ? null : site,
+      materials,
+      finish: job.asksFinish ? finish : null,
+      mixHave: materials === 'mix' ? mixHave : [],
+      extras,
+    })
+    setQuote(built)
     go('quote')
+    // Send quote + pay link as soon as the quotation is shown
+    await submitQuote(built)
+  }
+
+  function openPay() {
+    if (payUrl) {
+      window.location.href = payUrl
+      return
+    }
+    if (quote) {
+      void submitQuote(quote).then((url) => {
+        if (url) window.location.href = url
+      })
+    }
   }
 
   function goBack() {
     switch (step) {
-      case 'talk':
-        go('intro')
-        break
       case 'job':
         go('situation')
         break
@@ -835,11 +879,20 @@ export default function QuoteCaptureDemoPage() {
       case 'quote':
         go('details')
         break
-      case 'buy':
+      case 'done':
         go('quote')
         break
-      case 'situation':
+      case 'soft-no':
+        go('scope')
+        break
+      case 'scope':
         go('intro')
+        break
+      case 'talk':
+        go('intro')
+        break
+      case 'situation':
+        go('scope')
         break
       default:
         go('intro')
@@ -848,6 +901,9 @@ export default function QuoteCaptureDemoPage() {
 
   function restart() {
     setStep('intro')
+    setPayUrl(null)
+    setSubmitError(null)
+    setSubmitWarnings([])
     setSituationId(null)
     setJobId(null)
     setSizePresetId(null)
@@ -870,18 +926,18 @@ export default function QuoteCaptureDemoPage() {
   }
 
   const canSubmitDetails =
-    visitorName.trim().length >= 2 && visitorPhone.trim().replace(/\s/g, '').length >= 8
+    visitorName.trim().length >= 2 &&
+    visitorPhone.trim().replace(/\s/g, '').length >= 8 &&
+    visitorEmail.trim().includes('@')
   const canGoBack = step !== 'intro'
-  const headerEyebrow = businessName
-    ? `Built for ${businessName}`
-    : `Quote Capture demo · ${tradeLabel}`
-
-
+  const headerEyebrow = client?.isProof
+    ? `Proof install · ${businessName}`
+    : businessName
   const sizeResolved = resolveSize()
   const conciergeContext: ConciergeContextPayload = {
-    mode: 'sandbox',
+    mode: 'live',
     step,
-    businessName: businessName || undefined,
+    businessName,
     situationLabel: situation?.label ?? null,
     jobLabel: job?.label ?? null,
     sizeLabel: sizeResolved?.label ?? (sizePresetId ? SIZE_PRESETS[sizePresetId]?.label : null),
@@ -898,12 +954,25 @@ export default function QuoteCaptureDemoPage() {
   }
   const showConciergeDock = step !== 'intro' && step !== 'talk'
 
+  if (!client) {
+    return (
+      <div className="min-h-screen bg-cream font-sans text-dark flex items-center justify-center px-6">
+        <PageMeta
+          title="Quote not found | SYSBILT"
+          description="This quote form is not available."
+          robots="noindex, nofollow"
+        />
+        <p className="font-sans text-dark/70">This quote form is not available.</p>
+      </div>
+    )
+  }
+
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-cream font-sans text-dark selection:bg-dark selection:text-cream">
       <PageMeta
-        title="Quote Capture demo | SYSBILT"
-        description="Feel an instant quote calculator. Sample landscaping rates. Built by SYSBILT."
-        canonical={`${SITE_ORIGIN}/demo/quote-capture`}
+        title={`${businessName} · Quote | SYSBILT`}
+        description={`Get a quotation from ${businessName}.`}
+        canonical={`${SITE_ORIGIN}/q/${client.slug}`}
         robots="noindex, nofollow"
       />
 
@@ -951,7 +1020,7 @@ export default function QuoteCaptureDemoPage() {
           <div className="mb-6 flex items-center justify-between gap-4">
             <SysbiltLogo className="w-[110px] md:w-[130px]" />
             <p className="font-mono text-[9px] font-bold uppercase tracking-[0.22em] text-dark/40">
-              Sample demo · simulated {tradeLabel}
+              {embed ? 'Embedded quote' : client.isProof ? 'Proof install' : 'Quote'}
             </p>
           </div>
         )}
@@ -971,12 +1040,13 @@ export default function QuoteCaptureDemoPage() {
               Get a clear landscaping quote without writing a novel
             </h1>
             <p className="mx-auto mt-7 max-w-2xl font-sans text-lg leading-relaxed text-dark/70 md:text-xl">
-              A few plain questions. Then a clear quotation on screen. Sample landscaping prices so
-              you can feel how Quote Capture works on a real site.
+              {client.isProof
+                ? 'A few plain questions. Then a clear quotation on screen, with pay if you are ready. Sample landscaping prices for this proof install.'
+                : 'A few plain questions. Then a clear quotation on screen, with pay if you are ready.'}
             </p>
             <div className="mt-12 flex w-full flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center sm:justify-center">
-              <InkButton onClick={() => go('situation')}>
-                Start the sample <ArrowRight className="h-4 w-4" />
+              <InkButton onClick={() => go('scope')}>
+                Start the quote <ArrowRight className="h-4 w-4" />
               </InkButton>
               <button
                 type="button"
@@ -992,10 +1062,54 @@ export default function QuoteCaptureDemoPage() {
         {step === 'talk' && (
           <QuoteCaptureConciergeTalk
             context={conciergeContext}
-            onStartWizard={() => go('situation')}
+            onStartWizard={() => go('scope')}
             onBack={() => go('intro')}
           />
         )}
+
+        {step === 'scope' && (
+          <section>
+            <h1 className="font-serif text-3xl md:text-4xl leading-tight tracking-tight max-w-2xl">
+              Is this on our rate card
+            </h1>
+            <p className="mt-3 mb-8 font-sans text-base text-dark/60 max-w-xl">
+              {client.softNo.whatWeDo}
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 max-w-2xl">
+              <SelectCard
+                selected={false}
+                onSelect={() => go('situation')}
+                title="Yes, landscaping on the card"
+                blurb="Lawns, gardens, fencing, or retaining. Continue to quote."
+              />
+              <SelectCard
+                selected={false}
+                onSelect={() => go('soft-no')}
+                title="Something else"
+                blurb="Not on our catalogue. We will not send a quote or alerts."
+                unsure
+              />
+            </div>
+          </section>
+        )}
+
+        {step === 'soft-no' && (
+          <section className="max-w-xl">
+            <h1 className="font-serif text-3xl md:text-4xl leading-tight tracking-tight">
+              We do not quote that here
+            </h1>
+            <p className="mt-5 font-sans text-lg leading-relaxed text-dark/70">
+              {client.softNo.whatWeDo}
+            </p>
+            <p className="mt-4 font-sans text-base leading-relaxed text-dark/60">
+              {client.softNo.callEmail}
+            </p>
+            <div className="mt-10">
+              <InkButton onClick={() => go('scope')}>Back to rate card check</InkButton>
+            </div>
+          </section>
+        )}
+
         {step === 'situation' && (
           <section>
             <h1 className="font-serif text-3xl md:text-4xl leading-tight tracking-tight max-w-2xl">
@@ -1374,8 +1488,8 @@ export default function QuoteCaptureDemoPage() {
               Where should the quote go
             </h1>
             <p className="mt-3 mb-8 font-sans text-base text-dark/60">
-              On a live install this also fires SMS and the owner alert. In this sandbox it only
-              fills the sample quotation on screen. Nothing is saved to a CRM.
+              When you see your quotation, we email and text the quote with a pay link where
+              possible. {businessName} gets the priced lead at the same time.
             </p>
             {job?.impliesRemoval && (
               <p className="mb-6 rounded-xl border border-dark/10 bg-white px-4 py-3 font-sans text-sm text-dark/60">
@@ -1459,7 +1573,7 @@ export default function QuoteCaptureDemoPage() {
 
             <div className="mb-6 flex flex-wrap items-center justify-between gap-3 qc-no-print print:hidden">
               <p className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-[#A8843F]">
-                Sample quotation
+                {client.isProof ? 'Proof quotation' : 'Quotation'}
               </p>
               <button
                 type="button"
@@ -1481,7 +1595,7 @@ export default function QuoteCaptureDemoPage() {
                       {businessName || 'GreenEdge Landscapes'}
                     </p>
                     <p className="mt-2 font-sans text-[12px] leading-relaxed text-dark/55">
-                      Sample landscaping quotation
+                      Landscaping quotation
                     </p>
                   </div>
                   <div className="min-w-[10rem] text-left sm:text-right">
@@ -1592,7 +1706,7 @@ export default function QuoteCaptureDemoPage() {
                         Total payable
                       </h2>
                       <p className="mt-1 font-serif text-[12px] text-dark/50">
-                        Inclusive of GST. Sample rates for this demo.
+                        Inclusive of GST.
                       </p>
                     </div>
                     <p className="font-serif text-[2.35rem] leading-none tabular-nums tracking-tight md:text-[2.75rem]">
@@ -1606,77 +1720,103 @@ export default function QuoteCaptureDemoPage() {
                     Payment
                   </h2>
                   <p className="mt-1.5 font-serif text-[13px] leading-relaxed text-dark/70">
-                    Total due {money(quote.total)}. On a live install the pay link sits here. Demo
-                    pay is off.
+                    Total due {money(quote.total)}. We are sending your quotation and pay link by
+                    email and SMS. Pay is optional if you already have the link.
                   </p>
+                  {submitting && !payUrl ? (
+                    <p className="mt-3 font-sans text-sm text-dark/55">
+                      Sending quotation and pay link…
+                    </p>
+                  ) : null}
                   <button
                     type="button"
-                    disabled
-                    className="mt-3 cursor-not-allowed rounded-full bg-dark/80 px-6 py-2.5 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-cream opacity-70"
+                    disabled={submitting && !payUrl}
+                    onClick={openPay}
+                    className="mt-3 rounded-full bg-dark px-6 py-2.5 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-cream disabled:opacity-50"
                   >
-                    Pay {money(quote.total)} (demo only)
+                    {submitting && !payUrl
+                      ? 'Preparing…'
+                      : payUrl
+                        ? `Pay ${money(quote.total)}`
+                        : `Retry pay link · ${money(quote.total)}`}
                   </button>
+                  {submitError ? (
+                    <p className="mt-3 font-sans text-sm text-[#9A1730]">{submitError}</p>
+                  ) : null}
+                  {client.isProof && submitWarnings.length ? (
+                    <p className="mt-3 font-sans text-sm text-dark/45">
+                      Proof mode: Gmail visitor inboxes may skip until a sending domain is verified.
+                      A copy goes to the SYSBILT test inbox. SMS needs a Twilio verified mobile on
+                      trial. Pay link above still works.
+                    </p>
+                  ) : null}
                 </div>
 
                 <p className="mt-6 font-serif text-[12px] leading-relaxed text-dark/50">
                   This quotation remains valid for {quote.validDays} days from the date shown above.
                   {' '}
-                  {SAMPLE_DISCLAIMER}
+                  {client.disclaimer}
                 </p>
               </div>
 
               <footer className="border-t border-dark/15 px-7 py-4 md:px-12">
                 <p className="font-serif text-[11px] text-dark/40">
-                  Prepared with Quote Capture by SYSBILT. Sample document for demonstration only.
+                  Prepared with Quote Capture by SYSBILT.
                 </p>
               </footer>
             </article>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap qc-no-print print:hidden">
-              <InkButton onClick={() => go('buy')}>
-                Want this on your website <ArrowRight className="h-4 w-4" />
-              </InkButton>
               <button
                 type="button"
                 onClick={restart}
                 className="font-sans text-sm text-dark/45 hover:text-dark/70 sm:px-2"
               >
-                Run the demo again
+                Start again
               </button>
             </div>
           </section>
         )}
 
-        {step === 'buy' && (
+        {step === 'done' && (
           <section className="max-w-xl">
             <h1 className="font-serif text-3xl md:text-4xl leading-tight tracking-tight">
-              That was a sample. Yours runs on your prices
+              Quotation sent
             </h1>
-            <p className="mt-4 font-sans text-base leading-relaxed text-dark/70">
-              Quote Capture installs on your existing site. Customers answer plain questions, see a
-              clear quotation with scope and total, get email and SMS with a pay link, and you get a
-              priced lead you can call.
+            <p className="mt-5 font-sans text-lg leading-relaxed text-dark/70">
+              We emailed and texted you where possible. {businessName} has the priced lead.
             </p>
-            <div className="mt-10">
-              <Link
-                to="/go/quote-capture"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#E21E3F] px-8 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.2em] text-cream shadow-[0_12px_28px_-12px_rgba(226,30,63,0.65)]"
-              >
-                See Quote Capture, $2,800
-              </Link>
-            </div>
+            {payUrl ? (
+              <div className="mt-8">
+                <InkButton onClick={() => { window.location.href = payUrl }}>
+                  Open pay link <ArrowRight className="h-4 w-4" />
+                </InkButton>
+              </div>
+            ) : (
+              <p className="mt-4 font-sans text-base text-dark/55">
+                Pay link was not created yet. The team will follow up.
+              </p>
+            )}
+            {client.isProof && submitWarnings.length ? (
+              <p className="mt-6 font-sans text-sm text-dark/45">
+                Proof mode may skip visitor Gmail or trial SMS. Check felipe@sysbilt.com for the
+                proof copy.
+              </p>
+            ) : null}
             <button
               type="button"
-              onClick={() => go('quote')}
-              className="mt-6 font-sans text-sm text-dark/45"
+              onClick={restart}
+              className="mt-8 font-sans text-sm text-dark/45 hover:text-dark/70"
             >
-              Back to the sample quote
+              Start again
             </button>
           </section>
         )}
 
         <p className="mt-16 border-t border-dark/10 pt-6 font-sans text-[11px] text-dark/35">
-          SYSBILT, Quote Capture demo, sample rates only, simulated business, noindex
+          {client?.isProof
+            ? 'SYSBILT Quote Capture proof install · sample rates · noindex'
+            : 'Quote Capture by SYSBILT'}
         </p>
       </div>
 
@@ -1685,10 +1825,9 @@ export default function QuoteCaptureDemoPage() {
           context={conciergeContext}
           resetKey={conciergeResetKey}
           onSyncSituation={(id) => {
-            pickSituation(id)
-            if (step !== 'situation') {
-              go('job')
-            }
+            setSituationId(id)
+            setJobId(null)
+            setSizePresetId(null)
           }}
         />
       ) : null}

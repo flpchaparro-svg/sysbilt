@@ -7,7 +7,7 @@
  *
  * Dropdown values (you add data validation):
  *   Speed Fix | Google Profile | Missed-Call | Search Visibility |
- *   Landing Page | CRM Rescue | Website
+ *   Landing Page | CRM Rescue | Website | Quote Capture
  *
  * After route: routed
  * Skip forever: none | skip
@@ -208,6 +208,7 @@ const QUALIFY = new Set([
   'landing page',
   'crm rescue',
   'website',
+  'quote capture',
 ]);
 
 const rows = $input.all()
@@ -247,11 +248,12 @@ const TAB_BY_LANE = {
   'landing page': 'Landing Page',
   'crm rescue': 'CRM Rescue',
   website: 'Website',
+  'quote capture': 'Quote Capture',
 };
 
 const tab = TAB_BY_LANE[lane];
 if (!tab) {
-  return [{ json: { _skipAppend: true, reason: 'unknown_lane', _manualMark: 'skip', mapsId } }];
+  return [{ json: { _skipAppend: true, reason: 'unknown_lane', _manualMark: 'skip', mapsId, 'Maps ID': mapsId } }];
 }
 
 function rowsFrom(nodeName) {
@@ -271,6 +273,7 @@ if (destRows.some((r) => String(r['Maps ID'] || '').trim() === mapsId)) {
       _skipAppend: true,
       reason: 'already_on_tab',
       mapsId,
+      'Maps ID': mapsId,
       _manualMark: 'routed',
       _destTab: tab,
     },
@@ -300,7 +303,9 @@ if (tab === 'Speed Fix') {
   row = { ...row, 'LP Ads': 'manual' };
 } else if (tab === 'CRM Rescue') {
   row = { ...row, 'CRM Form': 'manual', 'Form Day': '', 'Form Time': '' };
-  } else if (tab === 'Website') {
+} else if (tab === 'Quote Capture') {
+  row = { ...row, Industry: 'Landscaping', 'Contact Form': '' };
+} else if (tab === 'Website') {
   row = {
     ...row,
     'LH Perf': lead['LH Mobile'] || '',
@@ -417,6 +422,21 @@ function buildRouterWorkflow(sheetId) {
         'CRM Form',
         'Form Day',
         'Form Time',
+        'Status',
+        'Maps ID',
+        'Notes',
+      ],
+    },
+    {
+      key: 'Quote Capture',
+      headers: [
+        'Business Name',
+        'Suburb',
+        'Website',
+        'Email',
+        'Phone',
+        'Industry',
+        'Contact Form',
         'Status',
         'Maps ID',
         'Notes',
@@ -550,6 +570,7 @@ const TAB_BY_LANE = {
   'landing page': 'Landing Page',
   'crm rescue': 'CRM Rescue',
   website: 'Website',
+  'quote capture': 'Quote Capture',
 };
 return [{ json: { ...lead, _destTab: TAB_BY_LANE[lane] || '' } }];`,
       },
@@ -638,7 +659,8 @@ return [{ json: { ...lead, _destTab: TAB_BY_LANE[lane] || '' } }];`,
         columns: {
           mappingMode: 'defineBelow',
           value: {
-            'Maps ID': "={{ $('Build Product Row').item.json['Maps ID'] }}",
+            'Maps ID':
+              "={{ $('Build Product Row').item.json['Maps ID'] || $('Build Product Row').item.json.mapsId || $('Pick Manual Lane').item.json['Maps ID'] }}",
             [MANUAL_COL]: "={{ $('Build Product Row').item.json._manualMark || 'routed' }}",
           },
           matchingColumns: ['Maps ID'],
@@ -803,7 +825,7 @@ async function main() {
   )
   console.log(`Master Leads column S = "${MANUAL_COL}"`)
   console.log(
-    'Dropdown: Speed Fix | Google Profile | Missed-Call | Search Visibility | Landing Page | CRM Rescue | Website',
+    'Dropdown: Speed Fix | Google Profile | Missed-Call | Search Visibility | Landing Page | CRM Rescue | Website | Quote Capture',
   )
   console.log('After route → routed. none/skip = ignore.')
 }

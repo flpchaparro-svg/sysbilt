@@ -91,6 +91,14 @@ export type SopHomeId =
   | 'unsure'
 /** Which mail tool holds the Inbox Triage mailbox. */
 export type InboxMailId = 'gmail' | 'outlook' | 'shared' | 'other' | 'unsure'
+/** Rate card readiness before Quote Capture install. */
+export type QcRateCardId = 'ready' | 'mostly' | 'need-call' | 'unsure'
+/** How priced-lead alerts should reach the team. */
+export type QcAlertId = 'email' | 'sms' | 'both' | 'other'
+/** Quote or invoice system status for Quote Capture. */
+export type QcQuoteSystemId = 'have' | 'need-setup' | 'unsure'
+/** AI Concierge add-on choice for Quote Capture. */
+export type QcAiConciergeId = 'yes' | 'no' | 'later'
 
 export type FunnelAccessPayload = {
   product: FunnelProductCode
@@ -176,6 +184,17 @@ export type FunnelAccessPayload = {
   hourReady?: string
   contentGoal?: string
   sessionFormat?: 'remote' | 'onsite'
+  qcRateCard?: QcRateCardId | ''
+  qcRatePackNotes?: string
+  qcRatePackFiles?: {
+    name: string
+    mime: string
+    size: number
+    data: string
+  }[]
+  qcAlerts?: QcAlertId | ''
+  qcQuoteSystem?: QcQuoteSystemId | ''
+  qcAiConcierge?: QcAiConciergeId | ''
 }
 
 export const DOMAIN_REGISTRARS = [

@@ -60,6 +60,8 @@ const FunnelAccessPage = lazy(() => import('./pages/funnel/FunnelAccessPage'));
 const WebsiteWizardPage = lazy(() => import('./pages/funnel/WebsiteWizardPage'));
 const WebsiteAgreementPage = lazy(() => import('./pages/funnel/WebsiteAgreementPage'));
 const QuoteCaptureDemoPage = lazy(() => import('./pages/demo/quoteCapture/QuoteCaptureDemoPage'));
+const QuoteCaptureLivePage = lazy(() => import('./pages/quoteCapture/QuoteCaptureLivePage'));
+const QuoteCaptureEmbedPage = lazy(() => import('./pages/quoteCapture/QuoteCaptureEmbedPage'));
 const NewsPage = lazy(() => import('./pages/NewsPage'));
 const BuiltToWorkBookPage = lazy(() => import('./pages/BuiltToWorkBookPage'));
 const BuiltToSellBookPage = lazy(() => import('./pages/BuiltToSellBookPage'));
@@ -185,13 +187,16 @@ const App: React.FC = () => {
     location.pathname === '/go/thanks' ||
     location.pathname.startsWith('/go/');
   const isDemoRoute = location.pathname.startsWith('/demo/');
+  const isQuoteCaptureLiveRoute =
+    location.pathname.startsWith('/q/') || location.pathname.startsWith('/embed/q/');
   const hideChrome =
     location.pathname === '/contact' ||
     location.pathname.startsWith('/proposal/') ||
     location.pathname.startsWith('/agreement/') ||
     location.pathname.startsWith('/reports/') ||
     isFunnelRoute ||
-    isDemoRoute;
+    isDemoRoute ||
+    isQuoteCaptureLiveRoute;
 
   return (
     <HelmetProvider>
@@ -274,6 +279,8 @@ const App: React.FC = () => {
                     <Route path="/go" element={<FunnelHomePage />} />
                     <Route path="/go/:slug" element={<FunnelPage />} />
                     <Route path="/demo/quote-capture" element={<QuoteCaptureDemoPage />} />
+                    <Route path="/q/:slug" element={<QuoteCaptureLivePage />} />
+                    <Route path="/embed/q/:slug" element={<QuoteCaptureEmbedPage />} />
 
                     <Route path="*" element={<NotFoundPage onNavigate={handleGlobalNavigate} />} />
                   </Routes>
@@ -288,7 +295,7 @@ const App: React.FC = () => {
           <ClientOnly>
             <Modal service={selectedService} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
             <CookieBanner />
-            {!isFunnelRoute && !isDemoRoute && <HelpDock />}
+            {!isFunnelRoute && !isDemoRoute && !isQuoteCaptureLiveRoute && <HelpDock />}
           </ClientOnly>
         </div>
       </LazyMotion>

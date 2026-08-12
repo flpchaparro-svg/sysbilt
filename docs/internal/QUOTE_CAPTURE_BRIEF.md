@@ -81,15 +81,49 @@ Build scope = what is visible on their site / agreed at kickoff. Extra catalogue
 
 ---
 
+## Three flows (do not mix)
+
+| Flow | Who | Goes into Zoho Invoice? | Money |
+|---|---|---|---|
+| **Sandbox** `/demo/quote-capture` | Prospect tasting the product | **No.** On-screen sample quote only | They may buy **Quote Capture** ($2,800) |
+| **SYSBILT `/go`** | Same prospect paying us | **No** job quote. Access wizard only | $2,800 (+ optional AI / $100 setup) |
+| **Client live site** | Their customers | **Yes.** Editable Quote in **their** Zoho Invoice (AU Quotes) | Pay link for **their** job |
+
+Sandbox finish does **not** create a Zoho quote. Buying from the demo CTA is buying our product, not paying for sample lawn metres.
+
+**Live Zoho Invoice lifecycle (locked):** Quote (API: estimate) → sent → accept → convert to tax Invoice. Owner edits the Quote first when numbers need to change. Owner converts when the quote is accepted as-is.
+
+---
+
 ## Zoho / quote platform
+
+Product for the live path: **Zoho Invoice (AU)** Quotes module (`invoice.zoho.com.au`). Reader-facing copy still says “quote or invoice system.”
 
 | Situation | Default |
 |---|---|
-| They have Zoho (or similar) | Connect **theirs**. Manual at handover. |
-| They have nothing | **$100 add-on:** basic Zoho (or equivalent) for quotes/invoices, in their name. |
+| They have Zoho Invoice (or similar) | Connect **theirs**. Per-client connect in Phase 5. |
+| They have nothing | **$100 add-on:** basic Zoho Invoice (or equivalent) for quotes/invoices, in their name. See `QUOTE_CAPTURE_ZOHO_SETUP_100.md`. |
 | They want SYSBILT to run it ongoing | **Retainer only.** Not free ops. |
 
 Do not default to running every client inside SYSBILT's Zoho.
+
+**Phase 4 proof:** one manual script run creates an editable Quote in **SYSBILT’s** Zoho Invoice from sample landscaping lines. Not wired to the sandbox. Proof tooling: `scripts/automations/zoho/`. Setup checklist for the $100 add-on: `QUOTE_CAPTURE_ZOHO_SETUP_100.md`.
+
+**Phase 5 live path (proof install):** **OK 8 Aug 2026.** `/q/proof-landscapes` and embed `/embed/q/proof-landscapes`. Soft no for out-of-catalogue. On **See my quotation**, submit rebuilds the total server-side, creates Zoho Quote (SYSBILT org for proof), Stripe Checkout (full pay), visitor email (Resend) + SMS (Twilio), owner HubSpot note + Slack. Pay only opens the Checkout URL already returned. Local `npm run dev` serves `POST /api/quote-capture/submit` via Vite middleware. SMS may skip on Twilio trial until the recipient is verified. Per-client Zoho OAuth and Stripe Connect stay for the first real client handover. Sandbox `/demo/quote-capture` stays fake.
+
+**Phase 6 AI Concierge (sandbox-first, live port):** **OK 9 Aug 2026.** `/demo/quote-capture` entry choice: **Start the sample** (wizard) or **Talk it through** (Concierge). During the wizard, persistent **Ask about this** dock with wizard selection context. Server: `POST /api/quote-capture/concierge` (Gemini) constrained to the landscaping rate card. Explains concepts and helps choose, never invents prices. Soft no for out-of-catalogue. Clear simulated-business labelling on sandbox. **Live** `/q/proof-landscapes` (and embed) uses the same Concierge with `mode: live` and client business name.
+
+**Phase 7 outbound:** **OK 9 Aug 2026 (machine live; Email A/B copy refreshed 12 Aug 2026).** Tab **Quote Capture** on the live outbound sheet. Manual Lane → Wait → Ready → Gmail draft Email A (demo link `?trade=&name=`). Email B via Status `Ready B` → `/go/quote-capture`. Industry dropdown + Email A/B copy: `QUOTE_CAPTURE_OUTBOUND.md`. Deploy: `deploy-outbound-quote-capture-send.mjs` (+ Manual Lane router). Phase 8 list build needs SerpAPI free searches.
+
+Embed snippet:
+
+```html
+<iframe
+  src="https://sysbilt.com/embed/q/proof-landscapes"
+  title="Get a quote"
+  style="width:100%;min-height:900px;border:0;"
+></iframe>
+```
 
 ---
 
@@ -102,6 +136,7 @@ Do not default to running every client inside SYSBILT's Zoho.
 - No real trade-customer payment for the fake job.
 - After sample quote: CTA to buy **Quote Capture** from SYSBILT (full payment) + notify Felipe (Slack/SMS).
 - Never collect real end-customer data into production pipelines from the demo.
+- Never create a Zoho Quote from a sandbox run.
 
 ---
 
@@ -110,10 +145,10 @@ Do not default to running every client inside SYSBILT's Zoho.
 1. Cold email with personalised sandbox link.
 2. They feel Quote Capture.
 3. `/go/quote-capture` landing (same six-beat sales copy standard as strong `/go` pages).
-4. Pay → access wizard (platform, rate-card readiness, alerts, Zoho yes/no, AI add-on).
-5. Felipe calls: congratulate, book rate-card call.
+4. Pay → access wizard (platform, rate-card readiness, optional rate pack drop, alerts, quote system, AI add-on).
+5. Felipe calls: congratulate, book rate-card call (always).
 6. Build → install → live test → handover manual.
-7. Optional: Zoho $100 add-on, AI $600, Care retainer if they want us operating.
+7. Optional: basic quote-platform $100 add-on, AI $600, Care retainer if they want us operating.
 
 ---
 
@@ -136,9 +171,9 @@ We finish each phase and get Felipe's OK before starting the next. Full detail s
 | **0** | Brief + Pricing Master entry | Committed |
 | **1** | Landscaping sandbox `/demo/quote-capture` (weapon) | Felipe happy with the feel |
 | **2** | `/go/quote-capture` sales page + Stripe $2,800 | Felipe happy with sell page |
-| **3** | Access wizard after pay (platform, rate card, alerts, Zoho, AI) | Wizard feels right |
-| **4** | Zoho path (their account or $100 basic setup) | Quote lands editable in Zoho |
-| **5** | Live install engine (embed, Stripe full-pay, email+SMS, soft no) | First real client-ready path |
+| **3** | Access wizard after pay (platform, rate card, pack, alerts, quote system, AI) | Wizard feels right |
+| **4** | Zoho Invoice Quotes API path + $100 setup checklist | Editable Quote appears in SYSBILT Zoho Invoice (manual proof) |
+| **5** | Live install engine (embed, Stripe full-pay, email+SMS, soft no, Zoho) | First proof path at `/q/proof-landscapes` works end-to-end |
 | **6** | AI Concierge add-on | Chat on same rate card |
 | **7** | Outbound Google Sheet tab + Email A/B with demo links | Tab live in the machine |
 | **8** | First outbound batch (landscaping cluster) | Sends going |

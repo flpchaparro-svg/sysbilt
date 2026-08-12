@@ -60,6 +60,14 @@ const STATUS_VALUES = ['New', 'Audit', 'Auditing', 'Audited', 'Engage', 'Emailed
 
 /** Suggested niches for Run Queue data validation (set manually in Sheets). */
 const NICHE_SUGGESTIONS = [
+  'Landscapers',
+  'Landscaping',
+  'Fencing contractors',
+  'Retaining wall contractors',
+  'Paving contractors',
+  'Concreters',
+  'Tree services',
+  'Pool builders',
   'Dentists',
   'Psychologists',
   'Physiotherapists',
@@ -83,6 +91,7 @@ const SUBURB_COORDS = {
   newtown: [-33.8983, 151.1795],
   enmore: [-33.8995, 151.1708],
   petersham: [-33.895, 151.155],
+  mascot: [-33.933, 151.185],
   dulwich: [-33.9045, 151.138],
   'dulwich hill': [-33.9045, 151.138],
   leichhardt: [-33.8847, 151.1564],
@@ -1319,11 +1328,26 @@ Run Queue row was set back to Queued. Workflow will retry automatically after th
       },
     },
     {
+      id: uid(),
+      name: 'Wait Before Mark Done',
+      type: 'n8n-nodes-base.wait',
+      typeVersion: 1.1,
+      position: [2920, 80],
+      parameters: {
+        amount: 8,
+        unit: 'seconds',
+      },
+    },
+    {
       id: markDoneId,
       name: 'Mark Queue Done',
       type: 'n8n-nodes-base.googleSheets',
       typeVersion: 4.7,
-      position: [3000, 80],
+      position: [3120, 80],
+      // Sheets rate-limits after append+homepage scrapes; without retry the row stays Running forever.
+      retryOnFail: true,
+      maxTries: 5,
+      waitBetweenTries: 10000,
       credentials: {
         googleSheetsOAuth2Api: { id: GOOGLE_SHEETS_CRED_ID, name: GOOGLE_SHEETS_CRED_NAME },
       },
@@ -1381,6 +1405,9 @@ Run Queue row was set back to Queued. Workflow will retry automatically after th
 
 One Queued job per run. Results append to **Master Leads**.
 
+**If Status sticks on Running**
+The scrape often already worked. Check Master Leads. Set that row to Done by hand (do not re-Queue or you may duplicate). Mark Done now retries Sheets rate limits.
+
 **SerpAPI quota**
 Silent 24h pause, job stays Queued. Email only if it fails again after the pause.
 
@@ -1428,10 +1455,10 @@ Silent 24h pause, job stays Queued. Email only if it fails again after the pause
     'Should Alert Quota': {
       main: [
         [{ node: 'Quota Alert Email', type: 'main', index: 0 }],
-        [{ node: 'Mark Queue Done', type: 'main', index: 0 }],
+        [{ node: 'Wait Before Mark Done', type: 'main', index: 0 }],
       ],
     },
-    'Quota Alert Email': { main: [[{ node: 'Mark Queue Done', type: 'main', index: 0 }]] },
+    'Quota Alert Email': { main: [[{ node: 'Wait Before Mark Done', type: 'main', index: 0 }]] },
     'Trigger Read Once': { main: [[{ node: 'Read Sheet For Dedup', type: 'main', index: 0 }]] },
     'Read Sheet For Dedup': { main: [[{ node: 'Dedup New Rows', type: 'main', index: 0 }]] },
     'Dedup New Rows': { main: [[{ node: 'Has Rows To Append', type: 'main', index: 0 }]] },
@@ -1445,7 +1472,8 @@ Silent 24h pause, job stays Queued. Email only if it fails again after the pause
       Object.entries(scrape.connections).filter(([k]) => k !== 'Has Rows To Append'),
     ),
     'Append To Sheet': { main: [[{ node: 'Finish Queue Job', type: 'main', index: 0 }]] },
-    'Finish Queue Job': { main: [[{ node: 'Mark Queue Done', type: 'main', index: 0 }]] },
+    'Finish Queue Job': { main: [[{ node: 'Wait Before Mark Done', type: 'main', index: 0 }]] },
+    'Wait Before Mark Done': { main: [[{ node: 'Mark Queue Done', type: 'main', index: 0 }]] },
   };
 
   return {

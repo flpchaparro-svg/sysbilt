@@ -6,6 +6,7 @@ import {A11Y_PASS_STACK_VISUALS} from './liveCopy/a11y-pass-motion'
 import {WHATSAPP_SETUP_STACK_VISUALS} from './liveCopy/whatsapp-setup-motion'
 import {DM_REPLY_STACK_VISUALS} from './liveCopy/dm-reply-motion'
 import {STACK_VISUALS as QUOTE_FOLLOWUP_STACK_VISUALS} from './liveCopy/quote-followup-motion'
+import {STACK_VISUALS as QUOTE_CAPTURE_STACK_VISUALS} from './liveCopy/quote-capture-motion'
 import {STACK_VISUALS as NOSHOW_RESCUE_STACK_VISUALS} from './liveCopy/noshow-rescue-motion'
 import {STACK_VISUALS as INTAKE_FORMS_STACK_VISUALS} from './liveCopy/intake-forms-motion'
 import {INBOX_TRIAGE_STACK_VISUALS} from './liveCopy/inbox-triage-motion'
@@ -3556,6 +3557,7 @@ export function StackMotionRows({
     | 'whatsapp-setup'
     | 'dm-reply'
     | 'quote-followup'
+    | 'quote-capture'
     | 'noshow-rescue'
     | 'intake-forms'
     | 'inbox-triage'
@@ -3613,6 +3615,8 @@ export function StackMotionRows({
                                       ? DM_REPLY_STACK_VISUALS
                                     : variant === 'quote-followup'
                                       ? QUOTE_FOLLOWUP_STACK_VISUALS
+                                    : variant === 'quote-capture'
+                                      ? QUOTE_CAPTURE_STACK_VISUALS
                                     : variant === 'noshow-rescue'
                                       ? NOSHOW_RESCUE_STACK_VISUALS
                                     : variant === 'intake-forms'

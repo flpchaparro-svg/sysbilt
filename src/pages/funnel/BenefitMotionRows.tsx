@@ -6,6 +6,7 @@ import {A11Y_PASS_BENEFIT_VISUALS} from './liveCopy/a11y-pass-motion'
 import {WHATSAPP_SETUP_BENEFIT_VISUALS} from './liveCopy/whatsapp-setup-motion'
 import {DM_REPLY_BENEFIT_VISUALS} from './liveCopy/dm-reply-motion'
 import {BENEFIT_VISUALS as QUOTE_FOLLOWUP_BENEFIT_VISUALS} from './liveCopy/quote-followup-motion'
+import {BENEFIT_VISUALS as QUOTE_CAPTURE_BENEFIT_VISUALS} from './liveCopy/quote-capture-motion'
 import {BENEFIT_VISUALS as NOSHOW_RESCUE_BENEFIT_VISUALS} from './liveCopy/noshow-rescue-motion'
 import {BENEFIT_VISUALS as INTAKE_FORMS_BENEFIT_VISUALS} from './liveCopy/intake-forms-motion'
 import {INBOX_TRIAGE_BENEFIT_VISUALS} from './liveCopy/inbox-triage-motion'
@@ -4108,6 +4109,7 @@ export function BenefitMotionRows({
     | 'whatsapp-setup'
     | 'dm-reply'
     | 'quote-followup'
+    | 'quote-capture'
     | 'noshow-rescue'
     | 'intake-forms'
     | 'inbox-triage'
@@ -4165,6 +4167,8 @@ export function BenefitMotionRows({
                                       ? DM_REPLY_BENEFIT_VISUALS
                                     : variant === 'quote-followup'
                                       ? QUOTE_FOLLOWUP_BENEFIT_VISUALS
+                                    : variant === 'quote-capture'
+                                      ? QUOTE_CAPTURE_BENEFIT_VISUALS
                                     : variant === 'noshow-rescue'
                                       ? NOSHOW_RESCUE_BENEFIT_VISUALS
                                     : variant === 'intake-forms'

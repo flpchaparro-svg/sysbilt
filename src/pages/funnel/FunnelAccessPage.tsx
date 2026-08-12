@@ -19,6 +19,7 @@ import {
   Server,
   ShoppingBag,
   Sparkles,
+  Upload,
   Users,
   X,
 } from 'lucide-react'
@@ -62,6 +63,10 @@ import {
   type IntakeDestId,
   type SopHomeId,
   type InboxMailId,
+  type QcRateCardId,
+  type QcAlertId,
+  type QcQuoteSystemId,
+  type QcAiConciergeId,
 } from './funnelAccessTypes'
 
 const SCHEDULER_URL = 'https://meetings-ap1.hubspot.com/felipe-chaparro'
@@ -119,6 +124,11 @@ type StepId =
   | 'dmChannels'
   | 'quoteTool'
   | 'quoteTools'
+  | 'qcRateCard'
+  | 'qcRatePack'
+  | 'qcAlerts'
+  | 'qcQuoteSystem'
+  | 'qcAiConcierge'
   | 'intakeDest'
   | 'intakePurpose'
   | 'noshowTools'
@@ -300,6 +310,13 @@ const PHASES_QUOTE: {id: PhaseId; n: number; label: string}[] = [
   {id: 'done', n: 4, label: 'Done'},
 ]
 
+const PHASES_QUOTE_CAPTURE: {id: PhaseId; n: number; label: string}[] = [
+  {id: 'about', n: 1, label: 'About you'},
+  {id: 'site', n: 2, label: 'Your install'},
+  {id: 'access', n: 3, label: 'Access'},
+  {id: 'done', n: 4, label: 'Done'},
+]
+
 const PHASES_INTAKE: {id: PhaseId; n: number; label: string}[] = [
   {id: 'about', n: 1, label: 'About you'},
   {id: 'site', n: 2, label: 'Your intake'},
@@ -390,6 +407,7 @@ function phaseForStep(
     | 'whatsapp-setup'
     | 'dm-reply'
     | 'quote-followup'
+    | 'quote-capture'
     | 'noshow-rescue'
     | 'intake-forms'
     | 'inbox-triage'
@@ -607,6 +625,23 @@ function phaseForStep(
   }
   if (kind === 'quote-followup') {
     if (step === 'quoteTool' || step === 'quoteTools') {
+      return 'site'
+    }
+    return 'access'
+  }
+  if (kind === 'quote-capture') {
+    if (
+      step === 'website' ||
+      step === 'platform' ||
+      step === 'provider' ||
+      step === 'domainProvider' ||
+      step === 'hostingProvider' ||
+      step === 'qcRateCard' ||
+      step === 'qcRatePack' ||
+      step === 'qcAlerts' ||
+      step === 'qcQuoteSystem' ||
+      step === 'qcAiConcierge'
+    ) {
       return 'site'
     }
     return 'access'
@@ -1300,6 +1335,160 @@ function quoteAccessOptionsForTool(tool: QuoteToolId | null) {
       return [call, crmInvite, mailbox]
   }
 }
+
+const QC_RATE_CARD_OPTIONS: {
+  id: QcRateCardId
+  label: string
+  blurb: string
+  icon: React.ReactNode
+  unsure?: boolean
+}[] = [
+  {
+    id: 'ready',
+    label: 'Written and ready',
+    blurb: 'We have real rates written down. The interview still locks rules and edge cases.',
+    icon: <FileText className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'mostly',
+    label: 'Mostly clear',
+    blurb: 'Core jobs are priced. Variables, extras, and judgement calls need the interview.',
+    icon: <Check className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'need-call',
+    label: 'Not written down',
+    blurb: 'Prices live in our heads, or change by job. We build the card on the call.',
+    icon: <Phone className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'unsure',
+    label: 'Start from scratch',
+    blurb: 'We have not thought this through yet. Fine. We map it on the call.',
+    icon: <Sparkles className="w-full h-full" strokeWidth={1.25} />,
+    unsure: true,
+  },
+]
+
+const QC_RATE_PACK_ACCEPT =
+  '.pdf,.png,.jpg,.jpeg,.webp,.csv,.xlsx,.xls,.doc,.docx,.txt'
+const QC_RATE_PACK_MAX_FILES = 3
+const QC_RATE_PACK_MAX_BYTES = 1.5 * 1024 * 1024
+
+type QcRatePackFilePayload = {
+  name: string
+  mime: string
+  size: number
+  data: string
+}
+
+async function encodeQcRatePackFiles(files: File[]): Promise<QcRatePackFilePayload[]> {
+  const picked = files.slice(0, QC_RATE_PACK_MAX_FILES)
+  const out: QcRatePackFilePayload[] = []
+  for (const file of picked) {
+    if (file.size > QC_RATE_PACK_MAX_BYTES) continue
+    const buf = await file.arrayBuffer()
+    const bytes = new Uint8Array(buf)
+    let binary = ''
+    for (let i = 0; i < bytes.length; i += 1) {
+      binary += String.fromCharCode(bytes[i]!)
+    }
+    out.push({
+      name: file.name.slice(0, 200),
+      mime: file.type || 'application/octet-stream',
+      size: file.size,
+      data: btoa(binary),
+    })
+  }
+  return out
+}
+
+const QC_ALERT_OPTIONS: {
+  id: QcAlertId
+  label: string
+  blurb: string
+  icon: React.ReactNode
+  unsure?: boolean
+}[] = [
+  {
+    id: 'email',
+    label: 'Email',
+    blurb: 'Priced-lead alerts land in an inbox your team watches.',
+    icon: <Mail className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'sms',
+    label: 'SMS',
+    blurb: 'Text alerts when a lead finishes with a price.',
+    icon: <Phone className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'both',
+    label: 'Email and SMS',
+    blurb: 'Both channels for priced-lead alerts.',
+    icon: <MessageCircle className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'other',
+    label: 'Other',
+    blurb: 'Tell us in notes how alerts should reach you.',
+    icon: <LayoutTemplate className="w-full h-full" strokeWidth={1.25} />,
+  },
+]
+
+const QC_QUOTE_SYSTEM_OPTIONS: {
+  id: QcQuoteSystemId
+  label: string
+  blurb: string
+  icon: React.ReactNode
+  unsure?: boolean
+}[] = [
+  {
+    id: 'have',
+    label: 'Already have one',
+    blurb: 'We already have a quote or invoice system.',
+    icon: <Server className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'need-setup',
+    label: 'Need basic setup',
+    blurb: 'We need a basic setup (+$100, can confirm later).',
+    icon: <Box className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'unsure',
+    label: 'Not sure yet',
+    blurb: 'We will confirm on the rate-card call.',
+    icon: <Sparkles className="w-full h-full" strokeWidth={1.25} />,
+    unsure: true,
+  },
+]
+
+const QC_AI_CONCIERGE_OPTIONS: {
+  id: QcAiConciergeId
+  label: string
+  blurb: string
+  icon: React.ReactNode
+}[] = [
+  {
+    id: 'yes',
+    label: 'Add AI Concierge',
+    blurb: 'Add AI Concierge (+$600, can confirm later).',
+    icon: <Sparkles className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'no',
+    label: 'Wizard only',
+    blurb: 'Wizard only for now.',
+    icon: <LayoutTemplate className="w-full h-full" strokeWidth={1.25} />,
+  },
+  {
+    id: 'later',
+    label: 'Decide later',
+    blurb: 'Decide after the rate-card call.',
+    icon: <Calendar className="w-full h-full" strokeWidth={1.25} />,
+  },
+]
 
 const INTAKE_DEST_OPTIONS: {
   id: IntakeDestId
@@ -3414,6 +3603,7 @@ function helpForStep(
     isWhatsappSetup?: boolean
     isDmReply?: boolean
     isQuoteFollowup?: boolean
+    isQuoteCapture?: boolean
     isIntakeForms?: boolean
     isSopPlaybook?: boolean
     isInboxTriage?: boolean
@@ -3437,6 +3627,8 @@ function helpForStep(
             ? 'A few plain questions about you and your Meta DMs so we can begin. No tech degree needed. If a later step feels unclear, open Help again.'
           : opts?.isQuoteFollowup
             ? 'A few plain questions about you and your quote path so we can begin. No tech degree needed. If a later step feels unclear, open Help again.'
+          : opts?.isQuoteCapture
+            ? 'A few plain questions about you, your site, and how quoting should work so we can begin. No tech degree needed. If a later step feels unclear, open Help again.'
           : opts?.isIntakeForms
             ? 'A few plain questions about you and the intake path so we can begin. No tech degree needed. If a later step feels unclear, open Help again.'
           : opts?.isSopPlaybook
@@ -3467,6 +3659,12 @@ function helpForStep(
                 'About you: name, email, business',
                 'Your quotes: where they live, how follow-up works now',
                 'Access: the easiest way into that tool',
+              ]
+          : opts?.isQuoteCapture
+            ? [
+                'About you: name, email, business',
+                'Your install: site URL, platform, rate card, alerts, quote system, AI Concierge',
+                'Access: the easiest way into the site',
               ]
           : opts?.isIntakeForms
             ? [
@@ -3571,6 +3769,31 @@ function helpForStep(
       return {
         title: 'How follow-up works now',
         body: 'What happens after a quote goes out, and where the chase stalls. A short honest note is enough.',
+      }
+    case 'qcRateCard':
+      return {
+        title: 'Rate card readiness',
+        body: 'We always run a short rate-card interview. This step only tells us how ready your prices are today. Many trades do not have clean numbers yet. That is fine.',
+      }
+    case 'qcRatePack':
+      return {
+        title: 'Rate pack for the interview',
+        body: 'Optional. Drop a price list, spreadsheet, rough notes, or paste a Drive link. Nothing handy is fine. We sort it on the call.',
+      }
+    case 'qcAlerts':
+      return {
+        title: 'Priced-lead alerts',
+        body: 'When someone finishes the wizard with a price, how should your team get notified? Pick Other if you need something different and tell us in notes.',
+      }
+    case 'qcQuoteSystem':
+      return {
+        title: 'Quote or invoice system',
+        body: 'Whether you already have a tool for quotes and invoices, or need a basic setup we can add. Not sure is fine.',
+      }
+    case 'qcAiConcierge':
+      return {
+        title: 'AI Concierge add-on',
+        body: 'Optional chat layer on top of the wizard. You can confirm the add-on after the rate-card call if you pick Decide later.',
       }
     case 'intakeDest':
       return {
@@ -4263,6 +4486,14 @@ const FunnelAccessPage: React.FC = () => {
   const [whatsappStatus, setWhatsappStatus] = useState<WhatsappStatusId | null>(null)
   const [dmPlatform, setDmPlatform] = useState<DmPlatformId | null>(null)
   const [quoteTool, setQuoteTool] = useState<QuoteToolId | null>(null)
+  const [qcRateCard, setQcRateCard] = useState<QcRateCardId | null>(null)
+  const [qcRatePackNotes, setQcRatePackNotes] = useState('')
+  const [qcRatePackFiles, setQcRatePackFiles] = useState<File[]>([])
+  const [qcRatePackError, setQcRatePackError] = useState<string | null>(null)
+  const qcRatePackFileRef = useRef<HTMLInputElement>(null)
+  const [qcAlerts, setQcAlerts] = useState<QcAlertId | null>(null)
+  const [qcQuoteSystem, setQcQuoteSystem] = useState<QcQuoteSystemId | null>(null)
+  const [qcAiConcierge, setQcAiConcierge] = useState<QcAiConciergeId | null>(null)
   const [intakeDest, setIntakeDest] = useState<IntakeDestId | null>(null)
   const [inboxMail, setInboxMail] = useState<InboxMailId | null>(null)
   const [inboxOwner, setInboxOwner] = useState('')
@@ -4358,6 +4589,7 @@ const FunnelAccessPage: React.FC = () => {
   const isWhatsappSetup = product === 'whatsapp-setup'
   const isDmReply = product === 'dm-reply'
   const isQuoteFollowup = product === 'quote-followup'
+  const isQuoteCapture = product === 'quote-capture'
   const isNoshowRescue = product === 'noshow-rescue'
   const isIntakeForms = product === 'intake-forms'
   const isInboxTriage = product === 'inbox-triage'
@@ -4398,6 +4630,7 @@ const FunnelAccessPage: React.FC = () => {
   const usesWhatsappWizard = isWhatsappSetup
   const usesDmWizard = isDmReply
   const usesQuoteWizard = isQuoteFollowup
+  const usesQuoteCaptureWizard = isQuoteCapture
   const usesIntakeWizard = isIntakeForms
   const usesSopWizard = isSopPlaybook
   const usesInboxWizard = isInboxTriage
@@ -4431,6 +4664,7 @@ const FunnelAccessPage: React.FC = () => {
     | 'whatsapp-setup'
     | 'dm-reply'
     | 'quote-followup'
+    | 'quote-capture'
     | 'noshow-rescue'
     | 'intake-forms'
     | 'inbox-triage'
@@ -4480,6 +4714,8 @@ const FunnelAccessPage: React.FC = () => {
                             ? 'whatsapp-setup'
                           : usesDmWizard
                             ? 'dm-reply'
+                          : usesQuoteCaptureWizard
+                            ? 'quote-capture'
                           : usesQuoteWizard
                             ? 'quote-followup'
                           : usesIntakeWizard
@@ -4537,6 +4773,8 @@ const FunnelAccessPage: React.FC = () => {
                           ? PHASES_WHATSAPP
                         : usesDmWizard
                           ? PHASES_DM
+                        : usesQuoteCaptureWizard
+                          ? PHASES_QUOTE_CAPTURE
                         : usesQuoteWizard
                           ? PHASES_QUOTE
                         : usesIntakeWizard
@@ -4875,6 +5113,32 @@ const FunnelAccessPage: React.FC = () => {
         'done',
       ]
     }
+    if (usesQuoteCaptureWizard) {
+      const base: StepId[] = [
+        'product',
+        'name',
+        'email',
+        'business',
+        'website',
+        'platform',
+        'provider',
+      ]
+      if (sameProvider === 'no') {
+        base.push('domainProvider', 'hostingProvider')
+      }
+      base.push(
+        'qcRateCard',
+        'qcRatePack',
+        'qcAlerts',
+        'qcQuoteSystem',
+        'qcAiConcierge',
+        'access',
+        'accessDetail',
+        'notes',
+        'done',
+      )
+      return base
+    }
     if (usesQuoteWizard) {
       return [
         'product',
@@ -5072,6 +5336,7 @@ const FunnelAccessPage: React.FC = () => {
     usesMediaCleanWizard,
     usesWhatsappWizard,
     usesDmWizard,
+    usesQuoteCaptureWizard,
     usesQuoteWizard,
     usesIntakeWizard,
     usesSopWizard,
@@ -5101,6 +5366,7 @@ const FunnelAccessPage: React.FC = () => {
     isWhatsappSetup,
     isDmReply,
     isQuoteFollowup,
+    isQuoteCapture,
     isIntakeForms,
     isSopPlaybook,
     isInboxTriage,
@@ -5200,6 +5466,19 @@ const FunnelAccessPage: React.FC = () => {
       }
     } else if (usesDmWizard) {
       if (!dmPlatform || scopeText.trim().length < 8) {
+        setError('Something is missing. Use Back to check your answers.')
+        return
+      }
+    } else if (usesQuoteCaptureWizard) {
+      if (
+        !isValidWebsite(website) ||
+        !platform ||
+        !sameProvider ||
+        !qcRateCard ||
+        !qcAlerts ||
+        !qcQuoteSystem ||
+        !qcAiConcierge
+      ) {
         setError('Something is missing. Use Back to check your answers.')
         return
       }
@@ -5483,6 +5762,27 @@ const FunnelAccessPage: React.FC = () => {
             business: business.trim(),
             dmPlatform: dmPlatform!,
             dmChannels: scopeText.trim(),
+            accessPath,
+            accessDetail: accessDetail.trim(),
+            notes: notes.trim(),
+          }
+      : usesQuoteCaptureWizard
+        ? {
+            product,
+            name: name.trim(),
+            email: email.trim(),
+            business: business.trim(),
+            website: website.trim(),
+            platform: platform!,
+            sameProvider: sameProvider!,
+            domainProvider: domainProvider.trim(),
+            hostingProvider: hostingProvider.trim(),
+            qcRateCard: qcRateCard!,
+            qcRatePackNotes: qcRatePackNotes.trim(),
+            qcRatePackFiles: await encodeQcRatePackFiles(qcRatePackFiles),
+            qcAlerts: qcAlerts!,
+            qcQuoteSystem: qcQuoteSystem!,
+            qcAiConcierge: qcAiConcierge!,
             accessPath,
             accessDetail: accessDetail.trim(),
             notes: notes.trim(),
@@ -6013,6 +6313,26 @@ const FunnelAccessPage: React.FC = () => {
     window.setTimeout(() => goNext('quoteTool'), 200)
   }
 
+  function selectQcRateCard(id: QcRateCardId) {
+    setQcRateCard(id)
+    window.setTimeout(() => goNext('qcRateCard'), 200)
+  }
+
+  function selectQcAlerts(id: QcAlertId) {
+    setQcAlerts(id)
+    window.setTimeout(() => goNext('qcAlerts'), 200)
+  }
+
+  function selectQcQuoteSystem(id: QcQuoteSystemId) {
+    setQcQuoteSystem(id)
+    window.setTimeout(() => goNext('qcQuoteSystem'), 200)
+  }
+
+  function selectQcAiConcierge(id: QcAiConciergeId) {
+    setQcAiConcierge(id)
+    window.setTimeout(() => goNext('qcAiConcierge'), 200)
+  }
+
   function selectIntakeDest(id: IntakeDestId) {
     setIntakeDest(id)
     setAccessPath(null)
@@ -6126,6 +6446,8 @@ const FunnelAccessPage: React.FC = () => {
         setStep('trackingStatus')
       } else if (usesSiteChatWizard) {
         setStep('chatTopics')
+      } else if (usesQuoteCaptureWizard) {
+        setStep('qcRateCard')
       } else if (usesMediaCleanWizard) {
         setStep('mediaTargets')
       } else if (usesBatchWizard && batchScopeField) {
@@ -6492,7 +6814,7 @@ const FunnelAccessPage: React.FC = () => {
               />
             ) : null}
 
-            {step === 'quoteTool' ? (
+            {usesQuoteWizard && step === 'quoteTool' ? (
               <>
                 <QuestionTitle>
                   Where do <span style={{color: RED}}>quotes</span> live today?
@@ -6528,6 +6850,204 @@ const FunnelAccessPage: React.FC = () => {
                 disabled={scopeText.trim().length < 8}
                 onNext={() => goNext('quoteTools')}
               />
+            ) : null}
+
+            {usesQuoteCaptureWizard && step === 'qcRateCard' ? (
+              <>
+                <QuestionTitle>
+                  How ready is your <span style={{color: RED}}>rate card</span>?
+                </QuestionTitle>
+                <p className="font-sans text-dark/55 mb-3 max-w-2xl leading-relaxed">
+                  We always run a short rate-card interview. Many owners do not have clean
+                  numbers yet. That is fine. These answers only tell us how ready you are.
+                </p>
+                <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
+                  Hover a card, then Select.
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+                  {QC_RATE_CARD_OPTIONS.map((opt) => (
+                    <div key={opt.id}>
+                      <SelectCard
+                        selected={qcRateCard === opt.id}
+                        onSelect={() => selectQcRateCard(opt.id)}
+                        title={opt.label}
+                        blurb={opt.blurb}
+                        icon={opt.icon}
+                        unsure={opt.unsure}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : null}
+
+            {usesQuoteCaptureWizard && step === 'qcRatePack' ? (
+              <div className="max-w-lg mx-auto text-center py-4">
+                <QuestionTitle>
+                  Anything for the <span style={{color: RED}}>rate-card call</span>?
+                </QuestionTitle>
+                <p className="font-sans text-dark/55 mb-8 leading-relaxed">
+                  Drop a price list, spreadsheet, rough notes, or paste a Drive link. Nothing
+                  handy is fine. We sort it on the call.
+                </p>
+                <textarea
+                  className={`${inputClass} min-h-[120px] resize-y text-base`}
+                  value={qcRatePackNotes}
+                  onChange={(e) => setQcRatePackNotes(e.target.value)}
+                  placeholder={
+                    'e.g. Drive link, or TV install is $X base then cable length and wall type change it…'
+                  }
+                />
+                <button
+                  type="button"
+                  onClick={() => qcRatePackFileRef.current?.click()}
+                  className="mt-5 flex w-full flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-dark/20 bg-white px-6 py-10 text-center transition-colors hover:border-[#E21E3F]/50 shadow-[0_8px_24px_-18px_rgba(26,26,26,0.28)]"
+                >
+                  <Upload className="h-7 w-7 text-dark/35" strokeWidth={1.5} />
+                  <span className="font-sans text-[15px] font-semibold text-dark">
+                    {qcRatePackFiles.length
+                      ? `${qcRatePackFiles.length} file${qcRatePackFiles.length > 1 ? 's' : ''} ready`
+                      : 'Drop a document'}
+                  </span>
+                  <span className="font-sans text-[13px] text-dark/45">
+                    PDF, spreadsheet, image, or notes. Up to 3 files, 1.5 MB each.
+                    Bigger files: paste a Drive link above.
+                  </span>
+                </button>
+                <input
+                  ref={qcRatePackFileRef}
+                  type="file"
+                  className="hidden"
+                  accept={QC_RATE_PACK_ACCEPT}
+                  multiple
+                  onChange={(e) => {
+                    const list = e.target.files ? Array.from(e.target.files) : []
+                    const next = [...qcRatePackFiles, ...list].slice(0, QC_RATE_PACK_MAX_FILES)
+                    const oversized = next.filter((f) => f.size > QC_RATE_PACK_MAX_BYTES)
+                    if (oversized.length) {
+                      setQcRatePackError(
+                        'One or more files are over 1.5 MB. Remove them or send a link instead.',
+                      )
+                    } else {
+                      setQcRatePackError(null)
+                    }
+                    setQcRatePackFiles(next.filter((f) => f.size <= QC_RATE_PACK_MAX_BYTES))
+                    e.target.value = ''
+                  }}
+                />
+                {qcRatePackFiles.length > 0 ? (
+                  <ul className="mt-4 space-y-2 text-left">
+                    {qcRatePackFiles.map((f) => (
+                      <li
+                        key={`${f.name}-${f.size}-${f.lastModified}`}
+                        className="flex items-center justify-between rounded-xl border border-dark/10 bg-white px-4 py-3 font-sans text-sm text-dark"
+                      >
+                        <span className="truncate pr-3">{f.name}</span>
+                        <button
+                          type="button"
+                          className="text-dark/40 hover:text-dark"
+                          onClick={() =>
+                            setQcRatePackFiles(qcRatePackFiles.filter((x) => x !== f))
+                          }
+                          aria-label={`Remove ${f.name}`}
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+                {qcRatePackError ? (
+                  <p className="mt-3 font-sans text-sm text-[#9A1730]">{qcRatePackError}</p>
+                ) : null}
+                <div className="mt-8 flex justify-center">
+                  <button
+                    type="button"
+                    onClick={() => goNext('qcRatePack')}
+                    className="inline-flex items-center gap-2 font-mono font-bold uppercase tracking-[0.16em] text-xs px-10 py-4 text-white transition-opacity"
+                    style={{backgroundColor: INK}}
+                  >
+                    {qcRatePackNotes.trim() || qcRatePackFiles.length
+                      ? 'Continue'
+                      : 'Nothing handy'}
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            ) : null}
+
+            {usesQuoteCaptureWizard && step === 'qcAlerts' ? (
+              <>
+                <QuestionTitle>
+                  How should we <span style={{color: RED}}>alert you</span> on priced leads?
+                </QuestionTitle>
+                <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
+                  Hover a card, then Select. Pick Other if you need something different.
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+                  {QC_ALERT_OPTIONS.map((opt) => (
+                    <div key={opt.id}>
+                      <SelectCard
+                        selected={qcAlerts === opt.id}
+                        onSelect={() => selectQcAlerts(opt.id)}
+                        title={opt.label}
+                        blurb={opt.blurb}
+                        icon={opt.icon}
+                        unsure={opt.unsure}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : null}
+
+            {usesQuoteCaptureWizard && step === 'qcQuoteSystem' ? (
+              <>
+                <QuestionTitle>
+                  Do you have a <span style={{color: RED}}>quote or invoice system</span>?
+                </QuestionTitle>
+                <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
+                  Hover a card, then Select. Not sure is fine.
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+                  {QC_QUOTE_SYSTEM_OPTIONS.map((opt) => (
+                    <div key={opt.id}>
+                      <SelectCard
+                        selected={qcQuoteSystem === opt.id}
+                        onSelect={() => selectQcQuoteSystem(opt.id)}
+                        title={opt.label}
+                        blurb={opt.blurb}
+                        icon={opt.icon}
+                        unsure={opt.unsure}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : null}
+
+            {usesQuoteCaptureWizard && step === 'qcAiConcierge' ? (
+              <>
+                <QuestionTitle>
+                  Add <span style={{color: RED}}>AI Concierge</span>?
+                </QuestionTitle>
+                <p className="font-sans text-dark/55 mb-6 max-w-2xl leading-relaxed">
+                  Optional chat layer on top of the wizard. Hover a card, then Select.
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+                  {QC_AI_CONCIERGE_OPTIONS.map((opt) => (
+                    <div key={opt.id}>
+                      <SelectCard
+                        selected={qcAiConcierge === opt.id}
+                        onSelect={() => selectQcAiConcierge(opt.id)}
+                        title={opt.label}
+                        blurb={opt.blurb}
+                        icon={opt.icon}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </>
             ) : null}
 
             {step === 'intakeDest' ? (

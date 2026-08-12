@@ -31,6 +31,7 @@ const PRODUCT_CODES = new Set([
   'whatsapp-setup',
   'dm-reply',
   'quote-followup',
+  'quote-capture',
   'noshow-rescue',
   'intake-forms',
   'inbox-triage',
@@ -68,6 +69,7 @@ const PRODUCT_LABELS: Record<string, string> = {
   'whatsapp-setup': 'WhatsApp Business Setup',
   'dm-reply': 'DM Reply System',
   'quote-followup': 'Quote Follow-Up Autopilot',
+  'quote-capture': 'Quote Capture',
   'noshow-rescue': 'No-Show Rescue',
   'intake-forms': 'Intake Form Pack',
   'inbox-triage': 'Inbox Triage Assistant',
@@ -106,6 +108,7 @@ const PRODUCT_AMOUNTS: Record<string, string> = {
   'whatsapp-setup': '950',
   'dm-reply': '1100',
   'quote-followup': '1450',
+  'quote-capture': '2800',
   'noshow-rescue': '750',
   'intake-forms': '1200',
   'inbox-triage': '2200',
@@ -163,6 +166,10 @@ const DM_PLATFORM = new Set(['instagram', 'facebook', 'both', 'unsure']);
 const DM_ACCESS = new Set(['invite', 'admin', 'provider', 'call']);
 const QUOTE_TOOL = new Set(['hubspot', 'pipedrive', 'sheets', 'email', 'other', 'unsure']);
 const QUOTE_ACCESS = new Set(['invite', 'crm', 'provider', 'call']);
+const QC_RATE_CARD = new Set(['ready', 'mostly', 'need-call', 'unsure']);
+const QC_ALERTS = new Set(['email', 'sms', 'both', 'other']);
+const QC_QUOTE_SYSTEM = new Set(['have', 'need-setup', 'unsure']);
+const QC_AI_CONCIERGE = new Set(['yes', 'no', 'later']);
 const INTAKE_DEST = new Set(['crm', 'email', 'sheets', 'other', 'unsure']);
 const INTAKE_ACCESS = new Set(['invite', 'crm', 'provider', 'form-provider', 'call']);
 const SOP_HOME = new Set(['drive', 'notion', 'confluence', 'docs', 'other', 'unsure']);
@@ -307,11 +314,42 @@ type Body = {
   lastPostWhen?: unknown;
   hourReady?: unknown;
   contentGoal?: unknown;
+  qcRateCard?: unknown;
+  qcRatePackNotes?: unknown;
+  qcRatePackFiles?: unknown;
+  qcAlerts?: unknown;
+  qcQuoteSystem?: unknown;
+  qcAiConcierge?: unknown;
 };
 
 function str(v: unknown, max = 500): string {
   if (typeof v !== 'string') return '';
   return v.trim().slice(0, max);
+}
+
+type QcRatePackFile = {
+  name: string;
+  mime: string;
+  size: number;
+  data: string;
+};
+
+function parseQcRatePackFiles(v: unknown): QcRatePackFile[] {
+  if (!Array.isArray(v)) return [];
+  const out: QcRatePackFile[] = [];
+  for (const item of v.slice(0, 3)) {
+    if (!item || typeof item !== 'object') continue;
+    const row = item as Record<string, unknown>;
+    const name = str(row.name, 200);
+    const mime = str(row.mime, 120) || 'application/octet-stream';
+    const size = typeof row.size === 'number' && Number.isFinite(row.size) ? row.size : 0;
+    const data = typeof row.data === 'string' ? row.data : '';
+    if (!name || !data || size <= 0 || size > 1.5 * 1024 * 1024) continue;
+    // Rough base64 length guard (~4/3 of bytes + padding)
+    if (data.length > Math.ceil((1.5 * 1024 * 1024 * 4) / 3) + 8) continue;
+    out.push({ name, mime, size, data });
+  }
+  return out;
 }
 
 function onpageUrlLines(value: string): string[] {
@@ -693,6 +731,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const lastPostWhen = str(body.lastPostWhen, 120);
   const hourReady = str(body.hourReady, 120);
   const contentGoal = str(body.contentGoal, 200);
+  const qcRateCard = str(body.qcRateCard, 40);
+  const qcRatePackNotes = str(body.qcRatePackNotes, 4000);
+  const qcRatePackFiles = parseQcRatePackFiles(body.qcRatePackFiles);
+  const qcAlerts = str(body.qcAlerts, 40);
+  const qcQuoteSystem = str(body.qcQuoteSystem, 40);
+  const qcAiConcierge = str(body.qcAiConcierge, 40);
 
   if (!PRODUCT_CODES.has(product)) {
     res.status(400).json({ error: 'Invalid product' });
@@ -722,6 +766,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const isWhatsappSetup = product === 'whatsapp-setup';
   const isDmReply = product === 'dm-reply';
   const isQuoteFollowup = product === 'quote-followup';
+  const isQuoteCapture = product === 'quote-capture';
   const isNoshowRescue = product === 'noshow-rescue';
   const isIntakeForms = product === 'intake-forms';
   const isInboxTriage = product === 'inbox-triage';
@@ -1037,6 +1082,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     }
     if (quoteTools.length < 8) {
       res.status(400).json({ error: 'Missing how follow-up works now' });
+      return;
+    }
+  } else if (isQuoteCapture) {
+    if (website.length < 4) {
+      res.status(400).json({ error: 'Missing website' });
+      return;
+    }
+    if (!PLATFORMS.has(platform) || !SAME.has(sameProvider) || !ACCESS.has(accessPath)) {
+      res.status(400).json({ error: 'Invalid platform, provider, or access path' });
+      return;
+    }
+    if (
+      !QC_RATE_CARD.has(qcRateCard) ||
+      !QC_ALERTS.has(qcAlerts) ||
+      !QC_QUOTE_SYSTEM.has(qcQuoteSystem) ||
+      !QC_AI_CONCIERGE.has(qcAiConcierge)
+    ) {
+      res.status(400).json({ error: 'Invalid quote capture setup answers' });
       return;
     }
   } else if (isIntakeForms) {
@@ -1501,6 +1564,32 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
             ]
               .filter(Boolean)
               .join('\n')
+        : isQuoteCapture
+          ? [
+              `Funnel access form — ${product}`,
+              `Business: ${business}`,
+              `Website: ${website}`,
+              `Rate card: ${qcRateCard}`,
+              qcRatePackNotes ? `Rate pack notes:\n${qcRatePackNotes}` : null,
+              qcRatePackFiles.length
+                ? `Rate pack files (${qcRatePackFiles.length}): ${qcRatePackFiles
+                    .map((f) => f.name)
+                    .join(', ')}`
+                : 'Rate pack files: none',
+              `Alerts: ${qcAlerts}`,
+              `Quote system: ${qcQuoteSystem}`,
+              `AI Concierge: ${qcAiConcierge}`,
+              `Platform: ${platform}`,
+              `Domain + hosting same provider: ${sameProvider}`,
+              domainProvider ? `Domain provider: ${domainProvider}` : null,
+              hostingProvider ? `Hosting provider: ${hostingProvider}` : null,
+              `Access path: ${accessPath}`,
+              accessDetail ? `Access notes:\n${accessDetail}` : null,
+              notes ? `Other notes:\n${notes}` : null,
+              `Submitted: ${new Date().toISOString()}`,
+            ]
+              .filter(Boolean)
+              .join('\n')
         : isIntakeForms
           ? [
               `Funnel access form — ${product}`,
@@ -1729,6 +1818,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     lastPostWhen: lastPostWhen || undefined,
     hourReady: hourReady || undefined,
     contentGoal: contentGoal || undefined,
+    qcRateCard: qcRateCard || undefined,
+    qcRatePackNotes: qcRatePackNotes || undefined,
+    qcRatePackFiles: qcRatePackFiles.length
+      ? qcRatePackFiles.map((f) => ({
+          name: f.name,
+          mime: f.mime,
+          size: f.size,
+          data: f.data,
+        }))
+      : undefined,
+    qcAlerts: qcAlerts || undefined,
+    qcQuoteSystem: qcQuoteSystem || undefined,
+    qcAiConcierge: qcAiConcierge || undefined,
     submittedAt: new Date().toISOString(),
   };
 
@@ -1853,7 +1955,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
                               ? `DM: ${dmPlatform} · ${dmChannels.slice(0, 60)}`
                             : isQuoteFollowup
                               ? `Quotes: ${quoteTool} · ${quoteTools.slice(0, 60)}`
-                            : isIntakeForms
+                            : isQuoteCapture
+                              ? `QC: ${website} · rate ${qcRateCard} · pack ${
+                                  qcRatePackFiles.length
+                                    ? `${qcRatePackFiles.length} file${qcRatePackFiles.length > 1 ? 's' : ''}`
+                                    : qcRatePackNotes
+                                      ? 'notes'
+                                      : 'none'
+                                } · alerts ${qcAlerts} · system ${qcQuoteSystem} · AI ${qcAiConcierge}`
+                              : isIntakeForms
                               ? `Intake: ${intakeDest} · ${intakePurpose.slice(0, 60)}`
                             : isSopPlaybook
                               ? `Jobs: ${sopJobs.slice(0, 50)} · Expert: ${sopExpert.slice(0, 40)} · Home: ${sopHome}`
