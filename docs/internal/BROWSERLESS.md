@@ -146,3 +146,5 @@ docker rm -f sysbilt-browserless
 - Postiz secrets pattern: `~/.config/sysbilt/postiz-secrets.env`
 - Tunnel (n8n + Postiz only): `~/.cloudflared/config.yml` — Browserless must stay off this list
 - Content lanes that will call this later: Industry News cards (LinkedIn), then Website News landscape cards
+- Lane 3 writing brief (locked): `docs/internal/LANE3_INDUSTRY_NEWS_BRIEF.md`
+- Lane 3 card template: `scripts/automations/social/cards/lane3-dot-grid.html`

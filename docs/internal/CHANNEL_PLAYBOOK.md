@@ -332,6 +332,12 @@ The scheduler is **Postiz** (self-hosted at postiz.sysbilt.com). Active channels
 - **Instagram and Facebook: the link goes in the bio.** There's no clickable link in the caption, so the caption closes with "link in bio". Do not write a first comment for Instagram or Facebook.
 - **`#sysbilt` is mandatory on every post, every platform.** It's the brand tag that ties the whole feed together. Beyond it, 3 to 5 hashtags, lowercase, mixing a business tag, the topic or tool, and a location (Australia or Sydney).
 
+## Caption spacing (the rule that never bends)
+
+- **Never a wall of text.** Social captions on every platform use short paragraphs with a blank line between each one.
+- One or two sentences per paragraph. Usually 3 to 6 paragraphs for LinkedIn. Instagram stays shorter but still breaks.
+- If a draft arrives as one block, split it before it ships. This applies to Lane 3, toolkit, blog, company, and personal posts.
+
 ## The three static formats
 
 Every social piece is one of three things. The agent (or Felipe) picks which one the content is, then lays it out.

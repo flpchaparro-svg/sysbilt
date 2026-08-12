@@ -37,6 +37,7 @@ Deploy and guide scripts load the API key from `.env.local` (`cursor-mcp=` or `N
 | `JU7VFyEcCHKU0ckl` | SYSBILT - Social Distribute | UNVERIFIED | Execute Workflow | Sanity news → captions → Postiz schedule (LinkedIn/Facebook) |
 | `36hxhyRRWoRgIMgz` | SYSBILT - Social Test (webhook) | UNVERIFIED | Webhook `sysbilt-social-test` | Manual test: pull Sanity news → call Social Distribute |
 | `2mtOhfqD5DRiXR7T` | SYSBILT - LinkedIn → Instagram Mirror | UNVERIFIED | Schedule (15 min) + Webhook `sysbilt-li-ig-mirror` | Mirror Felipe LinkedIn Postiz posts to Instagram |
+| `LWXR6m6QnEWWgyu6` | SYSBILT - Lane 3 Industry News | Active† (deployed with `--activate`) | Webhook `sysbilt-lane3` | Article URL/paste → DeepSeek brief → Browserless dark-dot card → Postiz **draft** on personal LinkedIn |
 | `Lph4ik3Y6VMhuYHV` | Newsletter Welcome | UNVERIFIED | Schedule | New HubSpot newsletter subscribers → welcome email (patched for guide/DM sources) |
 | `5i6sz7pSUvVFiNql` | Deal Stage Automations | Active† | Schedule | HubSpot deal stages → stage-appropriate Gmail |
 | `20NfO5zmf4sHTUJJ` | Sybil Chat Logger | UNVERIFIED | Webhook | Sybil chat events → Google Sheet |
@@ -135,7 +136,7 @@ Keep new SYSBILT workflows under the `SYSBILT -` prefix and separate experimenta
 
 ## 6. Outbound engine (A → Speed Fix / B → C)
 
-Google Sheet is the **source of truth** between workflows. **Master Leads** columns **A1:O5000** (row 1 headers; **LH Mobile** in column O). Status values include: `New`, `Audit`, `Auditing`, `Audited`, `Engage`, `Emailed`, `Replied`, `Dead`. **Run Queue** tab drives List Builder (Niche, Suburb, Status=`Queued`/`Running`/`Done`/`Failed`). **Speed Fix** tab columns: Business Name, Suburb, Website, Email, Phone, LH Mobile, Status (`Ready` / `Emailed` / `Replied` / `Dead`), Maps ID, Notes. Gate: **LH Mobile &lt; 65**.
+Google Sheet is the **source of truth** between workflows. **Master Leads** columns **A1:O5000** (row 1 headers; **LH Mobile** in column O). Status values include: `New`, `Audit`, `Auditing`, `Audited`, `Engage`, `Emailed`, `Replied`, `Dead`. **Run Queue** tab drives List Builder (Niche, Suburb, Status=`Queued`/`Running`/`Done`/`Failed`). **Speed Fix** tab columns: Business Name, Suburb, Website, Email, Phone, LH Mobile, Status (`Wait` / `Ready` / `Emailed` / `Replied` / `Dead`), Maps ID, Notes. Gate: **LH Mobile &lt; 65**. New Speed Fix rows land as **Wait**; flip **Wait → Ready** when you want a Gmail draft.
 
 **API quota (PageSpeed + SerpAPI):** workflows pause silently for **24 hours** on quota/rate-limit errors (schedule keeps running but exits early). Leads are not written as `err` on PageSpeed quota; Run Queue jobs stay **Queued**. Email to `felipe@sysbilt.com` only if the same workflow hits quota again after a cooldown. Success resets the streak.
 
@@ -154,9 +155,9 @@ Google Sheet is the **source of truth** between workflows. **Master Leads** colu
             │ schedule: empty LH Mobile
 ┌───────────▼─────────────┐
 │ Speed Fix Scorer         │  PageSpeed mobile → Master Leads!LH Mobile;
-│                          │  if score < 65 → Speed Fix tab (Ready)
+│                          │  if score < 65 → Speed Fix tab (Wait)
 └───────────┬─────────────┘
-            │ schedule: Status=Ready + Email
+            │ you flip Status Wait → Ready (+ Email)
 ┌───────────▼─────────────┐
 │ Speed Fix Send           │  Gmail draft Email A + /go?b=&s= → Emailed
 │                          │  (you Send from Drafts — not auto-send)
@@ -187,7 +188,7 @@ Google Sheet is the **source of truth** between workflows. **Master Leads** colu
 | B — Audit Runner | `zOZh6wE70PikOCqI` | `deploy-outbound-audit-runner.sh` |
 | C — HubSpot Engage | `WD3s1eD9aUQNUWY6` | `deploy-outbound-hubspot-engage.sh` |
 
-**Sheet ID:** `OUTBOUND_LEADS_SHEET_ID` in gitignored `.deploy-state.env`. Live sheet: `1aGz6kruGwSpt55rwlcknxVDXp9dgL_M-OnVJrDIbTlE` (**Master Leads** + **Run Queue** + **Speed Fix** + **Google Profile** + **Missed-Call** + **Search Visibility** + **Landing Page** + **CRM Rescue**). Master Leads column **P** = **SV Indexed** (Google `site:` count). Column **Q** = **LP Ads** (manual Meta Ad Library mark). Column **R** = **CRM Form** (manual website form-silence mark).
+**Sheet ID:** `OUTBOUND_LEADS_SHEET_ID` in gitignored `.deploy-state.env`. Live sheet: `1aGz6kruGwSpt55rwlcknxVDXp9dgL_M-OnVJrDIbTlE` (**Master Leads** + **Run Queue** + **Speed Fix** + **Google Profile** + **Missed-Call** + **Search Visibility** + **Landing Page** + **CRM Rescue** + **Website** + **Quote Capture**). Master Leads column **P** = **SV Indexed** (Google `site:` count). Column **Q** = **LP Ads** (manual Meta Ad Library mark). Column **R** = **CRM Form** (manual website form-silence mark). Column **S** = **Manual Lane** (your judgment → product tab).
 
 **Product tabs (Status):** `Ready` · `Wait` · `Emailed` · `Replied` · `Dead`. Flip **Wait → Ready** when product 1 went quiet and you want the next offer. Add the same data-validation list on each product Status column (G).
 
@@ -199,6 +200,9 @@ Google Sheet is the **source of truth** between workflows. **Master Leads** colu
 | Search Visibility | SV Indexed ≤ 5 **or** homepage `noindex` | `deploy-outbound-search-fix-scorer.sh --setup-tab` / `-send.sh` |
 | Landing Page | Manual: Master Leads **LP Ads** = `meta` / `yes` / `active` / `homepage` / `fit` / `ads` (Meta Ad Library check; ads → homepage). `none` = no fit. Router sets `routed`. | `deploy-outbound-landing-page-router.sh --setup-tab` / `-send.sh` |
 | CRM Rescue | Manual: Master Leads **CRM Form** = `silent` / `yes` / `48h` / `fit` / `noreply` (website form test → no reply). `replied` / `none` = no fit. Router sets `routed`. Optional Notes `d:Tuesday \| t:2:14pm` → Form Day / Form Time. | `deploy-outbound-crm-rescue-router.sh --setup-tab` / `-send.sh` |
+| Website | After **LH Mobile** scored: SEO/A11y/BP &lt; 55 (not speed-only). Status=Wait. Route auto. | `deploy-outbound-website-tab.sh --setup-tab` · `deploy-outbound-website-scorer.sh --activate` |
+| **Quote Capture** | Manual Lane = `Quote Capture` → tab Wait → Ready. Email A demo `/demo/quote-capture?trade=&name=`. Email B via Status `Ready B`. See `QUOTE_CAPTURE_OUTBOUND.md`. | `deploy-outbound-quote-capture-send.sh --setup-tab` then send deploy; redeploy Manual Lane router |
+| **Manual Lane** | Master Leads column **S** `Manual Lane`: your eye → product tab. Values: `Speed Fix` · `Google Profile` · `Missed-Call` · `Search Visibility` · `Landing Page` · `CRM Rescue` · `Website` · `Quote Capture`. After route → `routed`. `none`/`skip` ignore. | `deploy-outbound-manual-lane-router.sh --setup-col --activate` |
 
 If another product tab already has **Ready** or **Emailed** for the same Maps ID, new rows land as **Wait**. **Replied** anywhere skips append.
 

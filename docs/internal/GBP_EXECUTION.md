@@ -26,10 +26,10 @@ No links or phone numbers in caption bodies. No prices in Update text (price onl
 - [x] 1.6 Schema `sameAs`: same three URLs in `organizationJsonLd.ts`
 
 ### Phase 2 — Updates (Felipe)
-- [ ] 2.1 Connect Postiz → GBP
-- [ ] 2.2 Schedule S01–S12 one per week
-- [ ] 2.3 Real 4:3 image on each
-- [ ] 2.4 If good, schedule S13–S26 for months 4–6
+- [x] 2.1 Connect Postiz → GBP (or native GBP Updates)
+- [x] 2.2 Schedule Sell Updates (S01 onward, Canva + captions)
+- [x] 2.3 Image title + line on each Canva
+- [x] 2.4 Full sell bank scheduled
 
 ### Phase 3 — News branch (later)
 - [ ] 3.1 News pipeline fixed (other chat)
