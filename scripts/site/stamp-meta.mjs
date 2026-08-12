@@ -167,8 +167,16 @@ function isGoFunnelPath(routePath) {
   return routePath === '/go' || routePath === '/go/thanks' || routePath.startsWith('/go/');
 }
 
+function isFeedbackReviewPath(routePath) {
+  return routePath === '/r' || routePath.startsWith('/r/');
+}
+
 function isIndexableExcluded(routePath) {
-  return INDEXABLE_EXCLUDE.has(routePath) || isGoFunnelPath(routePath);
+  return (
+    INDEXABLE_EXCLUDE.has(routePath) ||
+    isGoFunnelPath(routePath) ||
+    isFeedbackReviewPath(routePath)
+  );
 }
 
 const BLOG_FALLBACK_DESCRIPTION =
@@ -1107,7 +1115,9 @@ function stampHtml(template, route) {
   const safeCanonical = escapeAttr(canonicalUrl(routePath));
   const robots =
     route.robots ||
-    (isGoFunnelPath(routePath) ? 'noindex, nofollow' : null) ||
+    (isGoFunnelPath(routePath) || isFeedbackReviewPath(routePath)
+      ? 'noindex, nofollow'
+      : null) ||
     (INDEXABLE_EXCLUDE.has(routePath) ? 'noindex, follow' : null);
 
   let html = template;

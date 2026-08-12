@@ -472,7 +472,7 @@ export default function WebsiteAgreementPage() {
                 <button
                   type="submit"
                   disabled={!canSubmit}
-                  className="mt-10 border-2 border-dark bg-dark px-10 py-5 font-mono text-sm uppercase tracking-[0.2em] text-cream transition-colors duration-200 hover:border-red-text hover:bg-red-text disabled:cursor-not-allowed disabled:opacity-40"
+                  className="mt-10 border-2 border-dark bg-dark px-10 py-5 font-mono text-sm uppercase tracking-[0.2em] text-cream transition-colors duration-200 hover:border-red-text hover:bg-red-text disabled:cursor-not-allowed disabled:opacity-80"
                 >
                   Sign agreement <span aria-hidden>›</span>
                 </button>

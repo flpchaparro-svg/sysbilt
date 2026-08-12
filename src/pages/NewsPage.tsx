@@ -44,7 +44,7 @@ export default function NewsPage() {
 
   useEffect(() => {
     const fetchNews = async () => {
-      const query = `*[_type == "newsItem"] | order(publishedAt desc) {
+      const query = `*[_type == "newsItem" && defined(publishedAt) && publishedAt > $cutoff] | order(publishedAt desc) {
         _id, 
         title, 
         publishedAt, 
@@ -59,7 +59,8 @@ export default function NewsPage() {
         }
       }`;
       try {
-        const data = await client.fetch(query);
+        const cutoff = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString();
+        const data = await client.fetch(query, { cutoff });
         setNews(data);
       } catch (error) {
         console.error("Error fetching news:", error);
@@ -81,9 +82,9 @@ export default function NewsPage() {
   }, [expandedItem]);
 
   const horizonNews = news.find((n) => n.revenuePhase === 'horizon');
-  const phase1News = news.filter((n) => n.revenuePhase === 'phase1').slice(0, 12);
-  const phase2News = news.filter((n) => n.revenuePhase === 'phase2').slice(0, 12);
-  const phase3News = news.filter((n) => n.revenuePhase === 'phase3').slice(0, 12);
+  const phase1News = news.filter((n) => n.revenuePhase === 'phase1');
+  const phase2News = news.filter((n) => n.revenuePhase === 'phase2');
+  const phase3News = news.filter((n) => n.revenuePhase === 'phase3');
 
   const sectionContent: Record<string, { label: string; title: string; description: string }> = {
     all: { label: 'View All', title: '', description: '' },

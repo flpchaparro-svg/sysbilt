@@ -31,6 +31,7 @@ Note: `BRAND_VOICE_CORE.md` is referenced in docs but may be missing from the re
 | No "small business" | growing business / companies / Australian businesses |
 | No pillar numbers | Service names only |
 | No public prices | Except locked `/go/` funnel exceptions |
+| Social captions: no wall of text | Short paragraphs with a **blank line** between each. 1–2 sentences per paragraph |
 
 ## Banned hype words
 
@@ -52,6 +53,7 @@ leverage, streamline, seamless, robust, harness, unlock, transform, navigate (fi
 - [ ] No banned hype words
 - [ ] We/you voice, contractions on
 - [ ] No small business / pillar numbers / unapproved prices
+- [ ] Social captions: blank line between short paragraphs (never one block)
 - [ ] Jargon explained where used
 ```
 

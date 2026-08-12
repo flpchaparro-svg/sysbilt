@@ -50,7 +50,7 @@ function PageStack({bars, featured}: {bars: readonly number[]; featured: boolean
       <div
         className="absolute inset-x-0 top-0 h-7 flex items-center gap-1.5 px-2.5 border-b"
         style={{
-          borderColor: `${FUNNEL_COLOURS.ink}10`,
+          borderColor: `${FUNNEL_COLOURS.ink}2C`,
           backgroundColor: FUNNEL_COLOURS.surface,
         }}
       >
@@ -147,10 +147,10 @@ export function WebsiteFixTiers() {
               style={{
                 borderColor: tier.featured
                   ? `${FUNNEL_COLOURS.goldDeep}22`
-                  : `${FUNNEL_COLOURS.ink}10`,
+                  : `${FUNNEL_COLOURS.ink}2C`,
                 backgroundColor: tier.featured
                   ? `${FUNNEL_COLOURS.goldDeep}0C`
-                  : `${FUNNEL_COLOURS.ink}03`,
+                  : `${FUNNEL_COLOURS.ink}12`,
               }}
             >
               <div>

@@ -214,6 +214,7 @@ export function LostClientCalculator({
     | 'ai-phone'
     | 'booking'
     | 'website'
+    | 'quote-capture'
   theme?: 'dark' | 'cream'
 }) {
   const rootRef = useRef<HTMLDivElement>(null)
@@ -227,6 +228,7 @@ export function LostClientCalculator({
   const isAiPhone = variant === 'ai-phone'
   const isBooking = variant === 'booking'
   const isWebsite = variant === 'website'
+  const isQuoteCapture = variant === 'quote-capture'
   const isCountThenMoney = isContent || isReviews || isWebsite
   const [value, setValue] = useState(
     isLanding
@@ -363,7 +365,9 @@ export function LostClientCalculator({
                           ? "What's being findable worth to you"
                           : variant === 'crm-rescue'
                             ? "What's one quiet enquiry worth to you"
-                            : "What's one lost client worth to you"}
+                            : isQuoteCapture
+                              ? "What's one lost job worth to you"
+                              : "What's one lost client worth to you"}
         </h3>
 
         <div

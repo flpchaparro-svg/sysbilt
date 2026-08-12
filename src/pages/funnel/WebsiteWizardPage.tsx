@@ -386,7 +386,7 @@ function InkButton({
       type="button"
       disabled={disabled}
       onClick={onClick}
-      className="inline-flex items-center gap-2 font-mono font-bold uppercase tracking-[0.16em] text-xs px-10 py-4 text-white disabled:opacity-40 transition-opacity"
+      className="inline-flex items-center gap-2 font-mono font-bold uppercase tracking-[0.16em] text-xs px-10 py-4 text-white disabled:opacity-80 transition-opacity"
       style={{ backgroundColor: INK }}
     >
       {children}
