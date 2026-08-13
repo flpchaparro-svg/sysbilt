@@ -1037,12 +1037,14 @@ export default function QuoteCaptureLivePage({embed = false}: {embed?: boolean})
               {headerEyebrow}
             </p>
             <h1 className="mt-6 w-full font-serif text-[2.35rem] leading-[1.08] tracking-tight text-dark sm:text-5xl md:text-6xl lg:text-[3.75rem]">
-              Get a clear landscaping quote without writing a novel
+              {client.isProof
+                ? 'Stop writing quotes, start closing them'
+                : 'Get a clear quote for your job'}
             </h1>
             <p className="mx-auto mt-7 max-w-2xl font-sans text-lg leading-relaxed text-dark/70 md:text-xl">
               {client.isProof
-                ? 'A few plain questions. Then a clear quotation on screen, with pay if you are ready. Sample landscaping prices for this proof install.'
-                : 'A few plain questions. Then a clear quotation on screen, with pay if you are ready.'}
+                ? 'Walk through this as if you were the customer. They get a clear landscaping quotation on screen. You check it, send the pay link or say yes, and move on. Sample rates for this proof install.'
+                : 'Answer a few questions. See the quotation on screen. Pay if you are ready, or wait for us to confirm.'}
             </p>
             <div className="mt-12 flex w-full flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center sm:justify-center">
               <InkButton onClick={() => go('scope')}>

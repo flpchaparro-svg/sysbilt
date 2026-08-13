@@ -907,7 +907,7 @@ export default function QuoteCaptureDemoPage() {
         robots="noindex, nofollow"
       />
 
-      {step === 'intro' ? (
+      {step === 'intro' || step === 'buy' ? (
         <div aria-hidden className="pointer-events-none absolute inset-0">
           <div
             className="absolute inset-0"
@@ -956,7 +956,7 @@ export default function QuoteCaptureDemoPage() {
           </div>
         )}
 
-        {step !== 'intro' ? (
+        {step !== 'intro' && step !== 'buy' && step !== 'talk' ? (
           <p className="mb-2 font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-[#A8843F]">
             {headerEyebrow}
           </p>
@@ -968,11 +968,11 @@ export default function QuoteCaptureDemoPage() {
               {headerEyebrow}
             </p>
             <h1 className="mt-6 w-full font-serif text-[2.35rem] leading-[1.08] tracking-tight text-dark sm:text-5xl md:text-6xl lg:text-[3.75rem]">
-              Get a clear landscaping quote without writing a novel
+              Stop writing quotes, start closing them
             </h1>
             <p className="mx-auto mt-7 max-w-2xl font-sans text-lg leading-relaxed text-dark/70 md:text-xl">
-              A few plain questions. Then a clear quotation on screen. Sample landscaping prices so
-              you can feel how Quote Capture works on a real site.
+              Walk through this as if you were the customer. They get a clear landscaping quotation on
+              screen. You check it, send the pay link or say yes, and move on.
             </p>
             <div className="mt-12 flex w-full flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center sm:justify-center">
               <InkButton onClick={() => go('situation')}>
@@ -1648,16 +1648,21 @@ export default function QuoteCaptureDemoPage() {
         )}
 
         {step === 'buy' && (
-          <section className="max-w-xl">
-            <h1 className="font-serif text-3xl md:text-4xl leading-tight tracking-tight">
-              That was a sample. Yours runs on your prices
-            </h1>
-            <p className="mt-4 font-sans text-base leading-relaxed text-dark/70">
-              Quote Capture installs on your existing site. Customers answer plain questions, see a
-              clear quotation with scope and total, get email and SMS with a pay link, and you get a
-              priced lead you can call.
+          <section className="mx-auto flex min-h-[min(62vh,36rem)] w-full max-w-4xl flex-col items-center justify-center pb-12 text-center md:min-h-[min(68vh,40rem)]">
+            <p className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-[#A8843F]">
+              {headerEyebrow}
             </p>
-            <div className="mt-10">
+            <h1 className="mt-6 w-full font-serif text-[2.35rem] leading-[1.08] tracking-tight text-dark sm:text-5xl md:text-6xl lg:text-[3.75rem]">
+              {businessName
+                ? `${businessName}, stop writing quotes, start closing them`
+                : 'Stop writing quotes, start closing them'}
+            </h1>
+            <p className="mx-auto mt-7 max-w-2xl font-sans text-lg leading-relaxed text-dark/70 md:text-xl">
+              That sample used demo rates. Quote Capture installs on your site with your prices.
+              Customers answer plain questions, see a clear quotation with scope and total, get email
+              and SMS with a pay link, and you get a priced lead you can close.
+            </p>
+            <div className="mt-12 flex w-full flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center sm:justify-center">
               <Link
                 to="/go/quote-capture"
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-[#E21E3F] px-8 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.2em] text-cream shadow-[0_12px_28px_-12px_rgba(226,30,63,0.65)]"
@@ -1668,7 +1673,7 @@ export default function QuoteCaptureDemoPage() {
             <button
               type="button"
               onClick={() => go('quote')}
-              className="mt-6 font-sans text-sm text-dark/45"
+              className="mt-8 font-sans text-sm text-dark/45 hover:text-dark/70"
             >
               Back to the sample quote
             </button>
