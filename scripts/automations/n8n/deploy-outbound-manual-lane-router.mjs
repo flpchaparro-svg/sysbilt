@@ -7,7 +7,7 @@
  *
  * Dropdown values (you add data validation):
  *   Speed Fix | Google Profile | Missed-Call | Search Visibility |
- *   Landing Page | CRM Rescue | Website | Quote Capture
+ *   Landing Page | CRM Rescue | Website | Quote Capture | Feedback Review
  *
  * After route: routed
  * Skip forever: none | skip
@@ -209,6 +209,7 @@ const QUALIFY = new Set([
   'crm rescue',
   'website',
   'quote capture',
+  'feedback review',
 ]);
 
 const rows = $input.all()
@@ -249,6 +250,7 @@ const TAB_BY_LANE = {
   'crm rescue': 'CRM Rescue',
   website: 'Website',
   'quote capture': 'Quote Capture',
+  'feedback review': 'Feedback Review',
 };
 
 const tab = TAB_BY_LANE[lane];
@@ -443,6 +445,19 @@ function buildRouterWorkflow(sheetId) {
       ],
     },
     {
+      key: 'Feedback Review',
+      headers: [
+        'Business Name',
+        'Suburb',
+        'Website',
+        'Email',
+        'Phone',
+        'Status',
+        'Maps ID',
+        'Notes',
+      ],
+    },
+    {
       key: 'Website',
       headers: [
         'Business Name',
@@ -571,6 +586,7 @@ const TAB_BY_LANE = {
   'crm rescue': 'CRM Rescue',
   website: 'Website',
   'quote capture': 'Quote Capture',
+  'feedback review': 'Feedback Review',
 };
 return [{ json: { ...lead, _destTab: TAB_BY_LANE[lane] || '' } }];`,
       },
@@ -825,7 +841,7 @@ async function main() {
   )
   console.log(`Master Leads column S = "${MANUAL_COL}"`)
   console.log(
-    'Dropdown: Speed Fix | Google Profile | Missed-Call | Search Visibility | Landing Page | CRM Rescue | Website | Quote Capture',
+    'Dropdown: Speed Fix | Google Profile | Missed-Call | Search Visibility | Landing Page | CRM Rescue | Website | Quote Capture | Feedback Review',
   )
   console.log('After route → routed. none/skip = ignore.')
 }

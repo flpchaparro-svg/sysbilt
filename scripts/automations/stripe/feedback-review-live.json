@@ -1,0 +1,14 @@
+{
+  "createdAt": "2026-08-15T08:34:00.000Z",
+  "mode": "live",
+  "note": "Feedback Review · $1,500 live Payment Link. After pay → thanks?p=feedback-review → access wizard.",
+  "product": {
+    "code": "feedback-review",
+    "name": "Feedback Review",
+    "productId": "prod_V4miLnrWbgfn87",
+    "priceId": "price_1U4d8w7kQC0CB85ztCBPMdMf",
+    "paymentLinkId": "plink_1U4d987kQC0CB85zEXQ8HIMF",
+    "paymentLinkUrl": "https://buy.stripe.com/8x2eV73dT9rqbau6S73gk0D",
+    "amountAud": 1500
+  }
+}

@@ -190,6 +190,7 @@ import {GOOGLE_PROFILE_STRIPE_URL} from '../../constants/googleProfileStripe'
 import {MISSED_CALL_STRIPE_URL} from '../../constants/missedCallStripe'
 import {SEARCH_FIX_STRIPE_URL} from '../../constants/searchFixStripe'
 import {REVIEWS_STRIPE_URL} from '../../constants/reviewsStripe'
+import {FEEDBACK_REVIEW_STRIPE_URL} from '../../constants/feedbackReviewStripe'
 import {CRM_RESCUE_STRIPE_URL} from '../../constants/crmRescueStripe'
 import {LANDING_PAGE_STRIPE_URL} from '../../constants/landingStripe'
 import {AI_PHONE_STRIPE_URL} from '../../constants/aiPhoneStripe'
@@ -362,7 +363,9 @@ const FunnelPage: React.FC = () => {
   const isTeamAi = proofKind === 'team-ai'
   const isChangePack = proofKind === 'change-pack'
   const isContentSystem = proofKind === 'content-system'
-  const isReviews = proofKind === 'reviews'
+  const isFeedbackReview = proofKind === 'feedback-review'
+  const isReviewsEngine = proofKind === 'reviews'
+  const isReviews = isReviewsEngine || isFeedbackReview
   const isAiPhone = proofKind === 'ai-phone'
   const isBooking = proofKind === 'booking'
   const isSpeed = proofKind === 'speed'
@@ -598,7 +601,8 @@ const FunnelPage: React.FC = () => {
     (isGoogleProfile ? GOOGLE_PROFILE_STRIPE_URL : undefined) ||
     (isMissedCall ? MISSED_CALL_STRIPE_URL : undefined) ||
     (isSearchFix ? SEARCH_FIX_STRIPE_URL : undefined) ||
-    (isReviews ? REVIEWS_STRIPE_URL : undefined) ||
+    (isFeedbackReview ? FEEDBACK_REVIEW_STRIPE_URL : undefined) ||
+    (isReviewsEngine ? REVIEWS_STRIPE_URL : undefined) ||
     (isCrmRescue ? CRM_RESCUE_STRIPE_URL : undefined) ||
     (isLandingPage ? LANDING_PAGE_STRIPE_URL : undefined) ||
     (isAiPhone ? AI_PHONE_STRIPE_URL : undefined) ||
@@ -653,17 +657,23 @@ const FunnelPage: React.FC = () => {
       : undefined,
     secondaryCtaLabel: isWebsite
       ? doc?.secondaryCtaLabel || 'Prefer to talk first? Book 15 minutes.'
-      : isQuoteCapture
-        ? 'Want to feel it first? Try the 60-second demo'
-        : doc?.secondaryCtaLabel,
+      : isFeedbackReview
+        ? 'Want to feel it first? Try the sample questions'
+        : isQuoteCapture
+          ? 'Want to feel it first? Try the 60-second demo'
+          : doc?.secondaryCtaLabel,
     secondaryUrl: isWebsite
       ? doc?.secondaryUrl || doc?.schedulerUrl
-      : isQuoteCapture
-        ? '/demo/quote-capture'
-        : doc?.secondaryUrl,
+      : isFeedbackReview
+        ? '/r/sysbilt?sample=1'
+        : isQuoteCapture
+          ? '/demo/quote-capture'
+          : doc?.secondaryUrl,
     schedulerUrl: buyDoorNeedsAccess
       ? accessFormPathForProduct(
-          isReviews
+          isFeedbackReview
+            ? 'feedback-review'
+            : isReviewsEngine
             ? 'reviews'
             : isAiPhone
               ? 'ai-phone'

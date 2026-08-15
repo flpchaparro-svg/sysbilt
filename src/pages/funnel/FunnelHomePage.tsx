@@ -48,6 +48,7 @@ const OUTBOUND_GROUPS: CatalogueGroup[] = [
     codes: [
       'google-profile',
       'reviews',
+      'feedback-review',
       'profile-posting',
       'local-pack',
     ],

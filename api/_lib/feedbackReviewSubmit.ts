@@ -38,6 +38,8 @@ export type FeedbackReviewPayload = {
   company?: string
   score?: number
   path?: FeedbackReviewPath
+  /** Prospect /go sample. Polish only. Never write the sheet or HubSpot. */
+  sample?: boolean
 }
 
 function asString(v: unknown): string {
@@ -231,6 +233,22 @@ export async function processFeedbackReviewSubmit(
     draft = polished.draft
     usedAi = polished.usedAi
     if (!polished.usedAi) warnings.push('AI polish skipped or failed; used skeleton')
+  }
+
+  const isSample =
+    body.sample === true ||
+    body.sample === 1 ||
+    String(body.sample || '').toLowerCase() === 'true' ||
+    String(body.sample || '') === '1'
+  if (isSample) {
+    return {
+      ok: true,
+      path: data.path,
+      draft: data.path === 'happy' ? draft : '',
+      usedAi,
+      hubspot: 'skipped',
+      warnings: ['sample: skipped sheet and HubSpot'],
+    }
   }
 
   const sheetRow: Record<string, string> = {

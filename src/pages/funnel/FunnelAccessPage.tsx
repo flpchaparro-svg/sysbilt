@@ -4573,7 +4573,8 @@ const FunnelAccessPage: React.FC = () => {
   const isGoogleProfile = product === 'google-profile'
   const isProfilePosting = product === 'profile-posting'
   const isEnquiryReply = product === 'enquiry-reply'
-  const isReviews = product === 'reviews'
+  const isFeedbackReview = product === 'feedback-review'
+  const isReviews = product === 'reviews' || isFeedbackReview
   const isLocalPack = product === 'local-pack'
   const isCrmRescue = product === 'crm-rescue'
   const isBooking = product === 'booking'

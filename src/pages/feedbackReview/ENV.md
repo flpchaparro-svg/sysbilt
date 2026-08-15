@@ -1,4 +1,36 @@
-# Feedback Review (`/r/sysbilt`) · env checklist
+# Feedback Review
+
+## Sell door (`/go/feedback-review`)
+
+Private funnel page, **$1,500**, distinct from Review Engine (`/go/reviews`).
+
+Sample of the customer questions (nothing saved): `/r/sysbilt?sample=1`
+
+After pay → `/go/thanks?p=feedback-review` → access wizard (same Google listing questions as Review Engine, tagged as Feedback Review in HubSpot).
+
+**Outbound worksheet** (same sheet as Speed Fix / Quote Capture):
+
+https://docs.google.com/spreadsheets/d/1aGz6kruGwSpt55rwlcknxVDXp9dgL_M-OnVJrDIbTlE
+
+Tab: **Feedback Review**. Status `Wait` → `Ready` → Gmail **draft** with `/go/feedback-review?b=` → `Emailed`. Drafts only.
+
+```bash
+node scripts/automations/n8n/deploy-outbound-feedback-review-send.mjs --setup-tab --activate
+node scripts/automations/n8n/deploy-outbound-manual-lane-router.mjs --activate
+```
+
+Master Leads **Manual Lane** = `Feedback Review` routes a lead onto that tab.
+
+Stripe live Payment Link is wired (`src/constants/feedbackReviewStripe.ts`). Recreate only if the price changes:
+
+```bash
+node scripts/automations/stripe/create-feedback-review-live.mjs
+```
+
+---
+
+# Dogfood wizard (`/r/sysbilt`) · env checklist
+
 
 Add to repo-root `.env.local` (never commit):
 

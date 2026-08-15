@@ -6,7 +6,7 @@ import React, {
   useState,
   type ReactNode,
 } from 'react'
-import {useSearchParams} from 'react-router-dom'
+import {Link, useSearchParams} from 'react-router-dom'
 import {
   ArrowRight,
   Check,
@@ -1114,6 +1114,8 @@ export default function FeedbackReviewPage() {
     catalogParam === 'products' || jobPrefill in PRODUCT_JOB_QUERY_MAP
       ? 'products'
       : 'general'
+  const isSample =
+    params.get('sample') === '1' || params.get('demo') === '1'
 
   /** Silent personalisation from the send link (sheet / outbound). Never asked in-form. */
   const linkContactName = (
@@ -1254,6 +1256,7 @@ export default function FeedbackReviewPage() {
       company: linkCompany,
       score: score ?? 0,
       path,
+      sample: isSample,
     }
   }
 
@@ -1327,6 +1330,7 @@ export default function FeedbackReviewPage() {
   }
 
   function openGoogle() {
+    if (isSample) return
     window.open(SYSBILT_GOOGLE_REVIEW_URL, '_blank', 'noopener,noreferrer')
   }
 
@@ -1380,9 +1384,17 @@ export default function FeedbackReviewPage() {
         }
       `}</style>
       <PageMeta
-        title="A quick note | SYSBILT"
-        description="Share how we did on your recent job. Feedback first. Google review only if you want."
-        canonical={`${SITE_ORIGIN}/r/sysbilt`}
+        title={isSample ? 'Sample | Feedback Review' : 'A quick note | SYSBILT'}
+        description={
+          isSample
+            ? 'A sample of the Feedback Review customer questions. Nothing is saved.'
+            : 'Share how we did on your recent job. Feedback first. Google review only if you want.'
+        }
+        canonical={
+          isSample
+            ? `${SITE_ORIGIN}/r/sysbilt?sample=1`
+            : `${SITE_ORIGIN}/r/sysbilt`
+        }
         robots="noindex, nofollow"
       />
 
@@ -1399,6 +1411,18 @@ export default function FeedbackReviewPage() {
       ) : null}
 
       <div className="relative mx-auto max-w-5xl px-5 pb-24 pt-5 md:px-8">
+        {isSample ? (
+          <p className="mb-6 rounded-2xl border border-dark/10 bg-white/80 px-4 py-3 text-center font-sans text-sm leading-relaxed text-dark/70">
+            This is a sample of the customer flow. Nothing is saved. Your install uses
+            your Google page and your jobs.{' '}
+            <Link
+              to="/go/feedback-review"
+              className="text-dark underline decoration-dark/25 underline-offset-4 hover:decoration-dark/60"
+            >
+              Back to Feedback Review
+            </Link>
+          </p>
+        ) : null}
         {step !== 'intro' ? (
           <div className="mb-8">
             <StageJourney
@@ -1411,31 +1435,33 @@ export default function FeedbackReviewPage() {
           <div className="mb-6 flex items-center justify-between gap-4">
             <SysbiltLogo className="w-[110px] md:w-[130px]" />
             <p className="font-mono text-[9px] font-bold uppercase tracking-[0.22em] text-dark/40">
-              Private · feedback
+              {isSample ? 'Sample · customer flow' : 'Private · feedback'}
             </p>
           </div>
         )}
 
         {step !== 'intro' ? (
           <p className="mb-2 text-center font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-[#A8843F]">
-            SYSBILT · how we did
+            {isSample ? 'Sample · customer questions' : 'SYSBILT · how we did'}
           </p>
         ) : null}
 
         {step === 'intro' && (
           <section className="mx-auto flex min-h-[min(74vh,44rem)] w-full max-w-4xl flex-col items-center justify-center pb-16 text-center md:min-h-[min(78vh,48rem)]">
             <p className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-[#A8843F]">
-              {linkFirstName
-                ? `Hi ${linkFirstName} · a few taps`
-                : 'A few taps · honest answers'}
+              {isSample
+                ? 'Sample · a few taps'
+                : linkFirstName
+                  ? `Hi ${linkFirstName} · a few taps`
+                  : 'A few taps · honest answers'}
             </p>
             <h1 className="mt-6 w-full font-serif text-[2.35rem] leading-[1.08] tracking-tight text-dark sm:text-5xl md:text-6xl lg:text-[3.75rem]">
-              A quick note on how we did
+              {isSample ? 'How the questions feel' : 'A quick note on how we did'}
             </h1>
             <p className="mx-auto mt-7 max-w-2xl font-sans text-lg leading-relaxed text-dark/70 md:text-xl">
-              Short questions about the job, the person you worked with, and what we can
-              improve. If it went well, we can shape a suggested Google review you can edit,
-              copy, or skip.
+              {isSample
+                ? 'Walk the same taps a customer would after a job. If it goes well, you will see a suggested Google review. Nothing is saved, and we will not send you to Google from this sample.'
+                : 'Short questions about the job, the person you worked with, and what we can improve. If it went well, we can shape a suggested Google review you can edit, copy, or skip.'}
             </p>
             <div className="mt-12">
               <InkButton onClick={() => go('service')}>
@@ -1885,11 +1911,12 @@ export default function FeedbackReviewPage() {
         {step === 'draft' && (
           <section className="mx-auto max-w-2xl text-center">
             <h1 className="font-serif text-3xl leading-tight tracking-tight md:text-4xl">
-              Thanks for your feedback
+              {isSample ? 'This is the suggested review' : 'Thanks for your feedback'}
             </h1>
             <p className="mb-6 mt-3 font-sans text-base text-dark/60">
-              If you are willing, here is a suggested Google review from your answers. Edit
-              it, copy it, or write your own on Google. Your call.
+              {isSample
+                ? 'On a live install, they can edit this, copy it, and post it on your Google page. We never post for them. This sample does not open Google.'
+                : 'If you are willing, here is a suggested Google review from your answers. Edit it, copy it, or write your own on Google. Your call.'}
             </p>
             {submitError ? (
               <p className="mb-4 font-sans text-sm text-dark/55">{submitError}</p>
@@ -1904,24 +1931,49 @@ export default function FeedbackReviewPage() {
               className="mt-2 w-full resize-y rounded-2xl border border-dark/15 bg-white px-4 py-4 text-left font-sans text-base leading-relaxed text-dark outline-none transition focus:border-[#E21E3F]"
             />
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap">
-              <InkButton onClick={() => void copyAndOpenGoogle()}>
-                {copied ? (
-                  <>
-                    Copied <Check className="h-4 w-4" />
-                  </>
-                ) : (
-                  <>
-                    Copy and open Google <Copy className="h-4 w-4" />
-                  </>
-                )}
-              </InkButton>
-              <GhostButton onClick={openGoogle}>
-                Write your own on Google <ExternalLink className="h-4 w-4" />
-              </GhostButton>
+              {isSample ? (
+                <>
+                  <InkButton onClick={() => void copyDraft()}>
+                    {copied ? (
+                      <>
+                        Copied <Check className="h-4 w-4" />
+                      </>
+                    ) : (
+                      <>
+                        Copy the sample <Copy className="h-4 w-4" />
+                      </>
+                    )}
+                  </InkButton>
+                  <Link
+                    to="/go/feedback-review"
+                    className="inline-flex items-center justify-center gap-2 rounded-full border border-dark/20 bg-white px-8 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark transition-colors hover:border-dark/40"
+                  >
+                    See Feedback Review
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <InkButton onClick={() => void copyAndOpenGoogle()}>
+                    {copied ? (
+                      <>
+                        Copied <Check className="h-4 w-4" />
+                      </>
+                    ) : (
+                      <>
+                        Copy and open Google <Copy className="h-4 w-4" />
+                      </>
+                    )}
+                  </InkButton>
+                  <GhostButton onClick={openGoogle}>
+                    Write your own on Google <ExternalLink className="h-4 w-4" />
+                  </GhostButton>
+                </>
+              )}
             </div>
             <p className="mt-6 font-sans text-sm leading-relaxed text-dark/50">
-              We never post for you. Improve answers stay private. Google opens in a new
-              tab.
+              {isSample
+                ? 'Nothing from this sample is saved. Weak jobs stay private on a live install.'
+                : 'We never post for you. Improve answers stay private. Google opens in a new tab.'}
             </p>
           </section>
         )}
@@ -1935,9 +1987,20 @@ export default function FeedbackReviewPage() {
               Thanks for the feedback
             </h1>
             <p className="mt-5 font-sans text-base leading-relaxed text-dark/65">
-              We will take your points seriously and use them to improve. No Google ask
-              from this path. You are done.
+              {isSample
+                ? 'On a live install, weak jobs stay with you. Nobody is sent to Google from this path. You are done with the sample.'
+                : 'We will take your points seriously and use them to improve. No Google ask from this path. You are done.'}
             </p>
+            {isSample ? (
+              <div className="mt-10">
+                <Link
+                  to="/go/feedback-review"
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-[#E21E3F] px-8 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.2em] text-cream shadow-[0_12px_28px_-12px_rgba(226,30,63,0.65)] transition hover:bg-[#c41935]"
+                >
+                  See Feedback Review <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            ) : null}
           </section>
         )}
 

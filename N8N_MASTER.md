@@ -188,7 +188,7 @@ Google Sheet is the **source of truth** between workflows. **Master Leads** colu
 | B — Audit Runner | `zOZh6wE70PikOCqI` | `deploy-outbound-audit-runner.sh` |
 | C — HubSpot Engage | `WD3s1eD9aUQNUWY6` | `deploy-outbound-hubspot-engage.sh` |
 
-**Sheet ID:** `OUTBOUND_LEADS_SHEET_ID` in gitignored `.deploy-state.env`. Live sheet: `1aGz6kruGwSpt55rwlcknxVDXp9dgL_M-OnVJrDIbTlE` (**Master Leads** + **Run Queue** + **Speed Fix** + **Google Profile** + **Missed-Call** + **Search Visibility** + **Landing Page** + **CRM Rescue** + **Website** + **Quote Capture**). Master Leads column **P** = **SV Indexed** (Google `site:` count). Column **Q** = **LP Ads** (manual Meta Ad Library mark). Column **R** = **CRM Form** (manual website form-silence mark). Column **S** = **Manual Lane** (your judgment → product tab).
+**Sheet ID:** `OUTBOUND_LEADS_SHEET_ID` in gitignored `.deploy-state.env`. Live sheet: `1aGz6kruGwSpt55rwlcknxVDXp9dgL_M-OnVJrDIbTlE` (**Master Leads** + **Run Queue** + **Speed Fix** + **Google Profile** + **Missed-Call** + **Search Visibility** + **Landing Page** + **CRM Rescue** + **Website** + **Quote Capture** + **Feedback Review**). Master Leads column **P** = **SV Indexed** (Google `site:` count). Column **Q** = **LP Ads** (manual Meta Ad Library mark). Column **R** = **CRM Form** (manual website form-silence mark). Column **S** = **Manual Lane** (your judgment → product tab).
 
 **Product tabs (Status):** `Ready` · `Wait` · `Emailed` · `Replied` · `Dead`. Flip **Wait → Ready** when product 1 went quiet and you want the next offer. Add the same data-validation list on each product Status column (G).
 
@@ -202,7 +202,8 @@ Google Sheet is the **source of truth** between workflows. **Master Leads** colu
 | CRM Rescue | Manual: Master Leads **CRM Form** = `silent` / `yes` / `48h` / `fit` / `noreply` (website form test → no reply). `replied` / `none` = no fit. Router sets `routed`. Optional Notes `d:Tuesday \| t:2:14pm` → Form Day / Form Time. | `deploy-outbound-crm-rescue-router.sh --setup-tab` / `-send.sh` |
 | Website | After **LH Mobile** scored: SEO/A11y/BP &lt; 55 (not speed-only). Status=Wait. Route auto. | `deploy-outbound-website-tab.sh --setup-tab` · `deploy-outbound-website-scorer.sh --activate` |
 | **Quote Capture** | Manual Lane = `Quote Capture` → tab Wait → Ready. Email A demo `/demo/quote-capture?trade=&name=`. Email B via Status `Ready B`. See `QUOTE_CAPTURE_OUTBOUND.md`. | `deploy-outbound-quote-capture-send.sh --setup-tab` then send deploy; redeploy Manual Lane router |
-| **Manual Lane** | Master Leads column **S** `Manual Lane`: your eye → product tab. Values: `Speed Fix` · `Google Profile` · `Missed-Call` · `Search Visibility` · `Landing Page` · `CRM Rescue` · `Website` · `Quote Capture`. After route → `routed`. `none`/`skip` ignore. | `deploy-outbound-manual-lane-router.sh --setup-col --activate` |
+| **Feedback Review** | Manual Lane = `Feedback Review` → tab Wait → Ready. Email A `/go/feedback-review?b=`. Drafts only. | `deploy-outbound-feedback-review-send.sh --setup-tab --activate`; redeploy Manual Lane router |
+| **Manual Lane** | Master Leads column **S** `Manual Lane`: your eye → product tab. Values: `Speed Fix` · `Google Profile` · `Missed-Call` · `Search Visibility` · `Landing Page` · `CRM Rescue` · `Website` · `Quote Capture` · `Feedback Review`. After route → `routed`. `none`/`skip` ignore. | `deploy-outbound-manual-lane-router.sh --setup-col --activate` |
 
 If another product tab already has **Ready** or **Emailed** for the same Maps ID, new rows land as **Wait**. **Replied** anywhere skips append.
 

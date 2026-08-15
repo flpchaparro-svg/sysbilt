@@ -67,6 +67,7 @@ export type FunnelProductCopy = {
     | 'change-pack'
     | 'content-system'
     | 'reviews'
+    | 'feedback-review'
     | 'ai-phone'
     | 'booking'
     | 'website'
@@ -3180,6 +3181,7 @@ import {WHATSAPP_SETUP_COPY as WHATSAPP_SETUP_LIVE} from './liveCopy/whatsapp-se
 import {DM_REPLY_COPY as DM_REPLY_LIVE} from './liveCopy/dm-reply'
 import {QUOTE_FOLLOWUP_LIVE_COPY as QUOTE_FOLLOWUP_LIVE} from './liveCopy/quote-followup'
 import {QUOTE_CAPTURE_LIVE_COPY as QUOTE_CAPTURE_LIVE} from './liveCopy/quote-capture'
+import {FEEDBACK_REVIEW_LIVE_COPY as FEEDBACK_REVIEW_LIVE} from './liveCopy/feedback-review'
 import {NOSHOW_RESCUE_LIVE_COPY as NOSHOW_RESCUE_LIVE} from './liveCopy/noshow-rescue'
 import {INTAKE_FORMS_LIVE_COPY as INTAKE_FORMS_LIVE} from './liveCopy/intake-forms'
 import {INBOX_TRIAGE_LIVE_COPY as INBOX_TRIAGE_LIVE} from './liveCopy/inbox-triage'
@@ -3198,6 +3200,7 @@ export function funnelCopyForSlug(slug: string | undefined): FunnelProductCopy {
   if (slug === 'dm-reply') return DM_REPLY_LIVE
   if (slug === 'quote-followup') return QUOTE_FOLLOWUP_LIVE
   if (slug === 'quote-capture') return QUOTE_CAPTURE_LIVE
+  if (slug === 'feedback-review') return FEEDBACK_REVIEW_LIVE
   if (slug === 'noshow-rescue') return NOSHOW_RESCUE_LIVE
   if (slug === 'intake-forms') return INTAKE_FORMS_LIVE
   if (slug === 'inbox-triage') return INBOX_TRIAGE_LIVE

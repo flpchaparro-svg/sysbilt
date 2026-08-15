@@ -12,6 +12,7 @@ const PRODUCT_CODES = new Set([
   'profile-posting',
   'enquiry-reply',
   'reviews',
+  'feedback-review',
   'local-pack',
   'search-fix',
   'booking',
@@ -50,6 +51,7 @@ const PRODUCT_LABELS: Record<string, string> = {
   'profile-posting': 'Profile Posting System',
   'enquiry-reply': 'Enquiry Auto-Reply',
   reviews: 'Review Engine',
+  'feedback-review': 'Feedback Review',
   'local-pack': 'Local Pack',
   'search-fix': 'Search Visibility Fix',
   booking: 'Booking System',
@@ -88,6 +90,7 @@ const PRODUCT_AMOUNTS: Record<string, string> = {
   'profile-posting': '1100',
   'enquiry-reply': '350',
   reviews: '1100',
+  'feedback-review': '1500',
   'local-pack': '2400',
   'search-fix': '1400',
   booking: '1500',
@@ -751,7 +754,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const isGoogleProfile = product === 'google-profile';
   const isProfilePosting = product === 'profile-posting';
   const isEnquiryReply = product === 'enquiry-reply';
-  const isReviews = product === 'reviews';
+  const isReviews = product === 'reviews' || product === 'feedback-review';
   const isLocalPack = product === 'local-pack';
   const isCrmRescue = product === 'crm-rescue';
   const isBooking = product === 'booking';
