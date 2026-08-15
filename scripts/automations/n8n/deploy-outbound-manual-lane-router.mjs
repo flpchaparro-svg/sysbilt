@@ -32,6 +32,21 @@ const LEADS_SHEET = 'Master Leads'
 const LEADS_RANGE = 'A1:S5000'
 const MANUAL_HEADER_CELL = 'Master Leads!S1'
 const MANUAL_COL = 'Manual Lane'
+/** Column S dropdown. Include routed so the robot can write it after a successful route. */
+const MANUAL_LANE_VALUES = [
+  'Speed Fix',
+  'Google Profile',
+  'Missed-Call',
+  'Search Visibility',
+  'Landing Page',
+  'CRM Rescue',
+  'Website',
+  'Quote Capture',
+  'Feedback Review',
+  'none',
+  'skip',
+  'routed',
+]
 
 const LEADS_HEADERS = [
   'Business Name',
@@ -774,20 +789,102 @@ function buildSetupColWorkflow(sheetId) {
       },
       {
         id: uid(),
+        name: 'Get Spreadsheet Meta',
+        type: 'n8n-nodes-base.httpRequest',
+        typeVersion: 4.4,
+        position: [80, 0],
+        credentials: {
+          googleSheetsOAuth2Api: { id: GOOGLE_SHEETS_CRED_ID, name: GOOGLE_SHEETS_CRED_NAME },
+        },
+        parameters: {
+          method: 'GET',
+          url: `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}?fields=sheets.properties`,
+          authentication: 'predefinedCredentialType',
+          nodeCredentialType: 'googleSheetsOAuth2Api',
+          options: {},
+        },
+      },
+      {
+        id: uid(),
+        name: 'Build Dropdown Requests',
+        type: 'n8n-nodes-base.code',
+        typeVersion: 2,
+        position: [320, 0],
+        parameters: {
+          mode: 'runOnceForAllItems',
+          jsCode: `const meta = $input.first().json;
+const sheet = (meta.sheets || []).find((s) => s.properties?.title === '${LEADS_SHEET}');
+if (!sheet?.properties?.sheetId && sheet?.properties?.sheetId !== 0) {
+  throw new Error('Master Leads sheetId not found');
+}
+const sid = sheet.properties.sheetId;
+const values = ${JSON.stringify(MANUAL_LANE_VALUES)};
+return [{
+  json: {
+    requests: [{
+      setDataValidation: {
+        range: {
+          sheetId: sid,
+          startRowIndex: 1,
+          endRowIndex: 5000,
+          startColumnIndex: 18,
+          endColumnIndex: 19,
+        },
+        rule: {
+          condition: {
+            type: 'ONE_OF_LIST',
+            values: values.map((v) => ({ userEnteredValue: v })),
+          },
+          showCustomUi: true,
+          strict: true,
+        },
+      },
+    }],
+  },
+}];`,
+        },
+      },
+      {
+        id: uid(),
+        name: 'Apply Manual Lane Dropdown',
+        type: 'n8n-nodes-base.httpRequest',
+        typeVersion: 4.4,
+        position: [560, 0],
+        credentials: {
+          googleSheetsOAuth2Api: { id: GOOGLE_SHEETS_CRED_ID, name: GOOGLE_SHEETS_CRED_NAME },
+        },
+        parameters: {
+          method: 'POST',
+          url: `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}:batchUpdate`,
+          authentication: 'predefinedCredentialType',
+          nodeCredentialType: 'googleSheetsOAuth2Api',
+          sendBody: true,
+          specifyBody: 'json',
+          jsonBody: '={{ { requests: $json.requests } }}',
+          options: {},
+        },
+      },
+      {
+        id: uid(),
         name: 'Respond OK',
         type: 'n8n-nodes-base.respondToWebhook',
         typeVersion: 1.1,
-        position: [80, 0],
+        position: [800, 0],
         parameters: {
           respondWith: 'json',
-          responseBody: `={{ ({ ok: true, header: '${MANUAL_COL}', cell: '${MANUAL_HEADER_CELL}' }) }}`,
+          responseBody: `={{ ({ ok: true, header: '${MANUAL_COL}', cell: '${MANUAL_HEADER_CELL}', dropdowns: true }) }}`,
           options: {},
         },
       },
     ],
     connections: {
       'Setup Webhook': { main: [[{ node: 'Set Manual Lane Header', type: 'main', index: 0 }]] },
-      'Set Manual Lane Header': { main: [[{ node: 'Respond OK', type: 'main', index: 0 }]] },
+      'Set Manual Lane Header': { main: [[{ node: 'Get Spreadsheet Meta', type: 'main', index: 0 }]] },
+      'Get Spreadsheet Meta': { main: [[{ node: 'Build Dropdown Requests', type: 'main', index: 0 }]] },
+      'Build Dropdown Requests': {
+        main: [[{ node: 'Apply Manual Lane Dropdown', type: 'main', index: 0 }]],
+      },
+      'Apply Manual Lane Dropdown': { main: [[{ node: 'Respond OK', type: 'main', index: 0 }]] },
     },
     settings: { executionOrder: 'v1' },
   }

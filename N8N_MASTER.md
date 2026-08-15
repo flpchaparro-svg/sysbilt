@@ -203,7 +203,7 @@ Google Sheet is the **source of truth** between workflows. **Master Leads** colu
 | Website | After **LH Mobile** scored: SEO/A11y/BP &lt; 55 (not speed-only). Status=Wait. Route auto. | `deploy-outbound-website-tab.sh --setup-tab` · `deploy-outbound-website-scorer.sh --activate` |
 | **Quote Capture** | Manual Lane = `Quote Capture` → tab Wait → Ready. Email A demo `/demo/quote-capture?trade=&name=`. Email B via Status `Ready B`. See `QUOTE_CAPTURE_OUTBOUND.md`. | `deploy-outbound-quote-capture-send.sh --setup-tab` then send deploy; redeploy Manual Lane router |
 | **Feedback Review** | Manual Lane = `Feedback Review` → tab Wait → Ready. Email A `/go/feedback-review?b=`. Drafts only. | `deploy-outbound-feedback-review-send.sh --setup-tab --activate`; redeploy Manual Lane router |
-| **Manual Lane** | Master Leads column **S** `Manual Lane`: your eye → product tab. Values: `Speed Fix` · `Google Profile` · `Missed-Call` · `Search Visibility` · `Landing Page` · `CRM Rescue` · `Website` · `Quote Capture` · `Feedback Review`. After route → `routed`. `none`/`skip` ignore. | `deploy-outbound-manual-lane-router.sh --setup-col --activate` |
+| **Manual Lane** | Master Leads column **S** `Manual Lane`: your eye → product tab. Values: `Speed Fix` · `Google Profile` · `Missed-Call` · `Search Visibility` · `Landing Page` · `CRM Rescue` · `Website` · `Quote Capture` · `Feedback Review`. After route → `routed`. `none`/`skip` ignore. Dropdown is applied with `--setup-col`. | `deploy-outbound-manual-lane-router.sh --setup-col --activate` |
 
 If another product tab already has **Ready** or **Emailed** for the same Maps ID, new rows land as **Wait**. **Replied** anywhere skips append.
 
