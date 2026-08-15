@@ -601,9 +601,7 @@ export function buildFakeDraft(input: {
       : (input.detailId && DETAIL_LINES[input.detailId]) || input.serviceLabel
   const bits: string[] = []
 
-  bits.push(
-    `We worked with SYSBILT on ${detail} and I'd give them ${input.score} out of 5.`,
-  )
+  bits.push(`We worked with SYSBILT on ${detail}.`)
 
   if (input.resultId === 'nailed') {
     bits.push('The finished work nailed what we needed.')
@@ -650,7 +648,7 @@ export function buildFakeDraft(input: {
     bits.push('The materials were mostly clear.')
   }
 
-  if (extra) {
+  if (extra && extra.length <= 140) {
     bits.push(extra.replace(/[.!?]+$/, '') + '.')
   }
 

@@ -60,6 +60,7 @@ const PERSON_TRAIT_LINES: Record<string, string> = {
 }
 
 const STYLE_HINTS = ['direct', 'warm', 'short', 'detail-first'] as const
+const OPENING_HINTS = ['extra-first', 'person-first', 'work-first', 'feel-first'] as const
 
 export type FeedbackDraftInput = {
   serviceLabel: string
@@ -88,9 +89,7 @@ export function buildReviewSkeleton(input: FeedbackDraftInput): string {
       : (input.detailId && DETAIL_LINES[input.detailId]) || input.serviceLabel
   const bits: string[] = []
 
-  bits.push(
-    `We worked with SYSBILT on ${detail} and I'd give them ${input.score} out of 5.`,
-  )
+  bits.push(`We worked with SYSBILT on ${detail}.`)
 
   if (input.resultId === 'nailed') {
     bits.push('The finished work nailed what we needed.')
@@ -149,8 +148,21 @@ export function buildReviewSkeleton(input: FeedbackDraftInput): string {
   return bits.join(' ').replace(/\s+/g, ' ').trim()
 }
 
-function pickStyleHint(): (typeof STYLE_HINTS)[number] {
-  return STYLE_HINTS[Math.floor(Math.random() * STYLE_HINTS.length)]
+function pickHint<T extends readonly string[]>(hints: T): T[number] {
+  return hints[Math.floor(Math.random() * hints.length)]
+}
+
+function stripRatingOpener(text: string): string {
+  return text
+    .replace(
+      /^(we (worked with|had) sysbilt[^.!?]{0,120}?\d\s*out of\s*5\.?\s*)/i,
+      '',
+    )
+    .replace(
+      /^(i('d| would)? (give|gave) (them|this company|sysbilt)[^.!?]{0,80}?(\d\s*out of\s*5|five stars)\.?\s*)/i,
+      '',
+    )
+    .trim()
 }
 
 function cleanModelDraft(raw: string, skeleton: string): string {
@@ -161,6 +173,7 @@ function cleanModelDraft(raw: string, skeleton: string): string {
   text = text.replace(/\u2014/g, ',').replace(/--/g, ',')
   text = text.replace(/!/g, '.')
   text = text.replace(/\s+/g, ' ').trim()
+  text = stripRatingOpener(text)
   if (!text || text.length < 40) return skeleton
   if (text.length > 900) return skeleton
   return text
@@ -169,7 +182,8 @@ function cleanModelDraft(raw: string, skeleton: string): string {
 export async function polishReviewWithDeepSeek(
   input: FeedbackDraftInput & { skeleton: string },
 ): Promise<{ draft: string; usedAi: boolean; styleHint: string }> {
-  const styleHint = pickStyleHint()
+  const styleHint = pickHint(STYLE_HINTS)
+  const openingHint = pickHint(OPENING_HINTS)
   const skeleton = input.skeleton
   const apiKey =
     process.env.SYSBILT_deepseek_api_key?.trim() ||
@@ -196,13 +210,16 @@ export async function polishReviewWithDeepSeek(
     extraNote: (input.extraNote || '').trim(),
     skeleton,
     styleHint,
+    openingHint,
   }
 
   const system = [
     'You polish Google review drafts for SYSBILT (Australian business systems agency).',
     'Rewrite the skeleton into a natural first-person Google review in Australian English.',
     'Write 3 to 5 flowing sentences. Not a list of facts with a full stop after each.',
-    'You may change sentence order and openings. Style hint guides tone only.',
+    'Google already shows the star rating next to the text. Never mention stars, scores, or "out of 5" in the review body. That reads fake.',
+    'Never open with the company name plus a rating. openingHint is the lead: extra-first uses extraNote, person-first uses the person, work-first uses the job, feel-first uses how it felt. Vary the first sentence.',
+    'If extraNote has a real point, that is usually the best opening. If extraNote is empty, ignore extra-first and lead with the person, the work, or how it felt.',
     'Do not invent jobs, results, praise, people, or facts missing from the JSON.',
     'extraNote is often spoken out loud: messy, long, and full of asides. Extract the point. Do not paste the transcript. Weave one or two tidy sentences of their meaning into the review.',
     'If extraNote is only a future request with no usable review content, omit it.',
@@ -220,7 +237,7 @@ export async function polishReviewWithDeepSeek(
       },
       body: JSON.stringify({
         model: 'deepseek-chat',
-        temperature: 0.78,
+        temperature: 0.88,
         max_tokens: 500,
         messages: [
           {role: 'system', content: system},
