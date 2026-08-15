@@ -30,7 +30,7 @@ const GMAIL_CRED_ID = 'pR8GnMBXmukPyA2V'
 const GMAIL_CRED_NAME = 'Gmail account'
 
 const SEND_TAB = 'Send'
-const SEND_RANGE = 'A1:I2000'
+const SEND_RANGE = 'A1:J2000'
 const SETUP_PATH = 'sysbilt-feedback-review-send-tab'
 const WEBHOOK_PATH = 'sysbilt-feedback-review-send'
 
@@ -44,6 +44,7 @@ const SEND_HEADERS = [
   'Link',
   'Notes',
   'Updated',
+  'SMS',
 ]
 
 const SEND_STATUSES = ['New', 'Ready', 'Drafted', 'Done']
@@ -324,7 +325,7 @@ return [{
         },
         parameters: {
           method: 'PUT',
-          url: `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodeURIComponent(`${SEND_TAB}!A1:I1`)}?valueInputOption=RAW`,
+          url: `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodeURIComponent(`${SEND_TAB}!A1:J1`)}?valueInputOption=RAW`,
           authentication: 'predefinedCredentialType',
           nodeCredentialType: 'googleSheetsOAuth2Api',
           sendBody: true,
@@ -428,6 +429,9 @@ for (const row of rows) {
     '<p style="margin:0 0 14px">Felipe<br>SYSBILT</p>',
     '</div>',
   ].join('');
+  const sms = firstName
+    ? ('Hi ' + firstName + ", we'd like your honest take on how we did. A few taps: " + link)
+    : ("We'd like your honest take on how we did. A few taps: " + link);
 
   out.push({
     json: {
@@ -440,6 +444,7 @@ for (const row of rows) {
       Link: link,
       Notes: String(row.Notes || '').trim(),
       Updated: now,
+      SMS: sms,
       _skip: false,
       _subject: subject,
       _html: html,
@@ -594,6 +599,7 @@ function buildLinkBuilderWorkflow(sheetId) {
               Notes:
                 "={{ (() => { const prior = String($('Build Links').item.json.Notes || '').trim(); const stamp = 'draft:' + new Date().toISOString().slice(0, 10); return prior ? prior + ' · ' + stamp : stamp; })() }}",
               Updated: '={{ new Date().toISOString() }}',
+              SMS: "={{ $('Build Links').item.json.SMS }}",
             },
             matchingColumns: ['Email'],
             schema: headerSchema('Email'),
@@ -825,8 +831,8 @@ async function deployBuilder(sheetId, activate) {
   console.log('2. Fill Contact Name / Email / Company / Job (optional)')
   console.log('3. Set Status = Ready')
   console.log('4. Wait ~5 min, or run the workflow Manual / POST the webhook')
-  console.log('5. Gmail draft is created. Status becomes Drafted')
-  console.log('6. Open Gmail Drafts, review, then send yourself')
+  console.log('5. Gmail draft is created. Status becomes Drafted. SMS column fills')
+  console.log('6. Open Gmail Drafts, review, then send yourself. Copy SMS if you want to text them')
   return wf
 }
 

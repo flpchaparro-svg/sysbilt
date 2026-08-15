@@ -54,14 +54,14 @@ Sheet tabs: **Responses** (wizard finishes) · **Send** (personalised links).
 
 ### Send tab (personalised)
 
-Columns: Contact Name, Email, Company, Job, Catalog, Status, Link, Notes, Updated
+Columns: Contact Name, Email, Company, Job, Catalog, Status, Link, Notes, Updated, SMS
 
 1. Add a row (Email required for matching)
 2. Optional: Job (`websites`, `speed-fix`, …), Catalog (`products` when using product list)
 3. Set **Status** = `Ready`
 4. Wait ~5 min, or run **SYSBILT - Feedback Review Send Links** Manual / webhook
-5. **Link** fills, a Gmail **draft** is created, Status becomes `Drafted`
-6. Open Gmail Drafts, review, then send yourself. Or copy the Link for SMS
+5. **Link** fills, a Gmail **draft** is created, **SMS** fills with a short text plus the live link, Status becomes `Drafted`
+6. Open Gmail Drafts, review, then send yourself. Copy the SMS cell if you want to text them. Or copy the Link for later
 
 Never auto-sends. End-of-job tokens stay later.
 
