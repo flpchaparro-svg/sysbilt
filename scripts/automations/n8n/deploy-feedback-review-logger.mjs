@@ -373,8 +373,10 @@ return [{ json: out }];`,
           operation: 'append',
           ...sheetRef(sheetId),
           columns: {
-            mappingMode: 'autoMapInputData',
-            value: {},
+            mappingMode: 'defineBelow',
+            value: Object.fromEntries(
+              HEADERS.map((h) => [h, `={{ $json[${JSON.stringify(h)}] }}`]),
+            ),
             matchingColumns: [],
             schema: headerSchema(),
             attemptToConvertTypes: false,
@@ -496,20 +498,65 @@ if (!values.length) {
 }
 
 const head = values[0].map((c) => String(c || '').trim());
-const hasJunk = head[0] === 'spreadsheetId' || head.includes('spreadsheetId');
-const tsIdx = head.indexOf('Timestamp');
-const start = hasJunk && tsIdx >= 0 ? tsIdx : head[0] === 'Timestamp' ? 0 : 0;
+const idx = (name) => head.indexOf(name);
+const tsIdx = idx('Timestamp');
+const start = head[0] === 'spreadsheetId' && tsIdx >= 0 ? tsIdx : head[0] === 'Timestamp' ? 0 : 0;
+
+const emailRe = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;
+const looksEmail = (s) => emailRe.test(s);
+const looksProse = (s) => s.length > 80 || /SYSBILT|worked with|recommend|I'd give|I would/i.test(s);
+const looksShort = (s) => Boolean(s) && s.length > 0 && s.length < 80 && !looksEmail(s) && !looksProse(s);
+
+const col = (row, name) => {
+  const i = headers.indexOf(name);
+  return i >= 0 ? String(row[i] ?? '').trim() : '';
+};
+const setCol = (row, name, val) => {
+  const i = headers.indexOf(name);
+  if (i >= 0) row[i] = val;
+};
 
 const out = [headers];
 for (let i = 1; i < values.length; i++) {
-  const row = values[i] || [];
-  const slice = start > 0 ? row.slice(start) : row;
+  const raw = values[i] || [];
+  const slice = start > 0 ? raw.slice(start) : raw;
   const ts = String(slice[0] || '').trim();
-  // Drop duplicate header rows and empty rows
   if (!ts || ts === 'Timestamp' || ts === 'spreadsheetId') continue;
   if (!ts.includes('T') && !/^\\d{4}-/.test(ts)) continue;
-  const clean = headers.map((_, idx) => String(slice[idx] ?? ''));
-  out.push(clean);
+
+  const row = headers.map((_, j) => String(slice[j] ?? '').trim());
+
+  // Repair shift from when Contact Name/Company were inserted into headers
+  // but older rows were Email | Skeleton | Draft in those slots.
+  const contact = col(row, 'Contact Name');
+  const email = col(row, 'Email');
+  const company = col(row, 'Company');
+  const skeleton = col(row, 'Skeleton');
+  const draft = col(row, 'Draft');
+
+  if (looksEmail(contact) && looksProse(email)) {
+    const realEmail = contact;
+    const realSkeleton = email;
+    let realDraft = '';
+    let realContact = '';
+    let realCompany = '';
+    if (looksProse(company)) {
+      realDraft = company;
+      if (looksShort(skeleton)) realContact = skeleton;
+      if (looksShort(draft)) realCompany = draft;
+    } else {
+      realDraft = looksProse(draft) ? draft : '';
+      if (looksShort(company)) realCompany = company;
+      if (looksShort(skeleton)) realContact = skeleton;
+    }
+    setCol(row, 'Contact Name', realContact);
+    setCol(row, 'Email', realEmail);
+    setCol(row, 'Company', realCompany);
+    setCol(row, 'Skeleton', realSkeleton);
+    setCol(row, 'Draft', realDraft);
+  }
+
+  out.push(row);
 }
 
 return [{ json: { values: out, rowCount: out.length - 1 } }];`

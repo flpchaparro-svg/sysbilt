@@ -62,6 +62,7 @@ const WebsiteAgreementPage = lazy(() => import('./pages/funnel/WebsiteAgreementP
 const QuoteCaptureDemoPage = lazy(() => import('./pages/demo/quoteCapture/QuoteCaptureDemoPage'));
 const QuoteCaptureLivePage = lazy(() => import('./pages/quoteCapture/QuoteCaptureLivePage'));
 const QuoteCaptureEmbedPage = lazy(() => import('./pages/quoteCapture/QuoteCaptureEmbedPage'));
+const FeedbackReviewPage = lazy(() => import('./pages/feedbackReview/FeedbackReviewPage'));
 const NewsPage = lazy(() => import('./pages/NewsPage'));
 const BuiltToWorkBookPage = lazy(() => import('./pages/BuiltToWorkBookPage'));
 const BuiltToSellBookPage = lazy(() => import('./pages/BuiltToSellBookPage'));
@@ -189,6 +190,8 @@ const App: React.FC = () => {
   const isDemoRoute = location.pathname.startsWith('/demo/');
   const isQuoteCaptureLiveRoute =
     location.pathname.startsWith('/q/') || location.pathname.startsWith('/embed/q/');
+  const isFeedbackReviewRoute =
+    location.pathname === '/r' || location.pathname.startsWith('/r/');
   const hideChrome =
     location.pathname === '/contact' ||
     location.pathname.startsWith('/proposal/') ||
@@ -196,7 +199,8 @@ const App: React.FC = () => {
     location.pathname.startsWith('/reports/') ||
     isFunnelRoute ||
     isDemoRoute ||
-    isQuoteCaptureLiveRoute;
+    isQuoteCaptureLiveRoute ||
+    isFeedbackReviewRoute;
 
   return (
     <HelmetProvider>
@@ -281,6 +285,7 @@ const App: React.FC = () => {
                     <Route path="/demo/quote-capture" element={<QuoteCaptureDemoPage />} />
                     <Route path="/q/:slug" element={<QuoteCaptureLivePage />} />
                     <Route path="/embed/q/:slug" element={<QuoteCaptureEmbedPage />} />
+                    <Route path="/r/sysbilt" element={<FeedbackReviewPage />} />
 
                     <Route path="*" element={<NotFoundPage onNavigate={handleGlobalNavigate} />} />
                   </Routes>
@@ -295,7 +300,7 @@ const App: React.FC = () => {
           <ClientOnly>
             <Modal service={selectedService} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
             <CookieBanner />
-            {!isFunnelRoute && !isDemoRoute && !isQuoteCaptureLiveRoute && <HelpDock />}
+            {!isFunnelRoute && !isDemoRoute && !isQuoteCaptureLiveRoute && !isFeedbackReviewRoute && <HelpDock />}
           </ClientOnly>
         </div>
       </LazyMotion>

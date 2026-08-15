@@ -4,7 +4,7 @@
  *
  * Adds a "Send" tab on the Feedback Review spreadsheet. You fill rows, set
  * Status=Ready, and this workflow writes the /r/sysbilt?name=&email=&company=
- * link (optional job / catalog). End-of-job tokens stay later.
+ * link, then a Gmail draft (does not send). End-of-job tokens stay later.
  *
  * Env:
  *   N8N_API_KEY / cursor-mcp
@@ -26,6 +26,8 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = resolve(__dirname, '../../..')
 const GOOGLE_SHEETS_CRED_ID = 'W8jOFatMKmraYw0F'
 const GOOGLE_SHEETS_CRED_NAME = 'Google Sheets account'
+const GMAIL_CRED_ID = 'pR8GnMBXmukPyA2V'
+const GMAIL_CRED_NAME = 'Gmail account'
 
 const SEND_TAB = 'Send'
 const SEND_RANGE = 'A1:I2000'
@@ -43,6 +45,24 @@ const SEND_HEADERS = [
   'Notes',
   'Updated',
 ]
+
+const SEND_STATUSES = ['New', 'Ready', 'Drafted', 'Done']
+const SEND_CATALOGS = ['general', 'products']
+const SEND_JOBS = [
+  'websites',
+  'crm',
+  'automation',
+  'ai',
+  'content',
+  'training',
+  'dashboards',
+  'website',
+  'speed-fix',
+  'google-profile',
+  'quote-capture',
+  'search-fix',
+]
+const DROPDOWNS_PATH = 'sysbilt-feedback-review-send-dropdowns'
 
 function loadEnvLocal() {
   const path = resolve(ROOT, '.env.local')
@@ -376,14 +396,39 @@ for (const row of rows) {
     // email alone is fine for HubSpot match + generic greeting
   }
 
-  const q = new URLSearchParams();
-  if (name) q.set('name', name);
-  if (email) q.set('email', email);
-  if (company) q.set('company', company);
-  if (job) q.set('job', job);
-  if (catalog === 'products') q.set('catalog', 'products');
+  const parts = []
+  if (name) parts.push('name=' + encodeURIComponent(name))
+  if (email) parts.push('email=' + encodeURIComponent(email))
+  if (company) parts.push('company=' + encodeURIComponent(company))
+  if (job) parts.push('job=' + encodeURIComponent(job))
+  if (catalog === 'products') parts.push('catalog=products')
+  const link = parts.length ? base + '?' + parts.join('&') : base
 
-  const link = q.toString() ? base + '?' + q.toString() : base;
+  const firstName = name.split(/\\s+/).filter(Boolean)[0] || '';
+
+  function esc(s) {
+    return String(s || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  const greeting = firstName ? ('Hi ' + esc(firstName) + ',') : 'Hi,';
+  const subject = firstName
+    ? firstName + ', a quick note on how we did'
+    : 'A quick note on how we did';
+  const html = [
+    '<div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.55;color:#222">',
+    '<p style="margin:0 0 14px">' + greeting + '</p>',
+    '<p style="margin:0 0 14px">Thank you for working with us. We hope we work together again.</p>',
+    '<p style="margin:0 0 14px">To keep getting better, we\\'d like your honest take on how we did, and anything we should change.</p>',
+    '<p style="margin:0 0 14px"><a href="' + esc(link) + '" style="color:#1a73e8;text-decoration:underline">Give feedback</a></p>',
+    '<p style="margin:0 0 14px">If you want to leave a Google review as well, we\\'d be glad. Only if it feels right.</p>',
+    '<p style="margin:0 0 14px">Felipe<br>SYSBILT</p>',
+    '</div>',
+  ].join('');
+
   out.push({
     json: {
       'Contact Name': name,
@@ -391,11 +436,14 @@ for (const row of rows) {
       Company: company,
       Job: job,
       Catalog: catalog === 'products' ? 'products' : '',
-      Status: 'Linked',
+      Status: 'Drafted',
       Link: link,
       Notes: String(row.Notes || '').trim(),
       Updated: now,
       _skip: false,
+      _subject: subject,
+      _html: html,
+      _to: email,
     },
   });
 }
@@ -503,10 +551,30 @@ function buildLinkBuilderWorkflow(sheetId) {
       },
       {
         id: uid(),
+        name: 'Gmail Draft',
+        type: 'n8n-nodes-base.gmail',
+        typeVersion: 2.1,
+        position: [320, -80],
+        credentials: {
+          gmailOAuth2: {id: GMAIL_CRED_ID, name: GMAIL_CRED_NAME},
+        },
+        parameters: {
+          resource: 'draft',
+          operation: 'create',
+          subject: '={{ $json._subject }}',
+          emailType: 'html',
+          message: '={{ $json._html }}',
+          options: {
+            sendTo: '={{ $json._to }}',
+          },
+        },
+      },
+      {
+        id: uid(),
         name: 'Write Link',
         type: 'n8n-nodes-base.googleSheets',
         typeVersion: 4.7,
-        position: [320, -80],
+        position: [560, -80],
         credentials: {
           googleSheetsOAuth2Api: {id: GOOGLE_SHEETS_CRED_ID, name: GOOGLE_SHEETS_CRED_NAME},
         },
@@ -516,15 +584,16 @@ function buildLinkBuilderWorkflow(sheetId) {
           columns: {
             mappingMode: 'defineBelow',
             value: {
-              'Contact Name': "={{ $json['Contact Name'] }}",
-              Email: '={{ $json.Email }}',
-              Company: '={{ $json.Company }}',
-              Job: '={{ $json.Job }}',
-              Catalog: '={{ $json.Catalog }}',
-              Status: '={{ $json.Status }}',
-              Link: '={{ $json.Link }}',
-              Notes: '={{ $json.Notes }}',
-              Updated: '={{ $json.Updated }}',
+              'Contact Name': "={{ $('Build Links').item.json['Contact Name'] }}",
+              Email: "={{ $('Build Links').item.json.Email }}",
+              Company: "={{ $('Build Links').item.json.Company }}",
+              Job: "={{ $('Build Links').item.json.Job }}",
+              Catalog: "={{ $('Build Links').item.json.Catalog }}",
+              Status: 'Drafted',
+              Link: "={{ $('Build Links').item.json.Link }}",
+              Notes:
+                "={{ (() => { const prior = String($('Build Links').item.json.Notes || '').trim(); const stamp = 'draft:' + new Date().toISOString().slice(0, 10); return prior ? prior + ' · ' + stamp : stamp; })() }}",
+              Updated: '={{ new Date().toISOString() }}',
             },
             matchingColumns: ['Email'],
             schema: headerSchema('Email'),
@@ -554,10 +623,11 @@ function buildLinkBuilderWorkflow(sheetId) {
       'Build Links': {main: [[{node: 'Has Rows', type: 'main', index: 0}]]},
       'Has Rows': {
         main: [
-          [{node: 'Write Link', type: 'main', index: 0}],
+          [{node: 'Gmail Draft', type: 'main', index: 0}],
           [{node: 'No Ready Rows', type: 'main', index: 0}],
         ],
       },
+      'Gmail Draft': {main: [[{node: 'Write Link', type: 'main', index: 0}]]},
     },
     settings: {executionOrder: 'v1'},
   }
@@ -605,6 +675,141 @@ async function setupTab(sheetId) {
   console.log(`Send tab ready: https://docs.google.com/spreadsheets/d/${sheetId}/edit`)
 }
 
+function buildDropdownsWorkflow(sheetId) {
+  return {
+    name: 'SYSBILT - Feedback Review Send Dropdowns',
+    nodes: [
+      {
+        id: uid(),
+        name: 'Setup Webhook',
+        type: 'n8n-nodes-base.webhook',
+        typeVersion: 2.1,
+        position: [-480, 0],
+        parameters: {
+          path: DROPDOWNS_PATH,
+          httpMethod: 'POST',
+          responseMode: 'responseNode',
+          options: {},
+        },
+        webhookId: DROPDOWNS_PATH,
+      },
+      {
+        id: uid(),
+        name: 'Get Spreadsheet Meta',
+        type: 'n8n-nodes-base.httpRequest',
+        typeVersion: 4.4,
+        position: [-240, 0],
+        credentials: {
+          googleSheetsOAuth2Api: {id: GOOGLE_SHEETS_CRED_ID, name: GOOGLE_SHEETS_CRED_NAME},
+        },
+        parameters: {
+          method: 'GET',
+          url: `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}?fields=sheets.properties`,
+          authentication: 'predefinedCredentialType',
+          nodeCredentialType: 'googleSheetsOAuth2Api',
+          options: {},
+        },
+      },
+      {
+        id: uid(),
+        name: 'Build Dropdown Requests',
+        type: 'n8n-nodes-base.code',
+        typeVersion: 2,
+        position: [0, 0],
+        parameters: {
+          mode: 'runOnceForAllItems',
+          jsCode: `const meta = $input.first().json;
+const sheet = (meta.sheets || []).find((s) => s.properties?.title === '${SEND_TAB}');
+if (!sheet?.properties || (sheet.properties.sheetId !== 0 && !sheet.properties.sheetId)) {
+  throw new Error('Send tab sheetId not found');
+}
+const sid = sheet.properties.sheetId;
+const listRule = (values) => ({
+  condition: {
+    type: 'ONE_OF_LIST',
+    values: values.map((v) => ({ userEnteredValue: v })),
+  },
+  showCustomUi: true,
+  strict: true,
+});
+const endRow = 2000;
+const col = (start, end, values) => ({
+  setDataValidation: {
+    range: {
+      sheetId: sid,
+      startRowIndex: 1,
+      endRowIndex: endRow,
+      startColumnIndex: start,
+      endColumnIndex: end,
+    },
+    rule: listRule(values),
+  },
+});
+// Send headers: Contact Name, Email, Company, Job, Catalog, Status, ...
+const requests = [
+  col(3, 4, ${JSON.stringify(SEND_JOBS)}),
+  col(4, 5, ${JSON.stringify(SEND_CATALOGS)}),
+  col(5, 6, ${JSON.stringify(SEND_STATUSES)}),
+];
+return [{ json: { requests } }];`,
+        },
+      },
+      {
+        id: uid(),
+        name: 'Apply Dropdowns',
+        type: 'n8n-nodes-base.httpRequest',
+        typeVersion: 4.4,
+        position: [240, 0],
+        credentials: {
+          googleSheetsOAuth2Api: {id: GOOGLE_SHEETS_CRED_ID, name: GOOGLE_SHEETS_CRED_NAME},
+        },
+        parameters: {
+          method: 'POST',
+          url: `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}:batchUpdate`,
+          authentication: 'predefinedCredentialType',
+          nodeCredentialType: 'googleSheetsOAuth2Api',
+          sendBody: true,
+          specifyBody: 'json',
+          jsonBody: '={{ JSON.stringify({ requests: $json.requests }) }}',
+          options: {},
+        },
+      },
+      {
+        id: uid(),
+        name: 'Respond OK',
+        type: 'n8n-nodes-base.respondToWebhook',
+        typeVersion: 1.1,
+        position: [480, 0],
+        parameters: {
+          respondWith: 'json',
+          responseBody: '={{ ({ ok: true, dropdowns: ["Job", "Catalog", "Status"] }) }}',
+          options: {},
+        },
+      },
+    ],
+    connections: {
+      'Setup Webhook': {main: [[{node: 'Get Spreadsheet Meta', type: 'main', index: 0}]]},
+      'Get Spreadsheet Meta': {
+        main: [[{node: 'Build Dropdown Requests', type: 'main', index: 0}]],
+      },
+      'Build Dropdown Requests': {main: [[{node: 'Apply Dropdowns', type: 'main', index: 0}]]},
+      'Apply Dropdowns': {main: [[{node: 'Respond OK', type: 'main', index: 0}]]},
+    },
+    settings: {executionOrder: 'v1'},
+  }
+}
+
+async function setupDropdowns(sheetId) {
+  console.log(`Applying Send tab dropdowns on ${sheetId}...`)
+  const {data, workflowId} = await runWebhookSetup(
+    DROPDOWNS_PATH,
+    buildDropdownsWorkflow(sheetId),
+  )
+  if (!data.ok) throw new Error(`Dropdown setup failed: ${JSON.stringify(data)}`)
+  saveDeployState({FEEDBACK_REVIEW_SEND_DROPDOWNS_WORKFLOW_ID: workflowId})
+  console.log('Dropdowns: Job, Catalog, Status')
+}
+
 async function deployBuilder(sheetId, activate) {
   const wf = await upsertWorkflow(buildLinkBuilderWorkflow(sheetId), {activate})
   const webhookUrl = `${N8N_BASE}/webhook/${WEBHOOK_PATH}`
@@ -620,13 +825,59 @@ async function deployBuilder(sheetId, activate) {
   console.log('2. Fill Contact Name / Email / Company / Job (optional)')
   console.log('3. Set Status = Ready')
   console.log('4. Wait ~5 min, or run the workflow Manual / POST the webhook')
-  console.log('5. Link fills and Status becomes Linked')
+  console.log('5. Gmail draft is created. Status becomes Drafted')
+  console.log('6. Open Gmail Drafts, review, then send yourself')
   return wf
 }
 
+async function inspect() {
+  const wfId = process.env.FEEDBACK_REVIEW_SEND_LINKS_WORKFLOW_ID
+  if (!wfId) {
+    console.error('Missing FEEDBACK_REVIEW_SEND_LINKS_WORKFLOW_ID')
+    process.exit(1)
+  }
+  const wf = await n8n('GET', `/workflows/${wfId}`)
+  console.log('Workflow', wf.id, wf.name, 'active=', wf.active)
+  const nodes = (wf.nodes || []).map((n) => n.name)
+  console.log('Nodes:', nodes.join(' → '))
+  const execs = await n8n('GET', `/executions?limit=8&workflowId=${wfId}`)
+  const rows = execs.data || []
+  console.log('Recent executions:', rows.length)
+  for (const e of rows) {
+    console.log(
+      '-',
+      e.id,
+      e.status,
+      e.mode,
+      e.startedAt,
+      e.stoppedAt || '',
+    )
+  }
+  const lastId = rows[0]?.id
+  if (!lastId) return
+  const full = await n8n('GET', `/executions/${lastId}?includeData=true`)
+  const run = full.data?.resultData?.runData || {}
+  console.log('\nLast run nodes:')
+  for (const [name, runs] of Object.entries(run)) {
+    const r = runs?.[0]
+    const err = r?.error?.message || r?.error?.description || ''
+    const nItems = r?.data?.main?.[0]?.length ?? 0
+    console.log(`  ${name}: items=${nItems}${err ? ` ERROR ${err}` : ''}`)
+  }
+  const errMsg = full.data?.resultData?.error?.message
+  if (errMsg) console.log('Workflow error:', errMsg)
+}
+
 const setup = process.argv.includes('--setup-tab')
+const dropdowns = process.argv.includes('--setup-dropdowns')
 const activate = process.argv.includes('--activate')
+const inspectOnly = process.argv.includes('--inspect')
 const sheetId = process.env.FEEDBACK_REVIEW_SHEET_ID
+
+if (inspectOnly) {
+  await inspect()
+  process.exit(0)
+}
 
 if (!sheetId) {
   console.error(
@@ -636,5 +887,8 @@ if (!sheetId) {
 }
 
 if (setup) await setupTab(sheetId)
-await deployBuilder(sheetId, activate || setup)
+if (dropdowns || setup) await setupDropdowns(sheetId)
+if (!dropdowns || setup || activate) {
+  await deployBuilder(sheetId, activate || setup)
+}
 console.log('\nDone.')

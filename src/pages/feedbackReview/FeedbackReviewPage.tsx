@@ -160,14 +160,14 @@ function StepChrome({
       ) : null}
       <h1
         className={`font-serif text-3xl leading-tight tracking-tight md:text-4xl ${
-          centre ? 'max-w-2xl' : 'max-w-2xl'
+          centre ? 'mx-auto max-w-2xl text-center' : 'max-w-2xl'
         }`}
       >
         {title}
       </h1>
       <p
         className={`mb-8 mt-3 font-sans text-base text-dark/60 ${
-          centre ? 'max-w-xl' : 'max-w-xl'
+          centre ? 'mx-auto max-w-xl text-center' : 'max-w-xl'
         }`}
       >
         {lead}
@@ -567,7 +567,7 @@ function SelectChoiceGrid({
   )
 }
 
-/** Compact card: hover shows Select; tap picks and advances (no Continue). */
+/** Compact card: tap picks. Instant options advance. No fake Select overlay. */
 function CompactCard({
   selected,
   onSelect,
@@ -589,10 +589,10 @@ function CompactCard({
       onClick={(e) => onSelect(e.currentTarget)}
       data-selected={selected ? 'true' : undefined}
       data-pop={pop ? 'true' : undefined}
-      className="group relative flex min-h-[148px] flex-col items-center overflow-hidden rounded-xl border border-dark/12 bg-white px-3 pt-4 pb-3 text-center shadow-[0_6px_18px_-14px_rgba(26,26,26,0.28)] transition-[border-color,box-shadow] duration-200 hover:border-[#E21E3F] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E21E3F] focus-visible:ring-offset-2 data-[selected=true]:border-[#E21E3F] data-[selected=true]:shadow-[0_12px_28px_-18px_rgba(226,30,63,0.35)] data-[pop=true]:[&>div:first-child]:animate-[fb-icon-pop_480ms_ease-out] sm:min-h-[160px]"
+      className="group relative flex min-h-[148px] flex-col items-center rounded-xl border border-dark/12 bg-white px-3 pt-4 pb-3 text-center shadow-[0_6px_18px_-14px_rgba(26,26,26,0.28)] transition-[border-color,box-shadow] duration-200 hover:border-[#E21E3F] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E21E3F] focus-visible:ring-offset-2 data-[selected=true]:border-[#E21E3F] data-[selected=true]:shadow-[0_12px_28px_-18px_rgba(226,30,63,0.35)] data-[pop=true]:[&>div:first-child]:animate-[fb-icon-pop_480ms_ease-out] sm:min-h-[160px]"
     >
       <div
-        className={`mb-2 flex h-8 w-8 shrink-0 items-center justify-center transition-all duration-200 group-hover:mb-1 group-hover:h-6 group-hover:w-6 group-data-[selected=true]:mb-1 group-data-[selected=true]:h-6 group-data-[selected=true]:w-6 sm:h-9 sm:w-9 ${
+        className={`mb-2 flex h-8 w-8 shrink-0 items-center justify-center sm:h-9 sm:w-9 ${
           selected ? 'text-[#E21E3F]' : 'text-dark group-hover:text-[#E21E3F]'
         }`}
       >
@@ -605,15 +605,9 @@ function CompactCard({
       >
         {title}
       </div>
-      <p className="mt-1.5 font-sans text-[11px] leading-snug text-dark/50 transition-opacity duration-200 group-hover:opacity-0 group-data-[selected=true]:opacity-0 sm:text-xs">
+      <p className="mt-1.5 font-sans text-[11px] leading-snug text-dark/50 sm:text-xs">
         {blurb}
       </p>
-      <span
-        className="absolute inset-x-3 bottom-3 flex items-center justify-center rounded-lg py-2 font-sans text-xs font-semibold text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-data-[selected=true]:opacity-100"
-        style={{backgroundColor: RED}}
-      >
-        Select
-      </span>
     </button>
   )
 }
@@ -765,6 +759,7 @@ function CompactChoiceWithNote({
 }) {
   const [popId, setPopId] = useState<string | null>(null)
   const busy = useRef(false)
+  const noteWrapRef = useRef<HTMLDivElement | null>(null)
 
   function finishPick(id: string) {
     onSelect(id)
@@ -796,25 +791,28 @@ function CompactChoiceWithNote({
     finishPick(id)
   }
 
-  const showNote = selectedId != null && !instantIds?.includes(selectedId)
+  const showNote = Boolean(selectedId) && !instantIds?.includes(selectedId)
+  const picked = items.find((item) => item.id === selectedId)
 
-  return (
-    <>
-      <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-4 lg:gap-3">
-        {items.map((item) => (
-          <CompactCard
-            key={item.id}
-            selected={selectedId === item.id || popId === item.id}
-            pop={popId === item.id}
-            onSelect={(el) => handlePick(item.id, el)}
-            title={item.title}
-            blurb={item.blurb}
-            icon={item.icon}
-          />
-        ))}
-      </div>
-      {showNote ? (
-        <div className="mx-auto mt-8 w-full max-w-xl text-left">
+  useEffect(() => {
+    if (!showNote) return
+    noteWrapRef.current?.scrollIntoView({behavior: 'smooth', block: 'start'})
+  }, [showNote])
+
+  if (showNote) {
+    return (
+      <div ref={noteWrapRef} className="mx-auto w-full max-w-xl text-center">
+        {picked ? (
+          <p className="font-sans text-base font-semibold text-dark">{picked.title}</p>
+        ) : null}
+        <button
+          type="button"
+          onClick={() => onSelect('')}
+          className="mt-2 font-sans text-sm text-dark/55 transition-colors hover:text-dark hover:underline hover:underline-offset-4"
+        >
+          Pick a different one
+        </button>
+        <div className="mt-8 text-left">
           <label className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-dark/45">
             {noteLabel}
           </label>
@@ -823,17 +821,34 @@ function CompactChoiceWithNote({
             onChange={(e) => onNoteChange(e.target.value)}
             rows={4}
             placeholder={notePlaceholder}
+            autoFocus
             className="mt-2 w-full resize-y rounded-2xl border border-dark/15 bg-white px-4 py-4 font-sans text-base leading-relaxed text-dark outline-none transition focus:border-[#E21E3F]"
           />
-          <div className="mt-6 flex flex-wrap gap-3">
-            <InkButton onClick={onAdvance}>
-              Continue <ArrowRight className="h-4 w-4" />
-            </InkButton>
-            <GhostButton onClick={onAdvance}>Skip</GhostButton>
-          </div>
         </div>
-      ) : null}
-    </>
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+          <InkButton onClick={onAdvance}>
+            Continue <ArrowRight className="h-4 w-4" />
+          </InkButton>
+          <GhostButton onClick={onAdvance}>Skip</GhostButton>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-4 lg:gap-3">
+      {items.map((item) => (
+        <CompactCard
+          key={item.id}
+          selected={selectedId === item.id || popId === item.id}
+          pop={popId === item.id}
+          onSelect={(el) => handlePick(item.id, el)}
+          title={item.title}
+          blurb={item.blurb}
+          icon={item.icon}
+        />
+      ))}
+    </div>
   )
 }
 
@@ -846,15 +861,57 @@ function StageJourney({
   canGoBack: boolean
   onBack: () => void
 }) {
+  const barRef = useRef<HTMLDivElement | null>(null)
+  const markRefs = useRef<(HTMLDivElement | null)[]>([])
+  const [fillPx, setFillPx] = useState(0)
+
+  useLayoutEffect(() => {
+    const bar = barRef.current
+    if (!bar) return
+
+    function measure() {
+      const mark = markRefs.current[phaseIndex]
+      if (!bar || !mark) return
+      const barBox = bar.getBoundingClientRect()
+      const markBox = mark.getBoundingClientRect()
+      if (phaseIndex >= PHASES.length - 1) {
+        setFillPx(barBox.width)
+        return
+      }
+      const next = markRefs.current[phaseIndex + 1]
+      const justPast = markBox.right - barBox.left + 8
+      if (next) {
+        const nextBox = next.getBoundingClientRect()
+        const mid = (markBox.right + nextBox.left) / 2 - barBox.left
+        setFillPx(Math.max(0, Math.min(justPast, mid, barBox.width)))
+        return
+      }
+      setFillPx(Math.max(0, Math.min(justPast, barBox.width)))
+    }
+
+    measure()
+    const ro = new ResizeObserver(measure)
+    ro.observe(bar)
+    markRefs.current.forEach((el) => {
+      if (el) ro.observe(el)
+    })
+    window.addEventListener('resize', measure)
+    return () => {
+      ro.disconnect()
+      window.removeEventListener('resize', measure)
+    }
+  }, [phaseIndex, canGoBack])
+
   return (
     <div
+      ref={barRef}
       className="relative flex h-12 w-full min-w-0 items-center rounded-full shadow-[0_4px_18px_-6px_rgba(26,26,26,0.28)] md:h-[52px]"
       style={{backgroundColor: INK}}
     >
       <div
         className="pointer-events-none absolute inset-y-0 left-0 rounded-full transition-[width] duration-500 ease-out"
         style={{
-          width: `${Math.min(100, ((phaseIndex + 1) / PHASES.length) * 100)}%`,
+          width: fillPx > 0 ? `${fillPx}px` : `${((phaseIndex + 1) / PHASES.length) * 100}%`,
           backgroundColor: CREAM,
         }}
         aria-hidden
@@ -883,7 +940,7 @@ function StageJourney({
             <span className="w-1 shrink-0" aria-hidden />
           )}
         </div>
-        <div className="ml-2 flex min-w-0 flex-1 items-center justify-between gap-1 overflow-x-auto md:ml-3 md:gap-2">
+        <div className="ml-2 flex min-w-0 flex-1 items-center justify-between gap-1 md:ml-3 md:gap-2">
           {PHASES.map((p, i) => {
             const active = i === phaseIndex
             const done = i < phaseIndex
@@ -891,6 +948,9 @@ function StageJourney({
             return (
               <div
                 key={p.id}
+                ref={(node) => {
+                  markRefs.current[i] = node
+                }}
                 className="flex shrink-0 items-center gap-1.5 px-1 md:gap-2 md:px-2"
               >
                 <span
@@ -1357,7 +1417,7 @@ export default function FeedbackReviewPage() {
         )}
 
         {step !== 'intro' ? (
-          <p className="mb-2 font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-[#A8843F]">
+          <p className="mb-2 text-center font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-[#A8843F]">
             SYSBILT · how we did
           </p>
         ) : null}
