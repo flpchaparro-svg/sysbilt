@@ -137,7 +137,8 @@ export function buildReviewSkeleton(input: FeedbackDraftInput): string {
     bits.push('The materials were mostly clear.')
   }
 
-  if (extra) {
+  // Short extras can sit in the fallback. Long spoken notes are for AI only.
+  if (extra && extra.length <= 140) {
     bits.push(extra.replace(/[.!?]+$/, '') + '.')
   }
 
@@ -161,7 +162,7 @@ function cleanModelDraft(raw: string, skeleton: string): string {
   text = text.replace(/!/g, '.')
   text = text.replace(/\s+/g, ' ').trim()
   if (!text || text.length < 40) return skeleton
-  if (text.length > 1200) return skeleton
+  if (text.length > 900) return skeleton
   return text
 }
 
@@ -199,14 +200,15 @@ export async function polishReviewWithDeepSeek(
 
   const system = [
     'You polish Google review drafts for SYSBILT (Australian business systems agency).',
-    'Rewrite the skeleton into natural first-person AU English.',
+    'Rewrite the skeleton into a natural first-person Google review in Australian English.',
+    'Write 3 to 5 flowing sentences. Not a list of facts with a full stop after each.',
     'You may change sentence order and openings. Style hint guides tone only.',
     'Do not invent jobs, results, praise, people, or facts missing from the JSON.',
-    'If extraNote has praise or concrete detail about the work (design, feel, speed, clarity, and so on), weave that meaning into the review. Keep their point. You may tidy grammar.',
-    'If extraNote is only a future request with no usable review content, omit it from the public review.',
+    'extraNote is often spoken out loud: messy, long, and full of asides. Extract the point. Do not paste the transcript. Weave one or two tidy sentences of their meaning into the review.',
+    'If extraNote is only a future request with no usable review content, omit it.',
     'Do not use marketing nicknames or hype words.',
     'No em dashes. No exclamation marks. No emoji.',
-    'Keep about 2 to 6 sentences. Output the review text only.',
+    'Output the review text only.',
   ].join(' ')
 
   try {
@@ -219,7 +221,7 @@ export async function polishReviewWithDeepSeek(
       body: JSON.stringify({
         model: 'deepseek-chat',
         temperature: 0.78,
-        max_tokens: 400,
+        max_tokens: 500,
         messages: [
           {role: 'system', content: system},
           {

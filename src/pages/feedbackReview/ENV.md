@@ -15,6 +15,14 @@ HUBSPOT_PRIVATE_APP_TOKEN=
 SYSBILT_deepseek_api_key=
 ```
 
+**Vercel Production and Preview must have:**
+
+- `FEEDBACK_REVIEW_SHEET_WEBHOOK_URL` (same n8n webhook as above)
+- `SYSBILT_deepseek_api_key`
+
+Without those, live submits return the raw skeleton and skip the sheet. Local `.env.local` is not enough.
+```
+
 **One-time sheet + logger:**
 
 ```bash

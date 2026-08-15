@@ -274,6 +274,10 @@ export async function processFeedbackReviewSubmit(
     warnings.push(err instanceof Error ? err.message : 'sheet failed')
   }
 
+  if (warnings.length) {
+    console.warn('[feedback-review]', warnings.join(' | '))
+  }
+
   let hubspot: 'noted' | 'no_match' | 'skipped' | 'error' = 'skipped'
   if (!data.email) {
     hubspot = 'skipped'
