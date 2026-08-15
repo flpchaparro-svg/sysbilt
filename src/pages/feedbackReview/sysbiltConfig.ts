@@ -604,19 +604,19 @@ export function buildFakeDraft(input: {
   bits.push(`We worked with SYSBILT on ${detail}.`)
 
   if (input.resultId === 'nailed') {
-    bits.push('The finished work nailed what we needed.')
+    bits.push('The finished work was what we needed.')
   } else if (input.resultId === 'solid') {
-    bits.push('The result was solid and ready to use.')
+    bits.push('The result was good and ready to use.')
   }
 
   if (input.attentionId === 'tight') {
-    bits.push('They kept me in the loop the whole way.')
+    bits.push('They kept me in the loop.')
   } else if (input.attentionId === 'fine') {
-    bits.push('Communication was fine throughout.')
+    bits.push('Updates were enough.')
   }
 
   if (input.comfortId === 'yes') {
-    bits.push('I felt looked after from start to finish.')
+    bits.push('I felt looked after.')
   } else if (input.comfortId === 'mostly') {
     bits.push('I felt mostly comfortable working with them.')
   }
@@ -643,7 +643,7 @@ export function buildFakeDraft(input: {
   }
 
   if (input.materialsId === 'crystal') {
-    bits.push('Everything they sent was crystal clear.')
+    bits.push('What they sent was easy to follow.')
   } else if (input.materialsId === 'mostly') {
     bits.push('The materials were mostly clear.')
   }
@@ -653,7 +653,7 @@ export function buildFakeDraft(input: {
   }
 
   if (input.againId === 'yes' || input.againId === 'likely') {
-    bits.push('I would work with them again and am happy to recommend them.')
+    bits.push('I would work with them again.')
   }
 
   return bits.join(' ').replace(/\s+/g, ' ').trim()

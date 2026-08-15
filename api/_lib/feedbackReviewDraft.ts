@@ -61,6 +61,11 @@ const PERSON_TRAIT_LINES: Record<string, string> = {
 
 const STYLE_HINTS = ['direct', 'warm', 'short', 'detail-first'] as const
 const OPENING_HINTS = ['extra-first', 'person-first', 'work-first', 'feel-first'] as const
+const CLOSER_LINES = [
+  'I would work with them again.',
+  'Happy to recommend them.',
+  "I'd use them again next time.",
+] as const
 
 export type FeedbackDraftInput = {
   serviceLabel: string
@@ -92,19 +97,19 @@ export function buildReviewSkeleton(input: FeedbackDraftInput): string {
   bits.push(`We worked with SYSBILT on ${detail}.`)
 
   if (input.resultId === 'nailed') {
-    bits.push('The finished work nailed what we needed.')
+    bits.push('The finished work was what we needed.')
   } else if (input.resultId === 'solid') {
-    bits.push('The result was solid and ready to use.')
+    bits.push('The result was good and ready to use.')
   }
 
   if (input.attentionId === 'tight') {
-    bits.push('They kept me in the loop the whole way.')
+    bits.push('They kept me in the loop.')
   } else if (input.attentionId === 'fine') {
-    bits.push('Communication was fine throughout.')
+    bits.push('Updates were enough.')
   }
 
   if (input.comfortId === 'yes') {
-    bits.push('I felt looked after from start to finish.')
+    bits.push('I felt looked after.')
   } else if (input.comfortId === 'mostly') {
     bits.push('I felt mostly comfortable working with them.')
   }
@@ -131,7 +136,7 @@ export function buildReviewSkeleton(input: FeedbackDraftInput): string {
   }
 
   if (input.materialsId === 'crystal') {
-    bits.push('Everything they sent was crystal clear.')
+    bits.push('What they sent was easy to follow.')
   } else if (input.materialsId === 'mostly') {
     bits.push('The materials were mostly clear.')
   }
@@ -142,7 +147,7 @@ export function buildReviewSkeleton(input: FeedbackDraftInput): string {
   }
 
   if (input.againId === 'yes' || input.againId === 'likely') {
-    bits.push('I would work with them again and am happy to recommend them.')
+    bits.push(pickHint(CLOSER_LINES))
   }
 
   return bits.join(' ').replace(/\s+/g, ' ').trim()
@@ -150,6 +155,15 @@ export function buildReviewSkeleton(input: FeedbackDraftInput): string {
 
 function pickHint<T extends readonly string[]>(hints: T): T[number] {
   return hints[Math.floor(Math.random() * hints.length)]
+}
+
+function softenSurveySpeak(text: string): string {
+  return text
+    .replace(/\bcommunication was tight\b/gi, 'they kept me in the loop')
+    .replace(/\bkept everything tight\b/gi, 'kept things clear')
+    .replace(/\btight from start to finish\b/gi, 'clear from start to finish')
+    .replace(/\bcrystal clear\b/gi, 'easy to follow')
+    .replace(/\bnailed it\b/gi, 'got it right')
 }
 
 function stripRatingOpener(text: string): string {
@@ -174,6 +188,7 @@ function cleanModelDraft(raw: string, skeleton: string): string {
   text = text.replace(/!/g, '.')
   text = text.replace(/\s+/g, ' ').trim()
   text = stripRatingOpener(text)
+  text = softenSurveySpeak(text)
   if (!text || text.length < 40) return skeleton
   if (text.length > 900) return skeleton
   return text
@@ -196,17 +211,45 @@ export async function polishReviewWithDeepSeek(
 
   const facts = {
     serviceLabel: input.serviceLabel,
-    detailId: input.detailId,
-    detailOther: input.detailOther,
-    score: input.score,
+    detail:
+      input.detailId === 'other-detail' && input.detailOther.trim()
+        ? input.detailOther.trim()
+        : (input.detailId && DETAIL_LINES[input.detailId]) || input.serviceLabel,
     personName: input.personName,
-    resultId: input.resultId,
-    attentionId: input.attentionId,
-    comfortId: input.comfortId,
-    personId: input.personId,
-    personTraitIds: input.personTraitIds,
-    materialsId: input.materialsId,
-    againId: input.againId,
+    result:
+      input.resultId === 'nailed'
+        ? 'the finished work was what they needed'
+        : input.resultId === 'solid'
+          ? 'the result was good and ready to use'
+          : '',
+    updates:
+      input.attentionId === 'tight'
+        ? 'they were kept in the loop'
+        : input.attentionId === 'fine'
+          ? 'updates were enough'
+          : '',
+    comfort:
+      input.comfortId === 'yes'
+        ? 'felt looked after'
+        : input.comfortId === 'mostly'
+          ? 'felt mostly comfortable'
+          : '',
+    personFeel:
+      input.personId === 'excellent'
+        ? 'excellent to work with'
+        : input.personId === 'good'
+          ? 'good to work with'
+          : '',
+    personTraits: input.personTraitIds
+      .map((id) => PERSON_TRAIT_LINES[id])
+      .filter(Boolean),
+    materials:
+      input.materialsId === 'crystal'
+        ? 'what they sent was easy to follow'
+        : input.materialsId === 'mostly'
+          ? 'materials were mostly clear'
+          : '',
+    wouldReturn: input.againId === 'yes' || input.againId === 'likely',
     extraNote: (input.extraNote || '').trim(),
     skeleton,
     styleHint,
@@ -216,13 +259,15 @@ export async function polishReviewWithDeepSeek(
   const system = [
     'You polish Google review drafts for SYSBILT (Australian business systems agency).',
     'Rewrite the skeleton into a natural first-person Google review in Australian English.',
-    'Write 3 to 5 flowing sentences. Not a list of facts with a full stop after each.',
-    'Google already shows the star rating next to the text. Never mention stars, scores, or "out of 5" in the review body. That reads fake.',
-    'Never open with the company name plus a rating. openingHint is the lead: extra-first uses extraNote, person-first uses the person, work-first uses the job, feel-first uses how it felt. Vary the first sentence.',
-    'If extraNote has a real point, that is usually the best opening. If extraNote is empty, ignore extra-first and lead with the person, the work, or how it felt.',
+    'Write 3 to 5 flowing sentences that connect, like a person talking. Not a list of survey answers.',
+    'Google already shows the star rating next to the text. Never mention stars, scores, or "out of 5" in the review body.',
+    'Never open with the company name plus a rating. openingHint is the lead: extra-first uses extraNote, person-first uses the person, work-first uses the job, feel-first uses how it felt.',
+    'If extraNote has a real point, that is usually the best opening. If extraNote is empty, ignore extra-first and still write a connected paragraph, not one fact per sentence.',
     'Do not invent jobs, results, praise, people, or facts missing from the JSON.',
-    'extraNote is often spoken out loud: messy, long, and full of asides. Extract the point. Do not paste the transcript. Weave one or two tidy sentences of their meaning into the review.',
+    'extraNote is often spoken out loud: messy, long, and full of asides. Extract the point. Do not paste the transcript.',
     'If extraNote is only a future request with no usable review content, omit it.',
+    'Do not use the words tight, crystal, or the phrase crystal clear. Say they kept you in the loop, or that notes were easy to follow.',
+    'Do not always end with "I would happily work with them again". Vary the last line if they would return: recommend, use them again, or glad they picked them.',
     'Do not use marketing nicknames or hype words.',
     'No em dashes. No exclamation marks. No emoji.',
     'Output the review text only.',
