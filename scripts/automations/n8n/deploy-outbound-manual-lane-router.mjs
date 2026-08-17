@@ -322,6 +322,8 @@ if (tab === 'Speed Fix') {
   row = { ...row, 'CRM Form': 'manual', 'Form Day': '', 'Form Time': '' };
 } else if (tab === 'Quote Capture') {
   row = { ...row, Industry: 'Landscaping', 'Contact Form': '' };
+} else if (tab === 'Feedback Review') {
+  row = { ...row, Status: 'Ready' };
 } else if (tab === 'Website') {
   row = {
     ...row,
