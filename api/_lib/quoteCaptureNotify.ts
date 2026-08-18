@@ -1,15 +1,32 @@
-/** Visitor + owner notify for Quote Capture (Resend + Twilio). */
+/** Visitor + owner notify for Quote Capture (Resend + ClickSend). */
 
 export function resendConfigured(): boolean {
   return Boolean(process.env.RESEND_API_KEY?.trim())
 }
 
+function envFirst(...names: string[]): string {
+  for (const name of names) {
+    const value = process.env[name]?.trim()
+    if (value) return value
+  }
+  return ''
+}
+
+function clicksendUsername(): string {
+  return envFirst('CLICKSEND_USERNAME', 'Clicksend_Username')
+}
+
+function clicksendApiKey(): string {
+  return envFirst('CLICKSEND_API_KEY', 'Clicksend_API_Key')
+}
+
+export function smsConfigured(): boolean {
+  return Boolean(clicksendUsername() && clicksendApiKey())
+}
+
+/** @deprecated Use smsConfigured. Kept so older call sites still compile. */
 export function twilioConfigured(): boolean {
-  return Boolean(
-    process.env.TWILIO_ACCOUNT_SID?.trim() &&
-      process.env.TWILIO_AUTH_TOKEN?.trim() &&
-      process.env.TWILIO_FROM_NUMBER?.trim(),
-  )
+  return smsConfigured()
 }
 
 function fromEmail(): string {
@@ -63,11 +80,20 @@ export function humanizeProviderError(
     if (status === 403) return 'Email skipped: Resend rejected the send (check from address / domain)'
     return `Email skipped: Resend ${status}`
   }
-  if (status === 422 && (lower.includes('verified') || lower.includes('trial'))) {
-    return 'SMS skipped: Twilio trial needs this mobile as a verified recipient'
+  if (lower.includes('insufficient_credit') || lower.includes('insufficient credit')) {
+    return 'SMS skipped: ClickSend credit ran out'
   }
-  if (status === 400 || status === 422) return `SMS skipped: Twilio ${status}`
-  return `SMS skipped: Twilio ${status}`
+  if (lower.includes('url') && (lower.includes('paus') || lower.includes('approv'))) {
+    return 'SMS skipped: ClickSend is holding messages with links until URL sending is approved'
+  }
+  if (lower.includes('invalid_recipient') || lower.includes('invalid recipient')) {
+    return 'SMS skipped: mobile number was not accepted'
+  }
+  if (status === 401 || lower.includes('invalid_credentials')) {
+    return 'SMS skipped: ClickSend username or API key rejected'
+  }
+  if (status >= 400) return `SMS skipped: ClickSend ${status}`
+  return 'SMS skipped: ClickSend rejected the send'
 }
 
 /** AU-first E.164. Accepts 04…, 4…, 61…, or +61…. */
@@ -85,35 +111,56 @@ export async function sendQuoteSms(input: {
   to: string
   body: string
 }): Promise<{ok: boolean; skipped?: boolean; error?: string}> {
-  const sid = process.env.TWILIO_ACCOUNT_SID?.trim()
-  const token = process.env.TWILIO_AUTH_TOKEN?.trim()
-  const from = process.env.TWILIO_FROM_NUMBER?.trim()
-  if (!sid || !token || !from) {
-    return {ok: false, skipped: true, error: 'Twilio env missing'}
+  const username = clicksendUsername()
+  const apiKey = clicksendApiKey()
+  if (!username || !apiKey) {
+    return {ok: false, skipped: true, error: 'ClickSend env missing'}
   }
   const to = toE164Phone(input.to)
   if (to.replace(/\D/g, '').length < 10) return {ok: false, error: 'Invalid phone'}
 
-  const auth = Buffer.from(`${sid}:${token}`).toString('base64')
-  const form = new URLSearchParams()
-  form.set('To', to)
-  form.set('From', from)
-  form.set('Body', input.body.slice(0, 1500))
-
-  const res = await fetch(
-    `https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`,
-    {
-      method: 'POST',
-      headers: {
-        Authorization: `Basic ${auth}`,
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: form,
+  const auth = Buffer.from(`${username}:${apiKey}`).toString('base64')
+  const res = await fetch('https://rest.clicksend.com/v3/sms/send', {
+    method: 'POST',
+    headers: {
+      Authorization: `Basic ${auth}`,
+      'Content-Type': 'application/json',
     },
-  )
-  if (!res.ok) {
-    const body = await res.text()
-    return {ok: false, error: humanizeProviderError('sms', res.status, body)}
+    body: JSON.stringify({
+      messages: [
+        {
+          source: 'sdk',
+          to,
+          body: input.body.slice(0, 1500),
+        },
+      ],
+    }),
+  })
+
+  const raw = await res.text()
+  let parsed: {
+    response_code?: string
+    response_msg?: string
+    data?: {messages?: Array<{status?: string; status_text?: string; error_text?: string}>}
+  } = {}
+  try {
+    parsed = raw ? JSON.parse(raw) : {}
+  } catch {
+    parsed = {}
+  }
+
+  const message = parsed.data?.messages?.[0]
+  const messageStatus = (message?.status || '').toUpperCase()
+  const responseCode = (parsed.response_code || '').toUpperCase()
+  const detail = [message?.status, message?.status_text, message?.error_text, parsed.response_msg]
+    .filter(Boolean)
+    .join(' ')
+
+  if (!res.ok || responseCode !== 'SUCCESS' || (messageStatus && messageStatus !== 'SUCCESS')) {
+    return {
+      ok: false,
+      error: humanizeProviderError('sms', res.status, detail || raw || `HTTP ${res.status}`),
+    }
   }
   return {ok: true}
 }

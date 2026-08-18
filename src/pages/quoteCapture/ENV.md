@@ -21,10 +21,9 @@ QUOTE_CAPTURE_PROOF_INBOX=felipe@sysbilt.com
 # AI Concierge (sandbox Phase 6 + live /q)
 GEMINI_API_KEY=
 
-# Visitor + owner SMS
-TWILIO_ACCOUNT_SID=
-TWILIO_AUTH_TOKEN=
-TWILIO_FROM_NUMBER=+61…
+# Visitor + owner SMS (ClickSend shared pool, leave From blank)
+CLICKSEND_USERNAME=
+CLICKSEND_API_KEY=
 
 # Owner alerts (optional extras; HubSpot/Slack already used elsewhere)
 HUBSPOT_PRIVATE_APP_TOKEN=
@@ -32,11 +31,12 @@ SLACK_ACCESS_WEBHOOK_URL=
 PUBLIC_BASE_URL=http://localhost:3333
 ```
 
-**Twilio trial (SMS test):**  
-1. Twilio Console → Phone Numbers → [Verified Caller IDs](https://console.twilio.com/us1/develop/phone-numbers/manage/verified) → add your mobile.  
-2. On `/q/proof-landscapes`, use that **exact** mobile in Your details.  
+**ClickSend SMS test:**  
+1. Dashboard send to your mobile first, From blank (shared pool).  
+2. On `/q/proof-landscapes`, use that mobile in Your details.  
 3. Complete a quote to **See my quotation**. SMS should land (or the page shows a clear skip reason).  
-AU mobiles like `04xx xxx xxx` are normalised to `+61…`.
+AU mobiles like `04xx xxx xxx` are normalised to `+61…`.  
+New ClickSend accounts may hold messages that contain a URL until they approve link sending. If the quote SMS is skipped for that reason, the email still has the pay link.
 
 **One-suburb Serp → Quote Capture test:**  
 1. **Run Queue** tab: new row → Niche `Landscapers` → Suburb e.g. `Marrickville` → Status `Queued` (leave Queue Key blank).  

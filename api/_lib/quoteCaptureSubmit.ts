@@ -15,7 +15,7 @@ import {
   resendConfigured,
   sendQuoteEmail,
   sendQuoteSms,
-  twilioConfigured,
+  smsConfigured,
 } from './quoteCaptureNotify.js'
 
 function proofNotifyInbox(): string {
@@ -273,8 +273,8 @@ export async function processQuoteCaptureSubmit(
   }
 
   if (visitorPhone) {
-    if (!twilioConfigured()) {
-      warnings.push('Visitor SMS skipped: Twilio env missing')
+    if (!smsConfigured()) {
+      warnings.push('Visitor SMS skipped: ClickSend env missing')
     } else {
       const smsBody = client.isProof
         ? payUrl
@@ -353,7 +353,7 @@ export async function processQuoteCaptureSubmit(
     })
     if (!sent.ok) warnings.push(sent.error || 'Owner email failed')
   }
-  if ((pref === 'sms' || pref === 'both') && client.owner.phone && twilioConfigured()) {
+  if ((pref === 'sms' || pref === 'both') && client.owner.phone && smsConfigured()) {
     const sent = await sendQuoteSms({
       to: client.owner.phone,
       body: `QC lead ${quote.quoteNumber} ${money} · ${visitorName} · ${visitorPhone}`,
