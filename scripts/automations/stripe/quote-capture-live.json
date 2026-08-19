@@ -1,0 +1,17 @@
+{
+  "createdAt": "2026-08-19T05:13:00.000Z",
+  "mode": "live",
+  "note": "Quote Capture · $2,800 live Payment Link with optional Concierge +$600 and quote/invoice setup +$100, plus terms on the Stripe page. After pay → thanks?p=quote-capture → access wizard.",
+  "product": {
+    "code": "quote-capture",
+    "name": "Quote Capture",
+    "productId": "prod_V6EGhCDfyDZWTA",
+    "priceId": "price_1U61oQ7kQC0CB85zEOebCCcw",
+    "conciergeProductId": "prod_V6EGsjbvgq3QMF",
+    "conciergePriceId": "price_1U61oc7kQC0CB85zVS0SVMPp",
+    "zohoProductId": "prod_V6EG159xQX50k4",
+    "zohoPriceId": "price_1U61oQ7kQC0CB85zrdvZSb2N",
+    "paymentLinkId": "plink_1U61os7kQC0CB85z8fOD94ul",
+    "paymentLinkUrl": "https://buy.stripe.com/3cI14hbKp9rq4M6dgv3gk0E"
+  }
+}

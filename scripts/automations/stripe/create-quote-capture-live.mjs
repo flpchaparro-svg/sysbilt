@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 /**
  * Create Quote Capture live Payment Link ($2,800).
+ * Optional at checkout: AI Concierge +$600, quote/invoice setup +$100.
+ * Terms checkbox is on the Stripe page.
  * Requires Stripe_Secret_key_live=sk_live_… in .env.local (refuses sk_test_).
  *
  *   node scripts/automations/stripe/create-quote-capture-live.mjs
@@ -89,9 +91,54 @@ const price = await stripe('prices', {
   'metadata[product]': 'quote-capture',
 })
 
+const conciergeProduct = await stripe('products', {
+  name: 'AI Concierge',
+  description:
+    'Chat path on the same locked Quote Capture prices. The wizard stays either way. SYSBILT ABN 56 115 228 020.',
+  'metadata[product]': 'quote-capture-concierge',
+})
+
+const conciergePrice = await stripe('prices', {
+  product: conciergeProduct.id,
+  unit_amount: '60000',
+  currency: 'aud',
+  tax_behavior: 'inclusive',
+  nickname: 'AI Concierge $600',
+  'metadata[product]': 'quote-capture-concierge',
+})
+
+const zohoProduct = await stripe('products', {
+  name: 'Basic quote or invoice setup',
+  description:
+    'Basic quote or invoice tool in your name, only if you have none. SYSBILT ABN 56 115 228 020.',
+  'metadata[product]': 'quote-capture-zoho',
+})
+
+const zohoPrice = await stripe('prices', {
+  product: zohoProduct.id,
+  unit_amount: '10000',
+  currency: 'aud',
+  tax_behavior: 'inclusive',
+  nickname: 'Quote invoice setup $100',
+  'metadata[product]': 'quote-capture-zoho',
+})
+
 const link = await stripe('payment_links', {
   'line_items[0][price]': price.id,
   'line_items[0][quantity]': '1',
+  'optional_items[0][price]': conciergePrice.id,
+  'optional_items[0][quantity]': '1',
+  'optional_items[0][adjustable_quantity][enabled]': 'true',
+  'optional_items[0][adjustable_quantity][minimum]': '0',
+  'optional_items[0][adjustable_quantity][maximum]': '1',
+  'optional_items[1][price]': zohoPrice.id,
+  'optional_items[1][quantity]': '1',
+  'optional_items[1][adjustable_quantity][enabled]': 'true',
+  'optional_items[1][adjustable_quantity][minimum]': '0',
+  'optional_items[1][adjustable_quantity][maximum]': '1',
+  'consent_collection[terms_of_service]': 'required',
+  'custom_text[terms_of_service_acceptance][message]':
+    'I have read and agree to the SYSBILT terms.',
   'after_completion[type]': 'redirect',
   'after_completion[redirect][url]':
     'https://sysbilt.com/go/thanks?p=quote-capture',
@@ -111,12 +158,16 @@ if (String(link.url || '').includes('test_')) {
 const out = {
   createdAt: new Date().toISOString(),
   mode: 'live',
-  note: 'Quote Capture · $2,800 live Payment Link. After pay → thanks?p=quote-capture → access wizard.',
+  note: 'Quote Capture · $2,800 live Payment Link with optional Concierge +$600 and quote/invoice setup +$100, plus terms on the Stripe page. After pay → thanks?p=quote-capture → access wizard.',
   product: {
     code: 'quote-capture',
     name: 'Quote Capture',
     productId: product.id,
     priceId: price.id,
+    conciergeProductId: conciergeProduct.id,
+    conciergePriceId: conciergePrice.id,
+    zohoProductId: zohoProduct.id,
+    zohoPriceId: zohoPrice.id,
     paymentLinkId: link.id,
     paymentLinkUrl: link.url,
   },
@@ -131,7 +182,8 @@ writeFileSync(
   `/**
  * Quote Capture · Stripe Payment Link (live).
  *
- * After pay → https://sysbilt.com/go/thanks?p=quote-capture
+ * Base $2,800. Optional at checkout: AI Concierge +$600, quote/invoice setup +$100.
+ * Terms checkbox is on the Stripe page. After pay → https://sysbilt.com/go/thanks?p=quote-capture
  */
 export const QUOTE_CAPTURE_STRIPE_URL =
   '${link.url}'

@@ -1,7 +1,6 @@
 import type {VercelRequest, VercelResponse} from '@vercel/node'
 import {processQuoteCaptureConcierge} from '../_lib/quoteCaptureConcierge.js'
 import {processQuoteCaptureSubmit} from '../_lib/quoteCaptureSubmit.js'
-import {processQuoteCaptureProductBuy} from '../_lib/stripeQuoteCheckout.js'
 
 function cors(res: VercelResponse): void {
   res.setHeader('Access-Control-Allow-Origin', '*')
@@ -34,7 +33,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const action = actionName(req)
-  if (action !== 'submit' && action !== 'concierge' && action !== 'buy') {
+  if (action !== 'submit' && action !== 'concierge') {
     res.status(404).json({error: 'Not found'})
     return
   }
@@ -56,16 +55,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return
     }
     res.status(200).json({reply: result.reply, suggestions: result.suggestions})
-    return
-  }
-
-  if (action === 'buy') {
-    const result = await processQuoteCaptureProductBuy(body, publicBase(req))
-    if (result.ok === false) {
-      res.status(result.status).json({error: result.error})
-      return
-    }
-    res.status(200).json({url: result.url})
     return
   }
 
