@@ -577,6 +577,7 @@ export default function QuoteCaptureDemoPage() {
   const [quote, setQuote] = useState<BuiltQuote | null>(null)
   const [revealAll, setRevealAll] = useState(false)
   const [conciergeResetKey, setConciergeResetKey] = useState(0)
+  const sandboxSellSent = useRef(false)
 
   const situation = SITUATIONS.find((s) => s.id === situationId) ?? null
   const job = jobId ? JOBS[jobId] : null
@@ -802,6 +803,29 @@ export default function QuoteCaptureDemoPage() {
     go('quote')
   }
 
+  async function sendSandboxSell() {
+    if (sandboxSellSent.current) return
+    if (visitorName.trim().length < 2 || visitorPhone.trim().replace(/\s/g, '').length < 8) {
+      return
+    }
+    sandboxSellSent.current = true
+    try {
+      await fetch('/api/quote-capture/submit', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          mode: 'sandbox-sell',
+          visitorName: visitorName.trim(),
+          visitorPhone: visitorPhone.trim(),
+          visitorEmail: visitorEmail.trim(),
+          businessName: businessName || undefined,
+        }),
+      })
+    } catch {
+      sandboxSellSent.current = false
+    }
+  }
+
   function goBack() {
     switch (step) {
       case 'talk':
@@ -866,6 +890,7 @@ export default function QuoteCaptureDemoPage() {
     setVisitorPhone('')
     setVisitorEmail('')
     setQuote(null)
+    sandboxSellSent.current = false
     setConciergeResetKey((k) => k + 1)
     window.scrollTo({top: 0, behavior: 'smooth'})
   }
@@ -1375,8 +1400,8 @@ export default function QuoteCaptureDemoPage() {
               Where should the quote go
             </h1>
             <p className="mt-3 mb-8 font-sans text-base text-dark/60">
-              On a live install this also fires SMS and the owner alert. In this sandbox it only
-              fills the sample quotation on screen. Nothing is saved to a CRM.
+              Use your mobile. After the sample quote we text you the link to buy Quote Capture for
+              your own site.
             </p>
             {job?.impliesRemoval && (
               <p className="mb-6 rounded-xl border border-dark/10 bg-white px-4 py-3 font-sans text-sm text-dark/60">
@@ -1634,7 +1659,12 @@ export default function QuoteCaptureDemoPage() {
             </article>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap qc-no-print print:hidden">
-              <InkButton onClick={() => go('buy')}>
+              <InkButton
+                onClick={() => {
+                  void sendSandboxSell()
+                  go('buy')
+                }}
+              >
                 Want this on your website <ArrowRight className="h-4 w-4" />
               </InkButton>
               <button

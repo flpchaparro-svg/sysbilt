@@ -57,6 +57,114 @@ export type QuoteCaptureSubmitError = {
   error: string
 }
 
+const SANDBOX_BUY_PATH = '/go/quote-capture'
+
+async function processSandboxSell(
+  body: Record<string, unknown>,
+  publicBaseUrl: string,
+): Promise<QuoteCaptureSubmitResult | QuoteCaptureSubmitError> {
+  const visitorName = str(body.visitorName, 120)
+  const visitorPhone = str(body.visitorPhone, 40)
+  const visitorEmail = str(body.visitorEmail, 200).toLowerCase()
+  const businessName = str(body.businessName, 120)
+  if (visitorName.length < 2 || visitorPhone.replace(/\s/g, '').length < 8) {
+    return {ok: false, status: 400, error: 'Name and phone required'}
+  }
+
+  const base = publicBaseUrl.replace(/\/$/, '') || 'https://sysbilt.com'
+  const buyUrl = `${base}${SANDBOX_BUY_PATH}`
+  const warnings: string[] = []
+  const firstName = visitorName.split(/\s+/).filter(Boolean)[0] || visitorName
+  const lastName = visitorName.split(/\s+/).filter(Boolean).slice(1).join(' ') || ''
+  const smsBody = businessName
+    ? `SYSBILT: thanks for trying Quote Capture, ${businessName}. Want it on your site: ${buyUrl}`
+    : `SYSBILT: thanks for trying Quote Capture. Want it on your site: ${buyUrl}`
+
+  if (!smsConfigured()) {
+    warnings.push('Sandbox SMS skipped: ClickSend env missing')
+  } else {
+    const sent = await sendQuoteSms({to: visitorPhone, body: smsBody})
+    if (!sent.ok && !sent.skipped) warnings.push(sent.error || 'Sandbox SMS failed')
+    if (sent.skipped) warnings.push(sent.error || 'Sandbox SMS skipped')
+  }
+
+  if (visitorEmail.includes('@')) {
+    if (!resendConfigured()) {
+      warnings.push('Sandbox email skipped: RESEND_API_KEY missing')
+    } else {
+      const sent = await sendQuoteEmail({
+        to: visitorEmail,
+        subject: 'Thanks for trying Quote Capture',
+        text: [
+          `Hi ${firstName},`,
+          '',
+          'Thanks for trying the Quote Capture sample.',
+          'If you want this on your website, pay and start here:',
+          buyUrl,
+          '',
+          'Felipe',
+          'SYSBILT',
+        ].join('\n'),
+      })
+      if (!sent.ok) warnings.push(sent.error || 'Sandbox email failed')
+    }
+  }
+
+  const ownerNote = [
+    'Quote Capture sandbox lead',
+    businessName ? `Business: ${businessName}` : '',
+    `Visitor: ${visitorName}`,
+    `Phone: ${visitorPhone}`,
+    `Email: ${visitorEmail || 'not given'}`,
+    `Buy: ${buyUrl}`,
+    warnings.length ? `Warnings:\n${warnings.join('\n')}` : '',
+  ]
+    .filter(Boolean)
+    .join('\n')
+
+  try {
+    if (process.env.HUBSPOT_PRIVATE_APP_TOKEN && visitorEmail.includes('@')) {
+      const {id} = await upsertContactByEmail({
+        email: visitorEmail,
+        firstname: firstName,
+        lastname: lastName,
+        phone: visitorPhone,
+        company: businessName || undefined,
+        leadSourceDetail: 'quote-capture/sandbox',
+        lifecyclestage: 'lead',
+      })
+      await addContactNote(id, ownerNote)
+    }
+  } catch (err) {
+    warnings.push(err instanceof Error ? err.message : 'HubSpot failed')
+  }
+
+  const slackUrl = process.env.SLACK_ACCESS_WEBHOOK_URL?.trim()
+  if (slackUrl) {
+    try {
+      await fetch(slackUrl, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          text: `QC sandbox · ${visitorName} · ${visitorPhone}${businessName ? ` · ${businessName}` : ''}`,
+        }),
+      })
+    } catch {
+      warnings.push('Slack notify failed')
+    }
+  }
+
+  return {
+    ok: true,
+    quoteNumber: 'sandbox',
+    total: 0,
+    payUrl: buyUrl,
+    checkoutId: null,
+    zoho: null,
+    warnings,
+  }
+}
+
 /**
  * Core Quote Capture submit: rebuild quote, Zoho, Stripe Checkout, email/SMS, owner alert.
  */
@@ -64,6 +172,10 @@ export async function processQuoteCaptureSubmit(
   body: Record<string, unknown>,
   publicBaseUrl: string,
 ): Promise<QuoteCaptureSubmitResult | QuoteCaptureSubmitError> {
+  if (str(body.mode, 40) === 'sandbox-sell') {
+    return processSandboxSell(body, publicBaseUrl)
+  }
+
   const slug = str(body.slug, 80).toLowerCase()
   if (Boolean(body.softNo)) {
     return {
