@@ -27,6 +27,9 @@ export async function createQuoteCheckoutSession(input: {
 }): Promise<{id: string; url: string}> {
   const sk = stripeSecret()
   if (!sk) throw new Error('Missing Stripe_Secret_key')
+  if (input.isProof && !sk.startsWith('sk_test_')) {
+    throw new Error('Proof checkout blocked: Stripe is not in test mode')
+  }
 
   const amountCents = Math.round(input.amountAud * 100)
   if (!Number.isFinite(amountCents) || amountCents < 50) {
