@@ -138,7 +138,7 @@ const link = await stripe('payment_links', {
   'optional_items[1][adjustable_quantity][maximum]': '1',
   'consent_collection[terms_of_service]': 'required',
   'custom_text[terms_of_service_acceptance][message]':
-    'I have read and agree to the SYSBILT terms.',
+    'I have read and agree to the [SYSBILT terms](https://sysbilt.com/terms)',
   'after_completion[type]': 'redirect',
   'after_completion[redirect][url]':
     'https://sysbilt.com/go/thanks?p=quote-capture',
