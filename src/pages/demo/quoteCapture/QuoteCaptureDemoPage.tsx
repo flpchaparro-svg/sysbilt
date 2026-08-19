@@ -16,6 +16,7 @@ import {
 import {SysbiltLogo} from '../../../components/SysbiltLogo'
 import {PageMeta} from '../../../components/PageMeta'
 import {SITE_ORIGIN} from '../../../constants/seoMeta'
+import {QUOTE_CAPTURE_STRIPE_URL} from '../../../constants/quoteCaptureStripe'
 import {
   QuoteCaptureConciergeDock,
   QuoteCaptureConciergeTalk,
@@ -60,7 +61,6 @@ type Step =
   | 'site'
   | 'details'
   | 'quote'
-  | 'buy'
 
 const PHASES = [
   {id: 'start', n: 1, label: 'Start'},
@@ -88,7 +88,6 @@ function phaseIndexFor(step: Step): number {
     case 'details':
       return 3
     case 'quote':
-    case 'buy':
       return 4
   }
 }
@@ -387,18 +386,24 @@ function InkButton({
   children,
   onClick,
   disabled,
+  href,
 }: {
   children: ReactNode
-  onClick: () => void
+  onClick?: () => void
   disabled?: boolean
+  href?: string
 }) {
+  const className =
+    'inline-flex items-center justify-center gap-2 rounded-full bg-[#E21E3F] px-8 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.2em] text-cream shadow-[0_12px_28px_-12px_rgba(226,30,63,0.65)] transition hover:bg-[#c41935] disabled:opacity-40'
+  if (href) {
+    return (
+      <a href={href} className={className} onClick={onClick}>
+        {children}
+      </a>
+    )
+  }
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={disabled}
-      className="inline-flex items-center justify-center gap-2 rounded-full bg-[#E21E3F] px-8 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.2em] text-cream shadow-[0_12px_28px_-12px_rgba(226,30,63,0.65)] transition hover:bg-[#c41935] disabled:opacity-40"
-    >
+    <button type="button" onClick={onClick} disabled={disabled} className={className}>
       {children}
     </button>
   )
@@ -801,6 +806,7 @@ export default function QuoteCaptureDemoPage() {
       }),
     )
     go('quote')
+    void sendSandboxSell()
   }
 
   async function sendSandboxSell() {
@@ -859,9 +865,6 @@ export default function QuoteCaptureDemoPage() {
         break
       case 'quote':
         go('details')
-        break
-      case 'buy':
-        go('quote')
         break
       case 'situation':
         go('intro')
@@ -933,7 +936,7 @@ export default function QuoteCaptureDemoPage() {
         robots="noindex, nofollow"
       />
 
-      {step === 'intro' || step === 'buy' ? (
+      {step === 'intro' ? (
         <div aria-hidden className="pointer-events-none absolute inset-0">
           <div
             className="absolute inset-0"
@@ -982,7 +985,7 @@ export default function QuoteCaptureDemoPage() {
           </div>
         )}
 
-        {step !== 'intro' && step !== 'buy' && step !== 'talk' ? (
+        {step !== 'intro' && step !== 'talk' ? (
           <p className="mb-2 font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-[#A8843F]">
             {headerEyebrow}
           </p>
@@ -1658,55 +1661,28 @@ export default function QuoteCaptureDemoPage() {
               </footer>
             </article>
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap qc-no-print print:hidden">
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center qc-no-print print:hidden">
               <InkButton
+                href={QUOTE_CAPTURE_STRIPE_URL}
                 onClick={() => {
                   void sendSandboxSell()
-                  go('buy')
                 }}
               >
                 Want this on your website <ArrowRight className="h-4 w-4" />
               </InkButton>
-              <button
-                type="button"
-                onClick={restart}
-                className="font-sans text-sm text-dark/45 hover:text-dark/70 sm:px-2"
-              >
-                Run the demo again
-              </button>
-            </div>
-          </section>
-        )}
-
-        {step === 'buy' && (
-          <section className="mx-auto flex min-h-[min(62vh,36rem)] w-full max-w-4xl flex-col items-center justify-center pb-12 text-center md:min-h-[min(68vh,40rem)]">
-            <p className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-[#A8843F]">
-              {headerEyebrow}
-            </p>
-            <h1 className="mt-6 w-full font-serif text-[2.35rem] leading-[1.08] tracking-tight text-dark sm:text-5xl md:text-6xl lg:text-[3.75rem]">
-              {businessName
-                ? `${businessName}, stop writing quotes, start closing them`
-                : 'Stop writing quotes, start closing them'}
-            </h1>
-            <p className="mx-auto mt-7 max-w-2xl font-sans text-lg leading-relaxed text-dark/70 md:text-xl">
-              That sample used demo rates. Quote Capture installs on your site with your prices.
-              Customers answer plain questions, see a clear quotation with scope and total, get email
-              and SMS with a pay link, and you get a priced lead you can close.
-            </p>
-            <div className="mt-12 flex w-full flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center sm:justify-center">
               <Link
                 to="/go/quote-capture"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#E21E3F] px-8 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.2em] text-cream shadow-[0_12px_28px_-12px_rgba(226,30,63,0.65)]"
+                className="font-sans text-sm text-dark/55 hover:text-dark/80 sm:px-2"
               >
-                See Quote Capture, $2,800
+                Learn more
               </Link>
             </div>
             <button
               type="button"
-              onClick={() => go('quote')}
-              className="mt-8 font-sans text-sm text-dark/45 hover:text-dark/70"
+              onClick={restart}
+              className="qc-no-print mt-5 font-sans text-xs text-dark/35 hover:text-dark/55 print:hidden"
             >
-              Back to the sample quote
+              Run the demo again
             </button>
           </section>
         )}

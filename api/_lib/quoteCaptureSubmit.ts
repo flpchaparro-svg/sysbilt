@@ -57,7 +57,7 @@ export type QuoteCaptureSubmitError = {
   error: string
 }
 
-const SANDBOX_BUY_PATH = '/go/quote-capture'
+const SANDBOX_PAY_URL = 'https://buy.stripe.com/3cI14hbKp9rq4M6dgv3gk0E'
 
 async function processSandboxSell(
   body: Record<string, unknown>,
@@ -72,18 +72,28 @@ async function processSandboxSell(
   }
 
   const base = publicBaseUrl.replace(/\/$/, '') || 'https://sysbilt.com'
-  const buyUrl = `${base}${SANDBOX_BUY_PATH}`
+  const payUrl = SANDBOX_PAY_URL
+  const learnMoreUrl = `${base}/go/quote-capture`
   const warnings: string[] = []
   const firstName = visitorName.split(/\s+/).filter(Boolean)[0] || visitorName
   const lastName = visitorName.split(/\s+/).filter(Boolean).slice(1).join(' ') || ''
-  const smsBody = businessName
-    ? `SYSBILT: thanks for trying Quote Capture, ${businessName}. Want it on your site: ${buyUrl}`
-    : `SYSBILT: thanks for trying Quote Capture. Want it on your site: ${buyUrl}`
+  const smsWithLink = businessName
+    ? `SYSBILT: thanks for trying Quote Capture, ${businessName}. Get it on your site: ${payUrl}`
+    : `SYSBILT: thanks for trying Quote Capture. Get it on your site: ${payUrl}`
+  const smsNoLink = businessName
+    ? `SYSBILT: thanks for trying Quote Capture, ${businessName}. Use Want this on your website on that page to pay.`
+    : `SYSBILT: thanks for trying Quote Capture. Use Want this on your website on that page to pay.`
 
   if (!smsConfigured()) {
     warnings.push('Sandbox SMS skipped: ClickSend env missing')
   } else {
-    const sent = await sendQuoteSms({to: visitorPhone, body: smsBody})
+    let sent = await sendQuoteSms({to: visitorPhone, body: smsWithLink})
+    if (!sent.ok && !sent.skipped) {
+      const reason = (sent.error || '').toLowerCase()
+      if (reason.includes('url') || reason.includes('link') || reason.includes('hold') || reason.includes('paus')) {
+        sent = await sendQuoteSms({to: visitorPhone, body: smsNoLink})
+      }
+    }
     if (!sent.ok && !sent.skipped) warnings.push(sent.error || 'Sandbox SMS failed')
     if (sent.skipped) warnings.push(sent.error || 'Sandbox SMS skipped')
   }
@@ -99,8 +109,11 @@ async function processSandboxSell(
           `Hi ${firstName},`,
           '',
           'Thanks for trying the Quote Capture sample.',
-          'If you want this on your website, pay and start here:',
-          buyUrl,
+          'If you want this on your website, pay here:',
+          payUrl,
+          '',
+          'Or read the page first:',
+          learnMoreUrl,
           '',
           'Felipe',
           'SYSBILT',
@@ -116,7 +129,7 @@ async function processSandboxSell(
     `Visitor: ${visitorName}`,
     `Phone: ${visitorPhone}`,
     `Email: ${visitorEmail || 'not given'}`,
-    `Buy: ${buyUrl}`,
+    `Buy: ${payUrl}`,
     warnings.length ? `Warnings:\n${warnings.join('\n')}` : '',
   ]
     .filter(Boolean)
@@ -154,11 +167,15 @@ async function processSandboxSell(
     }
   }
 
+  if (warnings.length) {
+    console.warn('[quote-capture sandbox]', warnings.join(' | '))
+  }
+
   return {
     ok: true,
     quoteNumber: 'sandbox',
     total: 0,
-    payUrl: buyUrl,
+    payUrl,
     checkoutId: null,
     zoho: null,
     warnings,
