@@ -132,8 +132,9 @@ function quoteCaptureDevApi(): Plugin {
         const url = (req.url || '').split('?')[0]
         const isSubmit = url === '/api/quote-capture/submit'
         const isConcierge = url === '/api/quote-capture/concierge'
+        const isBuy = url === '/api/quote-capture/buy'
         const isFeedback = url === '/api/feedback-review/submit'
-        if (!isSubmit && !isConcierge && !isFeedback) return next()
+        if (!isSubmit && !isConcierge && !isBuy && !isFeedback) return next()
 
         res.setHeader('Access-Control-Allow-Origin', '*')
         res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
@@ -195,6 +196,24 @@ function quoteCaptureDevApi(): Plugin {
             res.setHeader('Content-Type', 'application/json')
             res.setHeader('Cache-Control', 'no-store')
             res.end(JSON.stringify({reply: result.reply, suggestions: result.suggestions || []}))
+            return
+          }
+
+          if (isBuy) {
+            const mod = await server.ssrLoadModule('/api/_lib/stripeQuoteCheckout.ts')
+            const base =
+              process.env.PUBLIC_BASE_URL?.trim() || 'http://localhost:3333'
+            const result = await mod.processQuoteCaptureProductBuy(body, base)
+            if (!result.ok) {
+              res.statusCode = result.status || 400
+              res.setHeader('Content-Type', 'application/json')
+              res.end(JSON.stringify({error: result.error}))
+              return
+            }
+            res.statusCode = 200
+            res.setHeader('Content-Type', 'application/json')
+            res.setHeader('Cache-Control', 'no-store')
+            res.end(JSON.stringify({url: result.url}))
             return
           }
 

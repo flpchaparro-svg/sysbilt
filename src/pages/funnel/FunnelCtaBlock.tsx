@@ -20,29 +20,35 @@ function ctaSizeClass(size: FunnelCtaSize): string {
   }
 }
 
-/** Isolation-effect CTA — accent red only, for /go/ pages. */
-export function FunnelPrimaryLink({
-  href,
-  children,
-  size = 'md',
-}: {
-  href: string
-  children: React.ReactNode
-  size?: FunnelCtaSize
-}) {
-  if (!href) return null
+function funnelPrimaryVisual(size: FunnelCtaSize): {
+  className: string
+  style: React.CSSProperties
+  iconClass: string
+} {
   const iconClass =
     size === 'final' ? 'w-6 h-6 shrink-0' : size === 'md' ? 'w-4 h-4 shrink-0' : 'w-5 h-5 shrink-0'
+  return {
+    iconClass,
+    className: `group relative inline-flex font-mono font-bold uppercase overflow-hidden transition-all duration-[250ms] active:scale-[0.97] max-w-full h-auto border ${ctaSizeClass(size)}`,
+    style: {
+      borderColor: FUNNEL_COLOURS.accent,
+      backgroundColor: FUNNEL_COLOURS.accent,
+      color: FUNNEL_COLOURS.onInk,
+    },
+  }
+}
+
+function FunnelPrimaryInner({
+  children,
+  size,
+  iconClass,
+}: {
+  children: React.ReactNode
+  size: FunnelCtaSize
+  iconClass: string
+}) {
   return (
-    <a
-      href={href}
-      className={`group relative inline-flex font-mono font-bold uppercase overflow-hidden transition-all duration-[250ms] active:scale-[0.97] max-w-full h-auto border ${ctaSizeClass(size)}`}
-      style={{
-        borderColor: FUNNEL_COLOURS.accent,
-        backgroundColor: FUNNEL_COLOURS.accent,
-        color: FUNNEL_COLOURS.onInk,
-      }}
-    >
+    <>
       <div
         className="absolute inset-0 group-hover:-translate-y-full transition-transform duration-[250ms]"
         style={{backgroundColor: FUNNEL_COLOURS.accent}}
@@ -60,7 +66,57 @@ export function FunnelPrimaryLink({
         <span className="leading-none">{children}</span>
         <ArrowRight className={iconClass} aria-hidden />
       </span>
+    </>
+  )
+}
+
+/** Isolation-effect CTA, accent red only, for /go/ pages. */
+export function FunnelPrimaryLink({
+  href,
+  children,
+  size = 'md',
+}: {
+  href: string
+  children: React.ReactNode
+  size?: FunnelCtaSize
+}) {
+  if (!href) return null
+  const visual = funnelPrimaryVisual(size)
+  return (
+    <a href={href} className={visual.className} style={visual.style}>
+      <FunnelPrimaryInner size={size} iconClass={visual.iconClass}>
+        {children}
+      </FunnelPrimaryInner>
     </a>
+  )
+}
+
+export function FunnelPrimaryButton({
+  children,
+  size = 'md',
+  disabled,
+  onClick,
+  type = 'button',
+}: {
+  children: React.ReactNode
+  size?: FunnelCtaSize
+  disabled?: boolean
+  onClick?: () => void
+  type?: 'button' | 'submit'
+}) {
+  const visual = funnelPrimaryVisual(size)
+  return (
+    <button
+      type={type}
+      disabled={disabled}
+      onClick={onClick}
+      className={`${visual.className} disabled:opacity-55 disabled:cursor-not-allowed disabled:active:scale-100`}
+      style={visual.style}
+    >
+      <FunnelPrimaryInner size={size} iconClass={visual.iconClass}>
+        {children}
+      </FunnelPrimaryInner>
+    </button>
   )
 }
 

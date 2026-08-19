@@ -6,6 +6,7 @@ import {PageMeta} from '../../components/PageMeta'
 import {client} from '../../sanityClient'
 import {SITE_ORIGIN} from '../../constants/seoMeta'
 import {FunnelCtaBlock, FunnelLegalFooter, type FunnelCtaFields} from './FunnelCtaBlock'
+import {QuoteCaptureBuyBlock} from './QuoteCaptureBuyBlock'
 import {ScoreMoment} from './ScoreMoment'
 import {CallMissedMoment, MissedCallLeakPair} from './CallMissedMoment'
 import {PainCostCards} from './PainCostCards'
@@ -207,7 +208,6 @@ import {A11Y_PASS_STRIPE_URL} from '../../constants/a11yPassStripe'
 import {WHATSAPP_SETUP_STRIPE_URL} from '../../constants/whatsappSetupStripe'
 import {DM_REPLY_STRIPE_URL} from '../../constants/dmReplyStripe'
 import {QUOTE_FOLLOWUP_STRIPE_URL} from '../../constants/quoteFollowupStripe'
-import {QUOTE_CAPTURE_STRIPE_URL} from '../../constants/quoteCaptureStripe'
 import {NOSHOW_RESCUE_STRIPE_URL} from '../../constants/noshowRescueStripe'
 import {INTAKE_FORMS_STRIPE_URL} from '../../constants/intakeFormsStripe'
 import {INBOX_TRIAGE_STRIPE_URL} from '../../constants/inboxTriageStripe'
@@ -618,7 +618,6 @@ const FunnelPage: React.FC = () => {
     (isWhatsappSetup ? WHATSAPP_SETUP_STRIPE_URL : undefined) ||
     (isDmReply ? DM_REPLY_STRIPE_URL : undefined) ||
     (isQuoteFollowup ? QUOTE_FOLLOWUP_STRIPE_URL : undefined) ||
-    (isQuoteCapture ? QUOTE_CAPTURE_STRIPE_URL : undefined) ||
     (isNoshowRescue ? NOSHOW_RESCUE_STRIPE_URL : undefined) ||
     (isIntakeForms ? INTAKE_FORMS_STRIPE_URL : undefined) ||
     (isInboxTriage ? INBOX_TRIAGE_STRIPE_URL : undefined) ||
@@ -691,6 +690,9 @@ const FunnelPage: React.FC = () => {
       liveTeamAiPriceOptions ||
       (sanityPriceOptions.length > 0 ? sanityPriceOptions : undefined),
   }
+  const payCtaFields: FunnelCtaFields = isQuoteCapture
+    ? {...ctaFields, stripeUrl: '#quote-capture-buy'}
+    : ctaFields
 
   const pageTitle = doc?.title ? `${doc.title} | SYSBILT` : 'Fixed-price fix | SYSBILT'
   const h1 =
@@ -787,7 +789,7 @@ const FunnelPage: React.FC = () => {
                 {usesComingSoonCta ? (
                   <FunnelComingSoonCta label={COPY.ctaLabel} size="final" />
                 ) : (
-                  <FunnelCtaBlock fields={ctaFields} size="final" />
+                  <FunnelCtaBlock fields={payCtaFields} size="final" />
                 )}
               </div>
             </Reveal>
@@ -2378,7 +2380,7 @@ const FunnelPage: React.FC = () => {
                 {usesComingSoonCta ? (
                   <FunnelComingSoonCta label={COPY.ctaLabel} size="lg" />
                 ) : (
-                  <FunnelCtaBlock fields={ctaFields} size="lg" />
+                  <FunnelCtaBlock fields={payCtaFields} size="lg" />
                 )}
               </div>
             </Reveal>
@@ -2435,7 +2437,10 @@ const FunnelPage: React.FC = () => {
           ) : null}
 
           <section
+            id={isQuoteCapture ? 'quote-capture-buy' : undefined}
             className={`w-full overflow-hidden ${
+              isQuoteCapture ? 'scroll-mt-24' : ''
+            } ${
               isWebsite ? 'py-20 md:py-28 mb-20 md:mb-28' : 'py-16 md:py-24 mb-16 md:mb-24'
             }`}
             style={{backgroundColor: FUNNEL_COLOURS.inkSoft, color: FUNNEL_COLOURS.onInk}}
@@ -2500,7 +2505,7 @@ const FunnelPage: React.FC = () => {
                   <Reveal delay={0.28} y={10}>
                     {usesComingSoonCta ? (
                       <FunnelComingSoonCta label={COPY.ctaLabel} theme="dark" size="xl" />
-                    ) : (
+                    ) : isQuoteCapture ? null : (
                       <FunnelCtaBlock fields={ctaFields} theme="dark" size="xl" />
                     )}
                   </Reveal>
@@ -2603,6 +2608,11 @@ const FunnelPage: React.FC = () => {
                   <ReportDeliverableMock />
                 )}
               </div>
+              {isQuoteCapture && !usesComingSoonCta ? (
+                <div className="mt-12 md:mt-16">
+                  <QuoteCaptureBuyBlock theme="dark" size="xl" />
+                </div>
+              ) : null}
             </div>
           </section>
 
@@ -2652,6 +2662,8 @@ const FunnelPage: React.FC = () => {
               <Reveal delay={0.24} y={12}>
                 {usesComingSoonCta ? (
                   <FunnelComingSoonCta label={COPY.ctaLabel} theme="dark" size="final" />
+                ) : isQuoteCapture ? (
+                  <QuoteCaptureBuyBlock theme="dark" size="final" align="center" />
                 ) : (
                   <FunnelCtaBlock
                     fields={ctaFields}
