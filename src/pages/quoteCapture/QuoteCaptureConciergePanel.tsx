@@ -351,7 +351,7 @@ export function QuoteCaptureConciergeTalk({
         <p className="mt-3 font-sans text-base text-dark/60 max-w-xl">
           {sandbox
             ? 'Same choices as the sample wizard cards. Tap one to jump in, or type. Simulated landscaping rates only.'
-            : `Same choices as the quote cards. Tap one to jump in, or type. Prices stay on ${context.businessName || 'our'} rate card.`}
+            : `Same choices as the quote cards. Tap one to jump in, or type.`}
         </p>
       </m.div>
 

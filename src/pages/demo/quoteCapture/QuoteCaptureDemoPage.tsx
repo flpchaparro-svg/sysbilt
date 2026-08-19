@@ -489,13 +489,14 @@ function StageJourney({
               <div
                 key={p.id}
                 ref={current ? endRef : undefined}
-                className="shrink-0 whitespace-nowrap px-2.5 font-sans text-[12px] tracking-wide md:px-3.5 md:text-[13px]"
+                className="shrink-0 whitespace-nowrap px-1.5 font-sans text-[12px] tracking-wide md:px-3.5 md:text-[13px]"
                 style={{
                   color: filled ? INK : 'rgba(255,242,236,0.4)',
                   fontWeight: current || done ? 600 : 400,
                 }}
               >
-                {p.n}. {p.label}
+                {p.n}
+                <span className="hidden md:inline">. {p.label}</span>
               </div>
             )
           })}

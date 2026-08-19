@@ -199,6 +199,7 @@ export async function processQuoteCaptureSubmit(
         slug: client.slug,
         successUrl,
         cancelUrl,
+        isProof: client.isProof,
         metadata: {
           visitor_name: visitorName,
           visitor_phone: visitorPhone,

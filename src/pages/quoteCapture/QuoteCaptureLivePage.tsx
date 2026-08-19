@@ -493,13 +493,14 @@ function StageJourney({
               <div
                 key={p.id}
                 ref={current ? endRef : undefined}
-                className="shrink-0 whitespace-nowrap px-2.5 font-sans text-[12px] tracking-wide md:px-3.5 md:text-[13px]"
+                className="shrink-0 whitespace-nowrap px-1.5 font-sans text-[12px] tracking-wide md:px-3.5 md:text-[13px]"
                 style={{
                   color: filled ? INK : 'rgba(255,242,236,0.4)',
                   fontWeight: current || done ? 600 : 400,
                 }}
               >
-                {p.n}. {p.label}
+                {p.n}
+                <span className="hidden md:inline">. {p.label}</span>
               </div>
             )
           })}
@@ -892,7 +893,7 @@ export default function QuoteCaptureLivePage({embed = false}: {embed?: boolean})
         go('intro')
         break
       case 'situation':
-        go('scope')
+        go('intro')
         break
       default:
         go('intro')
@@ -1047,7 +1048,7 @@ export default function QuoteCaptureLivePage({embed = false}: {embed?: boolean})
                 : 'Answer a few questions. See the quotation on screen. Pay if you are ready, or wait for us to confirm.'}
             </p>
             <div className="mt-12 flex w-full flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center sm:justify-center">
-              <InkButton onClick={() => go('scope')}>
+              <InkButton onClick={() => go('situation')}>
                 Start the quote <ArrowRight className="h-4 w-4" />
               </InkButton>
               <button
@@ -1064,7 +1065,7 @@ export default function QuoteCaptureLivePage({embed = false}: {embed?: boolean})
         {step === 'talk' && (
           <QuoteCaptureConciergeTalk
             context={conciergeContext}
-            onStartWizard={() => go('scope')}
+            onStartWizard={() => go('situation')}
             onBack={() => go('intro')}
           />
         )}
@@ -1143,8 +1144,7 @@ export default function QuoteCaptureLivePage({embed = false}: {embed?: boolean})
               Which of these matches best
             </h1>
             <p className="mt-3 mb-8 font-sans text-base text-dark/60 max-w-xl">
-              Based on “{situation.label.toLowerCase()}”. Pick the closest job on the sample rate
-              card.
+              Based on “{situation.label.toLowerCase()}”. Pick the closest job.
             </p>
             <SelectChoiceGrid
               items={jobOptions.map((j) => ({
@@ -1722,8 +1722,9 @@ export default function QuoteCaptureLivePage({embed = false}: {embed?: boolean})
                     Payment
                   </h2>
                   <p className="mt-1.5 font-serif text-[13px] leading-relaxed text-dark/70">
-                    Total due {money(quote.total)}. We are sending your quotation and pay link by
-                    email and SMS. Pay is optional if you already have the link.
+                    {client.isProof
+                      ? `This is a sample landscaping total of ${money(quote.total)}, not the Quote Capture product. The pay step is Stripe test mode. Use card 4242 4242 4242 4242. Do not use a real card.`
+                      : `Total due ${money(quote.total)}. We are sending your quotation and pay link by email and SMS. Pay is optional if you already have the link.`}
                   </p>
                   {submitting && !payUrl ? (
                     <p className="mt-3 font-sans text-sm text-dark/55">
@@ -1739,7 +1740,9 @@ export default function QuoteCaptureLivePage({embed = false}: {embed?: boolean})
                     {submitting && !payUrl
                       ? 'Preparing…'
                       : payUrl
-                        ? `Pay ${money(quote.total)}`
+                        ? client.isProof
+                          ? `Try test pay ${money(quote.total)}`
+                          : `Pay ${money(quote.total)}`
                         : `Retry pay link · ${money(quote.total)}`}
                   </button>
                   {submitError ? (
@@ -1748,8 +1751,8 @@ export default function QuoteCaptureLivePage({embed = false}: {embed?: boolean})
                   {client.isProof && submitWarnings.length ? (
                     <p className="mt-3 font-sans text-sm text-dark/45">
                       Proof mode: Gmail visitor inboxes may skip until a sending domain is verified.
-                      A copy goes to the SYSBILT test inbox. SMS needs a Twilio verified mobile on
-                      trial. Pay link above still works.
+                      A copy goes to the SYSBILT test inbox. SMS goes through ClickSend. Pay is a
+                      Stripe test checkout, not a live charge.
                     </p>
                   ) : null}
                 </div>

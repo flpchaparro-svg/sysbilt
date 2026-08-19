@@ -30,7 +30,7 @@ export const PROOF_LANDSCAPES: QuoteCaptureClientConfig = {
   businessName: 'Proof Landscapes',
   rateCard: 'landscaping-sample',
   disclaimer:
-    'Proof install rates for Quote Capture testing. On a real client site this quotation uses their locked rate card, and a short site look confirms access, soil, and hidden work before work starts.',
+    'Proof install sample landscaping prices for Quote Capture testing. A real client site uses their own locked prices, and a short site look confirms access, soil, and hidden work before work starts.',
   owner: {
     // Resend test mode only delivers to the account inbox
     email: 'felipe@sysbilt.com',
