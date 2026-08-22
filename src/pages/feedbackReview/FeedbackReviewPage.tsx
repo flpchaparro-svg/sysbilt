@@ -1388,7 +1388,7 @@ export default function FeedbackReviewPage() {
         description={
           isSample
             ? 'A sample of the Feedback Review customer questions. Nothing is saved.'
-            : 'Share how we did on your recent job. Feedback first. Google review only if you want.'
+            : 'Share how we did on your recent job.'
         }
         canonical={
           isSample
@@ -1460,8 +1460,8 @@ export default function FeedbackReviewPage() {
             </h1>
             <p className="mx-auto mt-7 max-w-2xl font-sans text-lg leading-relaxed text-dark/70 md:text-xl">
               {isSample
-                ? 'Walk the same taps a customer would after a job. If it goes well, you will see a suggested Google review. Nothing is saved, and we will not send you to Google from this sample.'
-                : 'Short questions about the job, the person you worked with, and what we can improve. If it went well, we can shape a suggested Google review you can edit, copy, or skip.'}
+                ? 'Walk the same taps a customer would after a job. Nothing is saved.'
+                : 'Short questions about the job, the person you worked with, and what we can improve.'}
             </p>
             <div className="mt-12">
               <InkButton onClick={() => go('service')}>
@@ -1518,7 +1518,7 @@ export default function FeedbackReviewPage() {
           <StepChrome
             centre
             title="What part of that work"
-            lead="Pick the closest match so the review stays specific."
+            lead="Pick the closest match."
           >
             <CompactChoiceWithNote
               items={serviceDetails.map((o) => ({
@@ -1694,7 +1694,7 @@ export default function FeedbackReviewPage() {
           <StepChrome
             centre
             title={`What stood out about ${personName.trim() || 'them'}`}
-            lead="Pick up to three. This keeps the review specific, not generic."
+            lead="Pick up to three."
           >
             <MultiPickGrid
               items={PERSON_TRAIT_OPTIONS.map((o) => ({
@@ -1903,7 +1903,7 @@ export default function FeedbackReviewPage() {
               Thanks. Give us a moment
             </h1>
             <p className="mt-4 font-sans text-base text-dark/60">
-              Shaping a short suggested review from your answers. You can edit it next.
+              Putting your answers together.
             </p>
           </section>
         )}
@@ -1915,8 +1915,8 @@ export default function FeedbackReviewPage() {
             </h1>
             <p className="mb-6 mt-3 font-sans text-base text-dark/60">
               {isSample
-                ? 'On a live install, they can edit this, copy it, and post it on your Google page. We never post for them. This sample does not open Google.'
-                : 'If you are willing, here is a suggested Google review from your answers. Edit it, copy it, or write your own on Google. Your call.'}
+                ? 'On a live install, this is where we ask for a Google review, only after the questions. This sample does not open Google.'
+                : 'If you are willing, we would appreciate a Google review. You can use this, change it, or write your own.'}
             </p>
             {submitError ? (
               <p className="mb-4 font-sans text-sm text-dark/55">{submitError}</p>
@@ -1989,7 +1989,7 @@ export default function FeedbackReviewPage() {
             <p className="mt-5 font-sans text-base leading-relaxed text-dark/65">
               {isSample
                 ? 'On a live install, weak jobs stay with you. Nobody is sent to Google from this path. You are done with the sample.'
-                : 'We will take your points seriously and use them to improve. No Google ask from this path. You are done.'}
+                : 'We will take your points seriously and use them to improve. You are done.'}
             </p>
             {isSample ? (
               <div className="mt-10">
