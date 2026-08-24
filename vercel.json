@@ -1,5 +1,57 @@
 {
   "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/blog/what-vibe-coding-means-small-business-websites",
+      "destination": "/blog/what-vibe-coding-means-your-business-website",
+      "permanent": true
+    },
+    {
+      "source": "/blog/looker-studio-vs-power-bi-australian-small",
+      "destination": "/blog/looker-studio-vs-power-bi-australian-service-businesses",
+      "permanent": true
+    },
+    {
+      "source": "/blog/what-happens-when-your-business-hits-2m",
+      "destination": "/blog/what-happens-when-your-business-grows-faster-than-your-systems",
+      "permanent": true
+    },
+    {
+      "source": "/blog/true-cost-cheap-website-australian-small-businesses",
+      "destination": "/blog/true-cost-cheap-website-australian-business",
+      "permanent": true
+    },
+    {
+      "source": "/blog/best-social-media-scheduling-tool-small-business",
+      "destination": "/blog/best-social-media-scheduling-tool-for-your-business",
+      "permanent": true
+    },
+    {
+      "source": "/blog/hubspot-vs-pipedrive-australian-small-businesses",
+      "destination": "/blog/hubspot-vs-pipedrive-australian-service-businesses",
+      "permanent": true
+    },
+    {
+      "source": "/blog/complete-guide-business-automation-australian-small-businesses",
+      "destination": "/blog/complete-guide-business-automation-australian-businesses",
+      "permanent": true
+    },
+    {
+      "source": "/blog/800-missed-call-how-much-money-are",
+      "destination": "/blog/missed-call-your-business-cant-afford-to-ignore",
+      "permanent": true
+    },
+    {
+      "source": "/blog/what-kpis-should-5m-business-track-weekly",
+      "destination": "/blog/what-kpis-should-growing-business-track-weekly",
+      "permanent": true
+    },
+    {
+      "source": "/blog/business-technology-trends-australian-smbs-2026",
+      "destination": "/blog/business-technology-trends-australian-businesses-2026",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
       "source": "/embed/q/(.*)",
