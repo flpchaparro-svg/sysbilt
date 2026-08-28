@@ -75,6 +75,7 @@ const BuiltToSeeBookPage = lazy(() => import('./pages/BuiltToSeeBookPage'));
 const ProposalPage = lazy(() => import('./pages/proposal/ProposalPage'));
 const AgreementPage = lazy(() => import('./pages/agreement/AgreementPage'));
 const DeepAuditReportPage = lazy(() => import('./pages/DeepAuditReportPage'));
+const LearnApp = lazy(() => import('./learn/LearnApp'));
 
 declare global {
   interface Window {
@@ -192,6 +193,7 @@ const App: React.FC = () => {
     location.pathname.startsWith('/q/') || location.pathname.startsWith('/embed/q/');
   const isFeedbackReviewRoute =
     location.pathname === '/r' || location.pathname.startsWith('/r/');
+  const isLearnRoute = location.pathname === '/learn' || location.pathname.startsWith('/learn/');
   const hideChrome =
     location.pathname === '/contact' ||
     location.pathname.startsWith('/proposal/') ||
@@ -200,7 +202,8 @@ const App: React.FC = () => {
     isFunnelRoute ||
     isDemoRoute ||
     isQuoteCaptureLiveRoute ||
-    isFeedbackReviewRoute;
+    isFeedbackReviewRoute ||
+    isLearnRoute;
 
   return (
     <HelmetProvider>
@@ -286,6 +289,8 @@ const App: React.FC = () => {
                     <Route path="/q/:slug" element={<QuoteCaptureLivePage />} />
                     <Route path="/embed/q/:slug" element={<QuoteCaptureEmbedPage />} />
                     <Route path="/r/sysbilt" element={<FeedbackReviewPage />} />
+                    <Route path="/learn/*" element={<LearnApp />} />
+                    <Route path="/learn" element={<LearnApp />} />
 
                     <Route path="*" element={<NotFoundPage onNavigate={handleGlobalNavigate} />} />
                   </Routes>
@@ -300,7 +305,7 @@ const App: React.FC = () => {
           <ClientOnly>
             <Modal service={selectedService} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
             <CookieBanner />
-            {!isFunnelRoute && !isDemoRoute && !isQuoteCaptureLiveRoute && !isFeedbackReviewRoute && <HelpDock />}
+            {!isFunnelRoute && !isDemoRoute && !isQuoteCaptureLiveRoute && !isFeedbackReviewRoute && !isLearnRoute && <HelpDock />}
           </ClientOnly>
         </div>
       </LazyMotion>

@@ -217,12 +217,29 @@ Postiz uses **internal** Redis (`redis://postiz-redis:6379`) inside its Docker s
 | Postiz API | n8n credential **`Postiz API`**; env `POSTIZ_API_KEY` | Social distribute, LI→IG mirror |
 | Slack | n8n credential **`SYSBILT Slack`**; env `SLACK_BOT_TOKEN` | DM lead intake |
 | Notion | `NOTION_TOKEN` | `api/_lib/notion.ts` |
+| Supabase (Learn) | `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` | `/learn` membership, `api/learn/*` |
 | SerpAPI | **Inline key copied from inbound workflow** (see security notes in `N8N_MASTER.md`) | Outbound list builder |
 | Jina Reader | Public `https://r.jina.ai/...` URLs (no named credential in deploy scripts) | Outbound scrape |
 | Audit ingest webhook | `N8N_WEBHOOK_SECRET` | `api/reports/ingest.ts` |
 | Proposal/agreement tokens | `PROPOSAL_SIGNING_SECRET` | `api/_lib/auth.ts` |
 | Audit viewer tokens | `AUDIT_REPORT_SIGNING_SECRET` | `api/_lib/auth.ts` |
 | Admin sign routes | `ADMIN_PASSCODE` | `api/proposal/sign.ts`, `api/agreement/sign.ts` |
+
+### 6.6 Learn (Supabase)
+
+Hidden membership at `/learn` (noindex, not in nav or sitemap). Content in Sanity (`learnCourse`, `learnLesson`). People, entitlements, progress, attempts, and comments in Supabase.
+
+**One-time setup (free):**
+
+1. Create a Supabase project. Run `supabase/migrations/001_learn.sql` in the SQL editor.
+2. Auth → Google on. Site URL `https://sysbilt.com`. Redirect `https://sysbilt.com/learn` and `http://localhost:3333/learn`.
+3. Google Cloud OAuth client (Web), then paste client id/secret into Supabase.
+4. Vercel + `.env.local`: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `SANITY_API_TOKEN` (read drafts). Stripe already on the project; add `STRIPE_WEBHOOK_SECRET` when the Learn webhook is live.
+5. Optional seed: `npx tsx scripts/learn/seed-sample-course.mjs`
+
+Until Supabase env is set, `/learn` shows a configuration screen. Until Sanity has courses, the API serves a sample open course so the path can be clicked through.
+
+Company courses: keep unpublished in Studio, set `released`, add `inviteEmails`. Open and premium courses publish as usual.
 
 ---
 
@@ -231,9 +248,16 @@ Postiz uses **internal** Redis (`redis://postiz-redis:6379`) inside its Docker s
 | Route | Purpose | Key env vars |
 |-------|---------|--------------|
 | `api/chat.ts` | Sybil (Gemini) + Sanity catalogue | `GEMINI_API_KEY`, `SYBIL_KV_*`, optional `SYBIL_TRANSCRIPT_WEBHOOK_URL` |
-| `api/reports/ingest.ts` | n8n → store audit JSON | `N8N_WEBHOOK_SECRET`, `KV_REST_*`, `AUDIT_REPORT_SIGNING_SECRET`, `PUBLIC_BASE_URL` |
-| `api/reports/get.ts` | Signed audit viewer | `AUDIT_REPORT_SIGNING_SECRET`, `KV_REST_*` |
-| `api/proposal/*`, `api/agreement/*` | Client document flows | `HUBSPOT_PRIVATE_APP_TOKEN`, `NOTION_TOKEN`, `PROPOSAL_SIGNING_SECRET`, stage env vars |
+| `api/learn/[action].ts` | Learn membership (catalogue, course, lesson, progress, comments, checkout, stripe-webhook) | `SUPABASE_*`, `VITE_SUPABASE_*`, `SANITY_API_TOKEN`, Stripe, HubSpot |
+| `api/proposal/[action].ts` | Proposal get / accept / sign | HubSpot, Notion, `PROPOSAL_SIGNING_SECRET` |
+| `api/agreement/[action].ts` | Agreement get / accept / sign | HubSpot, Notion, `PROPOSAL_SIGNING_SECRET` |
+| `api/funnel/access.ts` | Funnel access form | HubSpot, Stripe session |
+| `api/quote-capture/[action].ts` | Quote Capture submit / concierge | Stripe, Resend, Zoho |
+| `api/reports/[action].ts` | Audit ingest / get | KV, n8n webhook |
+| `api/feedback-review/submit.ts` | Post-job feedback | HubSpot, Gemini |
+| `api/contact.ts` | Contact form | HubSpot |
+
+Hobby plan cap is **12 serverless functions**. These nine stay under it. Logic lives in `api/_lib/handlers/` so extra files are not extra functions.
 
 Full matrix: `REPO_MAP.md`.
 

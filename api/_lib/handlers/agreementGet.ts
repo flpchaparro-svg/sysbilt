@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { verifyAgreementToken } from '../_lib/auth.js';
-import { getDealBundle } from '../_lib/hubspot.js';
-import { fetchAgreementPage } from '../_lib/notion.js';
+import { verifyAgreementToken } from '../auth.js';
+import { getDealBundle } from '../hubspot.js';
+import { fetchAgreementPage } from '../notion.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'GET') {

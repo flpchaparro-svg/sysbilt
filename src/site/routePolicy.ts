@@ -95,6 +95,11 @@ function isQuoteCapturePath(path: string): boolean {
   );
 }
 
+/** Hidden Learn membership (noindex, not in nav). */
+export function isLearnPath(path: string): boolean {
+  return path === '/learn' || path.startsWith('/learn/');
+}
+
 /**
  * `/guides/built-to-work/:chapterSlug` (and the other seven books).
  * Excludes hubs (`/guides/built-to-work`) and `/read` editions.
@@ -181,7 +186,8 @@ export function bodyPolicyForPath(path: string): RouteBodyPolicy {
     NOINDEX_EXACT_PATHS.has(normalised) ||
     isGoFunnelPath(normalised) ||
     isFeedbackReviewPath(normalised) ||
-    isQuoteCapturePath(normalised)
+    isQuoteCapturePath(normalised) ||
+    isLearnPath(normalised)
   ) {
     return 'noindex-shell';
   }

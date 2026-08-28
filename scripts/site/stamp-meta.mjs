@@ -171,11 +171,16 @@ function isFeedbackReviewPath(routePath) {
   return routePath === '/r' || routePath.startsWith('/r/');
 }
 
+function isLearnPath(routePath) {
+  return routePath === '/learn' || routePath.startsWith('/learn/');
+}
+
 function isIndexableExcluded(routePath) {
   return (
     INDEXABLE_EXCLUDE.has(routePath) ||
     isGoFunnelPath(routePath) ||
-    isFeedbackReviewPath(routePath)
+    isFeedbackReviewPath(routePath) ||
+    isLearnPath(routePath)
   );
 }
 
@@ -1115,7 +1120,7 @@ function stampHtml(template, route) {
   const safeCanonical = escapeAttr(canonicalUrl(routePath));
   const robots =
     route.robots ||
-    (isGoFunnelPath(routePath) || isFeedbackReviewPath(routePath)
+    (isGoFunnelPath(routePath) || isFeedbackReviewPath(routePath) || isLearnPath(routePath)
       ? 'noindex, nofollow'
       : null) ||
     (INDEXABLE_EXCLUDE.has(routePath) ? 'noindex, follow' : null);

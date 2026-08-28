@@ -116,6 +116,7 @@
 | `EvidenceVaultPage.tsx` | Mixed (cream page + dark strips / modals) |
 | `GuideDocumentPage.tsx` | Cream (`#FFF2EC` guide root) |
 | `GuidesHubPage.tsx` | Cream |
+| `learn/LearnApp.tsx` | Cream (hidden `/learn` membership, noindex) |
 | `HomePage.tsx` | Cream (sections `bg-cream`; hero has dark overlay layers inside) |
 | `NewsPage.tsx` | Cream |
 | `NotFoundPage.tsx` | Cream |
@@ -140,7 +141,14 @@
 
 | Route / file | HubSpot | Notion | n8n | Other |
 |--------------|---------|--------|-----|--------|
-| `api/chat.ts` | Cookie read (`hubspotutk`) in transcript webhook payload | — | — | **Google Gemini** (`GEMINI_API_KEY`), **Sanity** (catalogue), **Upstash** (`SYBIL_KV_*` rate limit), optional **POST** to `SYBIL_TRANSCRIPT_WEBHOOK_URL` |
+| `api/chat.ts` | Cookie read (`hubspotutk`) in transcript webhook payload | — | — | **Google Gemini** (`GEMINI_API_KEY`), **Sanity** (catalogue), **Upstash** (`SYBIL_KV_*` rate limit), optional **POST** to `SYBIL_TRANSCRIPT_WEBHOOK_URL`. Optional Learn instructor context (`learn`) |
+| `api/learn/catalogue.ts` | First-login upsert + note | — | — | **Supabase** JWT, **Sanity** learn types |
+| `api/learn/course.ts` | — | — | — | Supabase entitlements, Sanity lessons |
+| `api/learn/lesson.ts` | — | — | — | Lesson payload (answers stripped) |
+| `api/learn/progress.ts` | — | — | — | Grade activities, save progress |
+| `api/learn/comments.ts` | — | — | — | Per-lesson comments when enabled |
+| `api/learn/checkout.ts` | — | — | — | Stripe Checkout for premium |
+| `api/learn/stripe-webhook.ts` | — | — | — | Entitlement on `checkout.session.completed` |
 | `api/proposal/get.ts` | Deal bundle | Proposal page + blocks | — | `PROPOSAL_SIGNING_SECRET` |
 | `api/proposal/accept.ts` | Stage + note | Mark accepted | — | `HUBSPOT_NEGOTIATING_DEAL_STAGE`, `PROPOSAL_SIGNING_SECRET` |
 | `api/proposal/sign.ts` | — | — | — | `PROPOSAL_SIGNING_SECRET`, `PUBLIC_BASE_URL`, `ADMIN_PASSCODE` |
@@ -160,7 +168,7 @@
 
 | Concern | Detail |
 |---------|--------|
-| **POST body** | `{ messages: { role: 'user' \| 'model', text: string }[], sessionId?: string }` |
+| **POST body** | `{ messages: { role: 'user' \| 'model', text: string }[], sessionId?: string, learn?: { courseTitle, lessonTitle, lessonPlain } }` |
 | **External** | Gemini `generateContent`; Sanity fetch for catalogue; optional Upstash rate limit; optional transcript webhook POST |
 | **Env** | `GEMINI_API_KEY` (required), `SYBIL_KV_REST_API_URL`, `SYBIL_KV_REST_API_TOKEN` (rate limit), `SYBIL_TRANSCRIPT_WEBHOOK_URL` (optional webhook), `NODE_ENV` (CORS) |
 

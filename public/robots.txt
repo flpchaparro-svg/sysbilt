@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
 Disallow: /studio/
+Disallow: /learn
+Disallow: /learn/
 
 Sitemap: https://sysbilt.com/sitemap.xml

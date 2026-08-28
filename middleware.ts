@@ -110,10 +110,12 @@ function isSpaRoute(normalizedPathname: string): boolean {
     '/toolkit',
     '/go',
     '/go/thanks',
+    '/learn',
   ]);
   if (exact.has(normalizedPathname)) return true;
 
   if (normalizedPathname.startsWith('/go/')) return true;
+  if (normalizedPathname.startsWith('/learn/')) return true;
 
   const blog = normalizedPathname.match(/^\/blog\/([^/]+)$/i);
   if (blog) {
@@ -221,7 +223,9 @@ export default async function middleware(request: Request): Promise<Response> {
   const forceNoindex =
     normalizedPath === '/news' ||
     normalizedPath === '/go' ||
-    normalizedPath.startsWith('/go/');
+    normalizedPath.startsWith('/go/') ||
+    normalizedPath === '/learn' ||
+    normalizedPath.startsWith('/learn/');
 
   // Catch-all 404 URLs: index.html is still 200 — add header so bots get noindex without JS.
   if (forceNoindex || !isSpaRoute(normalizedPath)) {

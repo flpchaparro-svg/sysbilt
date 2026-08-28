@@ -12,6 +12,9 @@ import guideBlockContent from './guideBlockContent'
 import guide from './guide'
 import toolkitItem from './toolkitItem'
 import funnelPage from './funnelPage'
+import learnActivity from './learnActivity'
+import learnCourse from './learnCourse'
+import learnLesson from './learnLesson'
 
 export const schemaTypes = [
   post,
@@ -28,4 +31,7 @@ export const schemaTypes = [
   guide,
   toolkitItem,
   funnelPage,
+  learnActivity,
+  learnCourse,
+  learnLesson,
 ]

@@ -419,7 +419,11 @@ If the visitor asks how to contact, how to get in touch, what the next step is, 
 
 type ChatRole = 'user' | 'model';
 interface ChatMessage { role: ChatRole; text: string; }
-interface ChatRequestBody { messages: ChatMessage[]; sessionId?: string; }
+interface ChatRequestBody {
+  messages: ChatMessage[];
+  sessionId?: string;
+  learn?: { courseTitle?: string; lessonTitle?: string; lessonPlain?: string };
+}
 
 function getHubSpotCookie(req: VercelRequest): string | undefined {
   const cookieHeader = req.headers.cookie || '';
@@ -539,7 +543,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const catalogue = await buildContentCatalogue();
-  const systemPrompt = SYSTEM_PROMPT_TEMPLATE.replace('{{CONTENT_CATALOGUE}}', catalogue);
+  let systemPrompt = SYSTEM_PROMPT_TEMPLATE.replace('{{CONTENT_CATALOGUE}}', catalogue);
+  if (body.learn && (body.learn.courseTitle || body.learn.lessonTitle)) {
+    const courseTitle = String(body.learn.courseTitle || '').slice(0, 200);
+    const lessonTitle = String(body.learn.lessonTitle || '').slice(0, 200);
+    const lessonPlain = String(body.learn.lessonPlain || '').slice(0, 4000);
+    systemPrompt += `
+
+# LEARN INSTRUCTOR MODE
+
+You are Sybil, the instructor for this SYSBILT Learn lesson. Stay on this lesson. Help the learner understand the ideas, quiz them gently, and do not pitch SYSBILT services unless they ask how we work with clients.
+
+Course: ${courseTitle}
+Lesson: ${lessonTitle}
+
+Lesson notes:
+${lessonPlain || '(no notes provided)'}
+`;
+  }
 
   const geminiPayload = {
     systemInstruction: { parts: [{ text: systemPrompt }] },

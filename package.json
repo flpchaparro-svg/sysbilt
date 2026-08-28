@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "learn:seed": "tsx scripts/learn/seed-sample-course.mjs",
     "postinstall": "npx puppeteer browsers install chrome",
     "build": "tsx scripts/site/capture-content-snapshot.mjs && vite build && vite build --ssr src/entry-server.tsx --outDir .build/ssr && tsx scripts/site/render-routes.mjs && tsx scripts/site/verify-seo.mjs",
     "preview": "vite preview"
@@ -14,6 +15,7 @@
     "@portabletext/react": "^6.0.2",
     "@sanity/client": "^7.15.0",
     "@sanity/image-url": "^2.0.3",
+    "@supabase/supabase-js": "^2.112.4",
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.38.0",
     "@vercel/functions": "^3.4.3",

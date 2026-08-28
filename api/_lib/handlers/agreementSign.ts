@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { signAgreementToken, requireAdmin } from '../_lib/auth.js';
-import { extractNotionPageId } from '../_lib/notion.js';
+import { signAgreementToken, requireAdmin } from '../auth.js';
+import { extractNotionPageId } from '../notion.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
