@@ -1,14 +1,47 @@
 import React, {useEffect, useState} from 'react'
-import {Navigate, Route, Routes} from 'react-router-dom'
+import {Navigate, Route, Routes, useLocation} from 'react-router-dom'
 import type {Session} from '@supabase/supabase-js'
 import {PageMeta} from '../components/PageMeta'
 import {getLearnSupabase, learnSupabaseConfigured} from './lib/supabaseClient'
+import {LearnSessionProvider, useLearnSession} from './lib/LearnSession'
 import {LearnShell} from './LearnShell'
+import {LearnLayout} from './LearnLayout'
 import {SignInPage} from './pages/SignInPage'
-import {CataloguePage} from './pages/CataloguePage'
+import {OnboardingPage} from './pages/OnboardingPage'
+import {DashboardPage, CoursesPage, FeaturedPage} from './pages/DashboardPage'
+import {CommentsPage} from './pages/CommentsPage'
 import {CoursePage} from './pages/CoursePage'
 import {LessonPage} from './pages/LessonPage'
 import {LearnPreviewProvider} from './previewData'
+
+function SignedRoutes({onSignOut}: {onSignOut?: () => void}) {
+  const {profile} = useLearnSession()
+  const location = useLocation()
+
+  if (!profile.onboarded && location.pathname !== '/learn/welcome') {
+    return <Navigate to="/learn/welcome" replace />
+  }
+  if (profile.onboarded && location.pathname === '/learn/welcome') {
+    return <Navigate to="/learn" replace />
+  }
+  if (location.pathname === '/learn/welcome') {
+    return <OnboardingPage />
+  }
+
+  return (
+    <LearnLayout displayName={profile.displayName} email={profile.email} onSignOut={onSignOut}>
+      <Routes>
+        <Route path="/learn" element={<DashboardPage />} />
+        <Route path="/learn/courses" element={<CoursesPage />} />
+        <Route path="/learn/featured" element={<FeaturedPage />} />
+        <Route path="/learn/comments" element={<CommentsPage />} />
+        <Route path="/learn/:courseSlug/:lessonSlug" element={<LessonPage />} />
+        <Route path="/learn/:courseSlug" element={<CoursePage />} />
+        <Route path="*" element={<Navigate to="/learn" replace />} />
+      </Routes>
+    </LearnLayout>
+  )
+}
 
 export default function LearnApp() {
   const configured = learnSupabaseConfigured()
@@ -36,8 +69,6 @@ export default function LearnApp() {
     await getLearnSupabase().auth.signOut()
   }
 
-  const email = preview ? 'design preview' : session?.user.email
-
   return (
     <>
       <PageMeta
@@ -46,33 +77,16 @@ export default function LearnApp() {
         robots="noindex, nofollow"
       />
       <LearnPreviewProvider enabled={preview}>
-        {!configured || preview ? (
-          <LearnShell email={email} onSignOut={undefined}>
-            <p className="mb-8 border border-dark/10 bg-white px-4 py-3 text-sm text-dark/70">
-              Design preview. Sign-in, saved progress, and payments wait until the database is connected. Click through the sample course.
-            </p>
-            <Routes>
-              <Route path="/learn" element={<CataloguePage />} />
-              <Route path="/learn/:courseSlug/:lessonSlug" element={<LessonPage />} />
-              <Route path="/learn/:courseSlug" element={<CoursePage />} />
-              <Route path="*" element={<Navigate to="/learn" replace />} />
-            </Routes>
-          </LearnShell>
-        ) : !ready ? (
+        {!ready ? (
           <LearnShell>
             <p className="font-mono text-xs uppercase tracking-[0.2em] text-dark/50">Loading</p>
           </LearnShell>
-        ) : !session ? (
-          <SignInPage />
+        ) : preview || session ? (
+          <LearnSessionProvider session={preview ? null : session}>
+            <SignedRoutes onSignOut={preview ? undefined : signOut} />
+          </LearnSessionProvider>
         ) : (
-          <LearnShell email={email} onSignOut={signOut}>
-            <Routes>
-              <Route path="/learn" element={<CataloguePage />} />
-              <Route path="/learn/:courseSlug/:lessonSlug" element={<LessonPage />} />
-              <Route path="/learn/:courseSlug" element={<CoursePage />} />
-              <Route path="*" element={<Navigate to="/learn" replace />} />
-            </Routes>
-          </LearnShell>
+          <SignInPage />
         )}
       </LearnPreviewProvider>
     </>

@@ -6,11 +6,14 @@ type LearnShellProps = {
   children: React.ReactNode
   email?: string | null
   onSignOut?: () => void
+  layout?: 'page' | 'auth'
 }
 
-export function LearnShell({children, email, onSignOut}: LearnShellProps) {
+export function LearnShell({children, email, onSignOut, layout = 'page'}: LearnShellProps) {
+  const auth = layout === 'auth'
+
   return (
-    <div className="min-h-screen bg-cream font-sans text-dark selection:bg-dark selection:text-cream">
+    <div className="flex min-h-screen flex-col bg-cream font-sans text-dark selection:bg-dark selection:text-cream">
       <header className="border-b border-dark/10">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-6 py-5">
           <Link to="/learn" aria-label="Learn home">
@@ -35,7 +38,15 @@ export function LearnShell({children, email, onSignOut}: LearnShellProps) {
           </div>
         </div>
       </header>
-      <main className="mx-auto max-w-5xl px-6 py-10 md:py-14">{children}</main>
+      <main
+        className={
+          auth
+            ? 'flex flex-1 items-center justify-center px-5 py-12 md:px-6 md:py-16'
+            : 'mx-auto w-full max-w-5xl flex-1 px-6 py-10 md:py-14'
+        }
+      >
+        {children}
+      </main>
     </div>
   )
 }

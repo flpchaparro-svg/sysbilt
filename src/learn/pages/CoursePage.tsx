@@ -4,7 +4,9 @@ import {learnGet, learnSend} from '../lib/api'
 import CTAButton from '../../components/CTAButton'
 import {ProgressBar} from '../components/ProgressBar'
 import type {CourseOutlineLesson} from '../types'
-import {PREVIEW_COURSE, PREVIEW_LOCKED, PREVIEW_OUTLINE, useLearnPreview} from '../previewData'
+import {DUMMY_CATALOGUE, dummyOutline} from '../dummyCourse'
+import {readLocalProgress} from '../lib/profileStore'
+import {useLearnSession} from '../lib/LearnSession'
 
 type CoursePayload = {
   course: {
@@ -21,47 +23,55 @@ type CoursePayload = {
   continueLessonSlug: string | null
 }
 
+function localPayload(slug: string): CoursePayload | null {
+  const course = DUMMY_CATALOGUE.find((item) => item.slug === slug)
+  if (!course) return null
+  if (course.locked) {
+    return {
+      course: {
+        id: course.id,
+        title: course.title,
+        slug: course.slug,
+        dek: course.dek,
+        access: course.access,
+        locked: true,
+        entitled: false,
+        hasPrice: false,
+      },
+      lessons: [],
+      continueLessonSlug: null,
+    }
+  }
+  const lessons = dummyOutline(readLocalProgress())
+  const next = lessons.find((l) => !l.completed) || lessons[0]
+  return {
+    course: {
+      id: course.id,
+      title: course.title,
+      slug: course.slug,
+      dek: course.dek,
+      access: course.access,
+      locked: false,
+      entitled: true,
+      hasPrice: false,
+    },
+    lessons,
+    continueLessonSlug: next?.slug || null,
+  }
+}
+
 export function CoursePage() {
   const {courseSlug} = useParams()
-  const preview = useLearnPreview()
+  const {source} = useLearnSession()
   const [data, setData] = useState<CoursePayload | null>(null)
   const [error, setError] = useState('')
   const [checkoutBusy, setCheckoutBusy] = useState(false)
 
   useEffect(() => {
     if (!courseSlug) return
-    if (preview) {
-      if (courseSlug === PREVIEW_LOCKED.slug) {
-        setData({
-          course: {
-            id: PREVIEW_LOCKED.id,
-            title: PREVIEW_LOCKED.title,
-            slug: PREVIEW_LOCKED.slug,
-            dek: PREVIEW_LOCKED.dek,
-            access: PREVIEW_LOCKED.access,
-            locked: true,
-            entitled: false,
-            hasPrice: false,
-          },
-          lessons: [],
-          continueLessonSlug: null,
-        })
-        return
-      }
-      setData({
-        course: {
-          id: PREVIEW_COURSE.id,
-          title: PREVIEW_COURSE.title,
-          slug: PREVIEW_COURSE.slug,
-          dek: PREVIEW_COURSE.dek,
-          access: PREVIEW_COURSE.access,
-          locked: false,
-          entitled: true,
-          hasPrice: false,
-        },
-        lessons: PREVIEW_OUTLINE,
-        continueLessonSlug: 'welcome',
-      })
+    const local = localPayload(courseSlug)
+    if (source === 'local' && local) {
+      setData(local)
       return
     }
     const paid = new URLSearchParams(window.location.search).get('session_id')
@@ -76,8 +86,14 @@ export function CoursePage() {
           window.history.replaceState({}, '', url.pathname)
         }
       })
-      .catch((err) => setError(err instanceof Error ? err.message : 'Could not load course'))
-  }, [courseSlug, preview])
+      .catch((err) => {
+        if (local) {
+          setData(local)
+          return
+        }
+        setError(err instanceof Error ? err.message : 'Could not load course')
+      })
+  }, [courseSlug, source])
 
   async function checkout() {
     if (!courseSlug) return
@@ -98,7 +114,7 @@ export function CoursePage() {
     }
   }
 
-  if (error && !data) return <p className="text-sm text-red">{error}</p>
+  if (error && !data) return <p className="text-sm text-red-text">{error}</p>
   if (!data) return <p className="font-mono text-xs uppercase tracking-[0.2em] text-dark/50">Loading course</p>
 
   const {course, lessons, continueLessonSlug} = data
@@ -107,11 +123,11 @@ export function CoursePage() {
     ? `/learn/${course.slug}/${continueLessonSlug}`
     : lessons[0]
       ? `/learn/${course.slug}/${lessons[0].slug}`
-      : '/learn'
+      : '/learn/courses'
 
   return (
     <div>
-      <Link to="/learn" className="font-mono text-[10px] uppercase tracking-[0.2em] text-dark/50 hover:text-dark">
+      <Link to="/learn/courses" className="font-mono text-[10px] uppercase tracking-[0.2em] text-dark/50 hover:text-dark">
         All courses
       </Link>
       <h1 className="mt-4 font-serif text-4xl md:text-5xl">{course.title}</h1>
@@ -120,7 +136,8 @@ export function CoursePage() {
       {course.locked ? (
         <div className="mt-10 max-w-xl border border-dark/10 bg-white p-6">
           <p className="text-sm leading-relaxed text-dark/70">
-            This course is listed, and access is reserved. If you were granted a seat, sign in with that Google account. If it is a paid course, continue below.
+            This course is listed, and access is reserved. If you were granted a seat, sign in with that account. If
+            it is a paid course, continue below.
           </p>
           {course.hasPrice ? (
             <div className="mt-6">
@@ -129,7 +146,7 @@ export function CoursePage() {
               </CTAButton>
             </div>
           ) : null}
-          {error ? <p className="mt-4 text-sm text-red">{error}</p> : null}
+          {error ? <p className="mt-4 text-sm text-red-text">{error}</p> : null}
         </div>
       ) : (
         <>

@@ -1,43 +1,63 @@
 import React, {useEffect, useState} from 'react'
 import {learnGet, learnSend, lessonQuery} from '../lib/api'
-import {useLearnPreview} from '../previewData'
+import {useLearnSession} from '../lib/LearnSession'
+import {DUMMY_SEED_COMMENTS} from '../dummyCourse'
+import {addLocalComment, readLocalComments, type LocalComment} from '../lib/profileStore'
 
 type Comment = {id: string; body: string; createdAt: string; author: string; mine: boolean}
 
 export function CommentThread({courseSlug, lessonSlug}: {courseSlug: string; lessonSlug: string}) {
-  const preview = useLearnPreview()
-  const [comments, setComments] = useState<Comment[] | null>(preview ? [] : null)
-  const [enabled, setEnabled] = useState(preview)
+  const {profile, source} = useLearnSession()
+  const local = source === 'local'
+  const [comments, setComments] = useState<Comment[] | null>(null)
+  const [enabled, setEnabled] = useState(local)
   const [body, setBody] = useState('')
   const [error, setError] = useState('')
 
   const q = lessonQuery(courseSlug, lessonSlug)
 
   useEffect(() => {
-    if (preview) return
+    if (local) {
+      const mine = readLocalComments(DUMMY_SEED_COMMENTS)
+        .filter((c) => c.lessonSlug === lessonSlug)
+        .map((c) => ({
+          id: c.id,
+          body: c.body,
+          createdAt: c.createdAt,
+          author: c.author,
+          mine: c.mine,
+        }))
+      setEnabled(true)
+      setComments(mine)
+      return
+    }
     learnGet<{enabled: boolean; comments: Comment[]}>(`/api/learn/comments?${q}`)
       .then((data) => {
         setEnabled(data.enabled)
         setComments(data.comments)
       })
       .catch(() => setComments([]))
-  }, [q, preview])
+  }, [q, local, lessonSlug])
 
   if (!enabled) return null
 
   async function submit(e: React.FormEvent) {
     e.preventDefault()
     setError('')
-    if (preview) {
+    if (local) {
+      const next: LocalComment = {
+        id: String(Date.now()),
+        lessonSlug,
+        lessonTitle: lessonSlug,
+        body,
+        author: profile.displayName || 'You',
+        createdAt: new Date().toISOString(),
+        mine: true,
+      }
+      addLocalComment(next)
       setComments((prev) => [
         ...(prev || []),
-        {
-          id: String(Date.now()),
-          body,
-          createdAt: new Date().toISOString(),
-          author: 'You',
-          mine: true,
-        },
+        {id: next.id, body: next.body, createdAt: next.createdAt, author: next.author, mine: true},
       ])
       setBody('')
       return
@@ -76,7 +96,7 @@ export function CommentThread({courseSlug, lessonSlug}: {courseSlug: string; les
         >
           Post
         </button>
-        {error ? <p className="text-sm text-red">{error}</p> : null}
+        {error ? <p className="text-sm text-red-text">{error}</p> : null}
       </form>
     </section>
   )

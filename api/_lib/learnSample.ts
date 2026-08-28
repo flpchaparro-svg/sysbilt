@@ -1,27 +1,27 @@
 /** Built-in sample so /learn is clickable before Studio content exists. */
 
-export const SAMPLE_COURSE_ID = 'learnCourse.sample-how-learn-works'
-export const SAMPLE_LESSON_1_ID = 'learnLesson.sample-welcome'
-export const SAMPLE_LESSON_2_ID = 'learnLesson.sample-activities'
+export const SAMPLE_COURSE_ID = 'learnCourse.start-here'
+export const SAMPLE_LESSON_1_ID = 'learnLesson.start-system'
+export const SAMPLE_LESSON_2_ID = 'learnLesson.start-pile'
+export const SAMPLE_LESSON_3_ID = 'learnLesson.start-first-job'
 
-const block = (text: string) => [
-  {
+const blocks = (...paras: string[]) =>
+  paras.map((text, i) => ({
     _type: 'block',
-    _key: 'b1',
+    _key: `p${i}`,
     style: 'normal',
     markDefs: [],
-    children: [{_type: 'span', _key: 's1', text, marks: []}],
-  },
-]
+    children: [{_type: 'span', _key: `s${i}`, text, marks: []}],
+  }))
 
 export const SAMPLE_COURSE = {
   _id: SAMPLE_COURSE_ID,
-  title: 'How Learn works',
-  slug: 'how-learn-works',
-  dek: 'A short walkthrough of progress, activities, and how a lesson feels on this membership.',
+  title: 'Start here',
+  slug: 'start-here',
+  dek: 'Three short lessons on what a system is, why work piles up, and how to pick one job to fix.',
   access: 'open' as const,
   released: true,
-  commentsEnabled: false,
+  commentsEnabled: true,
   order: 1,
   priceAud: null as number | null,
   stripePriceId: null as string | null,
@@ -33,20 +33,21 @@ export const SAMPLE_COURSE = {
 export const SAMPLE_LESSONS = [
   {
     _id: SAMPLE_LESSON_1_ID,
-    title: 'Welcome to a lesson',
-    slug: 'welcome',
+    title: 'What a system is',
+    slug: 'what-a-system-is',
     order: 1,
     unlockAfterDays: 0,
     videoUrl: null as string | null,
-    body: block(
-      'This is a lesson. Watch a video when you add one, read the notes, then complete the activity. Your progress saves so you can pick up here next time.',
+    body: blocks(
+      'A system is not software. It is the way a job gets done when you are not standing there.',
+      'If only you know the steps, you do not have a system. You have a memory. That is fine until you are busy, sick, or on a job.',
     ),
     activities: [
       {
-        _key: 'act-tf-1',
+        _key: 'act-system-tf',
         template: 'trueFalse' as const,
-        prompt: 'Progress on a lesson is saved so you can return later.',
-        explainAfter: 'Yes. Completing an activity, or marking a lesson done, writes to your account.',
+        prompt: 'A system is a way of doing a job the same way each time, without you standing over it.',
+        explainAfter: 'Yes. If it only works when you are in the room, it is still a habit sitting on you.',
         trueFalseCorrect: true,
         options: [],
         matchItems: [],
@@ -56,45 +57,61 @@ export const SAMPLE_LESSONS = [
   },
   {
     _id: SAMPLE_LESSON_2_ID,
-    title: 'Try the activity templates',
-    slug: 'activities',
+    title: 'Where the pile starts',
+    slug: 'where-the-pile-starts',
     order: 2,
     unlockAfterDays: 0,
     videoUrl: null as string | null,
-    body: block(
-      'Each lesson can reuse the same activity templates with different copy: true or false, a single best answer, or matching a case to the right idea.',
+    body: blocks(
+      'The pile is not a personality trait. It is the same job arriving again because nobody wrote down what good looks like.',
+      'You do not fix the pile by working later. You fix it by taking one repeating job off your head.',
     ),
     activities: [
       {
-        _key: 'act-mc-1',
+        _key: 'act-pile-mc',
         template: 'multipleChoice' as const,
-        prompt: 'Which of these is the point of a lesson activity?',
-        explainAfter: 'Activities check that the idea landed, then explain the right answer.',
+        prompt: 'What is the first sign a job has no system?',
+        explainAfter: 'The same question coming back is the pile starting. The rest of the business can look fine.',
         trueFalseCorrect: null,
         options: [
-          {key: 'a', label: 'Fill time on the page', isCorrect: false},
-          {key: 'b', label: 'Check the idea landed, then explain', isCorrect: true},
-          {key: 'c', label: 'Replace the video', isCorrect: false},
+          {key: 'a', label: 'People ask you the same question twice', isCorrect: true},
+          {key: 'b', label: 'The website looks dated', isCorrect: false},
+          {key: 'c', label: 'You hired someone last year', isCorrect: false},
         ],
         matchItems: [],
         matchChoices: [],
       },
+    ],
+  },
+  {
+    _id: SAMPLE_LESSON_3_ID,
+    title: 'Pick one job',
+    slug: 'pick-one-job',
+    order: 3,
+    unlockAfterDays: 0,
+    videoUrl: null as string | null,
+    body: blocks(
+      'Do not start with a platform. Start with a job you already do every week.',
+      'Write the steps as if a new person had to do it on Thursday without ringing you.',
+    ),
+    activities: [
       {
-        _key: 'act-match-1',
+        _key: 'act-job-match',
         template: 'match' as const,
-        prompt: 'Link each situation to the best next step.',
-        explainAfter: 'Open courses start at once. Premium sits in the catalogue until you are entitled. Company courses stay hidden from everyone else.',
+        prompt: 'Link each situation to the better next step.',
+        explainAfter:
+          'Start with one job you already do every week. Leave the shiny tools until that job runs without you.',
         trueFalseCorrect: null,
         options: [],
         matchItems: [
-          {prompt: 'Anyone signed in should be able to take it', correctKey: 'open'},
-          {prompt: 'Listed, but locked until they pay or you grant access', correctKey: 'premium'},
-          {prompt: 'Only the people you invite should even see it', correctKey: 'company'},
+          {prompt: 'The same quote request lands in your inbox every Monday', correctKey: 'repeat'},
+          {prompt: 'You want an AI assistant because it sounds current', correctKey: 'wait'},
+          {prompt: 'A client asks where the file is, again', correctKey: 'memory'},
         ],
         matchChoices: [
-          {key: 'open', label: 'Open course'},
-          {key: 'premium', label: 'Premium course'},
-          {key: 'company', label: 'Company course'},
+          {key: 'repeat', label: 'Turn that job into a system first'},
+          {key: 'wait', label: 'Leave it until a real job is systemised'},
+          {key: 'memory', label: 'Give the job a home, not another chat'},
         ],
       },
     ],

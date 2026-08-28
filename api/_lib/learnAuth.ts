@@ -40,17 +40,23 @@ export async function requireLearnUser(
     res.status(401).json({error: 'This account has no email'})
     return null
   }
-  const displayName =
-    (typeof data.user.user_metadata?.full_name === 'string' && data.user.user_metadata.full_name) ||
-    (typeof data.user.user_metadata?.name === 'string' && data.user.user_metadata.name) ||
+  const fromGoogle =
+    (typeof data.user.user_metadata?.full_name === 'string' && data.user.user_metadata.full_name.trim()) ||
+    (typeof data.user.user_metadata?.name === 'string' && data.user.user_metadata.name.trim()) ||
     ''
+  const {data: existing} = await supabase
+    .from('learn_profiles')
+    .select('display_name')
+    .eq('id', data.user.id)
+    .maybeSingle()
+  const displayName = (existing?.display_name || '').trim() || fromGoogle
   await supabase.from('learn_profiles').upsert(
     {
       id: data.user.id,
       email,
-      display_name: displayName,
+      display_name: displayName || null,
     },
-    {onConflict: 'id', ignoreDuplicates: false},
+    {onConflict: 'id'},
   )
   return {id: data.user.id, email, displayName}
 }

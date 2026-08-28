@@ -8,7 +8,9 @@ import {SybilInstructor} from '../components/SybilInstructor'
 import {YouTubePlayer} from '../components/YouTubePlayer'
 import CTAButton from '../../components/CTAButton'
 import type {LessonPayload} from '../types'
-import {gradePreview, previewLesson, useLearnPreview} from '../previewData'
+import {dummyLesson, gradeDummy} from '../dummyCourse'
+import {markLocalLessonDone} from '../lib/profileStore'
+import {useLearnSession} from '../lib/LearnSession'
 
 function portablePlain(blocks: unknown[]): string {
   if (!Array.isArray(blocks)) return ''
@@ -23,7 +25,8 @@ function portablePlain(blocks: unknown[]): string {
 
 export function LessonPage() {
   const {courseSlug, lessonSlug} = useParams()
-  const preview = useLearnPreview()
+  const {source} = useLearnSession()
+  const local = source === 'local'
   const [data, setData] = useState<LessonPayload | null>(null)
   const [error, setError] = useState('')
   const [completeBusy, setCompleteBusy] = useState(false)
@@ -31,21 +34,24 @@ export function LessonPage() {
   const q = courseSlug && lessonSlug ? lessonQuery(courseSlug, lessonSlug) : ''
 
   useEffect(() => {
-    if (preview && lessonSlug) {
-      const payload = previewLesson(lessonSlug)
-      if (!payload) {
-        setError('Lesson not found')
-        return
-      }
-      setData(payload)
+    if (!lessonSlug) return
+    const dummy = dummyLesson(lessonSlug, courseSlug)
+    if (local && dummy) {
+      setData(dummy)
       return
     }
     if (!q) return
     setData(null)
     learnGet<LessonPayload>(`/api/learn/lesson?${q}`)
       .then(setData)
-      .catch((err) => setError(err instanceof Error ? err.message : 'Could not load lesson'))
-  }, [q, preview, lessonSlug])
+      .catch((err) => {
+        if (dummy) {
+          setData(dummy)
+          return
+        }
+        setError(err instanceof Error ? err.message : 'Could not load lesson')
+      })
+  }, [q, local, lessonSlug])
 
   const lessonPlain = useMemo(() => (data ? portablePlain(data.lesson.body as unknown[]) : ''), [data])
 
@@ -90,8 +96,12 @@ export function LessonPage() {
               activity={activity}
               attempt={attempts[activity._key]}
               onSubmit={async (answers) => {
-                if (preview) {
-                  const result = gradePreview(activity._key, answers)
+                if (local) {
+                  const result = gradeDummy(activity._key, answers)
+                  if (result.passed) {
+                    markLocalLessonDone(lesson.id)
+                    setData((prevData) => (prevData ? {...prevData, completed: true} : prevData))
+                  }
                   return result
                 }
                 const result = await learnSend<{
@@ -118,7 +128,8 @@ export function LessonPage() {
             <CTAButton
               type="button"
               onClick={async () => {
-                if (preview) {
+                if (local) {
+                  markLocalLessonDone(lesson.id)
                   setData((prevData) => (prevData ? {...prevData, completed: true} : prevData))
                   return
                 }

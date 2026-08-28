@@ -13,6 +13,7 @@ export type CatalogueCourse = {
   hasPrice: boolean
   completedLessons: number
   continueLessonId: string | null
+  featured?: boolean
 }
 
 export type CourseOutlineLesson = {

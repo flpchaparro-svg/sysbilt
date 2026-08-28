@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "learn:seed": "tsx scripts/learn/seed-sample-course.mjs",
+    "learn:studio": "npm --prefix studio run dev -- --port 3334",
     "postinstall": "npx puppeteer browsers install chrome",
     "build": "tsx scripts/site/capture-content-snapshot.mjs && vite build && vite build --ssr src/entry-server.tsx --outDir .build/ssr && tsx scripts/site/render-routes.mjs && tsx scripts/site/verify-seo.mjs",
     "preview": "vite preview"
