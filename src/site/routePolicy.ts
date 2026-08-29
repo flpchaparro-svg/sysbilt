@@ -3,9 +3,13 @@
  * strategies. Shared by `scripts/site/render-routes.mjs` and
  * `scripts/site/verify-seo.mjs`.
  *
- * Every indexable route is `required-body`. Funnel, news, and `/read`
- * editions are `noindex-shell`. There is no legacy head-only shell left.
+ * Every indexable route is `required-body`. Private funnel SKUs, news, and
+ * `/read` editions are `noindex-shell`. `/go/speed-fix` is the public
+ * indexed funnel door and is `required-body`. There is no legacy head-only
+ * shell left.
  */
+
+import { PUBLIC_FUNNEL_SLUGS } from '../constants/funnel';
 
 /** Guides collection hub + eight book hubs. */
 export const GUIDES_HUB_REQUIRED_BODY_PATHS = [
@@ -24,7 +28,10 @@ export const GUIDES_HUB_REQUIRED_BODY_PATHS = [
  * Explicit required-body paths that are not inferred (pilots, hubs).
  * Book chapters use `isCodeBookChapterPath`; toolkit items use `isToolkitItemPath`;
  * blog posts use `isBlogPostPath`; Sanity guides use `isSanityGuidePath`.
+ * Public indexed /go doors live in PUBLIC_FUNNEL_PATHS.
  */
+export const PUBLIC_FUNNEL_PATHS = PUBLIC_FUNNEL_SLUGS.map((slug) => `/go/${slug}`);
+
 export const STATIC_REQUIRED_BODY_PATHS = [
   '/',
   '/architect',
@@ -42,6 +49,7 @@ export const STATIC_REQUIRED_BODY_PATHS = [
   '/proof',
   '/system',
   '/terms',
+  ...PUBLIC_FUNNEL_PATHS,
 ] as const;
 
 export const REQUIRED_BODY_PATHS = [
@@ -78,6 +86,15 @@ const BOOK_HUB_SLUG_SET = new Set<string>(BOOK_READ_HUB_SLUGS);
 
 function isGoFunnelPath(path: string): boolean {
   return path === '/go' || path.startsWith('/go/');
+}
+
+export function isPublicFunnelPath(path: string): boolean {
+  return PUBLIC_FUNNEL_PATHS.includes(path as (typeof PUBLIC_FUNNEL_PATHS)[number]);
+}
+
+/** Private catalogue and checkout surfaces. Public Speed Fix is required-body. */
+function isPrivateGoFunnelPath(path: string): boolean {
+  return isGoFunnelPath(path) && !isPublicFunnelPath(path);
 }
 
 /** Private post-job feedback / review helpers (SYSBILT first, client installs later). */
@@ -184,7 +201,7 @@ export function bodyPolicyForPath(path: string): RouteBodyPolicy {
 
   if (
     NOINDEX_EXACT_PATHS.has(normalised) ||
-    isGoFunnelPath(normalised) ||
+    isPrivateGoFunnelPath(normalised) ||
     isFeedbackReviewPath(normalised) ||
     isQuoteCapturePath(normalised) ||
     isLearnPath(normalised)

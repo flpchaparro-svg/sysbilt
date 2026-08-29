@@ -12,6 +12,20 @@ export const TALLY_ACCESS_FORM_URL =
 /** Locked footer copy for every /go/ surface (Privacy + Terms are linked in the UI). */
 export const FUNNEL_FOOTER_TEXT = 'SYSBILT, Sydney. ABN 56 115 228 020.' as const
 
+/**
+ * /go SKUs that are public and indexable. Everything else in the catalogue
+ * stays noindex and off the sitemap, nav, and footer.
+ */
+export const PUBLIC_FUNNEL_SLUGS = ['speed-fix'] as const
+
+export type PublicFunnelSlug = (typeof PUBLIC_FUNNEL_SLUGS)[number]
+
+export function isPublicFunnelSlug(slug: string | null | undefined): slug is PublicFunnelSlug {
+  return (
+    typeof slug === 'string' && (PUBLIC_FUNNEL_SLUGS as readonly string[]).includes(slug)
+  )
+}
+
 export const FUNNEL_PRODUCT_CODES = [
   'speed-fix',
   'missed-call',

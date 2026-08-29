@@ -3,6 +3,7 @@
  * (paths not handled by the SPA router) so crawlers see noindex without executing JS.
  */
 import { next } from '@vercel/functions';
+import { isPublicFunnelPath } from './src/site/routePolicy';
 import {
   BLOG_SLUGS,
   GUIDE_SLUGS,
@@ -218,12 +219,13 @@ export default async function middleware(request: Request): Promise<Response> {
 
   const normalizedPath = normalizePathname(url.pathname);
 
-  // Funnel + news: always noindex at the edge, even when the SPA route is "known".
+  // Private funnel + news: always noindex at the edge, even when the SPA route is "known".
   // Unstamped /go/* paths otherwise fall through to homepage HTML with no robots meta.
+  // /go/speed-fix is the public indexed door and must not get this header.
   const forceNoindex =
     normalizedPath === '/news' ||
-    normalizedPath === '/go' ||
-    normalizedPath.startsWith('/go/') ||
+    ((normalizedPath === '/go' || normalizedPath.startsWith('/go/')) &&
+      !isPublicFunnelPath(normalizedPath)) ||
     normalizedPath === '/learn' ||
     normalizedPath.startsWith('/learn/');
 

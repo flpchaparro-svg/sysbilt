@@ -10,6 +10,7 @@ import FrictionAuditSection from '../components/HomePage/FrictionAuditSection';
 import SystemPhases from '../components/HomePage/SystemPhases';
 import TheArchitect from '../components/HomePage/TheArchitect';
 import Feature_Group7 from '../components/HomePage/Feature_Group7';
+import SpeedFixDoor from '../components/HomePage/SpeedFixDoor';
 import { RouteHead } from '../site/RouteHead';
 import { ClientOnly } from '../site/ClientOnly';
 import { SEO_META } from '../constants/seoMeta';
@@ -229,6 +230,9 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onServiceClick }) => {
       </section>
       <section id="case-study" className="relative bg-cream z-30">
         <Feature_Group7 />
+      </section>
+      <section id="speed-fix" className="relative bg-cream z-30">
+        <SpeedFixDoor />
       </section>
       <section id="cta" aria-label="Call to Action Section" className="relative bg-cream z-30">
         <BookingCTA />
