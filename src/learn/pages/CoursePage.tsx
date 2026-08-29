@@ -1,32 +1,19 @@
 import React, {useEffect, useState} from 'react'
-import {Link, useParams} from 'react-router-dom'
+import {Link} from 'react-router-dom'
 import {learnGet, learnSend} from '../lib/api'
-import CTAButton from '../../components/CTAButton'
 import {ProgressBar} from '../components/ProgressBar'
-import type {CourseOutlineLesson} from '../types'
-import {DUMMY_CATALOGUE, dummyOutline} from '../dummyCourse'
+import {ProgressRing} from '../components/ProgressRing'
+import type {CoursePayload} from '../types'
+import {DUMMY_CATALOGUE, DUMMY_COURSE, dummyOutline} from '../dummyCourse'
 import {readLocalProgress} from '../lib/profileStore'
-import {useLearnSession} from '../lib/LearnSession'
-
-type CoursePayload = {
-  course: {
-    id: string
-    title: string
-    slug: string
-    dek: string | null
-    access: string
-    locked: boolean
-    entitled: boolean
-    hasPrice: boolean
-  }
-  lessons: CourseOutlineLesson[]
-  continueLessonSlug: string | null
-}
+import {useLearnSlugs} from '../lib/learnPath'
+import {fetchSanityCourse} from '../lib/sanityLearn'
+import {Chip, Kicker, LearnPage, PageHead, StampWell, learnBtn, learnLink} from '../components/learnChrome'
 
 function localPayload(slug: string): CoursePayload | null {
   const course = DUMMY_CATALOGUE.find((item) => item.slug === slug)
   if (!course) return null
-  if (course.locked) {
+  if (course.locked || course.slug !== DUMMY_COURSE.slug) {
     return {
       course: {
         id: course.id,
@@ -34,8 +21,8 @@ function localPayload(slug: string): CoursePayload | null {
         slug: course.slug,
         dek: course.dek,
         access: course.access,
-        locked: true,
-        entitled: false,
+        locked: course.locked,
+        entitled: course.entitled,
         hasPrice: false,
       },
       lessons: [],
@@ -61,39 +48,53 @@ function localPayload(slug: string): CoursePayload | null {
 }
 
 export function CoursePage() {
-  const {courseSlug} = useParams()
-  const {source} = useLearnSession()
+  const {courseSlug} = useLearnSlugs()
   const [data, setData] = useState<CoursePayload | null>(null)
   const [error, setError] = useState('')
   const [checkoutBusy, setCheckoutBusy] = useState(false)
 
   useEffect(() => {
     if (!courseSlug) return
-    const local = localPayload(courseSlug)
-    if (source === 'local' && local) {
-      setData(local)
-      return
-    }
+    let alive = true
+    const dummy = localPayload(courseSlug)
     const paid = new URLSearchParams(window.location.search).get('session_id')
     const qs = new URLSearchParams({slug: courseSlug})
     if (paid) qs.set('session_id', paid)
-    learnGet<CoursePayload>(`/api/learn/course?${qs.toString()}`)
-      .then((payload) => {
+
+    async function load() {
+      try {
+        const payload = await learnGet<CoursePayload>(`/api/learn/course?${qs.toString()}`)
+        if (!alive) return
         setData(payload)
         if (paid) {
           const url = new URL(window.location.href)
           url.searchParams.delete('session_id')
           window.history.replaceState({}, '', url.pathname)
         }
-      })
-      .catch((err) => {
-        if (local) {
-          setData(local)
+        return
+      } catch {
+        // Local Vite has no Learn API.
+      }
+      try {
+        const fromSanity = await fetchSanityCourse(courseSlug)
+        if (!alive) return
+        if (fromSanity) {
+          setData(fromSanity)
           return
         }
-        setError(err instanceof Error ? err.message : 'Could not load course')
-      })
-  }, [courseSlug, source])
+      } catch {
+        // Fall through to dummy cards.
+      }
+      if (!alive) return
+      if (dummy) setData(dummy)
+      else setError('Could not load course')
+    }
+
+    load()
+    return () => {
+      alive = false
+    }
+  }, [courseSlug])
 
   async function checkout() {
     if (!courseSlug) return
@@ -115,10 +116,11 @@ export function CoursePage() {
   }
 
   if (error && !data) return <p className="text-sm text-red-text">{error}</p>
-  if (!data) return <p className="font-mono text-xs uppercase tracking-[0.2em] text-dark/50">Loading course</p>
+  if (!data) return <p className="font-sans text-[11px] font-semibold uppercase tracking-[0.24em] text-dark/50">Loading course</p>
 
   const {course, lessons, continueLessonSlug} = data
   const done = lessons.filter((l) => l.completed).length
+  const finished = lessons.length > 0 && done >= lessons.length
   const continueTo = continueLessonSlug
     ? `/learn/${course.slug}/${continueLessonSlug}`
     : lessons[0]
@@ -126,67 +128,80 @@ export function CoursePage() {
       : '/learn/courses'
 
   return (
-    <div>
-      <Link to="/learn/courses" className="font-mono text-[10px] uppercase tracking-[0.2em] text-dark/50 hover:text-dark">
+    <LearnPage>
+      <Link to="/learn/courses" className={learnLink}>
         All courses
       </Link>
-      <h1 className="mt-4 font-serif text-4xl md:text-5xl">{course.title}</h1>
-      {course.dek ? <p className="mt-4 max-w-2xl text-sm leading-relaxed text-dark/70">{course.dek}</p> : null}
+      <PageHead kicker="Course" title={course.title}>
+        {course.dek}
+      </PageHead>
 
       {course.locked ? (
-        <div className="mt-10 max-w-xl border border-dark/10 bg-white p-6">
-          <p className="text-sm leading-relaxed text-dark/70">
-            This course is listed, and access is reserved. If you were granted a seat, sign in with that account. If
-            it is a paid course, continue below.
-          </p>
-          {course.hasPrice ? (
-            <div className="mt-6">
-              <CTAButton type="button" onClick={checkout}>
+        <StampWell className="mt-10 max-w-xl">
+          <div className="px-6 py-7">
+            <Kicker>Reserved</Kicker>
+            <p className="mt-4 text-sm leading-relaxed text-dark/70">
+              This course is listed, and access is reserved. If you were granted a seat, sign in with that account. If
+              it is a paid course, continue below.
+            </p>
+            {course.hasPrice ? (
+              <button type="button" onClick={checkout} className={`${learnBtn} mt-6`}>
                 {checkoutBusy ? 'Opening payment' : 'Get access'}
-              </CTAButton>
-            </div>
-          ) : null}
-          {error ? <p className="mt-4 text-sm text-red-text">{error}</p> : null}
-        </div>
+              </button>
+            ) : null}
+            {error ? <p className="mt-4 text-sm text-red-text">{error}</p> : null}
+          </div>
+        </StampWell>
       ) : (
         <>
-          <div className="mt-8 max-w-xl">
-            <ProgressBar value={lessons.length ? done / lessons.length : 0} label={`${done} of ${lessons.length} lessons`} />
+          <div className="mt-8 flex items-center gap-6">
+            <div className="min-w-0 max-w-xl flex-1">
+              <ProgressBar value={lessons.length ? done / lessons.length : 0} label={`${done} of ${lessons.length} lessons`} />
+            </div>
+            <ProgressRing value={lessons.length ? done / lessons.length : 0} done={finished} size={56} />
           </div>
+          {finished ? (
+            <p className="mt-6 font-serif text-lg italic text-dark/70">You finished this course.</p>
+          ) : null}
           <div className="mt-8">
-            <CTAButton to={continueTo}>{done > 0 ? 'Continue' : 'Start'}</CTAButton>
+            <Link to={continueTo} className={learnBtn}>
+              {finished ? 'View again' : done > 0 ? 'Continue' : 'Start'}
+            </Link>
           </div>
-          <ol className="mt-12 divide-y divide-dark/10 border-y border-dark/10">
-            {lessons.map((lesson) => (
-              <li key={lesson.id}>
-                {lesson.unlocked ? (
-                  <Link
-                    to={`/learn/${course.slug}/${lesson.slug}`}
-                    className="flex items-baseline justify-between gap-4 py-4 hover:bg-white/60"
-                  >
-                    <span>
-                      <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-dark/45">
-                        Lesson {String(lesson.order).padStart(2, '0')}
-                        {lesson.completed ? ' · Done' : ''}
+          <StampWell className="mt-12">
+            <ol>
+              {lessons.map((lesson) => (
+                <li key={lesson.id} className="border-t border-dark/10 first:border-t-0">
+                  {lesson.unlocked ? (
+                    <Link
+                      to={`/learn/${course.slug}/${lesson.slug}`}
+                      className="flex items-center justify-between gap-4 px-5 py-5"
+                    >
+                      <span>
+                        <Chip>
+                          Lesson {String(lesson.order).padStart(2, '0')}
+                          {lesson.completed ? ' · Done' : ''}
+                        </Chip>
+                        <span className="mt-3 block font-serif text-xl">{lesson.title}</span>
                       </span>
-                      <span className="mt-1 block font-serif text-xl">{lesson.title}</span>
-                    </span>
-                  </Link>
-                ) : (
-                  <div className="flex items-baseline justify-between gap-4 py-4 opacity-50">
-                    <span>
-                      <span className="font-mono text-[10px] uppercase tracking-[0.2em]">
-                        Unlocks after {lesson.unlockAfterDays} days
+                      {lesson.completed ? <ProgressRing value={1} done size={40} /> : null}
+                    </Link>
+                  ) : (
+                    <div className="flex items-baseline justify-between gap-4 px-5 py-5 opacity-50">
+                      <span>
+                        <span className="font-sans text-[11px] font-semibold uppercase tracking-[0.24em]">
+                          Opens after {lesson.unlockAfterDays} days
+                        </span>
+                        <span className="mt-2 block font-serif text-xl">{lesson.title}</span>
                       </span>
-                      <span className="mt-1 block font-serif text-xl">{lesson.title}</span>
-                    </span>
-                  </div>
-                )}
-              </li>
-            ))}
-          </ol>
+                    </div>
+                  )}
+                </li>
+              ))}
+            </ol>
+          </StampWell>
         </>
       )}
-    </div>
+    </LearnPage>
   )
 }

@@ -9,7 +9,7 @@ export function YouTubePlayer({url}: {url: string}) {
   const id = youtubeId(url)
   if (!id) return null
   return (
-    <div className="aspect-video w-full overflow-hidden border border-dark/10 bg-dark">
+    <div className="aspect-video w-full overflow-hidden bg-dark">
       <iframe
         title="Lesson video"
         src={`https://www.youtube-nocookie.com/embed/${id}?rel=0&modestbranding=1`}

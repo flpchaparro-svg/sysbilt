@@ -68,6 +68,7 @@ export const PREVIEW_COURSE: CatalogueCourse = {
   entitled: true,
   hasPrice: false,
   completedLessons: 0,
+  lessonCount: 2,
   continueLessonId: null,
 }
 
@@ -78,9 +79,9 @@ export const PREVIEW_OUTLINE: CourseOutlineLesson[] = [
 
 export const PREVIEW_LOCKED: CatalogueCourse = {
   id: 'preview-premium',
-  title: 'Client workshop (sample lock)',
-  slug: 'client-workshop',
-  dek: 'This card shows how a premium course looks when it is listed but locked.',
+  title: 'Private workshops',
+  slug: 'private-workshops',
+  dek: 'Live work with us. Locked until you have a seat.',
   access: 'premium',
   coverUrl: null,
   commentsEnabled: false,
@@ -88,6 +89,7 @@ export const PREVIEW_LOCKED: CatalogueCourse = {
   entitled: false,
   hasPrice: false,
   completedLessons: 0,
+  lessonCount: 4,
   continueLessonId: null,
 }
 

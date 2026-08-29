@@ -46,6 +46,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           entitled: vis.entitled,
           hasPrice: Boolean(course.stripePriceId || (course.priceAud && course.priceAud >= 0.5)),
           completedLessons: completedByCourse.get(course._id) || 0,
+          lessonCount: 3,
           continueLessonId: lastByCourse.get(course._id) || null,
         }
       })

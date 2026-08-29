@@ -8,7 +8,7 @@ type Comment = {id: string; body: string; createdAt: string; author: string; min
 
 export function CommentThread({courseSlug, lessonSlug}: {courseSlug: string; lessonSlug: string}) {
   const {profile, source} = useLearnSession()
-  const local = source === 'local'
+  const local = source !== 'api'
   const [comments, setComments] = useState<Comment[] | null>(null)
   const [enabled, setEnabled] = useState(local)
   const [body, setBody] = useState('')

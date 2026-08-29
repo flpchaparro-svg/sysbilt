@@ -1,6 +1,7 @@
 import React from 'react'
 import {Link} from 'react-router-dom'
 import {SysbiltLogo} from '../components/SysbiltLogo'
+import {LessonChartGrid} from './components/learnChrome'
 
 type LearnShellProps = {
   children: React.ReactNode
@@ -20,7 +21,9 @@ export function LearnShell({children, email, onSignOut, layout = 'page'}: LearnS
             <SysbiltLogo className="w-[110px] md:w-[130px]" />
           </Link>
           <div className="flex items-center gap-4">
-            <p className="hidden font-mono text-[10px] uppercase tracking-[0.2em] text-dark/50 sm:block">Learn</p>
+            <p className="hidden font-sans text-[11px] font-semibold uppercase tracking-[0.24em] text-gold-on-cream sm:block">
+              / Learn
+            </p>
             {email ? (
               <div className="flex items-center gap-3">
                 <p className="max-w-[12rem] truncate text-xs text-dark/60">{email}</p>
@@ -28,7 +31,7 @@ export function LearnShell({children, email, onSignOut, layout = 'page'}: LearnS
                   <button
                     type="button"
                     onClick={onSignOut}
-                    className="font-mono text-[10px] uppercase tracking-[0.2em] text-dark/70 underline-offset-4 hover:text-dark hover:underline"
+                    className="font-sans text-[11px] font-semibold uppercase tracking-[0.24em] text-dark/70 underline-offset-4 hover:text-gold-on-cream hover:underline"
                   >
                     Sign out
                   </button>
@@ -41,11 +44,12 @@ export function LearnShell({children, email, onSignOut, layout = 'page'}: LearnS
       <main
         className={
           auth
-            ? 'flex flex-1 items-center justify-center px-5 py-12 md:px-6 md:py-16'
-            : 'mx-auto w-full max-w-5xl flex-1 px-6 py-10 md:py-14'
+            ? 'relative flex flex-1 items-center justify-center overflow-visible px-5 py-12 md:px-6 md:py-16'
+            : 'relative mx-auto w-full max-w-5xl flex-1 overflow-visible px-6 py-10 md:py-14'
         }
       >
-        {children}
+        <LessonChartGrid />
+        <div className="relative">{children}</div>
       </main>
     </div>
   )

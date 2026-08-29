@@ -2,6 +2,7 @@ import React, {useState} from 'react'
 import {ArrowRight} from 'lucide-react'
 import {LearnShell} from '../LearnShell'
 import {getLearnSupabase} from '../lib/supabaseClient'
+import {GoldRule, Kicker, StampWell, learnBtn} from '../components/learnChrome'
 
 function GoogleMark() {
   return (
@@ -111,12 +112,12 @@ export function SignInPage() {
 
   return (
     <LearnShell layout="auth">
-      <div className="w-full max-w-[28rem] border border-dark/10 bg-white">
-        <div className="h-[3px] bg-gold" />
+      <StampWell className="w-full max-w-[28rem]">
         <div className="px-8 py-10 md:px-11 md:py-12">
-          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-gold-on-cream">/ Learn</p>
-          <h1 className="mt-4 font-serif text-4xl leading-tight md:text-[2.75rem]">Welcome to Learn</h1>
-          <p className="mt-4 text-[15px] leading-relaxed text-dark/70">
+          <Kicker>Learn</Kicker>
+          <h1 className="mt-5 font-serif text-4xl font-medium leading-[1.08] tracking-tight md:text-[2.75rem]">Welcome to Learn</h1>
+          <GoldRule />
+          <p className="mt-5 text-[15px] leading-relaxed text-dark/70">
             Enjoy the courses. AI, automation, and how to build a business that holds up as you grow.
           </p>
 
@@ -124,7 +125,7 @@ export function SignInPage() {
             type="button"
             onClick={google}
             disabled={busy}
-            className="group relative mt-10 flex min-h-[3rem] w-full items-center justify-center overflow-hidden border border-dark bg-dark px-6 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-cream transition-transform duration-[250ms] active:scale-[0.97] disabled:opacity-60"
+            className="group relative mt-10 flex min-h-[3rem] w-full items-center justify-center overflow-hidden bg-dark px-6 py-4 font-sans text-xs font-semibold uppercase tracking-[0.2em] text-cream shadow-[6px_6px_0_0_#C5A059] transition-transform duration-[250ms] active:scale-[0.97] disabled:opacity-60"
           >
             <span className="pointer-events-none absolute inset-0 translate-y-full bg-gold transition-transform duration-[250ms] group-hover:translate-y-0" />
             <span className="relative z-10 flex items-center justify-center gap-3 group-hover:text-dark">
@@ -138,7 +139,7 @@ export function SignInPage() {
 
           <div className="mt-8 flex items-center gap-4">
             <span className="h-px flex-1 bg-dark/10" />
-            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-dark/40">Or email</span>
+            <span className="font-sans text-[11px] font-semibold uppercase tracking-[0.24em] text-dark/40">Or email</span>
             <span className="h-px flex-1 bg-dark/10" />
           </div>
 
@@ -146,8 +147,8 @@ export function SignInPage() {
             <button
               type="button"
               onClick={() => switchMode('signin')}
-              className={`pb-3 font-mono text-[10px] uppercase tracking-[0.2em] ${
-                mode === 'signin' ? 'border-b-2 border-dark text-dark' : 'text-dark/40 hover:text-dark/70'
+              className={`pb-3 font-sans text-[11px] font-semibold uppercase tracking-[0.2em] ${
+                mode === 'signin' ? 'border-b-2 border-gold text-dark' : 'text-dark/40 hover:text-dark/70'
               }`}
             >
               Sign in
@@ -155,8 +156,8 @@ export function SignInPage() {
             <button
               type="button"
               onClick={() => switchMode('signup')}
-              className={`pb-3 font-mono text-[10px] uppercase tracking-[0.2em] ${
-                mode === 'signup' ? 'border-b-2 border-dark text-dark' : 'text-dark/40 hover:text-dark/70'
+              className={`pb-3 font-sans text-[11px] font-semibold uppercase tracking-[0.2em] ${
+                mode === 'signup' ? 'border-b-2 border-gold text-dark' : 'text-dark/40 hover:text-dark/70'
               }`}
             >
               Create account
@@ -171,7 +172,7 @@ export function SignInPage() {
             <form onSubmit={submit} className="mt-8 space-y-4">
               {mode === 'signup' ? (
                 <label className="block">
-                  <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-dark/50">Name</span>
+                  <span className="font-sans text-[11px] font-semibold uppercase tracking-[0.24em] text-dark/50">Name</span>
                   <input
                     type="text"
                     required
@@ -184,7 +185,7 @@ export function SignInPage() {
                 </label>
               ) : null}
               <label className="block">
-                <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-dark/50">Email</span>
+                <span className="font-sans text-[11px] font-semibold uppercase tracking-[0.24em] text-dark/50">Email</span>
                 <input
                   type="email"
                   required
@@ -196,7 +197,7 @@ export function SignInPage() {
                 />
               </label>
               <label className="block">
-                <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-dark/50">Password</span>
+                <span className="font-sans text-[11px] font-semibold uppercase tracking-[0.24em] text-dark/50">Password</span>
                 <input
                   type="password"
                   required
@@ -210,7 +211,7 @@ export function SignInPage() {
               </label>
               {mode === 'signup' ? (
                 <label className="block">
-                  <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-dark/50">
+                  <span className="font-sans text-[11px] font-semibold uppercase tracking-[0.24em] text-dark/50">
                     Confirm password
                   </span>
                   <input
@@ -228,7 +229,7 @@ export function SignInPage() {
               <button
                 type="submit"
                 disabled={busy}
-                className="flex min-h-[3rem] w-full items-center justify-center border border-dark/20 bg-white px-6 py-3 font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark transition-colors duration-[250ms] hover:border-dark hover:bg-cream disabled:opacity-60"
+                className={`${learnBtn} w-full disabled:opacity-60`}
               >
                 {status === 'form'
                   ? mode === 'signin'
@@ -243,7 +244,7 @@ export function SignInPage() {
 
           {message ? <p className="mt-6 text-sm text-red-text">{message}</p> : null}
         </div>
-      </div>
+      </StampWell>
     </LearnShell>
   )
 }

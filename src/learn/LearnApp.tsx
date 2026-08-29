@@ -1,44 +1,48 @@
 import React, {useEffect, useState} from 'react'
-import {Navigate, Route, Routes, useLocation} from 'react-router-dom'
+import {Navigate, useLocation} from 'react-router-dom'
 import type {Session} from '@supabase/supabase-js'
 import {PageMeta} from '../components/PageMeta'
 import {getLearnSupabase, learnSupabaseConfigured} from './lib/supabaseClient'
 import {LearnSessionProvider, useLearnSession} from './lib/LearnSession'
+import {learnPathParts} from './lib/learnPath'
 import {LearnShell} from './LearnShell'
 import {LearnLayout} from './LearnLayout'
 import {SignInPage} from './pages/SignInPage'
 import {OnboardingPage} from './pages/OnboardingPage'
 import {DashboardPage, CoursesPage, FeaturedPage} from './pages/DashboardPage'
-import {CommentsPage} from './pages/CommentsPage'
+import {ProgressPage} from './pages/ProgressPage'
 import {CoursePage} from './pages/CoursePage'
 import {LessonPage} from './pages/LessonPage'
+import {ProfilePage} from './pages/ProfilePage'
 import {LearnPreviewProvider} from './previewData'
 
 function SignedRoutes({onSignOut}: {onSignOut?: () => void}) {
   const {profile} = useLearnSession()
   const location = useLocation()
+  const rest = learnPathParts(location.pathname)
+  const section = rest[0] || ''
 
-  if (!profile.onboarded && location.pathname !== '/learn/welcome') {
+  if (!profile.onboarded && section !== 'welcome') {
     return <Navigate to="/learn/welcome" replace />
   }
-  if (profile.onboarded && location.pathname === '/learn/welcome') {
+  if (profile.onboarded && section === 'welcome') {
     return <Navigate to="/learn" replace />
   }
-  if (location.pathname === '/learn/welcome') {
+  if (section === 'welcome') {
     return <OnboardingPage />
   }
 
+  let page: React.ReactNode = <DashboardPage />
+  if (section === 'courses') page = <CoursesPage />
+  else if (section === 'featured') page = <FeaturedPage />
+  else if (section === 'progress' || section === 'comments') page = <ProgressPage />
+  else if (section === 'profile') page = <ProfilePage />
+  else if (rest.length >= 2) page = <LessonPage />
+  else if (section) page = <CoursePage />
+
   return (
     <LearnLayout displayName={profile.displayName} email={profile.email} onSignOut={onSignOut}>
-      <Routes>
-        <Route path="/learn" element={<DashboardPage />} />
-        <Route path="/learn/courses" element={<CoursesPage />} />
-        <Route path="/learn/featured" element={<FeaturedPage />} />
-        <Route path="/learn/comments" element={<CommentsPage />} />
-        <Route path="/learn/:courseSlug/:lessonSlug" element={<LessonPage />} />
-        <Route path="/learn/:courseSlug" element={<CoursePage />} />
-        <Route path="*" element={<Navigate to="/learn" replace />} />
-      </Routes>
+      {page}
     </LearnLayout>
   )
 }
@@ -79,7 +83,7 @@ export default function LearnApp() {
       <LearnPreviewProvider enabled={preview}>
         {!ready ? (
           <LearnShell>
-            <p className="font-mono text-xs uppercase tracking-[0.2em] text-dark/50">Loading</p>
+            <p className="font-sans text-xs uppercase tracking-[0.2em] text-dark/50">Loading</p>
           </LearnShell>
         ) : preview || session ? (
           <LearnSessionProvider session={preview ? null : session}>

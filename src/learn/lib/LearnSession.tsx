@@ -6,6 +6,7 @@ import {getLearnSupabase} from './supabaseClient'
 import {learnGet} from './api'
 import {
   type LearnProfile,
+  normaliseProfile,
   readLocalProfile,
   readLocalProgress,
   writeLocalProfile,
@@ -15,7 +16,7 @@ type LearnSessionValue = {
   session: Session | null
   profile: LearnProfile
   courses: CatalogueCourse[]
-  source: 'api' | 'local'
+  source: 'api' | 'sanity' | 'local'
   saveProfile: (patch: Partial<LearnProfile>) => Promise<void>
 }
 
@@ -24,12 +25,16 @@ const LearnSessionContext = createContext<LearnSessionValue | null>(null)
 function coursesWithProgress(list: CatalogueCourse[]): CatalogueCourse[] {
   const done = readLocalProgress()
   return list.map((course) => {
-    if (course.id !== DUMMY_COURSE.id) return course
+    const lessonCount = course.lessonCount || 3
+    if (course.slug !== DUMMY_COURSE.slug && course.id !== DUMMY_COURSE.id) {
+      return {...course, lessonCount}
+    }
     const outline = dummyOutline(done)
     const completedLessons = outline.filter((l) => l.completed).length
     const last = [...outline].reverse().find((l) => l.completed)
     return {
       ...course,
+      lessonCount: outline.length,
       completedLessons,
       continueLessonId: last?.id || outline[0]?.id || null,
     }
@@ -50,23 +55,32 @@ export function LearnSessionProvider({
     ''
   const [profile, setProfile] = useState<LearnProfile>(() => {
     if (!session) {
-      return {
+      return normaliseProfile({
         displayName: 'Felipe',
         email,
         interest: ['automation'],
-        goal: 'time',
+        goal: 'better',
         onboarded: true,
-      }
+        country: 'AU',
+      })
     }
     const local = readLocalProfile(email)
-    return {
+    return normaliseProfile({
       ...local,
       email,
       displayName: local.displayName || googleName,
-    }
+    })
   })
   const [courses, setCourses] = useState<CatalogueCourse[]>(() => coursesWithProgress(DUMMY_CATALOGUE))
-  const [source, setSource] = useState<'api' | 'local'>('local')
+  const [source, setSource] = useState<'api' | 'sanity' | 'local'>('local')
+
+  useEffect(() => {
+    function onProgress() {
+      setCourses((list) => coursesWithProgress(list))
+    }
+    window.addEventListener('sysbilt-learn-progress', onProgress)
+    return () => window.removeEventListener('sysbilt-learn-progress', onProgress)
+  }, [])
 
   useEffect(() => {
     if (!session) return
@@ -75,7 +89,7 @@ export function LearnSessionProvider({
 
     supabase
       .from('learn_profiles')
-      .select('display_name, interest, goal, onboarded_at, email')
+      .select('display_name, interest, goal, onboarded_at, email, phone, country')
       .eq('id', session.user.id)
       .maybeSingle()
       .then(({data, error}) => {
@@ -87,45 +101,50 @@ export function LearnSessionProvider({
               .filter(Boolean)
           : []
         const local = readLocalProfile(email)
-        const next: LearnProfile = {
+        const next = normaliseProfile({
           email: data.email || email,
           displayName: (data.display_name || '').trim() || local.displayName || googleName,
+          phone: (data.phone || '').trim() || local.phone,
+          country: data.country || local.country,
           interest: interest.length ? interest : local.interest,
           goal: data.goal || local.goal,
           onboarded: Boolean(data.onboarded_at) || local.onboarded,
-        }
+        })
         setProfile(next)
         writeLocalProfile(next)
-      })
-      .catch(() => undefined)
+      }, () => undefined)
 
-    learnGet<{courses: CatalogueCourse[]}>('/api/learn/catalogue')
-      .then((data) => {
+    async function loadCatalogue() {
+      try {
+        const data = await learnGet<{courses: CatalogueCourse[]}>('/api/learn/catalogue')
         if (!alive) return
         if (data.courses?.length) {
           setCourses(data.courses)
           setSource('api')
+          return
         }
-      })
-      .catch(async () => {
+      } catch {
+        // Vite has no Learn API. Fall through to published Sanity.
+      }
+      try {
+        const {fetchSanityCatalogue} = await import('./sanityLearn')
+        const fromSanity = await fetchSanityCatalogue()
         if (!alive) return
-        try {
-          const {fetchSanityCatalogue} = await import('./sanityLearn')
-          const fromSanity = await fetchSanityCatalogue()
-          if (!alive) return
-          if (fromSanity.length) {
-            const extras = DUMMY_CATALOGUE.filter((card) => !fromSanity.some((row) => row.slug === card.slug))
-            setCourses(coursesWithProgress([...fromSanity, ...extras]))
-            setSource('local')
-            return
-          }
-        } catch {
-          // Fall through to the built-in cards.
+        if (fromSanity.length) {
+          const extras = DUMMY_CATALOGUE.filter((card) => !fromSanity.some((row) => row.slug === card.slug))
+          setCourses(coursesWithProgress([...fromSanity, ...extras]))
+          setSource('sanity')
+          return
         }
-        if (!alive) return
-        setSource('local')
-        setCourses(coursesWithProgress(DUMMY_CATALOGUE))
-      })
+      } catch {
+        // Fall through to the built-in cards.
+      }
+      if (!alive) return
+      setSource('local')
+      setCourses(coursesWithProgress(DUMMY_CATALOGUE))
+    }
+
+    loadCatalogue()
 
     return () => {
       alive = false
@@ -134,7 +153,7 @@ export function LearnSessionProvider({
 
   const saveProfile = useCallback(
     async (patch: Partial<LearnProfile>) => {
-      const next: LearnProfile = {...profile, ...patch, email}
+      const next = normaliseProfile({...profile, ...patch, email})
       setProfile(next)
       writeLocalProfile(next)
       if (!session) return
@@ -143,6 +162,8 @@ export function LearnSessionProvider({
           id: session.user.id,
           email,
           display_name: next.displayName || null,
+          phone: next.phone || null,
+          country: next.country || null,
           interest: next.interest.join(','),
           goal: next.goal || null,
           onboarded_at: next.onboarded ? new Date().toISOString() : null,

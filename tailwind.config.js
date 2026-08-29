@@ -68,13 +68,13 @@ export default {
         luxury: 'cubic-bezier(0.16, 1, 0.3, 1)',
       },
       keyframes: {
-        'fade-in': {
-          '0%': { opacity: '0', transform: 'translateY(10px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' },
+        'heartbeat': {
+          '0%, 100%': { transform: 'scale(1)' },
+          '50%': { transform: 'scale(1.07)' },
         },
       },
       animation: {
-        'fade-in': 'fade-in 0.5s ease-out forwards',
+        'heartbeat': 'heartbeat 1.05s ease-in-out infinite',
       },
     },
   },

@@ -12,8 +12,10 @@ export type CatalogueCourse = {
   entitled: boolean
   hasPrice: boolean
   completedLessons: number
+  lessonCount: number
   continueLessonId: string | null
   featured?: boolean
+  popular?: boolean
 }
 
 export type CourseOutlineLesson = {
@@ -26,15 +28,48 @@ export type CourseOutlineLesson = {
   completed: boolean
 }
 
+export type CoursePayload = {
+  course: {
+    id: string
+    title: string
+    slug: string
+    dek: string | null
+    access: string
+    locked: boolean
+    entitled: boolean
+    hasPrice: boolean
+  }
+  lessons: CourseOutlineLesson[]
+  continueLessonSlug: string | null
+}
+
+export type ActivityOption = {
+  key: string
+  label: string
+  hint?: string
+  teach?: string
+}
+
 export type PublicActivity = {
   _key: string
-  template: 'trueFalse' | 'multipleChoice' | 'match'
+  template: 'trueFalse' | 'multipleChoice' | 'match' | 'threeColumn' | 'dropdown'
   prompt: string
   explainAfter: string | null
-  options: Array<{key: string; label: string}>
-  matchItems: Array<{prompt: string}>
-  matchChoices: Array<{key: string; label: string}>
+  trueHint?: string
+  falseHint?: string
+  trueTeach?: string
+  falseTeach?: string
+  options: ActivityOption[]
+  matchItems: Array<{
+    prompt: string
+    correctKey?: string
+    hint?: string
+    wrongTeach?: Record<string, string>
+  }>
+  matchChoices: Array<{key: string; label: string; teach?: string}>
 }
+
+export type LessonDiagramKind = 'system' | 'pile' | 'job' | 'generic'
 
 export type LessonPayload = {
   course: {id: string; title: string; slug: string; commentsEnabled: boolean}
@@ -44,6 +79,9 @@ export type LessonPayload = {
     slug: string
     order: number
     videoUrl: string | null
+    summary?: string | null
+    diagram?: LessonDiagramKind | null
+    showEmail?: boolean
     body: unknown[]
     activities: PublicActivity[]
   }

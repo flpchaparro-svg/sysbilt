@@ -1,12 +1,15 @@
 import React from 'react'
 import {Link, NavLink} from 'react-router-dom'
 import {SysbiltLogo} from '../components/SysbiltLogo'
+import {LearnBackdrop} from './components/LearnBackdrop'
+import {Kicker} from './components/learnChrome'
 
 const NAV = [
   {to: '/learn', label: 'Home', end: true},
   {to: '/learn/courses', label: 'Courses', end: true},
   {to: '/learn/featured', label: 'Featured', end: true},
-  {to: '/learn/comments', label: 'Comments', end: true},
+  {to: '/learn/progress', label: 'Progress', end: true},
+  {to: '/learn/profile', label: 'You', end: true},
 ]
 
 type LearnLayoutProps = {
@@ -26,7 +29,9 @@ export function LearnLayout({children, displayName, email, onSignOut}: LearnLayo
           <Link to="/learn" aria-label="Learn home">
             <SysbiltLogo className="w-[110px]" />
           </Link>
-          <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.2em] text-dark/45">Learn</p>
+          <div className="mt-4">
+            <Kicker>Learn</Kicker>
+          </div>
         </div>
         <nav className="flex flex-1 flex-col gap-1 px-3 py-6">
           {NAV.map((item) => (
@@ -35,8 +40,8 @@ export function LearnLayout({children, displayName, email, onSignOut}: LearnLayo
               to={item.to}
               end={item.end}
               className={({isActive}) =>
-                `px-3 py-2 font-mono text-[10px] uppercase tracking-[0.2em] ${
-                  isActive ? 'bg-white text-dark' : 'text-dark/50 hover:text-dark'
+                `px-3 py-2 font-sans text-[11px] font-semibold uppercase tracking-[0.2em] ${
+                  isActive ? 'bg-cream-warm text-dark shadow-[4px_4px_0_0_#C5A059]' : 'text-dark/50 hover:text-dark'
                 }`
               }
             >
@@ -46,8 +51,9 @@ export function LearnLayout({children, displayName, email, onSignOut}: LearnLayo
         </nav>
       </aside>
 
-      <div className="flex min-w-0 flex-1 flex-col">
-        <header className="border-b border-dark/10">
+      <div className="relative flex min-w-0 flex-1 flex-col">
+        <LearnBackdrop />
+        <header className="sticky top-0 z-20 border-b border-dark/10 bg-cream">
           <div className="flex items-center justify-between gap-4 px-5 py-4 md:px-8">
             <Link to="/learn" className="md:hidden" aria-label="Learn home">
               <SysbiltLogo className="w-[100px]" />
@@ -59,8 +65,8 @@ export function LearnLayout({children, displayName, email, onSignOut}: LearnLayo
                   to={item.to}
                   end={item.end}
                   className={({isActive}) =>
-                    `whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.2em] ${
-                      isActive ? 'text-dark' : 'text-dark/45'
+                    `whitespace-nowrap font-sans text-[11px] font-semibold uppercase tracking-[0.2em] ${
+                      isActive ? 'text-gold-on-cream' : 'text-dark/45'
                     }`
                   }
                 >
@@ -69,12 +75,19 @@ export function LearnLayout({children, displayName, email, onSignOut}: LearnLayo
               ))}
             </nav>
             <div className="ml-auto flex items-center gap-4">
-              {who ? <p className="max-w-[10rem] truncate text-xs text-dark/60 md:max-w-[16rem]">{who}</p> : null}
+              {who ? (
+                <Link
+                  to="/learn/profile"
+                  className="max-w-[10rem] truncate text-xs text-dark/60 underline-offset-4 hover:text-gold-on-cream hover:underline md:max-w-[16rem]"
+                >
+                  {who}
+                </Link>
+              ) : null}
               {onSignOut ? (
                 <button
                   type="button"
                   onClick={onSignOut}
-                  className="font-mono text-[10px] uppercase tracking-[0.2em] text-dark/70 underline-offset-4 hover:text-dark hover:underline"
+                  className="font-sans text-[11px] font-semibold uppercase tracking-[0.24em] text-dark/70 underline-offset-4 hover:text-gold-on-cream hover:underline"
                 >
                   Sign out
                 </button>
@@ -82,7 +95,9 @@ export function LearnLayout({children, displayName, email, onSignOut}: LearnLayo
             </div>
           </div>
         </header>
-        <main className="flex-1 px-5 py-8 md:px-10 md:py-10">{children}</main>
+        <main className="relative z-10 flex-1 overflow-visible px-5 py-8 md:px-10 md:py-10" style={{overflowAnchor: 'none'}}>
+          {children}
+        </main>
       </div>
     </div>
   )

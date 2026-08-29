@@ -42,7 +42,7 @@ export function CommentsPage() {
       <h1 className="mt-3 font-serif text-4xl md:text-5xl">Comments</h1>
       <p className="mt-4 max-w-xl text-sm leading-relaxed text-dark/70">
         Questions from lessons land here. This starter thread is on Start here, lesson one.
-        {source === 'local' ? ' Saved on this browser until the live comments API is in play.' : ''}
+        {source !== 'api' ? ' Saved on this browser until the live comments API is in play.' : ''}
       </p>
 
       {grouped.map(([slug, list]) => (
