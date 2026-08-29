@@ -1,10 +1,11 @@
 import React, {useEffect, useMemo, useState} from 'react'
 import {motion, useInView, useReducedMotion} from 'framer-motion'
-import {useParams, useSearchParams} from 'react-router-dom'
+import {Link, useParams, useSearchParams} from 'react-router-dom'
 import {SysbiltLogo} from '../../components/SysbiltLogo'
 import {PageMeta} from '../../components/PageMeta'
+import {RouteHead} from '../../site/RouteHead'
 import {client} from '../../sanityClient'
-import {SITE_ORIGIN} from '../../constants/seoMeta'
+import {SEO_META, SITE_ORIGIN} from '../../constants/seoMeta'
 import {FunnelCtaBlock, FunnelLegalFooter, type FunnelCtaFields} from './FunnelCtaBlock'
 import {ScoreMoment} from './ScoreMoment'
 import {CallMissedMoment, MissedCallLeakPair} from './CallMissedMoment'
@@ -224,6 +225,7 @@ import {
   FUNNEL_PRODUCT_LABELS,
   accessFormPathForProduct,
   isFunnelProductCode,
+  isPublicFunnelSlug,
 } from '../../constants/funnel'
 
 type FunnelPageDoc = FunnelCtaFields & {
@@ -245,6 +247,19 @@ const QUERY = `*[_type == "funnelPage" && slug.current == $slug && !(_id in path
   priceOptions[]{ label, ctaLabel, stripeUrl },
   faqs[]{ question, answer }
 }`
+
+function fallbackFunnelDoc(slug: string): FunnelPageDoc {
+  const copy = funnelCopyForSlug(slug)
+  return {
+    title: isFunnelProductCode(slug) ? FUNNEL_PRODUCT_LABELS[slug] : 'Fixed-price fix',
+    ctaMode: slug === 'change-pack' || slug === 'content-system' ? 'call' : 'buy',
+    ctaLabel: copy.ctaLabel,
+    schedulerUrl:
+      slug === 'change-pack' || slug === 'content-system'
+        ? accessFormPathForProduct(slug)
+        : undefined,
+  }
+}
 
 function SectionLabel({
   children,
@@ -343,8 +358,13 @@ function ProcessDayCards({
 const FunnelPage: React.FC = () => {
   const {slug} = useParams<{slug: string}>()
   const [params] = useSearchParams()
-  const [doc, setDoc] = useState<FunnelPageDoc | null>(null)
-  const [status, setStatus] = useState<'loading' | 'ready' | 'missing' | 'error'>('loading')
+  const isPublicOffer = isPublicFunnelSlug(slug)
+  const [doc, setDoc] = useState<FunnelPageDoc | null>(() =>
+    isPublicOffer && slug && isFunnelProductCode(slug) ? fallbackFunnelDoc(slug) : null,
+  )
+  const [status, setStatus] = useState<'loading' | 'ready' | 'missing' | 'error'>(() =>
+    isPublicOffer && slug && isFunnelProductCode(slug) ? 'ready' : 'loading',
+  )
 
   const COPY = useMemo(() => funnelCopyForSlug(slug), [slug])
   const business = useMemo(() => sanitiseBusinessName(params.get('b')), [params])
@@ -541,28 +561,26 @@ const FunnelPage: React.FC = () => {
 
   useEffect(() => {
     if (!slug) {
+      setDoc(null)
       setStatus('missing')
       return
     }
+    const publicOffer = isPublicFunnelSlug(slug)
+    if (publicOffer && isFunnelProductCode(slug)) {
+      setDoc(fallbackFunnelDoc(slug))
+      setStatus('ready')
+    } else {
+      setDoc(null)
+      setStatus('loading')
+    }
     let cancelled = false
-    setStatus('loading')
     client
       .fetch(QUERY, {slug})
       .then((result: FunnelPageDoc | null) => {
         if (cancelled) return
         if (!result) {
           if (isFunnelProductCode(slug)) {
-            const copy = funnelCopyForSlug(slug)
-            setDoc({
-              title: FUNNEL_PRODUCT_LABELS[slug],
-              ctaMode:
-                slug === 'change-pack' || slug === 'content-system' ? 'call' : 'buy',
-              ctaLabel: copy.ctaLabel,
-              schedulerUrl:
-                slug === 'change-pack' || slug === 'content-system'
-                  ? accessFormPathForProduct(slug)
-                  : undefined,
-            })
+            setDoc(fallbackFunnelDoc(slug))
             setStatus('ready')
             return
           }
@@ -575,6 +593,11 @@ const FunnelPage: React.FC = () => {
       })
       .catch(() => {
         if (cancelled) return
+        if (publicOffer && isFunnelProductCode(slug)) {
+          setDoc(fallbackFunnelDoc(slug))
+          setStatus('ready')
+          return
+        }
         setStatus('error')
       })
     return () => {
@@ -692,7 +715,13 @@ const FunnelPage: React.FC = () => {
       (sanityPriceOptions.length > 0 ? sanityPriceOptions : undefined),
   }
 
-  const pageTitle = doc?.title ? `${doc.title} | SYSBILT` : 'Fixed-price fix | SYSBILT'
+  const pageTitle = isPublicOffer
+    ? SEO_META.speedFix.title
+    : doc?.title
+      ? `${doc.title} | SYSBILT`
+      : 'Fixed-price fix | SYSBILT'
+  const pageDescription = isPublicOffer ? SEO_META.speedFix.description : COPY.sub
+  const pageCanonical = slug ? `${SITE_ORIGIN}/go/${slug}` : undefined
   const h1 =
     isContentSystem && business && lastPostMonth
       ? `${business}, your last post was ${lastPostMonth}, and it's not because you're lazy`
@@ -713,12 +742,20 @@ const FunnelPage: React.FC = () => {
         color: FUNNEL_COLOURS.ink,
       }}
     >
-      <PageMeta
-        title={pageTitle}
-        description={COPY.sub}
-        canonical={slug ? `${SITE_ORIGIN}/go/${slug}` : undefined}
-        robots="noindex, nofollow"
-      />
+      {isPublicOffer ? (
+        <RouteHead
+          title={pageTitle}
+          description={pageDescription}
+          canonical={pageCanonical ?? SEO_META.speedFix.canonical}
+        />
+      ) : (
+        <PageMeta
+          title={pageTitle}
+          description={pageDescription}
+          canonical={pageCanonical}
+          robots="noindex, nofollow"
+        />
+      )}
 
       {status === 'loading' && (
         <div className="max-w-3xl mx-auto px-6 md:px-10 pt-8">
@@ -753,6 +790,21 @@ const FunnelPage: React.FC = () => {
       {status === 'ready' && doc && (
         <>
           <header className="max-w-3xl mx-auto px-6 md:px-10 pt-8 pb-16 md:pb-20">
+            {isPublicOffer ? (
+              <nav
+                aria-label="Breadcrumb"
+                className="mb-8 font-mono text-[10px] font-bold uppercase tracking-[0.18em]"
+                style={{color: `${FUNNEL_COLOURS.ink}73`}}
+              >
+                <Link to="/" className="hover:opacity-80 transition-opacity">
+                  Home
+                </Link>
+                <span className="mx-2">/</span>
+                <span aria-current="page" style={{color: `${FUNNEL_COLOURS.ink}B3`}}>
+                  Website Speed Fix
+                </span>
+              </nav>
+            ) : null}
             <SysbiltLogo className="w-[110px] md:w-[130px]" />
 
             <Reveal delay={0.05} y={10}>

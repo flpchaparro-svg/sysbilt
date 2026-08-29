@@ -92,6 +92,7 @@ import {
   isToolkitItemPath,
   isBlogPostPath,
   isSanityGuidePath,
+  isPublicFunnelPath,
   EXPECTED_CODE_BOOK_CHAPTER_COUNT,
 } from '../../src/site/routePolicy';
 
@@ -275,7 +276,7 @@ function checkRouteHtml(route, html) {
   }
 
   if (isIndexableExcluded(p)) {
-    if (isGoFunnelPath(p)) {
+    if (isGoFunnelPath(p) && !isPublicFunnelPath(p)) {
       if (!/<meta[^>]+name="robots"[^>]*content="[^"]*noindex/i.test(html)) {
         addViolation(`${p} — /go/ route missing noindex robots meta`);
       }
@@ -878,7 +879,7 @@ async function main() {
   const indexableSet = new Set(routes.map((r) => r.path).filter((p) => !isIndexableExcluded(p)));
 
   for (const p of sitemapSet) {
-    if (p === '/news' || p === '/go' || p.startsWith('/go/')) {
+    if (p === '/news' || p === '/go' || (p.startsWith('/go/') && !isPublicFunnelPath(p))) {
       addViolation(`sitemap — ${p} must never appear in the sitemap set (funnel/news are noindex)`);
     }
   }

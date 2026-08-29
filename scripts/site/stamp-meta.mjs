@@ -67,7 +67,8 @@ import {
   buildProfessionalServiceJsonLd,
   organizationIdRef,
 } from '../../src/constants/organizationJsonLd';
-import { SITE_ORIGIN } from '../../src/constants/seoMeta';
+import { SITE_ORIGIN, SEO_META } from '../../src/constants/seoMeta';
+import { isPublicFunnelPath } from '../../src/site/routePolicy';
 import {
   BTW_CHAPTERS,
   btwChapterPath,
@@ -160,11 +161,16 @@ const SITEMAP_STATIC_PRIORITIES = new Map([
   ['/pillar7', '0.8'],
   ['/guides', '0.7'],
   ['/toolkit', '0.7'],
+  ['/go/speed-fix', '0.8'],
 ]);
 
 /** Private funnel routes: stamped with noindex, never in the sitemap. */
 function isGoFunnelPath(routePath) {
   return routePath === '/go' || routePath === '/go/thanks' || routePath.startsWith('/go/');
+}
+
+function isPrivateGoFunnelPath(routePath) {
+  return isGoFunnelPath(routePath) && !isPublicFunnelPath(routePath);
 }
 
 function isFeedbackReviewPath(routePath) {
@@ -178,7 +184,7 @@ function isLearnPath(routePath) {
 function isIndexableExcluded(routePath) {
   return (
     INDEXABLE_EXCLUDE.has(routePath) ||
-    isGoFunnelPath(routePath) ||
+    isPrivateGoFunnelPath(routePath) ||
     isFeedbackReviewPath(routePath) ||
     isLearnPath(routePath)
   );
@@ -260,6 +266,11 @@ const STATIC_ROUTES = [
     title: 'Access form | SYSBILT',
     description: 'Tell us how to reach your site so we can start delivery.',
     robots: 'noindex, nofollow',
+  },
+  {
+    path: '/go/speed-fix',
+    title: SEO_META.speedFix.title,
+    description: SEO_META.speedFix.description,
   },
   {
     path: '/blog',
@@ -1120,7 +1131,7 @@ function stampHtml(template, route) {
   const safeCanonical = escapeAttr(canonicalUrl(routePath));
   const robots =
     route.robots ||
-    (isGoFunnelPath(routePath) || isFeedbackReviewPath(routePath) || isLearnPath(routePath)
+    (isPrivateGoFunnelPath(routePath) || isFeedbackReviewPath(routePath) || isLearnPath(routePath)
       ? 'noindex, nofollow'
       : null) ||
     (INDEXABLE_EXCLUDE.has(routePath) ? 'noindex, follow' : null);
@@ -1425,10 +1436,14 @@ function buildAllRoutes({ posts, guides, toolkitItems, funnelPages = [] }) {
       skipped.push(`funnelPage:${page.slug ?? '(no slug)'} — missing slug or title`);
       continue;
     }
+    const path = `/go/${page.slug}`;
+    if (isPublicFunnelPath(path)) {
+      continue;
+    }
     const title = brandTitle(page.title);
     const description = (page.sub || 'Fixed-scope service from SYSBILT.').trim();
     dynamic.push({
-      path: `/go/${page.slug}`,
+      path,
       title,
       description,
       ogTitle: title,

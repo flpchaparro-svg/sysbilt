@@ -51,6 +51,12 @@ export const SEO_META = {
       'Book a call with SYSBILT. We build business systems for growing Australian companies.',
     canonical: `${SITE_ORIGIN}/contact`,
   },
+  speedFix: {
+    title: 'Website Speed Fix | SYSBILT',
+    description:
+      'Three-day website speed overhaul, $1,200, measured before and after with Google PageSpeed. We work on the site you already have.',
+    canonical: `${SITE_ORIGIN}/go/speed-fix`,
+  },
   system: {
     title: 'The System | SYSBILT',
     description:
