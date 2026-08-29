@@ -561,14 +561,19 @@ const FunnelPage: React.FC = () => {
 
   useEffect(() => {
     if (!slug) {
+      setDoc(null)
       setStatus('missing')
       return
     }
-    let cancelled = false
     const publicOffer = isPublicFunnelSlug(slug)
-    if (!publicOffer) {
+    if (publicOffer && isFunnelProductCode(slug)) {
+      setDoc(fallbackFunnelDoc(slug))
+      setStatus('ready')
+    } else {
+      setDoc(null)
       setStatus('loading')
     }
+    let cancelled = false
     client
       .fetch(QUERY, {slug})
       .then((result: FunnelPageDoc | null) => {
@@ -795,7 +800,9 @@ const FunnelPage: React.FC = () => {
                   Home
                 </Link>
                 <span className="mx-2">/</span>
-                <span style={{color: `${FUNNEL_COLOURS.ink}B3`}}>Website Speed Fix</span>
+                <span aria-current="page" style={{color: `${FUNNEL_COLOURS.ink}B3`}}>
+                  Website Speed Fix
+                </span>
               </nav>
             ) : null}
             <SysbiltLogo className="w-[110px] md:w-[130px]" />
