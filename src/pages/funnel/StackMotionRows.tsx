@@ -12,9 +12,16 @@ import {STACK_VISUALS as INTAKE_FORMS_STACK_VISUALS} from './liveCopy/intake-for
 import {INBOX_TRIAGE_STACK_VISUALS} from './liveCopy/inbox-triage-motion'
 import {SOP_PLAYBOOK_STACK_VISUALS} from './liveCopy/sop-playbook-motion'
 import {DASHBOARD_LITE_STACK_VISUALS} from './liveCopy/dashboard-lite-motion'
-import {BUNDLE_CLINIC_STACK_VISUALS} from './liveCopy/bundle-clinic-motion'
 import {BUNDLE_SPEED_NEXT_STACK_VISUALS} from './liveCopy/bundle-speed-next-motion'
 import {BUNDLE_FRONT_DOOR_STACK_VISUALS} from './liveCopy/bundle-front-door-motion'
+import {FOUND_BOOKED_STACK_VISUALS} from './liveCopy/found-booked-motion'
+import {CATCH_THE_LEAD_STACK_VISUALS} from './liveCopy/catch-the-lead-motion'
+import {CALL_AND_BOOK_STACK_VISUALS} from './liveCopy/call-and-book-motion'
+import {MAPS_TRUST_STACK_VISUALS} from './liveCopy/maps-trust-motion'
+import {FULL_DIARY_STACK_VISUALS} from './liveCopy/full-diary-motion'
+import {GET_FOUND_STACK_VISUALS} from './liveCopy/get-found-motion'
+import {GET_FOUND_FULL_STACK_VISUALS} from './liveCopy/get-found-full-motion'
+import {QUOTE_PATH_STACK_VISUALS} from './liveCopy/quote-path-motion'
 import {STACK_VISUALS as GEO_STACK_VISUALS} from './liveCopy/geo-motion'
 import {STACK_VISUALS as CLIENT_FINDER_STACK_VISUALS} from './liveCopy/client-finder-motion'
 
@@ -3566,6 +3573,14 @@ export function StackMotionRows({
     | 'bundle-clinic'
     | 'bundle-speed-next'
     | 'bundle-front-door'
+    | 'found-booked'
+    | 'catch-the-lead'
+    | 'call-and-book'
+    | 'maps-trust'
+    | 'full-diary'
+    | 'get-found'
+    | 'get-found-full'
+    | 'quote-path'
     | 'geo'
     | 'client-finder'
 }) {
@@ -3628,11 +3643,27 @@ export function StackMotionRows({
                                     : variant === 'dashboard-lite'
                                       ? DASHBOARD_LITE_STACK_VISUALS
                                     : variant === 'bundle-clinic'
-                                      ? BUNDLE_CLINIC_STACK_VISUALS
+                                      ? CATCH_THE_LEAD_STACK_VISUALS
                                     : variant === 'bundle-speed-next'
                                       ? BUNDLE_SPEED_NEXT_STACK_VISUALS
                                     : variant === 'bundle-front-door'
                                       ? BUNDLE_FRONT_DOOR_STACK_VISUALS
+                                    : variant === 'found-booked'
+                                      ? FOUND_BOOKED_STACK_VISUALS
+                                    : variant === 'catch-the-lead'
+                                      ? CATCH_THE_LEAD_STACK_VISUALS
+                                    : variant === 'call-and-book'
+                                      ? CALL_AND_BOOK_STACK_VISUALS
+                                    : variant === 'maps-trust'
+                                      ? MAPS_TRUST_STACK_VISUALS
+                                    : variant === 'full-diary'
+                                      ? FULL_DIARY_STACK_VISUALS
+                                    : variant === 'get-found'
+                                      ? GET_FOUND_STACK_VISUALS
+                                    : variant === 'get-found-full'
+                                      ? GET_FOUND_FULL_STACK_VISUALS
+                                    : variant === 'quote-path'
+                                      ? QUOTE_PATH_STACK_VISUALS
                                     : variant === 'geo'
                                       ? GEO_STACK_VISUALS
                                     : variant === 'client-finder'

@@ -1,7 +1,7 @@
 /**
- * Clinic Capture Bundle · Stripe Payment Link (live).
+ * Catch the lead (old Clinic Capture slug).
  *
- * After pay → https://sysbilt.com/go/thanks?p=bundle-clinic
+ * /go/bundle-clinic redirects to /go/catch-the-lead.
+ * Old Payment Link is deactivated in Stripe. Use the current pack URL.
  */
-export const BUNDLE_CLINIC_STRIPE_URL =
-  'https://buy.stripe.com/7sY8wJ6q5gTSguO3FV3gk0y'
+export {CATCH_THE_LEAD_STRIPE_URL as BUNDLE_CLINIC_STRIPE_URL} from './catchTheLeadStripe'

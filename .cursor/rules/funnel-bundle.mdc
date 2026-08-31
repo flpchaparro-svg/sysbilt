@@ -1,0 +1,25 @@
+---
+description: /go bundle SKUs. No clinic products, no mixed jobs, full atomic delivery, motion not pasted.
+globs: src/pages/funnel/**,src/constants/funnel.ts,src/constants/*Stripe.ts,api/funnel/access.ts,scripts/automations/stripe/**
+alwaysApply: false
+---
+
+# Funnel bundles
+
+Bundles are the only discounted `/go` SKUs. Atomic prices stay. Reader copy: skill `sysbilt-copy`. Prices allowed on `/go`.
+
+## Do not
+
+- Name, URL, copy, access, HubSpot, or motion that is clinic-only. Campaign wording lives in the email, not the SKU.
+- Hardcode leak headings or bodies in `FunnelPage.tsx`. Use that pack’s `liveCopy` (or the bundle registry). Front Door once said “the phone path” while Booking was the third job. That is product mixing.
+- Paste another bundle’s `*-motion.tsx`. Stack index *i* is the included product only. Reuse a mechanic (SMS bubble, Book now, category chips). Do not drop Missed-Call `StayWarm` on a price row.
+- Undersell. `stackItems` are the full atomic delivery (claim/recover, calendar wire, reminders, live miss proof), not “basics cleaned up” or “a Book now button”.
+- Add a new `isBundleX` ternary leak block in FunnelPage. Register Evidence, Leak, Pain, Deliverable, Stripe, and `motionVariant` in the bundle map.
+
+## Bar
+
+Local Pack benefit/stack visuals in `BenefitMotionRows.tsx` and `StackMotionRows.tsx`. New packs: `liveCopy/{slug}.ts` plus `{slug}-motion.tsx`. Benefits length = benefit visuals. Stack length = stack visuals.
+
+## Access
+
+Wizard fields are the union of the atomics inside. No reviews step if Review Engine is not in the pack. Phase label is the pack, not a vertical.

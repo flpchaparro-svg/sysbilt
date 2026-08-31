@@ -2,6 +2,7 @@ import React from 'react'
 import {motion} from 'framer-motion'
 import {colors} from '../../../constants/theme'
 import {FUNNEL_COLOURS} from '../funnelTheme'
+import {BookingStackVisual} from './bundle-motion-kit'
 
 type BenefitVisualProps = {reduce: boolean | null}
 type StackVisualProps = {reduce: boolean | null; play: boolean}
@@ -11,7 +12,7 @@ function BundleFrontDoorNarrativeVisual({reduce}: BenefitVisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
       <div className="h-6 shrink-0 border-b border-dark/10 bg-cream flex items-center px-2.5">
-        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Call script</span>
+        <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Find, trust, book</span>
       </div>
       <div className="flex-1 flex items-center justify-center gap-1.5 px-2.5">
         {['Find', 'Trust', 'Book'].map((label, i) => (
@@ -79,14 +80,14 @@ function BundleFrontDoorPriceVisual({reduce}: BenefitVisualProps) {
           viewport={{once: true}}
           transition={{delay: 0.22, type: 'spring', stiffness: 320, damping: 18}}
         >
-          <p className="font-mono text-[10px] font-bold text-white">$3,400 · one window</p>
+          <p className="font-mono text-[10px] font-bold text-white">$2,550 · one window</p>
         </motion.div>
       </div>
     </div>
   )
 }
 
-/** Benefit: clinics and service businesses. */
+/** Benefit: appointment and service businesses. */
 function BundleFrontDoorFitVisual({reduce}: BenefitVisualProps) {
   return (
     <div className="relative h-[118px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col">
@@ -94,7 +95,7 @@ function BundleFrontDoorFitVisual({reduce}: BenefitVisualProps) {
         <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-dark/55">Fit</span>
       </div>
       <div className="flex-1 flex flex-col items-center justify-center gap-1.5 px-2.5">
-        {['Clinics', 'Service businesses'].map((label, i) => (
+        {['Appointment businesses', 'Service businesses'].map((label, i) => (
           <motion.div
             key={label}
             className="w-full flex items-center gap-2 rounded-md border px-2.5 py-1.5"
@@ -343,5 +344,5 @@ export const BUNDLE_FRONT_DOOR_BENEFIT_VISUALS = [
 export const BUNDLE_FRONT_DOOR_STACK_VISUALS = [
   BundleFrontDoorProfileStackVisual,
   BundleFrontDoorReviewsStackVisual,
-  BundleFrontDoorBookingStackVisual,
+  BookingStackVisual,
 ]

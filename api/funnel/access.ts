@@ -41,6 +41,14 @@ const PRODUCT_CODES = new Set([
   'bundle-clinic',
   'bundle-speed-next',
   'bundle-front-door',
+  'found-booked',
+  'catch-the-lead',
+  'call-and-book',
+  'maps-trust',
+  'full-diary',
+  'get-found',
+  'get-found-full',
+  'quote-path',
   'geo',
   'client-finder',
 ]);
@@ -52,7 +60,7 @@ const PRODUCT_LABELS: Record<string, string> = {
   'enquiry-reply': 'Enquiry Auto-Reply',
   reviews: 'Review Engine',
   'feedback-review': 'Feedback Review',
-  'local-pack': 'Local Pack',
+  'local-pack': 'Maps alive',
   'search-fix': 'Search Visibility Fix',
   booking: 'Booking System',
   'landing-page': 'Campaign Landing Page',
@@ -77,10 +85,18 @@ const PRODUCT_LABELS: Record<string, string> = {
   'inbox-triage': 'Inbox Triage Assistant',
   'sop-playbook': 'SOP to AI Playbook',
   'dashboard-lite': 'Dashboard Lite',
-  'bundle-clinic': 'Clinic Capture Bundle',
-  'bundle-speed-next': 'Speed Next Bundle',
+  'bundle-clinic': 'Catch the lead',
+  'bundle-speed-next': 'Pages that ask',
   'bundle-front-door': 'Front Door Bundle',
-  'geo': 'AI Search Visibility',
+  'found-booked': 'Found and booked',
+  'catch-the-lead': 'Catch the lead',
+  'call-and-book': 'Call and book',
+  'maps-trust': 'Maps trust',
+  'full-diary': 'Full diary',
+  'get-found': 'Get found',
+  'get-found-full': 'Get found (full)',
+  'quote-path': 'Quote path',
+  geo: 'AI Search Visibility',
   'client-finder': 'Client Finder Sprint',
 };
 const PRODUCT_AMOUNTS: Record<string, string> = {
@@ -91,7 +107,7 @@ const PRODUCT_AMOUNTS: Record<string, string> = {
   'enquiry-reply': '350',
   reviews: '1100',
   'feedback-review': '1500',
-  'local-pack': '2400',
+  'local-pack': '2250',
   'search-fix': '1400',
   booking: '1500',
   'landing-page': '1800',
@@ -117,10 +133,18 @@ const PRODUCT_AMOUNTS: Record<string, string> = {
   'inbox-triage': '2200',
   'sop-playbook': '2400',
   'dashboard-lite': '2600',
-  'bundle-clinic': '2200',
-  'bundle-speed-next': '2400',
-  'bundle-front-door': '3400',
-  'geo': '2200',
+  'bundle-clinic': '1950',
+  'bundle-speed-next': '1900',
+  'bundle-front-door': '2550',
+  'found-booked': '2300',
+  'catch-the-lead': '1950',
+  'call-and-book': '1800',
+  'maps-trust': '1350',
+  'full-diary': '2400',
+  'get-found': '2100',
+  'get-found-full': '3600',
+  'quote-path': '3400',
+  geo: '2200',
   'client-finder': '2800',
 };
 const CRM_SYSTEMS = new Set([
@@ -214,6 +238,18 @@ const FRONT_DOOR_ACCESS = new Set([
   'admin',
   'call',
 ]);
+const FOUND_BOOKED_ACCESS = new Set([
+  'invite',
+  'claim',
+  'recover',
+  'forward',
+  'provider',
+  'crm',
+  'wp-admin',
+  'admin',
+  'call',
+]);
+const CALL_AND_BOOK_ACCESS = new Set(['invite', 'wp-admin', 'admin', 'forward', 'provider', 'crm', 'call']);
 const PLATFORMS = new Set([
   'wordpress',
   'wordpress-com',
@@ -754,14 +790,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const isGoogleProfile = product === 'google-profile';
   const isProfilePosting = product === 'profile-posting';
   const isEnquiryReply = product === 'enquiry-reply';
-  const isReviews = product === 'reviews' || product === 'feedback-review';
+  const isMapsTrust = product === 'maps-trust';
+  const isGetFound = product === 'get-found';
+  const isGetFoundFull = product === 'get-found-full';
+  const isQuotePath = product === 'quote-path';
+  const isFoundBooked = product === 'found-booked';
+  const isCallAndBook = product === 'call-and-book';
+  const isFullDiary = product === 'full-diary';
+  const isReviews = product === 'reviews' || product === 'feedback-review' || isMapsTrust;
   const isLocalPack = product === 'local-pack';
   const isCrmRescue = product === 'crm-rescue';
   const isBooking = product === 'booking';
   const isLandingPage = product === 'landing-page';
   const isConversionPass = product === 'conversion-pass';
-  const isOnpageSearch = product === 'onpage-search';
-  const isSchemaFaq = product === 'schema-faq';
+  const isOnpageSearch = product === 'onpage-search' || isGetFoundFull;
+  const isSchemaFaq = product === 'schema-faq' || isGetFound;
   const isTrackingForms = product === 'tracking-forms';
   const isSiteChat = product === 'site-chat';
   const isMediaClean = product === 'media-clean';
@@ -769,13 +812,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const isWhatsappSetup = product === 'whatsapp-setup';
   const isDmReply = product === 'dm-reply';
   const isQuoteFollowup = product === 'quote-followup';
-  const isQuoteCapture = product === 'quote-capture';
+  const isQuoteCapture = product === 'quote-capture' || isQuotePath;
   const isNoshowRescue = product === 'noshow-rescue';
   const isIntakeForms = product === 'intake-forms';
   const isInboxTriage = product === 'inbox-triage';
   const isSopPlaybook = product === 'sop-playbook';
   const isDashboardLite = product === 'dashboard-lite';
-  const isBundleClinic = product === 'bundle-clinic';
+  const isBundleClinic = product === 'bundle-clinic' || product === 'catch-the-lead';
   const isBundleSpeedNext = product === 'bundle-speed-next';
   const isBundleFrontDoor = product === 'bundle-front-door';
   const isGeo = product === 'geo';
@@ -1167,7 +1210,51 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       return;
     }
     if (bundleNotes.length < 8) {
-      res.status(400).json({ error: 'Missing clinic location notes' });
+      res.status(400).json({ error: 'Missing location notes' });
+      return;
+    }
+  } else if (isFoundBooked) {
+    const cleanPhone = phone.replace(/\s+/g, '');
+    if (profileUrl.length < 3) {
+      res.status(400).json({ error: 'Please enter your Google profile link or exact listing name.' });
+      return;
+    }
+    if (!GOOGLE_PROFILE_STATUS.has(profileStatus) || !FOUND_BOOKED_ACCESS.has(accessPath)) {
+      res.status(400).json({ error: 'Invalid profile status or access path' });
+      return;
+    }
+    if (!/^(0[23478])\d{8}$/.test(cleanPhone)) {
+      res.status(400).json({ error: 'Please enter a valid Australian business number.' });
+      return;
+    }
+    if (!MISSED_CALL_SETUPS.has(phoneSetup)) {
+      res.status(400).json({ error: 'Invalid phone setup' });
+      return;
+    }
+    if (!BOOKING_TOOLS.has(bookingTool) || !BOOKING_WHAT.has(bookingWhat) || !BOOKING_WHERE.has(bookingWhere)) {
+      res.status(400).json({ error: 'Invalid booking tool, booking type, or Book now surfaces' });
+      return;
+    }
+  } else if (isCallAndBook || isFullDiary) {
+    const cleanPhone = phone.replace(/\s+/g, '');
+    if (!/^(0[23478])\d{8}$/.test(cleanPhone)) {
+      res.status(400).json({ error: 'Please enter a valid Australian business number.' });
+      return;
+    }
+    if (!MISSED_CALL_SETUPS.has(phoneSetup)) {
+      res.status(400).json({ error: 'Invalid phone setup' });
+      return;
+    }
+    if (!BOOKING_TOOLS.has(bookingTool) || !BOOKING_WHAT.has(bookingWhat) || !BOOKING_WHERE.has(bookingWhere)) {
+      res.status(400).json({ error: 'Invalid booking tool, booking type, or Book now surfaces' });
+      return;
+    }
+    if (!CALL_AND_BOOK_ACCESS.has(accessPath)) {
+      res.status(400).json({ error: 'Invalid access path' });
+      return;
+    }
+    if (isFullDiary && noshowTools.length < 8) {
+      res.status(400).json({ error: 'Missing booking tool and reminder gaps' });
       return;
     }
   } else if (isBatchScoped) {
@@ -1363,6 +1450,43 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
               `What gets booked: ${bookingWhat}`,
               `Book now surfaces: ${bookingWhere}`,
               websiteUrl ? `Website: ${websiteUrl}` : null,
+              `Access path: ${accessPath}`,
+              accessDetail ? `Access notes:\n${accessDetail}` : null,
+              notes ? `Other notes:\n${notes}` : null,
+              `Submitted: ${new Date().toISOString()}`,
+            ]
+              .filter(Boolean)
+              .join('\n')
+        : isFoundBooked
+          ? [
+              `Funnel access form — ${product}`,
+              `Business: ${business}`,
+              `Profile: ${profileUrl}`,
+              `Profile status: ${profileStatus}`,
+              `Phone: ${phone}`,
+              `Phone setup: ${phoneSetup}`,
+              `Booking tool: ${bookingTool}`,
+              `What gets booked: ${bookingWhat}`,
+              `Book now surfaces: ${bookingWhere}`,
+              websiteUrl ? `Website: ${websiteUrl}` : null,
+              `Access path: ${accessPath}`,
+              accessDetail ? `Access notes:\n${accessDetail}` : null,
+              notes ? `Other notes:\n${notes}` : null,
+              `Submitted: ${new Date().toISOString()}`,
+            ]
+              .filter(Boolean)
+              .join('\n')
+        : isCallAndBook || isFullDiary
+          ? [
+              `Funnel access form — ${product}`,
+              `Business: ${business}`,
+              `Phone: ${phone}`,
+              `Phone setup: ${phoneSetup}`,
+              `Booking tool: ${bookingTool}`,
+              `What gets booked: ${bookingWhat}`,
+              `Book now surfaces: ${bookingWhere}`,
+              websiteUrl ? `Website: ${websiteUrl}` : null,
+              isFullDiary && noshowTools ? `No-show / reminders:\n${noshowTools}` : null,
               `Access path: ${accessPath}`,
               accessDetail ? `Access notes:\n${accessDetail}` : null,
               notes ? `Other notes:\n${notes}` : null,
@@ -1644,7 +1768,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
               `Phone: ${phone}`,
               `Phone setup: ${phoneSetup}`,
               reviewJob ? `Visit complete path: ${reviewJob}` : null,
-              `Clinic notes:\n${bundleNotes}`,
+              `Location notes:\n${bundleNotes}`,
               `Access path: ${accessPath}`,
               accessDetail ? `Access notes:\n${accessDetail}` : null,
               notes ? `Other notes:\n${notes}` : null,
@@ -1995,6 +2119,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         isBooking ||
         isBundleClinic ||
         isBundleFrontDoor ||
+        isFoundBooked ||
+        isCallAndBook ||
+        isFullDiary ||
         isSopPlaybook ||
         isInboxTriage
           ? `Access: ${accessPath}`
@@ -2009,12 +2136,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         !isBooking &&
         !isBundleClinic &&
         !isBundleFrontDoor &&
+        !isFoundBooked &&
+        !isCallAndBook &&
+        !isFullDiary &&
         !isSopPlaybook &&
         !isInboxTriage &&
         sameProvider !== 'yes'
           ? `Domain/hosting same: ${sameProvider}${domainProvider ? ` · Domain: ${domainProvider}` : ''}${hostingProvider ? ` · Host: ${hostingProvider}` : ''}`
           : null,
-        (isCrmRescue || isBooking || isEnquiryReply || isBundleFrontDoor) && websiteUrl ? `Website: ${websiteUrl}` : null,
+        (isCrmRescue || isBooking || isEnquiryReply || isBundleFrontDoor || isFoundBooked || isCallAndBook || isFullDiary) && websiteUrl ? `Website: ${websiteUrl}` : null,
         accessDetail ? `Access notes: ${accessDetail.slice(0, 280)}` : null,
         dealLink ? `<${dealLink}|Open deal>` : null,
         `<${contactLink}|Open contact>`,

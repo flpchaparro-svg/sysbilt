@@ -144,7 +144,7 @@ function BundleSpeedNextPriceVisual({reduce}: BenefitVisualProps) {
           viewport={{once: true}}
           transition={{delay: 0.2, type: 'spring', stiffness: 320, damping: 18}}
         >
-          <p className="font-mono text-[10px] font-bold text-white">$2,400 · one window</p>
+          <p className="font-mono text-[10px] font-bold text-white">$1,900 · one window</p>
         </motion.div>
       </div>
     </div>

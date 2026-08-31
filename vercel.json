@@ -2,6 +2,16 @@
   "trailingSlash": false,
   "redirects": [
     {
+      "source": "/go/bundle-clinic",
+      "destination": "/go/catch-the-lead",
+      "permanent": true
+    },
+    {
+      "source": "/evidence-vault",
+      "destination": "/proof",
+      "permanent": true
+    },
+    {
       "source": "/blog/what-vibe-coding-means-small-business-websites",
       "destination": "/blog/what-vibe-coding-means-your-business-website",
       "permanent": true

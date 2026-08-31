@@ -1,14 +1,22 @@
 {
-  "createdAt": "2026-08-02T11:25:00.000Z",
+  "createdAt": "2026-08-31T11:25:00.000Z",
   "mode": "live",
-  "note": "Local Pack · $2,400 live Payment Link. Bundle of Profile Fix + Review Engine + Profile Posting. Not local SEO. After pay → thanks?p=local-pack → access wizard.",
-  "product": {
-    "code": "local-pack",
-    "name": "Local Pack",
+  "note": "Maps alive · $2,250 live Payment Link. Old $2,400 Local Pack link and product are archived in Stripe. After pay → thanks?p=local-pack → access wizard.",
+  "superseded": {
+    "amountAud": 2400,
     "productId": "prod_UzxRD4hBZC8NLx",
     "priceId": "price_1TzxWJ7kQC0CB85zXFh4FBD5",
     "paymentLinkId": "plink_1TzxWz7kQC0CB85zEisQ0rS2",
     "paymentLinkUrl": "https://buy.stripe.com/00w6oB4hX3325Qab8n3gk0i",
-    "amountAud": 2400
+    "status": "archived"
+  },
+  "product": {
+    "code": "local-pack",
+    "name": "Maps alive",
+    "productId": "prod_VAowu5xGB3K1LF",
+    "priceId": "price_1UATJH7kQC0CB85zmGm3Bk8p",
+    "paymentLinkId": "plink_1UATMJ7kQC0CB85zMok2lysU",
+    "paymentLinkUrl": "https://buy.stripe.com/3cI28ldSxcDC5Qadgv3gk0P",
+    "amountAud": 2250
   }
 }

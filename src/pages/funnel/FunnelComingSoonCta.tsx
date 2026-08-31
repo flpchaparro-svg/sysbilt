@@ -1,5 +1,6 @@
 import React from 'react'
 import {FUNNEL_COLOURS} from './funnelTheme'
+import {CtaLabelText} from './funnelCtaLabel'
 
 /**
  * Non-clickable CTA while payment is not wired.
@@ -18,12 +19,12 @@ export function FunnelComingSoonCta({
 }) {
   const sizeClass =
     size === 'final'
-      ? 'w-full max-w-2xl px-8 py-7 text-[15px] md:text-lg tracking-[0.14em] min-h-[5.25rem]'
+      ? 'w-full max-w-2xl px-5 py-6 sm:px-8 sm:py-7 text-[14px] md:text-lg tracking-[0.08em] sm:tracking-[0.14em] min-h-[4.75rem] sm:min-h-[5.25rem]'
       : size === 'xl'
-        ? 'px-11 py-5 text-[15px] tracking-[0.2em] min-h-[4rem]'
+        ? 'px-6 py-4 sm:px-11 sm:py-5 text-[13px] sm:text-[15px] tracking-[0.1em] sm:tracking-[0.2em] min-h-[3.5rem] sm:min-h-[4rem]'
         : size === 'lg'
-          ? 'px-10 py-5 text-sm tracking-[0.2em] min-h-[3.75rem]'
-          : 'px-8 py-4 text-xs tracking-[0.18em] min-h-[3rem]'
+          ? 'px-6 py-4 sm:px-10 sm:py-5 text-[13px] sm:text-sm tracking-[0.1em] sm:tracking-[0.2em] min-h-[3.25rem] sm:min-h-[3.75rem]'
+          : 'px-5 py-3.5 sm:px-8 sm:py-4 text-[11px] sm:text-xs tracking-[0.1em] sm:tracking-[0.18em] min-h-[2.75rem] sm:min-h-[3rem]'
 
   const onDark = theme === 'dark'
 
@@ -37,7 +38,7 @@ export function FunnelComingSoonCta({
           color: onDark ? `${FUNNEL_COLOURS.onInk}90` : FUNNEL_COLOURS.steel,
         }}
       >
-        {label}
+        <CtaLabelText label={label} />
       </span>
       <p
         className="font-sans text-sm leading-relaxed max-w-md"

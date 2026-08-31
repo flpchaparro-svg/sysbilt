@@ -1,8 +1,8 @@
 /**
- * Local Pack · Stripe Payment Link (live).
+ * Maps alive (Local Pack) · Stripe Payment Link (live).
  *
- * Bundle: Profile Fix + Review Engine + Profile Posting · $2,400.
  * After pay → https://sysbilt.com/go/thanks?p=local-pack
+ * New $2,250 link. Do not reuse the old $2,400 Payment Link.
  */
 export const LOCAL_PACK_STRIPE_URL =
-  'https://buy.stripe.com/00w6oB4hX3325Qab8n3gk0i'
+  'https://buy.stripe.com/3cI28ldSxcDC5Qadgv3gk0P'

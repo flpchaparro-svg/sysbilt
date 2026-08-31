@@ -74,7 +74,18 @@ const OUTBOUND_GROUPS: CatalogueGroup[] = [
   {
     title: 'Bundles',
     blurb: 'Related jobs booked together, with one handover instead of three.',
-    codes: ['bundle-clinic', 'bundle-speed-next', 'bundle-front-door'],
+    codes: [
+      'found-booked',
+      'catch-the-lead',
+      'bundle-front-door',
+      'bundle-speed-next',
+      'call-and-book',
+      'maps-trust',
+      'full-diary',
+      'get-found',
+      'get-found-full',
+      'quote-path',
+    ],
   },
   {
     title: 'Promotions',
@@ -254,12 +265,14 @@ const FunnelHomePage: React.FC = () => {
                 {
                   id: 'outbound' as const,
                   label: 'Buy today',
+                  labelMobile: 'Buy today',
                   hint: 'Fixed price, paid online',
                   activeColor: FUNNEL_COLOURS.accent,
                 },
                 {
                   id: 'warm' as const,
                   label: 'Scoped on a call',
+                  labelMobile: 'On a call',
                   hint: 'Price fixed before you commit',
                   activeColor: FUNNEL_COLOURS.goldDeep,
                 },
@@ -273,14 +286,21 @@ const FunnelHomePage: React.FC = () => {
                   role="tab"
                   aria-selected={active}
                   onClick={() => setTab(item.id)}
-                  className="px-4 py-2.5 font-mono text-[10px] md:text-[11px] font-bold uppercase tracking-[0.16em] border transition-colors duration-200"
+                  className="px-3 sm:px-4 py-2.5 font-mono text-[10px] md:text-[11px] font-bold uppercase tracking-[0.12em] sm:tracking-[0.16em] border transition-colors duration-200 whitespace-nowrap"
                   style={{
                     borderColor: active ? item.activeColor : `${FUNNEL_COLOURS.ink}18`,
                     backgroundColor: active ? `${item.activeColor}12` : FUNNEL_COLOURS.surface,
                     color: active ? item.activeColor : FUNNEL_COLOURS.steel,
                   }}
                 >
-                  {item.label}
+                  {item.labelMobile && item.labelMobile !== item.label ? (
+                    <>
+                      <span className="sm:hidden">{item.labelMobile}</span>
+                      <span className="hidden sm:inline">{item.label}</span>
+                    </>
+                  ) : (
+                    item.label
+                  )}
                 </button>
               )
             })}

@@ -11,7 +11,7 @@ export const BUNDLE_FRONT_DOOR_LIVE_COPY = {
   h1Personal: (b: string) =>
     `${b}, they find you, they like the look of you, and then they have to ring during business hours`,
   sub: 'Three jobs in one window: your Google listing cleaned up so you look like a real business on Maps, a review ask that keeps firing so the proof stays fresh, and a Book now button on your site and Maps wired to your calendar, so people can book at ten at night without playing phone tag.',
-  ctaLabel: 'Buy the Front Door bundle, $3,400',
+  ctaLabel: 'Buy Front Door, $2,550',
   proofLabel: 'The leak',
   proofHeadingLive: 'Three locks on one door',
   proofHeadingGeneric: 'Three locks on one door',
@@ -25,6 +25,9 @@ export const BUNDLE_FRONT_DOOR_LIVE_COPY = {
     'Being found, being believed, and being able to book are one path, not three projects. Broken anywhere along it, the whole thing stops.',
   proofAfterGeneric:
     'Being found, being believed, and being able to book are one path, not three projects. Broken anywhere along it, the whole thing stops.',
+  leakHeading: 'Demand with nowhere to land',
+  leakBody:
+    'Profile and reviews pull people in. Without Book now they still have to ring you tomorrow.',
   painLabel: 'What this is costing you',
   painHeading: 'The front door has three locks',
   painLines: [
@@ -36,7 +39,7 @@ export const BUNDLE_FRONT_DOOR_LIVE_COPY = {
   bridgeLabel: 'The fix',
   bridgeHeading: 'The whole path opened in one window',
   bridgeBody:
-    'We do the three jobs in one planned window. We clean the Google Business Profile so Maps looks finished. We put in a review ask that fires after a visit or job without staff having to remember. And we put Book now on the site, on Maps, or both, wired to your calendar and tested end to end. One access conversation at the start, one handoff at the end.',
+    'We do the three full products in one planned window. Google Profile Fix so the listing is claimed or recovered, categories and description filled, photos sorted, review link ready, keys on your account. Review Engine so an automatic ask fires after every completed job, in your words, with a QR and short link, plus reply templates. Booking System so Book now sits on the site and Maps, wired to your calendar, with confirmations, reminders, and a no-show text sequence, then a live test booking. One access conversation, one handoff.',
   bridgeGaugeCaption: 'Seen. Believed. Booked without a phone call.',
   benefitsLabel: 'What changes for you',
   benefitsHeading: 'Outcomes you can feel at the door',
@@ -54,8 +57,8 @@ export const BUNDLE_FRONT_DOOR_LIVE_COPY = {
       text: 'The moment someone decides is usually the evening. A Book now button is the difference between that and a note they never act on.',
     },
     {
-      title: 'Built for appointment businesses',
-      text: 'Clinics and service businesses where the goal is a time in the calendar, not a brochure download.',
+      title: 'Less than buying them apart',
+      text: '$2,550 together, against $3,200 for the same three products bought separately.',
     },
   ],
   processLabel: 'How it runs',
@@ -67,7 +70,7 @@ export const BUNDLE_FRONT_DOOR_LIVE_COPY = {
     },
     {
       label: 'Build',
-      text: 'Profile clean-up, the review ask, and Book now on the surfaces you chose, in one planned window.',
+      text: 'Profile overhaul, the review ask, and Book now on the surfaces you chose, in one planned window.',
     },
     {
       label: 'Go live',
@@ -79,26 +82,26 @@ export const BUNDLE_FRONT_DOOR_LIVE_COPY = {
   stackItems: [
     {
       title: 'Google Profile Fix',
-      text: 'Categories, photos, hours, services and the basics cleaned up so your Maps listing looks finished and easy to trust.',
+      text: 'Claim or recover, categories, services, attributes, selling description, photos, review link. Ownership stays on your account. Habit guide, Systems Snapshot, 14 days of aftercare. Same scope as the $600 door.',
     },
     {
       title: 'Review Engine',
-      text: 'A simple ask after a visit or job, so new reviews keep arriving without staff having to remember to chase.',
+      text: 'Automatic ask after every completed job, wording in your voice, QR and short link, good and bad reply templates. Systems Snapshot and 14 days of aftercare. Same scope as the $1,100 door.',
     },
     {
       title: 'Booking System',
-      text: 'Book now on the site, on Google, or both, wired to your calendar so people can pick a time without ringing anyone.',
+      text: 'Tool wired to your real calendar. Confirmations, reminders, and a no-show text sequence. Book now on the site, Google, or both, then a live test booking. Systems Snapshot and 14 days of aftercare. Same scope as the $1,500 door.',
     },
   ],
   scopeLine:
     'One location, one calendar system. Google Profile Fix, Review Engine and Booking System as scoped at kickoff. Extra locations or staff calendars are quoted the same day so the fixed price stays honest.',
   priceLabel: 'Investment',
-  price: '$3,400',
+  price: '$2,550',
   priceLead: 'Paid once, and we start. No quotes, no meetings, no scope creep.',
   guarantee:
     'Our promise: all three scoped pieces are delivered, with a real test booking run end to end, or we keep working at no extra cost until they are.',
   priceAnchor:
-    'Work out what one booking is worth to you, then count the evenings and weekends where the only option was to ring you tomorrow. Those go on happening every week. This is one window, paid once.',
+    'Bought separately the same three jobs are $3,200 and three kickoffs. Together they are $2,550, one access handover, and people can book without ringing you.',
   faqLabel: 'Objections',
   faqHeading: 'Straight answers before you buy',
   faqs: [
@@ -108,7 +111,7 @@ export const BUNDLE_FRONT_DOOR_LIVE_COPY = {
     },
     {
       q: 'What exactly is included?',
-      a: 'Three jobs for one location: your Google Business Profile cleaned up, a review ask that keeps firing, and Book now on your site or Maps against one calendar. All scoped at kickoff.',
+      a: 'The same three products we sell separately: Google Profile Fix, Review Engine, and Booking System, at full scope, for one location and one primary calendar.',
     },
     {
       q: 'Will Book now work with our calendar?',
@@ -117,10 +120,6 @@ export const BUNDLE_FRONT_DOOR_LIVE_COPY = {
     {
       q: 'Do you write fake reviews?',
       a: 'Never. We ask real customers at the right moment and make it easy to say yes. What they write is up to them.',
-    },
-    {
-      q: 'Is this only for clinics?',
-      a: 'It fits clinics and any service business where the goal is a booked time. If people have to ring you to buy, this is your bundle.',
     },
     {
       q: 'What comes after this?',

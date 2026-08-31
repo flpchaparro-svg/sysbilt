@@ -1,0 +1,106 @@
+{
+  "createdAt": "2026-08-31T11:10:00.000Z",
+  "mode": "live",
+  "note": "One Payment Link per pack at the new round amounts. After pay → thanks?p={code} → access wizard. Old Front Door $3,400, Local Pack $2,400, Speed Next $2,400, and Clinic Capture products, prices, and Payment Links are archived in Stripe.",
+  "links": [
+    {
+      "code": "found-booked",
+      "name": "Found and booked",
+      "amountAud": 2300,
+      "productId": "prod_VAoopMBtWu8cI4",
+      "priceId": "price_1UATBR7kQC0CB85z9JJw5ETf",
+      "paymentLinkId": "plink_1UATIp7kQC0CB85zZRCjUZOE",
+      "paymentLinkUrl": "https://buy.stripe.com/3cI4gtdSxavu7Yidgv3gk0F"
+    },
+    {
+      "code": "catch-the-lead",
+      "name": "Catch the lead",
+      "amountAud": 1950,
+      "productId": "prod_VAops1osahq00B",
+      "priceId": "price_1UATBt7kQC0CB85zbYKM6JXZ",
+      "paymentLinkId": "plink_1UATJL7kQC0CB85zyLCOHdLE",
+      "paymentLinkUrl": "https://buy.stripe.com/6oU3cp8ydfPO1zUa4j3gk0G"
+    },
+    {
+      "code": "bundle-front-door",
+      "name": "Front Door",
+      "amountAud": 2550,
+      "productId": "prod_VAoptdo8W5YsYS",
+      "priceId": "price_1UATBv7kQC0CB85zkPyOs9fl",
+      "paymentLinkId": "plink_1UATJM7kQC0CB85zfJvJA965",
+      "paymentLinkUrl": "https://buy.stripe.com/cNi5kx3dTeLK0vQ7Wb3gk0H"
+    },
+    {
+      "code": "local-pack",
+      "name": "Maps alive",
+      "amountAud": 2250,
+      "productId": "prod_VAowu5xGB3K1LF",
+      "priceId": "price_1UATJH7kQC0CB85zmGm3Bk8p",
+      "paymentLinkId": "plink_1UATMJ7kQC0CB85zMok2lysU",
+      "paymentLinkUrl": "https://buy.stripe.com/3cI28ldSxcDC5Qadgv3gk0P"
+    },
+    {
+      "code": "bundle-speed-next",
+      "name": "Pages that ask",
+      "amountAud": 1900,
+      "productId": "prod_VAop1YMV7CzD3p",
+      "priceId": "price_1UATBx7kQC0CB85z2VaFrxqB",
+      "paymentLinkId": "plink_1UATJO7kQC0CB85zJDnKlctU",
+      "paymentLinkUrl": "https://buy.stripe.com/eVq8wJ29P476diC7Wb3gk0I"
+    },
+    {
+      "code": "call-and-book",
+      "name": "Call and book",
+      "amountAud": 1800,
+      "productId": "prod_VAopfH0WPaAXh5",
+      "priceId": "price_1UATBy7kQC0CB85zDBcbhbkU",
+      "paymentLinkId": "plink_1UATJR7kQC0CB85zHCDGuPQA",
+      "paymentLinkUrl": "https://buy.stripe.com/7sYeV79Ch5baemG4JZ3gk0J"
+    },
+    {
+      "code": "maps-trust",
+      "name": "Maps trust",
+      "amountAud": 1350,
+      "productId": "prod_VAopEdOHCoRy1I",
+      "priceId": "price_1UATC17kQC0CB85ztjOPA1fy",
+      "paymentLinkId": "plink_1UATJT7kQC0CB85zejwckHzG",
+      "paymentLinkUrl": "https://buy.stripe.com/28E8wJ9Ch1YYdiC7Wb3gk0K"
+    },
+    {
+      "code": "full-diary",
+      "name": "Full diary",
+      "amountAud": 2400,
+      "productId": "prod_VAopHjM6VvanS8",
+      "priceId": "price_1UATC37kQC0CB85zgyAy6iEG",
+      "paymentLinkId": "plink_1UATJX7kQC0CB85zA7ZW0TJr",
+      "paymentLinkUrl": "https://buy.stripe.com/fZubIV29PdHGguO2BR3gk0L"
+    },
+    {
+      "code": "get-found",
+      "name": "Get found",
+      "amountAud": 2100,
+      "productId": "prod_VAopW2GcY5q4jJ",
+      "priceId": "price_1UATC47kQC0CB85zVBpDrNdH",
+      "paymentLinkId": "plink_1UATJZ7kQC0CB85zw9WkIyE4",
+      "paymentLinkUrl": "https://buy.stripe.com/bJecMZ01HfPOguOekz3gk0M"
+    },
+    {
+      "code": "get-found-full",
+      "name": "Get found (full)",
+      "amountAud": 3600,
+      "productId": "prod_VAopIbqou2A0tx",
+      "priceId": "price_1UATIz7kQC0CB85zUEYQ3Myy",
+      "paymentLinkId": "plink_1UATJa7kQC0CB85zQs2lZAd6",
+      "paymentLinkUrl": "https://buy.stripe.com/bJe5kx4hXbzyceyccr3gk0N"
+    },
+    {
+      "code": "quote-path",
+      "name": "Quote path",
+      "amountAud": 3400,
+      "productId": "prod_VAopPve7S5hmDQ",
+      "priceId": "price_1UATJ07kQC0CB85zHPZyLGWG",
+      "paymentLinkId": "plink_1UATJb7kQC0CB85z73iDHM28",
+      "paymentLinkUrl": "https://buy.stripe.com/28EfZb01H1YYbaub8n3gk0O"
+    }
+  ]
+}

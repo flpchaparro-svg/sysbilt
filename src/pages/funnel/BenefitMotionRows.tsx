@@ -12,9 +12,16 @@ import {BENEFIT_VISUALS as INTAKE_FORMS_BENEFIT_VISUALS} from './liveCopy/intake
 import {INBOX_TRIAGE_BENEFIT_VISUALS} from './liveCopy/inbox-triage-motion'
 import {SOP_PLAYBOOK_BENEFIT_VISUALS} from './liveCopy/sop-playbook-motion'
 import {DASHBOARD_LITE_BENEFIT_VISUALS} from './liveCopy/dashboard-lite-motion'
-import {BUNDLE_CLINIC_BENEFIT_VISUALS} from './liveCopy/bundle-clinic-motion'
 import {BUNDLE_SPEED_NEXT_BENEFIT_VISUALS} from './liveCopy/bundle-speed-next-motion'
 import {BUNDLE_FRONT_DOOR_BENEFIT_VISUALS} from './liveCopy/bundle-front-door-motion'
+import {FOUND_BOOKED_BENEFIT_VISUALS} from './liveCopy/found-booked-motion'
+import {CATCH_THE_LEAD_BENEFIT_VISUALS} from './liveCopy/catch-the-lead-motion'
+import {CALL_AND_BOOK_BENEFIT_VISUALS} from './liveCopy/call-and-book-motion'
+import {MAPS_TRUST_BENEFIT_VISUALS} from './liveCopy/maps-trust-motion'
+import {FULL_DIARY_BENEFIT_VISUALS} from './liveCopy/full-diary-motion'
+import {GET_FOUND_BENEFIT_VISUALS} from './liveCopy/get-found-motion'
+import {GET_FOUND_FULL_BENEFIT_VISUALS} from './liveCopy/get-found-full-motion'
+import {QUOTE_PATH_BENEFIT_VISUALS} from './liveCopy/quote-path-motion'
 import {BENEFIT_VISUALS as GEO_BENEFIT_VISUALS} from './liveCopy/geo-motion'
 import {BENEFIT_VISUALS as CLIENT_FINDER_BENEFIT_VISUALS} from './liveCopy/client-finder-motion'
 
@@ -1434,7 +1441,7 @@ function LocalPackRealProductsVisual({reduce}: VisualProps) {
   )
 }
 
-/** Local Pack: $2,800 separate crossed out, $2,400 bundle, $400 under. */
+/** Local Pack: $2,800 separate crossed out, $2,250 pack, $550 under. */
 function LocalPackClearPriceVisual({reduce}: VisualProps) {
   return (
     <div className="relative h-[132px] w-full rounded-sm overflow-hidden border border-dark/12 bg-white flex flex-col items-center justify-center gap-2">
@@ -1464,7 +1471,7 @@ function LocalPackClearPriceVisual({reduce}: VisualProps) {
           viewport={{once: true}}
           transition={{delay: reduce ? 0 : 0.5, type: 'spring', stiffness: 320, damping: 20}}
         >
-          $2,400
+          $2,250
         </motion.span>
       </div>
       <motion.div
@@ -1476,7 +1483,7 @@ function LocalPackClearPriceVisual({reduce}: VisualProps) {
         transition={{delay: reduce ? 0 : 0.75}}
       >
         <span className="font-mono text-[7px] font-bold uppercase tracking-wide" style={{color: colors.teal}}>
-          $400 under
+          $550 under
         </span>
       </motion.div>
     </div>
@@ -4118,6 +4125,14 @@ export function BenefitMotionRows({
     | 'bundle-clinic'
     | 'bundle-speed-next'
     | 'bundle-front-door'
+    | 'found-booked'
+    | 'catch-the-lead'
+    | 'call-and-book'
+    | 'maps-trust'
+    | 'full-diary'
+    | 'get-found'
+    | 'get-found-full'
+    | 'quote-path'
     | 'geo'
     | 'client-finder'
 }) {
@@ -4180,11 +4195,27 @@ export function BenefitMotionRows({
                                     : variant === 'dashboard-lite'
                                       ? DASHBOARD_LITE_BENEFIT_VISUALS
                                     : variant === 'bundle-clinic'
-                                      ? BUNDLE_CLINIC_BENEFIT_VISUALS
+                                      ? CATCH_THE_LEAD_BENEFIT_VISUALS
                                     : variant === 'bundle-speed-next'
                                       ? BUNDLE_SPEED_NEXT_BENEFIT_VISUALS
                                     : variant === 'bundle-front-door'
                                       ? BUNDLE_FRONT_DOOR_BENEFIT_VISUALS
+                                    : variant === 'found-booked'
+                                      ? FOUND_BOOKED_BENEFIT_VISUALS
+                                    : variant === 'catch-the-lead'
+                                      ? CATCH_THE_LEAD_BENEFIT_VISUALS
+                                    : variant === 'call-and-book'
+                                      ? CALL_AND_BOOK_BENEFIT_VISUALS
+                                    : variant === 'maps-trust'
+                                      ? MAPS_TRUST_BENEFIT_VISUALS
+                                    : variant === 'full-diary'
+                                      ? FULL_DIARY_BENEFIT_VISUALS
+                                    : variant === 'get-found'
+                                      ? GET_FOUND_BENEFIT_VISUALS
+                                    : variant === 'get-found-full'
+                                      ? GET_FOUND_FULL_BENEFIT_VISUALS
+                                    : variant === 'quote-path'
+                                      ? QUOTE_PATH_BENEFIT_VISUALS
                                     : variant === 'geo'
                                       ? GEO_BENEFIT_VISUALS
                                     : variant === 'client-finder'

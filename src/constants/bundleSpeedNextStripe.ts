@@ -1,7 +1,8 @@
 /**
- * Speed Next Bundle · Stripe Payment Link (live).
+ * Pages that ask · Stripe Payment Link (live).
  *
  * After pay → https://sysbilt.com/go/thanks?p=bundle-speed-next
+ * New $1,900 link. Do not reuse the old $2,400 Payment Link.
  */
 export const BUNDLE_SPEED_NEXT_STRIPE_URL =
-  'https://buy.stripe.com/bJebIV8ydavuguOccr3gk0z'
+  'https://buy.stripe.com/eVq8wJ29P476diC7Wb3gk0I'

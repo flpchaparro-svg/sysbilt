@@ -1,13 +1,13 @@
 import type {FunnelProductCopy} from '../funnelCopy'
 
-/** Live copy for Speed Next Bundle. Wire via funnelCopyForSlug when ready. */
+/** Live copy for Pages that ask (Conversion Pass + Tracking). */
 export const BUNDLE_SPEED_NEXT_LIVE_COPY = {
   eyebrow: 'Two jobs, one window, while access is still open',
   h1Generic: 'The site is fast now. It still never asks anyone to do anything',
   h1Personal: (b: string) =>
     `${b}, the site is fast now, and it still never asks anyone to do anything`,
   sub: 'Speed was the first half. The second half is the pages actually asking for the enquiry, and you being able to see when one lands. While we still have access to the site, we rewrite the pages that matter so the next step is obvious, then wire the tracking and forms so a real enquiry turns up where you can see it.',
-  ctaLabel: 'Buy Speed Next, $2,400',
+  ctaLabel: 'Buy Pages that ask, $1,900',
   proofLabel: 'The gap',
   proofHeadingLive: 'Fast is not finished',
   proofHeadingGeneric: 'Fast is not finished',
@@ -21,6 +21,9 @@ export const BUNDLE_SPEED_NEXT_LIVE_COPY = {
     'Speed gets people to stay. The words get them to act. The tracking tells you whether any of it worked. All three or you are guessing.',
   proofAfterGeneric:
     'Speed gets people to stay. The words get them to act. The tracking tells you whether any of it worked. All three or you are guessing.',
+  leakHeading: 'Fast without the ask still loses',
+  leakBody:
+    'Speed is fixed, then the page still does not ask clearly, and you cannot see what landed.',
   painLabel: 'What this is costing you',
   painHeading: 'You paid for speed and still argue about results',
   painLines: [
@@ -85,12 +88,12 @@ export const BUNDLE_SPEED_NEXT_LIVE_COPY = {
   scopeLine:
     'Assumes site access like Website Speed Fix. Conversion Pass and Tracking and Forms Pack as scoped at kickoff. Extra pages, events or forms are quoted the same day so the fixed price stays honest.',
   priceLabel: 'Investment',
-  price: '$2,400',
+  price: '$1,900',
   priceLead: 'Paid once, and we start. No quotes, no meetings, no scope creep.',
   guarantee:
     'Our promise: both scoped pieces are delivered, with a test enquiry proved end to end, or we keep working at no extra cost until they are.',
   priceAnchor:
-    'The point here is timing, not a discount. We already have access and we already know the site, so both jobs land in one window instead of two kickoffs months apart. It is also the only way to find out whether the speed work you already paid for earned anything.',
+    'Bought separately Conversion Pass and Tracking and Forms Pack are $2,350. Together they are $1,900, while the site is still open, so you get a clean read instead of two half-changes months apart.',
   faqLabel: 'Objections',
   faqHeading: 'Straight answers before you buy',
   faqs: [

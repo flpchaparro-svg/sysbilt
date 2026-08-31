@@ -21,6 +21,9 @@ export type FunnelProductCopy = {
   proofLeadGeneric: string
   proofAfter: string
   proofAfterGeneric: string
+  /** Leak subhead in FunnelPage. Required for registered bundles. Never hardcode jobs in FunnelPage. */
+  leakHeading?: string
+  leakBody?: string
   painLabel: string
   painHeading: string
   painLines: string[]
@@ -95,6 +98,14 @@ export type FunnelProductCopy = {
     | 'bundle-clinic'
     | 'bundle-speed-next'
     | 'bundle-front-door'
+    | 'found-booked'
+    | 'catch-the-lead'
+    | 'call-and-book'
+    | 'maps-trust'
+    | 'full-diary'
+    | 'get-found'
+    | 'get-found-full'
+    | 'quote-path'
     | 'geo'
     | 'client-finder'
     | 'draft'
@@ -2231,8 +2242,8 @@ export const LOCAL_PACK_COPY: FunnelProductCopy = {
   h1Generic: 'Your Google listing needs a clean profile, a review habit, and posts that keep showing up',
   h1Personal: (b: string) =>
     `${b}, your Google listing needs a clean profile, a review habit, and posts that keep showing up`,
-  sub: 'Three jobs in one delivery: your listing cleaned up, a review ask that keeps firing after every job, and a posting kit so the Updates tab stops looking abandoned. This is not local SEO and it is not a rankings promise, it is the front door on Maps, done properly, for $400 less than buying the three apart.',
-  ctaLabel: 'Get the Local Pack, $2,400',
+  sub: 'Three jobs in one delivery: your listing cleaned up, a review ask that keeps firing after every job, and a posting kit so the Updates tab stops looking abandoned. This is not local SEO and it is not a rankings promise,     it is the front door on Maps, done properly, for $550 less than buying the three apart.',
+  ctaLabel: 'Get Maps alive, $2,250',
   proofLabel: 'The picture',
   proofHeadingLive: 'Maps trust is three jobs, not one',
   proofHeadingGeneric: 'Maps trust is three jobs, not one',
@@ -2257,7 +2268,7 @@ export const LOCAL_PACK_COPY: FunnelProductCopy = {
   bridgeLabel: 'The fix',
   bridgeHeading: 'One local sprint, three connected jobs',
   bridgeBody:
-    'This is not SEO for suburbs, and it is not a rankings promise. It is the three Maps jobs that belong together: Google Profile Fix, Review Engine, and Profile Posting System, run as one delivery so your listing looks coherent. Bought separately today that is $2,800. The pack is $2,400.',
+    'This is not SEO for suburbs, and it is not a rankings promise. It is the three Maps jobs that belong together: Google Profile Fix, Review Engine, and Profile Posting System, run as one delivery so your listing looks coherent. Bought separately today that is $2,800. The pack is $2,250.',
   bridgeGaugeCaption: 'Clean profile. Review ask. Posts you can keep. One sprint.',
   benefitsLabel: 'What changes for you',
   benefitsHeading: 'One window, not three projects',
@@ -2276,7 +2287,7 @@ export const LOCAL_PACK_COPY: FunnelProductCopy = {
     },
     {
       title: 'Clear price',
-      text: '$2,400 once. That is $400 under buying the three doors separately at list price.',
+      text: '$2,250 once. That is $550 under buying the three doors separately at list price.',
     },
   ],
   processLabel: 'How it runs',
@@ -2318,12 +2329,12 @@ export const LOCAL_PACK_COPY: FunnelProductCopy = {
   scopeLine:
     'One Google Business Profile / one location. Not local SEO, not ranking work, not multi-location. Extra locations quoted the same day.',
   priceLabel: 'Investment',
-  price: '$2,400',
+  price: '$2,250',
   priceLead: 'Paid once, and we start. No quotes, no meetings, no scope creep.',
   guarantee:
     'Our promise: all three scoped pieces are delivered, or we keep working at no extra cost until they are.',
   priceAnchor:
-    'Bought separately the same three jobs are $2,800 and three separate kickoffs, which in practice means the third one never happens. Together they are $2,400, one access handover, and a listing that finally looks like a business somebody runs.',
+    'Bought separately the same three jobs are $2,800 and three separate kickoffs, which in practice means the third one never happens. Together they are $2,250, one access handover, and a listing that finally looks like a business somebody runs.',
   faqLabel: 'Objections',
   faqHeading: 'Straight answers before you buy',
   faqs: [
@@ -2337,7 +2348,7 @@ export const LOCAL_PACK_COPY: FunnelProductCopy = {
     },
     {
       q: 'Why not buy the three doors alone?',
-      a: 'You can. Separate list prices add to $2,800. The pack is $2,400 and removes two extra kickoffs.',
+      a: 'You can. Separate list prices add to $2,800. The pack is $2,250 and removes two extra kickoffs.',
     },
     {
       q: 'Do you post for us every week?',
@@ -3187,12 +3198,18 @@ import {INTAKE_FORMS_LIVE_COPY as INTAKE_FORMS_LIVE} from './liveCopy/intake-for
 import {INBOX_TRIAGE_LIVE_COPY as INBOX_TRIAGE_LIVE} from './liveCopy/inbox-triage'
 import {SOP_PLAYBOOK_LIVE_COPY as SOP_PLAYBOOK_LIVE} from './liveCopy/sop-playbook'
 import {DASHBOARD_LITE_LIVE_COPY as DASHBOARD_LITE_LIVE} from './liveCopy/dashboard-lite'
-import {BUNDLE_CLINIC_LIVE_COPY as BUNDLE_CLINIC_LIVE} from './liveCopy/bundle-clinic'
 import {BUNDLE_SPEED_NEXT_LIVE_COPY as BUNDLE_SPEED_NEXT_LIVE} from './liveCopy/bundle-speed-next'
 import {BUNDLE_FRONT_DOOR_LIVE_COPY as BUNDLE_FRONT_DOOR_LIVE} from './liveCopy/bundle-front-door'
+import {FOUND_BOOKED_LIVE_COPY as FOUND_BOOKED_LIVE} from './liveCopy/found-booked'
+import {CATCH_THE_LEAD_LIVE_COPY as CATCH_THE_LEAD_LIVE} from './liveCopy/catch-the-lead'
+import {CALL_AND_BOOK_LIVE_COPY as CALL_AND_BOOK_LIVE} from './liveCopy/call-and-book'
+import {MAPS_TRUST_LIVE_COPY as MAPS_TRUST_LIVE} from './liveCopy/maps-trust'
+import {FULL_DIARY_LIVE_COPY as FULL_DIARY_LIVE} from './liveCopy/full-diary'
+import {GET_FOUND_LIVE_COPY as GET_FOUND_LIVE} from './liveCopy/get-found'
+import {GET_FOUND_FULL_LIVE_COPY as GET_FOUND_FULL_LIVE} from './liveCopy/get-found-full'
+import {QUOTE_PATH_LIVE_COPY as QUOTE_PATH_LIVE} from './liveCopy/quote-path'
 import {GEO_LIVE_COPY} from './liveCopy/geo'
 import {CLIENT_FINDER_LIVE_COPY} from './liveCopy/client-finder'
-import {DRAFT_COPY_BY_SLUG} from './funnelDraftProducts'
 
 export function funnelCopyForSlug(slug: string | undefined): FunnelProductCopy {
   if (slug === 'a11y-pass') return A11Y_PASS_LIVE
@@ -3206,9 +3223,16 @@ export function funnelCopyForSlug(slug: string | undefined): FunnelProductCopy {
   if (slug === 'inbox-triage') return INBOX_TRIAGE_LIVE
   if (slug === 'sop-playbook') return SOP_PLAYBOOK_LIVE
   if (slug === 'dashboard-lite') return DASHBOARD_LITE_LIVE
-  if (slug === 'bundle-clinic') return BUNDLE_CLINIC_LIVE
+  if (slug === 'bundle-clinic' || slug === 'catch-the-lead') return CATCH_THE_LEAD_LIVE
   if (slug === 'bundle-speed-next') return BUNDLE_SPEED_NEXT_LIVE
   if (slug === 'bundle-front-door') return BUNDLE_FRONT_DOOR_LIVE
+  if (slug === 'found-booked') return FOUND_BOOKED_LIVE
+  if (slug === 'call-and-book') return CALL_AND_BOOK_LIVE
+  if (slug === 'maps-trust') return MAPS_TRUST_LIVE
+  if (slug === 'full-diary') return FULL_DIARY_LIVE
+  if (slug === 'get-found') return GET_FOUND_LIVE
+  if (slug === 'get-found-full') return GET_FOUND_FULL_LIVE
+  if (slug === 'quote-path') return QUOTE_PATH_LIVE
   if (slug === 'geo') return GEO_LIVE_COPY
   if (slug === 'client-finder') return CLIENT_FINDER_LIVE_COPY
   if (slug === 'media-clean') return MEDIA_CLEAN_COPY
@@ -3232,6 +3256,5 @@ export function funnelCopyForSlug(slug: string | undefined): FunnelProductCopy {
   if (slug === 'ai-phone') return AI_PHONE_COPY
   if (slug === 'booking') return BOOKING_COPY
   if (slug === 'website' || slug === 'website-hook') return WEBSITE_COPY
-  if (slug && DRAFT_COPY_BY_SLUG[slug]) return DRAFT_COPY_BY_SLUG[slug]
   return SPEED_FIX_COPY
 }

@@ -1,6 +1,6 @@
 import React, {useEffect, useMemo, useState} from 'react'
 import {motion, useInView, useReducedMotion} from 'framer-motion'
-import {useParams, useSearchParams} from 'react-router-dom'
+import {useParams, useSearchParams, Navigate} from 'react-router-dom'
 import {SysbiltLogo} from '../../components/SysbiltLogo'
 import {PageMeta} from '../../components/PageMeta'
 import {client} from '../../sanityClient'
@@ -220,6 +220,9 @@ import {GEO_STRIPE_URL} from '../../constants/geoStripe'
 import {CLIENT_FINDER_STRIPE_URL} from '../../constants/clientFinderStripe'
 import {teamAiPriceOptions} from '../../constants/teamAiStripe'
 import {funnelCopyForSlug} from './funnelCopy'
+import {getBundleProof} from './bundleProofRegistry'
+import {FunnelRelatedOffer} from './FunnelRelatedOffer'
+import {relatedOfferForSlug} from './funnelRelated'
 import {
   FUNNEL_PRODUCT_LABELS,
   accessFormPathForProduct,
@@ -347,6 +350,7 @@ const FunnelPage: React.FC = () => {
   const [status, setStatus] = useState<'loading' | 'ready' | 'missing' | 'error'>('loading')
 
   const COPY = useMemo(() => funnelCopyForSlug(slug), [slug])
+  const relatedOffer = useMemo(() => relatedOfferForSlug(slug), [slug])
   const business = useMemo(() => sanitiseBusinessName(params.get('b')), [params])
   const competitor = useMemo(() => sanitiseCompetitorName(params.get('c')), [params])
   const score = useMemo(() => parseSpeedScore(params.get('s')), [params])
@@ -355,6 +359,7 @@ const FunnelPage: React.FC = () => {
   const callDay = useMemo(() => sanitiseCallDay(params.get('d')), [params])
   const callTime = useMemo(() => sanitiseCallTime(params.get('t')), [params])
   const proofKind = COPY.proofKind
+  const bundleUi = getBundleProof(proofKind)
   const isMissedCall = proofKind === 'missed-call'
   const isGoogleProfile = proofKind === 'google-profile'
   const isSearchFix = proofKind === 'search-fix'
@@ -400,7 +405,7 @@ const FunnelPage: React.FC = () => {
   const lastPostMonth = useMemo(() => sanitiseLastPostMonth(params.get('m')), [params])
   const yourReviews = useMemo(() => parseReviewCount(params.get('n')), [params])
   const theirReviews = useMemo(() => parseReviewCount(params.get('r')), [params])
-  const motionVariant = isMissedCall
+  const motionVariant = bundleUi?.motionVariant ?? (isMissedCall
     ? 'missed-call'
     : isGoogleProfile
       ? 'google-profile'
@@ -472,7 +477,7 @@ const FunnelPage: React.FC = () => {
                               ? 'ai-phone'
                               : isBooking
                                 ? 'booking'
-                                : 'speed'
+                                : 'speed')
   const calculatorVariant = isSpeed
     ? 'speed'
     : isMissedCall
@@ -624,6 +629,7 @@ const FunnelPage: React.FC = () => {
     (isInboxTriage ? INBOX_TRIAGE_STRIPE_URL : undefined) ||
     (isSopPlaybook ? SOP_PLAYBOOK_STRIPE_URL : undefined) ||
     (isDashboardLite ? DASHBOARD_LITE_STRIPE_URL : undefined) ||
+    (bundleUi?.stripeUrl ? bundleUi.stripeUrl : undefined) ||
     (isBundleClinic ? BUNDLE_CLINIC_STRIPE_URL : undefined) ||
     (isBundleSpeedNext ? BUNDLE_SPEED_NEXT_STRIPE_URL : undefined) ||
     (isBundleFrontDoor ? BUNDLE_FRONT_DOOR_STRIPE_URL : undefined) ||
@@ -703,6 +709,11 @@ const FunnelPage: React.FC = () => {
     doc?.faqs && doc.faqs.length > 0
       ? doc.faqs.map((f) => ({q: f.question || '', a: f.answer || ''}))
       : COPY.faqs
+
+  if (slug === 'bundle-clinic') {
+    const qs = params.toString()
+    return <Navigate to={`/go/catch-the-lead${qs ? `?${qs}` : ''}`} replace />
+  }
 
   return (
     <div
@@ -832,6 +843,7 @@ const FunnelPage: React.FC = () => {
               isBundleClinic ||
               isBundleSpeedNext ||
               isBundleFrontDoor ||
+              Boolean(bundleUi) ||
               isGeo ||
               isClientFinder ||
               isDraftSoon
@@ -884,9 +896,10 @@ const FunnelPage: React.FC = () => {
             {isInboxTriage ? <InboxTriageEvidenceCard business={business} /> : null}
             {isSopPlaybook ? <SopPlaybookEvidenceCard business={business} /> : null}
             {isDashboardLite ? <DashboardLiteEvidenceCard business={business} /> : null}
-            {isBundleClinic ? <BundleClinicEvidenceCard business={business} /> : null}
-            {isBundleSpeedNext ? <BundleSpeedNextEvidenceCard business={business} /> : null}
-            {isBundleFrontDoor ? <BundleFrontDoorEvidenceCard business={business} /> : null}
+            {!bundleUi && isBundleClinic ? <BundleClinicEvidenceCard business={business} /> : null}
+            {!bundleUi && isBundleSpeedNext ? <BundleSpeedNextEvidenceCard business={business} /> : null}
+            {!bundleUi && isBundleFrontDoor ? <BundleFrontDoorEvidenceCard business={business} /> : null}
+            {bundleUi ? <bundleUi.Evidence business={business} /> : null}
             {isGeo ? <GeoEvidenceCard business={business} /> : null}
             {isClientFinder ? <ClientFinderEvidenceCard business={business} /> : null}
             {isTeamAi ? <TeamRecognitionCards /> : null}
@@ -1757,6 +1770,39 @@ const FunnelPage: React.FC = () => {
                   <DashboardLiteLeakPair />
                 </section>
               </>
+            ) : bundleUi ? (
+              <>
+                <Reveal delay={0.08} y={12}>
+                  <p
+                    className="mt-6 font-sans text-base md:text-lg leading-relaxed max-w-2xl"
+                    style={{color: FUNNEL_COLOURS.muted}}
+                  >
+                    {COPY.proofAfterGeneric}
+                  </p>
+                </Reveal>
+                <section className="mt-12 md:mt-14">
+                  <Reveal y={10}>
+                    <SectionLabel>The leak</SectionLabel>
+                  </Reveal>
+                  <Reveal delay={0.06} y={14}>
+                    <h3
+                      className="font-serif font-bold text-2xl md:text-3xl tracking-tight mb-4 max-w-2xl"
+                      style={{color: FUNNEL_COLOURS.ink}}
+                    >
+                      {COPY.leakHeading || COPY.proofHeadingGeneric}
+                    </h3>
+                  </Reveal>
+                  <Reveal delay={0.1} y={10}>
+                    <p
+                      className="font-sans text-base md:text-lg leading-relaxed max-w-2xl mb-2"
+                      style={{color: FUNNEL_COLOURS.muted}}
+                    >
+                      {COPY.leakBody || COPY.proofLeadGeneric}
+                    </p>
+                  </Reveal>
+                  <bundleUi.Leak />
+                </section>
+              </>
             ) : isBundleClinic ? (
               <>
                 <Reveal delay={0.08} y={12}>
@@ -1850,7 +1896,7 @@ const FunnelPage: React.FC = () => {
                       className="font-sans text-base md:text-lg leading-relaxed max-w-2xl mb-2"
                       style={{color: FUNNEL_COLOURS.muted}}
                     >
-                      Profile and reviews pull people in. Booking and the phone path still drop them.
+                      Profile and reviews pull people in. Without Book now they still have to ring you tomorrow.
                     </p>
                   </Reveal>
                   <BundleFrontDoorLeakPair />
@@ -2194,6 +2240,8 @@ const FunnelPage: React.FC = () => {
                 <SopPlaybookPainCards />
               ) : isDashboardLite ? (
                 <DashboardLitePainCards />
+              ) : bundleUi ? (
+                <bundleUi.Pain />
               ) : isBundleClinic ? (
                 <BundleClinicPainCards />
               ) : isBundleSpeedNext ? (
@@ -2434,6 +2482,10 @@ const FunnelPage: React.FC = () => {
             </section>
           ) : null}
 
+          {relatedOffer ? (
+            <FunnelRelatedOffer offer={relatedOffer} business={business} />
+          ) : null}
+
           <section
             className={`w-full overflow-hidden ${
               isWebsite ? 'py-20 md:py-28 mb-20 md:mb-28' : 'py-16 md:py-24 mb-16 md:mb-24'
@@ -2554,6 +2606,8 @@ const FunnelPage: React.FC = () => {
                   <SopPlaybookDeliverableMock />
                 ) : isDashboardLite ? (
                   <DashboardLiteDeliverableMock />
+                ) : bundleUi ? (
+                  <bundleUi.Deliverable />
                 ) : isBundleClinic ? (
                   <BundleClinicDeliverableMock />
                 ) : isBundleSpeedNext ? (

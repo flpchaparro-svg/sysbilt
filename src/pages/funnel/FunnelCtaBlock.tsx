@@ -3,20 +3,21 @@ import {ArrowRight, ChevronDown} from 'lucide-react'
 import {Link} from 'react-router-dom'
 import {FUNNEL_FOOTER_TEXT} from '../../constants/funnel'
 import {FUNNEL_COLOURS} from './funnelTheme'
+import {CtaLabelText} from './funnelCtaLabel'
 
 export type FunnelCtaSize = 'md' | 'lg' | 'xl' | 'final'
 
 function ctaSizeClass(size: FunnelCtaSize): string {
   switch (size) {
     case 'final':
-      // Slightly tighter tracking on small screens so label + arrow stay one line.
-      return 'w-full max-w-2xl px-8 py-7 sm:px-10 md:px-14 md:py-8 text-[15px] sm:text-base md:text-lg tracking-[0.12em] sm:tracking-[0.18em] md:tracking-[0.22em] min-h-[5.25rem] md:min-h-[5.75rem] justify-center shadow-[0_18px_50px_-12px_rgba(226,30,63,0.55)]'
+      // Phone: short label + tighter tracking. Full copy from sm (tablet) up.
+      return 'w-full max-w-2xl px-5 py-6 sm:px-10 md:px-14 md:py-8 text-[14px] sm:text-base md:text-lg tracking-[0.08em] sm:tracking-[0.18em] md:tracking-[0.22em] min-h-[4.75rem] md:min-h-[5.75rem] justify-center shadow-[0_18px_50px_-12px_rgba(226,30,63,0.55)]'
     case 'xl':
-      return 'px-11 py-5 text-[15px] tracking-[0.22em] min-h-[4rem]'
+      return 'px-6 py-4 sm:px-11 sm:py-5 text-[13px] sm:text-[15px] tracking-[0.1em] sm:tracking-[0.22em] min-h-[3.5rem] sm:min-h-[4rem]'
     case 'lg':
-      return 'px-10 py-5 text-sm tracking-[0.22em] min-h-[3.75rem]'
+      return 'px-6 py-4 sm:px-10 sm:py-5 text-[13px] sm:text-sm tracking-[0.1em] sm:tracking-[0.22em] min-h-[3.25rem] sm:min-h-[3.75rem]'
     default:
-      return 'px-8 py-4 text-xs tracking-[0.2em] min-h-[3rem]'
+      return 'px-5 py-3.5 sm:px-8 sm:py-4 text-[11px] sm:text-xs tracking-[0.1em] sm:tracking-[0.2em] min-h-[2.75rem] sm:min-h-[3rem]'
   }
 }
 
@@ -57,7 +58,9 @@ export function FunnelPrimaryLink({
         }`}
         style={{color: FUNNEL_COLOURS.onInk}}
       >
-        <span className="leading-none">{children}</span>
+        <span className="leading-none">
+          {typeof children === 'string' ? <CtaLabelText label={children} /> : children}
+        </span>
         <ArrowRight className={iconClass} aria-hidden />
       </span>
     </a>
@@ -137,7 +140,7 @@ export function FunnelCtaBlock({
             color: FUNNEL_COLOURS.onInk,
           }}
         >
-          {label}
+          {typeof label === 'string' ? <CtaLabelText label={label} /> : label}
         </span>
       )
     }
@@ -260,8 +263,8 @@ function DualSwapCta({
   const iconClass = btnSize === 'md' ? 'w-4 h-4 shrink-0' : 'w-5 h-5 shrink-0'
   const optionPad =
     btnSize === 'xl' || btnSize === 'lg'
-      ? 'px-8 py-4 text-xs tracking-[0.18em] min-h-[3.25rem]'
-      : 'px-6 py-3.5 text-[11px] tracking-[0.16em] min-h-[2.85rem]'
+      ? 'px-5 py-3.5 sm:px-8 sm:py-4 text-[11px] sm:text-xs tracking-[0.1em] sm:tracking-[0.18em] min-h-[3rem] sm:min-h-[3.25rem]'
+      : 'px-4 py-3 sm:px-6 sm:py-3.5 text-[10px] sm:text-[11px] tracking-[0.08em] sm:tracking-[0.16em] min-h-[2.6rem] sm:min-h-[2.85rem]'
 
   return (
     <div
@@ -294,7 +297,9 @@ function DualSwapCta({
           className="relative z-10 inline-flex w-full items-center justify-between gap-3 px-1"
           style={{color: FUNNEL_COLOURS.onInk}}
         >
-          <span className="leading-none text-left truncate">{current.ctaLabel}</span>
+          <span className="leading-none text-left min-w-0 truncate">
+            {current.ctaLabel ? <CtaLabelText label={current.ctaLabel} /> : null}
+          </span>
           <span className="inline-flex items-center gap-2 shrink-0">
             <ChevronDown
               className={`w-4 h-4 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
@@ -332,7 +337,9 @@ function DualSwapCta({
                     : '0 10px 28px -18px rgba(226,30,63,0.35)',
                 }}
               >
-                <span className="min-w-0 text-left leading-none truncate">{opt.ctaLabel}</span>
+                <span className="min-w-0 text-left leading-none truncate">
+                  {opt.ctaLabel ? <CtaLabelText label={opt.ctaLabel} /> : null}
+                </span>
                 <ArrowRight className="w-4 h-4 shrink-0" aria-hidden />
               </a>
             )

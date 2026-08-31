@@ -1,13 +1,10 @@
 /**
  * Private /go/ funnel commerce constants.
  *
- * Post-purchase access is the branded wizard at /go/access (not Tally).
- * TALLY_ACCESS_FORM_URL remains as an emergency backup URL only.
+ * Post-purchase access is the branded wizard at /go/access.
  *
  * status: 'soon' = visual draft only (no Stripe / form sale).
  */
-export const TALLY_ACCESS_FORM_URL =
-  'https://tally.so/r/2EyW7D' as const
 
 /** Locked footer copy for every /go/ surface (Privacy + Terms are linked in the UI). */
 export const FUNNEL_FOOTER_TEXT = 'SYSBILT, Sydney. ABN 56 115 228 020.' as const
@@ -51,6 +48,14 @@ export const FUNNEL_PRODUCT_CODES = [
   'bundle-clinic',
   'bundle-speed-next',
   'bundle-front-door',
+  'found-booked',
+  'catch-the-lead',
+  'call-and-book',
+  'maps-trust',
+  'full-diary',
+  'get-found',
+  'get-found-full',
+  'quote-path',
   'website-hook',
 ] as const
 
@@ -89,7 +94,7 @@ export const FUNNEL_PRODUCT_LABELS: Record<FunnelProductCode, string> = {
   'client-finder': 'Client Finder Sprint',
   'enquiry-reply': 'Enquiry Auto-Reply',
   'profile-posting': 'Profile Posting System',
-  'local-pack': 'Local Pack',
+  'local-pack': 'Maps alive',
   'conversion-pass': 'Conversion Pass',
   'onpage-search': 'On-Page Search Pack',
   'schema-faq': 'Schema and FAQ Pack',
@@ -106,9 +111,17 @@ export const FUNNEL_PRODUCT_LABELS: Record<FunnelProductCode, string> = {
   'inbox-triage': 'Inbox Triage Assistant',
   'sop-playbook': 'SOP to AI Playbook',
   'dashboard-lite': 'Dashboard Lite',
-  'bundle-clinic': 'Clinic Capture Bundle',
-  'bundle-speed-next': 'Speed Next Bundle',
-  'bundle-front-door': 'Front Door Bundle',
+  'bundle-clinic': 'Catch the lead',
+  'bundle-speed-next': 'Pages that ask',
+  'bundle-front-door': 'Front Door',
+  'found-booked': 'Found and booked',
+  'catch-the-lead': 'Catch the lead',
+  'call-and-book': 'Call and book',
+  'maps-trust': 'Maps trust',
+  'full-diary': 'Full diary',
+  'get-found': 'Get found',
+  'get-found-full': 'Get found (full)',
+  'quote-path': 'Quote path',
   'website-hook': 'Hosted Website Plan',
 }
 
@@ -161,6 +174,14 @@ export const FUNNEL_OUTBOUND_CODES: ReadonlySet<string> = new Set([
   'bundle-clinic',
   'bundle-speed-next',
   'bundle-front-door',
+  'found-booked',
+  'catch-the-lead',
+  'call-and-book',
+  'maps-trust',
+  'full-diary',
+  'get-found',
+  'get-found-full',
+  'quote-path',
   'geo',
   'client-finder',
 ])
@@ -318,8 +339,8 @@ export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
   },
   {
     code: 'local-pack',
-    title: 'Local Pack',
-    price: '$2,400',
+    title: 'Maps alive',
+    price: '$2,250',
     blurb: 'Profile Fix, Review Engine, and Profile Posting in one sprint. Not local SEO.',
     status: 'live',
     lane: 'outbound',
@@ -487,19 +508,39 @@ export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
     href: '/go/dashboard-lite',
   },
   {
-    code: 'bundle-clinic',
-    title: 'Clinic Capture Bundle',
-    price: '$2,200',
+    code: 'found-booked',
+    title: 'Found and booked',
+    price: '$2,300',
+    blurb: 'Profile Fix, Booking, and Missed-Call in one pass.',
+    status: 'live',
+    lane: 'outbound',
+    section: 'draft-bundles',
+    href: '/go/found-booked',
+  },
+  {
+    code: 'catch-the-lead',
+    title: 'Catch the lead',
+    price: '$1,950',
     blurb: 'Profile Fix, Review Engine, and Missed-Call in one pass.',
     status: 'live',
     lane: 'outbound',
     section: 'draft-bundles',
-    href: '/go/bundle-clinic',
+    href: '/go/catch-the-lead',
+  },
+  {
+    code: 'bundle-clinic',
+    title: 'Catch the lead',
+    price: '$1,950',
+    blurb: 'Redirects to Catch the lead. Profile, Reviews, Missed-Call.',
+    status: 'live',
+    lane: 'outbound',
+    section: 'draft-bundles',
+    href: '/go/catch-the-lead',
   },
   {
     code: 'bundle-speed-next',
-    title: 'Speed Next Bundle',
-    price: '$2,400',
+    title: 'Pages that ask',
+    price: '$1,900',
     blurb: 'Conversion Pass plus Tracking Pack while the site is open.',
     status: 'live',
     lane: 'outbound',
@@ -508,13 +549,73 @@ export const FUNNEL_PRODUCT_CATALOGUE: FunnelProductCard[] = [
   },
   {
     code: 'bundle-front-door',
-    title: 'Front Door Bundle',
-    price: '$3,400',
+    title: 'Front Door',
+    price: '$2,550',
     blurb: 'Profile, Reviews, and Booking so demand can land and book.',
     status: 'live',
     lane: 'outbound',
     section: 'draft-bundles',
     href: '/go/bundle-front-door',
+  },
+  {
+    code: 'call-and-book',
+    title: 'Call and book',
+    price: '$1,800',
+    blurb: 'Booking System plus Missed-Call Text-Back.',
+    status: 'live',
+    lane: 'outbound',
+    section: 'draft-bundles',
+    href: '/go/call-and-book',
+  },
+  {
+    code: 'maps-trust',
+    title: 'Maps trust',
+    price: '$1,350',
+    blurb: 'Profile Fix plus Review Engine.',
+    status: 'live',
+    lane: 'outbound',
+    section: 'draft-bundles',
+    href: '/go/maps-trust',
+  },
+  {
+    code: 'full-diary',
+    title: 'Full diary',
+    price: '$2,400',
+    blurb: 'Booking, Missed-Call, and No-Show Rescue.',
+    status: 'live',
+    lane: 'outbound',
+    section: 'draft-bundles',
+    href: '/go/full-diary',
+  },
+  {
+    code: 'get-found',
+    title: 'Get found',
+    price: '$2,100',
+    blurb: 'Search Fix plus Schema and FAQ.',
+    status: 'live',
+    lane: 'outbound',
+    section: 'draft-bundles',
+    href: '/go/get-found',
+  },
+  {
+    code: 'get-found-full',
+    title: 'Get found (full)',
+    price: '$3,600',
+    blurb: 'Search Fix, On-Page Search, and Schema and FAQ.',
+    status: 'live',
+    lane: 'outbound',
+    section: 'draft-bundles',
+    href: '/go/get-found-full',
+  },
+  {
+    code: 'quote-path',
+    title: 'Quote path',
+    price: '$3,400',
+    blurb: 'Quote Capture plus Quote Follow-Up.',
+    status: 'live',
+    lane: 'outbound',
+    section: 'draft-bundles',
+    href: '/go/quote-path',
   },
   {
     code: 'website',
@@ -566,15 +667,7 @@ export function isFunnelProductCode(value: string | null | undefined): value is 
   )
 }
 
-/** Build the Tally access-form URL with product pre-filled via query string. */
-export function tallyAccessFormUrlForProduct(product: string | null | undefined): string {
-  if (!isFunnelProductCode(product)) return TALLY_ACCESS_FORM_URL
-  const url = new URL(TALLY_ACCESS_FORM_URL)
-  url.searchParams.set('product', product)
-  return url.toString()
-}
-
-/** Branded on-site access wizard path (preferred over Tally). Always keeps ?p= when present. */
+/** Branded on-site access wizard path. Always keeps ?p= when present. */
 export function accessFormPathForProduct(
   product: string | null | undefined,
   mode?: string | null,
