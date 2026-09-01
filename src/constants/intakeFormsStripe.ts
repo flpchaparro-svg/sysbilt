@@ -4,4 +4,4 @@
  * After pay → https://sysbilt.com/go/thanks?p=intake-forms
  */
 export const INTAKE_FORMS_STRIPE_URL =
-  'https://buy.stripe.com/14A6oB3dT6feguO5O33gk0u'
+  'https://buy.stripe.com/3cI00dbKpcDC5Qa4JZ3gk1c'

@@ -7,8 +7,8 @@
     "name": "Booking System",
     "productId": "prod_Uykx4Xd62ZMqy0",
     "priceId": "price_1TynRA7kQC0CB85zqCclJLX7",
-    "paymentLinkId": "plink_1TynSy7kQC0CB85ztTSifDZY",
-    "paymentLinkUrl": "https://buy.stripe.com/3cI28l5m17jiceya4j3gk0b",
+    "paymentLinkId": "plink_1UAV5V7kQC0CB85zUj7gXDav",
+    "paymentLinkUrl": "https://buy.stripe.com/14A3cp5m1bzy92m3FV3gk0Z",
     "amountAud": 1500
   }
 }

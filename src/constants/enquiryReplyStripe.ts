@@ -5,4 +5,4 @@
  * After pay → https://sysbilt.com/go/thanks?p=enquiry-reply
  */
 export const ENQUIRY_REPLY_STRIPE_URL =
-  'https://buy.stripe.com/bJe28l4hXfPOa6qb8n3gk0h'
+  'https://buy.stripe.com/bJe14hdSx9rqdiC1xN3gk1o'

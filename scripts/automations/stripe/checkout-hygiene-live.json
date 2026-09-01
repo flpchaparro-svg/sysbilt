@@ -1,0 +1,15 @@
+{
+  "createdAt": "2026-08-31T13:00:00.000Z",
+  "mode": "live",
+  "note": "Live Payment Links recreated with terms required. Catalogue SKUs have one complementary optional extra (quantity 1, min 0). Website has no extras, saves the card, redirects to the wizard. Quote Capture URL kept. Old pack and replaced links deactivated.",
+  "publicDetails": "Set Terms https://sysbilt.com/terms and Privacy https://sysbilt.com/privacy in Dashboard → Settings → Public details.",
+  "googlePay": "Turn on in Dashboard → Settings → Payment methods. Default config pmc_1Tu1RK7kQC0CB85zqQbwEHyB.",
+  "quoteCaptureUrlKept": "https://buy.stripe.com/3cI14hbKp9rq4M6dgv3gk0E",
+  "website": {
+    "brochure": "https://buy.stripe.com/28EbIV5m1dHG6Ueb8n3gk1x",
+    "practice": "https://buy.stripe.com/14A4gtg0FdHG2DYb8n3gk1y",
+    "full": "https://buy.stripe.com/00waER01Havu5Qaekz3gk1z",
+    "afterPay": "/go/website/wizard?tier={tier}&paid=1&session_id={CHECKOUT_SESSION_ID}",
+    "monthlyStart": "node scripts/automations/stripe/start-website-monthly.mjs --email=… --tier=practice"
+  }
+}

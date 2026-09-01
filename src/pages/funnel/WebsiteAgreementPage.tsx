@@ -42,9 +42,9 @@ type SignedRecord = {
 }
 
 /**
- * Product agreement after Hosted Website Plan checkout.
- * Prefills from Stripe Checkout session when session_id is present.
- * Use ?preview=1 to review without paying.
+ * Hosted Website Plan agreement.
+ * Stripe checkout links here with ?preview=1 before pay.
+ * After pay, Stripe sends the buyer to the wizard.
  */
 export default function WebsiteAgreementPage() {
   const [params] = useSearchParams()
@@ -158,8 +158,8 @@ export default function WebsiteAgreementPage() {
             </span>
             <h1 className="type-h3 text-dark">Choose a plan first</h1>
             <p className="type-body mt-4 text-dark/70">
-              This agreement needs a plan (Brochure, Practice, or Full site). Pick one on the Hosted
-              Website Plan page, pay the enrolment, then you land here.
+              This agreement needs a plan (Brochure, Practice, or Full site). Stripe checkout links
+              the right plan. You can also open a preview from the Hosted Website Plan page.
             </p>
             <Link
               to="/go/website"
@@ -190,7 +190,8 @@ export default function WebsiteAgreementPage() {
             </span>
             <h1 className="type-h3 text-dark">{meta.name} agreement</h1>
             <p className="type-body mt-4 text-dark/70">
-              Pay ${meta.enrolmentAud} today to start, then this agreement opens automatically.
+              Read this agreement from Stripe checkout, tick the box there, then pay. After you pay
+              you go to the briefing form, not back here.
             </p>
             <Link
               to="/go/website"
@@ -219,7 +220,8 @@ export default function WebsiteAgreementPage() {
               className="mt-8 border border-dark/15 bg-white px-4 py-3 font-mono text-xs uppercase tracking-[0.16em] text-dark/70"
               data-noprint
             >
-              Preview mode · no Stripe payment on this view
+              This is the agreement Stripe links to. Tick the box on checkout to accept, then pay.
+              After you pay you go to the briefing form.
             </p>
           ) : null}
 
@@ -342,7 +344,12 @@ export default function WebsiteAgreementPage() {
               </div>
             </div>
 
-            {signed ? (
+            {preview ? (
+              <p className="font-sans text-base text-dark/70" data-noprint>
+                You accept this agreement by ticking the box on Stripe before you pay. After payment
+                you go to the briefing form.
+              </p>
+            ) : signed ? (
               <div className="website-agreement-sign-block border-2 border-dark bg-cream-warm p-8">
                 <p className="mb-4 font-mono text-xs uppercase tracking-[0.2em] text-red-text">
                   / Signed by the client

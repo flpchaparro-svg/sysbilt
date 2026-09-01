@@ -1,7 +1,7 @@
 /**
  * Hosted Website Plan · client agreement (repo template, not Notion).
  * Source: Felipe draft v1.0 (23 July 2026), updated for locked billing:
- * one month today to start, monthly autopay at go-live, 14 day delivery,
+ * build fee today (same dollar as a month of care), monthly care from go-live, 14 day delivery,
  * Brochure $120 / Practice $160 / Full $190.
  */
 
@@ -65,11 +65,11 @@ export function buildWebsiteAgreementSummary(tier: WebsiteTierCode): {
       },
       {
         label: 'What you pay today',
-        value: `$${meta.enrolmentAud}. One month to start the build (enrolment)`,
+        value: `$${meta.enrolmentAud} to start the build. Same dollar as a month of care, charged once so we can write and build`,
       },
       {
         label: 'When the monthly starts',
-        value: 'The day your site goes live, not the day you pay to begin',
+        value: 'The day your site goes live and people can use it. That charge is hosting and care, not a second build fee',
       },
       {
         label: 'Minimum term',
@@ -77,7 +77,7 @@ export function buildWebsiteAgreementSummary(tier: WebsiteTierCode): {
       },
       {
         label: 'How you pay',
-        value: 'Card at checkout today, then monthly autopay on that card from go-live',
+        value: 'Card at checkout today for the build, then monthly care on that card from the day the site is live',
       },
       {
         label: 'Leaving early',
@@ -118,7 +118,7 @@ export function buildWebsiteAgreementClauses(tier: WebsiteTierCode): WebsiteAgre
       paragraphs: [
         'Us: SYSBILT, ABN 56 115 228 020, Sydney, New South Wales. Where this agreement says "we", "us" or "our", that means SYSBILT.',
         'You: the business named at checkout and on the signing block. Where this agreement says "you" or "your", that means that business.',
-        'This agreement starts on the day you pay your enrolment (one month to start the build).',
+        'This agreement starts on the day you tick the box on Stripe and pay the build fee.',
       ],
     },
     {
@@ -138,10 +138,10 @@ export function buildWebsiteAgreementClauses(tier: WebsiteTierCode): WebsiteAgre
       id: 'hwa-3',
       title: '3. What you pay',
       paragraphs: [
-        `Today (enrolment): ${enrol}. That is one month of the ${meta.name} plan and it starts the build.`,
-        `Monthly: ${monthly}, charged from the day your site goes live on the card you used at checkout. Nothing is charged monthly while we are still building. The second charge around go-live is intentional. It is the first month of live care, not a duplicate enrolment fee.`,
-        'No GST line is added on top of the funnel price. Prices are as shown on /go/website.',
-        'How we take it: card at checkout today, then monthly autopay on that card from go-live. If a payment fails we will let you know and try again before anything else happens.',
+        `Today (build fee): ${enrol}. That payment is so we can interview, write and build the ${meta.name} site. It is the same dollar amount as a month of care, but it is not the first monthly care charge.`,
+        `Monthly (care): ${monthly}, charged from the day your site goes live on hosting and people can use it, on the card you used at checkout. Nothing is charged monthly while we are still building. The go-live charge is the first month of hosting and care, not a second build fee.`,
+        'We are not registered for GST. Prices are as shown on /go/website. Stripe receipts for this plan are the invoice for what you paid through Stripe.',
+        'How we take it: card at checkout today, then monthly autopay on that card from the day the site is live. If a payment fails we will let you know and try again before anything else happens.',
         'Price changes: your monthly fee is fixed for your minimum term. After that, we will give you at least 30 days written notice of any change, and if you do not want to accept it you can cancel without paying anything further.',
       ],
     },
@@ -302,8 +302,8 @@ export function buildWebsiteAgreementClauses(tier: WebsiteTierCode): WebsiteAgre
       id: 'hwa-19',
       title: '19. Acceptance',
       paragraphs: [
-        `By signing below you confirm you have read this agreement, you chose the ${meta.name} plan, and you authorise the ${enrol} enrolment charge today and monthly autopay of ${monthly} from go-live.`,
-        'Electronic signature on this page is binding. A copy stays on our systems for both of us.',
+        `By ticking the box on Stripe checkout you confirm you have read this agreement, you chose the ${meta.name} plan, and you authorise the ${enrol} build fee today and monthly autopay of ${monthly} from the day the site is live.`,
+        'That Stripe tick is acceptance. A copy of this agreement stays on our systems for both of us.',
       ],
     },
   ]

@@ -490,7 +490,7 @@ function WebsiteWizardPage() {
     const business = String(answers.businessName || '').trim()
     const phone = String(answers.contactPhone || '').trim()
     if (!tier) {
-      setSubmitError('Missing plan tier. Open this page from the agreement after payment.')
+      setSubmitError('Missing plan tier. Open this page after you pay, with your plan in the link.')
       return
     }
     if (name.length < 2 || !email.includes('@') || business.length < 2) {

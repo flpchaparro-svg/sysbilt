@@ -1,0 +1,18 @@
+---
+description: Hosted Website monthly care starts at go-live, not at the first Stripe payment. Felipe must run the start script.
+alwaysApply: true
+---
+
+# Hosted Website monthly: activate at go-live
+
+Stripe checkout for `/go/website` is the **build fee only**. Monthly care does **not** start when they pay.
+
+When the site is on hosting and people can use it, Felipe must start monthly:
+
+```bash
+node scripts/automations/stripe/start-website-monthly.mjs --email=owner@example.com --tier=practice
+```
+
+`--tier` is `brochure`, `practice`, or `full`. `--session=cs_live_…` or `--customer=cus_…` also work. Needs `Stripe_Secret_key_live` in `.env.local`.
+
+Do not skip this. Catalogue `/go` products are one payment. They do not need this script.

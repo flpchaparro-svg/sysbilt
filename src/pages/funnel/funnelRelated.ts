@@ -4,59 +4,59 @@ import {
   type FunnelProductCode,
 } from '../../constants/funnel'
 
-/** One related door per SKU. Packs when the jobs already sit together. Otherwise the next job. */
+/** One related door per SKU. Sibling product they do not already have. Never a pack that includes this SKU. */
 const RELATED: Partial<Record<FunnelProductCode, {code: FunnelProductCode; why: string}>> = {
   'google-profile': {
-    code: 'found-booked',
-    why: 'A clean listing still loses people if Book now is missing and a missed call goes to voicemail. Found and booked does all three at the pack price.',
+    code: 'reviews',
+    why: 'A clean listing still needs someone to ask after the job. Review Engine is that ask. The listing works without it.',
   },
   booking: {
-    code: 'call-and-book',
-    why: 'Book now is wasted if the people who still ring get voicemail. Call and book wires the diary and the miss together.',
+    code: 'missed-call',
+    why: 'Book now is for the people who will tap. Missed-Call Text-Back catches the ones who still ring and get voicemail.',
   },
   'missed-call': {
-    code: 'call-and-book',
-    why: 'A text-back catches the miss. Booking gives the ones who will tap a slot. Call and book is both, at the pack price.',
+    code: 'booking',
+    why: 'A text-back catches the miss. Booking System lets the ones who will tap a slot finish without ringing.',
   },
   reviews: {
-    code: 'maps-trust',
-    why: 'Reviews land harder on a listing that is already clean. Maps trust is Profile Fix plus Review Engine.',
+    code: 'google-profile',
+    why: 'Reviews land harder on a listing that is already clean. Google Profile Fix is that listing job.',
   },
   'profile-posting': {
-    code: 'local-pack',
-    why: 'Posts on a messy listing do not help. Maps alive cleans the profile, starts the review ask, then sets the posting cadence.',
+    code: 'reviews',
+    why: 'Posts keep the listing alive. Review Engine is the ask after the job, which posting does not do.',
   },
   'noshow-rescue': {
-    code: 'full-diary',
-    why: 'Reminders only help once Book now and missed-call text-back are live. Full diary is the three together.',
+    code: 'booking',
+    why: 'Reminders help once there is a real diary. Booking System is that Book now door.',
   },
   'search-fix': {
-    code: 'get-found',
-    why: 'Pages can be indexed and still lose the click if search cannot read your FAQs. Get found is Search Fix plus Schema and FAQ.',
+    code: 'schema-faq',
+    why: 'Pages can be indexed and still lose the click if search cannot read your FAQs. Schema and FAQ is that markup job.',
   },
   'schema-faq': {
-    code: 'get-found',
-    why: 'Markup helps once Google can actually find the pages. Get found does the index block and the FAQs in one window.',
+    code: 'search-fix',
+    why: 'Markup helps once Google can actually find the pages. Search Fix is the index block.',
   },
   'onpage-search': {
-    code: 'get-found-full',
-    why: 'Titles and headings sit next to the index fix and the FAQ markup. Get found (full) is the three together.',
+    code: 'schema-faq',
+    why: 'Titles and headings sit next to FAQ markup. Schema and FAQ is that extra, not a pack that already includes this job.',
   },
   'conversion-pass': {
-    code: 'bundle-speed-next',
-    why: 'Rewritten pages still fail if forms and taps are not tracked. Pages that ask is Conversion Pass plus Tracking, while the site is open.',
+    code: 'tracking-forms',
+    why: 'Rewritten pages still fail if forms and taps are not tracked. Tracking and Forms Pack wires the events while the site is open.',
   },
   'tracking-forms': {
-    code: 'bundle-speed-next',
-    why: 'Tracking without pages that ask is a report on a leak. Pages that ask does the copy and the events together.',
+    code: 'conversion-pass',
+    why: 'Tracking without pages that ask is a report on a leak. Conversion Pass is the rewrite.',
   },
   'quote-capture': {
-    code: 'quote-path',
-    why: 'A quote that sits quiet still needs a chase. Quote path is Capture plus Follow-Up at the pack price.',
+    code: 'quote-followup',
+    why: 'A quote that sits quiet still needs a chase. Quote Follow-Up is that chase, not a pack that already includes Capture.',
   },
   'quote-followup': {
-    code: 'quote-path',
-    why: 'Chase works when the quote was captured cleanly. Quote path is both jobs in one window.',
+    code: 'quote-capture',
+    why: 'Chase works when the quote was captured cleanly. Quote Capture is that first job.',
   },
   'speed-fix': {
     code: 'conversion-pass',
@@ -119,8 +119,8 @@ const RELATED: Partial<Record<FunnelProductCode, {code: FunnelProductCode; why: 
     why: 'A dashboard is empty until the events exist. Tracking and Forms Pack is the source of those numbers.',
   },
   geo: {
-    code: 'get-found',
-    why: 'AI search still needs Google to index you and read your FAQs. Get found is that pair.',
+    code: 'search-fix',
+    why: 'AI search still needs Google to index you. Search Fix is that index job, not a pack that already includes it.',
   },
   'client-finder': {
     code: 'geo',

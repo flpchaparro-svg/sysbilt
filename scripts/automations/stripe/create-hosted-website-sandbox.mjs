@@ -11,6 +11,7 @@
 import { readFileSync, existsSync, writeFileSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { websiteTerms } from './paymentLinkDefaults.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = resolve(__dirname, '../../..')
@@ -153,9 +154,12 @@ async function main() {
     const link = await stripe('POST', '/payment_links', {
       'line_items[0][price]': enrolment.id,
       'line_items[0][quantity]': 1,
+      ...websiteTerms(tier.code),
       'after_completion[type]': 'redirect',
       'after_completion[redirect][url]':
-        'https://sysbilt.com/go/website/wizard?paid=1&tier=' + tier.code,
+        'https://sysbilt.com/go/website/wizard?tier=' +
+        tier.code +
+        '&paid=1&session_id={CHECKOUT_SESSION_ID}',
       billing_address_collection: 'required',
       'phone_number_collection[enabled]': 'true',
       'tax_id_collection[enabled]': 'true',
@@ -165,9 +169,10 @@ async function main() {
       'metadata[tier]': tier.code,
       'metadata[kind]': 'enrolment',
       'custom_text[submit][message]':
-        'Today is one month to start. Monthly autopay begins when your site goes live.',
+        'Today is to start the build. Monthly care starts the day your site goes live.',
       'payment_intent_data[description]': productDescription(tier).slice(0, 1000),
       'payment_intent_data[statement_descriptor]': 'SYSBILTWEB',
+      'payment_intent_data[setup_future_usage]': 'off_session',
     })
 
     const row = {

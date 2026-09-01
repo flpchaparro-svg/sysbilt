@@ -4,4 +4,4 @@
  * After pay → https://sysbilt.com/go/thanks?p=dashboard-lite
  */
 export const DASHBOARD_LITE_STRIPE_URL =
-  'https://buy.stripe.com/8x24gt9Chbzy1zUfoD3gk0x'
+  'https://buy.stripe.com/cNifZb9ChcDCbau4JZ3gk19'

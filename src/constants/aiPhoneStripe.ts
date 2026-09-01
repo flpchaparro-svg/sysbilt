@@ -3,4 +3,4 @@
  *
  * After pay → https://sysbilt.com/go/thanks?p=ai-phone
  */
-export const AI_PHONE_STRIPE_URL = 'https://buy.stripe.com/7sY3cp9Ch5badiC1xN3gk0d'
+export const AI_PHONE_STRIPE_URL = 'https://buy.stripe.com/4gM00d6q5dHG2DY5O33gk1r'

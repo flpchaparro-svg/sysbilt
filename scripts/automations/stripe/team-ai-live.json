@@ -9,8 +9,8 @@
       "name": "Team AI (Remote)",
       "productId": "prod_UuMt8liY0159aM",
       "priceId": "price_1TvqGK7kQC0CB85zJebHgdVD",
-      "paymentLinkId": "plink_1TvqGL7kQC0CB85zwmNkXuiF",
-      "paymentLinkUrl": "https://buy.stripe.com/6oU4gt9Chavu5Qab8n3gk05",
+      "paymentLinkId": "plink_1UAVFt7kQC0CB85ziJLesEvy",
+      "paymentLinkUrl": "https://buy.stripe.com/9B614h8yd9rqguOfoD3gk1v",
       "amountAud": 1950
     },
     "onsite": {
@@ -19,8 +19,8 @@
       "name": "Team AI · Face-to-face",
       "productId": "prod_UuNaQVr3nckrPK",
       "priceId": "price_1TvqGJ7kQC0CB85z5qF5Wvjq",
-      "paymentLinkId": "plink_1TvqGK7kQC0CB85zfssE23Yl",
-      "paymentLinkUrl": "https://buy.stripe.com/aFa9AN4hXeLKdiC5O33gk02",
+      "paymentLinkId": "plink_1UAVFu7kQC0CB85zIMI18zUW",
+      "paymentLinkUrl": "https://buy.stripe.com/eVqfZbaGl9rqdiC0tJ3gk1w",
       "amountAud": 2400
     }
   }

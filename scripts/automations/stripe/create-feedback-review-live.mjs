@@ -8,6 +8,7 @@
 import {readFileSync, existsSync, writeFileSync} from 'node:fs'
 import {resolve, dirname} from 'node:path'
 import {fileURLToPath} from 'node:url'
+import {CATALOGUE_TERMS} from './paymentLinkDefaults.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = resolve(__dirname, '../../..')
@@ -92,6 +93,7 @@ const price = await stripe('prices', {
 const link = await stripe('payment_links', {
   'line_items[0][price]': price.id,
   'line_items[0][quantity]': '1',
+  ...CATALOGUE_TERMS,
   'after_completion[type]': 'redirect',
   'after_completion[redirect][url]':
     'https://sysbilt.com/go/thanks?p=feedback-review',

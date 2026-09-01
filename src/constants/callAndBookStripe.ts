@@ -4,4 +4,4 @@
  * After pay → https://sysbilt.com/go/thanks?p=call-and-book
  */
 export const CALL_AND_BOOK_STRIPE_URL =
-  'https://buy.stripe.com/7sYeV79Ch5baemG4JZ3gk0J'
+  'https://buy.stripe.com/14A8wJ7u98nm2DY4JZ3gk0X'

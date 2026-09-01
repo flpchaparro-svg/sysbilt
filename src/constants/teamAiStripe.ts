@@ -8,13 +8,13 @@ export const TEAM_AI_STRIPE = {
   remote: {
     label: 'Remote',
     ctaLabel: 'Book remote · $1,950',
-    stripeUrl: 'https://buy.stripe.com/6oU4gt9Chavu5Qab8n3gk05',
+    stripeUrl: 'https://buy.stripe.com/9B614h8yd9rqguOfoD3gk1v',
     amountAud: 1950,
   },
   onsite: {
     label: 'Face-to-face · Sydney',
     ctaLabel: 'Book face-to-face · $2,400',
-    stripeUrl: 'https://buy.stripe.com/aFa9AN4hXeLKdiC5O33gk02',
+    stripeUrl: 'https://buy.stripe.com/eVqfZbaGl9rqdiC0tJ3gk1w',
     amountAud: 2400,
   },
 } as const

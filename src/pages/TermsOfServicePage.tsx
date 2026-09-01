@@ -7,7 +7,6 @@ import {SEO_META} from '../constants/seoMeta'
 
 interface TermsOfServicePageProps {
   onBack: () => void
-  onNavigate?: (view: string) => void
 }
 
 const TermsOfServicePage: React.FC<TermsOfServicePageProps> = ({onBack}) => {
@@ -61,7 +60,8 @@ const TermsOfServicePage: React.FC<TermsOfServicePageProps> = ({onBack}) => {
             <h2 className="font-serif text-2xl mb-4">1. Who we are</h2>
             <p className="font-sans text-base text-dark/70 leading-relaxed">
               SYSBILT is a Sydney-based business systems firm. Our ABN appears on every invoice and
-              receipt (ABN 56 115 228 020). When these terms say "we" or "us", that's SYSBILT. "You"
+              receipt (ABN 56 115 228 020). We are not registered for GST, so prices are as shown,
+              with no GST added. When these terms say "we" or "us", that's SYSBILT. "You"
               means the business purchasing the service.
             </p>
           </section>
@@ -70,7 +70,9 @@ const TermsOfServicePage: React.FC<TermsOfServicePageProps> = ({onBack}) => {
             <h2 className="font-serif text-2xl mb-4">2. What these terms cover</h2>
             <p className="font-sans text-base text-dark/70 leading-relaxed">
               These terms apply to fixed-scope services purchased through our payment links or
-              accepted quotes. Paying for a service means you've read and accepted these terms.
+              accepted quotes. You accept them by ticking the box on the Stripe checkout page
+              before you pay. Hosted Website Plan sales also use the Hosted Website Plan agreement
+              linked on that checkout.
             </p>
           </section>
 
@@ -78,7 +80,8 @@ const TermsOfServicePage: React.FC<TermsOfServicePageProps> = ({onBack}) => {
             <h2 className="font-serif text-2xl mb-4">3. The deal, plainly</h2>
             <p className="font-sans text-base text-dark/70 leading-relaxed">
               Each service has a fixed price, a defined scope described on its page or quote, and a
-              delivery window. You pay once, up front. The delivery window starts when you submit the
+              delivery window. You pay once, up front, except the Hosted Website Plan, which has a
+              build fee today and monthly care from the day the site is live. The delivery window starts when you submit the
               access form with what the job needs, not at the moment of payment, because we can't
               start without access.
             </p>

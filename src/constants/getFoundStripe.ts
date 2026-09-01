@@ -4,4 +4,4 @@
  * After pay → https://sysbilt.com/go/thanks?p=get-found
  */
 export const GET_FOUND_STRIPE_URL =
-  'https://buy.stripe.com/bJecMZ01HfPOguOekz3gk0M'
+  'https://buy.stripe.com/dRmdR37u9eLK5Qaa4j3gk0U'

@@ -36,6 +36,9 @@ Requires `N8N_API_KEY` (or `cursor-mcp=` in `.env.local`).
 # Deploy social pipeline
 ./scripts/automations/n8n/deploy-social-pipeline.sh
 
+# Comment replies to Slack (LinkedIn email + IG/FB webhook)
+./scripts/automations/n8n/deploy-social-comment-replies.sh --activate
+
 # Deploy outbound list builder
 ./scripts/automations/n8n/deploy-outbound-list-builder.sh
 
@@ -58,6 +61,20 @@ node scripts/automations/n8n/patch-news-workflow.mjs
 Local deploy state (sheet IDs, credential IDs) is written to  
 `scripts/automations/n8n/.deploy-state.env` — **gitignored, never commit**.
 
+### Motion (Remotion on Mac Mini)
+
+Kinetic-type LinkedIn video. Preview locally, render on the Mini loopback service.
+
+```bash
+cd scripts/automations/motion && npm install && npx remotion studio
+./scripts/automations/n8n/deploy-motion-kinetic.sh --activate
+./scripts/automations/n8n/deploy-motion-story-card.sh --activate
+./scripts/automations/n8n/deploy-motion-toolkit-deck.sh --activate
+./scripts/automations/n8n/deploy-motion-charts.sh --activate
+```
+
+See `scripts/automations/motion/README.md`.
+
 ### Postiz (Mac Mini)
 
 ```bash
@@ -70,6 +87,10 @@ Local deploy state (sheet IDs, credential IDs) is written to
 ```bash
 ./scripts/automations/mcp/hubspot.sh
 ```
+
+### Stripe Payment Links
+
+See [`scripts/automations/stripe/README.md`](automations/stripe/README.md). Live hygiene and Hosted Website monthly start are run from the repo with `Stripe_Secret_key_live` in `.env.local`.
 
 ## Git workflow
 

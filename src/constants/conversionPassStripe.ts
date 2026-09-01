@@ -4,4 +4,4 @@
  * After pay → https://sysbilt.com/go/thanks?p=conversion-pass
  */
 export const CONVERSION_PASS_STRIPE_URL =
-  'https://buy.stripe.com/bJe14hbKpfPO2DY0tJ3gk0j'
+  'https://buy.stripe.com/9B68wJ01H6fe0vQfoD3gk1n'

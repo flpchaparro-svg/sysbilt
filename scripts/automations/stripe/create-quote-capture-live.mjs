@@ -10,6 +10,7 @@
 import {readFileSync, existsSync, writeFileSync} from 'node:fs'
 import {resolve, dirname} from 'node:path'
 import {fileURLToPath} from 'node:url'
+import {CATALOGUE_TERMS} from './paymentLinkDefaults.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = resolve(__dirname, '../../..')
@@ -136,9 +137,7 @@ const link = await stripe('payment_links', {
   'optional_items[1][adjustable_quantity][enabled]': 'true',
   'optional_items[1][adjustable_quantity][minimum]': '0',
   'optional_items[1][adjustable_quantity][maximum]': '1',
-  'consent_collection[terms_of_service]': 'required',
-  'custom_text[terms_of_service_acceptance][message]':
-    'I have read and agree to the [SYSBILT terms](https://sysbilt.com/terms)',
+  ...CATALOGUE_TERMS,
   'after_completion[type]': 'redirect',
   'after_completion[redirect][url]':
     'https://sysbilt.com/go/thanks?p=quote-capture',

@@ -1,15 +1,15 @@
 {
   "createdAt": "2026-07-24T12:41:00.000Z",
   "mode": "live",
-  "note": "Add logo on each Payment Link + Product in Dashboard (Live). After pay redirects to https://sysbilt.com/go/website/agreement?tier=…&paid=1&session_id={CHECKOUT_SESSION_ID}. Prefill needs live Stripe secret on Vercel (Stripe_Secret_key=sk_live_…).",
+  "note": "Build fee on the Payment Link (terms tick before pay, card saved). After pay → /go/website/wizard. Monthly care starts with start-website-monthly.mjs the day the site is live.",
   "tiers": [
     {
       "tier": "brochure",
       "productId": "prod_UwbcPE9RZV0vRc",
       "enrolmentPriceId": "price_1TwiPL7kQC0CB85z2TrBfBTr",
       "monthlyPriceId": "price_1TwiPN7kQC0CB85zJFKTC0OU",
-      "paymentLinkId": "plink_1TwiRP7kQC0CB85zggURaDhE",
-      "paymentLinkUrl": "https://buy.stripe.com/aFaaER01HfPO2DY1xN3gk0a",
+      "paymentLinkId": "plink_1UAVFu7kQC0CB85zAmcGc70r",
+      "paymentLinkUrl": "https://buy.stripe.com/28EbIV5m1dHG6Ueb8n3gk1x",
       "amountAud": 120
     },
     {
@@ -17,8 +17,8 @@
       "productId": "prod_UwbcnNzvpyzoWU",
       "enrolmentPriceId": "price_1TwiPN7kQC0CB85zqvxoE1wV",
       "monthlyPriceId": "price_1TwiPQ7kQC0CB85z66cewDKN",
-      "paymentLinkId": "plink_1TwiPo7kQC0CB85zt74gIC5i",
-      "paymentLinkUrl": "https://buy.stripe.com/4gM14h01HfPOdiC3FV3gk09",
+      "paymentLinkId": "plink_1UAVFv7kQC0CB85zdYFClRad",
+      "paymentLinkUrl": "https://buy.stripe.com/14A4gtg0FdHG2DYb8n3gk1y",
       "amountAud": 160
     },
     {
@@ -26,8 +26,8 @@
       "productId": "prod_UwbcOUjQcJbPAx",
       "enrolmentPriceId": "price_1TwiPQ7kQC0CB85zYNDDleCQ",
       "monthlyPriceId": "price_1TwiPQ7kQC0CB85zTJZaDYVK",
-      "paymentLinkId": "plink_1TwiPm7kQC0CB85zhf0Djw35",
-      "paymentLinkUrl": "https://buy.stripe.com/4gM28l01HgTS6Ue90f3gk08",
+      "paymentLinkId": "plink_1UAVFv7kQC0CB85z4ZWwgt5H",
+      "paymentLinkUrl": "https://buy.stripe.com/00waER01Havu5Qaekz3gk1z",
       "amountAud": 190
     }
   ]
