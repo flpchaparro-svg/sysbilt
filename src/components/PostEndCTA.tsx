@@ -1,8 +1,9 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import { ArrowUpRight } from 'lucide-react'
 
 export type PostEndCTAProps = {
-  onCtaClick: () => void
+  to?: string
   description?: string
   ctaLabel?: string
   className?: string
@@ -16,7 +17,7 @@ const BRUTAL_END_CTA_BTN =
   'font-mono text-xs font-bold uppercase transition-all duration-300 border-2 border-cream bg-cream text-dark type-eyebrow hover:bg-gold hover:border-gold hover:shadow-[4px_4px_0px_0px_#D4A84B] hover:-translate-y-0.5 px-8 py-4 inline-flex items-center gap-3'
 
 const PostEndCTA: React.FC<PostEndCTAProps> = ({
-  onCtaClick,
+  to = '/contact',
   description = DEFAULT_DESCRIPTION,
   ctaLabel = 'BOOK A CALL',
   className = '',
@@ -34,10 +35,10 @@ const PostEndCTA: React.FC<PostEndCTAProps> = ({
 
         <p className="type-body text-cream/65 mb-8 max-w-sm mx-auto text-pretty">{description}</p>
 
-        <button type="button" onClick={onCtaClick} className={BRUTAL_END_CTA_BTN}>
+        <Link to={to} className={BRUTAL_END_CTA_BTN}>
           {ctaLabel}
           <ArrowUpRight className="w-4 h-4" />
-        </button>
+        </Link>
 
         <div className="mt-8 flex items-center justify-center gap-2.5 font-mono text-[10px] uppercase tracking-widest text-cream/45">
           <span className="w-2 h-2 shrink-0 bg-gold-on-dark" aria-hidden />

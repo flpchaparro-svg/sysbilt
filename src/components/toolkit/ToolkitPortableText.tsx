@@ -1,6 +1,8 @@
 import {PortableText, type PortableTextComponents} from '@portabletext/react'
 import {Info} from 'lucide-react'
+import {Link} from 'react-router-dom'
 import {urlFor} from '../../sanityClient'
+import {toInternalPath} from '../../utils/internalHref'
 
 const THEME = {
   textMain: 'text-gold-on-dark',
@@ -112,16 +114,28 @@ export function ToolkitPortableText({value}: {value: unknown}) {
       code: ({children}) => (
         <code className="font-mono text-sm bg-white/10 px-1.5 py-0.5 text-gold-on-dark">{children}</code>
       ),
-      link: ({children, value}) => (
-        <a
-          href={value?.href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-gold-on-dark underline underline-offset-4 hover:text-white transition-colors"
-        >
-          {children}
-        </a>
-      ),
+      link: ({children, value}) => {
+        const internalPath = toInternalPath(value?.href)
+        const className =
+          'text-gold-on-dark underline underline-offset-4 hover:text-white transition-colors'
+        if (internalPath) {
+          return (
+            <Link to={internalPath} className={className}>
+              {children}
+            </Link>
+          )
+        }
+        return (
+          <a
+            href={value?.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={className}
+          >
+            {children}
+          </a>
+        )
+      },
     },
     types: {
       image: ({value}) => {

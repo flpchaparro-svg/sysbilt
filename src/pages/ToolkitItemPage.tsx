@@ -1,6 +1,6 @@
 import {PortableText} from '@portabletext/react'
 import React, {useEffect, useMemo, useRef, useState} from 'react'
-import {Link, useNavigate, useParams} from 'react-router-dom'
+import {Link, useParams} from 'react-router-dom'
 import {motion} from 'framer-motion'
 import {ArrowLeft, ArrowUpRight} from 'lucide-react'
 import ShareButton from '../components/ShareButton'
@@ -120,7 +120,6 @@ type ToolkitRouteData = {
 
 export default function ToolkitItemPage() {
   const {slug} = useParams<{slug: string}>()
-  const navigate = useNavigate()
   const routeData = useRouteData<ToolkitRouteData>()
   const initialDataRef = useRef<ToolkitRouteData | null>(
     routeData && routeData.slug === slug ? routeData : null,
@@ -563,13 +562,12 @@ export default function ToolkitItemPage() {
                   See the exact system we build to fix this
                 </p>
 
-                <button
-                  type="button"
-                  onClick={() => navigate(tool.internalLinkDestination!)}
+                <Link
+                  to={tool.internalLinkDestination}
                   className={`font-mono text-xs font-bold uppercase transition-all duration-300 border-2 border-white bg-white text-dark px-8 py-4 inline-flex items-center gap-3 hover:bg-gold hover:border-gold hover:text-dark hover:shadow-[4px_4px_0px_0px_#D4A84B] hover:-translate-y-0.5`}
                 >
                   AUDIT MY BUSINESS SYSTEMS <ArrowUpRight className="w-4 h-4" />
-                </button>
+                </Link>
               </div>
             )}
 
@@ -671,7 +669,7 @@ export default function ToolkitItemPage() {
           </div>
         )}
 
-        <PostEndCTA onCtaClick={() => navigate('/contact')} />
+        <PostEndCTA to="/contact" />
       </div>
     </main>
   )

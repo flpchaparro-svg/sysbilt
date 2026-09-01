@@ -1,0 +1,32 @@
+---
+description: Blog, toolkit, and guide linking at publish time. Educational URL to matching service page, then contact. No mesh.
+globs: src/pages/BlogPostPage.tsx,src/pages/ToolkitItemPage.tsx,src/pages/GuideDocumentPage.tsx,src/pages/GuidesHubPage.tsx,studio/schemaTypes/post.ts,studio/schemaTypes/toolkitItem.ts,studio/schemaTypes/guide.ts
+alwaysApply: false
+---
+
+# Content internal linking (publish checklist)
+
+Educational URLs pass one crawlable link **up** to the matching service page, then `/contact`. Do not mesh pages together. Do not invent routes or change slugs in this pass.
+
+Destinations that already exist: `/pillar1`–`/pillar7`, `/system`, `/contact`. Visible text uses the **service name**, never “pillar N”.
+
+## Blog
+
+- One in-body link to the matching service page (anchor is the service name).
+- Soft `/contact` (PostEndCTA already points there).
+- Optional one extra: matching book hub **or** one sibling post. Not both.
+- Paste the **live** slug. After a slug rename, search published `body[].markDefs` hrefs for the old path the same day.
+
+## Toolkit
+
+- Fill `internalLinkDestination` on the item (service page).
+- Do not add links from one tool page to another.
+
+## Guides
+
+- `ctaLink` is `https://sysbilt.com/contact` (or `/contact`).
+- Do not rewrite `/guides/dashboards` copy unless asked.
+
+## Same-site hrefs
+
+Keep `https://sysbilt.com/...` or a root-relative path. Same-site links stay on-site in the renderer (no `target="_blank"`). External citations still open in a new tab.

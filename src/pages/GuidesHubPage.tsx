@@ -7,7 +7,7 @@ import { useRouteData } from '../site/RouteContentProvider';
 import { SITE_ORIGIN } from '../constants/seoMeta';
 import { organizationIdRef } from '../constants/organizationJsonLd';
 import ShareButton from '../components/ShareButton';
-import { ArrowRight, BookOpen, FileText, Rss, ChevronDown, ChevronUp } from 'lucide-react';
+import { ArrowRight, BookOpen, FileText, Wrench, ChevronDown, ChevronUp } from 'lucide-react';
 import { client } from '../sanityClient';
 
 import { BTW_META } from '../built-to-work/types';
@@ -391,13 +391,13 @@ export default function GuidesHubPage() {
                   <p className="text-on-cream-secondary font-light text-sm leading-relaxed">System-thinking for modern businesses.</p>
                 </div>
               </Link>
-              <Link to="/news" className="group flex items-start gap-6 bg-cream rounded-2xl p-8 shadow-neu border border-white/50 hover:-translate-y-1 transition-all">
+              <Link to="/toolkit" className="group flex items-start gap-6 bg-cream rounded-2xl p-8 shadow-neu border border-white/50 hover:-translate-y-1 transition-all">
                 <div className="shrink-0 w-12 h-12 rounded-full bg-cream shadow-neu-inner flex items-center justify-center">
-                  <Rss className="w-5 h-5 text-dark/40 group-hover:text-red-text" strokeWidth={1.5} />
+                  <Wrench className="w-5 h-5 text-dark/40 group-hover:text-red-text" strokeWidth={1.5} />
                 </div>
                 <div>
-                  <h4 className="font-serif text-xl text-dark group-hover:text-red-text mb-2">News</h4>
-                  <p className="text-on-cream-secondary font-light text-sm leading-relaxed">Updates and announcements.</p>
+                  <h4 className="font-serif text-xl text-dark group-hover:text-red-text mb-2">Toolkit</h4>
+                  <p className="text-on-cream-secondary font-light text-sm leading-relaxed">Tools we rate, with a plain explanation of what each one does.</p>
                 </div>
               </Link>
             </div>

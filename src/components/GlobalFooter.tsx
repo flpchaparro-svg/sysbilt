@@ -70,12 +70,12 @@ const GlobalFooter: React.FC = () => {
   ];
 
   const capabilitiesList = [
-    'Business Systems Sydney',
-    'CRM Setup and Integration',
-    'Custom Website Development',
-    'AI Assistants and Voice Agents',
-    'Business Automation',
-    'Dashboards and Reporting',
+    { label: 'Business Systems Sydney', to: '/system' },
+    { label: 'CRM Setup and Integration', to: '/pillar2' },
+    { label: 'Custom Website Development', to: '/pillar1' },
+    { label: 'AI Assistants and Voice Agents', to: '/pillar4' },
+    { label: 'Business Automation', to: '/pillar3' },
+    { label: 'Dashboards and Reporting', to: '/pillar7' },
   ];
 
   return (
@@ -153,9 +153,13 @@ const GlobalFooter: React.FC = () => {
             aria-label="Capabilities and services"
           >
             {capabilitiesList.map((item) => (
-              <span key={item} className="font-sans text-[11px] sm:text-xs text-white/65 leading-snug">
-                {item}
-              </span>
+              <Link
+                key={item.to}
+                to={item.to}
+                className="font-sans text-[11px] sm:text-xs text-white/65 leading-snug hover:text-white transition-colors"
+              >
+                {item.label}
+              </Link>
             ))}
           </div>
         </div>

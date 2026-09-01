@@ -11,6 +11,7 @@ import { PageMeta } from '../components/PageMeta';
 import { RouteHead } from '../site/RouteHead';
 import { useRouteData } from '../site/RouteContentProvider';
 import { brandTitle, stripSysbiltBrand } from '../utils/brandTitle';
+import { toInternalPath } from '../utils/internalHref';
 
 /** Shape embedded by `scripts/site/render-routes.mjs` for the `/blog/:slug` pilot route. */
 type BlogRouteData = {
@@ -708,11 +709,22 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
         }
         return <strong className="font-semibold text-white">{children}</strong>;
       },
-      link: ({ children, value }: any) => (
-        <a href={value.href} className={`text-white underline decoration-white/30 ${theme.linkHover} underline-offset-4 transition-colors`} target="_blank" rel="noopener noreferrer">
-          {children}
-        </a>
-      ),
+      link: ({ children, value }: any) => {
+        const internalPath = toInternalPath(value?.href)
+        const className = `text-white underline decoration-white/30 ${theme.linkHover} underline-offset-4 transition-colors`
+        if (internalPath) {
+          return (
+            <Link to={internalPath} className={className}>
+              {children}
+            </Link>
+          )
+        }
+        return (
+          <a href={value.href} className={className} target="_blank" rel="noopener noreferrer">
+            {children}
+          </a>
+        )
+      },
     },
   };
 
@@ -978,12 +990,12 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
                   See the exact system we build to fix this
                 </p>
                 
-                <button 
-                  onClick={() => onNavigate(post.internalLinkDestination.replace('/', ''))}
+                <Link
+                  to={post.internalLinkDestination}
                   className={`font-mono text-xs font-bold uppercase transition-all duration-300 ${theme.btnInlineCta} px-8 py-4 inline-flex items-center gap-3`}
                 >
                   {post?.customCTA || 'SEE THE SYSTEM'} <ArrowUpRight className="w-4 h-4" />
-                </button>
+                </Link>
               </div>
             ) : (
               <div className={`mt-20 border ${theme.borderSubtle} ${theme.bgSubtle} p-8 md:p-12 relative overflow-hidden group ${theme.isBw ? 'shadow-[8px_8px_0px_0px_rgba(255,255,255,0.1)]' : ''}`}>
@@ -1128,7 +1140,7 @@ export default function BlogPostPage({ onNavigate }: { onNavigate: (path: string
           </div>
         )}
 
-        <PostEndCTA onCtaClick={() => onNavigate('contact')} />
+        <PostEndCTA to="/contact" />
 
       </div>
     </main>
