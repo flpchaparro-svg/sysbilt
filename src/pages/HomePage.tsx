@@ -134,13 +134,6 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, onServiceClick }) => {
         <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 relative z-20">
           <div className="lg:col-span-12 flex flex-col justify-start md:justify-center items-center lg:items-start text-center lg:text-left pt-8 md:pt-0">
 
-            <nav
-              aria-label="Breadcrumb"
-              className="mb-6 relative z-20 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-dark/45 w-full text-left"
-            >
-              <span className="text-dark/70">Home</span>
-            </nav>
-
             <h1 id="homepage-hero-heading" className="sr-only">
               Business Systems & Automation Agency Sydney | SYSBILT
             </h1>
