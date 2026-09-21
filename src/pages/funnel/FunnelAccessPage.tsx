@@ -26,6 +26,7 @@ import {
 import {SysbiltLogo} from '../../components/SysbiltLogo'
 import {PageMeta} from '../../components/PageMeta'
 import {SITE_ORIGIN} from '../../constants/seoMeta'
+import {trackGenerateLead} from '../../utils/trackLead'
 import {
   FUNNEL_PRODUCT_CATALOGUE,
   FUNNEL_PRODUCT_LABELS,
@@ -6503,6 +6504,11 @@ const FunnelAccessPage: React.FC = () => {
       if (!res.ok) {
         throw new Error(data.error || 'Could not submit. Try again or reply to your payment email.')
       }
+      trackGenerateLead({
+        formId: 'funnel_access',
+        formDestination: 'funnel_access',
+        product,
+      })
       setStep('done')
       setHelpOpen(false)
     } catch (err) {

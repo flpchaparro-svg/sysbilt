@@ -388,11 +388,11 @@ export const MISSED_CALL_COPY: FunnelProductCopy = {
 }
 
 export const GOOGLE_PROFILE_COPY: FunnelProductCopy = {
-  eyebrow: 'Fixed price, two business days, you keep the keys',
-  h1Generic: "Your Google profile is the first thing customers see, and right now it's working against you",
+  eyebrow: 'Fixed price, two business days, Google Business Profile management',
+  h1Generic: "Your Google Business Profile is the first thing customers see, and right now it's working against you",
   h1Personal: (b: string) =>
-    `${b}, your Google profile is the first thing customers see, and right now it's working against you`,
-  sub: "Before anyone visits your website, they see your Google Business Profile: the map listing, the photos, the reviews, the hours. When it's thin or half-claimed, people quietly pick the business next to you that looks alive.",
+    `${b}, your Google Business Profile is the first thing customers see, and right now it's working against you`,
+  sub: "Before anyone visits your website, they see your Google Business Profile: the map listing, the photos, the reviews, the hours. Google Business Profile management is two business days of proper attention on that panel, not a retainer.",
   ctaLabel: 'Fix my profile, $600',
   proofLabel: 'The front door',
   proofHeadingLive: 'Search your name, then your best competitor. That gap is the job',
@@ -2238,11 +2238,11 @@ export const PROFILE_POSTING_COPY: FunnelProductCopy = {
 
 /** Bundle: Profile Fix + Review Engine + Profile Posting. Not local SEO. */
 export const LOCAL_PACK_COPY: FunnelProductCopy = {
-  eyebrow: 'Three jobs, one sprint, one location',
-  h1Generic: 'Your Google listing needs a clean profile, a review habit, and posts that keep showing up',
+  eyebrow: 'Three jobs, one sprint, one Google Business Profile',
+  h1Generic: 'Your Google listing on Maps needs a clean profile, a review habit, and posts that keep showing up',
   h1Personal: (b: string) =>
-    `${b}, your Google listing needs a clean profile, a review habit, and posts that keep showing up`,
-  sub: 'Three jobs in one delivery: your listing cleaned up, a review ask that keeps firing after every job, and a posting kit so the Updates tab stops looking abandoned. This is not local SEO and it is not a rankings promise,     it is the front door on Maps, done properly, for $550 less than buying the three apart.',
+    `${b}, your Google listing on Maps needs a clean profile, a review habit, and posts that keep showing up`,
+  sub: 'Three jobs in one delivery: Google Business Profile cleaned up, a review ask that keeps firing after every job, and a posting kit so the Updates tab stops looking abandoned. This is not local SEO and it is not a rankings promise. It is the front door on Maps, done properly, for $550 less than buying the three apart.',
   ctaLabel: 'Get Maps alive, $2,250',
   proofLabel: 'The picture',
   proofHeadingLive: 'Maps trust is three jobs, not one',
@@ -2502,11 +2502,11 @@ export const CONVERSION_PASS_COPY: FunnelProductCopy = {
 
 /** Titles, headings, links, and thin-page lifts on priority URLs. Not a retainer. */
 export const ONPAGE_SEARCH_COPY: FunnelProductCopy = {
-  eyebrow: 'Fixed price, about a week, up to eight pages',
+  eyebrow: 'Fixed price, about a week, on-page search on up to eight pages',
   h1Generic: 'Your pages look finished and still say almost nothing Google can trust',
   h1Personal: (b: string) =>
     `${b}, your pages look finished and still say almost nothing Google can trust`,
-  sub: 'Every page title starts with your business name, the service pages could be swapped without anyone noticing, and nothing links to anything. So a clearer competitor takes the click. We fix the titles, headings, internal links and thin pages on the eight that matter most. One job with an end, not a six-month retainer.',
+  sub: 'On-page search is titles, headings, and pages that say what they are. Every page title starts with your business name, the service pages could be swapped without anyone noticing, and nothing links to anything. So a clearer competitor takes the click. We fix the titles, headings, internal links and thin pages on the eight that matter most. One job with an end, not a six-month retainer.',
   ctaLabel: 'Fix my on-page search, $1,900',
   proofLabel: 'The picture',
   proofHeadingLive: 'Messy pages lose to clearer ones',

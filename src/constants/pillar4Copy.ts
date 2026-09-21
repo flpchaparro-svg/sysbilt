@@ -1,7 +1,7 @@
 export const pillar4Copy = {
   hero: {
-    headline: 'Stop answering the same questions over and over',
-    sub: 'We build AI assistants that know your business inside out. They answer your phone, reply to enquiries, and handle the repetitive questions so you and your team don\'t have to.',
+    headline: 'AI assistants and consulting for growing companies',
+    sub: 'We set up AI assistants for growing Australian companies in Sydney. They answer the phone, reply to enquiries, and handle the questions your team is tired of repeating, then we wire them into the rest of your system.',
     ctaPrimary: 'BOOK A CALL',
   },
   gap: {
@@ -47,7 +47,7 @@ export const pillar4Copy = {
     points: [
       { title: 'Engage', desc: 'The AI sits on your website, answers your phone, or lives in your team\'s chat. It catches questions the moment they happen.' },
       { title: 'Qualify', desc: 'It talks to the person, gathers their details, and figures out exactly what they need. Not a form, a conversation.' },
-      { title: 'Action', desc: 'The qualified lead gets pushed straight into your CRM (Pillar 2) and your team gets notified through your automations (Pillar 3). By the time you look at your screen the heavy lifting is done.' },
+      { title: 'Action', desc: 'The qualified lead gets pushed straight into your CRM and your team gets notified through your automations. By the time you look at your screen the heavy lifting is done.' },
     ],
   },
 };

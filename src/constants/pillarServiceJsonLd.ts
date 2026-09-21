@@ -38,8 +38,8 @@ const PILLAR_SERVICE_META: Record<
     url: `${SITE_ORIGIN}/pillar3`,
   },
   pillar4: {
-    name: 'AI assistants for business',
-    serviceType: 'AI implementation',
+    name: 'AI assistants and AI consulting',
+    serviceType: 'AI consulting',
     url: `${SITE_ORIGIN}/pillar4`,
   },
   pillar5: {

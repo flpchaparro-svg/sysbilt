@@ -543,10 +543,10 @@ export const DETAIL_LINES: Record<string, string> = {
   'job-flow': 'job automation',
   alerts: 'alert automation',
   'other-auto': 'automation',
-  'site-chat': 'website chat',
-  phone: 'phone AI',
-  'team-ai': 'team AI',
-  'other-ai': 'AI help',
+  'site-chat': 'an AI assistant on the website',
+  phone: 'an AI phone assistant',
+  'team-ai': 'a team AI assistant',
+  'other-ai': 'an AI assistant',
   posting: 'social posting',
   blog: 'blog content',
   system: 'a publishing system',
@@ -562,9 +562,9 @@ export const DETAIL_LINES: Record<string, string> = {
   speed: 'website speed work',
   images: 'image and media cleanup',
   'other-speed': 'speed work',
-  'profile-clean': 'Google profile cleanup',
-  claim: 'profile claim and access',
-  'other-profile': 'Google profile work',
+  'profile-clean': 'Google Business Profile cleanup',
+  claim: 'Google Business Profile access',
+  'other-profile': 'Google Business Profile work',
   wizard: 'a quote wizard',
   rates: 'a locked rate card',
   'other-quote': 'quote capture work',
@@ -604,9 +604,9 @@ export function buildFakeDraft(input: {
   bits.push(`We worked with SYSBILT on ${detail}.`)
 
   if (input.resultId === 'nailed') {
-    bits.push('The finished work was what we needed.')
+    bits.push(`They set up ${detail} and it does what we needed.`)
   } else if (input.resultId === 'solid') {
-    bits.push('The result was good and ready to use.')
+    bits.push(`The ${detail} is good and ready to use.`)
   }
 
   if (input.attentionId === 'tight') {

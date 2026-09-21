@@ -82,6 +82,7 @@ import {
   fetchSanityContent,
   buildAllRoutes,
   buildSitemapXml,
+  NOT_FOUND_HTML_PATH,
 } from './stamp-meta.mjs';
 import {
   bodyPolicyForPath,
@@ -234,11 +235,30 @@ async function checkWaveACrawlGraph() {
     const spaExcludesSitemap =
       typeof spaRewrite?.source === 'string' &&
       (spaRewrite.source.includes('sitemap\\.xml') || spaRewrite.source.includes('sitemap.xml'));
+    const spaExcludesNotFound =
+      typeof spaRewrite?.source === 'string' &&
+      (spaRewrite.source.includes('404\\.html') || spaRewrite.source.includes('404.html'));
 
     // Static dist/sitemap.xml is filesystem-served. Guard against the SPA fallback
     // swallowing it; do not require a redundant identity rewrite (Vercel may omit those).
     if (!hasIdentitySitemapRewrite && !spaExcludesSitemap) {
       addViolation('sitemap — vercel.json SPA fallback does not exclude the static sitemap.xml route');
+    }
+    if (!spaExcludesNotFound) {
+      addViolation('404 — vercel.json SPA fallback does not exclude the static 404.html route');
+    }
+
+    const redirects = Array.isArray(parsedVercel.redirects) ? parsedVercel.redirects : [];
+    const middlewareSrc = await readSource('middleware.ts');
+    for (const rule of redirects) {
+      const source = String(rule?.source || '');
+      if (!source.startsWith('/blog/')) continue;
+      const slug = source.slice('/blog/'.length);
+      if (middlewareSrc && !middlewareSrc.includes(`'${slug}'`)) {
+        addViolation(
+          `404 — vercel.json redirect ${source} is missing from middleware BLOG_REDIRECT_SLUGS (would 404 before the 308)`
+        );
+      }
     }
   }
 }
@@ -407,6 +427,36 @@ async function checkNoindexBookReadRoutes() {
   for (const p of NOINDEX_BOOK_READ_PATHS) {
     const html = await readDist(p);
     checkNoindexShellRoute(p, html);
+  }
+}
+
+async function checkNotFoundHtml(sitemapXml) {
+  let html = null;
+  try {
+    html = await readFile(NOT_FOUND_HTML_PATH, 'utf8');
+  } catch {
+    addViolation('404 — generated file missing (dist/404.html)');
+    return;
+  }
+
+  const titleMatch = html.match(/<title>([^<]*)<\/title>/);
+  if (!titleMatch || titleMatch[1].trim() !== 'Page not found | SYSBILT') {
+    addViolation('404 — dist/404.html must use title "Page not found | SYSBILT"');
+  }
+  if (!/<meta[^>]+name="robots"[^>]*content="[^"]*noindex/i.test(html)) {
+    addViolation('404 — dist/404.html missing noindex robots meta');
+  }
+  if (/<link rel="canonical"/i.test(html)) {
+    addViolation('404 — dist/404.html must not include a canonical tag');
+  }
+  if (/<link rel="canonical" href="https:\/\/sysbilt\.com\/?"/i.test(html)) {
+    addViolation('404 — dist/404.html must not carry the homepage canonical');
+  }
+  if (/<h1[^>]*>Stop doing/i.test(html)) {
+    addViolation('404 — dist/404.html still carries the homepage heading');
+  }
+  if (typeof sitemapXml === 'string' && sitemapXml.includes('/404.html')) {
+    addViolation('sitemap — 404.html must never appear in the sitemap');
   }
 }
 
@@ -865,6 +915,7 @@ async function main() {
   if (actualSitemap != null && actualSitemap !== expectedSitemap.xml) {
     addViolation('sitemap — generated XML does not match the deployed route and content snapshot');
   }
+  await checkNotFoundHtml(actualSitemap);
   if (
     actualSitemap != null &&
     (!actualSitemap.startsWith('<?xml version="1.0" encoding="UTF-8"?>') ||

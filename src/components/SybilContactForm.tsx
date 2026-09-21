@@ -4,6 +4,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { DIAGNOSIS_OPTIONS } from '../constants/contactData';
+import { trackGenerateLead } from '../utils/trackLead';
 
 const HUBSPOT_PORTAL_ID = '442914926';
 const HUBSPOT_FORM_ID = 'b73fe2b1-95e1-4d06-b275-349f3ac37386';
@@ -228,6 +229,7 @@ export function SybilContactForm({
         } catch {
           /* ignore */
         }
+        trackGenerateLead({ formId: 'sybil_contact', formDestination: 'sybil' });
         onSuccess();
       } else {
         const errText = await res.text();

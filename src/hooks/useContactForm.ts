@@ -1,4 +1,5 @@
 import { useState, FormEvent } from 'react';
+import { trackGenerateLead } from '../utils/trackLead';
 
 interface FormState {
   name: string;
@@ -85,6 +86,7 @@ export const useContactForm = () => {
         setStatus('success');
         localStorage.setItem('sysbilt_known_user', 'true');
         setFormState(INITIAL_STATE);
+        trackGenerateLead({ formId: 'contact', formDestination: 'contact' });
       } else {
         setErrorMessage(data.error || 'Something went wrong. Try again or email hello@sysbilt.com.');
         setStatus('error');

@@ -57,11 +57,6 @@ export const SEO_META = {
       'Seven pillars that work together. See how SYSBILT connects websites, CRM, automation, AI, content, training, and dashboards.',
     canonical: `${SITE_ORIGIN}/system`,
   },
-  evidenceVault: {
-    title: 'Evidence Vault | SYSBILT',
-    description: 'Technical proof and build details from SYSBILT client work.',
-    canonical: `${SITE_ORIGIN}/evidence-vault`,
-  },
   privacy: {
     title: 'Privacy Policy | SYSBILT',
     description: 'How SYSBILT collects, uses, and protects your information.',
@@ -96,9 +91,9 @@ export const SEO_META = {
     canonical: `${SITE_ORIGIN}/pillar3`,
   },
   pillar4: {
-    title: 'AI Assistants for Business | SYSBILT Sydney',
+    title: 'AI Assistants and Consulting, Sydney | SYSBILT',
     description:
-      'We build AI assistants that answer calls, qualify leads, and handle repetitive questions for your business. Custom AI chatbots and voice bots.',
+      'We set up AI assistants and AI consulting for growing Australian companies in Sydney. Phone, chat, team AI that knows your business, wired into your systems.',
     canonical: `${SITE_ORIGIN}/pillar4`,
   },
   pillar5: {

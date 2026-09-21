@@ -147,7 +147,6 @@ const SITEMAP_STATIC_PRIORITIES = new Map([
   ['/architect', '0.9'],
   ['/proof', '0.9'],
   ['/blog', '0.9'],
-  ['/evidence-vault', '0.9'],
   ['/contact', '0.7'],
   ['/privacy', '0.6'],
   ['/terms', '0.6'],
@@ -220,11 +219,6 @@ const STATIC_ROUTES = [
       'Real results from real businesses. See how SYSBILT systems drive revenue, save time, and reduce manual work.',
   },
   {
-    path: '/evidence-vault',
-    title: 'Evidence Vault | SYSBILT',
-    description: 'Technical proof and build details from SYSBILT client work.',
-  },
-  {
     path: '/contact',
     title: "Let's Talk | SYSBILT",
     description:
@@ -259,6 +253,20 @@ const STATIC_ROUTES = [
     path: '/go/access',
     title: 'Access form | SYSBILT',
     description: 'Tell us how to reach your site so we can start delivery.',
+    robots: 'noindex, nofollow',
+  },
+  {
+    path: '/go/local-pack',
+    title: 'Google Business Profile and Maps listing | SYSBILT',
+    description:
+      'Three jobs in one delivery: Google Business Profile cleaned up, a review ask that keeps firing after every job, and a posting kit so the Updates tab stops looking abandoned. This is not local SEO and it is not a rankings promise. It is the front door on Maps, done properly, for $550 less than buying the three apart.',
+    robots: 'noindex, nofollow',
+  },
+  {
+    path: '/go/onpage-search',
+    title: 'On-page search for growing companies | SYSBILT',
+    description:
+      'On-page search is titles, headings, and pages that say what they are. We fix the titles, headings, internal links and thin pages on the eight that matter most. One job with an end, not a six-month retainer.',
     robots: 'noindex, nofollow',
   },
   {
@@ -305,9 +313,9 @@ const STATIC_ROUTES = [
   },
   {
     path: '/pillar4',
-    title: 'AI Assistants for Business | SYSBILT Sydney',
+    title: 'AI Assistants and Consulting, Sydney | SYSBILT',
     description:
-      'We build AI assistants that answer calls, qualify leads, and handle repetitive questions for your business. Custom AI chatbots and voice bots.',
+      'We set up AI assistants and AI consulting for growing Australian companies in Sydney. Phone, chat, team AI that knows your business, wired into your systems.',
   },
   {
     path: '/pillar5',
@@ -1113,6 +1121,7 @@ function replaceOrFail(html, pattern, replacement, label) {
 
 function stampHtml(template, route) {
   const { path: routePath, title, description, ogTitle } = route;
+  const omitCanonical = Boolean(route.omitCanonical);
   const safeTitle = escapeAttr(title);
   const safeDescription = escapeAttr(description);
   const safeOgTitle = escapeAttr(ogTitle ?? title);
@@ -1141,8 +1150,8 @@ function stampHtml(template, route) {
   const robotsMeta = robots
     ? `\n    <meta name="robots" content="${escapeAttr(robots)}" />`
     : '';
-  const needsCanonical = !html.includes('rel="canonical"');
-  const canonicalMeta = needsCanonical
+  const hasCanonical = html.includes('rel="canonical"');
+  const canonicalMeta = !omitCanonical && !hasCanonical
     ? `\n    <link rel="canonical" href="${safeCanonical}" />`
     : '';
 
@@ -1150,7 +1159,9 @@ function stampHtml(template, route) {
     html = html.replace(stampedDescMeta, `${stampedDescMeta}${robotsMeta}${canonicalMeta}`);
   }
 
-  if (!needsCanonical) {
+  if (omitCanonical && hasCanonical) {
+    html = html.replace(/\s*<link rel="canonical" href="[^"]*" \/>/, '');
+  } else if (!omitCanonical && hasCanonical) {
     html = replaceOrFail(
       html,
       /<link rel="canonical" href="[^"]*" \/>/,
@@ -1209,6 +1220,30 @@ function distPathForRoute(routePath) {
   if (routePath === '/') return TEMPLATE_PATH;
   const segments = routePath.replace(/^\//, '').split('/');
   return path.join(DIST, ...segments, 'index.html');
+}
+
+const NOT_FOUND_HTML_PATH = path.join(DIST, '404.html');
+
+const NOT_FOUND_ROUTE = {
+  path: '/404.html',
+  title: 'Page not found | SYSBILT',
+  description: 'The page you are looking for does not exist.',
+  robots: 'noindex, follow',
+  omitCanonical: true,
+  jsonLd: [],
+};
+
+async function writeNotFoundHtml(template) {
+  let html = stampHtml(template, NOT_FOUND_ROUTE);
+  html = html.replace(
+    /<section class="static-hero-container">[\s\S]*?<\/section>/,
+    `<main style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.5rem;text-align:center">
+        <h1 class="static-h1" style="font-size:3rem;margin-bottom:1rem">Page Not Found</h1>
+        <p style="font-family:Inter,sans-serif;font-size:1.125rem;max-width:28rem;line-height:1.6;opacity:0.7">The page you are looking for does not exist. It might have been moved, deleted, or you may have typed the address incorrectly.</p>
+        <p style="margin-top:2rem"><a href="/" style="color:#1a1a1a">Go Back Home</a></p>
+      </main>`
+  );
+  await writeFile(NOT_FOUND_HTML_PATH, html, 'utf8');
 }
 
 /** Narrows the snapshot's wide per-doc shape down to the fields stamp-meta/verify-seo need. */
@@ -1420,15 +1455,19 @@ function buildAllRoutes({ posts, guides, toolkitItems, funnelPages = [] }) {
     dynamic.push({ path: `/toolkit/${item.slug}`, title, description, ogTitle: title, jsonLd });
   }
 
+  const staticPaths = new Set(STATIC_ROUTES.map((r) => r.path));
+
   for (const page of funnelPages) {
     if (!page.slug || !page.title) {
       skipped.push(`funnelPage:${page.slug ?? '(no slug)'} — missing slug or title`);
       continue;
     }
+    const path = `/go/${page.slug}`;
+    if (staticPaths.has(path)) continue;
     const title = brandTitle(page.title);
     const description = (page.sub || 'Fixed-scope service from SYSBILT.').trim();
     dynamic.push({
-      path: `/go/${page.slug}`,
+      path,
       title,
       description,
       ogTitle: title,
@@ -1477,6 +1516,8 @@ async function main() {
     await writeFile(outPath, html, 'utf8');
   }
 
+  await writeNotFoundHtml(template);
+
   const sitemap = buildSitemapXml(allRoutes, content);
   await writeFile(SITEMAP_PATH, sitemap.xml, 'utf8');
 
@@ -1492,6 +1533,7 @@ async function main() {
     }
   }
   console.log(`[stamp-meta] Wrote dist/sitemap.xml with ${sitemap.paths.length} deployed indexable routes.`);
+  console.log('[stamp-meta] Wrote dist/404.html (noindex, no homepage canonical).');
 }
 
 const isMain = import.meta.url === pathToFileURL(process.argv[1]).href;
@@ -1524,4 +1566,6 @@ export {
   buildAllRoutes,
   collectAllRoutes,
   stampHtml,
+  writeNotFoundHtml,
+  NOT_FOUND_HTML_PATH,
 };

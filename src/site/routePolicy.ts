@@ -29,7 +29,6 @@ export const STATIC_REQUIRED_BODY_PATHS = [
   '/',
   '/architect',
   '/contact',
-  '/evidence-vault',
   '/pillar1',
   '/pillar2',
   '/pillar3',

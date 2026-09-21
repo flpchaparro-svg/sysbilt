@@ -89,7 +89,7 @@
     { "source": "/reports/marmonyx-2026.html", "destination": "/reports/marmonyx-2026.html" },
     { "source": "/reports/:path*", "destination": "/index.html" },
     {
-      "source": "/((?!api|reports|sitemap\\.xml|robots\\.txt|src|node_modules|@vite|@react-refresh|@id|@fs|images|videos|assets|_next|favicon\\.ico).*)",
+      "source": "/((?!api|reports|sitemap\\.xml|robots\\.txt|404\\.html|src|node_modules|@vite|@react-refresh|@id|@fs|images|videos|assets|_next|favicon\\.ico).*)",
       "destination": "/index.html"
     }
   ]

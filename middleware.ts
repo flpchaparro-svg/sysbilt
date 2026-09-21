@@ -35,7 +35,19 @@ const VITE_DEV_FILE =
  * children (soft-404s) so `/blog/does-not-exist` etc. get noindex without a
  * runtime Sanity lookup.
  */
-const BLOG_SLUG_SET = new Set(BLOG_SLUGS);
+const BLOG_REDIRECT_SLUGS = [
+  'what-vibe-coding-means-small-business-websites',
+  'looker-studio-vs-power-bi-australian-small',
+  'what-happens-when-your-business-hits-2m',
+  'true-cost-cheap-website-australian-small-businesses',
+  'best-social-media-scheduling-tool-small-business',
+  'hubspot-vs-pipedrive-australian-small-businesses',
+  'complete-guide-business-automation-australian-small-businesses',
+  '800-missed-call-how-much-money-are',
+  'what-kpis-should-5m-business-track-weekly',
+  'business-technology-trends-australian-smbs-2026',
+];
+const BLOG_SLUG_SET = new Set([...BLOG_SLUGS, ...BLOG_REDIRECT_SLUGS]);
 const GUIDE_SLUG_SET = new Set(GUIDE_SLUGS);
 const TOOLKIT_SLUG_SET = new Set(TOOLKIT_SLUGS);
 const BTW_CHAPTER_SLUGS = new Set(BTW_CHAPTER_SLUG_LIST);
@@ -111,11 +123,33 @@ function isSpaRoute(normalizedPathname: string): boolean {
     '/go',
     '/go/thanks',
     '/learn',
+    '/r',
+    '/demo/quote-capture',
+    '/404.html',
   ]);
   if (exact.has(normalizedPathname)) return true;
 
   if (normalizedPathname.startsWith('/go/')) return true;
   if (normalizedPathname.startsWith('/learn/')) return true;
+  if (normalizedPathname.startsWith('/r/')) return true;
+  if (normalizedPathname.startsWith('/proposal/')) return true;
+  if (normalizedPathname.startsWith('/agreement/')) return true;
+  if (normalizedPathname.startsWith('/reports/')) return true;
+  if (normalizedPathname.startsWith('/q/')) return true;
+  if (normalizedPathname.startsWith('/embed/q/')) return true;
+  if (normalizedPathname.startsWith('/demo/quote-capture/')) return true;
+
+  const bookReadHubs = [
+    BTW_HUB_ROUTE,
+    BTS_HUB_ROUTE,
+    BTC_HUB_ROUTE,
+    BTR_HUB_ROUTE,
+    BTT_HUB_ROUTE,
+    BTM_HUB_ROUTE,
+    BTE_HUB_ROUTE,
+    BSE_HUB_ROUTE,
+  ];
+  if (bookReadHubs.some((hub) => normalizedPathname === `${hub}/read`)) return true;
 
   const blog = normalizedPathname.match(/^\/blog\/([^/]+)$/i);
   if (blog) {
@@ -205,7 +239,7 @@ function isSpaRoute(normalizedPathname: string): boolean {
 export const config = {
   matcher: [
     // Exclude Vite dev internals + static prefixes so middleware rarely runs for those in prod.
-    '/((?!api|_next/static|_next/image|assets|favicon.ico|robots.txt|sitemap.xml|images|videos|@vite|@react-refresh|@id|@fs|src|node_modules).*)',
+    '/((?!api|_next/static|_next/image|assets|favicon.ico|robots.txt|sitemap.xml|404.html|images|videos|@vite|@react-refresh|@id|@fs|src|node_modules).*)',
   ],
 };
 
@@ -218,17 +252,47 @@ export default async function middleware(request: Request): Promise<Response> {
 
   const normalizedPath = normalizePathname(url.pathname);
 
-  // Funnel + news: always noindex at the edge, even when the SPA route is "known".
-  // Unstamped /go/* paths otherwise fall through to homepage HTML with no robots meta.
+  // Private SPA routes: always noindex at the edge, even when the route is "known".
+  // Unstamped /go/* (and /r, /q, documents) otherwise fall through to homepage HTML
+  // with no robots meta, which is the GSC duplicate bucket this 404 work is closing.
   const forceNoindex =
     normalizedPath === '/news' ||
     normalizedPath === '/go' ||
     normalizedPath.startsWith('/go/') ||
     normalizedPath === '/learn' ||
-    normalizedPath.startsWith('/learn/');
+    normalizedPath.startsWith('/learn/') ||
+    normalizedPath === '/r' ||
+    normalizedPath.startsWith('/r/') ||
+    normalizedPath.startsWith('/proposal/') ||
+    normalizedPath.startsWith('/agreement/') ||
+    normalizedPath.startsWith('/reports/') ||
+    normalizedPath.startsWith('/q/') ||
+    normalizedPath.startsWith('/embed/q/') ||
+    normalizedPath === '/demo/quote-capture' ||
+    normalizedPath.startsWith('/demo/quote-capture/');
 
-  // Catch-all 404 URLs: index.html is still 200 — add header so bots get noindex without JS.
-  if (forceNoindex || !isSpaRoute(normalizedPath)) {
+  if (!isSpaRoute(normalizedPath)) {
+    const notFoundUrl = new URL('/404.html', request.url);
+    let notFoundRes: Response;
+    try {
+      notFoundRes = await fetch(notFoundUrl);
+    } catch {
+      return new Response('Not Found', {
+        status: 404,
+        statusText: 'Not Found',
+        headers: { 'X-Robots-Tag': 'noindex, follow', 'Content-Type': 'text/plain; charset=utf-8' },
+      });
+    }
+    const headers = new Headers(notFoundRes.headers);
+    headers.set('X-Robots-Tag', 'noindex, follow');
+    return new Response(notFoundRes.body, {
+      status: 404,
+      statusText: 'Not Found',
+      headers,
+    });
+  }
+
+  if (forceNoindex) {
     const res = await next();
     const headers = new Headers(res.headers);
     headers.set('X-Robots-Tag', 'noindex, follow');

@@ -27,6 +27,7 @@ import {
   distPathForRoute,
   fetchSanityContent,
   stampHtml,
+  writeNotFoundHtml,
 } from './stamp-meta.mjs';
 import {
   bodyPolicyForPath,
@@ -429,6 +430,8 @@ async function main() {
     process.exit(1);
   }
 
+  await writeNotFoundHtml(template);
+
   const sitemap = buildSitemapXml(allRoutes, content);
   await writeFile(SITEMAP_PATH, sitemap.xml, 'utf8');
 
@@ -496,6 +499,7 @@ async function main() {
     }
   }
   console.log(`[render-routes] Wrote dist/sitemap.xml with ${sitemap.paths.length} deployed indexable routes.`);
+  console.log('[render-routes] Wrote dist/404.html (noindex, no homepage canonical).');
   console.log(`[render-routes] Wrote ${path.relative(ROOT, CATALOG_PATH)}.`);
 }
 
