@@ -45,9 +45,9 @@ export const pillar5Copy = {
     headline: 'Content that feeds the rest of your business',
     sub: 'Posting for the sake of posting is noise. We connect your content system to your sales pipeline so attention turns into actual enquiries.',
     points: [
-      { title: 'Attract', desc: 'The content gets published and drives traffic to your website (Pillar 1). Blog posts rank on Google and social posts link back to your site.' },
-      { title: 'Capture', desc: 'A reader clicks through, lands on your site, and fills out a form. Their details land straight in your CRM (Pillar 2) and you know exactly which piece of content brought them in.' },
-      { title: 'Automate', desc: 'The entire publishing workflow from draft to approval to posting runs through your automations (Pillar 3). Nothing stalls because someone forgot to hit publish.' },
+      { title: 'Attract', desc: 'The content gets published and drives traffic to your website. Blog posts rank on Google and social posts link back to your site.' },
+      { title: 'Capture', desc: 'A reader clicks through, lands on your site, and fills out a form. Their details land straight in your CRM and you know exactly which piece of content brought them in.' },
+      { title: 'Automate', desc: 'The entire publishing workflow from draft to approval to posting runs through your automations. Nothing stalls because someone forgot to hit publish.' },
     ],
   },
 };

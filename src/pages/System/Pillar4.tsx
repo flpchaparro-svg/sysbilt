@@ -301,7 +301,6 @@ const Pillar4: React.FC<Pillar4Props> = ({ onNavigate }) => {
                   className="absolute w-48 h-48 rounded-full bg-gold text-dark flex flex-col items-center justify-center shadow-[0_0_40px_rgba(197,160,89,0.4)]"
                   style={{ transform: "rotateX(-70deg)", transformStyle: "preserve-3d" }}
                 >
-                  <span className="font-mono text-[10px] tracking-widest opacity-80 mb-1 uppercase">Pillar 4</span>
                   <span className="font-serif font-bold text-xl text-center leading-tight uppercase">AI</span>
                 </div>
 
@@ -328,7 +327,6 @@ const Pillar4: React.FC<Pillar4Props> = ({ onNavigate }) => {
                           boxShadow: "0 10px 30px -10px rgba(0,0,0,0.2), inset 0 0 20px rgba(255,255,255,0.8)"
                         }}
                       >
-                        <span className="font-mono text-[9px] tracking-widest text-dark/60 mb-1 uppercase">Pillar 1</span>
                         <span className="font-serif font-bold text-sm text-dark uppercase">Websites</span>
                       </div>
                     </motion.div>
@@ -351,7 +349,6 @@ const Pillar4: React.FC<Pillar4Props> = ({ onNavigate }) => {
                           boxShadow: "0 10px 30px -10px rgba(0,0,0,0.2), inset 0 0 20px rgba(255,255,255,0.8)"
                         }}
                       >
-                        <span className="font-mono text-[9px] tracking-widest text-dark/60 mb-1 uppercase">Pillar 2</span>
                         <span className="font-serif font-bold text-sm text-dark uppercase">CRM</span>
                       </div>
                     </motion.div>
@@ -374,7 +371,6 @@ const Pillar4: React.FC<Pillar4Props> = ({ onNavigate }) => {
                           boxShadow: "0 10px 30px -10px rgba(0,0,0,0.2), inset 0 0 20px rgba(255,255,255,0.8)"
                         }}
                       >
-                        <span className="font-mono text-[9px] tracking-widest text-dark/60 mb-1 uppercase">Pillar 3</span>
                         <span className="font-serif font-bold text-xs text-dark text-center leading-tight uppercase">Auto-<br/>mation</span>
                       </div>
                     </motion.div>

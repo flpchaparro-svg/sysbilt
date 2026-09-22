@@ -108,7 +108,7 @@ export default defineType({
         list: [
           {title: 'Our pick', value: 'our-pick'},
           {title: 'Best value', value: 'best-value'},
-          {title: 'Best for small business', value: 'best-for-small-business'},
+          {title: 'Best for a growing business', value: 'best-for-small-business'},
         ],
       },
     }),
@@ -188,7 +188,7 @@ export default defineType({
       title: 'Focus SEO keyword',
       type: 'string',
       group: 'seo',
-      description: 'What is the user Googling to find this? (e.g. "ChatGPT for small business").',
+      description: 'What is the user Googling to find this? (e.g. "ChatGPT for business Australia").',
     }),
     defineField({
       name: 'metaTitle',
@@ -196,8 +196,8 @@ export default defineType({
       type: 'string',
       group: 'seo',
       description:
-        'If the tool name is too generic for Google, write a punchy, keyword-rich title here. Max 60 characters.',
-      validation: (Rule) => Rule.max(60).warning('Keep under 60 characters for Google.'),
+        'If the tool name is too generic for Google, write a shorter keyword-led title here. Max 50 characters. The site adds " | SYSBILT".',
+      validation: (Rule) => Rule.max(50).warning('Keep under 50 characters. The site adds " | SYSBILT".'),
     }),
     defineField({
       name: 'metaDescription',

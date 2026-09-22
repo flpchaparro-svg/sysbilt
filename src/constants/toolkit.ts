@@ -36,7 +36,7 @@ export const TOOLKIT_PRICING_ORDER: ToolkitPricingModel[] = [
 export const TOOLKIT_PICK_LABELS: Record<ToolkitPick, string> = {
   'our-pick': 'Our pick',
   'best-value': 'Best value',
-  'best-for-small-business': 'Best for small business',
+  'best-for-small-business': 'Best for a growing business',
 }
 
 export const TOOLKIT_TAGLINE_MAX_CHARS = 160

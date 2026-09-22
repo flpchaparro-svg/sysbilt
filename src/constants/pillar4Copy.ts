@@ -1,7 +1,7 @@
 export const pillar4Copy = {
   hero: {
     headline: 'AI assistants and consulting for growing companies',
-    sub: 'We set up AI assistants for growing Australian companies in Sydney. They answer the phone, reply to enquiries, and handle the questions your team is tired of repeating, then we wire them into the rest of your system.',
+    sub: 'We set up AI assistants for growing Australian companies in Sydney. Search for an AI agency or an AI consultant and this is the work: the phone gets answered, enquiries get a reply, and the questions your team is tired of repeating get handled. Then we wire that into the rest of your system.',
     ctaPrimary: 'BOOK A CALL',
   },
   gap: {

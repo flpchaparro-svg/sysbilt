@@ -45,8 +45,8 @@ export const pillar7Copy = {
     headline: 'The layer that sits on top of everything',
     sub: 'A dashboard is only as useful as the data feeding it. We wire your reporting directly into your entire system so it updates itself.',
     points: [
-      { title: 'Pull', desc: 'It pulls lead data from your website (Pillar 1) and your sales pipeline from your CRM (Pillar 2). Every enquiry, every deal, and every conversion tracked.' },
-      { title: 'Calculate', desc: 'It matches that against the operational data running through your automations (Pillar 3). Cost per lead, time to close, revenue by source.' },
+      { title: 'Pull', desc: 'It pulls lead data from your website and your sales pipeline from your CRM. Every enquiry, every deal, and every conversion tracked.' },
+      { title: 'Calculate', desc: 'It matches that against the operational data running through your automations. Cost per lead, time to close, revenue by source.' },
       { title: 'Display', desc: 'One clean screen with profit, costs, pipeline, and velocity. You see the whole machine working and you steer instead of guess.' },
     ],
   },

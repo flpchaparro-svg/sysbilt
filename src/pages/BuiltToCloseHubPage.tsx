@@ -13,7 +13,7 @@ import { BTC_HUB_OG } from '../built-to-close/chapter-covers'
 
 export default function BuiltToCloseHubPage() {
   const hubUrl = `${SITE_ORIGIN}${BTC_HUB_PATH}`
-  const htmlTitle = 'CRM and Follow-Up That Wins Work: The Complete Guide | SYSBILT'
+  const htmlTitle = 'CRM and Follow-Up That Wins Work | SYSBILT',
   const description = BTC_META.seoDescription
 
   return (

@@ -172,8 +172,8 @@ export default defineType({
       title: 'SEO Title Override (Optional)',
       type: 'string',
       group: 'seo',
-      description: 'If your main article title is too long for Google, write a punchy, keyword-rich 60-character title here.',
-      validation: (Rule) => Rule.max(60).warning('Keep under 60 characters for Google.'),
+      description: 'If your main article title is too long for Google, write a shorter keyword-led title here. Max 50 characters. The site adds " | SYSBILT".',
+      validation: (Rule) => Rule.max(50).warning('Keep under 50 characters. The site adds " | SYSBILT".'),
     }),
     defineField({
       name: 'seoDescription',

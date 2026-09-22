@@ -10,7 +10,7 @@
  * snapshot file when present, so this never hits the network in a normal
  * build. It re-derives the route + sitemap sets from that snapshot, then
  * asserts, for every indexable route, that the generated dist HTML has:
- *   - a unique, non-generic <title>
+ *   - a unique, non-generic <title> of at most 60 characters on indexable routes
  *   - exactly one self-referential <link rel="canonical">
  *   - no accidental noindex
  *   - every JSON-LD @type that stamp-meta intended to emit
@@ -279,6 +279,10 @@ function checkRouteHtml(route, html) {
     else if (title === GENERIC_TITLE) addViolation(`${p} — generic/un-stamped <title> ("${title}")`);
     else if (/\|\s*SYSBILT\s*\|\s*SYSBILT/i.test(title)) {
       addViolation(`${p} — double-branded <title> ("${title}")`);
+    } else if (!isIndexableExcluded(p) && title.length > 60) {
+      addViolation(
+        `${p} — <title> is ${title.length} characters (max 60, including " | SYSBILT"): "${title}"`
+      );
     }
   }
 

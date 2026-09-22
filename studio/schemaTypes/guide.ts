@@ -141,6 +141,8 @@ export default defineType({
       name: 'seoTitle',
       title: 'SEO title',
       type: 'string',
+      description: 'Keyword-led title for Google. Max 50 characters. The site adds " | SYSBILT".',
+      validation: (Rule) => Rule.max(50).warning('Keep under 50 characters. The site adds " | SYSBILT".'),
     }),
     defineField({
       name: 'seoDescription',

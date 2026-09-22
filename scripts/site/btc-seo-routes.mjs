@@ -91,7 +91,7 @@ export const BTC_CHAPTER_META_BY_SLUG = {
 }
 
 export const BTC_HUB_META = {
-  title: 'CRM and Follow-Up That Wins Work: The Complete Guide | SYSBILT',
+  title: 'CRM and Follow-Up That Wins Work | SYSBILT',
   description:
     'A deep guide to CRM and lead follow-up for Australian businesses: memory, pipeline, features, daily rhythm, tracking, and your CRM as the business hub. Free from SYSBILT.',
 }

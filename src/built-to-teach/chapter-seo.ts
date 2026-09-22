@@ -63,7 +63,7 @@ export const BTE_CHAPTERS: BteChapterSeo[] = [
   {
     num: 2,
     slug: 'what-you-actually-own-the-knowledge-of-the-business',
-    seoTitle: 'What You Actually Own: The Knowledge of the Business',
+    seoTitle: 'What You Own: The Knowledge of the Business',
     seoDescription:
       'The asset nobody wrote down, the single source of truth, and key-person risk when knowledge lives only in heads.',
     h1: 'What you actually own: the knowledge of the business',

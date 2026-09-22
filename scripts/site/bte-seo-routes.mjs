@@ -25,7 +25,7 @@ export const BTE_CHAPTER_META_BY_SLUG = {
       'Training got cheap. The bottleneck is not production. One job, adoption, and why knowledge trapped in heads is the real risk.',
   },
   'what-you-actually-own-the-knowledge-of-the-business': {
-    title: 'What You Actually Own: The Knowledge of the Business | SYSBILT',
+    title: 'What You Own: The Knowledge of the Business | SYSBILT',
     description:
       'The asset nobody wrote down, the single source of truth, and key-person risk when knowledge lives only in heads.',
   },
@@ -82,7 +82,7 @@ export const BTE_CHAPTER_META_BY_SLUG = {
 }
 
 export const BTE_HUB_META = {
-  title: 'Built to Teach: Team Training at the Speed of Change | SYSBILT',
+  title: 'Built to Teach: Team Training That Keeps Up | SYSBILT',
   description:
     'How to train your team at the speed your business changes: capture knowledge, the format library, the training agent, onboarding, and change management. Free from SYSBILT.',
 }

@@ -93,7 +93,7 @@ export const SEO_META = {
   pillar4: {
     title: 'AI Assistants and Consulting, Sydney | SYSBILT',
     description:
-      'We set up AI assistants and AI consulting for growing Australian companies in Sydney. Phone, chat, team AI that knows your business, wired into your systems.',
+      'We set up AI assistants for growing Australian companies in Sydney. The work people mean when they look for an AI agency or an AI consultant.',
     canonical: `${SITE_ORIGIN}/pillar4`,
   },
   pillar5: {

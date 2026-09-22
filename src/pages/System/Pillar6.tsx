@@ -238,7 +238,6 @@ const Pillar6: React.FC<Pillar6Props> = ({ onNavigate }) => {
             <div className="relative aspect-square max-w-[320px] sm:max-w-md mx-auto w-full flex items-center justify-center bg-transparent scale-[0.85] sm:scale-100 origin-center -mt-4 sm:mt-8 lg:mt-0 -mb-8 sm:mb-0" style={{ perspective: "1200px" }}>
               <div className="relative w-full h-full flex items-center justify-center" style={{ transform: "rotateX(70deg)", transformStyle: "preserve-3d" }}>
                 <div className="absolute w-48 h-48 rounded-full bg-gold text-dark flex flex-col items-center justify-center shadow-[0_0_40px_rgba(197,160,89,0.4)]" style={{ transform: "rotateX(-70deg)", transformStyle: "preserve-3d" }}>
-                  <span className="font-mono text-[10px] tracking-widest opacity-80 mb-1 uppercase">Pillar 6</span>
                   <span className="font-serif font-bold text-xl text-center leading-tight uppercase">Training</span>
                 </div>
 
@@ -247,7 +246,6 @@ const Pillar6: React.FC<Pillar6Props> = ({ onNavigate }) => {
                   <div className="absolute" style={{ transform: "translateY(-180px)", transformStyle: "preserve-3d" }}>
                     <motion.div animate={{ rotate: -360 }} transition={{ duration: 15, repeat: Infinity, ease: "linear" }} style={{ transformStyle: "preserve-3d" }}>
                       <div className="w-32 h-32 rounded-full flex flex-col items-center justify-center backdrop-blur-md" style={{ transform: "rotateX(-70deg)", background: "linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.1) 100%)", border: "1px solid rgba(255,255,255,0.6)", boxShadow: "0 10px 30px -10px rgba(0,0,0,0.2), inset 0 0 20px rgba(255,255,255,0.8)" }}>
-                        <span className="font-mono text-[10px] tracking-widest text-dark/60 mb-1 uppercase">Pillar 3</span>
                         <span className="font-serif font-bold text-sm text-dark text-center leading-tight uppercase">Auto-<br/>mation</span>
                       </div>
                     </motion.div>
@@ -256,7 +254,6 @@ const Pillar6: React.FC<Pillar6Props> = ({ onNavigate }) => {
                   <div className="absolute" style={{ transform: "translateY(180px)", transformStyle: "preserve-3d" }}>
                     <motion.div animate={{ rotate: -360 }} transition={{ duration: 15, repeat: Infinity, ease: "linear" }} style={{ transformStyle: "preserve-3d" }}>
                       <div className="w-32 h-32 rounded-full flex flex-col items-center justify-center backdrop-blur-md" style={{ transform: "rotateX(-70deg)", background: "linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.1) 100%)", border: "1px solid rgba(255,255,255,0.6)", boxShadow: "0 10px 30px -10px rgba(0,0,0,0.2), inset 0 0 20px rgba(255,255,255,0.8)" }}>
-                        <span className="font-mono text-[10px] tracking-widest text-dark/60 mb-1 uppercase">Pillar 4</span>
                         <span className="font-serif font-bold text-base text-dark uppercase">AI</span>
                       </div>
                     </motion.div>

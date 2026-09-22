@@ -30,6 +30,7 @@ import {
   X,
 } from 'lucide-react'
 import { SysbiltLogo } from '../../components/SysbiltLogo'
+import { trackGenerateLead } from '../../utils/trackLead'
 import { FUNNEL_COLOURS, FUNNEL_CSS_VARS } from './funnelTheme'
 import {
   websiteWizardAcks,
@@ -517,6 +518,11 @@ function WebsiteWizardPage() {
       if (!res.ok) {
         throw new Error(data.error || 'Could not save. Try again or email hello@sysbilt.com.')
       }
+      trackGenerateLead({
+        formId: 'website_wizard',
+        formDestination: 'funnel_access',
+        product: 'website',
+      })
       setSubmitted(true)
     } catch (err) {
       setSubmitError(

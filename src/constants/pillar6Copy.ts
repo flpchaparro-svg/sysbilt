@@ -50,8 +50,8 @@ export const pillar6Copy = {
     sub: "Training shouldn't be a one-off event. We connect it into your operations so it happens automatically at the right pace without you managing it.",
     points: [
       { title: 'Trigger', desc: 'You launch a new process, roll out a new tool, or hire a new team member.' },
-      { title: 'Route', desc: 'Your automations (Pillar 3) drip-feed the right training materials over a few weeks. Videos, guides, and check-ins arrive at the right pace so nobody gets overwhelmed on day one.' },
-      { title: 'Support', desc: "Your internal AI assistant (Pillar 4) sits in your team's chat ready to answer questions any time. The system coaches your team through the transition without you being involved." },
+      { title: 'Route', desc: 'Your automations drip-feed the right training materials over a few weeks. Videos, guides, and check-ins arrive at the right pace so nobody gets overwhelmed on day one.' },
+      { title: 'Support', desc: "Your internal AI assistant sits in your team's chat ready to answer questions any time. The system coaches your team through the transition without you being involved." },
     ],
   },
 };

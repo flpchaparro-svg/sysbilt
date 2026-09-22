@@ -66,7 +66,7 @@ export const systemPageFAQs: FAQ[] = [
   {
     id: 'how-systems-connect',
     question: 'How do the 3 systems work together',
-    answer: `Get Clients (Pillars 1 to 3) brings people in and captures them. Scale Faster (Pillars 4 to 6) multiplies your output without adding headcount. See Clearly (Pillar 7) shows you what's working and what's not. Each phase feeds the next. The website catches leads, the CRM tracks them, automation moves the data, AI handles the overflow, content brings in more traffic, training makes sure everyone uses the tools, and the dashboard shows you the results.`
+    answer: `Get Clients is the website, the CRM, and the automations. That brings people in and captures them. Scale Faster is the AI assistants, the content, and the training. That multiplies output without adding headcount. See Clearly is the dashboard. That shows you what's working and what's not. Each part feeds the next. The website catches leads, the CRM tracks them, automation moves the data, AI handles the overflow, content brings in more traffic, training makes sure everyone uses the tools, and the dashboard shows you the results.`
   },
   {
     id: 'existing-systems',
