@@ -263,6 +263,16 @@ async function checkWaveACrawlGraph() {
   }
 }
 
+function decodeTitleEntities(raw) {
+  return raw
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;|&apos;|&#x27;/g, "'")
+    .replace(/&nbsp;/g, ' ');
+}
+
 function checkRouteHtml(route, html) {
   const p = route.path;
   if (html == null) {
@@ -274,7 +284,7 @@ function checkRouteHtml(route, html) {
   if (!titleMatch) {
     addViolation(`${p} — no <title> tag`);
   } else {
-    const title = titleMatch[1].trim();
+    const title = decodeTitleEntities(titleMatch[1].trim());
     if (!title) addViolation(`${p} — empty <title>`);
     else if (title === GENERIC_TITLE) addViolation(`${p} — generic/un-stamped <title> ("${title}")`);
     else if (/\|\s*SYSBILT\s*\|\s*SYSBILT/i.test(title)) {
