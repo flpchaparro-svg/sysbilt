@@ -1,6 +1,6 @@
 # SYSBILT — Search lane brief
 
-**Version 1.2 | 22 September 2026 | Internal only. Where search demand actually sits in Australia, which doors we open to meet it, and how we earn leads without domain authority.**
+**Version 1.3 | 22 September 2026 | Internal only. Where search demand actually sits in Australia, which doors we open to meet it, and how we earn leads without domain authority.**
 
 Read this with `SEO_MASTER.md`. That file owns the technical state and the off-page list. This file owns the demand question: what people type, what we sell, and which of the two actually meet.
 
@@ -19,7 +19,7 @@ Checked against the live site, GA4, and the live Sydney SERPs. Not checked again
 | Titles over 60 characters | Done. 22 to 0, and `verify-seo.mjs` now fails the build over 60 |
 | Sitemap health | 223 URLs, all `200`, every canonical self-referencing, exactly one `h1` each, nothing noindexed inside it |
 | `generate_lead` / `form_submit` events | Firing. Wired to `/contact`, Sybil, funnel access, and the website wizard |
-| GA4 key events | **Not done.** The events fire, `keyEvents` still reads 0. Nothing is counted as a conversion |
+| GA4 key events | Felipe marked `generate_lead` as a key event on 22 Sep. Confirm a real count on the next check |
 | Google profile description | Done. The new AI and profile language is live in the knowledge panel |
 | Google reviews | 4 to **5, rating 5.0** |
 | `/pillar4` title and meta | Done. 46-character title, 141-character description, both in search language |
@@ -224,7 +224,8 @@ Small, surgical, no new content wave.
 | Door | Page | Target language | Status |
 |---|---|---|---|
 | AI lane, meta | `/pillar4` | AI assistants and AI consulting for growing Australian companies, Sydney | **Done**, live and verified 22 Sep. 46-char title, 141-char description, body opening in search language |
-| AI lane, H1 | `/pillar4` | Same | **Open.** The rewritten `pillar4Copy.hero.headline` is dead code. The `h1` is hardcoded in `Pillar4.tsx` and still reads "Stop answering the same questions over and over" |
+| AI lane, H1 | `/pillar4` | Same | **Done**, live 22 Sep. The `h1` reads "AI assistants and consulting for growing companies" |
+| AI lane, guide | `/guides/ai-assistants` | What an AI agency in Sydney does | **Done**, published 22 Sep. SEO title and opening now use that language and link to `/pillar4`. The other 36 pages stay the how-to. Do not rewrite them, and do not bend the other guides or the AI posts toward this phrase |
 | Search lane | `/go/local-pack`, `/go/onpage-search`, `/go/google-profile` | Local listing / Maps, on-page search, Google Business Profile management | Copy shipped 21 Sep. **Zero search value**: `/go/*` is noindex at the edge and out of the sitemap by design. Good for conversion, not a door. A real search door needs a public indexable page |
 | Ops lane | `/pillar2` | CRM setup, job and field service systems | Later, lower priority |
 
@@ -238,7 +239,7 @@ The AI door goes first. It has the most demand, the competition is beatable at o
 
 Verified live 22 Sep: unknown URLs return a real `404` from `dist/404.html`, and `generate_lead` plus `form_submit` are arriving in GA4 from `/contact`, the Sybil form, the `/go` access wizard, and the website wizard.
 
-**One step is missing and it makes the rest meaningless.** GA4 still reports `keyEvents` as 0 for both events, so nothing is counted as a conversion. In GA4, Admin, Events, toggle **Mark as key event** on `generate_lead`. Thirty seconds, not retroactive, so do it before anything else in the sequence.
+Felipe marked `generate_lead` as a key event on 22 Sep. The next check should show a real count. Until that count exists, the events can fire without being treated as conversions.
 
 **The metric for this quarter is tracked enquiries, not position and not impressions.** Position is already fixed. Impressions are falling for good reasons. Neither of them pays. Review count stays on the board but it is background work now, not the blocker.
 
@@ -246,14 +247,14 @@ Verified live 22 Sep: unknown URLs return a real `404` from `dist/404.html`, and
 
 ## Sequence
 
-1. **GA4 key events.** Mark `generate_lead` as a key event. Nothing else is measurable until this is on. Felipe only, thirty seconds.
-2. **Profile category and services.** Move off Computer consultant, add the seven services. Manual, one afternoon, highest-value profile action left. Felipe only, the API is not approved.
-3. **The AI organic page.** A dedicated page targeting `ai agency sydney` and `ai consulting sydney`, written as an honest Australian buyer's guide rather than a service pitch. Evidence says this ranks at our authority. Biggest single upside left in the lane.
+1. **GA4 key events.** Felipe marked `generate_lead` as a key event on 22 Sep. Confirm a real count on the next check.
+2. **Profile category and services.** Services are in. Google has no AI category. Primary must move from Computer consultant to **Business management consultant**, with AI assistant setup, AI phone answering, and Missed Call Text Back under that primary. Computer consultant stays additional, holding only CRM setup and HubSpot Setup and Migration. Felipe only.
+3. **The AI organic page.** Done 22 Sep on the existing guide `/guides/ai-assistants`. Title: "What an AI Agency in Sydney Does". Opening names the search and links to `/pillar4`. The rest of the guide stays the how-to. Do not add a new page for this.
 4. **Reviews.** 5 to 10, then 20 over the quarter. Background work, do not gate anything on it.
 5. **Off-page.** Keep working the quarter list in `SEO_MASTER.md`. Still the only thing that lifts domain rank.
 6. **Tidy-ups.** The seven long guide-hub meta descriptions, and the homepage `h1` decision.
 
-Done 22 Sep: the `/pillar4` H1, all 60 hidden keyword headings, and the monthly monitor.
+Done 22 Sep: the `/pillar4` H1, all 60 hidden keyword headings, the monthly monitor, and the `/guides/ai-assistants` search opening.
 
 ### Next check
 
@@ -267,10 +268,10 @@ What to pull, and what would count as it working:
 | GSC "Duplicate without user-selected canonical" | 11 | trending to 0, those URLs move to "Not found (404)" |
 | GSC "Discovered currently not indexed" | 116 | flat or down, not up. It grows if we publish |
 | Google reviews | 5 at 5.0 | 10 or better |
-| Profile primary category | Computer consultant | anything in the AI or automation family |
+| Profile primary category | Computer consultant | Business management consultant |
 | Legitimate referring domains | 0 | 1 or more |
-| `ai agency sydney` position | not ranking | in the top 50 at all, once the page exists |
+| `ai agency sydney` position | not ranking | in the top 50 at all. The guide now carries the phrase |
 
 ---
 
-*End of Search lane brief v1.2. When a volume figure is rechecked, update the table and the date. When a door ships, mark it. When the review count moves, note it in the local pack section.*
+*End of Search lane brief v1.3. When a volume figure is rechecked, update the table and the date. When a door ships, mark it. When the review count moves, note it in the local pack section.*
