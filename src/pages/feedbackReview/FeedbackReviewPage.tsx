@@ -13,15 +13,18 @@ import {
   Copy,
   ExternalLink,
   FileText,
+  Frown,
   Gauge,
   Globe,
   Heart,
   HelpCircle,
+  Laugh,
   MapPin,
+  Meh,
   MessageCircle,
   Search,
+  Smile,
   Star,
-  ThumbsDown,
   ThumbsUp,
   User,
   Zap,
@@ -1013,67 +1016,68 @@ function serviceIcon(id: string): ReactNode {
   }
 }
 
-function toneIcon(id: string, kind: 'up' | 'ok' | 'mid' | 'down'): ReactNode {
-  if (kind === 'up') return <ThumbsUp strokeWidth={1.5} />
-  if (kind === 'ok') return <Check strokeWidth={1.5} />
-  if (kind === 'mid') return <HelpCircle strokeWidth={1.5} />
-  return <ThumbsDown strokeWidth={1.5} />
+/** Same four faces on every ranked question. Best is always the laugh, worst is always the frown. */
+function rankIcon(rank: 'best' | 'good' | 'mid' | 'poor'): ReactNode {
+  if (rank === 'best') return <Laugh strokeWidth={1.5} />
+  if (rank === 'good') return <Smile strokeWidth={1.5} />
+  if (rank === 'mid') return <Meh strokeWidth={1.5} />
+  return <Frown strokeWidth={1.5} />
 }
 
 function resultIcon(id: string): ReactNode {
-  if (id === 'nailed') return toneIcon(id, 'up')
-  if (id === 'solid') return toneIcon(id, 'ok')
-  if (id === 'mixed') return toneIcon(id, 'mid')
-  return toneIcon(id, 'down')
+  if (id === 'nailed') return rankIcon('best')
+  if (id === 'solid') return rankIcon('good')
+  if (id === 'mixed') return rankIcon('mid')
+  return rankIcon('poor')
 }
 
 function attentionIcon(id: string): ReactNode {
-  if (id === 'tight') return <MessageCircle strokeWidth={1.5} />
-  if (id === 'fine') return <Check strokeWidth={1.5} />
-  if (id === 'spotty') return <HelpCircle strokeWidth={1.5} />
-  return <ThumbsDown strokeWidth={1.5} />
+  if (id === 'tight') return rankIcon('best')
+  if (id === 'fine') return rankIcon('good')
+  if (id === 'spotty') return rankIcon('mid')
+  return rankIcon('poor')
 }
 
 function comfortIcon(id: string): ReactNode {
-  if (id === 'yes') return <Heart strokeWidth={1.5} />
-  if (id === 'mostly') return <ThumbsUp strokeWidth={1.5} />
-  if (id === 'uneasy') return <HelpCircle strokeWidth={1.5} />
-  return <ThumbsDown strokeWidth={1.5} />
+  if (id === 'yes') return rankIcon('best')
+  if (id === 'mostly') return rankIcon('good')
+  if (id === 'uneasy') return rankIcon('mid')
+  return rankIcon('poor')
 }
 
 function personFeelIcon(id: string): ReactNode {
-  if (id === 'excellent') return <Heart strokeWidth={1.5} />
-  if (id === 'good') return <ThumbsUp strokeWidth={1.5} />
-  if (id === 'mixed') return <HelpCircle strokeWidth={1.5} />
-  return <ThumbsDown strokeWidth={1.5} />
+  if (id === 'excellent') return rankIcon('best')
+  if (id === 'good') return rankIcon('good')
+  if (id === 'mixed') return rankIcon('mid')
+  return rankIcon('poor')
 }
 
 function materialsIcon(id: string): ReactNode {
-  if (id === 'crystal') return <Check strokeWidth={1.5} />
-  if (id === 'mostly') return <FileText strokeWidth={1.5} />
-  if (id === 'confusing') return <HelpCircle strokeWidth={1.5} />
-  return <ThumbsDown strokeWidth={1.5} />
+  if (id === 'crystal') return rankIcon('best')
+  if (id === 'mostly') return rankIcon('good')
+  if (id === 'confusing') return rankIcon('mid')
+  return rankIcon('poor')
 }
 
 function improveBetterIcon(id: string): ReactNode {
-  if (id === 'perfect') return <ThumbsUp strokeWidth={1.5} />
+  if (id === 'perfect') return rankIcon('best')
   if (id === 'result') return <Gauge strokeWidth={1.5} />
   if (id === 'explain') return <FileText strokeWidth={1.5} />
   return <MessageCircle strokeWidth={1.5} />
 }
 
 function improveFasterIcon(id: string): ReactNode {
-  if (id === 'perfect') return <ThumbsUp strokeWidth={1.5} />
+  if (id === 'perfect') return rankIcon('best')
   if (id === 'start') return <Zap strokeWidth={1.5} />
   if (id === 'replies') return <MessageCircle strokeWidth={1.5} />
   return <Gauge strokeWidth={1.5} />
 }
 
 function againIcon(id: string): ReactNode {
-  if (id === 'yes') return <Heart strokeWidth={1.5} />
-  if (id === 'likely') return <ThumbsUp strokeWidth={1.5} />
-  if (id === 'maybe') return <HelpCircle strokeWidth={1.5} />
-  return <ThumbsDown strokeWidth={1.5} />
+  if (id === 'yes') return rankIcon('best')
+  if (id === 'likely') return rankIcon('good')
+  if (id === 'maybe') return rankIcon('mid')
+  return rankIcon('poor')
 }
 
 function traitIcon(id: string): ReactNode {

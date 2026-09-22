@@ -1,7 +1,10 @@
 /**
- * Deterministic review skeleton + DeepSeek polish for Feedback Review.
- * Skeleton is the source of truth. AI may rewrite wording only.
+ * Feedback Review draft.
+ * The skeleton is the fallback if the model call fails.
+ * The model writes from meanings, not from a fixed sentence per tap.
  */
+
+import {buildVariedReview} from '../../src/lib/feedbackReviewSkeleton.js'
 
 const DETAIL_LINES: Record<string, string> = {
   'full-site': 'a full website',
@@ -60,11 +63,18 @@ const PERSON_TRAIT_LINES: Record<string, string> = {
 }
 
 const STYLE_HINTS = ['direct', 'warm', 'short', 'detail-first'] as const
-const OPENING_HINTS = ['extra-first', 'person-first', 'work-first', 'feel-first'] as const
-const CLOSER_LINES = [
-  'I would work with them again.',
-  'Happy to recommend them.',
-  "I'd use them again next time.",
+const SHAPES = [
+  'Job and result in one sentence, then the person, then how the contact or the files felt if that was good, then a short closer if they would return.',
+  'Open on the person, then the job and the result together, then how it felt. Do not give updates their own sentence.',
+  'Open on the result or how it felt, then name the work, then the person. Four sentences at most.',
+  'Customer note first if it has a real point. Then the job and the result in one sentence. Then the person. Skip any fact the note already covers.',
+] as const
+
+const UPDATE_SWAPS = [
+  'they told us where the job was up to',
+  'we always knew what was happening',
+  'we did not have to chase them',
+  'they checked in as the work moved',
 ] as const
 
 export type FeedbackDraftInput = {
@@ -84,82 +94,54 @@ export type FeedbackDraftInput = {
   extraNote?: string
 }
 
-export function buildReviewSkeleton(input: FeedbackDraftInput): string {
-  const person = input.personName.trim()
+function detailLine(input: FeedbackDraftInput): string {
   const otherDetail = input.detailOther.trim()
-  const extra = (input.extraNote || '').trim()
-  const detail =
-    input.detailId === 'other-detail' && otherDetail
-      ? otherDetail
-      : (input.detailId && DETAIL_LINES[input.detailId]) || input.serviceLabel
-  const bits: string[] = []
+  if (input.detailId === 'other-detail' && otherDetail) return otherDetail
+  return (input.detailId && DETAIL_LINES[input.detailId]) || input.serviceLabel
+}
 
-  bits.push(`We worked with SYSBILT on ${detail}.`)
-
-  if (input.resultId === 'nailed') {
-    bits.push('The finished work was what we needed.')
-  } else if (input.resultId === 'solid') {
-    bits.push('The result was good and ready to use.')
-  }
-
-  if (input.attentionId === 'tight') {
-    bits.push('They kept me in the loop.')
-  } else if (input.attentionId === 'fine') {
-    bits.push('Updates were enough.')
-  }
-
-  if (input.comfortId === 'yes') {
-    bits.push('I felt looked after.')
-  } else if (input.comfortId === 'mostly') {
-    bits.push('I felt mostly comfortable working with them.')
-  }
-
-  if (person && (input.personId === 'excellent' || input.personId === 'good')) {
-    const traits = input.personTraitIds
-      .map((id) => PERSON_TRAIT_LINES[id])
-      .filter(Boolean)
-    if (traits.length === 0) {
-      bits.push(
-        input.personId === 'excellent'
-          ? `${person} was excellent to work with.`
-          : `${person} was good to work with.`,
-      )
-    } else if (traits.length === 1) {
-      bits.push(`${person} ${traits[0]}.`)
-    } else if (traits.length === 2) {
-      bits.push(`${person} ${traits[0]}, and ${traits[1]}.`)
-    } else {
-      const last = traits[traits.length - 1]
-      const head = traits.slice(0, -1).join(', ')
-      bits.push(`${person} ${head}, and ${last}.`)
-    }
-  }
-
-  if (input.materialsId === 'crystal') {
-    bits.push('What they sent was easy to follow.')
-  } else if (input.materialsId === 'mostly') {
-    bits.push('The materials were mostly clear.')
-  }
-
-  // Short extras can sit in the fallback. Long spoken notes are for AI only.
-  if (extra && extra.length <= 140) {
-    bits.push(extra.replace(/[.!?]+$/, '') + '.')
-  }
-
-  if (input.againId === 'yes' || input.againId === 'likely') {
-    bits.push(pickHint(CLOSER_LINES))
-  }
-
-  return bits.join(' ').replace(/\s+/g, ' ').trim()
+export function buildReviewSkeleton(input: FeedbackDraftInput): string {
+  return buildVariedReview({
+    detail: detailLine(input),
+    personName: input.personName,
+    resultId: input.resultId,
+    attentionId: input.attentionId,
+    comfortId: input.comfortId,
+    personId: input.personId,
+    personTraitIds: input.personTraitIds,
+    materialsId: input.materialsId,
+    againId: input.againId,
+    extraNote: input.extraNote,
+  })
 }
 
 function pickHint<T extends readonly string[]>(hints: T): T[number] {
   return hints[Math.floor(Math.random() * hints.length)]
 }
 
+function swapPhrase(match: string, choices: readonly string[]): string {
+  const line = pickHint(choices)
+  if (match[0] && match[0] === match[0].toUpperCase()) {
+    return line.charAt(0).toUpperCase() + line.slice(1)
+  }
+  return line
+}
+
+/** Last-resort scrub if the model still reaches for the old stock lines. */
 function softenSurveySpeak(text: string): string {
   return text
-    .replace(/\bcommunication was tight\b/gi, 'they kept me in the loop')
+    .replace(/\bthey kept (me|us) in the loop\b/gi, (match) =>
+      swapPhrase(match, UPDATE_SWAPS),
+    )
+    .replace(/\bkept (me|us) in the loop\b/gi, (match) =>
+      swapPhrase(match, UPDATE_SWAPS),
+    )
+    .replace(/\bin the loop\b/gi, (match) =>
+      match[0] === match[0].toUpperCase() ? 'Up to date' : 'up to date',
+    )
+    .replace(/\bcommunication was tight\b/gi, (match) =>
+      swapPhrase(match, UPDATE_SWAPS),
+    )
     .replace(/\bkept everything tight\b/gi, 'kept things clear')
     .replace(/\btight from start to finish\b/gi, 'clear from start to finish')
     .replace(/\bcrystal clear\b/gi, 'easy to follow')
@@ -198,7 +180,8 @@ export async function polishReviewWithDeepSeek(
   input: FeedbackDraftInput & { skeleton: string },
 ): Promise<{ draft: string; usedAi: boolean; styleHint: string }> {
   const styleHint = pickHint(STYLE_HINTS)
-  const openingHint = pickHint(OPENING_HINTS)
+  const extra = (input.extraNote || '').trim()
+  const shape = extra ? pickHint(SHAPES) : pickHint(SHAPES.slice(0, 3))
   const skeleton = input.skeleton
   const apiKey =
     process.env.SYSBILT_deepseek_api_key?.trim() ||
@@ -211,28 +194,25 @@ export async function polishReviewWithDeepSeek(
 
   const facts = {
     serviceLabel: input.serviceLabel,
-    detail:
-      input.detailId === 'other-detail' && input.detailOther.trim()
-        ? input.detailOther.trim()
-        : (input.detailId && DETAIL_LINES[input.detailId]) || input.serviceLabel,
+    detail: detailLine(input),
     personName: input.personName,
     result:
       input.resultId === 'nailed'
-        ? 'the finished work was what they needed'
+        ? 'The finished work matched what was agreed, or was better.'
         : input.resultId === 'solid'
-          ? 'the result was good and ready to use'
+          ? 'The result was good, with only small niggles, and ready to use.'
           : '',
     updates:
       input.attentionId === 'tight'
-        ? 'they were kept in the loop'
+        ? 'Updates were clear and they did not have to chase.'
         : input.attentionId === 'fine'
-          ? 'updates were enough'
+          ? 'Contact was enough. They heard back when it mattered.'
           : '',
     comfort:
       input.comfortId === 'yes'
-        ? 'felt looked after'
+        ? 'They felt looked after the whole way.'
         : input.comfortId === 'mostly'
-          ? 'felt mostly comfortable'
+          ? 'They felt comfortable, with a few bumps.'
           : '',
     personFeel:
       input.personId === 'excellent'
@@ -245,30 +225,34 @@ export async function polishReviewWithDeepSeek(
       .filter(Boolean),
     materials:
       input.materialsId === 'crystal'
-        ? 'what they sent was easy to follow'
+        ? 'Briefs, links, and files were easy to follow.'
         : input.materialsId === 'mostly'
-          ? 'materials were mostly clear'
+          ? 'Materials were mostly clear, with a couple of fuzzy bits.'
           : '',
     wouldReturn: input.againId === 'yes' || input.againId === 'likely',
-    extraNote: (input.extraNote || '').trim(),
-    skeleton,
+    extraNote: extra,
     styleHint,
-    openingHint,
+    shape,
   }
 
   const system = [
-    'You polish Google review drafts for SYSBILT (Australian business systems agency).',
-    'Rewrite the skeleton into a natural first-person Google review in Australian English.',
-    'Write 3 to 5 flowing sentences that connect, like a person talking. Not a list of survey answers.',
-    'Google already shows the star rating next to the text. Never mention stars, scores, or "out of 5" in the review body.',
-    'Never open with the company name plus a rating. openingHint is the lead: extra-first uses extraNote, person-first uses the person, work-first uses the job, feel-first uses how it felt.',
-    'If extraNote has a real point, that is usually the best opening. If extraNote is empty, ignore extra-first and still write a connected paragraph, not one fact per sentence.',
-    'Do not invent jobs, results, praise, people, or facts missing from the JSON.',
-    'extraNote is often spoken out loud: messy, long, and full of asides. Extract the point. Do not paste the transcript.',
-    'If extraNote is only a future request with no usable review content, omit it.',
-    'Do not use the words tight, crystal, or the phrase crystal clear. Say they kept you in the loop, or that notes were easy to follow.',
-    'Do not always end with "I would happily work with them again". Vary the last line if they would return: recommend, use them again, or glad they picked them.',
-    'Do not use marketing nicknames or hype words.',
+    'You write Google review drafts for SYSBILT, an Australian business systems agency.',
+    'Write a natural first-person review in Australian English, as the customer.',
+    'Write 3 to 5 sentences that connect, like a person talking. Not a list of survey answers.',
+    'Combine facts. Do not give each fact its own sentence.',
+    'The JSON is the meaning, not the sentence. Do not copy its phrases.',
+    'Google already shows the star rating. Never mention stars, scores, or out of 5.',
+    'Never open with the company name plus a rating.',
+    'If extraNote has a real point, the first sentence comes from that point, cleaned up. Do not paste a messy transcript.',
+    'If extraNote is empty, or only a future request, ignore it.',
+    'Do not invent jobs, results, praise, people, or facts that are not in the JSON.',
+    'Never write: in the loop, kept me in the loop, kept us in the loop, crystal clear, nailed it, communication was tight.',
+    'If updates were good, say that as check-ins, replies, knowing where the job was up to, or not having to chase. Pick one way.',
+    'If the files were clear, say that as notes, links, or instructions that were easy to follow. Pick one way.',
+    'Work the person traits into one sentence about that person. Paraphrase them.',
+    'Follow shape for the order of the review.',
+    'If they would return, vary the last line: recommend them, use them again, send someone, or glad they picked them.',
+    'No marketing nicknames or hype words.',
     'No em dashes. No exclamation marks. No emoji.',
     'Output the review text only.',
   ].join(' ')
@@ -281,14 +265,15 @@ export async function polishReviewWithDeepSeek(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'deepseek-chat',
-        temperature: 0.88,
+        model: 'deepseek-flash',
+        temperature: 0.95,
         max_tokens: 500,
+        thinking: {type: 'disabled'},
         messages: [
           {role: 'system', content: system},
           {
             role: 'user',
-            content: `Polish this review. Facts JSON:\n${JSON.stringify(facts, null, 2)}`,
+            content: `Write this review from these facts. Do not copy the wording.\n${JSON.stringify(facts, null, 2)}`,
           },
         ],
       }),

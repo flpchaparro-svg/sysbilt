@@ -5,6 +5,8 @@
  * `?catalog=products` = /go product list for a specific product send.
  */
 
+import {buildVariedReview} from '../../lib/feedbackReviewSkeleton'
+
 export const SYSBILT_GOOGLE_REVIEW_URL =
   'https://g.page/r/CVcWJ7MFH-c5EBM/review' as const
 
@@ -151,12 +153,12 @@ export type ChoiceOption = {
 export const RESULT_OPTIONS: ChoiceOption[] = [
   {
     id: 'nailed',
-    label: 'Nailed it',
+    label: 'Great',
     blurb: 'Matches what we agreed, or better.',
   },
   {
     id: 'solid',
-    label: 'Solid',
+    label: 'Good',
     blurb: 'Good work. Small niggles only.',
   },
   {
@@ -167,7 +169,7 @@ export const RESULT_OPTIONS: ChoiceOption[] = [
   },
   {
     id: 'missed',
-    label: 'Missed',
+    label: 'Poor',
     blurb: 'Not what we needed.',
     weak: true,
   },
@@ -179,23 +181,23 @@ export const RESULT_INSTANT_IDS = ['nailed', 'solid'] as const
 export const ATTENTION_OPTIONS: ChoiceOption[] = [
   {
     id: 'tight',
-    label: 'In the loop',
+    label: 'Great',
     blurb: 'Clear updates. No chasing.',
   },
   {
     id: 'fine',
-    label: 'Fine',
-    blurb: 'Enough contact. Fine.',
+    label: 'Good',
+    blurb: 'Enough contact when it mattered.',
   },
   {
     id: 'spotty',
-    label: 'Spotty',
+    label: 'Patchy',
     blurb: 'I had to follow up.',
     weak: true,
   },
   {
     id: 'silent',
-    label: 'Ignored',
+    label: 'Poor',
     blurb: 'Hard to get answers.',
     weak: true,
   },
@@ -206,7 +208,7 @@ export const ATTENTION_INSTANT_IDS = ['tight', 'fine'] as const
 export const COMFORT_OPTIONS: ChoiceOption[] = [
   {
     id: 'yes',
-    label: 'Yes, fully',
+    label: 'Yes',
     blurb: 'Looked after the whole way.',
   },
   {
@@ -239,7 +241,7 @@ export const PERSON_OPTIONS: ChoiceOption[] = [
   {
     id: 'good',
     label: 'Good',
-    blurb: 'Solid to work with.',
+    blurb: 'Easy enough to work with.',
   },
   {
     id: 'mixed',
@@ -261,7 +263,7 @@ export const PERSON_INSTANT_IDS = ['excellent', 'good'] as const
 export const MATERIALS_OPTIONS: ChoiceOption[] = [
   {
     id: 'crystal',
-    label: 'Crystal clear',
+    label: 'Very clear',
     blurb: 'I always knew what I had.',
   },
   {
@@ -517,17 +519,6 @@ export const PERSON_TRAIT_OPTIONS: ChoiceOption[] = [
   },
 ]
 
-export const PERSON_TRAIT_LINES: Record<string, string> = {
-  clear: 'explained things in plain language',
-  fast: 'was quick to reply',
-  patient: 'was patient when I had questions',
-  honest: 'was straight about what was possible',
-  organised: 'kept the work organised',
-  skilled: 'really knew their stuff',
-  calm: 'stayed calm when things got messy',
-  listened: 'actually listened to what we needed',
-}
-
 export const DETAIL_LINES: Record<string, string> = {
   'full-site': 'a full website',
   landing: 'a landing page',
@@ -573,10 +564,7 @@ export const DETAIL_LINES: Record<string, string> = {
   'other-search': 'search visibility work',
 }
 
-/**
- * Phase 1: deterministic draft from structured answers (no AI yet).
- * Uses service detail + person traits so reviews do not all read the same.
- */
+/** Local fallback if the server draft does not come back. Same varied lines as the API. */
 export function buildFakeDraft(input: {
   serviceLabel: string
   detailId: string | null
@@ -592,69 +580,22 @@ export function buildFakeDraft(input: {
   againId: string | null
   extraNote?: string
 }): string {
-  const person = input.personName.trim()
   const otherDetail = input.detailOther.trim()
-  const extra = (input.extraNote || '').trim()
   const detail =
     input.detailId === 'other-detail' && otherDetail
       ? otherDetail
       : (input.detailId && DETAIL_LINES[input.detailId]) || input.serviceLabel
-  const bits: string[] = []
 
-  bits.push(`We worked with SYSBILT on ${detail}.`)
-
-  if (input.resultId === 'nailed') {
-    bits.push(`They set up ${detail} and it does what we needed.`)
-  } else if (input.resultId === 'solid') {
-    bits.push(`The ${detail} is good and ready to use.`)
-  }
-
-  if (input.attentionId === 'tight') {
-    bits.push('They kept me in the loop.')
-  } else if (input.attentionId === 'fine') {
-    bits.push('Updates were enough.')
-  }
-
-  if (input.comfortId === 'yes') {
-    bits.push('I felt looked after.')
-  } else if (input.comfortId === 'mostly') {
-    bits.push('I felt mostly comfortable working with them.')
-  }
-
-  if (person && (input.personId === 'excellent' || input.personId === 'good')) {
-    const traits = input.personTraitIds
-      .map((id) => PERSON_TRAIT_LINES[id])
-      .filter(Boolean)
-    if (traits.length === 0) {
-      bits.push(
-        input.personId === 'excellent'
-          ? `${person} was excellent to work with.`
-          : `${person} was good to work with.`,
-      )
-    } else if (traits.length === 1) {
-      bits.push(`${person} ${traits[0]}.`)
-    } else if (traits.length === 2) {
-      bits.push(`${person} ${traits[0]}, and ${traits[1]}.`)
-    } else {
-      const last = traits[traits.length - 1]
-      const head = traits.slice(0, -1).join(', ')
-      bits.push(`${person} ${head}, and ${last}.`)
-    }
-  }
-
-  if (input.materialsId === 'crystal') {
-    bits.push('What they sent was easy to follow.')
-  } else if (input.materialsId === 'mostly') {
-    bits.push('The materials were mostly clear.')
-  }
-
-  if (extra && extra.length <= 140) {
-    bits.push(extra.replace(/[.!?]+$/, '') + '.')
-  }
-
-  if (input.againId === 'yes' || input.againId === 'likely') {
-    bits.push('I would work with them again.')
-  }
-
-  return bits.join(' ').replace(/\s+/g, ' ').trim()
+  return buildVariedReview({
+    detail,
+    personName: input.personName,
+    resultId: input.resultId,
+    attentionId: input.attentionId,
+    comfortId: input.comfortId,
+    personId: input.personId,
+    personTraitIds: input.personTraitIds,
+    materialsId: input.materialsId,
+    againId: input.againId,
+    extraNote: input.extraNote,
+  })
 }
