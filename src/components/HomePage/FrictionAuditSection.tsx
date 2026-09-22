@@ -176,8 +176,7 @@ const FrictionAuditSection: React.FC<FrictionAuditSectionProps> = ({ onNavigate 
                     / THE FRICTION AUDIT
                  </div>
                  <h2 className="font-serif text-4xl md:text-5xl lg:text-7xl leading-[0.95] text-dark tracking-tighter mb-10">
-                    <span className="sr-only">Business Process Audit: Identifying Revenue &amp; Time Leaks</span>
-                    <span aria-hidden="true">
+                    <span>
                       Where your <span className="text-red-text">week</span>{' '}
                       <span className="italic text-red-text">disappears</span>
                     </span>
@@ -233,8 +232,7 @@ const FrictionAuditSection: React.FC<FrictionAuditSectionProps> = ({ onNavigate 
                / THE FRICTION AUDIT
             </div>
             <h2 className="font-serif text-4xl md:text-5xl lg:text-7xl leading-[0.95] tracking-tighter text-dark mb-6">
-               <span className="sr-only">Business Process Audit: Identifying Revenue &amp; Time Leaks</span>
-               <span aria-hidden="true">
+               <span>
                  Where your <span className="text-red-text">week</span>{' '}
                  <span className="italic text-red-text">disappears</span>
                </span>

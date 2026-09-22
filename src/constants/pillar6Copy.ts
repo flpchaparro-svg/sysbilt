@@ -1,6 +1,6 @@
 export const pillar6Copy = {
   hero: {
-    headline: 'A system is only as good as the team using it',
+    headline: 'The best system in the world is useless if nobody knows how to use it',
     sub: "You can buy the best software in the world, but if your team won't use it you've wasted your money. We build training that actually gets people to change how they work.",
     ctaPrimary: 'BOOK A CALL',
   },

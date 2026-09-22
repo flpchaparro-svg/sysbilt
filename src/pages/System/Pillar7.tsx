@@ -135,8 +135,7 @@ const Pillar7: React.FC<Pillar7Props> = ({ onNavigate }) => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 lg:gap-20 flex-1 content-center items-center">
             <div className="flex flex-col items-start max-w-3xl">
               <h1 id="pillar-hero-title" className="font-serif text-[2.75rem] md:text-[3.5rem] lg:text-[4.75rem] xl:text-[5.5rem] leading-[1.1] lg:leading-[0.9] tracking-tighter text-dark mb-8 md:mb-10">
-                <span className="sr-only">Business Dashboards &amp; Live Data Reporting Agency Sydney</span>
-                <span aria-hidden="true">
+                <span>
                   You know your revenue but not your <span className="italic font-serif text-gold-on-cream drop-shadow-[0_0_20px_rgba(197,160,89,0.3)]">real margin</span>
                 </span>
               </h1>
@@ -173,8 +172,7 @@ const Pillar7: React.FC<Pillar7Props> = ({ onNavigate }) => {
               <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark">{gap.eyebrow}</span>
             </div>
             <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-dark leading-[0.95] tracking-tighter mb-6 max-w-4xl drop-shadow-sm">
-              <span className="sr-only">The Risk of Delayed Financial Reporting and Disconnected Metrics</span>
-              <span aria-hidden="true">
+              <span>
                 You are driving fast with no <span className="italic font-serif text-gold-on-cream drop-shadow-[0_0_20px_rgba(197,160,89,0.3)]">instruments</span>
               </span>
             </h2>
@@ -192,8 +190,7 @@ const Pillar7: React.FC<Pillar7Props> = ({ onNavigate }) => {
         <motion.div className="mb-16 max-w-3xl" variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}>
           <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark mb-4 block">{solution.eyebrow}</span>
           <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-dark leading-[0.95] tracking-tighter mb-6">
-            <span className="sr-only">Real-Time KPI Dashboards and Centralised Business Intelligence</span>
-            <span aria-hidden="true">
+            <span>
               The end of the end-of-month <span className="italic font-serif text-gold-on-cream drop-shadow-[0_0_20px_rgba(197,160,89,0.3)]">surprise</span>
             </span>
           </h2>
@@ -214,8 +211,7 @@ const Pillar7: React.FC<Pillar7Props> = ({ onNavigate }) => {
           <div className="text-center max-w-3xl mx-auto mb-16">
             <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-dark mb-6 md:mb-4 block">{engine.eyebrow}</span>
             <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-dark leading-[0.95] tracking-tighter mb-8 md:mb-6">
-              <span className="sr-only">Connecting CRM, Marketing, and Operations Data into One View</span>
-              <span aria-hidden="true">
+              <span>
                 A dashboard that actually tells you <span className="italic font-serif text-gold-on-cream drop-shadow-[0_0_20px_rgba(197,160,89,0.3)]">what to do</span>
               </span>
             </h2>
@@ -279,8 +275,7 @@ const Pillar7: React.FC<Pillar7Props> = ({ onNavigate }) => {
               / LEARN FIRST
             </p>
             <h2 className="mb-6 font-serif text-3xl text-dark">
-              <span className="sr-only">Read Our Complete Guide to Building Business Dashboards</span>
-              <span aria-hidden="true">Want to know how to build a real dashboard?</span>
+              <span>Want to know how to build a real dashboard?</span>
             </h2>
             <p className="mb-10 font-sans text-lg font-light leading-relaxed text-dark/70">
               Read the complete guide on dashboards that work for your business. Everything we described here, in depth,
@@ -297,8 +292,7 @@ const Pillar7: React.FC<Pillar7Props> = ({ onNavigate }) => {
           <div className="mt-20 md:mt-24 w-full bg-dark rounded-sm p-12 md:p-24 flex flex-col items-center justify-center text-center">
             <p className="font-mono text-white/40 uppercase tracking-[0.2em] text-sm mb-6">/ READY?</p>
             <h2 className="font-serif text-6xl md:text-8xl text-white mb-12">
-              <span className="sr-only">Book a Business Data Consultation Call</span>
-              <span aria-hidden="true">
+              <span>
                 Let&apos;s <span className="italic text-[#D4A84B]">Talk</span>
               </span>
             </h2>
@@ -318,8 +312,7 @@ const Pillar7: React.FC<Pillar7Props> = ({ onNavigate }) => {
         accentColor={colors.goldOnCream}
         title={
           <>
-            <span className="sr-only">Frequently Asked Questions about Live Data Dashboards</span>
-            <span aria-hidden="true">
+            <span>
               Questions about <span className="italic text-gold-on-cream">data</span>
             </span>
           </>

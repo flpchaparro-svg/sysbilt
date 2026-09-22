@@ -158,8 +158,7 @@ const Pillar2: React.FC<Pillar2Props> = ({ onNavigate }) => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 lg:gap-20 flex-1 content-center items-center">
             <div className="flex flex-col items-start max-w-3xl">
               <h1 id="pillar-hero-title" className="font-serif text-[2.75rem] md:text-[3.5rem] lg:text-[4.75rem] xl:text-[5.5rem] leading-[1.1] lg:leading-[0.9] tracking-tighter text-dark mb-8 md:mb-10">
-                <span className="sr-only">CRM Setup &amp; Lead Tracking Agency Sydney</span>
-                <span aria-hidden="true">
+                <span>
                   Never lose track of a <span className="italic font-serif text-red-text drop-shadow-[0_0_20px_rgba(226,30,63,0.2)]">lead again</span>
                 </span>
               </h1>
@@ -209,8 +208,7 @@ const Pillar2: React.FC<Pillar2Props> = ({ onNavigate }) => {
               </span>
             </div>
             <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-dark leading-[0.95] tracking-tighter mb-6 max-w-4xl drop-shadow-sm">
-              <span className="sr-only">The Cost of Poor Lead Management &amp; Manual Follow-ups</span>
-              <span aria-hidden="true">
+              <span>
                 You are not short on leads, you are short on <span className="italic font-serif text-red-text drop-shadow-[0_0_20px_rgba(226,30,63,0.2)]">follow-up</span>
               </span>
             </h2>
@@ -239,8 +237,7 @@ const Pillar2: React.FC<Pillar2Props> = ({ onNavigate }) => {
             {solution.eyebrow}
           </span>
           <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-dark leading-[0.95] tracking-tighter mb-6">
-            <span className="sr-only">HubSpot CRM Setup &amp; Sales Pipeline Automation</span>
-            <span aria-hidden="true">
+            <span>
               One place for every lead, every deal, every <span className="italic font-serif text-red-text drop-shadow-[0_0_20px_rgba(226,30,63,0.2)]">follow-up</span>
             </span>
           </h2>
@@ -267,8 +264,7 @@ const Pillar2: React.FC<Pillar2Props> = ({ onNavigate }) => {
               {engine.eyebrow}
             </span>
             <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-dark leading-[0.95] tracking-tighter mb-8 md:mb-6">
-              <span className="sr-only">Automated Lead Scoring and Follow-up Sequences</span>
-              <span aria-hidden="true">
+              <span>
                 The memory your business has been <span className="italic font-serif text-red-text drop-shadow-[0_0_20px_rgba(226,30,63,0.2)]">missing</span>
               </span>
             </h2>
@@ -365,8 +361,7 @@ const Pillar2: React.FC<Pillar2Props> = ({ onNavigate }) => {
               / LEARN FIRST
             </p>
             <h2 className="mb-6 font-serif text-3xl text-dark">
-              <span className="sr-only">Read Our Complete CRM Strategy Guide</span>
-              <span aria-hidden="true">Want to know how to stop losing leads?</span>
+              <span>Want to know how to stop losing leads?</span>
             </h2>
             <p className="mb-10 font-sans text-lg font-light leading-relaxed text-dark/70">
               Read the complete guide on lead tracking that works for your business. Everything we described here, in
@@ -386,8 +381,7 @@ const Pillar2: React.FC<Pillar2Props> = ({ onNavigate }) => {
             </p>
 
             <h2 className="font-serif text-6xl md:text-8xl text-white mb-12">
-              <span className="sr-only">Book a CRM Consultation Call</span>
-              <span aria-hidden="true">
+              <span>
                 Let&apos;s <span className="italic text-[#D4A84B]">Talk</span>
               </span>
             </h2>
@@ -412,8 +406,7 @@ const Pillar2: React.FC<Pillar2Props> = ({ onNavigate }) => {
         accentColor={colors.goldOnCream}
         title={
           <>
-            <span className="sr-only">Frequently Asked Questions about CRM Setup</span>
-            <span aria-hidden="true">
+            <span>
               Questions about <span className="italic text-gold-on-cream">CRM</span>
             </span>
           </>

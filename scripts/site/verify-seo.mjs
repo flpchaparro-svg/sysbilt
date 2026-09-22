@@ -95,6 +95,24 @@ import {
   isSanityGuidePath,
   EXPECTED_CODE_BOOK_CHAPTER_COUNT,
 } from '../../src/site/routePolicy';
+import { pillar1Copy } from '../../src/constants/pillar1Copy';
+import { pillar2Copy } from '../../src/constants/pillar2Copy';
+import { pillar3Copy } from '../../src/constants/pillar3Copy';
+import { pillar4Copy } from '../../src/constants/pillar4Copy';
+import { pillar5Copy } from '../../src/constants/pillar5Copy';
+import { pillar6Copy } from '../../src/constants/pillar6Copy';
+import { pillar7Copy } from '../../src/constants/pillar7Copy';
+
+/** Pillar hero headlines, keyed by route. The rendered `<h1>` must match. */
+const PILLAR_HERO_HEADLINES = {
+  '/pillar1': pillar1Copy.hero.headline,
+  '/pillar2': pillar2Copy.hero.headline,
+  '/pillar3': pillar3Copy.hero.headline,
+  '/pillar4': pillar4Copy.hero.headline,
+  '/pillar5': pillar5Copy.hero.headline,
+  '/pillar6': pillar6Copy.hero.headline,
+  '/pillar7': pillar7Copy.hero.headline,
+};
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '../..');
@@ -354,6 +372,58 @@ function wordCountOfHtml(html) {
   return trimmed ? trimmed.split(/\s+/).length : 0;
 }
 
+/** Visible text of an HTML fragment, entities collapsed, whitespace normalised. */
+function headingText(fragment) {
+  return fragment
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&#39;|&apos;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/**
+ * Headings must read the same to a screen reader as to everyone else.
+ *
+ * The pattern removed on 22 Sep 2026 put a keyword string in an `sr-only` span
+ * beside an `aria-hidden` sibling holding the real sentence, so assistive tech
+ * and crawlers got copy no visitor ever saw. Google's spam policies call that
+ * hidden text.
+ */
+function checkNoHiddenKeywordHeadings(p, html) {
+  for (const match of html.matchAll(/<h[1-6][\s>][\s\S]*?<\/h[1-6]>/g)) {
+    const heading = match[0];
+    if (!/class="[^"]*\bsr-only\b/.test(heading)) continue;
+    if (!/aria-hidden="true"/.test(heading)) continue;
+    addViolation(
+      `${p} — heading pairs an sr-only keyword span with an aria-hidden sibling (hidden text): "${headingText(heading).slice(0, 80)}"`
+    );
+  }
+}
+
+/**
+ * Pillar `<h1>` text must match `heroCopy.headline`.
+ *
+ * Every pillar hardcodes its `h1` in JSX while also declaring a `headline` in
+ * its copy constant. On 21 Sep 2026 `/pillar4`'s headline was rewritten for the
+ * AI door and the page kept rendering the old one, because nothing read the
+ * constant. This makes that divergence a build failure instead of a silent one.
+ */
+function checkPillarH1MatchesCopy(p, html) {
+  const headline = PILLAR_HERO_HEADLINES[p];
+  if (!headline) return;
+  const h1 = html.match(/<h1[\s>][\s\S]*?<\/h1>/);
+  if (!h1) return; // already flagged by the h1-count check
+  const rendered = headingText(h1[0]);
+  if (rendered !== headline) {
+    addViolation(
+      `${p} — <h1> is "${rendered}" but the copy constant says "${headline}". Update both together.`
+    );
+  }
+}
+
 /** Guard v2: `required-body` routes must have a real, unique, threshold-length server-rendered body. */
 function checkRequiredBodyRoute(route, html) {
   const p = route.path;
@@ -372,6 +442,9 @@ function checkRequiredBodyRoute(route, html) {
   } else if (h1Count > 1) {
     addViolation(`${p} — required-body route has ${h1Count} <h1> elements (expected 1)`);
   }
+
+  checkNoHiddenKeywordHeadings(p, html);
+  checkPillarH1MatchesCopy(p, html);
 
   if (!/aria-label="Breadcrumb"/.test(html)) {
     addViolation(`${p} — required-body route is missing a breadcrumb nav`);

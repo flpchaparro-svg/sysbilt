@@ -81,8 +81,7 @@ const TheArchitect: React.FC = () => {
               / WHO WE ARE
             </span>
             <h2 className="font-serif text-5xl md:text-6xl lg:text-7xl leading-[0.9] mb-8 md:mb-10 text-dark tracking-tight">
-              <span className="sr-only">About Felipe Chaparro, Revenue Systems Architect</span>
-              <span aria-hidden="true">
+              <span>
                 Built by people who have{' '}
                 <span className="italic text-gold-on-cream">actually run businesses</span>
               </span>

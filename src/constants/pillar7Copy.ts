@@ -1,6 +1,6 @@
 export const pillar7Copy = {
   hero: {
-    headline: 'Know exactly what your business is doing right now',
+    headline: 'You know your revenue but not your real margin',
     sub: "You shouldn't have to wait for the accountant to tell you if last month was good or bad. We build dashboards that pull your scattered data into one screen so you can see your numbers live from anywhere.",
     ctaPrimary: 'BOOK A CALL',
   },

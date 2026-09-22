@@ -67,13 +67,38 @@ Blog and toolkit items carry structured SEO fields in Sanity: focus keyword, SEO
 
 ## Open SEO work
 
-- **Soft 404s (confirmed live 22 Sep 2026).** Unknown URLs return HTTP 404 from `dist/404.html`, title `Page not found | SYSBILT`, `X-Robots-Tag: noindex, follow`, and no homepage canonical. `/r/sysbilt` and `/go/*` still return 200.
-- **Conversion tracking (code shipped 2026-09-21, GA4 key events still Felipe).** Contact, Sybil, and `/go` access now fire `generate_lead` and `form_submit` after a successful save. Mark those events as key events in GA4. Three months to 2026-09-20: 871 sessions, 295 users, 8 `form_start`, **zero** `form_submit`.
-- **Sitemap `/evidence-vault` (confirmed live 22 Sep 2026).** The live sitemap does not list it. The `308` in `vercel.json` stays.
-- **Titles over 60 characters (code and Sanity shortened 22 Sep 2026, confirm live after deploy).** 34 indexable titles were over 60 once ` | SYSBILT` was added. Blog and guide `seoTitle` fields were shortened in Sanity, and four book titles were shortened in code. `verify-seo` now fails an indexable title over 60 characters. Studio warns at 50 characters on the field, because the site adds the brand suffix.
+- **Soft 404s (done, verified live 22 Sep 2026).** Unknown URLs return HTTP 404 from `dist/404.html`, title `Page not found | SYSBILT`, `X-Robots-Tag: noindex, follow`, and no homepage canonical. Verified on `/this-page-does-not-exist-abc123`, `/blog/no-such-post-xyz`, `/toolkit/nope-not-real`. `/go/*`, `/learn/*`, `/r/*` and the document routes still return 200 with homepage HTML, **by design**: the middleware stamps `X-Robots-Tag: noindex, follow` on them at the edge, so they cannot land in a duplicate-canonical bucket. Do not "fix" those to 404.
+- **Conversion tracking (code done, GA4 toggle still open).** Contact, Sybil, `/go` access and the website wizard fire `generate_lead` and `form_submit` after a successful save, and both events are arriving in GA4 (verified 22 Sep). **`keyEvents` still reads 0**, so GA4 counts no conversions. Mark `generate_lead` as a key event in GA4 Admin. Not retroactive.
+- **Sitemap `/evidence-vault` (done, verified live 22 Sep 2026).** The live sitemap does not list it. The `308` in `vercel.json` stays.
+- **Titles over 60 characters (done, verified live 22 Sep 2026).** Full sitemap recrawl: 223 URLs, **0 titles over 60 characters**, 0 missing. `verify-seo` fails an indexable title over 60 and measures after decoding HTML entities. Studio warns at 50 on the field, because the site adds the brand suffix.
+- **Meta descriptions over 160 characters (open).** Seven run 170 to 205: the `built-to-close`, `built-to-multiply`, `built-to-run`, `built-to-see`, `built-to-sell` and `built-to-teach` hubs, plus `/guides/how-to-build-a-branded-carousel-system`. Google truncates them. The monthly monitor reports these under "Worth a look", so they will not be forgotten, but nothing fails the build over length yet.
+- **Hidden keyword headings (done 22 Sep 2026).** 60 heading pairs across the seven pillars, `/system` and six homepage components put an `sr-only` keyword string beside an `aria-hidden` sibling holding the real sentence, so assistive tech and crawlers read copy no visitor ever saw. All 60 removed; both now read the visible text. `verify-seo` fails the build if a heading ever pairs `sr-only` with an `aria-hidden` sibling again. **Still open:** the homepage `h1` is a variant of the same pattern, `sr-only` with the entire visible hero in an `aria-hidden` sibling div, so the guard does not catch it. Fixing it means choosing which visible element becomes the `h1`, which changes the homepage keyword signal.
+- **Pillar H1 drift (done 22 Sep 2026).** `pillar4Copy.hero.headline` had been rewritten for the AI door while `Pillar4.tsx` kept rendering the old hardcoded `h1`, because nothing read the constant. `/pillar4` now renders "AI assistants and consulting for growing companies". `verify-seo` asserts every `/pillar1` to `/pillar7` `h1` matches its `heroCopy.headline`; adding that guard immediately caught the same drift on `/pillar6` and `/pillar7`, where the constants were stale and the live headlines were right, so the constants were corrected to match what ships.
 - **Toolkit “small business” metaTitle (done, confirmed live 22 Sep 2026).** Published toolkit `metaTitle` values say “for growing businesses”. The Studio example no longer says “ChatGPT for small business”, and the badge readers see is “Best for a growing business”. Three guide `seoTitle` values that still said “small business” were rewritten in the title pass above.
 - **Off-page and Domain Rating (open, tracked below).** On-page is resolved and guarded. Off-page is where the next real gains are. Baseline and the quarter list live in the section after this one.
 - **GSC recovery: the call was wrong, corrected 2026-09-21.** We expected the indexed count to trend back up toward the full sitemap. It has not, and Google is not stalling, it is declining. **116 Discovered currently not indexed** plus **33 Crawled currently not indexed** is 149 of 224 URLs. The 116 lines up with the 96 book chapters and 8 hubs added to the sitemap on 9 Aug. The content is not thin (chapters run 1,416 words median in the deployed HTML). The domain has not earned the crawl budget for 224 URLs. This is an off-page symptom, not an on-page one, and **adding pages makes the number grow**. Do not treat it as a bug to fix on the site.
+
+---
+
+## The monthly monitor
+
+`verify-seo.mjs` guards the build. It reads `dist/` and never sees production, Google, or GA4. The monitor covers that gap.
+
+```bash
+npm run seo:check                                        # full run, ~25s
+node scripts/automations/seo/seo-monitor.mjs --crawl      # crawl only, ~4s
+```
+
+It separates two things on purpose. **Invariants** are the 21 and 22 September fixes: every sitemap URL 200 and self-canonical with one `h1` and a title under 60, unknown URLs returning a real 404 with no canonical, and `/go`, `/learn`, `/news` still noindex at the edge. A broken invariant exits 1. **Readings** are numbers that move on their own: domain rank, referring domains, spam score, Google review count, and who holds the `ai agency sydney` and `ai consultant sydney` local packs. Those are reported, never failed on.
+
+Scheduled monthly on the 1st at 09:00 via launchd, and it posts to Slack through n8n:
+
+```bash
+node scripts/automations/n8n/deploy-seo-monitor.mjs --activate   # creates the webhook + Slack post
+bash scripts/automations/seo/install-launchd.sh                  # monthly schedule
+```
+
+The deploy prints the webhook URL to put in `.env.local` as `SEO_MONITOR_WEBHOOK`. Without it the script still runs and prints locally. Read-only with no model call, so the DeepSeek off-peak rule does not apply and it can run any hour. Reports land in `scripts/automations/seo/logs/` (gitignored, last twelve kept).
 
 ---
 
@@ -86,8 +111,8 @@ When a followed link from a new real domain lands, tick the item, note the domai
 ### Baseline (verified 2026-09-21, previous check 2026-09-10)
 
 - **DR 0.** DataForSEO rank returned no score at all. For scale, the domains beating us on our own target keywords: `safetyculture.com` 543, `opcentral.com.au` 389, `thedigitalprojectmanager.com` 389, `trainual.com` 372, `scribe.com` 355.
-- **11 backlinks from 11 referring domains** (was 9 and 9 on 10 Sep), first seen 3 Aug 2026. Every one is the same PBN pattern: casino and scraper domains, `/all/2799/33.html` style paths, ~3,000 outbound links per page, anchor text reading "Buy Backlinks Online Cheap". Auto-generated by spam networks scraping new domains, not bought. They do not move DR.
-- DataForSEO **spam score 64 / 100** (was 63).
+- **14 backlinks from 14 referring domains** on 22 Sep (was 11 and 11 on 21 Sep, 9 and 9 on 10 Sep), first seen 3 Aug 2026. Every one is the same PBN pattern: casino and scraper domains, `/all/2799/33.html` style paths, ~3,000 outbound links per page, anchor text reading "Buy Backlinks Online Cheap". Auto-generated by spam networks scraping new domains, not bought. They do not move DR.
+- DataForSEO **spam score 61 / 100** (was 64 on 21 Sep, 63 on 10 Sep). It drifts with the PBN crawl, it is not a signal we are improving.
 - **Legitimate referring domains: zero.** That is the number that matters and it has not moved.
 
 ### Do not

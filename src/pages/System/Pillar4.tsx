@@ -158,9 +158,8 @@ const Pillar4: React.FC<Pillar4Props> = ({ onNavigate }) => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 lg:gap-20 flex-1 content-center items-center">
             <div className="flex flex-col items-start max-w-3xl">
               <h1 id="pillar-hero-title" className="font-serif text-[2.75rem] md:text-[3.5rem] lg:text-[4.75rem] xl:text-[5.5rem] leading-[1.1] lg:leading-[0.9] tracking-tighter text-dark mb-8 md:mb-10">
-                <span className="sr-only">Custom AI Assistants &amp; Business Chatbot Agency Sydney</span>
-                <span aria-hidden="true">
-                  Stop answering the same questions <span className="italic font-serif text-gold-on-cream drop-shadow-[0_0_20px_rgba(197,160,89,0.3)]">over and over</span>
+                <span>
+                  AI assistants and consulting for <span className="italic font-serif text-gold-on-cream drop-shadow-[0_0_20px_rgba(197,160,89,0.3)]">growing companies</span>
                 </span>
               </h1>
 
@@ -209,8 +208,7 @@ const Pillar4: React.FC<Pillar4Props> = ({ onNavigate }) => {
               </span>
             </div>
             <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-dark leading-[0.95] tracking-tighter mb-6 max-w-4xl drop-shadow-sm">
-              <span className="sr-only">The Hidden Cost of Repetitive Client Inquiries and Staff Training</span>
-              <span aria-hidden="true">
+              <span>
                 Your business can only grow as fast as <span className="italic font-serif text-gold-on-cream drop-shadow-[0_0_20px_rgba(197,160,89,0.3)]">you can reply</span>
               </span>
             </h2>
@@ -238,8 +236,7 @@ const Pillar4: React.FC<Pillar4Props> = ({ onNavigate }) => {
             {solution.eyebrow}
           </span>
           <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-dark leading-[0.95] tracking-tighter mb-6">
-            <span className="sr-only">Custom AI Agent Development &amp; Knowledge Base Integration</span>
-            <span aria-hidden="true">
+            <span>
               An AI that knows your business and sounds like <span className="italic font-serif text-gold-on-cream drop-shadow-[0_0_20px_rgba(197,160,89,0.3)]">your team</span>
             </span>
           </h2>
@@ -266,8 +263,7 @@ const Pillar4: React.FC<Pillar4Props> = ({ onNavigate }) => {
               {engine.eyebrow}
             </span>
             <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-dark leading-[0.95] tracking-tighter mb-8 md:mb-6">
-              <span className="sr-only">Training AI Models on Your Private Business Data</span>
-              <span aria-hidden="true">
+              <span>
                 An assistant wired into the rest of <span className="italic font-serif text-gold-on-cream drop-shadow-[0_0_20px_rgba(197,160,89,0.3)]">your business</span>
               </span>
             </h2>
@@ -388,8 +384,7 @@ const Pillar4: React.FC<Pillar4Props> = ({ onNavigate }) => {
               / LEARN FIRST
             </p>
             <h2 className="mb-6 font-serif text-3xl text-dark">
-              <span className="sr-only">Read Our Guide on Implementing AI Assistants in Business</span>
-              <span aria-hidden="true">Want to know what AI can actually do for you?</span>
+              <span>Want to know what AI can actually do for you?</span>
             </h2>
             <p className="mb-10 font-sans text-lg font-light leading-relaxed text-dark/70">
               Read the complete guide on AI assistants that work for your business. Everything we described here, in
@@ -409,8 +404,7 @@ const Pillar4: React.FC<Pillar4Props> = ({ onNavigate }) => {
             </p>
 
             <h2 className="font-serif text-6xl md:text-8xl text-white mb-12">
-              <span className="sr-only">Book a Custom AI Assistant Consultation</span>
-              <span aria-hidden="true">
+              <span>
                 Let&apos;s <span className="italic text-[#D4A84B]">Talk</span>
               </span>
             </h2>
@@ -436,8 +430,7 @@ const Pillar4: React.FC<Pillar4Props> = ({ onNavigate }) => {
         accentColor={colors.goldOnCream}
         title={
           <>
-            <span className="sr-only">Frequently Asked Questions about Business AI Assistants</span>
-            <span aria-hidden="true">
+            <span>
               Questions about <span className="italic text-gold-on-cream">AI</span>
             </span>
           </>

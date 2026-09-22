@@ -53,8 +53,7 @@ const Feature_Group7: React.FC = () => {
           </span>
           {/* FIXED: Smooth scaling 4xl -> 5xl -> 7xl */}
           <h2 className="font-serif text-4xl md:text-5xl lg:text-7xl text-dark leading-[0.95] tracking-tighter mb-6">
-            <span className="sr-only">Business Systems Case Study: Group 7 Security</span>
-            <span aria-hidden="true">
+            <span>
               See it in <span className="italic text-gold-on-cream">action</span>
             </span>
           </h2>

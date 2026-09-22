@@ -1,10 +1,55 @@
 # SYSBILT — Search lane brief
 
-**Version 1.1 | 21 September 2026 | Internal only. Where search demand actually sits in Australia, which doors we open to meet it, and how the Google Business Profile earns leads without domain authority.**
+**Version 1.2 | 22 September 2026 | Internal only. Where search demand actually sits in Australia, which doors we open to meet it, and how we earn leads without domain authority.**
 
 Read this with `SEO_MASTER.md`. That file owns the technical state and the off-page list. This file owns the demand question: what people type, what we sell, and which of the two actually meet.
 
 `BRAND_FACTS.md` still wins all contradictions. Nothing here changes the brand, the audience, or the "small business" ban.
+
+---
+
+## Shipped and verified (22 September 2026)
+
+Checked against the live site, GA4, and the live Sydney SERPs. Not checked against a claim in a commit message.
+
+| Item | State |
+|---|---|
+| Real 404s on unknown URLs | Done. `404` + `noindex, follow` + no canonical + "Page not found \| SYSBILT" |
+| `/evidence-vault` out of the sitemap | Done. Still `308`s to `/proof`, which is correct, it is just no longer advertised |
+| Titles over 60 characters | Done. 22 to 0, and `verify-seo.mjs` now fails the build over 60 |
+| Sitemap health | 223 URLs, all `200`, every canonical self-referencing, exactly one `h1` each, nothing noindexed inside it |
+| `generate_lead` / `form_submit` events | Firing. Wired to `/contact`, Sybil, funnel access, and the website wizard |
+| GA4 key events | **Not done.** The events fire, `keyEvents` still reads 0. Nothing is counted as a conversion |
+| Google profile description | Done. The new AI and profile language is live in the knowledge panel |
+| Google reviews | 4 to **5, rating 5.0** |
+| `/pillar4` title and meta | Done. 46-character title, 141-character description, both in search language |
+| `/pillar4` H1 | Done. Now reads "AI assistants and consulting for growing companies", and `verify-seo` fails the build if any pillar `h1` stops matching its copy constant |
+| Hidden keyword headings | Done. All 60 `sr-only` plus `aria-hidden` pairs removed and guarded. The homepage `h1` is a variant the guard cannot see and is still open |
+| The three `/go` search pages | Copy rewritten, but **no search value**. `/go/*` is `noindex` at the edge and absent from the sitemap by design. See the corrected door list below |
+| Monthly monitor | Done. `npm run seo:check`, scheduled on the 1st, posts to Slack through n8n. See `SEO_MASTER.md` |
+
+One thing still loose: seven guide-hub meta descriptions run 170 to 205 characters, which Google truncates. The monitor reports them every month.
+
+---
+
+## Two corrections to version 1.0
+
+### Reviews were not the blocker
+
+Version 1.0 said reviews were the whole lever. The live packs say otherwise. SYSBILT now has 5 reviews at 5.0 and appears in neither AI pack:
+
+| Pack | Holders and review counts | SYSBILT |
+|---|---|---|
+| ai agency sydney | 1 at 3.0, 15 at 5.0, 1 at 5.0 | 5 at 5.0, not in the pack |
+| ai consultant sydney | 15 at 5.0, 3 at 5.0, 1 at 5.0 | 5 at 5.0, not in the pack |
+
+We already beat two of the three holders in each pack on review count. **Every holder has "AI" in the business name.** AI Sydney, AI Consulting Group, AI Digital Solutions, Ai Consultancy, AI Consultants Australia. Business name match is doing the work, and we are not renaming the company.
+
+So: keep asking for reviews, because they close deals and they matter for every other pack. Stop treating the count as the thing standing between us and `ai agency sydney`.
+
+### The primary category is actively wrong
+
+The profile reads **Computer consultant**. That places us in the `computer consultant sydney` pack against itGenius (609 reviews, 15 years), Kaine Mathrick Tech (110 reviews) and Computer One (20 years). Unwinnable, and it does nothing for any AI query. Changing it is free and it is the highest-value profile action left.
 
 ---
 
@@ -104,9 +149,9 @@ This is a naming change on the doors, not a repositioning.
 
 ## The local pack play
 
-This is the part that works without domain authority, and it is why it leads.
+**Read the corrections above first.** This section was written believing reviews were the lever. They are not, for the AI packs specifically. What stands is everything about category and services.
 
-The local 3-pack is a separate ranking system from organic. It weighs proximity to the searcher, primary category, service relevance and review signal. It does not care about backlinks. A brand-new listing can hold position one, and in this category it currently does.
+The local 3-pack is a separate ranking system from organic. It weighs proximity to the searcher, primary category, service relevance, business name match and review signal. It does not care about backlinks. A brand-new listing can hold position one, and in this category it currently does.
 
 ### What the Sydney packs look like (verified 21 September 2026)
 
@@ -122,11 +167,13 @@ Six AI listings hold 22 reviews between them. The highest single count is 15. Ne
 
 ### Review target
 
-- **4** is where we are. Already mid-pack.
-- **10** clears five of the six listings. Two weeks of asking.
-- **20 at 4.8 or better** makes us the clear review leader in the category with margin. This is the target.
+- **5 at 5.0** is where we are (22 Sep). Already ahead of two of the three holders in both AI packs.
+- **10** is still worth having. It clears five of the six AI listings and it is the floor for every other pack we might enter.
+- **20 at 4.8 or better** stays the quarter target.
 
-Stop at twenty for now. A new company jumping to forty in a month is the velocity pattern that gets a listing filtered, and we do not need it to win this pack.
+Stop at twenty for now. A new company jumping to forty in a month is the velocity pattern that gets a listing filtered.
+
+Reviews are no longer the blocking item. Treat them as background work that keeps running, not the thing the lane waits on.
 
 **Coach the ask.** A review that names the work carries relevance weight that a generic one does not. "Felipe set up an AI assistant that answers our enquiries" beats "great service, highly recommended". Same effort from the client, much better signal. Build that prompt into the Feedback Review send rather than asking for a rating alone.
 
@@ -136,9 +183,9 @@ Stop at twenty for now. A new company jumping to forty in a month is the velocit
 
 Three things to set, in order of impact:
 
-1. **Primary category.** The single biggest relevance lever and it costs nothing. Open the category picker and choose the closest match to the AI lane. Google has been adding AI-related categories, so check the current list rather than assuming. If no AI category exists, the pack holders sit under software and consulting categories. Set one primary and add the rest as secondary.
-2. **Services.** Add each service under its search name: AI assistant setup, AI phone answering, business automation, CRM setup, website design, Google Business Profile management, local SEO. The services list feeds relevance directly.
-3. **Description.** Paste this, then keep weekly Sell Updates:
+1. **Primary category. Open, and now the top priority.** It currently reads **Computer consultant**, which is the MSP and IT-support pack: itGenius on 609 reviews, Kaine Mathrick on 110, Computer One at 20 years old. Wrong room, and it does nothing for any AI query. Search the category picker for artificial intelligence, automation, software, and business consulting, then set the closest honest match as primary and move the rest to secondary. Google keeps adding categories, so read the live list rather than trusting this note.
+2. **Services. Open.** Add each service under its search name: AI assistant setup, AI phone answering, business automation, CRM setup, website design, Google Business Profile management, local SEO. The services list feeds relevance directly, and since the business-name match is off the table, category and services are the only pack levers we control.
+3. **Description. Done 22 Sep**, live in the knowledge panel. Kept here for reference:
 
    We set up AI assistants and AI consulting for growing Australian companies in Sydney. Phone answering, website chat, CRM, automation, websites, and Google Business Profile work, built so the pieces connect. You can buy one piece now or the system over time.
 
@@ -148,37 +195,82 @@ Paste-ready services (one line each): AI assistant setup. AI phone answering. Bu
 
 ---
 
+## The AI organic SERP is winnable at zero authority
+
+This is the most useful thing the 22 September recheck found, and it changes the priority order.
+
+Version 1.0 assumed DR 0 locked us out of organic. That is true of `standard operating procedure software`, where page one is SafetyCulture (rank 543) and Trainual (372). It is **not** true of the Sydney AI terms. Live domain ranks against live page-one positions:
+
+| Domain | Rank | Where it sits |
+|---|---:|---|
+| sydneyaiagency.com | **0** | #2 organic, `ai agency sydney` (6,600 a month) |
+| aiconsultantsaustralia.com | **0** | local pack #3, `ai consultant sydney` |
+| aidigital.solutions | 83 | local pack #3, `ai agency sydney` |
+| lightningventures.com.au | 88 | #7 organic via `/ai-agency/sydney/` |
+| absolutelyai.com.au | 139 | #10 organic via a buyer's-guide post |
+| ailabaustralia.com | 143 | #1 organic |
+| sysbilt.com | **0** | nowhere |
+
+A domain with no measurable backlinks holds position two for a 6,600-a-month keyword. Two of the seven are exact-match domains, which we cannot copy, but `lightningventures.com.au` and `absolutelyai.com.au` are not: they rank on a single dedicated page each, from rank 88 and 139.
+
+So the read flips. **The organic AI page is a better bet than the AI local pack**, because the pack is decided by a business name we will not change, while the organic result is decided by a page we can write. Both packs also sit under an AI Overview with a Reddit thread on page one, which is where an honest Australian buyer's guide gets cited.
+
+---
+
 ## The doors to build
 
 Small, surgical, no new content wave.
 
 | Door | Page | Target language | Status |
 |---|---|---|---|
-| AI lane | `/pillar4` | AI assistants and AI consulting for growing Australian companies, Sydney | Code shipped 21 Sep 2026. Meta and opening rewritten. Confirm on the next deploy. |
-| Search lane | `/go/local-pack`, `/go/onpage-search`, `/go/google-profile` | Local listing / Maps, on-page search, Google Business Profile management | Code and Sanity titles shipped 21 Sep 2026. Pages stay noindex. Confirm on the next deploy. |
+| AI lane, meta | `/pillar4` | AI assistants and AI consulting for growing Australian companies, Sydney | **Done**, live and verified 22 Sep. 46-char title, 141-char description, body opening in search language |
+| AI lane, H1 | `/pillar4` | Same | **Open.** The rewritten `pillar4Copy.hero.headline` is dead code. The `h1` is hardcoded in `Pillar4.tsx` and still reads "Stop answering the same questions over and over" |
+| Search lane | `/go/local-pack`, `/go/onpage-search`, `/go/google-profile` | Local listing / Maps, on-page search, Google Business Profile management | Copy shipped 21 Sep. **Zero search value**: `/go/*` is noindex at the edge and out of the sitemap by design. Good for conversion, not a door. A real search door needs a public indexable page |
 | Ops lane | `/pillar2` | CRM setup, job and field service systems | Later, lower priority |
 
-The AI door goes first. It has the most demand, the weakest competition and the product is already built.
+The AI door goes first. It has the most demand, the competition is beatable at our authority, and the product is already built.
+
+**The `/go` pages are not doors.** `routePolicy.ts` classifies every `/go/*` path as `noindex-shell` and the middleware sets `X-Robots-Tag: noindex, follow` at the edge. That is deliberate and it should stay: the funnel is for people we send there, not for Google. Any indexable search door has to be a public page, which means a pillar page or a new public service page. Do not "fix" the `/go` noindex to chase rankings.
 
 ---
 
 ## Measurement
 
-There is currently no way to tell whether any of this works until the next deploy is live and Felipe marks the new events as key events in GA4. Code now fires `generate_lead` and `form_submit` after a successful contact form, Sybil contact form, and `/go` access wizard save. Unknown URLs are set to return HTTP 404 from `dist/404.html` instead of the homepage. Local `npm run build` (stamp-meta + verify-seo) passed 21 Sep 2026. Live `curl` of a fake path was still HTTP 200 with homepage HTML until deploy. Confirm both on the live site after deploy.
+Verified live 22 Sep: unknown URLs return a real `404` from `dist/404.html`, and `generate_lead` plus `form_submit` are arriving in GA4 from `/contact`, the Sybil form, the `/go` access wizard, and the website wizard.
 
-**The metric for this quarter is review count and tracked enquiries, not position and not impressions.** Position is already fixed. Impressions are falling for good reasons. Neither of them pays.
+**One step is missing and it makes the rest meaningless.** GA4 still reports `keyEvents` as 0 for both events, so nothing is counted as a conversion. In GA4, Admin, Events, toggle **Mark as key event** on `generate_lead`. Thirty seconds, not retroactive, so do it before anything else in the sequence.
+
+**The metric for this quarter is tracked enquiries, not position and not impressions.** Position is already fixed. Impressions are falling for good reasons. Neither of them pays. Review count stays on the board but it is background work now, not the blocker.
 
 ---
 
 ## Sequence
 
-1. Measurement: form submit events (code shipped, mark as GA4 key events after deploy), real 404s (code shipped, confirm live).
-2. Profile: primary category, services, description. Manual, same afternoon. Paste-ready copy is in the profile section above.
-3. Reviews: 4 to 10 in two weeks, 10 to 20 over the quarter. Feedback Review drafts now name the work. Send `/r/sysbilt` to recent clients.
-4. AI door: `/pillar4` meta and opening rewrite. Code shipped 21 Sep 2026.
-5. Search door: meta pass on `/go/google-profile`, `/go/local-pack`, `/go/onpage-search`. Code and Sanity shipped 21 Sep 2026.
-6. Off-page: keep working the quarter list in `SEO_MASTER.md`. It is still the only thing that lifts domain rank.
+1. **GA4 key events.** Mark `generate_lead` as a key event. Nothing else is measurable until this is on. Felipe only, thirty seconds.
+2. **Profile category and services.** Move off Computer consultant, add the seven services. Manual, one afternoon, highest-value profile action left. Felipe only, the API is not approved.
+3. **The AI organic page.** A dedicated page targeting `ai agency sydney` and `ai consulting sydney`, written as an honest Australian buyer's guide rather than a service pitch. Evidence says this ranks at our authority. Biggest single upside left in the lane.
+4. **Reviews.** 5 to 10, then 20 over the quarter. Background work, do not gate anything on it.
+5. **Off-page.** Keep working the quarter list in `SEO_MASTER.md`. Still the only thing that lifts domain rank.
+6. **Tidy-ups.** The seven long guide-hub meta descriptions, and the homepage `h1` decision.
+
+Done 22 Sep: the `/pillar4` H1, all 60 hidden keyword headings, and the monthly monitor.
+
+### Next check
+
+**Late October 2026.** Earlier than that and there is nothing to read: the 404 and title work shipped on 21 and 22 September, and Google needs several weeks of recrawl before the GSC indexing buckets move.
+
+What to pull, and what would count as it working:
+
+| Reading | Now (22 Sep) | Working looks like |
+|---|---|---|
+| GA4 key events | 0 configured | `generate_lead` marked, a real count of tracked enquiries |
+| GSC "Duplicate without user-selected canonical" | 11 | trending to 0, those URLs move to "Not found (404)" |
+| GSC "Discovered currently not indexed" | 116 | flat or down, not up. It grows if we publish |
+| Google reviews | 5 at 5.0 | 10 or better |
+| Profile primary category | Computer consultant | anything in the AI or automation family |
+| Legitimate referring domains | 0 | 1 or more |
+| `ai agency sydney` position | not ranking | in the top 50 at all, once the page exists |
 
 ---
 
-*End of Search lane brief v1.1. When a volume figure is rechecked, update the table and the date. When a door ships, mark it. When the review count moves, note it in the local pack section.*
+*End of Search lane brief v1.2. When a volume figure is rechecked, update the table and the date. When a door ships, mark it. When the review count moves, note it in the local pack section.*

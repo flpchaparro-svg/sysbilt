@@ -135,8 +135,7 @@ const Pillar6: React.FC<Pillar6Props> = ({ onNavigate }) => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 lg:gap-20 flex-1 content-center items-center">
             <div className="flex flex-col items-start max-w-3xl">
               <h1 id="pillar-hero-title" className="font-serif text-[2.75rem] md:text-[3.5rem] lg:text-[4.75rem] xl:text-[5.5rem] leading-[1.1] lg:leading-[0.9] tracking-tighter text-dark mb-8 md:mb-10">
-                <span className="sr-only">Business System Training &amp; Software Adoption Agency Sydney</span>
-                <span aria-hidden="true">
+                <span>
                   The best system in the world is useless if nobody <span className="italic font-serif text-dark drop-shadow-[0_0_20px_rgba(26,26,26,0.3)]">knows how to use it</span>
                 </span>
               </h1>
@@ -173,8 +172,7 @@ const Pillar6: React.FC<Pillar6Props> = ({ onNavigate }) => {
               <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-gold-on-cream">{gap.eyebrow}</span>
             </div>
             <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-dark leading-[0.95] tracking-tighter mb-6 max-w-4xl drop-shadow-sm">
-              <span className="sr-only">The Risk of Undocumented Business Processes</span>
-              <span aria-hidden="true">
+              <span>
                 You built a great business, but it only lives in <span className="italic font-serif text-dark drop-shadow-[0_0_20px_rgba(26,26,26,0.3)]">your head</span>
               </span>
             </h2>
@@ -192,8 +190,7 @@ const Pillar6: React.FC<Pillar6Props> = ({ onNavigate }) => {
         <motion.div className="mb-16 max-w-3xl" variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}>
           <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-gold-on-cream mb-4 block">{solution.eyebrow}</span>
           <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-dark leading-[0.95] tracking-tighter mb-6">
-            <span className="sr-only">Interactive Standard Operating Procedures (SOPs)</span>
-            <span aria-hidden="true">
+            <span>
               Documentation that doesn&apos;t put your team <span className="italic font-serif text-dark drop-shadow-[0_0_20px_rgba(26,26,26,0.3)]">to sleep</span>
             </span>
           </h2>
@@ -214,8 +211,7 @@ const Pillar6: React.FC<Pillar6Props> = ({ onNavigate }) => {
           <div className="text-center max-w-3xl mx-auto mb-16">
             <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-gold-on-cream mb-6 md:mb-4 block">{engine.eyebrow}</span>
             <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-dark leading-[0.95] tracking-tighter mb-8 md:mb-6">
-              <span className="sr-only">Driving Internal Software Adoption and System Compliance</span>
-              <span aria-hidden="true">
+              <span>
                 A culture of <span className="italic font-serif text-dark drop-shadow-[0_0_20px_rgba(26,26,26,0.3)]">adoption</span>
               </span>
             </h2>
@@ -271,8 +267,7 @@ const Pillar6: React.FC<Pillar6Props> = ({ onNavigate }) => {
               / LEARN FIRST
             </p>
             <h2 className="mb-6 font-serif text-3xl text-dark">
-              <span className="sr-only">Read Our Strategy Guide on Business System Training</span>
-              <span aria-hidden="true">Want to know how to train your team effectively?</span>
+              <span>Want to know how to train your team effectively?</span>
             </h2>
             <p className="mb-10 font-sans text-lg font-light leading-relaxed text-dark/70">
               Read the complete guide on team training and adoption that works for your business. Everything we described
@@ -289,8 +284,7 @@ const Pillar6: React.FC<Pillar6Props> = ({ onNavigate }) => {
           <div className="mt-20 md:mt-24 w-full bg-dark rounded-sm p-12 md:p-24 flex flex-col items-center justify-center text-center">
             <p className="font-mono text-[#D4A84B]/80 uppercase tracking-[0.2em] text-sm mb-6">/ READY?</p>
             <h2 className="font-serif text-6xl md:text-8xl text-white mb-12">
-              <span className="sr-only">Book a Team Training Consultation Call</span>
-              <span aria-hidden="true">
+              <span>
                 Let&apos;s <span className="italic text-[#D4A84B]">Talk</span>
               </span>
             </h2>
@@ -310,8 +304,7 @@ const Pillar6: React.FC<Pillar6Props> = ({ onNavigate }) => {
         accentColor={colors.dark}
         title={
           <>
-            <span className="sr-only">Frequently Asked Questions about Team Training</span>
-            <span aria-hidden="true">
+            <span>
               Questions about <span className="italic text-dark drop-shadow-[0_0_20px_rgba(26,26,26,0.3)]">training</span>
             </span>
           </>

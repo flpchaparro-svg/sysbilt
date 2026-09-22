@@ -26,8 +26,19 @@ bundle-stats.html
 *.sw?
 dist/
 .env.local
+scripts/automations/motion/out/
+scripts/automations/motion/.remotion/
+
+# Local scratch (never commit)
+.tmp-renders/
+.tmp-*
+__pycache__/
+*.pyc
 .vercel
 .cursor/mcp.json
 
 # Local automation deploy state (machine-specific IDs, never commit)
 scripts/automations/n8n/.deploy-state.env
+
+# Monthly SEO monitor output
+scripts/automations/seo/logs/

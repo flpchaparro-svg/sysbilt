@@ -50,8 +50,7 @@ const NarrativeSection: React.FC<NarrativeSectionProps> = ({
         <div className={`flex flex-col ${isRight ? 'md:col-start-2 md:order-2' : 'md:col-start-1 md:order-1'}`}>
           <span className="type-eyebrow mb-6 block" style={{ color: color }}>{phase}</span>
           <h3 className="font-serif text-5xl md:text-6xl text-dark mb-8 leading-[1.1]">
-            <span className="sr-only">{seoTitle}</span>
-            <span aria-hidden="true">
+            <span>
               {title} <span className="italic font-serif" style={{ color: color }}>{subtitle}</span>
             </span>
           </h3>
