@@ -902,7 +902,7 @@ export default function QuoteCaptureDemoPage() {
     visitorName.trim().length >= 2 && visitorPhone.trim().replace(/\s/g, '').length >= 8
   const canGoBack = step !== 'intro'
   const headerEyebrow = businessName
-    ? `Built for ${businessName}`
+    ? `Quote Capture demo for ${businessName}`
     : `Quote Capture demo · ${tradeLabel}`
 
 

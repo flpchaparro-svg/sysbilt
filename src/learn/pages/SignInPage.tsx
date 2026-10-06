@@ -1,31 +1,35 @@
 import React, {useState} from 'react'
-import {ArrowRight} from 'lucide-react'
+import {Link} from 'react-router-dom'
+import {PageMeta} from '../../components/PageMeta'
 import {LearnShell} from '../LearnShell'
 import {getLearnSupabase} from '../lib/supabaseClient'
 import {GoldRule, Kicker, StampWell, learnBtn} from '../components/learnChrome'
 
+/** Standard four-colour Google "G". Google's branding rules do not allow recolouring it. */
 function GoogleMark() {
   return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" aria-hidden="true">
+    <svg viewBox="0 0 24 24" className="h-5 w-5 shrink-0" aria-hidden="true">
       <path
-        fill="currentColor"
+        fill="#4285F4"
         d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
       />
       <path
-        fill="currentColor"
+        fill="#34A853"
         d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
       />
       <path
-        fill="currentColor"
+        fill="#FBBC05"
         d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
       />
       <path
-        fill="currentColor"
+        fill="#EA4335"
         d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
       />
     </svg>
   )
 }
+
+const GOOGLE_BUTTON_FONT = "Roboto, system-ui, -apple-system, 'Segoe UI', Arial, sans-serif"
 
 function authMessage(err: unknown, fallback: string): string {
   const raw = err instanceof Error ? err.message : fallback
@@ -112,34 +116,40 @@ export function SignInPage() {
 
   return (
     <LearnShell layout="auth">
+      <PageMeta
+        title="Sign in | SYSBILT Learn"
+        description="Sign in to SYSBILT Learn, our courses on AI and automation at work."
+        robots="noindex, nofollow"
+      />
       <StampWell className="w-full max-w-[28rem]">
         <div className="px-8 py-10 md:px-11 md:py-12">
-          <Kicker>Learn</Kicker>
-          <h1 className="mt-5 font-serif text-4xl font-medium leading-[1.08] tracking-tight md:text-[2.75rem]">Welcome to Learn</h1>
+          <Kicker>SYSBILT Learn</Kicker>
+          <h1 className="mt-5 font-serif text-4xl font-medium leading-[1.08] tracking-tight md:text-[2.75rem]">
+            {mode === 'signup' ? 'Create your Learn account' : 'Sign in to SYSBILT Learn'}
+          </h1>
           <GoldRule />
           <p className="mt-5 text-[15px] leading-relaxed text-dark/70">
-            Enjoy the courses. AI, automation, and how to build a business that holds up as you grow.
+            Our courses on AI and automation at work. Each lesson has the video, the notes, and the exercises.
           </p>
 
           <button
             type="button"
             onClick={google}
             disabled={busy}
-            className="group relative mt-10 flex min-h-[3rem] w-full items-center justify-center overflow-hidden bg-dark px-6 py-4 font-sans text-xs font-semibold uppercase tracking-[0.2em] text-cream shadow-[6px_6px_0_0_#C5A059] transition-transform duration-[250ms] active:scale-[0.97] disabled:opacity-60"
+            aria-busy={status === 'google'}
+            className="mt-10 flex h-10 w-full items-center justify-center gap-2.5 rounded border border-[#747775] bg-white px-3 text-sm font-medium leading-5 text-[#1F1F1F] transition-colors hover:bg-[#F2F2F2] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1F1F1F] disabled:opacity-60"
+            style={{fontFamily: GOOGLE_BUTTON_FONT}}
           >
-            <span className="pointer-events-none absolute inset-0 translate-y-full bg-gold transition-transform duration-[250ms] group-hover:translate-y-0" />
-            <span className="relative z-10 flex items-center justify-center gap-3 group-hover:text-dark">
-              <span className="text-gold transition-colors duration-[250ms] group-hover:text-dark">
-                <GoogleMark />
-              </span>
-              <span>{status === 'google' ? 'Opening Google' : 'Continue with Google'}</span>
-              <ArrowRight className="h-4 w-4 shrink-0" />
-            </span>
+            <GoogleMark />
+            <span>Continue with Google</span>
           </button>
+          <p className="mt-3 text-center text-xs leading-relaxed text-dark/55">
+            Google signs you in. We never see your Google password.
+          </p>
 
           <div className="mt-8 flex items-center gap-4">
             <span className="h-px flex-1 bg-dark/10" />
-            <span className="font-sans text-[11px] font-semibold uppercase tracking-[0.24em] text-dark/40">Or email</span>
+            <span className="font-sans text-[11px] font-semibold uppercase tracking-[0.24em] text-dark/40">Or use your email</span>
             <span className="h-px flex-1 bg-dark/10" />
           </div>
 
@@ -197,7 +207,9 @@ export function SignInPage() {
                 />
               </label>
               <label className="block">
-                <span className="font-sans text-[11px] font-semibold uppercase tracking-[0.24em] text-dark/50">Password</span>
+                <span className="font-sans text-[11px] font-semibold uppercase tracking-[0.24em] text-dark/50">
+                  Learn password
+                </span>
                 <input
                   type="password"
                   required
@@ -208,6 +220,11 @@ export function SignInPage() {
                   autoComplete={mode === 'signin' ? 'current-password' : 'new-password'}
                   disabled={busy}
                 />
+                {mode === 'signup' ? (
+                  <span className="mt-2 block text-xs leading-relaxed text-dark/55">
+                    Make a new password just for Learn. Don't reuse your Google or email password.
+                  </span>
+                ) : null}
               </label>
               {mode === 'signup' ? (
                 <label className="block">
@@ -243,6 +260,17 @@ export function SignInPage() {
           )}
 
           {message ? <p className="mt-6 text-sm text-red-text">{message}</p> : null}
+
+          <p className="mt-10 border-t border-dark/10 pt-6 text-xs leading-relaxed text-dark/50">
+            © {new Date().getFullYear()} SYSBILT. Sydney, Australia.{' '}
+            <Link to="/privacy" className="underline underline-offset-4 hover:text-dark">
+              Privacy policy
+            </Link>
+            {' · '}
+            <Link to="/terms" className="underline underline-offset-4 hover:text-dark">
+              Terms
+            </Link>
+          </p>
         </div>
       </StampWell>
     </LearnShell>

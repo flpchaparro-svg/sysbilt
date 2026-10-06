@@ -101,6 +101,16 @@ function money(n: number): string {
   return `$${n.toLocaleString('en-AU')}`
 }
 
+function DemoNotice({businessName}: {businessName: string}) {
+  return (
+    <p className="mb-6 rounded-xl border border-dark/10 bg-white px-4 py-3 font-sans text-[13px] leading-relaxed text-dark/70">
+      <span className="font-semibold text-dark">Demo by SYSBILT.</span> {businessName} is a sample
+      business, not a real company. Prices are sample rates and the pay step is a Stripe test checkout,
+      so no real money moves.
+    </p>
+  )
+}
+
 function SelectCard({
   selected,
   onSelect,
@@ -932,7 +942,7 @@ export default function QuoteCaptureLivePage({embed = false}: {embed?: boolean})
     visitorEmail.trim().includes('@')
   const canGoBack = step !== 'intro'
   const headerEyebrow = client?.isProof
-    ? `Proof install · ${businessName}`
+    ? `Quote Capture demo · ${businessName}`
     : businessName
   const sizeResolved = resolveSize()
   const conciergeContext: ConciergeContextPayload = {
@@ -971,8 +981,12 @@ export default function QuoteCaptureLivePage({embed = false}: {embed?: boolean})
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-cream font-sans text-dark selection:bg-dark selection:text-cream">
       <PageMeta
-        title={`${businessName} · Quote | SYSBILT`}
-        description={`Get a quotation from ${businessName}.`}
+        title={client.isProof ? 'Quote Capture demo | SYSBILT' : `${businessName} · Quote | SYSBILT`}
+        description={
+          client.isProof
+            ? `A working demo of Quote Capture by SYSBILT. ${businessName} is a sample business with sample rates.`
+            : `Get a quotation from ${businessName}.`
+        }
         canonical={`${SITE_ORIGIN}/q/${client.slug}`}
         robots="noindex, nofollow"
       />
@@ -1021,10 +1035,12 @@ export default function QuoteCaptureLivePage({embed = false}: {embed?: boolean})
           <div className="mb-6 flex items-center justify-between gap-4">
             <SysbiltLogo className="w-[110px] md:w-[130px]" />
             <p className="font-mono text-[9px] font-bold uppercase tracking-[0.22em] text-dark/40">
-              {embed ? 'Embedded quote' : client.isProof ? 'Proof install' : 'Quote'}
+              {client.isProof ? (embed ? 'Embedded demo' : 'Demo') : embed ? 'Embedded quote' : 'Quote'}
             </p>
           </div>
         )}
+
+        {client.isProof ? <DemoNotice businessName={businessName} /> : null}
 
         {step !== 'intro' ? (
           <p className="mb-2 font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-[#A8843F]">
@@ -1044,7 +1060,7 @@ export default function QuoteCaptureLivePage({embed = false}: {embed?: boolean})
             </h1>
             <p className="mx-auto mt-7 max-w-2xl font-sans text-lg leading-relaxed text-dark/70 md:text-xl">
               {client.isProof
-                ? 'Walk through this as if you were the customer. They get a clear landscaping quotation on screen. You check it, send the pay link or say yes, and move on. Sample rates for this proof install.'
+                ? 'Walk through this as if you were the customer. They get a clear landscaping quotation on screen. You check it, send the pay link or say yes, and move on. Sample rates for this demo.'
                 : 'Answer a few questions. See the quotation on screen. Pay if you are ready, or wait for us to confirm.'}
             </p>
             <div className="mt-12 flex w-full flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center sm:justify-center">
@@ -1489,10 +1505,26 @@ export default function QuoteCaptureLivePage({embed = false}: {embed?: boolean})
             <h1 className="font-serif text-3xl md:text-4xl leading-tight tracking-tight">
               Where should the quote go
             </h1>
-            <p className="mt-3 mb-8 font-sans text-base text-dark/60">
-              When you see your quotation, we email and text the quote with a pay link where
-              possible. {businessName} gets the priced lead at the same time.
-            </p>
+            {client.isProof ? (
+              <p className="mt-3 mb-8 font-sans text-base text-dark/60">
+                This is a demo, so use your own details. When you see the sample quotation, we email
+                and text it to you so you can see what a customer gets. Your details come to SYSBILT,
+                not to another business.{' '}
+                <a
+                  href="/privacy"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline underline-offset-4 hover:text-dark"
+                >
+                  Privacy policy
+                </a>
+              </p>
+            ) : (
+              <p className="mt-3 mb-8 font-sans text-base text-dark/60">
+                When you see your quotation, we email and text the quote with a pay link where
+                possible. {businessName} gets the priced lead at the same time.
+              </p>
+            )}
             {job?.impliesRemoval && (
               <p className="mb-6 rounded-xl border border-dark/10 bg-white px-4 py-3 font-sans text-sm text-dark/60">
                 Rip-out and clear is already included in this job type, so we skipped the ground
@@ -1575,7 +1607,7 @@ export default function QuoteCaptureLivePage({embed = false}: {embed?: boolean})
 
             <div className="mb-6 flex flex-wrap items-center justify-between gap-3 qc-no-print print:hidden">
               <p className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-[#A8843F]">
-                {client.isProof ? 'Proof quotation' : 'Quotation'}
+                {client.isProof ? 'Sample quotation' : 'Quotation'}
               </p>
               <button
                 type="button"
@@ -1597,7 +1629,7 @@ export default function QuoteCaptureLivePage({embed = false}: {embed?: boolean})
                       {businessName || 'GreenEdge Landscapes'}
                     </p>
                     <p className="mt-2 font-sans text-[12px] leading-relaxed text-dark/55">
-                      Landscaping quotation
+                      {client.isProof ? 'Sample landscaping quotation · demo only' : 'Landscaping quotation'}
                     </p>
                   </div>
                   <div className="min-w-[10rem] text-left sm:text-right">
@@ -1723,12 +1755,14 @@ export default function QuoteCaptureLivePage({embed = false}: {embed?: boolean})
                   </h2>
                   <p className="mt-1.5 font-serif text-[13px] leading-relaxed text-dark/70">
                     {client.isProof
-                      ? `This is a sample landscaping total of ${money(quote.total)}, not the Quote Capture product. The pay step is Stripe test mode. Use card 4242 4242 4242 4242. Do not use a real card.`
+                      ? `This is a demo total of ${money(quote.total)}. The pay button opens a Stripe test checkout, so no real money moves. To try it, use the test card 4242 4242 4242 4242. Never enter a real card.`
                       : `Total due ${money(quote.total)}. We are sending your quotation and pay link by email and SMS. Pay is optional if you already have the link.`}
                   </p>
                   {submitting && !payUrl ? (
                     <p className="mt-3 font-sans text-sm text-dark/55">
-                      Sending quotation and pay link…
+                      {client.isProof
+                        ? 'Sending the sample quotation and test pay link…'
+                        : 'Sending quotation and pay link…'}
                     </p>
                   ) : null}
                   <button
@@ -1739,11 +1773,13 @@ export default function QuoteCaptureLivePage({embed = false}: {embed?: boolean})
                   >
                     {submitting && !payUrl
                       ? 'Preparing…'
-                      : payUrl
-                        ? client.isProof
-                          ? `Try test pay ${money(quote.total)}`
-                          : `Pay ${money(quote.total)}`
-                        : `Retry pay link · ${money(quote.total)}`}
+                      : client.isProof
+                        ? payUrl
+                          ? `Test payment ${money(quote.total)} (no real charge)`
+                          : 'Retry test pay link'
+                        : payUrl
+                          ? `Pay ${money(quote.total)}`
+                          : `Retry pay link · ${money(quote.total)}`}
                   </button>
                   {submitError ? (
                     <p className="mt-3 font-sans text-sm text-[#9A1730]">{submitError}</p>
@@ -1766,7 +1802,9 @@ export default function QuoteCaptureLivePage({embed = false}: {embed?: boolean})
 
               <footer className="border-t border-dark/15 px-7 py-4 md:px-12">
                 <p className="font-serif text-[11px] text-dark/40">
-                  Prepared with Quote Capture by SYSBILT.
+                  {client.isProof
+                    ? 'Prepared with Quote Capture by SYSBILT. Sample document for demonstration only.'
+                    : 'Prepared with Quote Capture by SYSBILT.'}
                 </p>
               </footer>
             </article>
@@ -1794,7 +1832,8 @@ export default function QuoteCaptureLivePage({embed = false}: {embed?: boolean})
             {payUrl ? (
               <div className="mt-8">
                 <InkButton onClick={() => { window.location.href = payUrl }}>
-                  Open pay link <ArrowRight className="h-4 w-4" />
+                  {client.isProof ? 'Open test pay link' : 'Open pay link'}{' '}
+                  <ArrowRight className="h-4 w-4" />
                 </InkButton>
               </div>
             ) : (
@@ -1820,7 +1859,7 @@ export default function QuoteCaptureLivePage({embed = false}: {embed?: boolean})
 
         <p className="mt-16 border-t border-dark/10 pt-6 font-sans text-[11px] text-dark/35">
           {client?.isProof
-            ? 'SYSBILT Quote Capture proof install · sample rates · noindex'
+            ? 'Quote Capture demo by SYSBILT · sample business · sample rates · Stripe test mode'
             : 'Quote Capture by SYSBILT'}
         </p>
       </div>

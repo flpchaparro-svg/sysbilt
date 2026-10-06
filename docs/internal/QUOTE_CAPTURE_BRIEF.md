@@ -125,6 +125,8 @@ Embed snippet:
 ></iframe>
 ```
 
+Framing is locked to sysbilt.com (`frame-ancestors 'self'` on `/embed/q/*` in `vercel.json`). Tightened 6 Oct 2026 after Google flagged sysbilt.com as deceptive: a form with a pay step should not be frameable by any site. When the first real client goes live, add only their site to that header.
+
 ---
 
 ## Sandbox (sales weapon)
