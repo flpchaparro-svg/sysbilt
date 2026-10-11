@@ -615,7 +615,7 @@ function sitemapHints(routePath) {
 }
 
 /** Static HTML pages with their own head tags. Not SPA routes, so render-routes must not overwrite them. */
-export const STATIC_INDEXABLE_PATHS = ['/ai-transformation-package'];
+const STATIC_INDEXABLE_PATHS = ['/ai-transformation-package'];
 
 function buildSitemapXml(routes, content) {
   const lastmodByPath = sitemapLastmodByPath(content);
