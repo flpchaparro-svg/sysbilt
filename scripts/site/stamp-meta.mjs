@@ -614,14 +614,15 @@ function sitemapHints(routePath) {
   return { changefreq: 'weekly', priority: '0.65' };
 }
 
+/** Static HTML pages with their own head tags. Not SPA routes, so render-routes must not overwrite them. */
+export const STATIC_INDEXABLE_PATHS = ['/ai-transformation-package'];
+
 function buildSitemapXml(routes, content) {
   const lastmodByPath = sitemapLastmodByPath(content);
-  // Static HTML, not an SPA route. Listed here so search can find it without render-routes overwriting the page.
-  const staticIndexablePaths = ['/ai-transformation-package'];
   const uniquePaths = [
     ...new Set([
       ...routes.map((route) => route.path).filter((routePath) => !isIndexableExcluded(routePath)),
-      ...staticIndexablePaths,
+      ...STATIC_INDEXABLE_PATHS,
     ]),
   ].sort((a, b) => {
     if (a === '/') return -1;
@@ -1566,6 +1567,7 @@ export {
   BSE_ROUTES,
   canonicalUrl,
   buildSitemapXml,
+  STATIC_INDEXABLE_PATHS,
   distPathForRoute,
   fetchSanityContent,
   buildAllRoutes,

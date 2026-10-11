@@ -82,6 +82,7 @@ import {
   fetchSanityContent,
   buildAllRoutes,
   buildSitemapXml,
+  STATIC_INDEXABLE_PATHS,
   NOT_FOUND_HTML_PATH,
 } from './stamp-meta.mjs';
 import {
@@ -1013,7 +1014,28 @@ async function main() {
   }
 
   const sitemapSet = new Set(expectedSitemap.paths);
-  const indexableSet = new Set(routes.map((r) => r.path).filter((p) => !isIndexableExcluded(p)));
+  const indexableSet = new Set([
+    ...routes.map((r) => r.path).filter((p) => !isIndexableExcluded(p)),
+    ...STATIC_INDEXABLE_PATHS,
+  ]);
+
+  for (const staticPath of STATIC_INDEXABLE_PATHS) {
+    let html = '';
+    try {
+      html = await readFile(distPathForRoute(staticPath), 'utf8');
+    } catch {
+      addViolation(`sitemap — static page ${staticPath} is missing from dist`);
+      continue;
+    }
+    if (
+      !html.includes('<title>') ||
+      !html.includes('rel="canonical"') ||
+      !html.includes('name="description"') ||
+      html.includes('noindex')
+    ) {
+      addViolation(`sitemap — static page ${staticPath} is missing indexable metadata`);
+    }
+  }
 
   for (const p of sitemapSet) {
     if (p === '/news' || p === '/go' || p.startsWith('/go/')) {
