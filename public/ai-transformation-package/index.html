@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Transformation Package | SYSBILT</title>
+  <meta name="robots" content="noindex, follow">
+  <meta name="description" content="The AI Transformation Package from SYSBILT. One workflow on monday.com, three tiers, and a discovery call.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cream: #FFF2EC;
+      --cream-warm: #FFF9F0;
+      --white: #fff;
+      --ink: #1a1a1a;
+      --muted: rgba(26,26,26,0.7);
+      --gold: #C5A059;
+      --gold-text: #8B6914;
+      --gold-deep: #A8843F;
+      --red: #E21E3F;
+      --red-text: #9A1730;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: Inter, system-ui, sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      line-height: 1.6;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; }
+    .nav {
+      position: fixed; inset: 0 0 auto 0; z-index: 40;
+      height: 72px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 1.5rem;
+      background: rgba(255,242,236,0.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(26,26,26,0.08);
+    }
+    @media (min-width: 1024px) { .nav { padding: 0 4rem; } }
+    .logo { width: 108px; display: block; }
+    .nav-links { display: none; gap: 1.75rem; }
+    @media (min-width: 980px) { .nav-links { display: flex; } }
+    .nav-links a {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase; color: rgba(26,26,26,0.7);
+    }
+    .nav-links a:hover { color: var(--gold-text); }
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      background: var(--ink); color: var(--cream);
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase;
+      padding: 0.95rem 1.4rem;
+      border: 2px solid var(--ink);
+      transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+    }
+    .btn:hover { transform: translateY(-2px); background: #000; }
+    .btn svg { width: 14px; height: 14px; }
+    .btn-ghost {
+      background: transparent; color: var(--ink);
+    }
+    .btn-ghost:hover { background: var(--ink); color: var(--cream); }
+    .shell { max-width: 1400px; margin: 0 auto; padding: 0 1.5rem; }
+    @media (min-width: 768px) { .shell { padding: 0 3rem; } }
+    @media (min-width: 1024px) { .shell { padding: 0 5rem; } }
+
+    .hero {
+      min-height: 100dvh;
+      display: flex; flex-direction: column;
+      padding-top: 72px;
+      position: relative;
+    }
+    .hero-grid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+      align-items: center;
+      padding: 3rem 0 4rem;
+    }
+    @media (min-width: 1024px) {
+      .hero-grid { grid-template-columns: 1.1fr 0.9fr; gap: 4rem; padding: 2rem 0 5rem; }
+    }
+    .eyebrow {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--gold-text);
+      margin-bottom: 1.25rem;
+    }
+    .eyebrow span {
+      display: inline-block;
+      margin-left: 0.7rem;
+      padding-left: 0.7rem;
+      border-left: 1px solid var(--gold);
+      color: rgba(26,26,26,0.55);
+      letter-spacing: 0.16em;
+    }
+    h1 {
+      font-family: Lora, Georgia, serif;
+      font-weight: 700;
+      font-size: clamp(2.7rem, 6vw, 5.4rem);
+      line-height: 0.95;
+      letter-spacing: -0.03em;
+    }
+    h1 em { font-style: italic; color: var(--gold-text); }
+    .lede {
+      margin-top: 1.75rem;
+      max-width: 38rem;
+      font-size: 1.15rem;
+      font-weight: 400;
+      line-height: 1.65;
+      color: var(--muted);
+      border-left: 2px solid var(--gold);
+      padding-left: 1.25rem;
+    }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2rem; }
+    .hero-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem 1.5rem;
+      margin-top: 2.75rem;
+      padding-top: 1.75rem;
+      border-top: 1px solid rgba(26,26,26,0.1);
+      max-width: 36rem;
+    }
+    .hero-stats strong {
+      display: block;
+      font-family: Lora, Georgia, serif;
+      font-size: 1.65rem;
+      letter-spacing: -0.03em;
+    }
+    .hero-stats span { display: block; margin-top: 0.2rem; font-size: 0.85rem; color: var(--muted); }
+
+    .phase-board {
+      background: var(--white);
+      border: 1px solid rgba(26,26,26,0.08);
+      padding: 1.75rem 1.5rem 1.5rem;
+      min-height: 420px;
+      display: flex; flex-direction: column; justify-content: space-between;
+      position: relative; overflow: hidden;
+    }
+    .phase-board::before {
+      content: '';
+      position: absolute; left: 0; right: 0; top: 0; height: 3px;
+      background: linear-gradient(90deg, var(--gold), var(--red), var(--ink));
+      transform-origin: left;
+      animation: grow 1.4s cubic-bezier(.16,1,.3,1) both;
+    }
+    .phase-row {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 1rem 0.9rem;
+      border: 1px solid rgba(26,26,26,0.08);
+      margin-bottom: 0.7rem;
+      background: var(--cream);
+    }
+    .phase-row.on { border-color: var(--gold); background: #fff; }
+    .dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: rgba(26,26,26,0.2); flex-shrink: 0;
+    }
+    .phase-row.on .dot { background: var(--gold); box-shadow: 0 0 0 6px rgba(197,160,89,0.25); }
+    .phase-row b { font-family: Lora, Georgia, serif; font-size: 1.15rem; }
+    .phase-row small {
+      margin-left: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--gold-text);
+    }
+    .chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1rem; }
+    .chips span {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase;
+      border: 1px solid rgba(26,26,26,0.12);
+      padding: 0.35rem 0.5rem;
+      color: rgba(26,26,26,0.7);
+      animation: rise 0.7s cubic-bezier(.16,1,.3,1) both;
+    }
+    .chips span:nth-child(1) { animation-delay: 0.15s; }
+    .chips span:nth-child(2) { animation-delay: 0.28s; }
+    .chips span:nth-child(3) { animation-delay: 0.41s; }
+    .chips span:nth-child(4) { animation-delay: 0.54s; }
+    .chips span:nth-child(5) { animation-delay: 0.67s; }
+    .scroll-line {
+      position: absolute; bottom: 0; left: 50%;
+      width: 1px; height: 48px; overflow: hidden;
+      background: rgba(26,26,26,0.1);
+    }
+    .scroll-line i {
+      display: block; width: 100%; height: 100%;
+      background: rgba(26,26,26,0.45);
+      animation: drip 2.4s linear infinite;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-top: 1px solid rgba(26,26,26,0.1);
+      border-bottom: 1px solid rgba(26,26,26,0.1);
+      background: #fff;
+    }
+    @media (min-width: 900px) { .stats { grid-template-columns: repeat(4, 1fr); } }
+    .stat {
+      padding: 2rem 1.25rem;
+      text-align: center;
+      border-right: 1px solid rgba(26,26,26,0.08);
+      border-bottom: 1px solid rgba(26,26,26,0.08);
+    }
+    .stat:nth-child(2n) { border-right: 0; }
+    @media (min-width: 900px) {
+      .stat { border-bottom: 0; }
+      .stat:nth-child(2n) { border-right: 1px solid rgba(26,26,26,0.08); }
+      .stat:last-child { border-right: 0; }
+    }
+    .stat b {
+      display: block;
+      font-family: Lora, Georgia, serif;
+      font-size: 2.6rem;
+      letter-spacing: -0.03em;
+      color: var(--gold-text);
+    }
+    .stat p { margin-top: 0.4rem; font-size: 0.85rem; color: var(--muted); line-height: 1.45; }
+    .stat small { display: block; margin-top: 0.45rem; font-size: 0.7rem; color: rgba(26,26,26,0.45); }
+
+    section { padding: 5.5rem 0; }
+    @media (min-width: 768px) { section { padding: 7rem 0; } }
+    .rule {
+      width: 3rem; height: 1px; background: var(--gold); margin-bottom: 1.25rem;
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 0.7s cubic-bezier(.16,1,.3,1);
+    }
+    .reveal.in .rule, .rule.in { transform: scaleX(1); }
+    h2 {
+      font-family: Lora, Georgia, serif;
+      font-weight: 700;
+      font-size: clamp(2.1rem, 4vw, 3.6rem);
+      line-height: 1.02;
+      letter-spacing: -0.03em;
+      margin-bottom: 1rem;
+    }
+    h2 em { font-style: italic; color: var(--gold-text); }
+    .sub { max-width: 38rem; color: var(--muted); font-size: 1.05rem; line-height: 1.65; }
+
+    .split { display: grid; gap: 3rem; align-items: start; }
+    @media (min-width: 960px) { .split { grid-template-columns: 1fr 1fr; gap: 4rem; } }
+    .outcomes { display: flex; flex-direction: column; gap: 0.75rem; }
+    .outcome {
+      background: #fff;
+      border: 1px solid rgba(26,26,26,0.08);
+      padding: 1.1rem 1.15rem;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.9rem;
+      transition: transform 0.25s ease, border-color 0.25s ease;
+    }
+    .outcome:hover { transform: translateY(-3px); border-color: var(--gold); }
+    .outcome i {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-style: normal; font-size: 11px; font-weight: 700;
+      letter-spacing: 0.12em; color: var(--gold-text);
+      padding-top: 0.2rem;
+    }
+    .outcome strong { display: block; font-size: 0.98rem; margin-bottom: 0.2rem; }
+    .outcome span { font-size: 0.88rem; color: var(--muted); }
+
+    .methods { display: grid; gap: 0.75rem; }
+    @media (min-width: 900px) { .methods { grid-template-columns: 1fr 1fr 1fr; gap: 0; } }
+    .method {
+      background: #fff;
+      border: 1px solid rgba(26,26,26,0.08);
+      padding: 2rem 1.5rem 1.75rem;
+      min-height: 100%;
+      height: 100%;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    @media (min-width: 900px) {
+      .method + .method { border-left: 0; }
+    }
+    .method::before {
+      content: '';
+      position: absolute; left: 0; right: 0; top: 0; height: 3px;
+      background: var(--gold);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 0.9s cubic-bezier(.16,1,.3,1);
+      transition-delay: var(--d, 0s);
+    }
+    .method.in::before, .methods.in .method::before { transform: scaleX(1); }
+    .method .num {
+      font-family: Lora, Georgia, serif;
+      font-size: 3rem; line-height: 1; color: rgba(26,26,26,0.08);
+      margin-bottom: 0.5rem;
+    }
+    .method .ph {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--gold-text); margin-bottom: 0.4rem;
+    }
+    .method h3 { font-family: Lora, Georgia, serif; font-size: 1.8rem; margin-bottom: 0.35rem; }
+    .method .share { font-size: 0.8rem; color: rgba(26,26,26,0.5); margin-bottom: 0.8rem; }
+    .method p { font-size: 0.92rem; color: var(--muted); margin-bottom: 1rem; }
+    .method li { font-size: 0.88rem; color: var(--muted); margin: 0.45rem 0 0.45rem 0; list-style: none; padding-left: 0.9rem; position: relative; }
+    .method li::before { content: ''; position: absolute; left: 0; top: 0.55rem; width: 6px; height: 1px; background: var(--gold); }
+
+    .ready { display: grid; gap: 2.5rem; }
+    @media (min-width: 960px) { .ready { grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; } }
+    .dims { display: flex; flex-direction: column; gap: 0.7rem; }
+    .dim { background: #fff; border: 1px solid rgba(26,26,26,0.08); padding: 0.95rem 1rem; }
+    .dim strong { display: block; font-size: 0.95rem; }
+    .dim span { font-size: 0.85rem; color: var(--muted); }
+    .graph { background: #fff; border: 1px solid rgba(26,26,26,0.08); padding: 1.5rem; }
+    .graph h3 {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+      color: rgba(26,26,26,0.5); font-weight: 700; margin-bottom: 1.25rem;
+    }
+    .gbar { margin-bottom: 1rem; }
+    .gbar .top { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.35rem; }
+    .track { height: 6px; background: rgba(26,26,26,0.06); }
+    .fill {
+      height: 100%; width: 0;
+      background: var(--gold);
+      transition: width 1.1s cubic-bezier(.16,1,.3,1);
+    }
+    .fill.low { background: var(--red-text); }
+    .graph.in .fill { width: var(--w); }
+    .graph note, .graph .foot { display: block; margin-top: 0.8rem; font-size: 0.85rem; color: var(--muted); }
+
+    .center { text-align: center; }
+    .center .sub { margin: 0 auto; }
+    .center .rule { margin-left: auto; margin-right: auto; }
+    .tiers { display: grid; gap: 1rem; margin-top: 2.5rem; }
+    @media (min-width: 980px) { .tiers { grid-template-columns: 1fr 1fr 1fr; align-items: stretch; } }
+    .tier {
+      background: #fff;
+      border: 1px solid rgba(26,26,26,0.08);
+      padding: 1.6rem 1.4rem 1.4rem;
+      display: flex; flex-direction: column;
+      position: relative;
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    .tier:hover { transform: translateY(-6px); border-color: var(--gold); box-shadow: 6px 10px 0 rgba(197,160,89,0.22); }
+    .tier.hot { border-color: var(--ink); background: var(--ink); color: var(--cream); }
+    .tier.hot:hover { border-color: var(--gold); }
+    .badge {
+      position: absolute; top: 1rem; right: 1rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 9px; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase;
+      background: var(--gold); color: var(--ink);
+      padding: 0.3rem 0.45rem;
+    }
+    .tier .k {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--gold-text);
+    }
+    .tier.hot .k { color: var(--gold); }
+    .tier h3 { font-family: Lora, Georgia, serif; font-size: 2rem; margin: 0.35rem 0 0.4rem; }
+    .tier .desc { font-size: 0.9rem; color: var(--muted); min-height: 6.4rem; }
+    .tier .when { min-height: 2.6rem; }
+    .tier.hot .desc { color: rgba(255,242,236,0.75); }
+    .price {
+      font-family: Lora, Georgia, serif;
+      font-size: 2.4rem;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin-top: 1rem;
+    }
+    .aud { margin-top: 0.35rem; font-size: 0.95rem; color: var(--gold-text); }
+    .tier.hot .aud { color: var(--gold); }
+    .when { margin: 0.45rem 0 1rem; font-size: 0.8rem; color: var(--muted); }
+    .tier.hot .when { color: rgba(255,242,236,0.6); }
+    .tier ul { list-style: none; flex: 1; border-top: 1px solid rgba(26,26,26,0.08); padding-top: 1rem; }
+    .tier.hot ul { border-top-color: rgba(255,242,236,0.12); }
+    .tier li { font-size: 0.88rem; padding: 0.32rem 0 0.32rem 1rem; position: relative; color: var(--muted); }
+    .tier.hot li { color: rgba(255,242,236,0.82); }
+    .tier li::before { content: ''; position: absolute; left: 0; top: 0.7rem; width: 6px; height: 1px; background: var(--gold); }
+    .base {
+      display: flex; align-items: center; gap: 0.45rem;
+      margin-top: 1rem; font-size: 0.75rem; color: rgba(26,26,26,0.5);
+    }
+    .tier.hot .base { color: rgba(255,242,236,0.55); }
+    .mlogo { width: 22px; height: 18px; flex-shrink: 0; }
+    .tier .btn, .tier .btn-ghost { margin-top: 1.15rem; justify-content: center; }
+    .tier.hot .btn { background: var(--cream); color: var(--ink); border-color: var(--cream); }
+    .note {
+      margin-top: 1.25rem;
+      background: #fff;
+      border: 1px solid rgba(26,26,26,0.08);
+      padding: 1rem 1.15rem;
+      font-size: 0.92rem;
+      color: var(--muted);
+      text-align: center;
+    }
+    .note strong { color: var(--ink); font-weight: 600; }
+
+    .credits {
+      margin-top: 2.5rem;
+      background: var(--cream);
+      border: 1px solid rgba(26,26,26,0.08);
+      padding: 2rem 1.5rem 1.25rem;
+    }
+    @media (min-width: 800px) { .credits { padding: 2.5rem 2.25rem 1.5rem; } }
+    .credits h2 { font-size: clamp(1.8rem, 3vw, 2.5rem); max-width: 16ch; }
+    .credits .sub { max-width: 40rem; }
+    .bundle-why {
+      margin-top: 1.35rem;
+      font-family: Lora, Georgia, serif;
+      font-size: 1.35rem;
+      letter-spacing: -0.02em;
+      max-width: 28rem;
+    }
+    .bundle {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1.75rem;
+    }
+    .bundle th, .bundle td {
+      text-align: left;
+      padding: 0.95rem 0.8rem;
+      border-bottom: 1px solid rgba(26,26,26,0.1);
+      vertical-align: middle;
+      font-size: 0.92rem;
+    }
+    .bundle th {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(26,26,26,0.45);
+    }
+    .bundle tr.mark td { background: #fff; box-shadow: inset 3px 0 0 var(--gold); }
+    @media (max-width: 700px) {
+      .bundle, .bundle thead, .bundle tbody, .bundle tr, .bundle th, .bundle td { display: block; }
+      .bundle thead { display: none; }
+      .bundle tr { margin-bottom: 0.75rem; background: #fff; border: 1px solid rgba(26,26,26,0.08); }
+      .bundle td { border: 0; padding: 0.45rem 0.9rem; }
+      .bundle td::before {
+        content: attr(data-label);
+        display: block;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 9px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: rgba(26,26,26,0.45);
+        margin-bottom: 0.15rem;
+      }
+    }
+
+    .caps, .uses, .kpis, .whys { display: grid; gap: 0.75rem; margin-top: 2rem; }
+    @media (min-width: 800px) {
+      .caps { grid-template-columns: 1fr 1fr 1fr; }
+      .uses { grid-template-columns: 1fr 1fr; }
+      .kpis, .whys { grid-template-columns: 1fr 1fr; }
+    }
+    .card {
+      background: #fff;
+      border: 1px solid rgba(26,26,26,0.08);
+      padding: 1.4rem 1.25rem 1.25rem;
+      min-height: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.25s ease, border-color 0.25s ease;
+    }
+    .card:hover { transform: translateY(-4px); border-color: var(--gold); }
+    .card h3 { font-family: Lora, Georgia, serif; font-size: 1.35rem; margin-bottom: 0.45rem; }
+    .card p { font-size: 0.9rem; color: var(--muted); }
+    .tag {
+      display: block; margin-top: auto; padding-top: 1rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--gold-text);
+    }
+    .vert {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--red-text); margin-bottom: 0.45rem;
+    }
+    .ex {
+      margin-top: auto; padding: 0.75rem 0.8rem;
+      background: var(--cream); font-size: 0.82rem; color: var(--muted);
+    }
+    .ex b { color: var(--ink); font-weight: 600; }
+
+    .who {
+      display: grid; gap: 2rem; align-items: center;
+    }
+    @media (min-width: 800px) { .who { grid-template-columns: 240px 1fr; gap: 3.5rem; } }
+    .portrait {
+      width: 100%;
+      max-width: 240px;
+      height: 300px;
+      object-fit: cover;
+      object-position: center 18%;
+      display: block;
+      border: 1px solid rgba(26,26,26,0.12);
+      background: #111;
+    }
+    .meters { display: flex; flex-direction: column; gap: 0; background: #fff; border: 1px solid rgba(26,26,26,0.08); }
+    .meter-head {
+      display: flex; justify-content: space-between; align-items: flex-end; gap: 1rem;
+      padding: 1.35rem 1.25rem 1.15rem;
+      border-bottom: 1px solid rgba(26,26,26,0.08);
+      background: var(--ink); color: var(--cream);
+    }
+    .meter-head p {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--gold); max-width: 14rem;
+    }
+    .meter-head strong {
+      font-family: Lora, Georgia, serif; font-size: 3rem; line-height: 0.85; letter-spacing: -0.04em;
+    }
+    .meter-head em { font-style: italic; font-size: 1.3rem; color: var(--gold); margin-left: 0.15rem; }
+    .meter { padding: 1.05rem 1.25rem 1.1rem; border-bottom: 1px solid rgba(26,26,26,0.06); }
+    .meter:last-child { border-bottom: 0; }
+    .meter-top { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+    .meter-top strong { font-family: Lora, Georgia, serif; font-size: 1.2rem; }
+    .meter-top b { font-family: Lora, Georgia, serif; font-size: 1.2rem; color: var(--gold-text); }
+    .meter p { margin: 0.25rem 0 0.7rem; font-size: 0.9rem; color: var(--muted); }
+    .meter .track { height: 10px; background: rgba(26,26,26,0.06); overflow: hidden; }
+    .meter i {
+      display: block; height: 100%; width: 0; background: var(--gold);
+      transition: width 1.15s cubic-bezier(.16,1,.3,1);
+    }
+    .meter.low i { background: var(--red-text); }
+    .meter.in i { width: var(--w); }
+    .caps, .uses, .kpis, .whys, .tiers, .methods { align-items: stretch; }
+    .reveal { transition-delay: var(--d, 0s); }
+    .close {
+      background: var(--ink); color: var(--cream);
+      text-align: center; padding: 6rem 1.5rem;
+      position: relative; overflow: hidden;
+    }
+    .close h2 { color: var(--cream); }
+    .close h2 em { color: var(--gold); }
+    .close p { color: rgba(255,242,236,0.78); max-width: 34rem; margin: 0 auto 1.75rem; }
+    .close .btn { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+    footer {
+      padding: 1.5rem;
+      display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+      font-size: 0.8rem; color: rgba(26,26,26,0.5);
+      border-top: 1px solid rgba(26,26,26,0.08);
+    }
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.75s cubic-bezier(.16,1,.3,1), transform 0.75s cubic-bezier(.16,1,.3,1); transition-delay: var(--d, 0s); }
+    .reveal.in { opacity: 1; transform: none; }
+    @keyframes grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+    @keyframes drip { from { transform: translateY(-100%); } to { transform: translateY(100%); } }
+    @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { opacity: 1; transform: none; transition: none; }
+      .scroll-line i, .phase-board::before, .chips span { animation: none; }
+      .fill, .meter i { transition: none; }
+      .meter i { width: var(--w); }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="#top" aria-label="SYSBILT">
+    <svg class="logo" viewBox="0 0 2100 441" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g fill="#1A1A1A">
+        <path d="M146.793 54.9541C148.135 54.8759 149.478 54.8135 150.822 54.767C219.339 52.3968 290.969 71.2013 293.561 146.349L223.994 146.361C223.243 144.346 222.233 140.82 222.071 138.63C219.057 98.088 113.702 95.1389 109.905 134.96C107.79 157.152 144.942 162.192 161.434 166.11C217.576 179.446 302.096 184.616 299.43 257.195C298.381 316.457 229.757 340.564 175.302 339.525C139.026 339.926 98.1224 336.728 68.0639 315.9C40.867 297.055 33.9581 277.504 29.4271 247.366C35.4579 246.999 47.1809 247.378 53.6085 247.372L102.284 247.16C102.29 248.025 102.333 248.888 102.411 249.749C105.813 286.433 150.652 291.8 181.759 288.98C200.993 287.782 229.686 278.734 226.495 256.066C223.06 231.67 175.026 227.732 154.545 222.518C123.366 214.58 89.8039 212.302 63.5388 192.762C31.1891 168.696 32.67 120.561 56.9634 92.0714C77.4512 68.4025 115.165 57.5842 146.793 54.9541Z"/>
+        <path d="M516.289 60.0602L596.858 59.8965C583.256 80.0708 570.889 100.477 557.53 120.498L525.801 168.766C517.855 180.871 509.073 193.766 501.914 206.236C496.534 213.945 487.755 225.087 485.099 233.753C481.739 244.713 482.701 317.94 483.888 332.107C459.238 332.349 435.653 333.341 410.942 332.625C413.073 304.588 411.278 264.423 411.382 235.975C411.395 232.275 378.929 184.241 374.343 177.16L328.41 106.159C318.06 90.0843 309.97 75.9444 298.067 60.3938C321.927 59.374 353.734 60.2152 378.056 60.1631C379.949 60.0719 380.285 60.1148 382.135 60.512C385.66 65.1977 396.14 84.9075 399.749 91.1543L440.123 160.424C441.538 162.825 447.124 172.72 449.504 173.365C452.596 169.439 454.385 165.121 457.008 161.005C477.82 128.358 495.154 92.463 516.289 60.0602Z"/>
+        <path d="M714.099 54.9148C748.131 51.4583 801.654 58.8552 828.593 79.7338C854.269 99.6341 859.282 117.399 862.772 146.257L793.061 146.188C791.629 136.331 789.221 127.11 780.83 120.53C766.037 109.166 743.615 104.96 724.745 106.005C706.644 107.006 674.645 114.518 675.927 135.995C677.326 156.285 704.717 159.786 721.213 164.271C772.236 178.144 861.194 180.403 867.191 244.74C873.557 313.061 808.46 336.162 747.147 339.51C698.183 341.034 642.801 334.279 612.32 293.959C601.308 279.393 598.608 264.797 596.843 247.523L667.184 247.642C670.886 259.288 672.175 267.653 682.948 276.551C697.317 288.42 724.599 290.657 743.07 289.664C754.023 288.601 772.641 287.051 781.465 280.765C792.209 273.116 796.816 267.369 794.771 254.613C794.485 248.727 789.172 242.021 783.245 239.28C749.716 223.788 707.139 221.634 671.525 211.634C637.743 202.149 608.935 183.465 606.185 148.076C601.389 86.354 655.777 58.9269 714.099 54.9148Z"/>
+        <path d="M1248.13 60.1872C1255.52 60.8613 1267.17 60.5764 1274.83 60.5689L1320.29 60.4838L1320.55 178.381C1319.89 229.762 1319.65 281.147 1319.82 332.531C1297.38 332.989 1269.84 332.8 1247.22 332.383C1248.15 330.092 1248.24 327.623 1248.25 325.186C1248.66 256.697 1248.77 188.148 1248.68 119.659C1248.67 112.902 1249.17 63.6893 1248.13 60.1872Z"/>
+        <path d="M1369.98 60.5303L1441.68 60.5071C1440.82 132.238 1441.65 205.469 1441.56 277.305L1602.94 277.161C1601.93 292.502 1603.13 315.476 1602.92 331.404L1369.96 332.392C1370.52 299.085 1369.87 264.988 1369.82 231.598L1369.98 60.5303Z"/>
+        <path d="M1564.79 60.4704L1829.15 60.6124C1828.74 78.9982 1828.53 97.3881 1828.54 115.778L1732.76 115.934L1732.48 244.729C1732.27 273.993 1732.37 303.259 1732.76 332.522C1712.78 333.373 1680.18 332.945 1660.04 332.643C1660.99 304.842 1660.62 277.03 1660.61 249.231L1660.35 115.8C1628.94 115.325 1596.42 115.715 1564.93 115.702C1565.04 97.2912 1564.99 78.8805 1564.79 60.4704Z"/>
+      </g>
+      <g fill="#8B6914">
+        <path d="M958.894 197.286C976.87 196.363 998.455 197.24 1016.77 196.994C1037.68 196.712 1059.37 196.83 1080.31 197.092C1101.37 197.519 1128.96 203.042 1143.48 218.542C1160.74 236.972 1158.57 269.425 1139.25 285.778C1114.42 303.337 1078.49 300.323 1048.91 300.36L958.804 300.308C958.231 291.164 956.905 199.434 958.894 197.286ZM996.536 219.844C997.401 239.355 997.164 258.082 996.885 277.625C1026.16 277.89 1055.44 277.633 1084.7 276.853C1095.54 276.043 1102.74 274.901 1110.57 266.982C1124.57 252.824 1116.02 224.876 1095.1 222.008C1075.25 219.288 1048.2 218.167 1027.91 219.445C1018.16 219.925 1006.38 219.8 996.536 219.844Z"/>
+        <path d="M906 62.29C914.105 61.8015 925.498 62.0998 933.812 62.1022L983.251 62.1256L1048.62 62.1042C1092.39 62.0858 1156.76 58.0948 1181.22 101.362C1199.55 133.785 1192.5 171.902 1155.54 189.935C1202.47 208.535 1214.95 246.146 1195.86 289.493C1185.87 312.211 1151.3 326.863 1126.09 329.635C1082.28 334.449 1036.89 332.085 992.515 332.397C981.945 332.026 969.205 332.311 958.483 332.314C958.141 323.236 957.673 318.706 959.586 309.823C968.877 309.146 986.706 309.547 996.633 309.553L1065.47 309.631C1102.31 309.67 1150.56 311.671 1163.04 269.672C1168.25 252.136 1167.81 234.729 1157.97 218.581C1148.19 202.536 1133.88 197.144 1115.78 192.495C1131.03 185.944 1148.48 177.432 1153.39 161.31C1158.94 143.102 1156.27 117.817 1141.47 103.923C1123.72 87.246 1103.39 85.0807 1079.71 85.1692C1064.1 85.2277 1048.65 85.1724 1033.14 85.1815L906.642 85.1998L906 62.29Z"/>
+        <path d="M958.413 95.0358L1037.02 95.0676C1079.43 95.0787 1147.67 86.2535 1144.07 145.809C1143.22 159.899 1138.39 166.915 1127.41 176.033C1096.8 197.253 1027.43 184.788 989.792 188.109C984.438 188.581 964.088 188.67 959.202 187.3C957.924 182.596 957.073 99.7495 958.413 95.0358ZM997.01 167.414L1049.69 167.411C1062.69 167.41 1087.26 168.898 1097.28 161.562C1103.34 156.344 1106.32 151.677 1106.63 143.884C1107.45 123.199 1087.58 117.753 1069.18 117.646C1045.19 117.506 1021.42 118.094 997.562 117.939C996.124 119.32 996.326 120.246 996.424 122.562C997.059 137.497 997.087 152.462 997.01 167.414Z"/>
+        <path d="M906.328 95.5164C919.382 95.2224 933.463 95.5034 946.587 95.5502C945.882 137.4 945.938 178.454 946.475 220.266C946.936 256.614 945.072 295.932 947.55 332.02C944.255 332.959 911.641 332.428 906.244 332.419C907.236 298.16 906.593 260.218 906.44 225.825L906.328 95.5164Z"/>
+      </g>
+    </svg>
+  </a>
+  <div class="nav-links">
+    <a href="#deliver">What you get</a>
+    <a href="#method">Methodology</a>
+    <a href="#packages">Packages</a>
+    <a href="#usecases">Use cases</a>
+    <a href="#who">Who runs it</a>
+  </div>
+  <a class="btn" href="#contact">Discovery call <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+</nav>
+
+<header class="hero" id="top">
+  <div class="shell hero-grid">
+    <div>
+      <p class="eyebrow">AI Transformation Package <span>monday.com partner</span></p>
+      <h1>Manual work, on an <em>AI workflow</em></h1>
+      <p class="lede">We're a monday.com partner. If the job that keeps coming back already lives in monday.com, we put one AI workflow on it, agree the number that has to move, and stay until your team is the one running it.</p>
+      <div class="hero-actions">
+        <a class="btn" href="#packages">See the packages <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        <a class="btn btn-ghost" href="#method">See the methodology</a>
+      </div>
+      <div class="hero-stats">
+        <div><strong>From kickoff</strong><span>Discovery in the first days, then the build</span></div>
+        <div><strong>3 tiers</strong><span>One team, two teams, or three</span></div>
+        <div><strong>8 to 16 weeks</strong><span>Fixed length, not an open brief</span></div>
+        <div><strong>1 workflow</strong><span>The first process, then the next</span></div>
+      </div>
+    </div>
+    <div class="phase-board" aria-hidden="true">
+      <div>
+        <p class="eyebrow">How an engagement moves</p>
+        <div class="phase-row on" data-phase="0"><span class="dot"></span><b>01 Assess</b><small>First quarter</small></div>
+        <div class="phase-row" data-phase="1"><span class="dot"></span><b>02 Align</b><small>The middle</small></div>
+        <div class="phase-row" data-phase="2"><span class="dot"></span><b>03 Adopt</b><small>Last quarter</small></div>
+      </div>
+      <div>
+        <p class="sub" style="font-size:0.92rem;">Built on monday.com, using only the pieces that process actually needs.</p>
+        <div class="chips">
+          <span>Sidekick</span><span>AI blocks</span><span>Vibe</span><span>Agents</span><span>Workflows</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-line" aria-hidden="true"><i></i></div>
+</header>
+
+<div class="stats count-block">
+  <div class="stat"><b><span data-count="73">0</span>%</b><p>of companies have adopted AI, or are planning to</p><small>Glide, State of AI 2025</small></div>
+  <div class="stat"><b><span data-count="52">0</span>%</b><p>report a real change in how the work runs</p><small>Glide, State of AI 2025</small></div>
+  <div class="stat"><b><span data-count="2">0</span>×</b><p>output reported by 45% of companies using generative AI</p><small>Google, ROI of generative AI</small></div>
+  <div class="stat"><b><span data-count="1">0</span>%</b><p>of companies have AI running across the operation</p><small>McKinsey, 2025</small></div>
+</div>
+
+<section id="deliver">
+  <div class="shell split">
+    <div class="reveal">
+      <div class="rule"></div>
+      <p class="eyebrow">What you get</p>
+      <h2>A workflow your team <em>actually runs</em></h2>
+      <p class="sub">This is monday.com's AI Transformation Package, delivered by us. We find the job that keeps eating the week, build it on your account, and leave a person on your side who can own it.</p>
+    </div>
+    <div class="outcomes">
+      <article class="outcome reveal" style="--d:.05s"><i>01</i><div><strong>The bottleneck, named</strong><span>We show you where the manual work sits, and which process should go first.</span></div></article>
+      <article class="outcome reveal" style="--d:.12s"><i>02</i><div><strong>The workflow, built for how you work</strong><span>Boards, automations, and the AI pieces that fit, with a proof you can see before we build the rest.</span></div></article>
+      <article class="outcome reveal" style="--d:.19s"><i>03</i><div><strong>A before and an after</strong><span>Hours, errors, or cycle time, written in your words and then reported on a dashboard.</span></div></article>
+      <article class="outcome reveal" style="--d:.26s"><i>04</i><div><strong>A champion who owns it</strong><span>Training, written instructions, and a named person, so the workflow doesn't die after we leave.</span></div></article>
+    </div>
+  </div>
+</section>
+
+<section id="method" style="background:#fff;border-top:1px solid rgba(26,26,26,.08);border-bottom:1px solid rgba(26,26,26,.08);">
+  <div class="shell">
+    <div class="reveal center" style="margin-bottom:2.5rem;">
+      <div class="rule"></div>
+      <p class="eyebrow">Methodology</p>
+      <h2>Assess, align, <em>adopt</em></h2>
+      <p class="sub">These are monday.com's three phases. We stay in the work with you until people are using the workflow on a normal day, with a weekly check-in, and nothing goes live until you've signed it off.</p>
+    </div>
+    <div class="methods">
+      <article class="method reveal" style="--d:.05s">
+        <div class="num">01</div>
+        <p class="ph">Phase one, about a quarter of the time</p>
+        <h3>Assess</h3>
+        <p>We learn the business before we touch a board, across one to three sessions, and a short conversation with one or two leaders sets the outcomes in their own words.</p>
+        <ul>
+          <li>Readiness scored 1 to 5 before we start</li>
+          <li>What the team owns, this year's priorities, and what great looks like</li>
+          <li>The current process, or the target if it doesn't exist yet</li>
+          <li>Each pain sorted: classify and route, extract and enrich, assist and generate, or automate and act</li>
+          <li>An agent first, and a written reason when an agent is the wrong tool</li>
+          <li>A SMART objective: specific, measurable, achievable, relevant, time-bound</li>
+        </ul>
+      </article>
+      <article class="method reveal" style="--d:.16s">
+        <div class="num">02</div>
+        <p class="ph">Phase two, about half the time</p>
+        <h3>Align</h3>
+        <p>We design the target workflow and prove it on a small slice of real items before we build the rest.</p>
+        <ul>
+          <li>Solution design tied to the objective, not to a feature list</li>
+          <li>A proof on items from your account</li>
+          <li>Edge cases tested, including what the agent must not do</li>
+          <li>Credit use checked against the budget you agreed</li>
+          <li>Written sign-off before the full build</li>
+          <li>A weekly check-in until go-live</li>
+        </ul>
+      </article>
+      <article class="method reveal" style="--d:.27s">
+        <div class="num">03</div>
+        <p class="ph">Phase three, about a quarter of the time</p>
+        <h3>Adopt</h3>
+        <p>People need to know why it exists, want to use it, know how, and still be using it on a normal day after we've stepped back.</p>
+        <ul>
+          <li>Training for the people who use it, and a deeper session for the champion</li>
+          <li>Instructions for the workflow, the agent, and the prompts</li>
+          <li>Go-live watch, with issues fixed while we are still on the engagement</li>
+          <li>The baseline read back against the target</li>
+          <li>Handover, and a date for the next conversation</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="ready">
+  <div class="shell">
+    <div class="split">
+      <div class="reveal">
+        <div class="rule"></div>
+        <p class="eyebrow">Before we start</p>
+        <h2>Is the organisation <em>ready</em></h2>
+        <p class="sub">We score five things with you, from 1 to 5, and a low mark doesn't stop the work, because it shows what we fix first, usually the data, before an agent is allowed to run.</p>
+        <p class="sub" style="margin-top:1rem;">The bars are a normal starting point, not a pass mark. Most accounts look like this, and the gaps become the plan.</p>
+      </div>
+      <div class="meters count-block">
+        <div class="meter-head">
+          <p>Where a normal account starts</p>
+          <strong><span data-count="3">0</span><em>/ 5</em></strong>
+        </div>
+        <div class="meter" style="--w:60%"><div class="meter-top"><strong>Data</strong><b>3 / 5</b></div><p>Are the boards clean, current, and kept up</p><div class="track"><i></i></div></div>
+        <div class="meter low" style="--w:40%"><div class="meter-top"><strong>Talent</strong><b>2 / 5</b></div><p>Is there someone inside who will learn to run it</p><div class="track"><i></i></div></div>
+        <div class="meter low" style="--w:40%"><div class="meter-top"><strong>Governance</strong><b>2 / 5</b></div><p>Do you know who may use the agents, and what they can see</p><div class="track"><i></i></div></div>
+        <div class="meter" style="--w:60%"><div class="meter-top"><strong>Culture</strong><b>3 / 5</b></div><p>Is there room to try a new way of working in these weeks</p><div class="track"><i></i></div></div>
+        <div class="meter" style="--w:60%"><div class="meter-top"><strong>Tooling</strong><b>3 / 5</b></div><p>Can the account support the workflow without a long wait</p><div class="track"><i></i></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="packages" style="background:#fff;border-top:1px solid rgba(26,26,26,.08);">
+  <div class="shell">
+    <div class="reveal center">
+      <div class="rule"></div>
+      <p class="eyebrow">Packages</p>
+      <h2>Sized to <em>your scope</em></h2>
+      <p class="sub">Three tiers, priced for the outcome and the list under it. The US figure is the program reference, and the Australian dollar figure is monday.com's published list.</p>
+    </div>
+    <div class="tiers">
+      <article class="tier reveal">
+        <p class="k">Tier 1</p>
+        <h3>Essential</h3>
+        <p class="desc">For one team that wants one process running, with a person trained to keep it going.</p>
+        <p class="price">US$15,000+</p>
+        <p class="aud">A$20,625</p>
+        <p class="when">Up to 8 weeks, one team, up to 50 people</p>
+        <ul>
+          <li>1 basic use case</li>
+          <li>Discovery and an AI opportunity score</li>
+          <li>Up to 5 boards and 1 dashboard</li>
+          <li>Up to 2 AI workflows and 1 basic agent</li>
+          <li>1 Vibe app, plus Sidekick set up</li>
+          <li>Up to 5 working sessions and 1 training session</li>
+          <li>30 days of watch after go-live</li>
+        </ul>
+        <p class="base"><svg class="mlogo" viewBox="0 0 44 36"><path d="M5.7 35.8C3.7 35.8 1.9 34.7.9 33.1-.05 31.4 0 29.4 1.1 27.8L10.9 12.7c1-1.6 2.9-2.6 4.8-2.6 2 0 3.8 1.1 4.7 2.8 1 1.7.8 3.7-.3 5.3L10.3 33.3C9.3 34.8 7.6 35.8 5.7 35.8Z" fill="#FB275D"/><path d="M22.4 35.8c-2 0-3.8-1-4.8-2.7-1-1.7-.9-3.7.2-5.3l9.8-15c1-1.7 2.8-2.7 4.8-2.6 2 0 3.8 1.1 4.7 2.8.9 1.7.8 3.7-.3 5.3L27 33.3c-1 1.5-2.7 2.5-4.6 2.5Z" fill="#FFCC00"/><circle cx="38.7" cy="30.4" r="5.4" fill="#00CA72"/></svg> Includes monday.com AITP Tier 1 as the base</p>
+        <a class="btn btn-ghost" href="#contact">Get started</a>
+      </article>
+      <article class="tier hot reveal">
+        <span class="badge">Most teams start here</span>
+        <p class="k">Tier 2</p>
+        <h3>Advanced</h3>
+        <p class="desc">For two processes, or one harder one, across up to two teams, so intake connects to the work that follows it.</p>
+        <p class="price">US$30,000+</p>
+        <p class="aud">A$41,250</p>
+        <p class="when">Up to 12 weeks, up to two teams, up to 250 people</p>
+        <ul>
+          <li>Up to 2 basic use cases, or 1 advanced</li>
+          <li>Full discovery and a readiness score</li>
+          <li>Up to 10 boards and 2 dashboards</li>
+          <li>Up to 4 AI workflows and 2 basic agents</li>
+          <li>Up to 2 Vibe apps</li>
+          <li>Up to 8 working sessions and 2 training sessions</li>
+          <li>Champion training included</li>
+          <li>60 days of watch, with check-ins</li>
+        </ul>
+        <p class="base"><svg class="mlogo" viewBox="0 0 44 36"><path d="M5.7 35.8C3.7 35.8 1.9 34.7.9 33.1-.05 31.4 0 29.4 1.1 27.8L10.9 12.7c1-1.6 2.9-2.6 4.8-2.6 2 0 3.8 1.1 4.7 2.8 1 1.7.8 3.7-.3 5.3L10.3 33.3C9.3 34.8 7.6 35.8 5.7 35.8Z" fill="#FB275D"/><path d="M22.4 35.8c-2 0-3.8-1-4.8-2.7-1-1.7-.9-3.7.2-5.3l9.8-15c1-1.7 2.8-2.7 4.8-2.6 2 0 3.8 1.1 4.7 2.8.9 1.7.8 3.7-.3 5.3L27 33.3c-1 1.5-2.7 2.5-4.6 2.5Z" fill="#FFCC00"/><circle cx="38.7" cy="30.4" r="5.4" fill="#00CA72"/></svg> Includes monday.com AITP Tier 2 as the base</p>
+        <a class="btn" href="#contact">Get started</a>
+      </article>
+      <article class="tier reveal">
+        <p class="k">Tier 3</p>
+        <h3>Premier</h3>
+        <p class="desc">For up to three teams, where we stay in the work until the connected processes are running, then hand them to a champion.</p>
+        <p class="price">US$45,000+</p>
+        <p class="aud">A$61,875</p>
+        <p class="when">Up to 16 weeks, up to three teams, up to 500 people</p>
+        <ul>
+          <li>Up to 5 basic use cases, or 2 advanced</li>
+          <li>We stay through the build, not only the handover</li>
+          <li>Up to 20 boards and 5 dashboards</li>
+          <li>Up to 6 AI workflows</li>
+          <li>Up to 4 basic agents, or 2 advanced agents</li>
+          <li>Up to 3 Vibe apps, plus a written control plan</li>
+          <li>Up to 12 working sessions and 3 training sessions</li>
+          <li>90 days of watch, then a quarterly look at the next process</li>
+        </ul>
+        <p class="base"><svg class="mlogo" viewBox="0 0 44 36"><path d="M5.7 35.8C3.7 35.8 1.9 34.7.9 33.1-.05 31.4 0 29.4 1.1 27.8L10.9 12.7c1-1.6 2.9-2.6 4.8-2.6 2 0 3.8 1.1 4.7 2.8 1 1.7.8 3.7-.3 5.3L10.3 33.3C9.3 34.8 7.6 35.8 5.7 35.8Z" fill="#FB275D"/><path d="M22.4 35.8c-2 0-3.8-1-4.8-2.7-1-1.7-.9-3.7.2-5.3l9.8-15c1-1.7 2.8-2.7 4.8-2.6 2 0 3.8 1.1 4.7 2.8.9 1.7.8 3.7-.3 5.3L27 33.3c-1 1.5-2.7 2.5-4.6 2.5Z" fill="#FFCC00"/><circle cx="38.7" cy="30.4" r="5.4" fill="#00CA72"/></svg> Includes monday.com AITP Tier 3 as the base</p>
+        <a class="btn btn-ghost" href="#contact">Talk to us</a>
+      </article>
+    </div>
+    <p class="note reveal"><strong>These prices are the starting list.</strong> After the discovery call, the proposal sets the final fee, the credit budget, and anything outside the package, such as moving old data or a connection monday.com doesn't already have, and you buy one package per product, with the work remote unless we agree otherwise.</p>
+
+    <div class="credits reveal">
+      <p class="eyebrow">AI credits</p>
+      <h2>What a credit is</h2>
+      <p class="sub">The prices above are what you pay us to build the workflow, and a credit is what monday.com charges when the AI runs, about one US cent, renewed every month. Sidekick, agents, blocks, Vibe, and the notetaker all spend them, so we agree a budget before anything goes live and the account doesn't get a surprise.</p>
+      <p class="bundle-why">A larger bundle of seats and credits can take money off the package, or include Essential</p>
+      <table class="bundle">
+        <thead>
+          <tr><th>Seats</th><th>Credits a month</th><th>Discount</th><th>What it does to the package</th></tr>
+        </thead>
+        <tbody>
+          <tr><td data-label="Seats">25</td><td data-label="Credits a month">20,000</td><td data-label="Discount">5%</td><td data-label="Package">Essential included</td></tr>
+          <tr><td data-label="Seats">50</td><td data-label="Credits a month">40,000</td><td data-label="Discount">7.5%</td><td data-label="Package">Half off Essential</td></tr>
+          <tr class="mark"><td data-label="Seats">100</td><td data-label="Credits a month">80,000</td><td data-label="Discount">10%</td><td data-label="Package">Essential at no package fee</td></tr>
+          <tr><td data-label="Seats">200</td><td data-label="Credits a month">160,000</td><td data-label="Discount">12.5%</td><td data-label="Package">A step toward Advanced</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="stack">
+  <div class="shell">
+    <div class="reveal center">
+      <div class="rule"></div>
+      <p class="eyebrow">The pieces</p>
+      <h2>What each tool <em>actually does</em></h2>
+      <p class="sub">We don't switch all of these on. We pick the ones the process needs, and we tell you the credit cost before they run.</p>
+    </div>
+    <div class="caps">
+      <article class="card reveal" style="--d:.04s"><h3>Agents</h3><p>For work that needs a judgment across steps, like routing a request, chasing a missing field, or updating the next board. We try an agent first, with a basic one as a short chain and an advanced one reasoning across boards.</p><span class="tag">Basic, 10 to 50 credits. Advanced, 50 to 250 or more</span></article>
+      <article class="card reveal" style="--d:.1s"><h3>Sidekick</h3><p>The assistant inside the account, for when someone needs an answer from the boards right now rather than a standing automation, and it spends credits from the first message.</p><span class="tag">30 to 150 or more credits a message</span></article>
+      <article class="card reveal" style="--d:.16s"><h3>AI blocks</h3><p>One step on one item, such as summarising, pulling a field out of an email, tagging a request, or reading the tone, which is enough when a full agent is more than the job.</p><span class="tag">8 credits an item</span></article>
+      <article class="card reveal" style="--d:.04s"><h3>Vibe</h3><p>A small app on monday.com for when the board is the wrong screen, built for that process and either public or private, with the app itself about US$10 and the prompts spending the credits.</p><span class="tag">About 30 to 500 credits a prompt</span></article>
+      <article class="card reveal" style="--d:.1s"><h3>AI workflows</h3><p>The chain that connects agents, blocks, and the rules you already have, so a job can move from one team to the next without a handover meeting.</p><span class="tag">Credits per run, by complexity</span></article>
+      <article class="card reveal" style="--d:.16s"><h3>AI notetaker</h3><p>A meeting becomes notes and actions on the item, which is the right pick when the lost work is what was agreed in the room rather than the board itself.</p><span class="tag">120 credits an hour</span></article>
+    </div>
+  </div>
+</section>
+
+<section id="usecases" style="background:#fff;border-top:1px solid rgba(26,26,26,.08);border-bottom:1px solid rgba(26,26,26,.08);">
+  <div class="shell">
+    <div class="reveal">
+      <div class="rule"></div>
+      <p class="eyebrow">Use cases</p>
+      <h2>Ready for the work <em>we already see</em></h2>
+      <p class="sub">We use this with professional services firms, clinics and practices, businesses that run projects, and established retail and wholesale, and the package stays the same shape. The first workflow comes from your week, not from a menu.</p>
+    </div>
+    <div class="uses">
+      <article class="card reveal"><p class="vert">Professional services</p><h3>Enquiry in, the right person on it</h3><p>New work gets classified and routed, the weekly status is drafted from the board, and meeting actions land on the item.</p><span class="tag">Agents, workflows, notetaker</span></article>
+      <article class="card reveal" style="--d:.08s"><p class="vert">Clinics and practices</p><h3>The chase after the first enquiry</h3><p>New enquiries get sorted and followed up, and referrals or missing paperwork stay visible until someone has actually finished them.</p><span class="tag">AI blocks, agents, workflows</span></article>
+      <article class="card reveal" style="--d:.12s"><p class="vert">Project businesses</p><h3>The job, without the status meeting</h3><p>Stage, variations, and client updates sit on the board, and a short status comes from the live items while people still make the decisions.</p><span class="tag">Sidekick, AI blocks, agents</span></article>
+      <article class="card reveal" style="--d:.16s"><p class="vert">Retail and wholesale</p><h3>Exceptions, not every order</h3><p>Ordinary orders stay where they are. The requests that land in an inbox get classified and routed, and a person still handles the ones that need a decision.</p><span class="tag">AI blocks, workflows, Vibe</span></article>
+    </div>
+  </div>
+</section>
+
+<section id="measure">
+  <div class="shell">
+    <div class="reveal center">
+      <div class="rule"></div>
+      <p class="eyebrow">What good looks like</p>
+      <h2>By the <em>numbers</em></h2>
+      <p class="sub">We agree one to three outcomes with one or two leaders, in their words, and we don't promise a return. We write the baseline first, then read it back on a live dashboard at the end.</p>
+    </div>
+    <div class="kpis">
+      <article class="card reveal"><p class="vert">Productivity</p><h3>Time back on the repeated job</h3><p>We start here because it is the clearest thing to measure, and it doesn't need a finance model.</p><p class="ex">Example target: <b>status reporting down by a set number of hours each week</b></p></article>
+      <article class="card reveal" style="--d:.08s"><p class="vert">Quality</p><h3>Fewer errors, the same output</h3><p>We count missed fields, rework, and jobs that come out of the process in a different shape every time.</p><p class="ex">Example target: <b>exception rate on that workflow down against the baseline</b></p></article>
+      <article class="card reveal"><p class="vert">Adoption</p><h3>People using it on a normal day</h3><p>We look at who is active, and how often the agent runs, because a workflow nobody opens is not finished.</p><p class="ex">Example target: <b>the champion's team on it through the watch period</b></p></article>
+      <article class="card reveal" style="--d:.08s"><p class="vert">Business impact</p><h3>The result you named</h3><p>Cycle time or response time, only if you raised it, and we don't introduce headcount as the goal.</p><p class="ex">Example target: <b>the number from the alignment conversation</b></p></article>
+    </div>
+  </div>
+</section>
+
+<section style="background:#fff;border-top:1px solid rgba(26,26,26,.08);">
+  <div class="shell">
+    <div class="reveal">
+      <div class="rule"></div>
+      <p class="eyebrow">Why SYSBILT</p>
+      <h2>You deal with the person <em>who builds it</em></h2>
+      <p class="sub">The package is monday.com's and the delivery is ours. Felipe leads it from the first call through to handover.</p>
+    </div>
+    <div class="whys">
+      <article class="card reveal"><h3>One workflow first</h3><p>We don't turn every AI feature on. The next process waits until the first one is in daily use.</p></article>
+      <article class="card reveal" style="--d:.08s"><h3>An agent first, and a reason when it isn't</h3><p>If an agent is the wrong tool, we write down why, and we use Sidekick, a block, a workflow, or Vibe instead.</p></article>
+      <article class="card reveal"><h3>The rest of the business, said out loud</h3><p>Native boards are inside the package. If the work has to meet the CRM, the inbox, or the reporting you already use, that is priced on its own, not slipped in.</p></article>
+      <article class="card reveal" style="--d:.08s"><h3>The same person answers</h3><p>A question in the afternoon comes back to the person who built it, not a queue that picks it up the next day.</p></article>
+      <article class="card reveal"><h3>The before is written down</h3><p>We record hours and error rate in your words before we build, so the dashboard at the end can show whether we made a dent.</p></article>
+      <article class="card reveal" style="--d:.08s"><h3>A champion and a next date</h3><p>We don't close without an internal owner and a follow-up already booked. A retainer after the watch period is optional, and it has its own scope.</p></article>
+    </div>
+  </div>
+</section>
+
+<section id="who">
+  <div class="shell who reveal">
+    <img class="portrait" src="felipe-portrait.png" alt="Felipe Chaparro">
+    <div>
+      <div class="rule"></div>
+      <p class="eyebrow">Who runs it</p>
+      <h2>Felipe Chaparro</h2>
+      <p class="sub">Felipe founded SYSBILT and he leads this himself, from the first conversation through the build, the training, and the weeks after go-live. You talk to the person doing the work, which is the reason to do it with us.</p>
+    </div>
+  </div>
+</section>
+
+<section class="close" id="contact">
+  <p class="eyebrow" style="color:var(--gold);">Discovery call</p>
+  <h2>Find the first <em>workflow</em></h2>
+  <p>On the call we look at one process and tell you whether Essential, Advanced, or Premier is the right fit. If it is, you get a single page with the outcome, the scope, the weeks, the fee, and how we'll know it worked.</p>
+  <a class="btn" href="mailto:hello@sysbilt.com">Book a discovery call <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+</section>
+
+<footer>
+  <span>© 2026 SYSBILT</span>
+  <span>monday.com partner</span>
+</footer>
+
+<script>
+  (function () {
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var nodes = document.querySelectorAll('.reveal, .graph, .count-block, .method');
+    if (reduce) {
+      nodes.forEach(function (n) { n.classList.add('in'); });
+      document.querySelectorAll('[data-count]').forEach(function (el) { el.textContent = el.getAttribute('data-count'); });
+      document.querySelectorAll('.meter').forEach(function (meter) {
+        meter.classList.add('in');
+        var bar = meter.querySelector('i');
+        if (bar) bar.style.width = getComputedStyle(meter).getPropertyValue('--w');
+      });
+    } else {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('in');
+          entry.target.querySelectorAll('[data-count]').forEach(countUp);
+          io.unobserve(entry.target);
+        });
+      }, { threshold: 0.18, rootMargin: '0px 0px -8% 0px' });
+      nodes.forEach(function (n) { io.observe(n); });
+      document.querySelectorAll('.meter').forEach(function (meter, index) {
+        meter.style.setProperty('--d', (index * 0.12) + 's');
+        var bar = meter.querySelector('i');
+        if (bar) bar.style.transitionDelay = (index * 0.12) + 's';
+        io.observe(meter);
+      });
+    }
+
+    function countUp(el) {
+      var target = Number(el.getAttribute('data-count'));
+      var start = performance.now();
+      var dur = 900;
+      function tick(now) {
+        var t = Math.min(1, (now - start) / dur);
+        var eased = 1 - Math.pow(1 - t, 3);
+        el.textContent = String(Math.round(target * eased));
+        if (t < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+
+    var rows = document.querySelectorAll('[data-phase]');
+    if (!reduce && rows.length) {
+      var i = 0;
+      setInterval(function () {
+        rows.forEach(function (r) { r.classList.remove('on'); });
+        i = (i + 1) % rows.length;
+        rows[i].classList.add('on');
+      }, 1600);
+    }
+  })();
+</script>
+</body>
+</html>

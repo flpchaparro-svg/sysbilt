@@ -252,6 +252,21 @@ export default async function middleware(request: Request): Promise<Response> {
 
   const normalizedPath = normalizePathname(url.pathname);
 
+  // Assignment page: static HTML, not a nav route. Reachable by link, kept out of search.
+  if (
+    normalizedPath === '/ai-transformation-package' ||
+    normalizedPath.startsWith('/ai-transformation-package/')
+  ) {
+    const res = await next();
+    const headers = new Headers(res.headers);
+    headers.set('X-Robots-Tag', 'noindex, follow');
+    return new Response(res.body, {
+      status: res.status,
+      statusText: res.statusText,
+      headers,
+    });
+  }
+
   // Private SPA routes: always noindex at the edge, even when the route is "known".
   // Unstamped /go/* (and /r, /q, documents) otherwise fall through to homepage HTML
   // with no robots meta, which is the GSC duplicate bucket this 404 work is closing.
