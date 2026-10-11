@@ -616,8 +616,13 @@ function sitemapHints(routePath) {
 
 function buildSitemapXml(routes, content) {
   const lastmodByPath = sitemapLastmodByPath(content);
+  // Static HTML, not an SPA route. Listed here so search can find it without render-routes overwriting the page.
+  const staticIndexablePaths = ['/ai-transformation-package'];
   const uniquePaths = [
-    ...new Set(routes.map((route) => route.path).filter((routePath) => !isIndexableExcluded(routePath))),
+    ...new Set([
+      ...routes.map((route) => route.path).filter((routePath) => !isIndexableExcluded(routePath)),
+      ...staticIndexablePaths,
+    ]),
   ].sort((a, b) => {
     if (a === '/') return -1;
     if (b === '/') return 1;
